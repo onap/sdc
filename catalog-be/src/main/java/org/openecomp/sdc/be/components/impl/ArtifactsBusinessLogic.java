@@ -3145,9 +3145,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         Operation operation = optionalOperation.get();
         ArtifactDefinition implementationArtifact =  operation.getImplementationArtifact();
-        implementationArtifact.setArtifactName(operation.getName() + "_" + artifactInfo.getArtifactName());
+        implementationArtifact.setArtifactName(artifactInfo.getArtifactName());
         implementationArtifact.setDescription(artifactInfo.getDescription());
         implementationArtifact.setArtifactType(artifactInfo.getArtifactType());
+        implementationArtifact.setArtifactLabel(artifactInfo.getUniqueId());
+        implementationArtifact.setEsId(artifactInfo.getEsId());
         operation.setImplementation(implementationArtifact);
         gotInterface.setOperationsMap(operationsMap);
         Either<InterfaceDefinition, StorageOperationStatus> interfaceDefinitionStorageOperationStatusEither =

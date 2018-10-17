@@ -259,8 +259,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         String artifactUUID = UUID.randomUUID().toString();
         artifactDefinition.setArtifactUUID(artifactUUID);
         artifactDefinition.setUniqueId(artifactUUID);
-        artifactDefinition.setArtifactType(ArtifactTypeEnum.PLAN.getType());
-        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
+        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setImplementation(artifactDefinition);
     }

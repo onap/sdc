@@ -16,28 +16,94 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.tosca.CsarUtils;
-
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.WordUtils;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class OperationArtifactUtil {
 
+    public static final String BPMN_ARTIFACT_PATH = "BPMN";
+
+    private OperationArtifactUtil() {
+        //Hiding implicit public constructor
+    }
 
     /**
      * This method assumes that operation.getImplementation() is not NULL  ( it should be verified by the caller method)
      *
-     * @param componentName component's normalized name
-     * @param interfaceType the specific interface type
      * @param operation     the specific operation name
      * @return the full path including file name for operation's artifacts
      */
+    static String createOperationArtifactPath(Component component, OperationDataDefinition operation,
+                                                     boolean isAssociatedResourceComponent) {
+        if (!(component instanceof Resource)) {
+            return null;
+        }
+        if (isAssociatedResourceComponent) {
+            ResourceMetadataDataDefinition resourceMetadataDataDefinition = (ResourceMetadataDataDefinition)
+                    component.getComponentMetadataDefinition().getMetadataDataDefinition();
+            return createOperationArtifactPathInService(resourceMetadataDataDefinition.getToscaResourceName() +
+                    "_v" + component.getVersion(), operation);
+        }
+        return createOperationArtifactPathInResource(operation);
+    }
 
-    public static String createOperationArtifactPath(String componentName, String interfaceType,
-            OperationDataDefinition operation) {
-        return CsarUtils.ARTIFACTS + File.separator + componentName + File.separator + interfaceType + File.separator
-                       + CsarUtils.DEPLOYMENT_ARTIFACTS_DIR + CsarUtils.WORKFLOW_ARTIFACT_DIR + operation
-                                                                                                        .getImplementation()
-                                                                                                        .getArtifactName();
+
+    private static String createOperationArtifactPathInResource(OperationDataDefinition operation) {
+        return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
+                + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
+                + File.separator + operation.getImplementation().getArtifactName();
+    }
+
+    private static String createOperationArtifactPathInService(String toscaComponentName,
+                                                          OperationDataDefinition operation) {
+        return CsarUtils.ARTIFACTS + File.separator + toscaComponentName + File.separator +
+                WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
+                ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
+                operation.getImplementation().getArtifactName();
+    }
+
+    public static Map<String, ArtifactDefinition> getDistinctInterfaceOperationArtifactsByName(Component originComponent) {
+        Map<String, ArtifactDefinition> distinctInterfaceArtifactsByName = new HashMap<>();
+        Map<String, InterfaceDefinition> interfaces = originComponent.getInterfaces();
+        if (MapUtils.isEmpty(interfaces)) {
+            return distinctInterfaceArtifactsByName;
+        }
+        Map<String, ArtifactDefinition> interfaceArtifacts = interfaces.values().stream()
+                .flatMap(interfaceDefinition -> interfaceDefinition.getOperationsMap().values().stream())
+                .map(Operation::getImplementationArtifact)
+                .collect(Collectors.toMap(ArtifactDataDefinition::getUniqueId,
+                        artifactDefinition -> artifactDefinition));
+        if (MapUtils.isNotEmpty(interfaceArtifacts)) {
+            Set<String> artifactNameSet = new HashSet<>();
+            for (Map.Entry<String, ArtifactDefinition> interfaceArtifactEntry : interfaceArtifacts.entrySet()) {
+                String artifactName = interfaceArtifactEntry.getValue().getArtifactName();
+                if (artifactNameSet.contains(artifactName)) {
+                    continue;
+                }
+                distinctInterfaceArtifactsByName.put(interfaceArtifactEntry.getKey(),
+                        interfaceArtifactEntry.getValue());
+                artifactNameSet.add(artifactName);
+            }
+
+        }
+        return distinctInterfaceArtifactsByName;
     }
 }

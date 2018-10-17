@@ -162,14 +162,14 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
 
 		// default test when convertInterfaceNodeType is right
-		result = testSubject.exportComponentInterface(component);
+		result = testSubject.exportComponentInterface(component, false);
 
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 		Mockito.when(capabiltyRequirementConvertor.convertRequirements(Mockito.any(Map.class),Mockito.any(Resource.class),
 				Mockito.any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
 		// default test when convertInterfaceNodeType is left
-		result = testSubject.exportComponentInterface(component);
+		result = testSubject.exportComponentInterface(component, false);
 
 	}
 
@@ -397,7 +397,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 				Mockito.any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "convertInterfaceNodeType",new HashMap<>(), component, toscaNode, nodeTypes);
+		result = Deencapsulation.invoke(testSubject, "convertInterfaceNodeType",new HashMap<>(), component, toscaNode
+				, nodeTypes, false);
 	}
 	@Ignore("need to fix change in injected class.")
 	@Test

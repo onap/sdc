@@ -210,7 +210,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false, false);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -241,7 +241,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false, false);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -361,7 +361,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(toscaTemplate));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true, true);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -412,7 +412,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(toscaTemplate));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true, true);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -466,7 +466,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true, true);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -525,7 +525,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(schemaList));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true, true);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -587,7 +587,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				Mockito.any(Boolean.class))).thenReturn(new User());
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true, true);
+			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -697,11 +697,11 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		ToscaRepresentation tosca = new ToscaRepresentation();
 		tosca.setMainYaml("value");
 
-		Mockito.when(toscaExportUtils.exportComponentInterface(Mockito.any(Component.class)))
+		Mockito.when(toscaExportUtils.exportComponentInterface(Mockito.any(Component.class), Mockito.any(Boolean.class)))
 				.thenReturn(Either.left(tosca));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName);
+			Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -868,174 +868,6 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Test
 	public void testValidateNonMetaArtifactWithExceptionCaught() {
 		CsarUtils.validateNonMetaArtifact("", new byte[0], new HashMap<>());
-	}
-
-	@Test
-	public void testWriteAllFilesToCsarWhenWriteOperationsArtifactsToCsarIsRight() {
-		Component component = new Resource();
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
-
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		Map<String, InterfaceDefinition> interfaces = new HashMap<>();
-		InterfaceDefinition interfaceDef = new InterfaceDefinition();
-		Map<String, OperationDataDefinition> operations = new HashMap<>();
-		OperationDataDefinition operation = new OperationDataDefinition();
-		ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-		implementation.setArtifactUUID("artifactUUID");
-		implementation.setArtifactName("artifactName");
-		operation.setImplementation(implementation);
-		operations.put("key", operation);
-		interfaceDef.setOperations(operations);
-		interfaces.put("key", interfaceDef);
-		((Resource) component).setInterfaces(interfaces);
-
-		ESArtifactData artifactData = new ESArtifactData();
-		byte[] data = "value".getBytes();
-		artifactData.setDataAsArray(data);
-
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		toscaTemplate.setDependencies(dependencies);
-
-		List<SdcSchemaFilesData> filesData = new ArrayList<>();
-		SdcSchemaFilesData filedata = new SdcSchemaFilesData();
-		filedata.setPayloadAsArray(data);
-		filesData.add(filedata);
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData),
-				Either.right(CassandraOperationStatus.GENERAL_ERROR));
-
-		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
-				.thenReturn(ActionStatus.GENERAL_ERROR);
-
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
-
-		Mockito.when(
-				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
-				.thenReturn(Either.left(filesData));
-
-		testSubject.createCsar(component, false, true);
-	}
-
-	@Test
-	public void testWriteOperationsArtifactsToCsarWhenComponentIsService() {
-		Component component = new Service();
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeOperationsArtifactsToCsar", component, zip);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testWriteOperationsArtifactsToCsarWhenOperationGetImplementaionIsNull() {
-		Component component = new Resource();
-		Map<String, InterfaceDefinition> interfaces = new HashMap<>();
-		InterfaceDefinition interfaceDef = new InterfaceDefinition();
-		Map<String, OperationDataDefinition> operations = new HashMap<>();
-		operations.put("key", new OperationDataDefinition());
-		interfaceDef.setOperations(operations);
-		interfaces.put("key", interfaceDef);
-
-		((Resource) component).setInterfaces(interfaces);
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeOperationsArtifactsToCsar", component, zip);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testWriteOperationsArtifactsToCsarWhenOperationGetArtifactNameIsNull() {
-		Component component = new Resource();
-
-		Map<String, InterfaceDefinition> interfaces = new HashMap<>();
-		InterfaceDefinition interfaceDef = new InterfaceDefinition();
-		Map<String, OperationDataDefinition> operations = new HashMap<>();
-		OperationDataDefinition operation = new OperationDataDefinition();
-		ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-		operation.setImplementation(implementation);
-		operations.put("key", operation);
-		interfaceDef.setOperations(operations);
-		interfaces.put("key", interfaceDef);
-		((Resource) component).setInterfaces(interfaces);
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeOperationsArtifactsToCsar", component, zip);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testWriteOperationsArtifactsToCsarWhenGettingArtifactFromCassandra() {
-		Component component = new Resource();
-
-		Map<String, InterfaceDefinition> interfaces = new HashMap<>();
-		InterfaceDefinition interfaceDef = new InterfaceDefinition();
-		Map<String, OperationDataDefinition> operations = new HashMap<>();
-		OperationDataDefinition operation = new OperationDataDefinition();
-		ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-		implementation.setArtifactName("artifactName");
-		implementation.setArtifactUUID("artifactUUID");
-		operation.setImplementation(implementation);
-		operations.put("key", operation);
-		interfaceDef.setOperations(operations);
-		interfaceDef.setToscaResourceName("toscaResourceName");
-		interfaces.put("key", interfaceDef);
-		((Resource) component).setInterfaces(interfaces);
-		component.setNormalizedName("normalizedName");
-
-		ESArtifactData data = new ESArtifactData();
-		data.setDataAsArray("data".getBytes());
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(data));
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeOperationsArtifactsToCsar", component, zip);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testWriteOperationsArtifactsToCsarWhenNullPointerExceptionIsCaught() {
-		Component component = new Resource();
-
-		Map<String, InterfaceDefinition> interfaces = new HashMap<>();
-		InterfaceDefinition interfaceDef = new InterfaceDefinition();
-		Map<String, OperationDataDefinition> operations = new HashMap<>();
-		OperationDataDefinition operation = new OperationDataDefinition();
-		ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-		implementation.setArtifactName("artifactName");
-		implementation.setArtifactUUID("artifactUUID");
-		operation.setImplementation(implementation);
-		operations.put("key", operation);
-		interfaceDef.setOperations(operations);
-		interfaceDef.setToscaResourceName("toscaResourceName");
-		interfaces.put("key", interfaceDef);
-		((Resource) component).setInterfaces(interfaces);
-		component.setNormalizedName("normalizedName");
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
-				.thenReturn(Either.left(new ESArtifactData()));
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "writeOperationsArtifactsToCsar", component, zip);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test

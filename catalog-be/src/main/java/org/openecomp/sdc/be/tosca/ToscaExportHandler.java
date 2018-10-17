@@ -151,7 +151,8 @@ public class ToscaExportHandler {
         return Either.left(toscaRepresentation);
     }
 
-    public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component) {
+    public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component,
+                                                                            boolean isAssociatedResourceComponent) {
         if (null == DEFAULT_IMPORTS) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -160,8 +161,8 @@ public class ToscaExportHandler {
         ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
         toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component, toscaTemplate,
-                nodeTypes);
+        Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component,
+                toscaTemplate, nodeTypes, isAssociatedResourceComponent);
         if (toscaTemplateRes.isRight()) {
             return Either.right(toscaTemplateRes.right().value());
         }
@@ -546,8 +547,10 @@ public class ToscaExportHandler {
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
     }
 
-    private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache, Component component, ToscaTemplate toscaNode,
-            Map<String, ToscaNodeType> nodeTypes) {
+    private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache,
+                                                                       Component component, ToscaTemplate toscaNode,
+                                                                       Map<String, ToscaNodeType> nodeTypes,
+                                                                       boolean isAssociatedResourceComponent) {
         log.debug("start convert node type for {}", component.getUniqueId());
         ToscaNodeType toscaNodeType = createNodeType(component);
         toscaNode.setInterface_types(addInterfaceTypeElement(component));
@@ -561,7 +564,7 @@ public class ToscaExportHandler {
 
         List<InputDefinition> inputDef = component.getInputs();
         Map<String, ToscaProperty> inputs = new HashMap<>();
-        addInterfaceDefinitionElement(component, toscaNodeType);
+        addInterfaceDefinitionElement(component, toscaNodeType, isAssociatedResourceComponent);
         if (inputDef != null) {
             inputDef.forEach(i -> {
                 ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);

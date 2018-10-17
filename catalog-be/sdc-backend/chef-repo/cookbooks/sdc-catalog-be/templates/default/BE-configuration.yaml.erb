@@ -319,6 +319,9 @@ serviceDeploymentArtifacts:
     PLAN:
         acceptedTypes:
             - xml
+    WORKFLOW:
+        acceptedTypes:
+
 
 resourceDeploymentArtifacts:
     HEAT:
@@ -444,6 +447,9 @@ resourceDeploymentArtifacts:
         validForResourceTypes:
             - VF
             - VFC
+    WORKFLOW:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
