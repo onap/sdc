@@ -206,7 +206,13 @@ public class SdcProxy extends HttpServlet {
     }
 
     private ContentType getContentType(HttpServletRequest request) {
-        ContentType contentType = ContentType.parse(request.getContentType());
+        String contentTypeStr = null;
+            if (request.getContentType() == null ){
+                contentTypeStr = request.getHeader("contentType");
+            }
+            else contentTypeStr = request.getContentType();
+
+        ContentType contentType = ContentType.parse(contentTypeStr);
         return ContentType.create(contentType.getMimeType());
     }
 
