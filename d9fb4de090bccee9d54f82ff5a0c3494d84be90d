@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_14135bb9",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-10-17T12:20:47Z",
+      "side": 1,
+      "message": "why are you doing request.getContentType() twice?\nset the value of contentTypeStr to request.getContentType() and then, if contentTypeStr is null, assign request.getHeader(\"contentType\") to contentTypeStr. no \u0027else\u0027 is needed",
+      "range": {
+        "startLine": 210,
+        "startChar": 12,
+        "endLine": 213,
+        "endChar": 59
+      },
+      "revId": "d9fb4de090bccee9d54f82ff5a0c3494d84be90d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
