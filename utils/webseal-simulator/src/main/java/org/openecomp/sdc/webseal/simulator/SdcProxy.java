@@ -52,7 +52,7 @@ public class SdcProxy extends HttpServlet {
     private final String STYLES = "/styles";
     private final String LANGUAGES = "/languages";
     private final String CONFIGURATIONS = "/configurations";
-    private static final Set<String> RESERVED_HEADERS = Arrays.stream(ReservedHeaders.values()).map(h -> h.name()).collect(Collectors.toSet());
+    private static final Set<String> RESERVED_HEADERS = Arrays.stream(ReservedHeaders.values()).map(h -> h.getValue()).collect(Collectors.toSet());
 
 
     private final static Logger logger = Logger.getLogger(SdcProxy.class);
@@ -206,7 +206,11 @@ public class SdcProxy extends HttpServlet {
     }
 
     private ContentType getContentType(HttpServletRequest request) {
-        ContentType contentType = ContentType.parse(request.getContentType());
+        String contentTypeStr = request.getContentType();
+            if (contentTypeStr == null ){
+                contentTypeStr = request.getHeader("contentType");
+            }
+        ContentType contentType = ContentType.parse(contentTypeStr);
         return ContentType.create(contentType.getMimeType());
     }
 
@@ -250,7 +254,7 @@ public class SdcProxy extends HttpServlet {
 				Enumeration<String> headers = request.getHeaders(headerName);
 				while (headers.hasMoreElements()) {
 					String headerValue = headers.nextElement();
-//					proxyMethod.setHeader(headerName, headerValue);
+					proxyMethod.setHeader(headerName, headerValue);
 				}
 			}
 		}
@@ -306,9 +310,20 @@ public class SdcProxy extends HttpServlet {
         return "Http Proxy Servlet";
     }
 
-    private enum ReservedHeaders {
-        HTTP_IV_USER, USER_ID, HTTP_CSP_FIRSTNAME, HTTP_CSP_EMAIL, HTTP_CSP_LASTNAME, HTTP_IV_REMOTE_ADDRESS, HTTP_CSP_WSTYPE
+    enum ReservedHeaders {
+        HTTP_IV_USER("HTTP_IV_USER"), USER_ID("USER_ID"), HTTP_CSP_FIRSTNAME("HTTP_CSP_FIRSTNAME"), HTTP_CSP_EMAIL("HTTP_CSP_EMAIL"), HTTP_CSP_LASTNAME("HTTP_CSP_LASTNAME"), HTTP_IV_REMOTE_ADDRESS("HTTP_IV_REMOTE_ADDRESS"), HTTP_CSP_WSTYPE("HTTP_CSP_WSTYPE"), HOST("Host"), CONTENTLENGTH("Content-Length");
+
+        private String value;
+
+        ReservedHeaders(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
+
 
     private static CloseableHttpClient buildRestClient() throws NoSuchAlgorithmException, KeyStoreException {
         SSLContextBuilder builder = new SSLContextBuilder();
