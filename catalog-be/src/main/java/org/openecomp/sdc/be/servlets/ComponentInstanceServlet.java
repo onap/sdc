@@ -1244,9 +1244,138 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                     copyComponentInstance.left().value());
         } catch (Exception e) {
-            log.error("Failed to convert json to Map { }, error: { }", data, e);
+            log.error("Failed to convert json to Map { }", data, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.USER_DEFINED,
                     "Failed to get the copied component instance information"));
         }
     }
+
+    @POST
+    @Path("/{containerComponentType}/{componentId}/batchDeleteResourceInstances/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Batch Delete ResourceInstances", httpMethod = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(code = 203, message = "ResourceInstances deleted"),
+            @ApiResponse(code = 403, message = "Restricted Operation"),
+            @ApiResponse(code = 400, message = "Invalid Content / Missing Content")
+    })
+    public Response batchDeleteResourceInstances(
+            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + "," +
+                    ComponentTypeEnum.PRODUCT_PARAM_NAME)
+            @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("componentId") final String componentId,
+            @Context final HttpServletRequest request,
+            @ApiParam(value = "Component Instance Id List", required = true) final String componentInstanceIdLisStr) {
+        ServletContext context = request.getSession().getServletContext();
+        try {
+            if (componentInstanceIdLisStr == null || componentInstanceIdLisStr.isEmpty()) {
+                log.error("Empty JSON List was sent",componentInstanceIdLisStr);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            }
+
+
+            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
+            if (componentInstanceLogic == null) {
+                log.error("Unsupported component type {}", containerComponentType);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+            }
+
+            Either<List<String>, ResponseFormat> convertResponse = convertToStringList(componentInstanceIdLisStr);
+
+            if (convertResponse.isRight()) {
+                BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - batchDeleteResourceInstances");
+                log.error("Failed to convert received data to BE format.");
+                return buildErrorResponse(convertResponse.right().value());
+            }
+
+            String userId = request.getHeader(Constants.USER_ID_HEADER);
+            List<String> componentInstanceIdList = convertResponse.left().value();
+            log.debug("batchDeleteResourceInstances componentInstanceIdList is {}", componentInstanceIdList);
+            Map<String, List<String>> deleteErrorMap = componentInstanceLogic.batchDeleteComponentInstance(containerComponentType,
+                    componentId, componentInstanceIdList, userId);
+
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteErrorMap);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Batch Delete ResourceInstances");
+            log.error("batch delete resource instances with exception" , e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+
+    }
+
+    @PUT
+    @Path("/{containerComponentType}/{componentId}/resourceInstance/batchDissociate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Batch Dissociate RI from RI", httpMethod = "PUT", notes = "Returns deleted RelationShip Info", response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Relationship deleted"),
+            @ApiResponse(code = 403, message = "Missing Information"),
+            @ApiResponse(code = 400, message = "Invalid Content / Missing Content")
+    })
+    public Response batchDissociateRIFromRI(
+            @ApiParam(value = "allowed values are resources/services/products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + "," + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true)
+            @PathParam("containerComponentType") final String containerComponentType,
+            @ApiParam(value = "unique id of the container component")
+            @PathParam("componentId") final String componentId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @ApiParam(value = "RelationshipInfo", required = true) String data,
+            @Context final HttpServletRequest request) {
+        ServletContext context = request.getSession().getServletContext();
+
+        try {
+            if (data == null || data.length() == 0) {
+                log.info("Empty JSON list was sent");
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            }
+
+            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
+
+            if (componentInstanceLogic == null) {
+                log.debug("Unsupported component type {}", containerComponentType);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+            }
+
+            Either<List<RequirementCapabilityRelDef>, ResponseFormat> regInfoWs = convertToRequirementCapabilityRelDefList(data);
+
+            if (regInfoWs.isRight()) {
+                BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - batch dissociateRIFromRI");
+                log.debug("Failed to convert received data to BE format");
+                return buildErrorResponse(regInfoWs.right().value());
+            }
+
+            List<RequirementCapabilityRelDef> requirementDefList = regInfoWs.left().value();
+            List<RequirementCapabilityRelDef> delOkResult = componentInstanceLogic.dissociateRIFromRI(
+                    componentId, userId, requirementDefList, componentTypeEnum);
+
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), delOkResult);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Batch Dissociate Resource Instance");
+            log.debug("batch dissociate resource instance from service failed with exception", e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    private Either<List<String>, ResponseFormat> convertToStringList(String datalist) {
+        Either<String[], ResponseFormat> convertStatus = getComponentsUtils().convertJsonToObjectUsingObjectMapper(datalist, new User(), String[].class, null, null);
+
+        if (convertStatus.isRight()) {
+            return Either.right(convertStatus.right().value());
+        }
+
+        return Either.left(Arrays.asList(convertStatus.left().value()));
+    }
+
+    private Either<List<RequirementCapabilityRelDef>, ResponseFormat> convertToRequirementCapabilityRelDefList(String data) {
+        Either<RequirementCapabilityRelDef[], ResponseFormat> convertStatus = getComponentsUtils().convertJsonToObjectUsingObjectMapper(data, new User(), RequirementCapabilityRelDef[].class, null, null);
+
+        if (convertStatus.isRight()) {
+            return Either.right(convertStatus.right().value());
+        }
+
+        return Either.left(Arrays.asList(convertStatus.left().value()));
+    }
+
 }

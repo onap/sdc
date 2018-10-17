@@ -4,6 +4,7 @@ import fj.data.Either;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import javax.ws.rs.client.Entity;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -12,6 +13,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.config.SpringConfig;
@@ -29,6 +31,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.model.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,10 +41,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
@@ -130,6 +135,111 @@ public class ComponentInstanceServletTest extends JerseyTest {
             .post(Entity.json(c));
 
         assertEquals(response.getStatus(), HttpStatus.OK_200);
+    }
+
+    @Test
+    public void testBatchDeleteResourceInstancesSuccess() {
+
+        String componentId = "componentId";
+        String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String compId1 = "compId1";
+        String[] delCompIds = new String[1];
+        delCompIds[0] = compId1;
+        List<ComponentInstance> compInsts = new ArrayList<ComponentInstance>();
+        String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/batchDeleteResourceInstances";
+
+        ComponentInstance compInst = new ComponentInstance();
+        compInst.setName(compId1);
+        compInst.setUniqueId(compId1);
+        compInst.setComponentUid(compId1);
+        compInst.setInvariantName(compId1);
+        compInsts.add(compInst);
+
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        Either<String[], ResponseFormat> convertStatusEither = Either.left(delCompIds);
+        when(componentsUtils
+                .convertJsonToObjectUsingObjectMapper(anyString(), any(User.class), ArgumentMatchers.<Class<String[]>>any(),
+                        nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertStatusEither);
+        when(componentInstanceBusinessLogic
+                .batchDeleteComponentInstance(eq(containerComponentType), eq(componentId), any(List.class),
+                        eq(USER_ID))).thenReturn(Mockito.mock(Map.class));
+
+        Response response = target()
+                .path(path)
+                .request(MediaType.APPLICATION_JSON)
+                .header("USER_ID", USER_ID)
+                .post(Entity.json(compInsts));
+
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+    }
+
+    @Test
+    public void testBatchDeleteResourceInstancesFailure() {
+
+        String componentId = "componentId";
+        String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/batchDeleteResourceInstances";
+
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+
+        Response response = target()
+                .path(path)
+                .request(MediaType.APPLICATION_JSON)
+                .header("USER_ID", USER_ID)
+                .post(Entity.json(""));
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testBatchDissociateRIFromRISuccess() {
+
+        String componentId = "componentId";
+        String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance/batchDissociate";
+        RequirementCapabilityRelDef[] refs = new RequirementCapabilityRelDef[1];
+        RequirementCapabilityRelDef ref = new RequirementCapabilityRelDef();
+        refs[0] = ref;
+
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        Either<RequirementCapabilityRelDef[], ResponseFormat> convertReqEither = Either.left(refs);
+        when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
+                ArgumentMatchers.<Class<RequirementCapabilityRelDef[]>>any(),
+                nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertReqEither);
+        Either<RequirementCapabilityRelDef, ResponseFormat> actionResponseEither = Either.left(ref);
+        when(componentInstanceBusinessLogic
+                .dissociateRIFromRI(componentId, USER_ID, ref, ComponentTypeEnum.findByParamName(containerComponentType)))
+                .thenReturn(actionResponseEither);
+
+        Response response = target()
+                .path(path)
+                .request(MediaType.APPLICATION_JSON)
+                .header("USER_ID", USER_ID)
+                .put(Entity.json(refs));
+
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+    }
+
+    @Test
+    public void testBatchDissociateRIFromRIFailure() {
+
+        String componentId = "componentId";
+        String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance/batchDissociate";
+
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+
+        Response response = target()
+                .path(path)
+                .request(MediaType.APPLICATION_JSON)
+                .header("USER_ID", USER_ID)
+                .put(Entity.json(""));
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
     }
 
     @Override
