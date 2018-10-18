@@ -115,7 +115,6 @@ class Tree extends Component {
             this.props.nodes.length !== prevProps.nodes.length ||
             this.props.selectedNodeId !== prevProps.selectedNodeId
         ) {
-            console.log('update');
             this.renderTree();
         }
     }
