@@ -384,7 +384,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
         if (USERNAME != null && PASSWORD != null) {
             try {
                 if (USERNAME.equals(CipherUtil.decryptPKC(portal_user)) &&
-                        CipherUtil.decryptPKC(PASSWORD).equals(CipherUtil.decryptPKC(portal_key))) {
+                        PASSWORD.equals(CipherUtil.decryptPKC(portal_key))) {
                     log.debug("User authenticated - Username: {}", USERNAME);
                     return true;
                 }
