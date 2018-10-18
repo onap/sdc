@@ -13,10 +13,10 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-var keyMirror = function(obj) {
-    var ret = {};
-    var key;
-    var val;
+let keyMirror = function(obj) {
+    let ret = {};
+    let key;
+    let val;
     if (!(obj instanceof Object && !Array.isArray(obj))) {
         throw new Error('keyMirror(...): Argument must be an object.');
     }
@@ -28,7 +28,7 @@ var keyMirror = function(obj) {
             } else if (val !== null && val !== undefined) {
                 ret[key] = val;
             } else {
-                ret[key] = Symbol(key);
+                ret[key] = Symbol.for(key);
             }
         }
     }
