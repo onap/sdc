@@ -1,3 +1,32 @@
+/*
+
+ * Copyright (c) 2018 AT&T Intellectual Property.
+
+ *
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ *
+
+ *     http://www.apache.org/licenses/LICENSE-2.0
+
+ *
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
 package org.openecomp.sdc.asdctool.impl;
 
 import org.junit.Before;
@@ -136,7 +165,6 @@ public class DataMigrationTest {
         verifyDistributionNotificationEvent((DistributionNotificationEvent)event);
     }
 
-
     @Test
     public void createEventForNoneAuditTable() {
         assertThat(dataMigration.createAuditEvent(dataMap, Table.COMPONENT_CACHE)).isNull();
@@ -180,9 +208,9 @@ public class DataMigrationTest {
         assertThat(((GetUsersListEvent)event).getModifier()).isEqualTo(MODIFIER);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void createEventFromEsFailedWhenActionDoesNotExist() throws IOException {
-        dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, "WRONG", timestampStr),
+        dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
                 Table.CONSUMER_EVENT);
     }
 
@@ -190,6 +218,78 @@ public class DataMigrationTest {
     public void createRecordWhenJsonIsEmpty() throws IOException{
         dataMigration.createAuditRecordForCassandra("{}",
                 Table.CONSUMER_EVENT);
+    }
+
+    @Test
+    public void createEventFromUEBCluster() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.DISTRIBUTION_GET_UEB_CLUSTER_EVENT);
+        assertThat(AuditingActionEnum.GET_UEB_CLUSTER.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createEventFromDistEngine() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.DISTRIBUTION_ENGINE_EVENT);
+        assertThat(AuditingActionEnum.IMPORT_RESOURCE.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createEventFromDistStatus() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.DISTRIBUTION_STATUS_EVENT);
+        assertThat(AuditingActionEnum.DISTRIBUTION_STATUS.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createEventFromCategory() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.CATEGORY_EVENT);
+        assertThat(AuditingActionEnum.IMPORT_RESOURCE.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createFromCategoryHierarchy() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.GET_CATEGORY_HIERARCHY_EVENT);
+        assertThat(AuditingActionEnum.GET_CATEGORY_HIERARCHY.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, false);
+    }
+
+    @Test
+    public void createEventFromUserAccess() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.USER_ACCESS_EVENT);
+        assertThat(AuditingActionEnum.USER_ACCESS.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createEventFromDistDwnld() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.DISTRIBUTION_DOWNLOAD_EVENT);
+        assertThat(AuditingActionEnum.DISTRIBUTION_ARTIFACT_DOWNLOAD.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
+    }
+
+    @Test
+    public void createEventFromDistDeploy() throws IOException
+    {
+        AuditingGenericEvent event = dataMigration.createAuditRecordForCassandra(String.format(ES_STRING, AuditingActionEnum.IMPORT_RESOURCE.getName(), timestampStr),
+                Table.DISTRIBUTION_DEPLOY_EVENT);
+        assertThat(AuditingActionEnum.DISTRIBUTION_DEPLOY.getName()).isEqualTo(event.getAction());
+        verifyCommonData(event, true);
     }
 
     private void verifyCommonData(AuditingGenericEvent event, boolean isServiceInstanceProvided) {
