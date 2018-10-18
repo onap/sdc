@@ -3,6 +3,8 @@ package org.openecomp.sdc.be.components.impl.exceptions;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
+import java.util.Arrays;
+
 public class ComponentException extends RuntimeException {
 
     /**
@@ -38,6 +40,22 @@ public class ComponentException extends RuntimeException {
     public String[] getParams() {
         return params.clone();
     }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "ComponentException{" +
+                "responseFormat=" + responseFormat +
+                ", actionStatus=" + actionStatus +
+                ", params=" + Arrays.toString(params) +
+                '}';
+    }
+
+
 
 
 }

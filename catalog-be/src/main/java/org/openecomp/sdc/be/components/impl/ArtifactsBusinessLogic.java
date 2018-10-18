@@ -78,12 +78,12 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.*;
 import org.yaml.snakeyaml.Yaml;
@@ -119,7 +119,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public static final String HEAT_ENV_SUFFIX = "env";
     private static final String ARTIFACT_PLACEHOLDER_FILE_EXTENSION = "fileExtension";
 
-    private static final Logger log = LoggerFactory.getLogger(ArtifactsBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class);
     public static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
     public static final String FAILED_UPDATE_ARTIFACT = "Failed to delete or update the artifact {}. Parent uniqueId is {}";
     public static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
@@ -3258,7 +3258,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // currently done separately
         else {
             if (!isArtifactMetadataUpdate) {
-                log.debug("Payload is missing.");
+                log.debug("In artifact: {} Payload is missing.",artifactInfo.getArtifactName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_PAYLOAD);
                 return Either.right(responseFormat);
             }
