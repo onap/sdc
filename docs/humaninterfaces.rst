@@ -8,7 +8,7 @@ Human Interfaces
 User Guides In ONAP Confluence
 ==============================
 
-Those are links to the SDC user guides found in ONAP Confluence:
+These are links to the SDC user guides found in ONAP Confluence:
 
 - `Resource Onboarding <https://wiki.onap.org/display/DW/Resource+Onboarding>`_
 - `Service Design <https://wiki.onap.org/display/DW/Service+Design>`_

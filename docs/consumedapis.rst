@@ -7,7 +7,7 @@ Consumed APIs
 
 VNF-SDK
 -------
-SDC allows the user to choose packages from VNF-SDK and start the onboarding from their instead of manually uploading a package.
+SDC allows the user to choose packages from VNF-SDK and start the onboarding from there instead of manually uploading a package.
 
 
 .. list-table::
