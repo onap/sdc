@@ -1990,7 +1990,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         String resourceId = newComponentInstance.getComponentUid();
         Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
         if (componentExistsRes.isRight()) {
-            log.debug("Failed to find resource ", resourceId);
+            log.debug("Failed to find resource {} ", resourceId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse
                     (componentExistsRes.right().value()), resourceId));
             return resultOp;
