@@ -22,12 +22,9 @@ package org.openecomp.sdc.be.ecomp;
 
 import fj.data.Either;
 import org.onap.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
-import org.onap.portalsdk.core.onboarding.crossapi.IPortalRestCentralService;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.onap.portalsdk.core.onboarding.util.CipherUtil;
-import org.onap.portalsdk.core.onboarding.util.KeyConstants;
-import org.onap.portalsdk.core.onboarding.util.KeyProperties;
 import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
@@ -46,7 +43,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -387,7 +383,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
 
         if (USERNAME != null && PASSWORD != null) {
             try {
-                if (CipherUtil.decryptPKC(USERNAME).equals(CipherUtil.decryptPKC(portal_user)) &&
+                if (USERNAME.equals(CipherUtil.decryptPKC(portal_user)) &&
                         CipherUtil.decryptPKC(PASSWORD).equals(CipherUtil.decryptPKC(portal_key))) {
                     log.debug("User authenticated - Username: {}", USERNAME);
                     return true;
@@ -397,7 +393,6 @@ public class EcompIntImpl implements IPortalRestAPIService {
                 return false;
             }
         }
-
         log.debug("User authentication failed");
         return false;
     }
