@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_6eb453d1",
+        "filename": "openecomp-ui/src/nfvo-utils/KeyMirror.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1951
+      },
+      "writtenOn": "2018-10-18T15:32:14Z",
+      "side": 1,
+      "message": "Please update license as well",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 12,
+        "endChar": 21
+      },
+      "revId": "23603da82f5fba82114caaed674eb2ea9a8b53e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
