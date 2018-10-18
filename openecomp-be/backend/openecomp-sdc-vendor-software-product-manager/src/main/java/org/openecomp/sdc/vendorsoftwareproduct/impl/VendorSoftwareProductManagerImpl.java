@@ -202,15 +202,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-  public ValidationResponse validate(String vspId, Version version) throws IOException {
-    VspDetails vspDetails = getValidatedVsp(vspId, version);
+  public ValidationResponse validate(VspDetails vspDetails) throws IOException {
     List<ErrorCode> vspErrors = new ArrayList<>(validateVspFields(vspDetails));
     ValidationResponse validationResponse = new ValidationResponse();
     if (Objects.nonNull(vspDetails.getOnboardingMethod())
         && OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod())) {
       validateManualOnboardingMethod(vspDetails, validationResponse, vspErrors);
     } else {
-      validateOrchestrationTemplateCandidate(validationResponse, vspErrors, vspId, version);
+      validateOrchestrationTemplateCandidate(validationResponse, vspErrors, vspDetails.getId(), vspDetails.getVersion());
       if (!validationResponse.isValid()) {
         return validationResponse;
       }
@@ -219,9 +218,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         vspErrors.addAll(validateMandatoryLicenseFields(vspDetails));
       }
       OrchestrationTemplateEntity orchestrationTemplate =
-          orchestrationTemplateDao.get(vspId, version);
+          orchestrationTemplateDao.get(vspDetails.getId(), vspDetails.getVersion());
       ToscaServiceModel serviceModel =
-          serviceModelDao.getServiceModel(vspId, vspDetails.getVersion());
+          serviceModelDao.getServiceModel( vspDetails.getId(), vspDetails.getVersion());
       if (isOrchestrationTemplateMissing(orchestrationTemplate)
           || isServiceModelMissing(serviceModel)) {
         vspErrors.add(VendorSoftwareProductInvalidErrorBuilder
@@ -245,7 +244,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     Collection<ComponentDependencyModelEntity> componentDependencies =
-        componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
+        componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspDetails.getId(), vspDetails.getVersion(), null));
 
     if (validateComponentDependencies(componentDependencies)) {
       vspErrors

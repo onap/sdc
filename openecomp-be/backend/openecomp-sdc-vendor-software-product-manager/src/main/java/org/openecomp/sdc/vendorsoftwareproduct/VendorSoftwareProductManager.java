@@ -44,7 +44,7 @@ public interface VendorSoftwareProductManager {
 
   void deleteVsp(String vspId, Version version);
 
-  ValidationResponse validate(String vspId, Version version) throws IOException;
+  ValidationResponse validate(VspDetails vspDetails) throws IOException;
 
   Map<String, List<ErrorMessage>> compile(String vspId, Version version);
 

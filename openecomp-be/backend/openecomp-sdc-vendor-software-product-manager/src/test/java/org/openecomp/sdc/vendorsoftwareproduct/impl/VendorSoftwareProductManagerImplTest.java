@@ -362,7 +362,7 @@ public class VendorSoftwareProductManagerImplTest {
         .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
 
     ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+        vendorSoftwareProductManager.validate(vsp);
     Assert.assertNotNull(validationResponse);
     Assert.assertFalse(validationResponse.isValid());
     Assert.assertNull(validationResponse.getVspErrors());
@@ -396,7 +396,7 @@ public class VendorSoftwareProductManagerImplTest {
         .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
 
     ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+        vendorSoftwareProductManager.validate(vsp);
     Assert.assertTrue(validationResponse.isValid());
 
 /*    Assert.assertEquals(vsp2.getVersionInfo().getVersion(), VERSION10);
@@ -569,7 +569,7 @@ public class VendorSoftwareProductManagerImplTest {
         .when(orchestrationTemplateCandidateManagerMock)
         .getInfo(VSP_ID, VERSION01);
     ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+        vendorSoftwareProductManager.validate(vsp);
     Assert.assertNotNull(validationResponse);
     Assert.assertFalse(validationResponse.isValid());
     Assert.assertNotNull(validationResponse.getVspErrors());
@@ -593,7 +593,7 @@ public class VendorSoftwareProductManagerImplTest {
         .when(orchestrationTemplateCandidateManagerMock)
         .getInfo(VSP_ID, VERSION01);
     ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+        vendorSoftwareProductManager.validate(vsp);
     Assert.assertNotNull(validationResponse);
     Assert.assertFalse(validationResponse.isValid());
     Assert.assertNotNull(validationResponse.getVspErrors());
