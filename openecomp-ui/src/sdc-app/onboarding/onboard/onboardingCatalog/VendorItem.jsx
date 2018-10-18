@@ -41,18 +41,15 @@ class VendorItem extends React.Component {
         onAddVSP: PropTypes.func,
         onVSPButtonClick: PropTypes.func
     };
-
+    handleSeeMore = () => {
+        const { onVendorSelect, vendor } = this.props;
+        onVendorSelect(vendor);
+    };
     render() {
-        let {
-            vendor,
-            onSelectVSP,
-            shouldShowOverlay,
-            onVendorSelect,
-            onMigrate
-        } = this.props;
+        let { vendor, onSelectVSP, shouldShowOverlay, onMigrate } = this.props;
         let { softwareProductList = [], name } = vendor;
         return (
-            <Tile iconName="vendor" onClick={() => onVendorSelect(vendor)}>
+            <Tile iconName="vendor" onClick={this.handleSeeMore}>
                 <TileInfo align="center">
                     <TileInfoLine type="title">
                         <TooltipWrapper
@@ -65,7 +62,7 @@ class VendorItem extends React.Component {
                         <Button
                             btnType="secondary"
                             className="venodor-tile-btn"
-                            onClick={e => this.handleVspCountClick(e)}
+                            onClick={this.handleVspCountClick}
                             data-test-id="catalog-vsp-count"
                             disabled={!softwareProductList.length}>
                             {`${softwareProductList.length.toString()} ${i18n(
@@ -80,7 +77,7 @@ class VendorItem extends React.Component {
                                         onMigrate={onMigrate}
                                         VSPList={softwareProductList}
                                         onSelectVSP={onSelectVSP}
-                                        onSeeMore={() => onVendorSelect(vendor)}
+                                        onSeeMore={this.handleSeeMore}
                                     />
                                 </ClickOutsideWrapper>
                             )}
@@ -92,7 +89,7 @@ class VendorItem extends React.Component {
                             btnType="link"
                             color="primary"
                             iconName="plusThin"
-                            onClick={e => this.onCreateVspClick(e)}>
+                            onClick={this.onCreateVspClick}>
                             {i18n('Create new VSP')}
                         </Button>
                     </TileFooterCell>
@@ -101,26 +98,28 @@ class VendorItem extends React.Component {
         );
     }
 
-    onCreateVspClick(e) {
+    onCreateVspClick = e => {
         e.stopPropagation();
         e.preventDefault();
         const { onAddVSP, vendor: { id } } = this.props;
         onAddVSP(id);
-    }
+    };
     handleClickOutside = () => {
-        this.props.onVSPButtonClick(false);
+        const { onVSPButtonClick, vlm } = this.props;
+        onVSPButtonClick(false, vlm);
     };
 
-    handleVspCountClick(e) {
+    handleVspCountClick = e => {
         e.stopPropagation();
         e.preventDefault();
         const {
             onVSPButtonClick,
-            vendor: { softwareProductList }
+            vendor: { softwareProductList },
+            vlm
         } = this.props;
         const hasVSP = Boolean(softwareProductList.length);
-        onVSPButtonClick(hasVSP);
-    }
+        onVSPButtonClick(hasVSP, vlm);
+    };
 }
 
 export default VendorItem;

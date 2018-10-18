@@ -44,44 +44,22 @@ class OnboardingCatalogView extends React.Component {
             selectedVendor,
             searchValue,
             onMigrate,
-            filteredItems
+            filteredItems,
+            isArchived
         } = this.props;
 
         const { vlmList, vspList } = filteredItems;
 
         switch (activeTab) {
             case tabsMapping.ARCHIVE:
-                return (
-                    <DetailsCatalogView
-                        VLMList={vlmList}
-                        VSPList={vspList}
-                        users={users}
-                        onSelectVLM={(item, users) =>
-                            onSelectLicenseModel(
-                                item,
-                                users,
-                                WCTabsMapping.CATALOG
-                            )
-                        }
-                        onSelectVSP={(item, users) =>
-                            onSelectSoftwareProduct(
-                                item,
-                                users,
-                                WCTabsMapping.CATALOG
-                            )
-                        }
-                        filter={searchValue}
-                        onMigrate={onMigrate}
-                    />
-                );
             case tabsMapping.ACTIVE:
                 return (
                     <DetailsCatalogView
                         VLMList={vlmList}
                         VSPList={vspList}
                         users={users}
-                        onAddVLM={onAddLicenseModelClick}
-                        onAddVSP={onAddSoftwareProductClick}
+                        onAddVLM={!isArchived && onAddLicenseModelClick}
+                        onAddVSP={!isArchived && onAddSoftwareProductClick}
                         onSelectVLM={(item, users) =>
                             onSelectLicenseModel(
                                 item,
@@ -100,10 +78,12 @@ class OnboardingCatalogView extends React.Component {
                         onMigrate={onMigrate}
                     />
                 );
+
             case tabsMapping.BY_VENDOR:
             default:
                 return (
                     <VendorCatalogView
+                        isArchived={isArchived}
                         licenseModelList={vlmList}
                         users={users}
                         onAddVSP={onAddSoftwareProductClick}

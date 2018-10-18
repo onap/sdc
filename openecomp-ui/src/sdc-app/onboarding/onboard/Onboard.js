@@ -23,6 +23,7 @@ import SoftwareProductCreationActionHelper from '../softwareProduct/creation/Sof
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import { tabsMapping } from './onboardingCatalog/OnboardingCatalogConstants.js';
 import { itemStatus } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
+import { catalogItemStatuses } from './onboardingCatalog/OnboardingCatalogConstants.js';
 
 export const mapStateToProps = ({
     onboard: { onboardingCatalog, activeTab, searchValue, filter },
@@ -95,6 +96,7 @@ export const mapStateToProps = ({
     }
 
     return {
+        isArchived: filter.itemStatus === catalogItemStatuses.ARCHIVED,
         finalizedLicenseModelList,
         finalizedSoftwareProductList,
         licenseModelList,
