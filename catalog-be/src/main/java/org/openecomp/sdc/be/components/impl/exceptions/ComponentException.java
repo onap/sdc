@@ -22,6 +22,7 @@ public class ComponentException extends RuntimeException {
     }
 
     private ComponentException(ResponseFormat responseFormat, ActionStatus actionStatus, String... params) {
+        super(responseFormat.getFormattedMessage());
         this.actionStatus = actionStatus;
         this.params = params.clone();
         this.responseFormat = responseFormat;
