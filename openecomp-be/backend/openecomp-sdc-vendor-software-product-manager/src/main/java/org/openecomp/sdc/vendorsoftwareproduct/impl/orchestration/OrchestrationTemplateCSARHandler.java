@@ -12,6 +12,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingManifest;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
@@ -54,8 +55,24 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
   private void validateContent(UploadFileResponse uploadFileResponse, FileContentHandler contentMap,
                                List<String> folderList) {
+
     validateManifest(uploadFileResponse, contentMap);
-    validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
+    if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
+      try (InputStream metaFileContent = contentMap.getFileContent(TOSCA_META_PATH_FILE_NAME)) {
+
+        OnboardingToscaMetadata onboardingToscaMetadata = new OnboardingToscaMetadata(metaFileContent);
+        String entryDefinitionsPath = onboardingToscaMetadata.getEntryDefinitionsPath();
+        if (entryDefinitionsPath != null) {
+          validateFileExist(uploadFileResponse, contentMap, entryDefinitionsPath);
+        } else {
+          uploadFileResponse.addStructureError(
+              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
+                  Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
+        }
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to validate metadata file", e);
+      }
+    }
     validateNoExtraFiles(uploadFileResponse, contentMap);
     validateFolders(uploadFileResponse, folderList);
   }
@@ -116,14 +133,22 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     return ELIGBLE_FOLDERS.stream().noneMatch(fileName::startsWith);
   }
 
+
+  private boolean validateTOSCAYamlFileInRootExist(FileContentHandler contentMap, String fileName) {
+    return contentMap.containsFile(fileName);
+  }
+
   private boolean validateFileExist(UploadFileResponse uploadFileResponse,
                                     FileContentHandler contentMap, String fileName) {
 
     boolean containsFile = contentMap.containsFile(fileName);
     if (!containsFile) {
+
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
               getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
+
+
     }
     return containsFile;
   }
@@ -159,6 +184,6 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
                                         UploadFileResponse uploadFileResponse,
                                         byte[] uploadedFileData,
                                         CandidateService candidateService) {
-    return super.isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService);
+                                        return super.isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService);
   }
 }
