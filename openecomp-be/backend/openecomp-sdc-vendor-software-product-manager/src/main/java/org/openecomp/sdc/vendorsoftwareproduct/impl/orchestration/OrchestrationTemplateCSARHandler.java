@@ -12,6 +12,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingManifest;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
@@ -32,7 +33,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
   @Override
   public Optional<FileContentHandler> getFileContentMap(UploadFileResponse uploadFileResponse,
-                                                        byte[] uploadedFileData) {
+      byte[] uploadedFileData) {
     FileContentHandler contentMap = null;
     List<String> folderList = new ArrayList<>();
     try {
@@ -53,15 +54,31 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   }
 
   private void validateContent(UploadFileResponse uploadFileResponse, FileContentHandler contentMap,
-                               List<String> folderList) {
+      List<String> folderList) {
+
     validateManifest(uploadFileResponse, contentMap);
-    validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
+    if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
+      try (InputStream metaFileContent = contentMap.getFileContent(TOSCA_META_PATH_FILE_NAME)) {
+
+        OnboardingToscaMetadata onboardingToscaMetadata = new OnboardingToscaMetadata(metaFileContent);
+        String entryDefinitionsPath = onboardingToscaMetadata.getEntryDefinitionsPath();
+        if (entryDefinitionsPath != null) {
+          validateFileExist(uploadFileResponse, contentMap, entryDefinitionsPath);
+        } else {
+          uploadFileResponse.addStructureError(
+              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
+                  Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
+        }
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to validate metadata file", e);
+      }
+    }
     validateNoExtraFiles(uploadFileResponse, contentMap);
     validateFolders(uploadFileResponse, folderList);
   }
 
   private void validateManifest(UploadFileResponse uploadFileResponse,
-                                FileContentHandler contentMap) {
+      FileContentHandler contentMap) {
 
     if (!validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
       return;
@@ -82,7 +99,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   }
 
   private void validateNoExtraFiles(UploadFileResponse uploadFileResponse,
-                                    FileContentHandler contentMap) {
+      FileContentHandler contentMap) {
     List<String> unwantedFiles = contentMap.getFileList().stream()
         .filter(this::filterFiles).collect(Collectors.toList());
     if (!unwantedFiles.isEmpty()) {
@@ -116,24 +133,33 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     return ELIGBLE_FOLDERS.stream().noneMatch(fileName::startsWith);
   }
 
+
+  private boolean validateTOSCAYamlFileInRootExist(FileContentHandler contentMap, String fileName) {
+    return contentMap.containsFile(fileName);
+  }
+
+
   private boolean validateFileExist(UploadFileResponse uploadFileResponse,
-                                    FileContentHandler contentMap, String fileName) {
+      FileContentHandler contentMap, String fileName) {
 
     boolean containsFile = contentMap.containsFile(fileName);
     if (!containsFile) {
+
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
               getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
+
+
     }
     return containsFile;
   }
 
   @Override
   protected boolean updateCandidateData(VspDetails vspDetails, byte[] uploadedFileData,
-                                        FileContentHandler contentMap,
-                                        String fileSuffix, String networkPackageName,
-                                        CandidateService candidateService,
-                                        UploadFileResponse uploadFileResponse) {
+      FileContentHandler contentMap,
+      String fileSuffix, String networkPackageName,
+      CandidateService candidateService,
+      UploadFileResponse uploadFileResponse) {
     try {
       candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
           new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
@@ -156,9 +182,9 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
   @Override
   protected boolean isInvalidRawZipData(String fileSuffix,
-                                        UploadFileResponse uploadFileResponse,
-                                        byte[] uploadedFileData,
-                                        CandidateService candidateService) {
+      UploadFileResponse uploadFileResponse,
+      byte[] uploadedFileData,
+      CandidateService candidateService) {
     return super.isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService);
   }
 }
