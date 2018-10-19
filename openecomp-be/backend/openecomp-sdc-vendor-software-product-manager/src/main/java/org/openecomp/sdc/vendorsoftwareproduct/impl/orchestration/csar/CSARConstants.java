@@ -26,6 +26,8 @@ public class CSARConstants {
 
     public static final String MAIN_SERVICE_TEMPLATE_MF_FILE_NAME = "MainServiceTemplate.mf";
     public static final String MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME = "MainServiceTemplate.yaml";
+    public static final String TOSCA_META_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta";
+    public static final String TOSCA_META_ENTRY_DEFINITIONS="Entry-Definitions";
     public static final ImmutableSet<String> ELIGIBLE_FILES =
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
 
