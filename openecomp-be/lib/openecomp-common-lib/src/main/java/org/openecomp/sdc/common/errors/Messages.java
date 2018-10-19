@@ -33,6 +33,8 @@ public enum Messages {
   MANIFEST_NO_METADATA("Manifest must contain metadata"),
   MANIFEST_NO_SOURCES("Manifest must contain Source"),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
+  METADATA_PARSER_INTERNAL("Invalid Metadata file"),
+  METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),
   FAILED_TO_TRANSLATE_ZIP_FILE("Failed to translate zip file"),
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 
