@@ -370,7 +370,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
-			<!--<version>4.0.7.RELEASE</version>-->
 			<scope>compile</scope>
 		</dependency>
 
