@@ -1,3 +1,32 @@
+/*
+
+ * Copyright (c) 2018 AT&T Intellectual Property.
+
+ *
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ *
+
+ *     http://www.apache.org/licenses/LICENSE-2.0
+
+ *
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
@@ -7,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -14,27 +44,36 @@ import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
@@ -53,7 +92,6 @@ public class ToscaOperationFacadeTest {
         testInstance = new ToscaOperationFacade();
         MockitoAnnotations.initMocks(this);
     }
-
 
     @SuppressWarnings("unchecked")
     @Test
@@ -100,7 +138,7 @@ public class ToscaOperationFacadeTest {
         assertTrue(fetchedComponents.isRight());
         assertEquals(StorageOperationStatus.GENERAL_ERROR, fetchedComponents.right().value());
     }
-    
+
     @Test
     public void associatePolicyToComponentSuccessTest(){
         Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.OK);
@@ -124,17 +162,57 @@ public class ToscaOperationFacadeTest {
         Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.NOT_FOUND);
         assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.NOT_FOUND);
     }
-    
+
     @Test
     public void removePolicyFromComponentSuccessTest(){
         removePolicyFromComponentWithStatus(StorageOperationStatus.OK);
     }
-    
+
     @Test
     public void removePolicyFromComponentFailureTest(){
         removePolicyFromComponentWithStatus(StorageOperationStatus.NOT_FOUND);
     }
-    
+
+    @Test
+    public void testFindLastCertifiedToscaElementByUUID(){
+        Component component = new Resource();
+        List<GraphVertex> list = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        list.add(graphVertex);
+        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.UUID, component.getUUID());
+        props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        TopologyTemplate toscaElement = new TopologyTemplate();
+        toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
+        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex),any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(titanDaoMock.getByCriteria(ModelConverter.getVertexType(component), props)).thenReturn(Either.left(list));
+        testInstance.findLastCertifiedToscaElementByUUID(component);
+    }
+
+    @Test
+    public void testLatestComponentByToscaResourceName(){
+        TopologyTemplate toscaElement = new TopologyTemplate();
+        toscaElement.setComponentType(ComponentTypeEnum.SERVICE);
+        List<GraphVertex> list = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        Map<GraphPropertyEnum, Object> props = new HashMap<>();
+        props.put(GraphPropertyEnum.VERSION, "1.0");
+        graphVertex.setMetadataProperties(props);
+        list.add(graphVertex);
+
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, "toscaResourceName");
+        propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+
+        when(titanDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
+        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex),any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+
+        testInstance.getFullLatestComponentByToscaResourceName("toscaResourceName");
+    }
+
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
@@ -150,7 +228,7 @@ public class ToscaOperationFacadeTest {
         when(topologyTemplateOperationMock.addPolicyToToscaElement(eq(vertex), any(PolicyDefinition.class), anyInt())).thenReturn(status);
         return testInstance.associatePolicyToComponent(componentId, policy, counter);
     }
-    
+
     private Either<PolicyDefinition, StorageOperationStatus> updatePolicyOfComponentWithStatus(StorageOperationStatus status) {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
@@ -170,7 +248,7 @@ public class ToscaOperationFacadeTest {
         StorageOperationStatus result = testInstance.removePolicyFromComponent(componentId, policyId);
         assertSame(result, status);
     }
-    
+
     private List<GraphVertex> getMockVertices(int numOfVertices) {
         return IntStream.range(0, numOfVertices).mapToObj(i -> getTopologyTemplateVertex()).collect(Collectors.toList());
     }
@@ -188,7 +266,7 @@ public class ToscaOperationFacadeTest {
         graphVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         return graphVertex;
     }
-    
+
     private GraphVertex getNodeTypeVertex() {
         GraphVertex graphVertex = new GraphVertex();
         graphVertex.setLabel(VertexTypeEnum.NODE_TYPE);
