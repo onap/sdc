@@ -1,4 +1,4 @@
-FROM onap/base_sdc-vnc:1.4.0-SNAPSHOT-latest
+FROM onap/base_sdc-vnc:1.4.0
 
 COPY chef-solo /root/chef-solo/
 
