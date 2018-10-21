@@ -53,8 +53,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
-  private static final String DEFAULT = "default";
-  private static final String _DEFAULT = "_default";
+  public static final String DEFAULT = "default";
+  public static final String _DEFAULT = "_default";
 
   private CommonUtil() {
     // prevent instantiation
