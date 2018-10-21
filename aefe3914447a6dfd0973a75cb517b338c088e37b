@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_5da01f43",
+        "filename": "catalog-ui/src/app/models/operation.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-10-21T06:58:46Z",
+      "side": 1,
+      "message": "any reason this string is with capital s ?",
+      "revId": "aefe3914447a6dfd0973a75cb517b338c088e37b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7da3a34f",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-10-21T06:58:46Z",
+      "side": 1,
+      "message": "why not \u003d\u003d\u003d ? or just filteredInputProps.length",
+      "revId": "aefe3914447a6dfd0973a75cb517b338c088e37b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1d8a97bf",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.less",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-10-21T06:58:46Z",
+      "side": 1,
+      "message": "hard coded color is a no no",
+      "revId": "aefe3914447a6dfd0973a75cb517b338c088e37b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
