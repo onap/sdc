@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0f2b3e95",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T09:24:56Z",
+      "side": 1,
+      "message": "Junit dependency is defined in dependencyManagement of a parent pom. The version has zero effect here and is confusing.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 47
+      },
+      "revId": "0a75b25a2a07f1ff08f58a6ddb46af0f0de3df68",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8f164e54",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/src/main/java/org/openecomp/core/enrichment/types/CeilometerMetrics.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T09:24:56Z",
+      "side": 1,
+      "message": "@Data also generates toString(), hashCode(), equals(), and more. See https://projectlombok.org/features/Data.\n\nThe original class had just setters and getters. Are you sure you want to change this? Especially that the only field is a List. If not, please use @Setter \u0026 @Getter",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 5
+      },
+      "revId": "0a75b25a2a07f1ff08f58a6ddb46af0f0de3df68",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
