@@ -20,6 +20,7 @@
 
 package org.openecomp.core.translator.datatypes;
 
+import lombok.Data;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
@@ -27,33 +28,10 @@ import java.util.List;
 import java.util.Map;
 
 
+@Data
 public class TranslatorOutput {
   private Map<String, List<ErrorMessage>> errorMessages;
   private ToscaServiceModel toscaServiceModel;
   private ToscaServiceModel nonUnifiedToscaServiceModel;
 
-  public Map<String, List<ErrorMessage>> getErrorMessages() {
-    return errorMessages;
-  }
-
-  public void setErrorMessages(Map<String, List<ErrorMessage>> errorMessages) {
-    this.errorMessages = errorMessages;
-  }
-
-  public ToscaServiceModel getToscaServiceModel() {
-    return toscaServiceModel;
-  }
-
-  public void setToscaServiceModel(ToscaServiceModel toscaServiceModel) {
-    this.toscaServiceModel = toscaServiceModel;
-  }
-
-  public ToscaServiceModel getNonUnifiedToscaServiceModel() {
-    return nonUnifiedToscaServiceModel;
-  }
-
-  public void setNonUnifiedToscaServiceModel(
-      ToscaServiceModel nonUnifiedToscaServiceModel) {
-    this.nonUnifiedToscaServiceModel = nonUnifiedToscaServiceModel;
-  }
 }
