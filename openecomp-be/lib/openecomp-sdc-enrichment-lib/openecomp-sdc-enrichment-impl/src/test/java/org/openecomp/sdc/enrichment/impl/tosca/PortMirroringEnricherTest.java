@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.junit.Before;

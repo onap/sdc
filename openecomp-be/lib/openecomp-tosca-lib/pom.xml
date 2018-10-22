@@ -98,9 +98,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <properties>
-        <useSystemClassLoader>false</useSystemClassLoader>
-    </properties>
-
 
 </project>

@@ -25,13 +25,13 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -83,7 +83,7 @@ public class MonitoringMibEnricherTest {
   }
 
   @Test
-  public void testEnrichComponent() throws Exception {
+  public void testEnrichComponent() {
     String vspId = "123";
     String componentId = "1";
     Version version = new Version();
@@ -104,8 +104,7 @@ public class MonitoringMibEnricherTest {
 
     Mockito.verify(enrichedServiceModelDaoMock, atLeastOnce())
         .storeExternalArtifact(expectedServiceArtifact.capture());
-    Assert.assertEquals(expectedServiceArtifact.getValue().getName()
-        .startsWith(unifiedComponentName), true);
+    Assert.assertTrue(expectedServiceArtifact.getValue().getName().startsWith(unifiedComponentName));
     Assert.assertEquals(expectedServiceArtifact.getValue().getName(),
         unifiedComponentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
             File.separator + MonitoringUploadType.VES_EVENTS + File.separator + "mib1.yml");
@@ -113,7 +112,7 @@ public class MonitoringMibEnricherTest {
   }
 
   @Test
-  public void testEnrichmentOfTwoComponentsFromSameType() throws IOException {
+  public void testEnrichmentOfTwoComponentsFromSameType() {
     EnrichmentInfo enrichmentInfo = new EnrichmentInfo();
     Version version = new Version();
     version.setMajor(1);
@@ -194,13 +193,12 @@ public class MonitoringMibEnricherTest {
     return ByteBuffer.wrap(mibBytes);
   }
 
-  private ToscaServiceModel getMockServiceModel(String serviceTemplatesDirectory)
-      throws IOException {
+  private ToscaServiceModel getMockServiceModel(String serviceTemplatesDirectory) {
     File directory = new File(this.getClass().getResource(serviceTemplatesDirectory).getFile());
     ToscaServiceModel serviceModel = new ToscaServiceModel();
     Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
 
-    for (final File serviceTemplateFile : directory.listFiles()) {
+    for (final File serviceTemplateFile : Objects.requireNonNull(directory.listFiles())) {
       byte[] content = FileUtils
           .readViaInputStream(this.getClass().getResource(serviceTemplatesDirectory + File
                   .separator + serviceTemplateFile.getName()),

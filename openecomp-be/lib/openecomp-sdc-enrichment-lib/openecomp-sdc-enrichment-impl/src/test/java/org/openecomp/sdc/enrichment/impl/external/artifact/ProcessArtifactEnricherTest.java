@@ -100,8 +100,7 @@ public class ProcessArtifactEnricherTest {
         ArgumentCaptor.forClass(ServiceArtifact.class);
     Mockito.verify(enrichedServiceModelDaoMock, atLeastOnce())
         .storeExternalArtifact(expectedServiceArtifact.capture());
-    Assert
-        .assertEquals(expectedServiceArtifact.getValue().getName().startsWith(componentName), true);
+    Assert.assertTrue(expectedServiceArtifact.getValue().getName().startsWith(componentName));
     Assert.assertEquals(expectedServiceArtifact.getValue().getName(),
         componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
             File.separator + "Lifecycle Operations" + File.separator + "artifact_1kb.txt");
@@ -141,8 +140,6 @@ public class ProcessArtifactEnricherTest {
     info.setVersion(version);
     info.setKey(vspId);
     processArtifactEnricher.enrich(info, null);
-
-    String componentName = componentEntity.getComponentCompositionData().getName();
 
     ArgumentCaptor<ServiceArtifact> expectedServiceArtifact =
         ArgumentCaptor.forClass(ServiceArtifact.class);
@@ -246,8 +243,7 @@ public class ProcessArtifactEnricherTest {
   }
 
   private ByteBuffer getMibByteBuffer(String fileName) {
-    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
-        stream -> FileUtils.toByteArray(stream));
+    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName), FileUtils::toByteArray);
     return ByteBuffer.wrap(mibBytes);
   }
 }
