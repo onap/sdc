@@ -25,10 +25,12 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +43,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.onap.sdc.tosca.datatypes.model.CapabilityType;
+import org.onap.sdc.tosca.datatypes.model.Constraint;
 import org.onap.sdc.tosca.datatypes.model.DataType;
 import org.onap.sdc.tosca.datatypes.model.DefinitionOfDataType;
 import org.onap.sdc.tosca.datatypes.model.Import;
@@ -54,10 +57,12 @@ import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.Status;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.tosca.TestUtil;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
@@ -78,7 +83,6 @@ public class ToscaAnalyzerServiceImplTest {
     private static final String TOSCA_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
     private static final String CMAUI_INTERFACE_TEST =
             "org.openecomp.resource.vfc.nodes.heat.cmaui_image_interfaceTest";
-    private static final String CMAUI_IMAGE_EXTEND2 = "org.openecomp.resource.vfc.nodes.heat.cmaui_image_extend2";
 
     /*
     Dictionary:
@@ -111,7 +115,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Before
-    public void init() throws IOException {
+    public void init() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -278,7 +282,12 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void testCalculateExposedRequirements() throws Exception {
+    public void testCalculateExposedRequirementsNull() {
+        assertTrue(toscaAnalyzerService.calculateExposedRequirements(null, null).isEmpty());
+    }
+
+    @Test
+    public void testCalculateExposedRequirements() {
         RequirementDefinition rd = new RequirementDefinition();
         rd.setCapability("tosca.capabilities.Node");
         rd.setNode("tosca.nodes.Root");
@@ -297,7 +306,6 @@ public class ToscaAnalyzerServiceImplTest {
         nodeTypeRequirementDefinition.put("binding", rd1);
         nodeTypeRequirementDefinition.put("dependency", rd);
 
-        Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinition = new HashMap<>();
         RequirementAssignment ra = new RequirementAssignment();
         ra.setCapability("tosca.capabilities.network.Bindable");
         ra.setNode("pd_server");
@@ -309,14 +317,14 @@ public class ToscaAnalyzerServiceImplTest {
         nodeTypeRequirementsDefinition.add(nodeTypeRequirementDefinition);
 
         List<Map<String, RequirementDefinition>> exposedRequirements = toscaAnalyzerService
-                                                                               .calculateExposedRequirements(
-                                                                                nodeTypeRequirementsDefinition,
-                                                                                nodeTemplateRequirementsAssignment);
+                .calculateExposedRequirements(
+                        nodeTypeRequirementsDefinition,
+                        nodeTemplateRequirementsAssignment);
         Assert.assertEquals(1, exposedRequirements.size());
     }
 
     @Test
-    public void testCalExpReqWithNullNodeInReqAssignment() throws Exception {
+    public void testCalExpReqWithNullNodeInReqAssignment() {
         RequirementDefinition rd = new RequirementDefinition();
         rd.setCapability("tosca.capabilities.Node");
         rd.setNode("tosca.nodes.Root");
@@ -335,7 +343,6 @@ public class ToscaAnalyzerServiceImplTest {
         nodeTypeRequirementDefinition.put("binding", rd1);
         nodeTypeRequirementDefinition.put("dependency", rd);
 
-        Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinition = new HashMap<>();
         RequirementAssignment ra = new RequirementAssignment();
         ra.setCapability("tosca.capabilities.network.Bindable");
         ra.setNode(null);
@@ -347,14 +354,14 @@ public class ToscaAnalyzerServiceImplTest {
         nodeTypeRequirementsDefinition.add(nodeTypeRequirementDefinition);
 
         List<Map<String, RequirementDefinition>> exposedRequirements = toscaAnalyzerService
-                                                                               .calculateExposedRequirements(
-                                                                               nodeTypeRequirementsDefinition,
-                                                                               nodeTemplateRequirementsAssignment);
+                .calculateExposedRequirements(
+                        nodeTypeRequirementsDefinition,
+                        nodeTemplateRequirementsAssignment);
         Assert.assertEquals(1, exposedRequirements.size());
     }
 
     @Test
-    public void testCalculateExposedCapabilities() throws Exception {
+    public void testCalculateExposedCapabilities() {
         Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition = new HashMap<>();
         CapabilityDefinition cd = new CapabilityDefinition();
         cd.setType("tosca.capabilities.Scalable");
@@ -432,7 +439,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void testGetNodeTemplateById() throws Exception {
+    public void testGetNodeTemplateById() {
         ServiceTemplate emptyServiceTemplate = new ServiceTemplate();
         Optional<NodeTemplate> nodeTemplate =
                 toscaAnalyzerService.getNodeTemplateById(emptyServiceTemplate, "test_net222");
@@ -448,7 +455,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void testGetSubstituteServiceTemplateName() throws Exception {
+    public void testGetSubstituteServiceTemplateName() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
                 "Invalid Substitute Node Template invalid2, mandatory map property service_template_filter "
@@ -462,21 +469,18 @@ public class ToscaAnalyzerServiceImplTest {
                 toscaAnalyzerService.getNodeTemplateById(mainServiceTemplate, "test_net");
         assertTrue(notSubstitutableNodeTemplate.isPresent());
 
-        if (notSubstitutableNodeTemplate.isPresent()) {
-            substituteServiceTemplateName = toscaAnalyzerService.getSubstituteServiceTemplateName("test_net",
-                    notSubstitutableNodeTemplate.get());
-            assertFalse(substituteServiceTemplateName.isPresent());
-        }
+        substituteServiceTemplateName = toscaAnalyzerService.getSubstituteServiceTemplateName("test_net",
+                notSubstitutableNodeTemplate.get());
+        assertFalse(substituteServiceTemplateName.isPresent());
 
         Optional<NodeTemplate> substitutableNodeTemplate =
                 toscaAnalyzerService.getNodeTemplateById(mainServiceTemplate, "test_nested");
         assertTrue(substitutableNodeTemplate.isPresent());
-        if (substitutableNodeTemplate.isPresent()) {
-            substituteServiceTemplateName = toscaAnalyzerService.getSubstituteServiceTemplateName("test_nested",
-                    substitutableNodeTemplate.get());
-            assertTrue(substituteServiceTemplateName.isPresent());
-            assertEquals("nestedServiceTemplate.yaml", substituteServiceTemplateName.get());
-        }
+
+        substituteServiceTemplateName = toscaAnalyzerService.getSubstituteServiceTemplateName("test_nested",
+                substitutableNodeTemplate.get());
+        assertTrue(substituteServiceTemplateName.isPresent());
+        assertEquals("nestedServiceTemplate.yaml", substituteServiceTemplateName.get());
 
         NodeTemplate invalidSubstitutableNodeTemplate1 = new NodeTemplate();
         substituteServiceTemplateName =
@@ -565,7 +569,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void invalidSubstitutableMapping() throws Exception {
+    public void invalidSubstitutableMapping() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
                 "Invalid Substitution Service Template invalidMappingServiceTemplate.yaml, "
@@ -578,7 +582,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void substitutableMappingWithNoReqMap() throws Exception {
+    public void substitutableMappingWithNoReqMap() {
         ServiceTemplate emptyReqMapping = new ServiceTemplate();
         emptyReqMapping.setTopology_template(new TopologyTemplate());
         emptyReqMapping.getTopology_template().setSubstitution_mappings(new SubstitutionMapping());
@@ -587,7 +591,7 @@ public class ToscaAnalyzerServiceImplTest {
                 toscaServiceModel.getServiceTemplates().get(toscaServiceModel.getEntryDefinitionServiceTemplate());
         Optional<Map.Entry<String, NodeTemplate>> mappedNodeTemplate =
                 toscaAnalyzerService.getSubstitutionMappedNodeTemplateByExposedReq(
-                        toscaServiceModel.getEntryDefinitionServiceTemplate(),mainServiceTemplate,
+                        toscaServiceModel.getEntryDefinitionServiceTemplate(), mainServiceTemplate,
                         "local_storage_server_cmaui");
         assertFalse(mappedNodeTemplate.isPresent());
     }
@@ -610,7 +614,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void testIsDesiredRequirementAssignmentMatch() throws Exception {
+    public void testIsDesiredRequirementAssignmentMatch() {
 
         RequirementAssignment requirementAssignment = new RequirementAssignment();
         String capability = "Test.Capability";
@@ -621,11 +625,11 @@ public class ToscaAnalyzerServiceImplTest {
         requirementAssignment.setRelationship(relationship);
 
         assertTrue(toscaAnalyzerService
-                           .isDesiredRequirementAssignment(requirementAssignment, capability, node, relationship));
+                .isDesiredRequirementAssignment(requirementAssignment, capability, node, relationship));
         assertTrue(
                 toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, null, node, relationship));
         assertTrue(toscaAnalyzerService
-                           .isDesiredRequirementAssignment(requirementAssignment, capability, null, relationship));
+                .isDesiredRequirementAssignment(requirementAssignment, capability, null, relationship));
         assertTrue(toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, capability, node, null));
         assertTrue(
                 toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, null, null, relationship));
@@ -635,7 +639,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
-    public void testIsDesiredRequirementAssignmentNoMatch() throws Exception {
+    public void testIsDesiredRequirementAssignmentNoMatch() {
 
         RequirementAssignment requirementAssignment = new RequirementAssignment();
         String capability = "Test.Capability";
@@ -651,7 +655,7 @@ public class ToscaAnalyzerServiceImplTest {
                 toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, "no", "no", relationship));
         assertFalse(toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, "no", "no", "no"));
         assertFalse(toscaAnalyzerService
-                            .isDesiredRequirementAssignment(requirementAssignment, capability, "no", relationship));
+                .isDesiredRequirementAssignment(requirementAssignment, capability, "no", relationship));
         assertFalse(toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, capability, node, "no"));
         assertFalse(toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, capability, "no", "no"));
         assertFalse(toscaAnalyzerService.isDesiredRequirementAssignment(requirementAssignment, "no", null, null));
@@ -673,7 +677,7 @@ public class ToscaAnalyzerServiceImplTest {
         String nodeTypeToSearch = ToscaNodeType.NATIVE_BLOCK_STORAGE;
         nodeTemplate.setType(nodeTypeToSearch);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(nodeTemplate, nodeTypeToSearch, new ServiceTemplate(), toscaServiceModelMock));
+                .isTypeOf(nodeTemplate, nodeTypeToSearch, new ServiceTemplate(), toscaServiceModelMock));
     }
 
     @Test
@@ -704,7 +708,7 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     private void interfaceIsTypeTest(ToscaExtensionYamlUtil toscaExtensionYamlUtil, String nodeTypeKey,
-            InputStream yamlFile) {
+                                     InputStream yamlFile) {
         ServiceTemplate serviceTemplateFromYaml = toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
         ToscaFlatData flatData = toscaAnalyzerService.getFlatEntity(ToscaElementTypes.NODE_TYPE, nodeTypeKey,
@@ -716,8 +720,8 @@ public class ToscaAnalyzerServiceImplTest {
         InterfaceDefinitionType standardInterfaceDefinitionType =
                 new InterfaceDefinitionType(standardInterfaceDefinition);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(standardInterfaceDefinitionType, TOSCA_LIFECYCLE_STANDARD, serviceTemplateFromYaml,
-                                   toscaServiceModel));
+                .isTypeOf(standardInterfaceDefinitionType, TOSCA_LIFECYCLE_STANDARD, serviceTemplateFromYaml,
+                        toscaServiceModel));
     }
 
     @Test
@@ -769,7 +773,7 @@ public class ToscaAnalyzerServiceImplTest {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setData_types(stDataTypes);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(testedDefinitionDataType, typeToMatch, serviceTemplate, toscaServiceModelMock));
+                .isTypeOf(testedDefinitionDataType, typeToMatch, serviceTemplate, toscaServiceModelMock));
     }
 
     @Test
@@ -791,7 +795,7 @@ public class ToscaAnalyzerServiceImplTest {
     public void shouldThrowCoreExceptionForInvalidNodeType() {
         thrown.expect(CoreException.class);
         thrown.expectMessage("Entity Type 'AAA' or one of its derivedFrom type hierarchy, is not defined in "
-                                     + "tosca service model");
+                + "tosca service model");
         when(nodeTemplateMock.getType()).thenReturn("AAA");
         Map<String, NodeType> stNodeTypes = new HashMap<>();
         addNodeType(stNodeTypes, "notImportant", new NodeType());
@@ -815,7 +819,7 @@ public class ToscaAnalyzerServiceImplTest {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setNode_types(stNodeTypes);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(nodeTemplateMock, "BDerivedFromC", serviceTemplate, toscaServiceModelMock));
+                .isTypeOf(nodeTemplateMock, "BDerivedFromC", serviceTemplate, toscaServiceModelMock));
     }
 
     @Test
@@ -830,7 +834,7 @@ public class ToscaAnalyzerServiceImplTest {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setNode_types(stNodeTypes);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(nodeTemplateMock, "BDerivedFromC", serviceTemplate, toscaServiceModelMock));
+                .isTypeOf(nodeTemplateMock, "BDerivedFromC", serviceTemplate, toscaServiceModelMock));
     }
 
     private NodeType createNodeType(String derivedFrom) {
@@ -953,7 +957,7 @@ public class ToscaAnalyzerServiceImplTest {
         capabilityType.setDerived_from(TOSCA_CAPABILITIES_ROOT);
         serviceTemplate.getCapability_types().put(CAPABILITY_TYPE_A, capabilityType);
         assertFalse(toscaAnalyzerService
-                            .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
+                .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
     }
 
     @Test
@@ -966,7 +970,139 @@ public class ToscaAnalyzerServiceImplTest {
         capabilityType.setDerived_from(CAPABILITY_TYPE_B);
         serviceTemplate.getCapability_types().put(CAPABILITY_TYPE_A, capabilityType);
         assertTrue(toscaAnalyzerService
-                           .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
+                .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
+    }
+
+    @Test
+    public void testGetNodeTemplatesByTypeNodeTemplateIsEmpty() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setTopology_template(new TopologyTemplate());
+
+        assertTrue(toscaAnalyzerService.getNodeTemplatesByType(serviceTemplate, null, null).isEmpty());
+    }
+
+    @Test
+    public void testGetNodeTemplatesByTypeDifferentType() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setTopology_template(new TopologyTemplate());
+        serviceTemplate.setNode_types(Collections.singletonMap("nodeType", new NodeType()));
+
+        NodeTemplate nodeTemplate = new NodeTemplate();
+        nodeTemplate.setType("nodeType");
+
+        serviceTemplate.getTopology_template().setNode_templates(Collections.singletonMap("node1", nodeTemplate));
+
+        assertEquals(0, toscaAnalyzerService.getNodeTemplatesByType(
+                serviceTemplate, "nodeType1", new ToscaServiceModel()).size());
+    }
+
+    @Test
+    public void testGetNodeTemplatesByTypeSameType() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setTopology_template(new TopologyTemplate());
+
+        NodeTemplate nodeTemplate = new NodeTemplate();
+        nodeTemplate.setType("nodeType");
+
+        serviceTemplate.getTopology_template().setNode_templates(Collections.singletonMap("node1", nodeTemplate));
+
+        assertEquals(1, toscaAnalyzerService.getNodeTemplatesByType(
+                serviceTemplate, "nodeType", new ToscaServiceModel()).size());
+    }
+
+    @Test
+    public void testFetchNodeTypeNodeTypePresent() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setNode_types(Collections.singletonMap("nodeType", new NodeType()));
+
+        Optional<NodeType> nodeType =
+                toscaAnalyzerService.fetchNodeType("nodeType", Collections.singletonList(serviceTemplate));
+
+        assertTrue(nodeType.isPresent());
+    }
+
+    @Test
+    public void testFetchNodeTypeNodeTypeAbsent() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setNode_types(Collections.singletonMap("nodeType", new NodeType()));
+
+        Optional<NodeType> nodeType =
+                toscaAnalyzerService.fetchNodeType("nodeTypeAbsent", Collections.singletonList(serviceTemplate));
+
+        assertFalse(nodeType.isPresent());
+    }
+
+    @Test
+    public void testGetFlatEntityForCapability() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        CapabilityType capabilityType = new CapabilityType();
+        capabilityType.setDescription("Capability");
+        capabilityType.setVersion("1.0");
+
+        serviceTemplate.setCapability_types(Collections.singletonMap("capabilityTypeId", capabilityType));
+        ToscaFlatData toscaFlatData =
+                toscaAnalyzerService.getFlatEntity(ToscaElementTypes.CAPABILITY_TYPE, "capabilityTypeId",
+                        serviceTemplate, new ToscaServiceModel());
+
+        assertNotNull(toscaFlatData);
+        assertEquals(ToscaElementTypes.CAPABILITY_TYPE, toscaFlatData.getElementType());
+    }
+
+    @Test(expected = CoreException.class)
+    public void testGetFlatEntityForCapabilityThrowsException() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+
+        CapabilityType capabilityType = new CapabilityType();
+        capabilityType.setDerived_from("tosca.capabilities.Root");
+
+        serviceTemplate.setCapability_types(Collections.singletonMap("capabilityTypeId", capabilityType));
+
+        toscaAnalyzerService.getFlatEntity(ToscaElementTypes.CAPABILITY_TYPE, "capabilityTypeId",
+                serviceTemplate, new ToscaServiceModel());
+    }
+
+    @Test(expected = CoreException.class)
+    public void testGetFlatEntityForCapabilityNullThrowsException() {
+        toscaAnalyzerService.getFlatEntity(ToscaElementTypes.CAPABILITY_TYPE, "capabilityTypeId",
+                new ServiceTemplate(), new ToscaServiceModel());
+    }
+
+    @Test
+    public void testCreateInitSubstitutionNodeType() {
+        ParameterDefinition parameterDefinitionInput = new ParameterDefinition();
+        parameterDefinitionInput.setRequired(true);
+        parameterDefinitionInput.set_default("default");
+        parameterDefinitionInput.setConstraints(Collections.singletonList(new Constraint()));
+        parameterDefinitionInput.setStatus(Status.SUPPORTED);
+
+        ParameterDefinition parameterDefinitionOutput = new ParameterDefinition();
+        parameterDefinitionOutput.setStatus(Status.SUPPORTED);
+
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setTopology_template(new TopologyTemplate());
+        serviceTemplate.getTopology_template()
+                .setInputs(Collections.singletonMap("parameterDef1", parameterDefinitionInput));
+        serviceTemplate.getTopology_template()
+                .setOutputs(Collections.singletonMap("parameterDef1", parameterDefinitionOutput));
+
+        NodeType nodeType = toscaAnalyzerService.createInitSubstitutionNodeType(serviceTemplate, "tosca.nodes.Root");
+
+        assertNotNull(nodeType);
+        assertTrue(nodeType.getProperties().size() ==1
+                        && nodeType.getAttributes().size() == 1);
+    }
+
+    @Test(expected = CoreException.class)
+    public void testGetSubstituteServiceTemplateNameThrowsException() {
+        NodeTemplate nodeTemplate = new NodeTemplate();
+        nodeTemplate.setDirectives(Collections.singletonList(ToscaConstants.NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE));
+
+        toscaAnalyzerService.getSubstituteServiceTemplateName(null, nodeTemplate);
+    }
+
+    @Test(expected = SdcRuntimeException.class)
+    public void testGetFlatEntityThrowsExceptionIncorrectSwitchProvided() {
+        toscaAnalyzerService.getFlatEntity(ToscaElementTypes.RELATIONSHIP_TYPE, null, null, null);
     }
 }
 
