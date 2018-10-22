@@ -16,37 +16,23 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
+
+@Getter
+@Setter
 public class ToscaFlatData {
 
     private Object flatEntity;
     private ToscaElementTypes elementType;
+
+    @Setter(AccessLevel.NONE)
     private List<String> inheritanceHierarchyType;
-
-    public ToscaElementTypes getElementType() {
-        return elementType;
-    }
-
-    public void setElementType(ToscaElementTypes elementType) {
-        this.elementType = elementType;
-    }
-
-    public Object getFlatEntity() {
-        return flatEntity;
-    }
-
-    public void setFlatEntity(Object flatEntity) {
-        this.flatEntity = flatEntity;
-    }
-
-    public List<String> getInheritanceHierarchyType() {
-        return inheritanceHierarchyType;
-    }
 
     public void addInheritanceHierarchyType(String inheritedType) {
         if (CollectionUtils.isEmpty(inheritanceHierarchyType)) {
