@@ -51,7 +51,7 @@ public class InterfaceUIDataConverter {
       List<OperationOutputDefinition> outputList = outputParams.getListToscaDataDefinition().stream()
               .map(interfaceOperationParamDataDefinition -> new OperationOutputDefinition(
                       interfaceOperationParamDataDefinition.getName(),
-                      interfaceOperationParamDataDefinition.getMandatory(),
+                      interfaceOperationParamDataDefinition.getMandatory() == null ? false : interfaceOperationParamDataDefinition.getMandatory(),
                       interfaceOperationParamDataDefinition.getType()
                       )).collect(Collectors.toList());
       outputList.forEach(outputs::add);
