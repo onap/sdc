@@ -3162,6 +3162,16 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         String uniqueId = implementationArtifact.getUniqueId();
+        Either<Long, CassandraOperationStatus> artifactCount = artifactCassandraDao.getCountOfArtifactById(uniqueId);
+        if(artifactCount.isLeft()){
+            CassandraOperationStatus cassandraOperationStatus = artifactCassandraDao.deleteArtifact(uniqueId);
+            if(cassandraOperationStatus != CassandraOperationStatus.OK){
+                log.debug("Failed to persist operation {} artifact, error is {}",operation.getName(),cassandraOperationStatus);
+                StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraOperationStatus);
+                ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
+                return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
+            }
+        }
         artifactData.setId(uniqueId);
         CassandraOperationStatus cassandraOperationStatus = artifactCassandraDao.saveArtifact(artifactData);
         if(cassandraOperationStatus != CassandraOperationStatus.OK){
