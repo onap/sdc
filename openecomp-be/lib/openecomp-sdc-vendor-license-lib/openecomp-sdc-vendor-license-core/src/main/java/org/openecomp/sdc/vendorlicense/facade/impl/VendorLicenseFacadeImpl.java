@@ -339,8 +339,9 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
       return  Optional.of(USED_VLM_ARCHIVE_ERROR);
     }
 
-   if(VersionStatus.Draft.equals(version.getStatus())){
-     return Optional.of(USED_VLM_IS_DRAFT_ERROR);
+    if (version != null && VersionStatus.Draft.equals(version.getStatus()) ||
+                vlm.getVersionStatusCounters().get(VersionStatus.Certified) <= 0) {
+      return Optional.of(USED_VLM_IS_DRAFT_ERROR);
     }
 
     return Optional.empty();

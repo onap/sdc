@@ -497,7 +497,9 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                                                 String user) throws IOException {
 
         VspDetails vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
-        vspDetails.setVlmVersion(versioningManager.get(vspDetails.getVendorId(),vspDetails.getVlmVersion()));
+        if(vspDetails.getVlmVersion() != null) {
+            vspDetails.setVlmVersion(versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion()));
+        }
         ValidationResponse validationResponse = vendorSoftwareProductManager.validate(vspDetails);
         Map<String, List<ErrorMessage>> compilationErrors =
                 vendorSoftwareProductManager.compile(vspId, version);
