@@ -2,25 +2,23 @@ package org.openecomp.core.enrichment.types;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import lombok.Getter;
+import lombok.Setter;
+
 
 public class ComponentProcessInfo {
-  private String name;
-  private byte[] content;
 
-  public String getName() {
-    return name;
-  }
+    @Setter
+    @Getter
+    private String name;
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    @Setter
+    private byte[] content;
 
-  public InputStream getContent() {
-    return new ByteArrayInputStream(this.content);
-  }
 
-  public void setContent(byte[] content) {
-    this.content = content;
-  }
+    public InputStream getContent() {
+        return new ByteArrayInputStream(this.content);
+    }
+
 
 }
