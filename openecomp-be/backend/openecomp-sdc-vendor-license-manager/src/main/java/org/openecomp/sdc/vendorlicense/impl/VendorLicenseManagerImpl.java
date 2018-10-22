@@ -18,6 +18,7 @@ package org.openecomp.sdc.vendorlicense.impl;
 
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
@@ -516,8 +517,11 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   public void updateLimit(LimitEntity limit) {
     getLimit(limit);
     validateLimit(limit);
-    vendorLicenseFacade.updateLimit(limit);
-    updateParentForLimit(limit);
+    LimitEntity retrieved = limitDao.get(limit);
+    if(!retrieved.equals(limit)){
+      vendorLicenseFacade.updateLimit(limit);
+      updateParentForLimit(limit);
+    }
   }
 
   private boolean isLimitPresent(LimitEntity limit) {
@@ -545,14 +549,16 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
       EntitlementPoolEntity entitlementPoolEntity =
           entitlementPoolDao.get(new EntitlementPoolEntity(limit.getVendorLicenseModelId(),
               limit.getVersion(), limit.getEpLkgId()));
-      vendorLicenseFacade.updateEntitlementPool(entitlementPoolEntity);
+      entitlementPoolEntity.setVersionUuId(CommonMethods.nextUuId());
+      entitlementPoolDao.update(entitlementPoolEntity);
     }
 
     if ("LicenseKeyGroup".equals(limit.getParent())) {
       LicenseKeyGroupEntity licenseKeyGroupEntity = licenseKeyGroupDao.get(
           new LicenseKeyGroupEntity(limit.getVendorLicenseModelId(), limit.getVersion(),
               limit.getEpLkgId()));
-      vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroupEntity);
+      licenseKeyGroupEntity.setVersionUuId(CommonMethods.nextUuId());
+      licenseKeyGroupDao.update(licenseKeyGroupEntity);
     }
   }
 
