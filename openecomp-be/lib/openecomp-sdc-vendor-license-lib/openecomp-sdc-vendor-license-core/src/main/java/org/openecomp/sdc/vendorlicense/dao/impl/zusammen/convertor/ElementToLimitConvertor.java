@@ -10,7 +10,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
  */
 public class ElementToLimitConvertor extends ElementConvertor {
   @Override
-  public Object convert(Element element) {
+  public LimitEntity convert(Element element) {
     if (element == null) {
       return null;
     }
