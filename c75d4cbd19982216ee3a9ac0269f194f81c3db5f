@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_85af0d94",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-sdk/src/main/java/org/openecomp/sdc/validation/type/HeatResourceValidationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T14:19:13Z",
+      "side": 1,
+      "message": "Please remove commented-out code.",
+      "revId": "c75d4cbd19982216ee3a9ac0269f194f81c3db5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_65830905",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-sdk/src/test/java/org/openecomp/sdc/validation/base/ResourceBaseValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T14:19:13Z",
+      "side": 1,
+      "message": "Please specify an initial size if it\u0027s know. In this case there will be only one element, so new HashMap\u003c\u003e(1);\nIn this particular case you may even use https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#singletonMap-K-V- (if it\u0027s OK for the map to be immutable).",
+      "range": {
+        "startLine": 110,
+        "startChar": 37,
+        "endLine": 110,
+        "endChar": 52
+      },
+      "revId": "c75d4cbd19982216ee3a9ac0269f194f81c3db5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
