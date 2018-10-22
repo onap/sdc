@@ -40,88 +40,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mvn.compiler.version}</version>
                 <inherited>true</inherited>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <skipMain>${skipMainSourceCompile}</skipMain>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <configuration>
-                            <skip>${skipTestSourceCompile}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
                 <configuration>
                     <source>${java.source}</source>
                     <target>${java.target}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openecomp.sdc.onboarding</groupId>
-                <artifactId>artifact-copy-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>init-artifact-helper</goal>
-                            <!--<goal>copy-helper</goal>-->
-                            <goal>calibrate-artifact-helper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <groupId>org.openecomp.sdc</groupId>
-                    <artifactId>build-data-installer</artifactId>
-                    <version>${project.version}</version>
-                    <artifactHelper>
-                        <project>${project}</project>
-                        <session>${session}</session>
-                        <unicornRoot>org.openecomp.sdc:sdc-onboarding/target/build-data</unicornRoot>
-                    </artifactHelper>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openecomp.sdc.onboarding</groupId>
-                <artifactId>compile-helper-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>init-helper</goal>
-                            <goal>pre-compile-helper</goal>
-                            <goal>post-compile-helper</goal>
-                            <goal>pre-test-compile-helper</goal>
-                            <goal>post-test-run-helper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludePackaging>pom</excludePackaging>
-                    <excludeDependencies>test,runtime</excludeDependencies>
-                    <generatedSourceLocation>${project.build.directory}/generated-sources</generatedSourceLocation>
-                    <buildState>
-                        <project>${project}</project>
-                        <compileStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/compileState.dat
-                        </compileStateFilePath>
-                    </buildState>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${mvn.jar.version}</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>${mvnDsc}</addMavenDescriptor>
-                    </archive>
                     <excludes>
-                        <exclude>${emptyJAR}</exclude>
+                        <exclude>**/package-info.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
