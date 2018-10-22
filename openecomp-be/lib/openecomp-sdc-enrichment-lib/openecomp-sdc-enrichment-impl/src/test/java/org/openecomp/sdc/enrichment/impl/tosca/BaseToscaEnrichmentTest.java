@@ -16,6 +16,23 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.NotDirectoryException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -23,15 +40,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.file.NotDirectoryException;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
 
 public class BaseToscaEnrichmentTest {
 
@@ -63,11 +71,7 @@ public class BaseToscaEnrichmentTest {
         if (urlFile != null) {
             File pathFile = new File(urlFile.getFile());
             Collection<File> files = org.apache.commons.io.FileUtils.listFiles(pathFile, null, true);
-            if (files != null) {
-                addServiceTemplateFiles(serviceTemplates, files, toscaExtensionYamlUtil);
-            } else {
-                throw new NotDirectoryException(serviceTemplatesPath);
-            }
+            addServiceTemplateFiles(serviceTemplates, files, toscaExtensionYamlUtil);
         } else {
             throw new NotDirectoryException(serviceTemplatesPath);
         }
@@ -81,68 +85,11 @@ public class BaseToscaEnrichmentTest {
             try (InputStream yamlFile = new FileInputStream(file)) {
                 ServiceTemplate serviceTemplateFromYaml =
                     toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-                serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplateFromYaml), serviceTemplateFromYaml);
+                serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplateFromYaml),
+                        serviceTemplateFromYaml);
             }
         }
     }
-
-
-    /*public static ToscaServiceModel loadToscaServiceModel(String serviceTemplatesPath,
-                                                          String globalServiceTemplatesPath,
-                                                          String entryDefinitionServiceTemplate)
-        throws IOException {
-        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-        Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
-        if (entryDefinitionServiceTemplate == null) {
-            entryDefinitionServiceTemplate = "MainServiceTemplate.yaml";
-        }
-
-        loadServiceTemplates(serviceTemplatesPath, toscaExtensionYamlUtil, serviceTemplates);
-        if (globalServiceTemplatesPath != null) {
-            loadServiceTemplates(globalServiceTemplatesPath, toscaExtensionYamlUtil, serviceTemplates);
-        }
-
-        return new ToscaServiceModel(null, serviceTemplates, entryDefinitionServiceTemplate);
-    }
-
-    private static void loadServiceTemplates(String serviceTemplatesPath,
-                                             ToscaExtensionYamlUtil toscaExtensionYamlUtil,
-                                             Map<String, ServiceTemplate> serviceTemplates)
-        throws IOException {
-        URL urlFile = BaseToscaEnrichmentTest.class.getResource(serviceTemplatesPath);
-        if (urlFile != null) {
-            File pathFile = new File(urlFile.getFile());
-            File[] files = pathFile.listFiles();
-            if (files != null) {
-                addServiceTemplateFiles(serviceTemplates, files, toscaExtensionYamlUtil);
-            } else {
-                throw new NotDirectoryException(serviceTemplatesPath);
-            }
-        } else {
-            throw new NotDirectoryException(serviceTemplatesPath);
-        }
-    }
-
-    private static void addServiceTemplateFiles(Map<String, ServiceTemplate> serviceTemplates,
-                                                File[] files,
-                                                ToscaExtensionYamlUtil toscaExtensionYamlUtil)
-        throws IOException {
-        for (File file : files) {
-            try (InputStream yamlFile = new FileInputStream(file)) {
-                ServiceTemplate serviceTemplateFromYaml =
-                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-                serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
-                try {
-                    yamlFile.close();
-                } catch (IOException ignore) {
-                }
-            } catch (FileNotFoundException e) {
-                throw e;
-            } catch (IOException e) {
-                throw e;
-            }
-        }
-    }*/
 
     void compareActualAndExpectedModel(ToscaServiceModel toscaServiceModel) throws IOException {
 
@@ -172,7 +119,7 @@ public class BaseToscaEnrichmentTest {
 
             while ((entry = zis.getNextEntry()) != null) {
                 name = entry.getName()
-                        .substring(entry.getName().lastIndexOf(File.separator) + 1, entry.getName().length());
+                        .substring(entry.getName().lastIndexOf(File.separator) + 1);
                 if (expectedResultFileNameSet.contains(name)) {
                     expected = new String(expectedResultMap.get(name)).trim().replace("\r", "");
                     actual = new String(FileUtils.toByteArray(zis)).trim().replace("\r", "");

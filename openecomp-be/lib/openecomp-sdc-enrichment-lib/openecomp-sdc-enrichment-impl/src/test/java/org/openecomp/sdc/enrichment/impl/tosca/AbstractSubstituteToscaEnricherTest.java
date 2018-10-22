@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
@@ -49,8 +48,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
   @InjectMocks
   AbstractSubstituteToscaEnricher toscaEnricher;
 
-  String vspId = null;
-  Version version = new Version();
+  private String vspId = null;
+  private final Version version = new Version();
 
   @Before
   public void injectDoubles() {
@@ -64,9 +63,6 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
   public void testEnrich() throws Exception {
     outputFilesPath = "/mock/enrichHA/out/";
 
-    ToscaServiceModel toscaServiceModel =
-        loadToscaServiceModel("/mock/enrichHA/in/", "/mock/toscaGlobalServiceTemplates/",
-            "MainServiceTemplate.yaml");
 
     Map<String, Map<String, Object>> componentTypetoParams = new HashMap<>();
     Map<String, Object> innerProps = new HashMap<>();
@@ -83,18 +79,24 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
-    targets.add("fe"); targets.add("be");
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
+    targets.add("fe");
+    targets.add("be");
     sourceToTargetDependencies.put("pd_server", targets);
+
+    Map<String,String> map = new HashMap<>();
 
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
 
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
 
+    ToscaServiceModel toscaServiceModel =
+            loadToscaServiceModel("/mock/enrichHA/in/", "/mock/toscaGlobalServiceTemplates/",
+                    "MainServiceTemplate.yaml");
+
     Map<String, List<ErrorMessage>> errors =
-        toscaEnricher.enrich(toscaServiceModel, vspId, version );
+        toscaEnricher.enrich(toscaServiceModel, vspId, version);
 
     compareActualAndExpectedModel(toscaServiceModel);
 
@@ -125,8 +127,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
 
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
@@ -160,9 +162,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
     targets.add("fe");
     sourceToTargetDependencies.put("pd_server_vm", targets);
 
