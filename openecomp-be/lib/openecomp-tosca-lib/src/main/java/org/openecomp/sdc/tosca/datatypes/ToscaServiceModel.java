@@ -25,6 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -34,42 +39,16 @@ import org.openecomp.sdc.tosca.services.DataModelUtil;
 /**
  * Tosca service model.
  */
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class ToscaServiceModel implements AsdcModel {
 
     private FileContentHandler artifactFiles;
+    @Getter(AccessLevel.NONE)
     private Map<String, ServiceTemplate> serviceTemplates;
     private String entryDefinitionServiceTemplate;
-
-    public ToscaServiceModel() {
-    }
-
-    /**
-     * Instantiates a new Tosca service model.
-     *
-     * @param artifactFiles                  the artifact files
-     * @param serviceTemplates               the service templates
-     * @param entryDefinitionServiceTemplate the entry definition service template
-     */
-    public ToscaServiceModel(FileContentHandler artifactFiles,
-                             Map<String, ServiceTemplate> serviceTemplates,
-                             String entryDefinitionServiceTemplate) {
-        this.artifactFiles = artifactFiles;
-        this.serviceTemplates = serviceTemplates;
-        this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
-    }
-
-    /**
-     * Gets artifact files.
-     *
-     * @return the artifact files
-     */
-    public FileContentHandler getArtifactFiles() {
-        return artifactFiles;
-    }
-
-    public void setArtifactFiles(FileContentHandler artifactFiles) {
-        this.artifactFiles = artifactFiles;
-    }
 
     /**
      * Gets service templates.
@@ -92,33 +71,6 @@ public class ToscaServiceModel implements AsdcModel {
         }
 
         serviceTemplates.put(serviceTemplateName, serviceTemplate);
-    }
-
-    /**
-     * Sets service templates.
-     *
-     * @param serviceTemplates the service templates
-     */
-    public void setServiceTemplates(Map<String, ServiceTemplate> serviceTemplates) {
-        this.serviceTemplates = serviceTemplates;
-    }
-
-    /**
-     * Gets entry definition service template.
-     *
-     * @return the entry definition service template
-     */
-    public String getEntryDefinitionServiceTemplate() {
-        return entryDefinitionServiceTemplate;
-    }
-
-    /**
-     * Sets entry definition service template.
-     *
-     * @param entryDefinitionServiceTemplate the entry definition service template
-     */
-    public void setEntryDefinitionServiceTemplate(String entryDefinitionServiceTemplate) {
-        this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
     }
 
     /**

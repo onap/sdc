@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.tosca.services.ConfigConstants;

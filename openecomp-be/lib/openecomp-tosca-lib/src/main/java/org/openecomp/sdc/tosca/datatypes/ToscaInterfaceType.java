@@ -21,11 +21,9 @@ import org.onap.config.api.ConfigurationManager;
 
 public class ToscaInterfaceType {
 
-  private static Configuration config = ConfigurationManager.lookup();
+    private static Configuration config = ConfigurationManager.lookup();
 
-  //TOSCA native types
-  public static final String NATIVE_ROOT = " tosca.interfaces.Root";
-  public static final String NATIVE_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
-
-
+    //TOSCA native types
+    public static final String NATIVE_ROOT = " tosca.interfaces.Root";
+    public static final String NATIVE_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
 }
