@@ -4793,17 +4793,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
                         .value());
-                errorWrapper.setInnerElement(actionResult.right().value());
+                return Either.right(actionResult.right().value());
             }
+            return Either.left(actionResult.left().value().left().value());
         }
-        if (errorWrapper.isEmpty()) {
-            uploadArtifact = actionResult.left().value().left().value();
-            uploadArtifactResult = Either.left(uploadArtifact);
-        }
-        else {
-            uploadArtifactResult = Either.right(errorWrapper.getInnerElement());
-        }
-        return uploadArtifactResult;
+        return Either.right(errorWrapper.getInnerElement());
     }
     /**
      * upload an artifact to a resource instance by UUID
