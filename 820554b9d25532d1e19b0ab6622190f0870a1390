@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_b227f5b5",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T09:37:06Z",
+      "side": 1,
+      "message": "The preferred library for unit tests is JUnit. You don\u0027t have to specify its version because it should be already declared in the dependencyManagement of a parent pom.",
+      "range": {
+        "startLine": 49,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 19
+      },
+      "revId": "820554b9d25532d1e19b0ab6622190f0870a1390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_323b05d3",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/test/java/org/openecomp/core/validation/types/GlobalValidationContextTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T09:37:06Z",
+      "side": 1,
+      "message": "It looks like a simple assertNotNull(messageContainers) should be enough. The next line covers the rest. You could also assert the exact expected size to check nothing else gets into the list by mistake.",
+      "range": {
+        "startLine": 97,
+        "startChar": 3,
+        "endLine": 97,
+        "endChar": 62
+      },
+      "revId": "820554b9d25532d1e19b0ab6622190f0870a1390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
