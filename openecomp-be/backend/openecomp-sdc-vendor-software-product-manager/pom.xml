@@ -203,9 +203,4 @@
         </dependency>
     </dependencies>
 
-
-    <properties>
-        <useSystemClassLoader>false</useSystemClassLoader>
-    </properties>
-
 </project>

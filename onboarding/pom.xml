@@ -14,12 +14,8 @@
     </parent>
 
     <modules>
-        <module>../openecomp-be/tools/artifact-copy-plugin</module>
-        <module>../openecomp-be/tools/compile-helper-plugin</module>
-        <module>../common</module>
+         <module>../common</module>
         <module>../openecomp-be</module>
-        <module>../openecomp-be/tools/build-data-installer</module>
-        <module>../openecomp-be/tools/snapshot-signature-plugin</module>
         <module>../openecomp-ui</module>
     </modules>
 
@@ -32,8 +28,6 @@
         <!-- Maven plugin versions -->
         <mvn.assembly.version>2.1</mvn.assembly.version>
         <mvn.compiler.version>3.7.0</mvn.compiler.version>
-        <mvn.clean.version>2.5</mvn.clean.version>
-        <mvn.resource.version>3.1.0</mvn.resource.version>
         <mvn.deploy.version>2.4</mvn.deploy.version>
         <mvn.hub.version>1.4.0</mvn.hub.version>
         <mvn.install.version>2.4</mvn.install.version>
@@ -309,44 +303,10 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${mvn.jar.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>${mvn.clean.version}</version>
-                <configuration>
-                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                    <filesets>
-                        <fileset>
-                            <directory>${project.build.directory}</directory>
-                            <excludes>
-                                <exclude>${classes}</exclude>
-                                <exclude>${testClasses}</exclude>
-                                <exclude>${mavenStatus}</exclude>
-                                <exclude>${customGeneratedSources}</exclude>
-                                <exclude>build-data/**</exclude>
-                            </excludes>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
                     <forkCount>${fork.count}</forkCount>
-                    <forkMode>${fork.mode}</forkMode>
                     <printSummary>false</printSummary>
                     <additionalClasspathElements>
                         <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
@@ -358,27 +318,9 @@
                         </artifactgenerator.config>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
-                    <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
-                    <skip>${skipTestRun}</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>${mvn.install.version}</version>
-                <configuration>
-                    <skip>${skipInstall}</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${mvn.resource.version}</version>
-                <configuration>
-                    <skip>${skipResourceCollection}</skip>
-                </configuration>
-            </plugin>
-        </plugins>
+         </plugins>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
