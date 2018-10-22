@@ -52,6 +52,10 @@ public class ResourceBaseValidator implements Validator {
   private static final ErrorMessageCode ERROR_CODE_RBV_1 = new ErrorMessageCode("RBV1");
   private static final ErrorMessageCode ERROR_CODE_RBV_2 = new ErrorMessageCode("RBV2");
 
+  Map<String, ImplementationConfiguration> getResourceTypeToImpl() {
+    return MapUtils.unmodifiableMap(this.resourceTypeToImpl);
+  }
+
 @Override
   public void init(Map<String, Object> properties) {
     if (MapUtils.isEmpty(properties)) {
