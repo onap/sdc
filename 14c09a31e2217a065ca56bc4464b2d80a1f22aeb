@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_d2be39d4",
+        "filename": "openecomp-ui/resources/scss/components/_datepicker.scss",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "You left a comment here",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_f2933df8",
+        "filename": "openecomp-ui/resources/scss/modules/_entitlementPools.scss",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "This should probably be written as a hierarchy tree",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b2bdb56a",
+        "filename": "openecomp-ui/resources/scss/modules/_featureGroup.scss",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "hierarchy tree also",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d2c079e2",
+        "filename": "openecomp-ui/resources/scss/modules/_licenseAgreement.scss",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "tree",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_52cd695c",
+        "filename": "openecomp-ui/resources/scss/onboarding.scss",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "Can this be put in a component or common scss file?",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_12ee01b5",
+        "filename": "openecomp-ui/src/nfvo-components/modal/GlobalModal.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "why don\u0027t you define this function above where you defined the action button callback?",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b2c85523",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementListEditor.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "Why is this hardcoded to false? Read only mode should disable the button from opening this modal",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_52fec939",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/attachments/setup/components/SortableModuleFileList.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-22T12:52:18Z",
+      "side": 1,
+      "message": "Forgot to remove comment",
+      "revId": "14c09a31e2217a065ca56bc4464b2d80a1f22aeb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
