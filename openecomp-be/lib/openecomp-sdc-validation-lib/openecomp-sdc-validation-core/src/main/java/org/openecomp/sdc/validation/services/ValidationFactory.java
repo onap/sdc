@@ -1,5 +1,6 @@
 package org.openecomp.sdc.validation.services;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
@@ -21,20 +22,28 @@ public class ValidationFactory {
   private static Logger logger =
       (Logger) LoggerFactory.getLogger(ValidationFactory.class);
   private static File file;
+  private static AtomicBoolean initCompleted = new AtomicBoolean(false);
 
 
-  static {
-    Configuration config = ConfigurationManager.lookup();
+  private static void initData(Configuration config) {
     validationImplMap = config.populateMap(ConfigConstants.Namespace,
         ConfigConstants.Validator_Impl_Key, ImplementationConfiguration.class);
     validationImplMap.putAll(config.populateMap(ConfigConstants.Mandatory_Namespace,
         ConfigConstants.Validator_Impl_Key, ImplementationConfiguration.class));
+    initCompleted.getAndSet(true);
+  }
+
+  public static List<Validator> getValidators() {
+    return getValidators(ConfigurationManager.lookup());
   }
 
   /**
    * Initialize a validator.
    */
-  public static List<Validator> getValidators() {
+  public static List<Validator> getValidators(Configuration configuration) {
+    if(!initCompleted.get()){
+      initData(configuration);
+    }
     synchronized (validators) {
       if (CollectionUtils.isEmpty(validators)) {
         validationImplMap.values().stream()
