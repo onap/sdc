@@ -29,11 +29,18 @@ public class OnbordingDataProviders {
 	
 	@DataProvider(name = "VNF_List" , parallel = true)
 	private static final Object[][] VnfList() throws Exception {
-		
 		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileList();
-		
 		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
 		return provideData(fileNamesFromFolder, filepath);
+	}
+
+	@DataProvider(name = "Single_VNF" , parallel = true)
+	private static final Object[][] SingleVNF() throws Exception {
+		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileList();
+		List<String> newList = new ArrayList<>();
+		newList.add(fileNamesFromFolder.get(0));
+		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
+		return provideData(newList, filepath);
 	}
 	
 //	-----------------------factories-----------------------------------------

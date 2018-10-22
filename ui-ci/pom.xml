@@ -308,6 +308,11 @@
 									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites</directory>
 									<followSymlinks>false</followSymlinks>
 								</fileset>
+								<!-- VNF files -->
+								<fileset>
+									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs</directory>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>

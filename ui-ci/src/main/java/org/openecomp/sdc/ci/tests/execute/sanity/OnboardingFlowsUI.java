@@ -98,6 +98,15 @@ public class OnboardingFlowsUI extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVNFflow(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        System.out.println("print - >" + makeDistributionValue);
+        runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
+    }
+
 
     public void runOnboardToDistributionFlow(ResourceReqDetails resourceReqDetails, ServiceReqDetails serviceMetadata, String filePath, String vnfFile) throws Exception {
         getExtendTest().log(Status.INFO, "Going to create resource with category: " + resourceReqDetails.getCategories().get(0).getName()
