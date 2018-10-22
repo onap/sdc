@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_4f85c6ab",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-config-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-22T07:43:30Z",
+      "side": 1,
+      "message": "\"default\" is a constant in CommonUtils. If you want to test it plwase change it\u0027s from private to public . So there will not be duplication.",
+      "revId": "0878fcd5a7f69b8b7a153438b1e61ff9c716e9d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8fa3ae4e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-config-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-22T07:43:30Z",
+      "side": 1,
+      "message": "getObjectAsMap return some value. What would you define as success/failure?",
+      "revId": "0878fcd5a7f69b8b7a153438b1e61ff9c716e9d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
