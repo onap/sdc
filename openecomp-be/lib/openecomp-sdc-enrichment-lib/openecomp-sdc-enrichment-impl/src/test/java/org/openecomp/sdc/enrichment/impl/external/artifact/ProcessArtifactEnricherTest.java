@@ -1,6 +1,38 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import org.mockito.*;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.core.enrichment.types.ArtifactCategory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.types.ServiceArtifact;
@@ -12,17 +44,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
 
 public class ProcessArtifactEnricherTest {
   @Mock
@@ -34,7 +55,7 @@ public class ProcessArtifactEnricherTest {
   @InjectMocks
   ProcessArtifactEnricher processArtifactEnricher;
 
-  @BeforeMethod(alwaysRun = true)
+  @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
   }
@@ -79,8 +100,7 @@ public class ProcessArtifactEnricherTest {
         ArgumentCaptor.forClass(ServiceArtifact.class);
     Mockito.verify(enrichedServiceModelDaoMock, atLeastOnce())
         .storeExternalArtifact(expectedServiceArtifact.capture());
-    Assert
-        .assertEquals(expectedServiceArtifact.getValue().getName().startsWith(componentName), true);
+    Assert.assertTrue(expectedServiceArtifact.getValue().getName().startsWith(componentName));
     Assert.assertEquals(expectedServiceArtifact.getValue().getName(),
         componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
             File.separator + "Lifecycle Operations" + File.separator + "artifact_1kb.txt");
@@ -120,8 +140,6 @@ public class ProcessArtifactEnricherTest {
     info.setVersion(version);
     info.setKey(vspId);
     processArtifactEnricher.enrich(info, null);
-
-    String componentName = componentEntity.getComponentCompositionData().getName();
 
     ArgumentCaptor<ServiceArtifact> expectedServiceArtifact =
         ArgumentCaptor.forClass(ServiceArtifact.class);
@@ -225,8 +243,7 @@ public class ProcessArtifactEnricherTest {
   }
 
   private ByteBuffer getMibByteBuffer(String fileName) {
-    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
-        stream -> FileUtils.toByteArray(stream));
+    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName), FileUtils::toByteArray);
     return ByteBuffer.wrap(mibBytes);
   }
 }

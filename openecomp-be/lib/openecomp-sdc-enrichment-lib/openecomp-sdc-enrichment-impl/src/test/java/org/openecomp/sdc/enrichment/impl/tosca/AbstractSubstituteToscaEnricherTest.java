@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.enrichment.impl.tosca;
 
 
@@ -6,25 +22,24 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AV
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_FUNCTION;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.map.HashedMap;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest {
@@ -34,10 +49,10 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
   @InjectMocks
   AbstractSubstituteToscaEnricher toscaEnricher;
 
-  String vspId = null;
-  Version version = new Version();
+  private String vspId = null;
+  private Version version = new Version();
 
-  @BeforeMethod(alwaysRun = true)
+  @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     vspId = "123";
@@ -68,9 +83,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
     targets.add("fe"); targets.add("be");
     sourceToTargetDependencies.put("pd_server", targets);
 
@@ -110,8 +125,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
 
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
@@ -145,9 +160,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
     targets.add("fe");
     sourceToTargetDependencies.put("pd_server_vm", targets);
 
