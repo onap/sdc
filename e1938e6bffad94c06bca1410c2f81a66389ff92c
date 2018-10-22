@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_b2893528",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/utils/CommonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T11:56:31Z",
+      "side": 1,
+      "message": "Please do not elevate the visibility. The person who made it private might have a good reason to do so. If the goal was to make unit testing easier, at least use package-private access.",
+      "revId": "e1938e6bffad94c06bca1410c2f81a66389ff92c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d28cf937",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-config-lib/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T11:56:31Z",
+      "side": 1,
+      "message": "Please do not use both TestNG and JUnit in the same project.",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 47
+      },
+      "revId": "e1938e6bffad94c06bca1410c2f81a66389ff92c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_92867112",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-config-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-22T11:56:31Z",
+      "side": 1,
+      "message": "Please specify initial size whenever possible.",
+      "revId": "e1938e6bffad94c06bca1410c2f81a66389ff92c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
