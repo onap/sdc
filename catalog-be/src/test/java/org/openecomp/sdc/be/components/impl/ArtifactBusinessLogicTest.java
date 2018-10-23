@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
@@ -117,6 +118,10 @@ public class ArtifactBusinessLogicTest {
     TitanDao titanDao;
     @Mock
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
+    @Mock
+    private ResponseFormat responseFormat;
+    @Mock
+    private User user;
 
     // public static final InformationDeployedArtifactsBusinessLogic
     // informationDeployedArtifactsBusinessLogic =
@@ -428,9 +433,9 @@ public class ArtifactBusinessLogicTest {
     @Test
     public void testValidMibAritactsConfiguration() {
         Map<String, ArtifactTypeConfig> componentDeploymentArtifacts =
-                    ConfigurationManager.getConfigurationManager().getConfiguration().getResourceDeploymentArtifacts();
+                ConfigurationManager.getConfigurationManager().getConfiguration().getResourceDeploymentArtifacts();
         Map<String, ArtifactTypeConfig> componentInstanceDeploymentArtifacts =
-                    ConfigurationManager.getConfigurationManager().getConfiguration().getResourceInstanceDeploymentArtifacts();
+                ConfigurationManager.getConfigurationManager().getConfiguration().getResourceInstanceDeploymentArtifacts();
         assertThat(componentDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_POLL.getType())).isTrue();
         assertThat(componentDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_TRAP.getType())).isTrue();
         assertThat(componentInstanceDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_POLL.getType())).isTrue();
@@ -471,7 +476,7 @@ public class ArtifactBusinessLogicTest {
         Either<List<org.openecomp.sdc.be.model.Component>, StorageOperationStatus> getServiceRes = Either.left(serviceList);
         when(toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, serviceName)).thenReturn(getServiceRes);
         Either<byte[], ResponseFormat> downloadServiceArtifactByNamesRes =
-        artifactBL.downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
+                artifactBL.downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
         assertThat(downloadServiceArtifactByNamesRes.isLeft()).isTrue();
         assertThat(downloadServiceArtifactByNamesRes.left().value() !=null &&
                 downloadServiceArtifactByNamesRes.left().value().length == payload.length).isTrue();
@@ -560,6 +565,37 @@ public class ArtifactBusinessLogicTest {
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, false);
         verify(titanDao, times(1)).commit();
+    }
+
+    @Test
+    public void testDeleteComponent_ArtifactNotFound(){
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result;
+        Resource resource = new Resource();
+        String uniqueId = "uniqueId";
+        resource.setUniqueId(uniqueId);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("artifactId", artifact);
+        resource.setArtifacts(toscaArtifacts);
+        resource.setToscaArtifacts(toscaArtifacts);
+        when(graphLockOperation.lockComponent(uniqueId, NodeTypeEnum.Resource))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(uniqueId, NodeTypeEnum.Resource))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getToscaElement(uniqueId)).thenReturn(Either.left(resource));
+        when(componentsUtils.getResponseFormatByArtifactId(ActionStatus.ARTIFACT_NOT_FOUND, "artifactId")).
+                thenReturn(responseFormat);
+        result = artifactBL.handleDelete("parentId", "artifactId", user, AuditingActionEnum.ARTIFACT_DELETE,
+                ComponentTypeEnum.RESOURCE, resource,
+                true, false);
+        assertThat(result.isRight());
     }
 
     private void verifyHeatParam(HeatParameterDefinition heatEnvParam, HeatParameterDefinition heatYamlParam) {
