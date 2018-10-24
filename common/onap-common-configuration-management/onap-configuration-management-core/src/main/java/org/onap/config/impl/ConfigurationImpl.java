@@ -1,13 +1,20 @@
-package org.onap.config.impl;
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.DatabaseConfiguration;
-import org.onap.config.ConfigurationUtils;
-import org.onap.config.Constants;
-import org.onap.config.NonConfigResource;
-import org.onap.config.api.Config;
-import org.onap.config.api.ConfigurationChangeListener;
-import org.onap.config.api.Hint;
+package org.onap.config.impl;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -23,15 +30,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import static org.onap.config.ConfigurationUtils.getConfigurationRepositoryKey;
+import org.onap.config.ConfigurationUtils;
+import org.onap.config.Constants;
+import org.onap.config.NonConfigResource;
+import org.onap.config.api.Config;
+import org.onap.config.api.ConfigurationChangeListener;
+import org.onap.config.api.Hint;
 
 /**
  * The type Configuration.
  */
 public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
+  private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
   private static ThreadLocal<String> tenant = new ThreadLocal<String>() {
+
+    @Override
     protected String initialValue() {
       return Constants.DEFAULT_TENANT;
     }
@@ -141,7 +155,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase()
             : Constants.DEFAULT_NAMESPACE;
     if (key == null || key.trim().length() == 0) {
-      throw new IllegalArgumentException("Key can't be null.");
+      throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
     }
     if (myself == null) {
       throw new IllegalArgumentException("ConfigurationChangeListener instance is null.");
@@ -153,9 +167,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     }
   }
 
-  private void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs)
-      throws Exception {
-    boolean isDbAccessible = false;
+  private void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
+
     if (configs.get(
         Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELEMETER + Constants.DB_NAMESPACE)
         != null) {
@@ -164,42 +177,12 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
           configs.remove(
               Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELEMETER + Constants.DB_NAMESPACE)
               .getFinalConfiguration());
-      isDbAccessible = ConfigurationUtils.executeDdlSql(ConfigurationRepository.lookup()
-          .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-          .getString("createtablecql"));
-      if (isDbAccessible) {
-        ConfigurationUtils.executeDdlSql(ConfigurationRepository.lookup()
-            .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-            .getString("createmonitoringtablecql"));
-      }
     }
 
     Set<String> modules = configs.keySet();
     for (String module : modules) {
-      if (isDbAccessible) {
-        DatabaseConfiguration config =
-            ConfigurationUtils.getDbConfigurationBuilder(module).getConfiguration();
-        Configuration currentConfig = configs.get(module).getFinalConfiguration();
-        Iterator<String> keys = currentConfig.getKeys();
-        while (keys.hasNext()) {
-          String currentKey = keys.next();
-          if (!(Constants.MODE_KEY.equals(currentKey)
-              || Constants.NAMESPACE_KEY.equals(currentKey)
-              || Constants.LOAD_ORDER_KEY.equals(currentKey))) {
-            if (!config.containsKey(currentKey)) {
-              Object propValue = currentConfig.getProperty(currentKey);
-              if (propValue instanceof Collection) {
-                config.addProperty(currentKey, propValue.toString());
-              } else {
-                config.addProperty(currentKey, propValue);
-              }
-            }
-          }
-        }
-      } else {
         ConfigurationRepository.lookup()
             .populateConfigurtaion(module, configs.get(module).getFinalConfiguration());
-      }
     }
   }
 
@@ -276,7 +259,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     }
 
     if (tenant == null || tenant.trim().length() == 0) {
-      tenant = this.tenant.get();
+      tenant = ConfigurationImpl.tenant.get();
     } else {
       tenant = tenant.toUpperCase();
     }
@@ -285,10 +268,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     } else {
       namespace = namespace.toUpperCase();
     }
-    if (key == null || key.trim().length() == 0) {
-      if (!clazz.isAnnotationPresent(Config.class)) {
-        throw new IllegalArgumentException("Key can't be null.");
-      }
+    if ((key == null || key.trim().length() == 0) && !clazz.isAnnotationPresent(Config.class)) {
+      throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
     }
     if (clazz == null) {
       throw new IllegalArgumentException("clazz is null.");
@@ -481,7 +462,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
           Float floatVal = doubleValue.floatValue();
           return (T) floatVal;
         case "java.lang.Double":
-          Double doubleVal = doubleValue.doubleValue();
+          Double doubleVal = doubleValue;
           return (T) doubleVal;
         default:
       }
@@ -556,7 +537,6 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     if (changeNotifier != null) {
       try {
         changeNotifier.shutdown();
-        ConfigurationDataSource.lookup().close();
       } catch (Exception exception) {
         exception.printStackTrace();
       }
@@ -572,7 +552,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase()
             : Constants.DEFAULT_NAMESPACE;
     if (key == null || key.trim().length() == 0) {
-      throw new IllegalArgumentException("Key can't be null.");
+      throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
     }
     try {
       changeNotifier.stopNotificationTowards(tenant, namespace, key, myself);
@@ -584,7 +564,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
   @Override
   public <T> Map<String, T> populateMap(String tenantId, String namespace, String key, Class<T> clazz){
     if (tenantId==null || tenantId.trim().length()==0){
-      tenantId = this.tenant.get();
+      tenantId = tenant.get();
     }else{
       tenantId = tenantId.toUpperCase();
     }
@@ -596,12 +576,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     Map<String, T> map = new HashMap<>();
     Iterator<String> keys ;
     try {
-      if (ConfigurationRepository.lookup().isDBAccessible()){
-        keys = ConfigurationUtils.executeSelectSql(ConfigurationRepository.lookup().getConfigurationFor(
-            Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE).getString("fetchkeysql"), new String[]{tenantId+ Constants.KEY_ELEMENTS_DELEMETER+namespace}).iterator();
-      }else{
-        keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
-      }
+      keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
       while(keys.hasNext()){
         String k = keys.next();
         if (k.startsWith(key+".")){
@@ -621,7 +596,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
   @Override
   public Map generateMap(String tenantId, String namespace, String key){
     if (tenantId==null || tenantId.trim().length()==0){
-      tenantId = this.tenant.get();
+      tenantId = tenant.get();
     }else{
       tenantId = tenantId.toUpperCase();
     }
@@ -633,15 +608,10 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     Map map, parentMap = new HashMap<>();
     Iterator<String> keys ;
     try {
-      if (ConfigurationRepository.lookup().isDBAccessible()){
-        keys = ConfigurationUtils.executeSelectSql(ConfigurationRepository.lookup().getConfigurationFor(
-            Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE).getString("fetchkeysql"), new String[]{tenantId+ Constants.KEY_ELEMENTS_DELEMETER+namespace}).iterator();
+      if (key==null || key.trim().length()==0){
+        keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys();
       }else{
-        if (key==null || key.trim().length()==0){
-          keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys();
-        }else{
-          keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
-        }
+        keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
       }
       while(keys.hasNext()){
         map = parentMap;

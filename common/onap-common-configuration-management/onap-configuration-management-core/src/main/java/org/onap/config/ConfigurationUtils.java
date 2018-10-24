@@ -1,33 +1,27 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onap.config;
 
-import com.google.common.collect.ImmutableMap;
+import static java.util.Optional.ofNullable;
+import static org.onap.config.api.Hint.EXTERNAL_LOOKUP;
+import static org.onap.config.api.Hint.LATEST_LOOKUP;
+import static org.onap.config.api.Hint.NODE_SPECIFIC;
+
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
-import net.sf.corn.cps.CPScanner;
-import net.sf.corn.cps.ResourceFilter;
-import org.apache.commons.configuration2.CompositeConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
-import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.onap.config.api.Config;
-import org.onap.config.api.ConfigurationManager;
-import org.onap.config.impl.ConfigurationRepository;
-import org.onap.config.impl.YamlConfiguration;
-import org.onap.config.impl.AgglomerateConfiguration;
-import org.onap.config.impl.ConfigurationDataSource;
-import org.onap.config.type.ConfigurationMode;
-import org.onap.config.type.ConfigurationType;
- 
-import javax.sql.DataSource;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -35,14 +29,11 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,42 +57,54 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.google.common.collect.ImmutableMap.builder;
-
-import static java.util.Optional.ofNullable;
-import static org.onap.config.api.Hint.EXTERNAL_LOOKUP;
-import static org.onap.config.api.Hint.LATEST_LOOKUP;
-import static org.onap.config.api.Hint.NODE_SPECIFIC;
-
-
-import static com.google.common.collect.ImmutableMap.builder;
-import static org.onap.config.api.Hint.*;
+import net.sf.corn.cps.CPScanner;
+import net.sf.corn.cps.ResourceFilter;
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.io.IOUtils;
+import org.onap.config.api.Config;
+import org.onap.config.api.ConfigurationManager;
+import org.onap.config.impl.AgglomerateConfiguration;
+import org.onap.config.impl.ConfigurationRepository;
+import org.onap.config.impl.YamlConfiguration;
+import org.onap.config.type.ConfigurationMode;
+import org.onap.config.type.ConfigurationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The type Configuration utils.
  */
 public class ConfigurationUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtils.class);
+    private static final String CONFIGURATION_TYPE_NOT_SUPPORTED = "Configuration type not supported:";
 
     private ConfigurationUtils() {
     }
 
-    private static ImmutableMap<Class, Class> arrayClassMap;
+    private static final Map<Class, Class> ARRAY_CLASS_MAP;
 
     static {
-        ImmutableMap.Builder<Class, Class> builder = builder();
-        builder.put(Byte.class, Byte[].class).put(Short.class, Short[].class)
-                .put(Integer.class, Integer[].class).put(Long.class, Long[].class)
-                .put(Float.class, Float[].class).put(Double.class, Double[].class)
-                .put(Boolean.class, Boolean[].class).put(Character.class, Character[].class)
-                .put(String.class, String[].class);
-        arrayClassMap = builder.build();
+        Map<Class, Class> arrayTypes = new HashMap<>();
+        arrayTypes.put(Byte.class, Byte[].class);
+        arrayTypes.put(Short.class, Short[].class);
+        arrayTypes.put(Integer.class, Integer[].class);
+        arrayTypes.put(Long.class, Long[].class);
+        arrayTypes.put(Float.class, Float[].class);
+        arrayTypes.put(Double.class, Double[].class);
+        arrayTypes.put(Boolean.class, Boolean[].class);
+        arrayTypes.put(Character.class, Character[].class);
+        arrayTypes.put(String.class, String[].class);
+        ARRAY_CLASS_MAP = Collections.unmodifiableMap(arrayTypes);
     }
 
     /**
@@ -110,7 +113,7 @@ public class ConfigurationUtils {
      * @return the thread factory
      */
     public static ThreadFactory getThreadFactory() {
-        return (r1) -> {
+        return r1 -> {
             Thread thread = Executors.privilegedThreadFactory().newThread(r1);
             thread.setDaemon(true);
             return thread;
@@ -386,7 +389,7 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, url);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:" + configType);
+                    throw new ConfigurationException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
@@ -418,7 +421,7 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, file);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:" + configType);
+                    throw new ConfigurationException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
@@ -460,7 +463,7 @@ public class ConfigurationUtils {
      * @return the array class
      */
     public static Class getArrayClass(Class clazz) {
-        return arrayClassMap.getOrDefault(clazz, null);
+        return ARRAY_CLASS_MAP.getOrDefault(clazz, null);
     }
 
     /**
@@ -470,29 +473,6 @@ public class ConfigurationUtils {
      */
     public static List<URL> getAllClassPathResources() {
         return CPScanner.scanResources(new ResourceFilter());
-    }
-
-    /**
-     * Execute ddlsql boolean.
-     *
-     * @param sql the sql
-     * @return the boolean
-     * @throws Exception the exception
-     */
-    public static boolean executeDdlSql(String sql) throws Exception {
-        DataSource datasource = ConfigurationDataSource.lookup();
-        if (datasource == null) {
-            System.err.println("DB configuration not found. Configuration management will be using "
-                    + "in-memory persistence.");
-            return false;
-        }
-        try (Connection con = datasource.getConnection(); Statement stmt = con.createStatement()) {
-            stmt.executeQuery(sql);
-        } catch (Exception exception) {
-            System.err.println("Datasource initialization error. Configuration management will be using in-memory persistence.");
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -545,86 +525,9 @@ public class ConfigurationUtils {
                 builder = new ReloadingFileBasedConfigurationBuilder<>(YamlConfiguration.class);
                 break;
             default:
-                throw new IllegalArgumentException("Configuration type not supported:" + configType);
+                throw new IllegalArgumentException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
         }
         return builder;
-    }
-
-
-    /**
-     * Execute select sql collection.
-     *
-     * @param sql    the sql
-     * @param params the params
-     * @return the collection
-     * @throws Exception the exception
-     */
-    public static Collection<String> executeSelectSql(String sql, String[] params) throws Exception {
-        Collection<String> coll = new ArrayList<>();
-        DataSource datasource = ConfigurationDataSource.lookup();
-        try (Connection con = datasource.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
-            if (params != null) {
-                for (int i = 0; i < params.length; i++) {
-                    stmt.setString(i + 1, params[i]);
-                }
-            }
-
-            try (ResultSet rs = stmt.executeQuery()) {
-
-                while (rs.next()) {
-                    coll.add(rs.getString(1));
-                }
-            }
-
-        } catch (Exception exception) {
-            //exception.printStackTrace();
-            return null;
-        }
-
-        return coll;
-    }
-
-    /**
-     * Execute insert sql boolean.
-     *
-     * @param sql    the sql
-     * @param params the params
-     * @return the boolean
-     * @throws Exception the exception
-     */
-    public static boolean executeInsertSql(String sql, Object[] params) throws Exception {
-        DataSource datasource = ConfigurationDataSource.lookup();
-        try (Connection con = datasource.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
-            if (params != null) {
-                int counter = 0;
-                for (Object obj : params) {
-                    if (obj == null) {
-                        obj = "";
-                    }
-                    switch (obj.getClass().getName()) {
-                        case "java.lang.String":
-                            stmt.setString(++counter, obj.toString());
-                            break;
-                        case "java.lang.Integer":
-                            stmt.setInt(++counter, ((Integer) obj).intValue());
-                            break;
-                        case "java.lang.Long":
-                            stmt.setLong(++counter, ((Long) obj).longValue());
-                            break;
-                        default:
-                            stmt.setString(++counter, obj.toString());
-                            break;
-                    }
-                }
-            }
-            stmt.executeUpdate();
-            return true;
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return false;
     }
 
     /**
@@ -656,32 +559,6 @@ public class ConfigurationUtils {
             }
         }
         return objToReturn;
-    }
-
-    /**
-     * Gets db configuration builder.
-     *
-     * @param configName the config name
-     * @return the db configuration builder
-     * @throws Exception the exception
-     */
-    public static BasicConfigurationBuilder<AgglomerateConfiguration> getDbConfigurationBuilder(
-            String configName) throws Exception {
-        Configuration dbConfig = ConfigurationRepository.lookup()
-                .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
-        BasicConfigurationBuilder<AgglomerateConfiguration> builder =
-                new BasicConfigurationBuilder<AgglomerateConfiguration>(AgglomerateConfiguration.class);
-        builder.configure(
-                new Parameters().database()
-                        .setDataSource(ConfigurationDataSource.lookup())
-                        .setTable(dbConfig.getString("config.Table"))
-                        .setKeyColumn(dbConfig.getString("configKey"))
-                        .setValueColumn(dbConfig.getString("configValue"))
-                        .setConfigurationNameColumn(dbConfig.getString("configNameColumn"))
-                        .setConfigurationName(configName)
-                        .setAutoCommit(true)
-        );
-        return builder;
     }
 
     /**
@@ -777,8 +654,7 @@ public class ConfigurationUtils {
             }
             return array;
         }
-        Object obj = null;
-        return obj;
+        return null;
     }
 
     /**
