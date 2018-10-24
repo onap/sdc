@@ -1,27 +1,59 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onap.config.impl;
 
-import org.apache.commons.configuration2.*;
-import org.onap.config.ConfigurationUtils;
-import org.onap.config.Constants;
-import org.onap.config.api.ConfigurationManager;
-import org.onap.config.api.Hint;
-import org.onap.config.type.ConfigurationQuery;
-import org.onap.config.type.ConfigurationUpdate;
+import static org.onap.config.Constants.DB_NAMESPACE;
+import static org.onap.config.Constants.DEFAULT_NAMESPACE;
+import static org.onap.config.Constants.DEFAULT_TENANT;
+import static org.onap.config.Constants.KEY_ELEMENTS_DELEMETER;
+import static org.onap.config.Constants.LOAD_ORDER_KEY;
+import static org.onap.config.Constants.MBEAN_NAME;
+import static org.onap.config.Constants.MODE_KEY;
+import static org.onap.config.Constants.NAMESPACE_KEY;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.*;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerDelegate;
 import javax.management.MBeanServerNotification;
 import javax.management.Notification;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
-
-import static org.onap.config.Constants.*;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.onap.config.ConfigurationUtils;
+import org.onap.config.Constants;
+import org.onap.config.api.ConfigurationManager;
+import org.onap.config.api.Hint;
+import org.onap.config.type.ConfigurationQuery;
+import org.onap.config.type.ConfigurationUpdate;
 
 /**
  * The type Cli configuration.
@@ -62,7 +94,6 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                     if (mbs.getMBeanName()
                                 .equals(mbean == null ? new ObjectName(MBEAN_NAME) : new ObjectName(mbean))) {
                         changeNotifier.shutdown();
-                        ConfigurationDataSource.lookup().close();
                     }
                 } catch (Exception exception) {
                     //do nothing.
@@ -114,7 +145,6 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                 throw new RuntimeException("Invalid Namespace.");
             }
         } catch (NullPointerException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
@@ -161,9 +191,9 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                                         + updateData.getNamespace());
                         pc.setProperty(MODE_KEY, "OVERRIDE");
                         pc.setProperty(updateData.getKey(), updateData.getValue());
-                        if (System.getProperty("node.config.location") != null
-                                    && System.getProperty("node.config.location").trim().length() > 0) {
-                            File file = new File(System.getProperty("node.config.location"),
+                        String nodeConfigLocation = System.getProperty("node.config.location");
+                        if (nodeConfigLocation != null && nodeConfigLocation.trim().length() > 0) {
+                            File file = new File(nodeConfigLocation,
                                     updateData.getTenant() + File.separator + updateData.getNamespace()
                                             + File.separator + "config.properties");
                             file.getParentFile().mkdirs();
@@ -179,11 +209,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                                 .setProperty(updateData.getKey(), updateData.getValue());
                     }
                 }
-                if (!updateData.isNodeOverride()) {
-                    ConfigurationUtils.executeInsertSql(
-                            ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                                    .getString("insertconfigurationchangecql"), paramArray);
-                } else {
+                if (updateData.isNodeOverride()) {
                     ConfigurationRepository.lookup().refreshOverrideConfigurtaionFor(
                             updateData.getTenant() + KEY_ELEMENTS_DELEMETER + updateData.getNamespace(),
                             overrideIndex);
@@ -306,30 +332,10 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     @Override
     public Collection<String> getKeys(String tenant, String namespace) {
         Set<String> keyCollection = new HashSet<>();
-        try {
-            keyCollection.addAll(ConfigurationUtils.executeSelectSql(
-                    ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                            .getString("fetchkeysql"),
-                    new String[]{tenant + KEY_ELEMENTS_DELEMETER + DEFAULT_NAMESPACE}));
-            keyCollection.addAll(ConfigurationUtils.executeSelectSql(
-                    ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                            .getString("fetchkeysql"),
-                    new String[]{tenant + KEY_ELEMENTS_DELEMETER + namespace}));
-            keyCollection.addAll(ConfigurationUtils.executeSelectSql(
-                    ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                            .getString("fetchkeysql"),
-                    new String[]{DEFAULT_TENANT + KEY_ELEMENTS_DELEMETER + namespace}));
-            keyCollection.addAll(ConfigurationUtils.executeSelectSql(
-                    ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                            .getString("fetchkeysql"),
-                    new String[]{DEFAULT_TENANT + KEY_ELEMENTS_DELEMETER + DEFAULT_NAMESPACE}));
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            keyCollection.addAll(getInMemoryKeys(tenant, DEFAULT_NAMESPACE));
-            keyCollection.addAll(getInMemoryKeys(tenant, namespace));
-            keyCollection.addAll(getInMemoryKeys(DEFAULT_TENANT, namespace));
-            keyCollection.addAll(getInMemoryKeys(DEFAULT_TENANT, DEFAULT_NAMESPACE));
-        }
+        keyCollection.addAll(getInMemoryKeys(tenant, DEFAULT_NAMESPACE));
+        keyCollection.addAll(getInMemoryKeys(tenant, namespace));
+        keyCollection.addAll(getInMemoryKeys(DEFAULT_TENANT, namespace));
+        keyCollection.addAll(getInMemoryKeys(DEFAULT_TENANT, DEFAULT_NAMESPACE));
         return keyCollection;
     }
 }

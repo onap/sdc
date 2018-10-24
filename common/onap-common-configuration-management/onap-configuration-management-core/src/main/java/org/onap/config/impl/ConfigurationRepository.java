@@ -1,5 +1,32 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onap.config.impl;
 
+import java.io.File;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
@@ -9,10 +36,6 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
-
-import java.io.File;
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * The type Configuration repository.
@@ -26,7 +49,7 @@ public final class ConfigurationRepository {
   private static Set<String> validCallers = Collections.unmodifiableSet(new HashSet<>(Arrays
       .asList(ConfigurationChangeNotifier.NotificationData.class.getName(),
           ConfigurationUtils.class.getName(), CliConfigurationImpl.class.getName(),
-          ConfigurationChangeNotifier.class.getName(), ConfigurationDataSource.class.getName(),
+          ConfigurationChangeNotifier.class.getName(),
           ConfigurationImpl.class.getName())));
 
   static {
@@ -102,17 +125,7 @@ public final class ConfigurationRepository {
    * Init tenants and namespaces.
    */
   public void initTenantsAndNamespaces() {
-    try {
-      Collection<String> collection = ConfigurationUtils.executeSelectSql(
-          getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-              .getString("fetchnamescql"), new String[]{});
-      Iterator<String> iterator = collection.iterator();
-      while (iterator.hasNext()) {
-        populateTenantsNamespace(iterator.next(), true);
-      }
-    } catch (Exception exception) {
-      //Log this later
-    }
+    // nothing to do here, left for backward compatibility
   }
 
   /**
@@ -122,7 +135,7 @@ public final class ConfigurationRepository {
    * @return the boolean
    */
   public boolean isValidTenant(String tenant) {
-    return tenant == null ? false : tenants.contains(tenant.toUpperCase());
+    return tenant != null && tenants.contains(tenant.toUpperCase());
   }
 
   /**
@@ -132,7 +145,7 @@ public final class ConfigurationRepository {
    * @return the boolean
    */
   public boolean isValidNamespace(String namespace) {
-    return namespace == null ? false : namespaces.contains(namespace.toUpperCase());
+    return namespace != null && namespaces.contains(namespace.toUpperCase());
   }
 
   /**
@@ -148,8 +161,7 @@ public final class ConfigurationRepository {
     String module = tenant + Constants.KEY_ELEMENTS_DELEMETER + namespace;
     config = store.get(module);
     if (config == null) {
-      config = new ConfigurationHolder(ConfigurationUtils
-          .getDbConfigurationBuilder(tenant + Constants.KEY_ELEMENTS_DELEMETER + namespace));
+      config = new ConfigurationHolder(new BasicConfigurationBuilder<>(AgglomerateConfiguration.class));
       store.put(module, config);
     }
     return config.getConfiguration(tenant + Constants.KEY_ELEMENTS_DELEMETER + namespace);
@@ -167,32 +179,16 @@ public final class ConfigurationRepository {
   }
 
   /**
-   * Populate configurtaion.
-   *
-   * @param key     the key
-   * @param builder the builder
-   * @throws Exception the exception
-   */
-  public void populateConfigurtaion(String key, BasicConfigurationBuilder builder)
-      throws Exception {
-    store.put(key, new ConfigurationHolder(builder));
-  }
-
-  /**
    * Populate override configurtaion.
    *
    * @param key  the key
    * @param file the file
    * @throws Exception the exception
    */
-  public void populateOverrideConfigurtaion(String key, File file) throws Exception {
+  public void populateOverrideConfigurtaion(String key, File file) {
     ConfigurationHolder holder = store.get(key);
     if (holder == null) {
-      if (dbAccessible) {
-        holder = new ConfigurationHolder(ConfigurationUtils.getDbConfigurationBuilder(key));
-      } else {
         holder = new ConfigurationHolder(new CombinedConfiguration());
-      }
       store.put(key, holder);
     }
     holder.addOverrideConfiguration(file.getAbsolutePath(),
@@ -207,7 +203,7 @@ public final class ConfigurationRepository {
    * @param index the index
    * @throws Exception the exception
    */
-  public void refreshOverrideConfigurtaionFor(String key, int index) throws Exception {
+  public void refreshOverrideConfigurtaionFor(String key, int index) {
     ConfigurationHolder holder = store.get(key);
     if (holder != null) {
       holder.refreshOverrideConfiguration(index);
@@ -380,20 +376,7 @@ public final class ConfigurationRepository {
      * @return the last update timestamp for
      */
     public Timestamp getLastUpdateTimestampFor(String namespace) {
-      Timestamp timestamp = null;
-
-      try {
-        Collection<String> collection = ConfigurationUtils.executeSelectSql(
-            getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-                .getString("fetchlastchangecql"), new String[]{namespace});
-        if (!collection.isEmpty()) {
-          timestamp = new Timestamp(Long.valueOf(((ArrayList) collection).get(0).toString()));
-        }
-      } catch (Exception exception) {
-        //Log this later
-      }
-
-      return timestamp;
+      return null;
     }
 
 
