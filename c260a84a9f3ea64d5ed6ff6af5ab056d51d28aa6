@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0391ce51",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "this does locking each time there needs to be an overall lock and commit over all the operation and not separate onse for each operation.\nthe validations are done multiple times.\nyou need to validate the user once not each time.",
+      "range": {
+        "startLine": 1112,
+        "startChar": 81,
+        "endLine": 1112,
+        "endChar": 92
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_a39fa25e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3035,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "you need an over all lock on all the operation right now you are locing each time and you are doing the validations each time.",
+      "range": {
+        "startLine": 3035,
+        "startChar": 54,
+        "endLine": 3035,
+        "endChar": 88
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_2383b205",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3060,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "this needs to be done once since the container is the same.",
+      "range": {
+        "startLine": 3060,
+        "startChar": 68,
+        "endLine": 3060,
+        "endChar": 90
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_e37cca22",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3067,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "thsi needs to be done once.",
+      "range": {
+        "startLine": 3067,
+        "startChar": 69,
+        "endLine": 3067,
+        "endChar": 94
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0378ee29",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "this needs to be done once.",
+      "range": {
+        "startLine": 3075,
+        "startChar": 60,
+        "endLine": 3075,
+        "endChar": 73
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_c3718645",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3093,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T09:02:34Z",
+      "side": 1,
+      "message": "same as above this needs to be done on the top level not for each delete.",
+      "range": {
+        "startLine": 3093,
+        "startChar": 12,
+        "endLine": 3093,
+        "endChar": 28
+      },
+      "revId": "c260a84a9f3ea64d5ed6ff6af5ab056d51d28aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
