@@ -19,20 +19,29 @@ import com.amdocs.zusammen.adaptor.inbound.api.health.HealthAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ElementAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemVersionAdaptorFactory;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.*;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementConflict;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ItemVersionConflict;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.MergeResult;
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.Space;
-import com.amdocs.zusammen.datatypes.item.*;
+import com.amdocs.zusammen.datatypes.item.ElementContext;
+import com.amdocs.zusammen.datatypes.item.Info;
+import com.amdocs.zusammen.datatypes.item.Item;
+import com.amdocs.zusammen.datatypes.item.ItemVersion;
+import com.amdocs.zusammen.datatypes.item.ItemVersionData;
+import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
+import com.amdocs.zusammen.datatypes.item.Resolution;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import com.amdocs.zusammen.datatypes.response.Response;
+import java.util.Collection;
 import org.openecomp.core.zusammen.db.ZusammenConnector;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
-
-import java.util.Collection;
 
 public class ZusammenConnectorImpl implements ZusammenConnector {
 
@@ -355,8 +364,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   }
 
   @Override
-  public Element saveElement(SessionContext context, ElementContext elementContext,
-                             ZusammenElement element, String message) {
+  public Element saveElement(SessionContext context, ElementContext elementContext, Element element, String message) {
     Response<Element> response = elementAdaptorFactory.createInterface(context)
         .save(context, elementContext, element, message);
     if (!response.isSuccessful()) {
@@ -369,9 +377,8 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   }
 
   @Override
-  public void resolveElementConflict(SessionContext context, ElementContext elementContext,
-                                     ZusammenElement element,
-                                     Resolution resolution) {
+  public void resolveElementConflict(SessionContext context, ElementContext elementContext, Element element,
+          Resolution resolution) {
     Response<Void> response = elementAdaptorFactory.createInterface(context)
         .resolveConflict(context, elementContext, element, resolution);
     if (!response.isSuccessful()) {
