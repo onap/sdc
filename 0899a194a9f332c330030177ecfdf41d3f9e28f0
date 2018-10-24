@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_832ffef5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4802,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-24T09:54:11Z",
+      "side": 1,
+      "message": "If actionResultOp is null an exception will be thrown here.",
+      "revId": "0899a194a9f332c330030177ecfdf41d3f9e28f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
