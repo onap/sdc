@@ -92,7 +92,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
                   .withMessage("The supplied vendor is archived and therefore cannot be used").build();
   private static final ErrorCode USED_VLM_IS_DRAFT_ERROR =
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(FIELD_VALIDATION_ERROR_ERR_ID)
-                                          .withMessage("The supplied vendor version is draft and therefor can not be used").build();
+                                          .withMessage("The supplied vendor version is draft and therefore can not be used").build();
 
 
   /**
@@ -328,25 +328,29 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     return errorMessages;
   }
 
-  @Override
-  public Optional<ErrorCode> validateVendorForUsage(String vlmId, Version version) {
-    Item vlm = ItemManagerFactory.getInstance().createInterface().get(vlmId);
-    if(vlm == null) {
-      return Optional.of(USED_VLM_NOT_EXIST_ERROR);
+    @Override
+    public Optional<ErrorCode> validateVendorForUsage(String vlmId, Version version) {
+        Item vlm = ItemManagerFactory.getInstance().createInterface().get(vlmId);
+        return vlm == null
+                       ? Optional.of(USED_VLM_NOT_EXIST_ERROR)
+                       : ItemStatus.ARCHIVED == vlm.getStatus()
+                                 ? Optional.of(USED_VLM_ARCHIVE_ERROR)
+                                 : isDraftVlm(vlm, version)
+                                           ? Optional.of(USED_VLM_IS_DRAFT_ERROR)
+                                           : Optional.empty();
     }
 
-    if (ItemStatus.ARCHIVED == vlm.getStatus()){
-      return  Optional.of(USED_VLM_ARCHIVE_ERROR);
-    }
-
-   if(VersionStatus.Draft.equals(version.getStatus())){
-     return Optional.of(USED_VLM_IS_DRAFT_ERROR);
-    }
-
-    return Optional.empty();
+  private boolean isDraftVlm(Item vlm, Version version) {
+    return (version == null && isVlmWithoutCertifiedVersions(vlm)) ||
+              (version != null && VersionStatus.Draft.equals(version.getStatus()));
   }
 
-  @Override
+  private boolean isVlmWithoutCertifiedVersions(Item vlm) {
+        Integer numOfCertifiedVersions = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
+        return numOfCertifiedVersions == null || numOfCertifiedVersions < 1;
+    }
+
+    @Override
   public LicenseAgreementEntity getLicenseAgreement(String vlmId, Version version,
                                                     String licenseAgreementId) {
     LicenseAgreementEntity input = new LicenseAgreementEntity(vlmId, version, licenseAgreementId);
