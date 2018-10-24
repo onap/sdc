@@ -16,7 +16,6 @@
 
 package org.onap.config;
 
-import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.onap.config.test.CLIFallbackAndLookupTest;
@@ -57,20 +56,9 @@ import org.onap.config.test.YAMLConfigTest;
         NodeSpecificCliTest.class,
         ValidateDefaultModeTest.class,
         LoadOrderMergeAndOverrideTest.class})
-
 public class TestCMSuite extends junit.framework.TestSuite {
 
     private TestCMSuite() {
         // prevent instantiation
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        try {
-            ConfigurationUtils.executeDdlSql("truncate dox.configuration_change");
-            ConfigurationUtils.executeDdlSql("truncate dox.configuration");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
