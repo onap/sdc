@@ -108,4 +108,24 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn.surefire.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <systemPropertyVariables>
+                        <config.location>${project.basedir}/src/test/resources</config.location>
+                        <node.config.location>${user.home}/TestResources</node.config.location>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/TestCMSuite.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
