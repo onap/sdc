@@ -16,7 +16,6 @@
 	<modules>
 		<module>onap-configuration-management-api</module>
 		<module>onap-configuration-management-core</module>
-		<module>onap-configuration-management-test</module>
 	</modules>
 
 </project>
