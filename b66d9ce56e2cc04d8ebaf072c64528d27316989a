@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_036eae96",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/GroupBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T08:09:24Z",
+      "side": 1,
+      "message": "please merge the tests between the two class and not just remove the class",
+      "revId": "b66d9ce56e2cc04d8ebaf072c64528d27316989a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
