@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_632d3a46",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-24T08:17:05Z",
+      "side": 1,
+      "message": "please remove the commented suction since you are working on the class",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 69
+      },
+      "revId": "b31fc30227d6ae1ce33da8f86365c47d28ca58db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
