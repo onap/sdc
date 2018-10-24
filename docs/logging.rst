@@ -7,7 +7,7 @@ Logging
 
 Where to Access Information
 ---------------------------
-the logs for the application are available in the docker it self at /var/lib/jetty/logs/
+the logs for the application are available in the docker itself at /var/lib/jetty/logs/
 in Heat deployment the dockers are mapped into /data/logs on the vm where the application is running.
 In OOM you can use the logging project to access the logging collected from the applications.
 
