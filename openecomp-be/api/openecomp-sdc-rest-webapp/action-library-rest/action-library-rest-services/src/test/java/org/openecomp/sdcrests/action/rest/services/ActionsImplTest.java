@@ -19,6 +19,22 @@
 package org.openecomp.sdcrests.action.rest.services;
 
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM;
+import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.attachment.AttachmentDataSource;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.junit.Assert;
@@ -35,23 +51,6 @@ import org.openecomp.sdc.action.types.ActionArtifact;
 import org.openecomp.sdc.action.types.ActionStatus;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM;
-import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM;
-
 public class ActionsImplTest {
 
     @Mock
@@ -64,6 +63,7 @@ public class ActionsImplTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        when(request.getRemoteUser()).thenReturn("unit-test-user");
         when(request.getHeader(X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM)).thenReturn("X-OPEN-ECOMP-InstanceID");
         when(request.getHeader(X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM)).thenReturn("X-OPEN-ECOMP-RequestID");
     }
