@@ -13,7 +13,7 @@
 
     STOP.KEY=[alphanumeric]
       The passphrase defined to stop the server.
-      Requried along with STOP.PORT if you want to use the --stop option above.
+      Required along with STOP.PORT if you want to use the --stop option above.
 
     STOP.WAIT=[number]
       The time (in seconds) to wait for confirmation that the running
@@ -22,8 +22,8 @@
       
       
 #Upload Normative types:
-# 1. create zip file containing the yaml
-# 2. create json string (payloadName should be the yml file name): {
+# 1. create a zip file containing the yaml
+# 2. create a json string (payloadName should be the yml file name): {
 #					"payloadName":"normative-types-new-root.yml",
 #					"userId":"adminid",
 #					"resourceName":"tosca.nodes.Root",

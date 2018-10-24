@@ -12,10 +12,10 @@ more information is available in the OOM and in the demo projects.
 
 For local deployment SDC offers two options:
 
-- `Deploying SDC on a Linux VM for Development <https://wiki.onap.org/display/DW/Deploying+SDC+on+a+Linux+VM+for+Development>`_
-- `Using Vagrant-Onap for local deployment of SDC project <https://wiki.onap.org/display/DW/Deploying+SDC+on+a+Linux+VM+for+Development>`_
+- Deploying SDC on a Linux VM for Development <https://wiki.onap.org/display/DW/Deploying+SDC+on+a+Linux+VM+for+Development>`_
+- Using Vagrant-Onap for local deployment of SDC project <https://wiki.onap.org/display/DW/Deploying+SDC+on+a+Linux+VM+for+Development>`_
 
 
 SDC troubleshooting:
 
-- `trouble shooting guide and logging info <https://wiki.onap.org/display/DW/SDC+Troubleshooting>`_
+- Trouble shooting guide and logging info <https://wiki.onap.org/display/DW/SDC+Troubleshooting>`_
