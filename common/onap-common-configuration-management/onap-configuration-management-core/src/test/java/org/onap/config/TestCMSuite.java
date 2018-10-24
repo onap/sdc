@@ -1,9 +1,39 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onap.config;
 
 import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.onap.config.test.*;
+import org.onap.config.test.CLIFallbackAndLookupTest;
+import org.onap.config.test.CliTest;
+import org.onap.config.test.ConfigSourceLocationTest;
+import org.onap.config.test.FallbackConfigTest;
+import org.onap.config.test.FallbackToGlobalNSTest;
+import org.onap.config.test.GlobalAndNSConfigTest;
+import org.onap.config.test.JAVAPropertiesConfigTest;
+import org.onap.config.test.JSONConfigTest;
+import org.onap.config.test.LoadOrderMergeAndOverrideTest;
+import org.onap.config.test.ModeAsConfigPropTest;
+import org.onap.config.test.MultiTenancyConfigTest;
+import org.onap.config.test.NodeSpecificCliTest;
+import org.onap.config.test.ValidateDefaultModeTest;
+import org.onap.config.test.XMLConfigTest;
+import org.onap.config.test.YAMLConfigTest;
 
 /**
  * Created by sheetalm on 10/25/2016.
@@ -11,44 +41,35 @@ import org.onap.config.test.*;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        ConfigurationUtilsTest.class,
         JAVAPropertiesConfigTest.class,
         JSONConfigTest.class,
         XMLConfigTest.class,
         YAMLConfigTest.class,
         CLIFallbackAndLookupTest.class,
-        CLITest.class,
+        CliTest.class,
         ConfigSourceLocationTest.class,
-        DynamicConfigurationTest.class,
         FallbackConfigTest.class,
         FallbackToGlobalNSTest.class,
         GlobalAndNSConfigTest.class,
         ModeAsConfigPropTest.class,
         MultiTenancyConfigTest.class,
-        NodeSpecificCLITest.class,
-        NotificationForNodeConfigTest.class,
-        NotificationOnPropValTest.class,
-        ResourceChangeNotificationTest.class,
-        UnregisterNotificationTest.class,
+        NodeSpecificCliTest.class,
         ValidateDefaultModeTest.class,
-        ValidateNodeConfigTest.class,
-        LoadOrderMergeAndOverrideTest.class
-
-
-})
+        LoadOrderMergeAndOverrideTest.class})
 
 public class TestCMSuite extends junit.framework.TestSuite {
 
     private TestCMSuite() {
-
+        // prevent instantiation
     }
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         try {
             ConfigurationUtils.executeDdlSql("truncate dox.configuration_change");
             ConfigurationUtils.executeDdlSql("truncate dox.configuration");
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
