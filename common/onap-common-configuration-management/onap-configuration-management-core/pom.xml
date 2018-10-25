@@ -119,11 +119,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
-                    <!--
-                        For some reason running without JaCoCo causes test failures.
-                        Making tests depend on JaCoCo until the problem is fixed.
-                     -->
-                    <skipTests>${jacoco.skip}</skipTests>
                     <systemPropertyVariables>
                         <config.location>${project.basedir}/src/test/resources</config.location>
                         <node.config.location>${user.home}/TestResources</node.config.location>
