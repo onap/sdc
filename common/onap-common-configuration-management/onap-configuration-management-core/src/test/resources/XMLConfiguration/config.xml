@@ -16,7 +16,7 @@
 		<status>Deleted</status>
 		<persistLocation>/opt/spool,${sys:user.home}/asdc</persistLocation>
 		<jsonSchema>@GeneratorList.json</jsonSchema>
-		<xmlSchema>@${env:path}/myschema.json</xmlSchema>
+		<xmlSchema>@${env:PATH}/myschema.json</xmlSchema>
 		<consumerAPPC>${artifact.consumer}</consumerAPPC>
 	</artifact>
 	<_config>

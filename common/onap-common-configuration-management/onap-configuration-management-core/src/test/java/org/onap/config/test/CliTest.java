@@ -77,7 +77,7 @@ public class CliTest {
         Assert.assertEquals("14", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
         Assert.assertEquals("pdf,zip,xml,pdf,tgz,xls", outputMap.get(ConfigTestConstant.ARTIFACT_EXT));
         Assert.assertEquals("Base64,MD5", outputMap.get(ConfigTestConstant.ARTIFACT_ENC));
-        Assert.assertEquals("@" + System.getenv("Path") + "/myschema.json",
+        Assert.assertEquals("@" + TestUtil.getenv(ConfigTestConstant.PATH) + "/myschema.json",
                 outputMap.get(ConfigTestConstant.ARTIFACT_XML_SCHEMA));
         Assert.assertEquals("a-zA-Z_0-9", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_UPPER));
         Assert.assertEquals("/opt/spool," + System.getProperty("user.home") + "/asdc",

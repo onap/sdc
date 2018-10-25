@@ -84,7 +84,7 @@ public class TestUtil {
 
         Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA ), "@GeneratorList.json");
 
-        Assert.assertEquals("@"+System.getenv("Path")+"/myschema.json",config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+        Assert.assertEquals("@"+getenv(ConfigTestConstant.PATH)+"/myschema.json",config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
 
         List<String> artifactConsumer = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER );
         Assert.assertEquals(config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER_APPC ), artifactConsumer);
@@ -92,5 +92,14 @@ public class TestUtil {
         Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH ), "6");
         Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME ), "true");
         Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_ENCODED ), "true");
+    }
+
+    /**
+     * This to make the behavior of tests consistent with "env:X" in configuration files
+     * when environment variable X is not defined.
+     */
+    public static String getenv(String name) {
+        String value = System.getenv(name);
+        return value == null ? "" : value;
     }
 }
