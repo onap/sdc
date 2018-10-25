@@ -25,6 +25,7 @@ import java.util.List;
 import org.junit.Test;
 
 public class ConfigurationUtilsTest {
+
     @Test
     public void testCommaList() {
         List<?> list = Arrays.asList("1", "2", 3);

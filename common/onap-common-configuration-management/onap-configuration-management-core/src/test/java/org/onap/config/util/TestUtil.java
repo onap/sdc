@@ -30,33 +30,32 @@ import org.onap.config.api.ConfigurationManager;
  */
 public class TestUtil {
 
-    public final static String jsonSchemaLoc = System.getProperty("user.home")+"/TestResources/";
-    public static FileWriter fileWriter ;
-
-    public static void writeFile(String data) throws IOException {
-        File dir = new File(jsonSchemaLoc);
-        dir.mkdirs();
-        File file = new File(jsonSchemaLoc+"/GeneratorsList.json");
-        file.createNewFile();
-        fileWriter = new FileWriter(file);
-        fileWriter.write(data);
-        fileWriter.close();
-    }
+    public static final String jsonSchemaLoc = System.getProperty("user.home") + "/TestResources/";
 
     public static void cleanUp() throws Exception {
         String data = "{name:\"SCM\"}";
         TestUtil.writeFile(data);
     }
 
-    public static void validateConfiguraton(String nameSpace) {
+    public static void writeFile(String data) throws IOException {
+        File dir = new File(jsonSchemaLoc);
+        dir.mkdirs();
+        File file = new File(jsonSchemaLoc + "/GeneratorsList.json");
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(data);
+        fileWriter.close();
+    }
+
+    public static void validateConfiguration(String nameSpace) {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH ), "14");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
 
         // First value from list is picked from Merge properties
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MAXSIZE ), "1048576");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MAXSIZE), "1048576");
 
-        List<String> expectedExtList = new ArrayList<String>();
+        List<String> expectedExtList = new ArrayList<>();
         expectedExtList.add("pdf");
         expectedExtList.add("zip");
         expectedExtList.add("xml");
@@ -66,32 +65,35 @@ public class TestUtil {
         List<String> extList = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_EXT);
         Assert.assertEquals(expectedExtList, extList);
 
-        List<String> expectedEncList = new ArrayList<String>();
+        List<String> expectedEncList = new ArrayList<>();
         expectedEncList.add("Base64");
         expectedEncList.add("MD5");
         List<String> encList = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_ENC);
         Assert.assertEquals(expectedEncList, encList);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_UPPER ), "a-zA-Z_0-9");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_LOWER ), "a-zA-Z");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_STATUS ), "deleted");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_UPPER), "a-zA-Z_0-9");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_LOWER), "a-zA-Z");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_STATUS), "deleted");
 
-        List<String> expectedLocList = new ArrayList<String>();
+        List<String> expectedLocList = new ArrayList<>();
         expectedLocList.add("/opt/spool");
-        expectedLocList.add(System.getProperty("user.home")+"/asdc");
+        expectedLocList.add(System.getProperty("user.home") + "/asdc");
         List<String> locList = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_LOC);
         Assert.assertEquals(expectedLocList, locList);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA ), "@GeneratorList.json");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA),
+                "@GeneratorList.json");
 
-        Assert.assertEquals("@"+getenv(ConfigTestConstant.PATH)+"/myschema.json",config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+        Assert.assertEquals("@" + getenv(ConfigTestConstant.PATH) + "/myschema.json",
+                config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
 
-        List<String> artifactConsumer = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER );
-        Assert.assertEquals(config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER_APPC ), artifactConsumer);
+        List<String> artifactConsumer = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER);
+        Assert.assertEquals(config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER_APPC),
+                artifactConsumer);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH ), "6");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME ), "true");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_ENCODED ), "true");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH), "6");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME), "true");
+        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_ENCODED), "true");
     }
 
     /**

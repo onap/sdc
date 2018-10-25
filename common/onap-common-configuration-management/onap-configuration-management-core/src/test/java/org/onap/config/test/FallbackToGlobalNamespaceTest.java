@@ -27,12 +27,14 @@ import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
 /**
- * Created by ARR on 10/14/2016.
- * Scenario 17 - Verify Configuration management System - Support for Multi-Tenancy.
+ * Scenario 12
+ * Verify configuration value fallback to the global namespace if the configuration property does
+ * not exist in the namespace configuration.
+ * Created by sheetalm on 10/14/2016.
  */
-public class MultiTenancyConfigTest {
+public class FallbackToGlobalNamespaceTest {
 
-    private static final String NAMESPACE = "tenancy";
+    private static final String NAMESPACE = "FallbackToGlobalNS";
 
     @Before
     public void setUp() throws IOException {
@@ -41,20 +43,16 @@ public class MultiTenancyConfigTest {
     }
 
     @Test
-    public void testConfigurationWithMultiTenancyFileFormat() {
+    public void testFallbackToGlobalNamespace() {
         Configuration config = ConfigurationManager.lookup();
-
-        Assert.assertEquals(config.getAsString("OPENECOMP", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH),
-                "20");
-
-        Assert.assertEquals(config.getAsString("Telefonica", NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS), "Deleted");
-
-        Assert.assertEquals(config.getAsString("TID", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
-
+        Assert.assertEquals("14", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
+        Assert.assertEquals("1024", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_MAXSIZE));
     }
 
     @After
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }
+
+
 }
