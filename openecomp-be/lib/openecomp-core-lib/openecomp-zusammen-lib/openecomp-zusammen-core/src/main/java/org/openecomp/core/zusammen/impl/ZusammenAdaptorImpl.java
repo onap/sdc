@@ -15,22 +15,31 @@
  */
 package org.openecomp.core.zusammen.impl;
 
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.*;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementConflict;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ItemVersionConflict;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.item.*;
+import com.amdocs.zusammen.datatypes.item.Action;
+import com.amdocs.zusammen.datatypes.item.ElementContext;
+import com.amdocs.zusammen.datatypes.item.Info;
+import com.amdocs.zusammen.datatypes.item.Item;
+import com.amdocs.zusammen.datatypes.item.ItemVersion;
+import com.amdocs.zusammen.datatypes.item.ItemVersionData;
+import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
+import com.amdocs.zusammen.datatypes.item.Resolution;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
-import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.db.ZusammenConnector;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.openecomp.core.zusammen.api.ZusammenAdaptor;
+import org.openecomp.core.zusammen.db.ZusammenConnector;
 
 public class ZusammenAdaptorImpl implements ZusammenAdaptor {
 
@@ -145,6 +154,9 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
     if (element.getElementId() != null) {
       return;
     }
+    if (element.getInfo() == null || element.getInfo().getName() == null) {
+      throw new IllegalArgumentException("When saving element to zusammen - its Id or name must be supplied");
+    }
     Optional<ElementInfo> elementInfo =
         getElementInfoByName(context, elementContext, parentElementId, element.getInfo().getName());
     if (elementInfo.isPresent()) {
@@ -187,19 +199,6 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   @Override
   public void updateItem(SessionContext context, Id itemId, Info info) {
     connector.updateItem(context, itemId, info);
-  }
-
-  @Override
-  public Optional<ItemVersion> getFirstVersion(SessionContext context, Id itemId) {
-    Collection<ItemVersion> versions = connector.listPublicVersions(context, itemId);
-    if (versions == null || versions.isEmpty()) {
-      return Optional.empty();
-    }
-    List<ItemVersion> itemVersions = new ArrayList<>(versions);
-    sortItemVersionListByModificationTimeDescOrder(itemVersions);
-    ItemVersion itemVersion = itemVersions.iterator().next();
-
-    return Optional.ofNullable(itemVersion);
   }
 
   @Override
@@ -288,11 +287,5 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   @Override
   public String getVersion(SessionContext context) {
     return connector.getVersion(context);
-  }
-
-  private static void sortItemVersionListByModificationTimeDescOrder(
-      List<ItemVersion> itemVersions) {
-    itemVersions.sort((o1, o2) -> Integer.compare(o2.getId().getValue().length(),
-        o1.getId().getValue().length()));
   }
 }
