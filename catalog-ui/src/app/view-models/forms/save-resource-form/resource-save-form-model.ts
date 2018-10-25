@@ -126,7 +126,7 @@ export class ResourceSaveViewFormModel {
             this.$scope.isAlreadyPressed = true;
             this.$scope.component.icon = "combination";
 
-            this.componentServiceNg2.createServiceInput(this.$scope.component, this.serviceId).subscribe(onSaveSuccess, onSaveSuccess);
+            this.componentServiceNg2.createServiceInput(this.$scope.component, this.serviceId).subscribe(onSaveSuccess, onSaveFailed);
         };
 
         this.$scope.footerButtons = [
