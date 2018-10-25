@@ -88,7 +88,7 @@
         <jackson.dataformat.version>${jackson.version}</jackson.dataformat.version>
         <jackson.mapper.version>1.9.13</jackson.mapper.version>
         <jcommander.version>1.58</jcommander.version>
-        <jetty.servlets.version>9.0.6.v20130930</jetty.servlets.version>
+        <jetty.servlets.version>9.4.11.v20180605</jetty.servlets.version>
         <jersey.core.version>1.19.1</jersey.core.version>
         <jersey.multipart.version>1.18.1</jersey.multipart.version>
         <junit.version>4.12</junit.version>
