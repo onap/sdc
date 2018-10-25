@@ -18,6 +18,7 @@ public class ConfigTestConstant {
 	public static final String ARTIFACT_NAME_MINLENGTH = "artifact.name.minlength";
 	public static final String ARTIFACT_ENCODED = "artifact.encoded";
 
+	public static final String PATH = "PATH";
 	public static final String ONBOARDING_NAMESPACE = "onboarding";
 
 }

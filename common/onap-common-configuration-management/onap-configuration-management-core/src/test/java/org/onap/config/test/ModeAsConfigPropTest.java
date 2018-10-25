@@ -67,7 +67,7 @@ public class ModeAsConfigPropTest {
 		List<String> locList = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_LOC);
 		Assert.assertEquals(expectedLocList, locList);
 
-		Assert.assertEquals("@"+System.getenv("Path")+"/myschema.json",config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+		Assert.assertEquals("@"+TestUtil.getenv(ConfigTestConstant.PATH)+"/myschema.json",config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
 
 		List<String> artifactConsumer = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_CONSUMER );
 		Assert.assertEquals(config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_CONSUMER_APPC ), artifactConsumer);
