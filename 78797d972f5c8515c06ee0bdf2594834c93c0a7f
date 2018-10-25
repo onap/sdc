@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_8f939ff9",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsontitan/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-25T09:22:16Z",
+      "side": 1,
+      "message": "need to add an assertion on the test",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 190,
+        "endChar": 68
+      },
+      "revId": "78797d972f5c8515c06ee0bdf2594834c93c0a7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4fbdb767",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsontitan/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-25T09:22:16Z",
+      "side": 1,
+      "message": "need to add an assertion to check the logic.",
+      "range": {
+        "startLine": 212,
+        "startChar": 0,
+        "endLine": 213,
+        "endChar": 84
+      },
+      "revId": "78797d972f5c8515c06ee0bdf2594834c93c0a7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
