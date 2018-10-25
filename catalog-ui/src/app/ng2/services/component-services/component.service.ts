@@ -202,7 +202,6 @@ export class ComponentServiceNg2 {
             })
     }
     createServiceInput(component: Component, serviceId: string): Observable<any> {
-
         return this.http.post(this.baseUrl + 'combination/' + serviceId, component)
             .map(res => {
                 return res.json();
