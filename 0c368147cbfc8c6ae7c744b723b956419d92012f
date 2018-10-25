@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0f456f6f",
+        "filename": "docs/installation.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-25T09:33:09Z",
+      "side": 0,
+      "message": "removing thsi brakes the rst formate please check using the online rst editor and you will see it is corect as it was.",
+      "range": {
+        "startLine": 15,
+        "startChar": 1,
+        "endLine": 15,
+        "endChar": 4
+      },
+      "revId": "0c368147cbfc8c6ae7c744b723b956419d92012f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

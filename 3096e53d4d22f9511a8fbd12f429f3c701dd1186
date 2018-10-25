@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_cf5e8745",
+        "filename": "openecomp-be/lib/openecomp-common-lib/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-25T09:33:09Z",
+      "side": 1,
+      "message": "why was this add?",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 21
+      },
+      "revId": "3096e53d4d22f9511a8fbd12f429f3c701dd1186",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
