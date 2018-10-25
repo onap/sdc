@@ -16,6 +16,24 @@
       "revId": "b66d9ce56e2cc04d8ebaf072c64528d27316989a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4fa297af",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/GroupBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-10-25T06:26:30Z",
+      "side": 1,
+      "message": "there is no test in this class. You want me to merge the @Before annotations with the other test class? That probably wont be necessary..",
+      "parentUuid": "bada0100_036eae96",
+      "revId": "b66d9ce56e2cc04d8ebaf072c64528d27316989a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
