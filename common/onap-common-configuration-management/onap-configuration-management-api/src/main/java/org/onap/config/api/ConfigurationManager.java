@@ -1,98 +1,52 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onap.config.api;
 
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-/**
- * The interface Configuration manager.
- */
 public interface ConfigurationManager extends Configuration {
 
-  /**
-   * The constant config.
-   */
-  public static final Configuration config = lookup();
+    Configuration CONFIG = lookup();
 
-  /**
-   * Lookup configuration.
-   *
-   * @return the configuration
-   */
-  public static Configuration lookup() {
-    if (config == null) {
-      ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
-      for (ConfigurationManager configuration : loader) {
-        return (Configuration) Proxy.newProxyInstance(ConfigurationManager.class.getClassLoader(),
-            new Class[]{Configuration.class}, (object, method, args) -> {
-              try {
-                return method.invoke(configuration, args);
-              } catch (InvocationTargetException ite) {
-                throw ite.getTargetException();
-              }
-            });
-      }
+    static Configuration lookup() {
+
+        if (CONFIG == null) {
+            ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
+            Iterator<ConfigurationManager> configManagers = loader.iterator();
+            return configManagers.hasNext() ? configManagers.next() : null;
+        }
+
+        return CONFIG;
     }
-    return config;
-  }
 
-  /**
-   * Gets configuration value.
-   *
-   * @param queryData the query data
-   * @return the configuration value
-   */
-  public String getConfigurationValue(Map<String, Object> queryData);
+    String getConfigurationValue(Map<String, Object> queryData);
 
-  /**
-   * Update configuration value.
-   *
-   * @param updateData the update data
-   */
-  public void updateConfigurationValue(Map<String, Object> updateData);
+    void updateConfigurationValue(Map<String, Object> updateData);
 
-  /**
-   * List configuration map.
-   *
-   * @param query the query
-   * @return the map
-   */
-  public Map<String, String> listConfiguration(Map<String, Object> query);
+    Map<String, String> listConfiguration(Map<String, Object> query);
 
-  /**
-   * Update configuration values boolean.
-   *
-   * @param tenant              the tenant
-   * @param namespace           the namespace
-   * @param configKeyValueStore the config key value store
-   * @return the boolean
-   */
-  public boolean updateConfigurationValues(String tenant, String namespace,
-                                           Map configKeyValueStore);
+    boolean updateConfigurationValues(String tenant, String namespace, Map configKeyValueStore);
 
-  /**
-   * Gets tenants.
-   *
-   * @return the tenants
-   */
-  public Collection<String> getTenants();
+    Collection<String> getTenants();
 
-  /**
-   * Gets namespaces.
-   *
-   * @return the namespaces
-   */
-  public Collection<String> getNamespaces();
+    Collection<String> getNamespaces();
 
-  /**
-   * Gets keys.
-   *
-   * @param tenant    the tenant
-   * @param namespace the namespace
-   * @return the keys
-   */
-  public Collection<String> getKeys(String tenant, String namespace);
+    Collection<String> getKeys(String tenant, String namespace);
 }

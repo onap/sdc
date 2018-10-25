@@ -18,44 +18,32 @@ package org.onap.config;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.onap.config.test.CLIFallbackAndLookupTest;
+import org.onap.config.test.CliFallbackAndLookupTest;
 import org.onap.config.test.CliTest;
 import org.onap.config.test.ConfigSourceLocationTest;
 import org.onap.config.test.FallbackConfigTest;
-import org.onap.config.test.FallbackToGlobalNSTest;
-import org.onap.config.test.GlobalAndNSConfigTest;
-import org.onap.config.test.JAVAPropertiesConfigTest;
-import org.onap.config.test.JSONConfigTest;
+import org.onap.config.test.FallbackToGlobalNamespaceTest;
+import org.onap.config.test.GlobalAndNamespaceConfigTest;
+import org.onap.config.test.JavaPropertiesConfigTest;
+import org.onap.config.test.JsonConfigTest;
 import org.onap.config.test.LoadOrderMergeAndOverrideTest;
 import org.onap.config.test.ModeAsConfigPropTest;
 import org.onap.config.test.MultiTenancyConfigTest;
 import org.onap.config.test.NodeSpecificCliTest;
 import org.onap.config.test.ValidateDefaultModeTest;
-import org.onap.config.test.XMLConfigTest;
-import org.onap.config.test.YAMLConfigTest;
+import org.onap.config.test.XmlConfigTest;
+import org.onap.config.test.YamlConfigTest;
 
 /**
  * Created by sheetalm on 10/25/2016.
  */
-
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-        ConfigurationUtilsTest.class,
-        JAVAPropertiesConfigTest.class,
-        JSONConfigTest.class,
-        XMLConfigTest.class,
-        YAMLConfigTest.class,
-        CLIFallbackAndLookupTest.class,
-        CliTest.class,
-        ConfigSourceLocationTest.class,
-        FallbackConfigTest.class,
-        FallbackToGlobalNSTest.class,
-        GlobalAndNSConfigTest.class,
-        ModeAsConfigPropTest.class,
-        MultiTenancyConfigTest.class,
-        NodeSpecificCliTest.class,
-        ValidateDefaultModeTest.class,
-        LoadOrderMergeAndOverrideTest.class})
+@Suite.SuiteClasses(
+        {ConfigurationUtilsTest.class, JavaPropertiesConfigTest.class, JsonConfigTest.class, XmlConfigTest.class,
+                YamlConfigTest.class, CliFallbackAndLookupTest.class, CliTest.class, ConfigSourceLocationTest.class,
+                FallbackConfigTest.class, FallbackToGlobalNamespaceTest.class, GlobalAndNamespaceConfigTest.class,
+                ModeAsConfigPropTest.class, MultiTenancyConfigTest.class, NodeSpecificCliTest.class,
+                ValidateDefaultModeTest.class, LoadOrderMergeAndOverrideTest.class})
 public class TestCMSuite extends junit.framework.TestSuite {
 
     private TestCMSuite() {

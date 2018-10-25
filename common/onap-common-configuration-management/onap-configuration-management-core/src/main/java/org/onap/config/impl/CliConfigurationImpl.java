@@ -19,7 +19,7 @@ package org.onap.config.impl;
 import static org.onap.config.Constants.DB_NAMESPACE;
 import static org.onap.config.Constants.DEFAULT_NAMESPACE;
 import static org.onap.config.Constants.DEFAULT_TENANT;
-import static org.onap.config.Constants.KEY_ELEMENTS_DELEMETER;
+import static org.onap.config.Constants.KEY_ELEMENTS_DELIMETER;
 import static org.onap.config.Constants.LOAD_ORDER_KEY;
 import static org.onap.config.Constants.MBEAN_NAME;
 import static org.onap.config.Constants.MODE_KEY;
@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -55,16 +56,8 @@ import org.onap.config.api.Hint;
 import org.onap.config.type.ConfigurationQuery;
 import org.onap.config.type.ConfigurationUpdate;
 
-/**
- * The type Cli configuration.
- */
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 
-    /**
-     * Instantiates a new Cli configuration.
-     *
-     * @throws Exception the exception
-     */
     public CliConfigurationImpl() throws Exception {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName name = new ObjectName(MBEAN_NAME);
@@ -73,26 +66,17 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         }
         mbs.registerMBean(new StandardMBean(this, ConfigurationManager.class), name);
         mbs.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME,
-                (notification, handback) -> handleNotification(notification), null,
-                null);
+                (notification, handback) -> handleNotification(notification), null, null);
     }
 
-
-    /**
-     * Handle notification.
-     *
-     * @param notification the notification
-     */
     public void handleNotification(Notification notification) {
         if (notification instanceof MBeanServerNotification) {
             MBeanServerNotification mbs = (MBeanServerNotification) notification;
             if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(mbs.getType())) {
                 try {
-                    String mbean =
-                            ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-                                    .getString("shutdown.mbean");
-                    if (mbs.getMBeanName()
-                                .equals(mbean == null ? new ObjectName(MBEAN_NAME) : new ObjectName(mbean))) {
+                    String mbean = ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
+                                           .getString("shutdown.mbean");
+                    if (mbs.getMBeanName().equals(mbean == null ? new ObjectName(MBEAN_NAME) : new ObjectName(mbean))) {
                         changeNotifier.shutdown();
                     }
                 } catch (Exception exception) {
@@ -118,17 +102,34 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                                 queryData.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT));
             } else {
                 String[] list =
-                        getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(),
-                                String[].class, queryData.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT,
+                        getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
+                                queryData.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT,
                                 queryData.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT,
                                 queryData.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
                 return ConfigurationUtils
-                               .getCommaSeparatedList(list == null ? Arrays.asList() : Arrays.asList(list));
+                               .getCommaSeparatedList(list == null ? Collections.emptyList() : Arrays.asList(list));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    private Object getInput(Map<String, Object> input) {
+        Object toReturn = null;
+        try {
+            toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
+            Method[] methods = toReturn.getClass().getMethods();
+            for (Method method : methods) {
+                if (input.containsKey(method.getName())) {
+                    method.invoke(toReturn, input.get(method.getName()));
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return toReturn;
     }
 
     public void updateConfigurationValue(Map<String, Object> input) {
@@ -149,14 +150,13 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         }
 
         try {
-            boolean keyPresent =
-                    isKeyExists(updateData.getTenant(), updateData.getNamespace(), updateData.getKey());
+            boolean keyPresent = isKeyExists(updateData.getTenant(), updateData.getNamespace(), updateData.getKey());
             if (keyPresent) {
                 boolean isUpdated = false;
-                Object[] paramArray = new Object[]{
-                        updateData.getTenant() + KEY_ELEMENTS_DELEMETER + updateData.getNamespace(),
-                        new Long(System.currentTimeMillis()), updateData.getKey(),
-                        getConfigurationValue(updateData), updateData.getValue()};
+                Object[] paramArray =
+                        new Object[] {updateData.getTenant() + KEY_ELEMENTS_DELIMETER + updateData.getNamespace(),
+                                System.currentTimeMillis(), updateData.getKey(), getConfigurationValue(updateData),
+                                updateData.getValue()};
                 Configuration config = ConfigurationRepository.lookup()
                                                .getConfigurationFor(updateData.getTenant(), updateData.getNamespace());
                 if (config instanceof AgglomerateConfiguration || config instanceof CombinedConfiguration) {
@@ -167,17 +167,15 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                 CompositeConfiguration configuration = (CompositeConfiguration) config;
                 int overrideIndex = -1;
                 for (int i = 0; i < configuration.getNumberOfConfigurations(); i++) {
-                    if (!updateData.isNodeOverride()
-                                && (configuration.getConfiguration(i) instanceof AgglomerateConfiguration
-                                            || configuration.getConfiguration(i) instanceof CombinedConfiguration)) {
-                        configuration.getConfiguration(i)
-                                .setProperty(updateData.getKey(), updateData.getValue());
+                    if (!updateData.isNodeOverride() && (
+                            configuration.getConfiguration(i) instanceof AgglomerateConfiguration
+                                    || configuration.getConfiguration(i) instanceof CombinedConfiguration)) {
+                        configuration.getConfiguration(i).setProperty(updateData.getKey(), updateData.getValue());
                         isUpdated = true;
                         break;
-                    } else if (updateData.isNodeOverride()
-                                       && configuration.getConfiguration(i) instanceof FileBasedConfiguration) {
-                        configuration.getConfiguration(i)
-                                .setProperty(updateData.getKey(), updateData.getValue());
+                    } else if (updateData.isNodeOverride() && configuration.getConfiguration(
+                            i) instanceof FileBasedConfiguration) {
+                        configuration.getConfiguration(i).setProperty(updateData.getKey(), updateData.getValue());
                         isUpdated = true;
                         overrideIndex = i;
                         break;
@@ -187,32 +185,29 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                     if (updateData.isNodeOverride()) {
                         PropertiesConfiguration pc = new PropertiesConfiguration();
                         pc.setProperty(NAMESPACE_KEY,
-                                updateData.getTenant() + Constants.TENANT_NAMESPACE_SAPERATOR
+                                updateData.getTenant() + Constants.TENANT_NAMESPACE_SEPARATOR
                                         + updateData.getNamespace());
                         pc.setProperty(MODE_KEY, "OVERRIDE");
                         pc.setProperty(updateData.getKey(), updateData.getValue());
                         String nodeConfigLocation = System.getProperty("node.config.location");
                         if (nodeConfigLocation != null && nodeConfigLocation.trim().length() > 0) {
                             File file = new File(nodeConfigLocation,
-                                    updateData.getTenant() + File.separator + updateData.getNamespace()
-                                            + File.separator + "config.properties");
+                                    updateData.getTenant() + File.separator + updateData.getNamespace() + File.separator
+                                            + "config.properties");
                             file.getParentFile().mkdirs();
                             PrintWriter out = new PrintWriter(file);
                             pc.write(out);
                             out.close();
-                            ConfigurationRepository.lookup().populateOverrideConfigurtaion(
-                                    updateData.getTenant() + KEY_ELEMENTS_DELEMETER + updateData.getNamespace(),
-                                    file);
+                            ConfigurationRepository.lookup().populateOverrideConfiguration(
+                                    updateData.getTenant() + KEY_ELEMENTS_DELIMETER + updateData.getNamespace(), file);
                         }
                     } else {
-                        configuration.getConfiguration(0)
-                                .setProperty(updateData.getKey(), updateData.getValue());
+                        configuration.getConfiguration(0).setProperty(updateData.getKey(), updateData.getValue());
                     }
                 }
                 if (updateData.isNodeOverride()) {
-                    ConfigurationRepository.lookup().refreshOverrideConfigurtaionFor(
-                            updateData.getTenant() + KEY_ELEMENTS_DELEMETER + updateData.getNamespace(),
-                            overrideIndex);
+                    ConfigurationRepository.lookup().refreshOverrideConfigurationFor(
+                            updateData.getTenant() + KEY_ELEMENTS_DELIMETER + updateData.getNamespace(), overrideIndex);
                 }
             }
         } catch (Exception exception) {
@@ -223,8 +218,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     private boolean isKeyExists(String tenant, String namespace, String key) {
         boolean keyExist = false;
         try {
-            keyExist =
-                    ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).containsKey(key);
+            keyExist = ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).containsKey(key);
             if (!keyExist && !DEFAULT_TENANT.equals(tenant)) {
                 keyExist = ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, namespace)
                                    .containsKey(key);
@@ -234,9 +228,8 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                                    .containsKey(key);
             }
             if (!keyExist && !DEFAULT_TENANT.equals(tenant) && !DEFAULT_NAMESPACE.equals(namespace)) {
-                keyExist =
-                        ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DEFAULT_NAMESPACE)
-                                .containsKey(key);
+                keyExist = ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DEFAULT_NAMESPACE)
+                                   .containsKey(key);
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -262,14 +255,30 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         return map;
     }
 
+    private ArrayList<String> getInMemoryKeys(String tenant, String namespace) {
+        ArrayList<String> keys = new ArrayList<>();
+
+        try {
+            Iterator<String> iter = ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).getKeys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                if (!(key.equals(NAMESPACE_KEY) || key.equals(MODE_KEY) || key.equals(LOAD_ORDER_KEY))) {
+                    keys.add(key);
+                }
+            }
+        } catch (Exception exception) {
+            //do nothing
+        }
+
+        return keys;
+    }
+
     @Override
-    public boolean updateConfigurationValues(String tenant, String namespace,
-            Map configKeyValueStore) {
+    public boolean updateConfigurationValues(String tenant, String namespace, Map configKeyValueStore) {
         boolean valueToReturn = true;
-        Iterator<String> keys = configKeyValueStore.keySet().iterator();
-        while (keys.hasNext()) {
+        for (String s : (Iterable<String>) configKeyValueStore.keySet()) {
             try {
-                String key = keys.next();
+                String key = s;
                 ConfigurationUpdate updateData = new ConfigurationUpdate();
                 updateData.tenant(tenant).namespace(namespace).key(key);
                 updateData.value(configKeyValueStore.get(key).toString());
@@ -282,23 +291,6 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         return valueToReturn;
     }
 
-    private Object getInput(Map<String, Object> input) {
-        Object toReturn = null;
-        try {
-            toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
-            Method[] methods = toReturn.getClass().getMethods();
-            for (Method method : methods) {
-                if (input.containsKey(method.getName())) {
-                    method.invoke(toReturn, input.get(method.getName()));
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-
-        return toReturn;
-    }
-
     @Override
     public Collection<String> getTenants() {
         return ConfigurationRepository.lookup().getTenants();
@@ -307,26 +299,6 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     @Override
     public Collection<String> getNamespaces() {
         return ConfigurationRepository.lookup().getNamespaces();
-    }
-
-    private ArrayList<String> getInMemoryKeys(String tenant, String namespace) {
-        ArrayList<String> keys = new ArrayList<>();
-
-        try {
-            Iterator<String> iter =
-                    ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).getKeys();
-            while (iter.hasNext()) {
-                String key = iter.next();
-                if (!(key.equals(NAMESPACE_KEY) || key.equals(MODE_KEY)
-                              || key.equals(LOAD_ORDER_KEY))) {
-                    keys.add(key);
-                }
-            }
-        } catch (Exception exception) {
-            //do nothing
-        }
-
-        return keys;
     }
 
     @Override

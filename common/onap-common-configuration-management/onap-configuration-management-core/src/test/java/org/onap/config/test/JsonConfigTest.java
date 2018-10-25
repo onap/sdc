@@ -16,42 +16,34 @@
 
 package org.onap.config.test;
 
+import static org.onap.config.util.TestUtil.validateConfiguration;
+import static org.onap.config.util.TestUtil.writeFile;
+
 import java.io.IOException;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.config.api.Configuration;
-import org.onap.config.api.ConfigurationManager;
-import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
 /**
  * Created by ARR on 10/14/2016.
- * Scenario 17 - Verify Configuration management System - Support for Multi-Tenancy.
+ * Scenario 3 Validate configuration with JSON file format with mode.
  */
-public class MultiTenancyConfigTest {
+public class JsonConfigTest {
 
-    private static final String NAMESPACE = "tenancy";
+    private static final String NAMESPACE = "JSONConfig";
 
     @Before
     public void setUp() throws IOException {
         String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+        writeFile(data);
     }
 
     @Test
-    public void testConfigurationWithMultiTenancyFileFormat() {
-        Configuration config = ConfigurationManager.lookup();
-
-        Assert.assertEquals(config.getAsString("OPENECOMP", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH),
-                "20");
-
-        Assert.assertEquals(config.getAsString("Telefonica", NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS), "Deleted");
-
-        Assert.assertEquals(config.getAsString("TID", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
-
+    public void testConfigurationWithJsonFileFormat() {
+        validateConfiguration(NAMESPACE);
     }
+
 
     @After
     public void tearDown() throws Exception {

@@ -27,12 +27,12 @@ import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
 /**
- * Created by ARR on 10/14/2016.
- * Scenario 17 - Verify Configuration management System - Support for Multi-Tenancy.
+ * Created by sheetalm on 10/13/2016.
+ * Scenario 10 Verify configuration present in both global and defined namespace
  */
-public class MultiTenancyConfigTest {
+public class GlobalAndNamespaceConfigTest {
 
-    private static final String NAMESPACE = "tenancy";
+    private static final String NAMESPACE = "GlobalAndNSConfig";
 
     @Before
     public void setUp() throws IOException {
@@ -41,20 +41,16 @@ public class MultiTenancyConfigTest {
     }
 
     @Test
-    public void testConfigurationWithMultiTenancyFileFormat() {
+    public void testNamespaceInConfig() {
         Configuration config = ConfigurationManager.lookup();
-
-        Assert.assertEquals(config.getAsString("OPENECOMP", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH),
-                "20");
-
-        Assert.assertEquals(config.getAsString("Telefonica", NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS), "Deleted");
-
-        Assert.assertEquals(config.getAsString("TID", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
-
+        Assert.assertEquals("a-zA-Z", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        Assert.assertEquals("a-zA-Z_0-9", config.getAsString(ConfigTestConstant.ARTIFACT_NAME_UPPER));
     }
 
     @After
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }
+
+
 }
