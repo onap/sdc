@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -41,6 +42,7 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModelConverterTest {
@@ -81,5 +83,24 @@ public class ModelConverterTest {
         topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
         Component component = test.convertFromToscaElement(topologyTemplate);
         assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+    }
+
+    @Test
+    public void testIsAtomicComponent()
+    {
+        Resource component = new Resource();
+        component.setComponentType(ComponentTypeEnum.RESOURCE);
+        boolean result = test.isAtomicComponent(component);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testGetVertexType()
+    {
+        VertexTypeEnum result;
+        Resource component = new Resource();
+        component.setComponentType(ComponentTypeEnum.RESOURCE);
+        result = test.getVertexType(component);
+        assertThat(result.getName()).isEqualTo("node_type");
     }
 }
