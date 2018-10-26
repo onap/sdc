@@ -1,11 +1,42 @@
+/*
+
+ * Copyright (c) 2018 AT&T Intellectual Property.
+
+ *
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ *
+
+ *     http://www.apache.org/licenses/LICENSE-2.0
+
+ *
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import com.google.common.collect.Lists;
 import fj.data.Either;
+import org.mockito.Mock;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
@@ -15,6 +46,7 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -192,42 +224,38 @@ public class NodeTemplateOperationTest extends ModelTestBase {
 		return operation;
 	}
 
-	
 	@Test
-	public void testGetDefaultHeatTimeout() throws Exception {
+	public void testGetDefaultHeatTimeout() {
 		Integer result;
 
 		// default test
 		result = NodeTemplateOperation.getDefaultHeatTimeout();
     }
 
-	
-
-	
-
-	
-
-	
-
-	
-
-	
 	@Test
-	public void testPrepareInstDeploymentArtifactPerInstance() throws Exception {
-		NodeTemplateOperation testSubject;
-		Map<String, ArtifactDataDefinition> deploymentArtifacts = null;
-		String componentInstanceId = "";
-		User user = null;
-		String envType = "";
-		MapArtifactDataDefinition result;
+    public void testPrepareInstDeploymentArtifactPerInstance() {
+        NodeTemplateOperation testSubject;
+        Map<String, Object> deploymentResourceArtifacts = new HashMap<>();
+        Map<String, ArtifactDataDefinition> deploymentArtifacts = new HashMap<>();
+        ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactType("HEAT");
+        artifactDataDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        deploymentArtifacts.put("1", artifactDataDefinition);
+        deploymentResourceArtifacts.put("1", artifactDataDefinition);
+        String componentInstanceId = "componentInstanceId";
+        User user = new User();
+        user.setUserId("userId");
+        user.setFirstName("first");
+        user.setLastName("last");
+        String envType = "VfHeatEnv";
+        MapArtifactDataDefinition result;
 
-		// test 1
-		testSubject = createTestSubject();
-		deploymentArtifacts = null;
-		result = testSubject.prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstanceId, user,
-				envType);
-		Assert.assertEquals(null, result);
-	}
+        testSubject = createTestSubject();
+
+        result = testSubject.prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstanceId, user,
+                envType);
+        Assert.assertEquals(2, result.getMapToscaDataDefinition().size());
+    }
 
 
 
