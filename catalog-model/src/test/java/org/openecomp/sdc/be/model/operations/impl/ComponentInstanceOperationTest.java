@@ -1,44 +1,84 @@
+/*
+
+ * Copyright (c) 2018 AT&T Intellectual Property.
+
+ *
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ *
+
+ *     http://www.apache.org/licenses/LICENSE-2.0
+
+ *
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ComponentInstanceOperationTest {
 
-	private ComponentInstanceOperation createTestSubject() {
-		return new ComponentInstanceOperation();
-	}
+	@InjectMocks
+	private ComponentInstanceOperation componentInstanceOperation;
 
-	
+	@Mock
+	protected TitanGenericDao titanGenericDao;
+
+
 	@Test
-	public void testSetTitanGenericDao() throws Exception {
-		ComponentInstanceOperation testSubject;
-		TitanGenericDao titanGenericDao = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setTitanGenericDao(titanGenericDao);
+	public void testSetTitanGenericDao() {
+		componentInstanceOperation.setTitanGenericDao(titanGenericDao);
 	}
 
 	@Test
-	public void testUpdateInputValueInResourceInstance() throws Exception {
-		ComponentInstanceOperation testSubject;
+	public void testUpdateInputValueInResourceInstance() {
 		ComponentInstanceInput input = null;
 		String resourceInstanceId = "";
 		boolean b = false;
 		Either<ComponentInstanceInput, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updateInputValueInResourceInstance(input, resourceInstanceId, b);
+		result = componentInstanceOperation.updateInputValueInResourceInstance(input, resourceInstanceId, b);
+		assertNull(result);
 	}
 
-	
-
-
-	
-
+	@Test
+	public void testUpdateCustomizationUUID() {
+		StorageOperationStatus result;
+		String componentInstanceId = "instanceId";
+		TitanVertex titanVertex = Mockito.mock(TitanVertex.class);
+		when(titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),componentInstanceId)).thenReturn(Either.left(titanVertex));
+		result = componentInstanceOperation.updateCustomizationUUID(componentInstanceId);
+		assertEquals(StorageOperationStatus.OK, result);
+	}
 }
