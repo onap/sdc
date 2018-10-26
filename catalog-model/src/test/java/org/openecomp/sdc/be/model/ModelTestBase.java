@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -35,7 +36,9 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ModelTestBase {
 
@@ -44,16 +47,23 @@ public class ModelTestBase {
     protected static final String CONTAINER_NAME = "containerName";
 
     public static void init() {
-		String appConfigDir = "src/test/resources/config";
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
-		configurationManager = new ConfigurationManager(configurationSource);
+        String appConfigDir = "src/test/resources/config";
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+                appConfigDir);
+        configurationManager = new ConfigurationManager(configurationSource);
 
-		Configuration configuration = new Configuration();
+        Configuration configuration = new Configuration();
 
-		configuration.setTitanInMemoryGraph(true);
+        configuration.setTitanInMemoryGraph(true);
 
-		configurationManager.setConfiguration(configuration);
+        Map<String, Object> deploymentRIArtifacts = new HashMap<>();
+        ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition();
+        Object artifactDataObj = new HashMap<String, Object>();
+        ((HashMap) artifactDataObj).put("1", artifactInfo);
+        deploymentRIArtifacts.put("VfHeatEnv", artifactDataObj);
+
+        configurationManager.setConfiguration(configuration);
+        configurationManager.getConfiguration().setDeploymentResourceInstanceArtifacts(deploymentRIArtifacts);
 	}
 
     protected void removeGraphVertices(Either<TitanGraph, TitanOperationStatus> graphResult) {
