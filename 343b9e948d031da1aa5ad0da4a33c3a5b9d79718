@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_ab4e90bf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-27T10:13:39Z",
+      "side": 1,
+      "message": "please add assertions to the test to make them useful.",
+      "revId": "343b9e948d031da1aa5ad0da4a33c3a5b9d79718",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
