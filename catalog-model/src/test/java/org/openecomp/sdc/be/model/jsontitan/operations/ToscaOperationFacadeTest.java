@@ -220,6 +220,52 @@ public class ToscaOperationFacadeTest {
         assertThat(result.isLeft());
     }
 
+    @Test
+    public void testValidateCsarUuidUniqueness() {
+        StorageOperationStatus result;
+        String csarUUID = "csarUUID";
+        Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
+        properties.put(GraphPropertyEnum.CSAR_UUID, csarUUID);
+        List<GraphVertex> vertexList = new ArrayList<>();
+        when(titanDaoMock.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(vertexList));
+        result = testInstance.validateCsarUuidUniqueness(csarUUID);
+        assertEquals(StorageOperationStatus.ENTITY_ALREADY_EXISTS, result);
+    }
+
+    @Test
+    public void testValidateCsarUuidUnique_true() {
+        StorageOperationStatus result;
+        String csarUUID = "csarUUID";
+        Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
+        properties.put(GraphPropertyEnum.CSAR_UUID, csarUUID);
+        when(titanDaoMock.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        result = testInstance.validateCsarUuidUniqueness(csarUUID);
+        assertEquals(StorageOperationStatus.OK, result);
+    }
+
+    @Test
+    public void testGetLatestCertiNodeTypeByToscaResourceName() {
+        Either<Resource, StorageOperationStatus> result;
+        String toscaResourceName = "resourceName";
+        String uniqueId = "uniqueId";
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setJsonMetadataField(JsonPresentationFields.VERSION, "1.0");
+        graphVertex.setUniqueId(uniqueId);
+        List<GraphVertex> vertexList = new ArrayList<>();
+        vertexList.add(graphVertex);
+        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        ToscaElement topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
+        when(titanDaoMock.getByCriteria(VertexTypeEnum.NODE_TYPE, props, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(vertexList));
+        when(titanDaoMock.getVertexById(uniqueId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
+        result = testInstance.getLatestCertifiedNodeTypeByToscaResourceName(toscaResourceName);
+        assertThat(result.isLeft());
+    }
+
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
