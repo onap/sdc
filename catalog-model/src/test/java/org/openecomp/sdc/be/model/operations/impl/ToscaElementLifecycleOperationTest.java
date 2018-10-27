@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
@@ -42,6 +43,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -320,6 +322,15 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         verifyInCatalogData(5, expectedIds);
     }
 
+    @Test
+    public void testGetToscaElOwner_Fail(){
+        Either<User, StorageOperationStatus> result;
+        String toscaEleId = "toscaElementId";
+        titanDao.getVertexById(toscaEleId, JsonParseFlagEnum.NoParse);
+        result = lifecycleOperation.getToscaElementOwner(toscaEleId);
+        assertEquals(StorageOperationStatus.NOT_FOUND, result.right().value());
+    }
+
     private void createResourceCategory() {
 
         GraphVertex cat = new GraphVertex(VertexTypeEnum.RESOURCE_CATEGORY);
@@ -579,7 +590,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
     public void verifyInCatalogData(int expected, List<String> expectedIds) {
 
-		Either<List<CatalogComponent>, StorageOperationStatus> highestResourcesRes = topologyTemplateOperation.getElementCatalogData(true, null);
+        Either<List<CatalogComponent>, StorageOperationStatus> highestResourcesRes = topologyTemplateOperation.getElementCatalogData(true, null);
         assertTrue(highestResourcesRes.isLeft());
         List<CatalogComponent> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
