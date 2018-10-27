@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_2bd2a0d2",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-27T10:17:28Z",
+      "side": 1,
+      "message": "this is used in only the newly added tests please muck it as part of the test instead of exposing it as field in the class",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 36
+      },
+      "revId": "eb68d11a65be23d33dc487fa4a3ef4f69a73b411",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
