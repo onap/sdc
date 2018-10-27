@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_0bd79cc0",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ComponentInstanceOperationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-27T10:18:52Z",
+      "side": 1,
+      "message": "please move this as part of the test i see no need to expose it as a field.",
+      "range": {
+        "startLine": 57,
+        "startChar": 1,
+        "endLine": 58,
+        "endChar": 33
+      },
+      "revId": "3c7f0deeae8348d8a066897f207a419555631256",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
