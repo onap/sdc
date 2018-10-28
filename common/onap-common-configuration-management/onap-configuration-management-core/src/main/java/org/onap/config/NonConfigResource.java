@@ -21,14 +21,15 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
 public class NonConfigResource {
 
-    private static final Set<URL> urls = new HashSet<>();
-    private static final Set<File> files = new HashSet<>();
+    private static final Set<URL> urls = Collections.synchronizedSet(new HashSet<>());
+    private static final Set<File> files = Collections.synchronizedSet(new HashSet<>());
 
     public static void add(URL url) {
         urls.add(url);

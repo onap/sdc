@@ -26,6 +26,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +72,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.onap.config.api.Config;
 import org.onap.config.api.ConfigurationManager;
-import org.onap.config.impl.AgglomerateConfiguration;
 import org.onap.config.impl.ConfigurationRepository;
 import org.onap.config.impl.YamlConfiguration;
 import org.onap.config.type.ConfigurationMode;
@@ -163,29 +163,36 @@ public class ConfigurationUtils {
     }
 
     public static Optional<FileBasedConfiguration> getConfiguration(URL url) {
-        FileBasedConfiguration builder = null;
+
         try {
+
             ConfigurationType configType = ConfigurationUtils.getConfigType(url);
             switch (configType) {
                 case PROPERTIES:
-                    builder = new Configurations().fileBased(PropertiesConfiguration.class, url);
-                    break;
+                    return Optional.of(new Configurations().fileBased(PropertiesConfiguration.class, url));
                 case XML:
-                    builder = new Configurations().fileBased(XMLConfiguration.class, url);
-                    break;
+                    return Optional.of(new Configurations().fileBased(XMLConfiguration.class, url));
                 case JSON:
-                    builder = new Configurations().fileBased(JsonConfiguration.class, url);
-                    break;
+                    return Optional.of(new Configurations().fileBased(JsonConfiguration.class, url));
                 case YAML:
-                    builder = new Configurations().fileBased(YamlConfiguration.class, url);
-                    break;
+                    return Optional.of(new Configurations().fileBased(YamlConfiguration.class, url));
                 default:
                     throw new ConfigurationException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
         }
-        return ofNullable(builder);
+
+        return Optional.empty();
+    }
+
+    public static Optional<FileBasedConfiguration> getConfiguration(File file) {
+
+        try {
+            return getConfiguration(file.getAbsoluteFile().toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Malformed URL: " + file.getAbsolutePath());
+        }
     }
 
     public static ConfigurationMode getMergeStrategy(String file) {
@@ -240,32 +247,6 @@ public class ConfigurationUtils {
                 getConfiguration(file).flatMap(ConfigurationUtils::getMergeStrategy)
                         .flatMap(ConfigurationUtils::convertConfigurationMode);
         return configurationMode.orElseGet(() -> getMergeStrategy(file.getName().toUpperCase()));
-    }
-
-    public static Optional<FileBasedConfiguration> getConfiguration(File file) {
-        FileBasedConfiguration builder = null;
-        try {
-            ConfigurationType configType = ConfigurationUtils.getConfigType(file);
-            switch (configType) {
-                case PROPERTIES:
-                    builder = new Configurations().fileBased(PropertiesConfiguration.class, file);
-                    break;
-                case XML:
-                    builder = new Configurations().fileBased(XMLConfiguration.class, file);
-                    break;
-                case JSON:
-                    builder = new Configurations().fileBased(JsonConfiguration.class, file);
-                    break;
-                case YAML:
-                    builder = new Configurations().fileBased(YamlConfiguration.class, file);
-                    break;
-                default:
-                    throw new ConfigurationException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
-            }
-        } catch (ConfigurationException exception) {
-            exception.printStackTrace();
-        }
-        return ofNullable(builder);
     }
 
     public static ConfigurationType getConfigType(File file) {
@@ -651,15 +632,15 @@ public class ConfigurationUtils {
     }
 
     public static Object getProperty(Configuration config, String key, int processingHints) {
+
         if (!isDirectLookup(processingHints)) {
-            if (config instanceof AgglomerateConfiguration) {
-                return ((AgglomerateConfiguration) config).getPropertyValue(key);
-            } else if (config instanceof CompositeConfiguration) {
+
+            if (config instanceof CompositeConfiguration) {
+
                 CompositeConfiguration conf = (CompositeConfiguration) config;
                 for (int i = 0; i < conf.getNumberOfConfigurations(); i++) {
-                    if (conf.getConfiguration(i) instanceof AgglomerateConfiguration) {
-                        return ((AgglomerateConfiguration) conf.getConfiguration(i)).getPropertyValue(key);
-                    } else if (isNodeSpecific(processingHints)) {
+
+                    if (isNodeSpecific(processingHints)) {
                         Object obj = conf.getConfiguration(i).getProperty(key);
                         if (obj != null) {
                             return obj;

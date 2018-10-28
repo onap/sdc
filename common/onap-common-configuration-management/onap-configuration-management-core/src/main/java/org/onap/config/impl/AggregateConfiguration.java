@@ -35,10 +35,10 @@ import org.onap.config.type.ConfigurationMode;
 
 public final class AggregateConfiguration {
 
-    private final Map<String, Configuration> rootConfig = new HashMap<>();
-    private final Map<String, Configuration> unionConfig = new HashMap<>();
-    private final Map<String, Configuration> mergeConfig = new HashMap<>();
-    private final Map<String, Configuration> overrideConfig = new LinkedHashMap<>();
+    private final Map<String, Configuration> rootConfig = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Configuration> unionConfig = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Configuration> mergeConfig = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Configuration> overrideConfig = Collections.synchronizedMap(new LinkedHashMap<>());
 
     public void addConfig(File file) throws Exception {
         addConfig(file.getAbsolutePath().toUpperCase(), ConfigurationUtils.getMergeStrategy(file),

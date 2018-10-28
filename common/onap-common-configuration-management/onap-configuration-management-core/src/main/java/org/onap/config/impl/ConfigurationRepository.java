@@ -20,6 +20,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,10 +39,14 @@ public final class ConfigurationRepository {
 
     private static final ConfigurationRepository repo = new ConfigurationRepository();
 
-    private final Set<String> tenants = new HashSet<>();
-    private final Set<String> namespaces = new HashSet<>();
-    private final LinkedHashMap<String, ConfigurationHolder> store =
+    private final Set<String> tenants = Collections.synchronizedSet(new HashSet<>());
+
+    private final Set<String> namespaces = Collections.synchronizedSet(new HashSet<>());
+
+    private final Map<String, ConfigurationHolder> store = Collections.synchronizedMap(
+
             new LinkedHashMap<String, ConfigurationHolder>(16, 0.75f, true) {
+
                 @Override
                 protected boolean removeEldestEntry(Map.Entry eldest) {
                     try {
@@ -51,7 +56,8 @@ public final class ConfigurationRepository {
                         return false;
                     }
                 }
-            };
+            });
+
 
     private ConfigurationRepository() {
         tenants.add(Constants.DEFAULT_TENANT);
@@ -80,13 +86,8 @@ public final class ConfigurationRepository {
     }
 
     public Configuration getConfigurationFor(String tenant, String namespace) throws Exception {
-        ConfigurationHolder config;
         String module = tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace;
-        config = store.get(module);
-        if (config == null) {
-            config = new ConfigurationHolder(new BasicConfigurationBuilder<>(AgglomerateConfiguration.class));
-            store.put(module, config);
-        }
+        ConfigurationHolder config = store.get(module);
         return config.getConfiguration(tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace);
     }
 
