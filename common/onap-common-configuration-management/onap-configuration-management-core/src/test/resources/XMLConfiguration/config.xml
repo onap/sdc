@@ -6,7 +6,6 @@
 			<allowedChar>a-zA-Z</allowedChar>
 			<allowedchar>a-zA-Z</allowedchar>
 		</name>
-		<!-- <maxsize></maxsize> -->
 		<extension>pdf</extension>
 		<extension>zip,xml</extension>
 

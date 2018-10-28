@@ -38,11 +38,7 @@ public interface ConfigurationManager extends Configuration {
 
     String getConfigurationValue(Map<String, Object> queryData);
 
-    void updateConfigurationValue(Map<String, Object> updateData);
-
     Map<String, String> listConfiguration(Map<String, Object> query);
-
-    boolean updateConfigurationValues(String tenant, String namespace, Map configKeyValueStore);
 
     Collection<String> getTenants();
 

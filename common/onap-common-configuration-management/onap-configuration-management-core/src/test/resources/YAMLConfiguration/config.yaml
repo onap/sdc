@@ -3,7 +3,6 @@ artifact:
    maxlength: 14
    allowedChar: "a-zA-Z"
    allowedchar: "a-zA-Z"
-  #maxsize: ""
   extension:
    -
     pdf

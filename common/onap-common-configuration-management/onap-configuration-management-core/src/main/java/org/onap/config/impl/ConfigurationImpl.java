@@ -34,7 +34,6 @@ import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
 import org.onap.config.NonConfigResource;
 import org.onap.config.api.Config;
-import org.onap.config.api.ConfigurationChangeListener;
 import org.onap.config.api.Hint;
 
 public class ConfigurationImpl implements org.onap.config.api.Configuration {
@@ -43,8 +42,6 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     private static final ThreadLocal<String> tenant = ThreadLocal.withInitial(() -> Constants.DEFAULT_TENANT);
 
     private static boolean instantiated = false;
-
-    ConfigurationChangeNotifier changeNotifier;
 
     public ConfigurationImpl() throws Exception {
         if (instantiated || !CliConfigurationImpl.class.isAssignableFrom(this.getClass())) {
@@ -126,15 +123,14 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             }
         }
         instantiated = true;
-        changeNotifier = new ConfigurationChangeNotifier(moduleConfigStore);
     }
 
     private void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
 
-        if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMETER + Constants.DB_NAMESPACE) != null) {
+        if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE) != null) {
             ConfigurationRepository.lookup().populateConfiguration(
-                    Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMETER + Constants.DB_NAMESPACE,
-                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMETER + Constants.DB_NAMESPACE)
+                    Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE,
+                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE)
                             .getFinalConfiguration());
         }
 
@@ -185,43 +181,6 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             return (T) ConfigurationUtils.getDefaultFor(clazz);
         } else {
             return returnValue;
-        }
-    }
-
-    @Override
-    public void addConfigurationChangeListener(String tenant, String namespace, String key,
-            ConfigurationChangeListener myself) {
-        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase()
-                         : Constants.DEFAULT_TENANT;
-        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase()
-                            : Constants.DEFAULT_NAMESPACE;
-        if (key == null || key.trim().length() == 0) {
-            throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
-        }
-        if (myself == null) {
-            throw new IllegalArgumentException("ConfigurationChangeListener instance is null.");
-        }
-        try {
-            changeNotifier.notifyChangesTowards(tenant, namespace, key, myself);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    @Override
-    public void removeConfigurationChangeListener(String tenant, String namespace, String key,
-            ConfigurationChangeListener myself) {
-        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase()
-                         : Constants.DEFAULT_TENANT;
-        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase()
-                            : Constants.DEFAULT_NAMESPACE;
-        if (key == null || key.trim().length() == 0) {
-            throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
-        }
-        try {
-            changeNotifier.stopNotificationTowards(tenant, namespace, key, myself);
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
     }
 
@@ -574,16 +533,4 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
         return collection;
     }
-
-    public void shutdown() {
-        if (changeNotifier != null) {
-            try {
-                changeNotifier.shutdown();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-
 }

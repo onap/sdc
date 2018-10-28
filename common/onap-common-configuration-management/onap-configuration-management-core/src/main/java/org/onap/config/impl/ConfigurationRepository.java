@@ -19,9 +19,7 @@ package org.onap.config.impl;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,16 +36,7 @@ import org.onap.config.Constants;
 
 public final class ConfigurationRepository {
 
-    private static final ConfigurationRepository repo;
-
-    private static final Set<String> validCallers = Collections.unmodifiableSet(new HashSet<>(
-            Arrays.asList(ConfigurationChangeNotifier.NotificationData.class.getName(),
-                    ConfigurationUtils.class.getName(), CliConfigurationImpl.class.getName(),
-                    ConfigurationChangeNotifier.class.getName(), ConfigurationImpl.class.getName())));
-
-    static {
-        repo = new ConfigurationRepository();
-    }
+    private static final ConfigurationRepository repo = new ConfigurationRepository();
 
     private final Set<String> tenants = new HashSet<>();
     private final Set<String> namespaces = new HashSet<>();
@@ -65,18 +54,12 @@ public final class ConfigurationRepository {
             };
 
     private ConfigurationRepository() {
-        if (repo != null) {
-            throw new RuntimeException("Illegal access to configuration.");
-        }
         tenants.add(Constants.DEFAULT_TENANT);
         namespaces.add(Constants.DEFAULT_NAMESPACE);
     }
 
     public static ConfigurationRepository lookup() {
-        if (validCallers.contains(Thread.currentThread().getStackTrace()[2].getClassName())) {
-            return repo;
-        }
-        return null;
+        return repo;
     }
 
     public Set<String> getTenants() {
@@ -98,22 +81,22 @@ public final class ConfigurationRepository {
 
     public Configuration getConfigurationFor(String tenant, String namespace) throws Exception {
         ConfigurationHolder config;
-        String module = tenant + Constants.KEY_ELEMENTS_DELIMETER + namespace;
+        String module = tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace;
         config = store.get(module);
         if (config == null) {
             config = new ConfigurationHolder(new BasicConfigurationBuilder<>(AgglomerateConfiguration.class));
             store.put(module, config);
         }
-        return config.getConfiguration(tenant + Constants.KEY_ELEMENTS_DELIMETER + namespace);
+        return config.getConfiguration(tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace);
     }
 
     public void populateConfiguration(String key, Configuration builder) {
         store.put(key, new ConfigurationHolder(builder));
-        populateTenantsNamespace(key, false);
+        populateTenantsNamespace(key);
     }
 
-    private void populateTenantsNamespace(String key, boolean sourcedFromDb) {
-        String[] array = key.split(Constants.KEY_ELEMENTS_DELIMETER);
+    private void populateTenantsNamespace(String key) {
+        String[] array = key.split(Constants.KEY_ELEMENTS_DELIMITER);
         if (!array[1].equalsIgnoreCase(Constants.DB_NAMESPACE)) {
             tenants.add(array[0]);
             namespaces.add(array[1]);
@@ -127,7 +110,7 @@ public final class ConfigurationRepository {
             store.put(key, holder);
         }
         holder.addOverrideConfiguration(file.getAbsolutePath(), ConfigurationUtils.getConfigurationBuilder(file, true));
-        populateTenantsNamespace(key, true);
+        populateTenantsNamespace(key);
     }
 
     public void refreshOverrideConfigurationFor(String key, int index) {
@@ -207,6 +190,7 @@ public final class ConfigurationRepository {
         }
 
         public Configuration getConfiguration(String namespace) throws Exception {
+
             if (config == null) {
                 config = builder.getConfiguration();
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
@@ -216,9 +200,11 @@ public final class ConfigurationRepository {
                                                     .getInt("config.refresh.interval")) {
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
             }
+
             if (composite == null && overrideConfiguration.size() != 0) {
                 composite = getEffectiveConfiguration(config, overrideConfiguration.values());
             }
+
             return overrideConfiguration.size() == 0 ? config : composite;
         }
     }

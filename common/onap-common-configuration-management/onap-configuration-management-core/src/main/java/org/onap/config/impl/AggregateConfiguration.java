@@ -40,18 +40,6 @@ public final class AggregateConfiguration {
     private final Map<String, Configuration> mergeConfig = new HashMap<>();
     private final Map<String, Configuration> overrideConfig = new LinkedHashMap<>();
 
-    public AggregateConfiguration() {
-
-        try {
-            Class clazz = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
-            if (!clazz.getCanonicalName().equals(ConfigurationImpl.class.getCanonicalName())) {
-                throw new RuntimeException("Illegal access.");
-            }
-        } catch (ClassNotFoundException cfe) {
-            throw new RuntimeException("Class not found while loading change notifier");
-        }
-    }
-
     public void addConfig(File file) throws Exception {
         addConfig(file.getAbsolutePath().toUpperCase(), ConfigurationUtils.getMergeStrategy(file),
                 ConfigurationUtils.getConfigurationBuilder(file, false).getConfiguration());

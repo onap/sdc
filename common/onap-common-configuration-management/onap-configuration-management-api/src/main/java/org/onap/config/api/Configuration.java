@@ -161,35 +161,6 @@ public interface Configuration {
         return get(tenantId, namespace, null, clazz, Hint.EXTERNAL_LOOKUP);
     }
 
-    default <T> DynamicConfiguration<T> getDynamicConfiguration(String key, Class<T> clazz, T defaultValue) {
-        return getDynamicConfiguration(null, key, clazz, defaultValue);
-    }
-
-    default <T> DynamicConfiguration<T> getDynamicConfiguration(String namespace, String key, Class<T> clazz,
-            T defaultValue) {
-        return getDynamicConfiguration(TENANT.get(), namespace, key, clazz, defaultValue);
-    }
-
-    default <T> DynamicConfiguration<T> getDynamicConfiguration(String tenant, String namespace, String key,
-            Class<T> clazz, T defaultValue) {
-        return DynamicConfiguration.getDynamicConfiguration(tenant, namespace, key, clazz, defaultValue, this);
-    }
-
-    default <T> DynamicConfiguration<List<T>> getDynamicConfigurationValues(String key, Class<T> clazz,
-            T defaultValue) {
-        return getDynamicConfigurationValues(null, key, clazz, defaultValue);
-    }
-
-    default <T> DynamicConfiguration<List<T>> getDynamicConfigurationValues(String namespace, String key,
-            Class<T> clazz, T defaultValue) {
-        return getDynamicConfigurationValues(TENANT.get(), namespace, key, clazz, defaultValue);
-    }
-
-    default <T> DynamicConfiguration<List<T>> getDynamicConfigurationValues(String tenant, String namespace, String key,
-            Class<T> clazz, T defaultValue) {
-        return DynamicConfiguration.getDynConfiguration(tenant, namespace, key, clazz, defaultValue, this);
-    }
-
     default List<String> getAsStringValues(String key) {
         return getAsStringValues(null, key);
     }
@@ -293,28 +264,6 @@ public interface Configuration {
         Character[] tempArray = get(tenantId, namespace, key, Character[].class);
         return tempArray == null ? Collections.emptyList() : Arrays.asList(tempArray);
     }
-
-    default void addConfigurationChangeListener(String key, ConfigurationChangeListener myself) {
-        addConfigurationChangeListener(null, key, myself);
-    }
-
-    default void addConfigurationChangeListener(String namespace, String key, ConfigurationChangeListener myself) {
-        addConfigurationChangeListener(TENANT.get(), namespace, key, myself);
-    }
-
-    void addConfigurationChangeListener(String tenant, String namespace, String key,
-            ConfigurationChangeListener myself);
-
-    default void removeConfigurationChangeListener(String key, ConfigurationChangeListener myself) {
-        removeConfigurationChangeListener(null, key, myself);
-    }
-
-    default void removeConfigurationChangeListener(String namespace, String key, ConfigurationChangeListener myself) {
-        removeConfigurationChangeListener(TENANT.get(), namespace, key, myself);
-    }
-
-    void removeConfigurationChangeListener(String tenant, String namespace, String key,
-            ConfigurationChangeListener myself);
 
     default <T> Map<String, T> populateMap(String key, Class<T> clazz) {
         return populateMap(null, key, clazz);

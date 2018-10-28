@@ -48,10 +48,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TransferQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,14 +100,7 @@ public class ConfigurationUtils {
     }
 
     private ConfigurationUtils() {
-    }
-
-    public static ThreadFactory getThreadFactory() {
-        return r1 -> {
-            Thread thread = Executors.privilegedThreadFactory().newThread(r1);
-            thread.setDaemon(true);
-            return thread;
-        };
+        // prevent instantiation
     }
 
     public static Collection<File> getAllFiles(File file, boolean recursive, boolean onlyDirectory) {
@@ -303,8 +294,9 @@ public class ConfigurationUtils {
     }
 
     public static boolean isWrapperClass(Class clazz) {
-        return clazz == String.class || clazz == Boolean.class || clazz == Character.class
-                       || Number.class.isAssignableFrom(clazz);
+        return clazz == String.class || clazz == Boolean.class || clazz == Character.class || Number.class
+                                                                                                      .isAssignableFrom(
+                                                                                                              clazz);
     }
 
     public static Class getArrayClass(Class clazz) {
@@ -324,8 +316,8 @@ public class ConfigurationUtils {
         return builder;
     }
 
-    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>
-            getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(ConfigurationType configType) {
+    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+            ConfigurationType configType) {
 
         ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
         switch (configType) {
@@ -569,7 +561,7 @@ public class ConfigurationUtils {
             stack.push(element);
         }
         String toReturn = stack.pop();
-        return stack.pop() + Constants.KEY_ELEMENTS_DELIMETER + toReturn;
+        return stack.pop() + Constants.KEY_ELEMENTS_DELIMITER + toReturn;
     }
 
     public static String getNamespace(File file) {
