@@ -39,14 +39,26 @@ import org.onap.config.api.Hint;
 public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
-    private static final ThreadLocal<String> tenant = ThreadLocal.withInitial(() -> Constants.DEFAULT_TENANT);
+
+    private static final ThreadLocal<String> TENANT = ThreadLocal.withInitial(() -> Constants.DEFAULT_TENANT);
+
+    private static final Object LOCK = new Object();
 
     private static boolean instantiated = false;
 
     public ConfigurationImpl() throws Exception {
+
+        synchronized (LOCK) {
+            init();
+        }
+    }
+
+    private void init() throws Exception {
+
         if (instantiated || !CliConfigurationImpl.class.isAssignableFrom(this.getClass())) {
             throw new RuntimeException("Illegal access to configuration.");
         }
+
         Map<String, AggregateConfiguration> moduleConfigStore = new HashMap<>();
         List<URL> classpathResources = ConfigurationUtils.getAllClassPathResources();
         Predicate<URL> predicate = ConfigurationUtils::isConfig;
@@ -107,6 +119,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
             }
         }
+
         populateFinalConfigurationIncrementally(moduleConfigStore);
         String nodeConfigLocation = System.getProperty("node.config.location");
         if (nodeConfigLocation != null && nodeConfigLocation.trim().length() > 0) {
@@ -122,6 +135,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
             }
         }
+
         instantiated = true;
     }
 
@@ -186,8 +200,9 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     @Override
     public <T> Map<String, T> populateMap(String tenantId, String namespace, String key, Class<T> clazz) {
+
         if (tenantId == null || tenantId.trim().length() == 0) {
-            tenantId = tenant.get();
+            tenantId = TENANT.get();
         } else {
             tenantId = tenantId.toUpperCase();
         }
@@ -218,8 +233,9 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     @Override
     public Map generateMap(String tenantId, String namespace, String key) {
+
         if (tenantId == null || tenantId.trim().length() == 0) {
-            tenantId = tenant.get();
+            tenantId = TENANT.get();
         } else {
             tenantId = tenantId.toUpperCase();
         }
@@ -277,7 +293,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
 
         if (tenant == null || tenant.trim().length() == 0) {
-            tenant = ConfigurationImpl.tenant.get();
+            tenant = TENANT.get();
         } else {
             tenant = tenant.toUpperCase();
         }
