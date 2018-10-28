@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,16 +273,26 @@ public class NodeTemplateOperationTest extends ModelTestBase {
 	
 	@Test
 	public void testPrepareCalculatedCapabiltyForNodeType() throws Exception {
-		NodeTemplateOperation testSubject;
-		Map<String, ListCapabilityDataDefinition> capabilities = null;
-		ComponentInstanceDataDefinition componentInstance = null;
-		MapListCapabilityDataDefinition result;
+        NodeTemplateOperation testSubject;
+        Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
+        ListCapabilityDataDefinition listCapDataDefinition = new ListCapabilityDataDefinition();
+        List<CapabilityDataDefinition> listToscaDataDefinition = new ArrayList<>();
+        CapabilityDataDefinition capabilityDataDefinition = new CapabilityDefinition();
+        capabilityDataDefinition.setMaxOccurrences("1");
+        listToscaDataDefinition.add(capabilityDataDefinition);
+        listCapDataDefinition.setListToscaDataDefinition(listToscaDataDefinition);
+        capabilities.put("1", listCapDataDefinition);
+        ComponentInstanceDataDefinition componentInstance = new ComponentInstance();
+        String id = "id";
+        componentInstance.setComponentUid(id);
+        componentInstance.setUniqueId(id);
+        componentInstance.setName(id);
+        MapListCapabilityDataDefinition result;
 
-		// test 1
-		testSubject = createTestSubject();
-		capabilities = null;
-		result = testSubject.prepareCalculatedCapabiltyForNodeType(capabilities, componentInstance);
-		Assert.assertEquals(null, result);
+        // test 1
+        testSubject = createTestSubject();
+        result = testSubject.prepareCalculatedCapabiltyForNodeType(capabilities, componentInstance);
+        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
 	}
 
 	
