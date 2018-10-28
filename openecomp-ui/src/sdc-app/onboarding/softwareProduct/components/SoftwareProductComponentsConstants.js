@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    COMPONENTS_LIST_UPDATE: null,
-    COMPONENTS_LIST_EDIT: null,
-    COMPONENT_UPDATE: null,
-    COMPONENT_DATA_CHANGED: null,
-    COMPONENT_DATA_CLEAR: null,
-    COMPONENT_QUESTIONNAIRE_UPDATE: null,
-    COMPONENT_DELETE: null,
-    COMPONENT_LOAD: null,
-    COMPONENT_CREATE_OPEN: null
-});
+export const actionTypes = keyMirror(
+    {
+        COMPONENTS_LIST_UPDATE: null,
+        COMPONENTS_LIST_EDIT: null,
+        COMPONENT_UPDATE: null,
+        COMPONENT_DATA_CHANGED: null,
+        COMPONENT_DATA_CLEAR: null,
+        COMPONENT_QUESTIONNAIRE_UPDATE: null,
+        COMPONENT_DELETE: null,
+        COMPONENT_LOAD: null,
+        COMPONENT_CREATE_OPEN: null
+    },
+    'softwareProductComponents'
+);
 
 export const storageConstants = keyMirror({
     backupType: {

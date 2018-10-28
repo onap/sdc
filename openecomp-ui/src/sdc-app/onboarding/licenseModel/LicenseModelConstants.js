@@ -16,13 +16,16 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-export const actionTypes = keyMirror({
-    LICENSE_MODEL_LOADED: null,
-    LICENSE_MODELS_LIST_LOADED: null,
-    FINALIZED_LICENSE_MODELS_LIST_LOADED: null,
-    ARCHIVED_LICENSE_MODELS_LIST_LOADED: null,
-    EDIT_LICENSE_MODEL: null
-});
+export const actionTypes = keyMirror(
+    {
+        LICENSE_MODEL_LOADED: null,
+        LICENSE_MODELS_LIST_LOADED: null,
+        FINALIZED_LICENSE_MODELS_LIST_LOADED: null,
+        ARCHIVED_LICENSE_MODELS_LIST_LOADED: null,
+        EDIT_LICENSE_MODEL: null
+    },
+    'licenseModel'
+);
 
 export const thresholdUnitType = {
     ABSOLUTE: 'Absolute',

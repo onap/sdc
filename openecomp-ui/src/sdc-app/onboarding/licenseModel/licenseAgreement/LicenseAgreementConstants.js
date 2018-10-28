@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,20 @@ import InputOptions, {
     other as optionInputOther
 } from 'nfvo-components/input/validation/InputOptions.jsx';
 
-export const actionTypes = keyMirror({
-    LICENSE_AGREEMENT_LIST_LOADED: null,
-    DELETE_LICENSE_AGREEMENT: null,
+export const actionTypes = keyMirror(
+    {
+        LICENSE_AGREEMENT_LIST_LOADED: null,
+        DELETE_LICENSE_AGREEMENT: null,
 
-    licenseAgreementEditor: {
-        OPEN: null,
-        CLOSE: null,
-        DATA_CHANGED: null,
-        SELECT_TAB: null
-    }
-});
+        licenseAgreementEditor: {
+            OPEN: null,
+            CLOSE: null,
+            DATA_CHANGED: null,
+            SELECT_TAB: null
+        }
+    },
+    'licenseAgreement'
+);
 
 export const LA_EDITOR_FORM = 'LA_EDITOR_FORM';
 

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    USERS_LIST_LOADED: null,
-    GOT_USER_INFO: null
-});
+export const actionTypes = keyMirror(
+    {
+        USERS_LIST_LOADED: null,
+        GOT_USER_INFO: null
+    },
+    'users'
+);

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,18 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    ADD_SOFTWARE_PRODUCT_PROCESS: null,
-    EDIT_SOFTWARE_PRODUCT_PROCESS: null,
-    DELETE_SOFTWARE_PRODUCT_PROCESS: null,
-    SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN: null,
-    SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE: null,
-    FETCH_SOFTWARE_PRODUCT_PROCESSES: null,
-    SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM: null
-});
+export const actionTypes = keyMirror(
+    {
+        ADD_SOFTWARE_PRODUCT_PROCESS: null,
+        EDIT_SOFTWARE_PRODUCT_PROCESS: null,
+        DELETE_SOFTWARE_PRODUCT_PROCESS: null,
+        SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN: null,
+        SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE: null,
+        FETCH_SOFTWARE_PRODUCT_PROCESSES: null,
+        SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM: null
+    },
+    'softwareProductProcesses'
+);
 
 export const optionsInputValues = {
     PROCESS_TYPE: [
