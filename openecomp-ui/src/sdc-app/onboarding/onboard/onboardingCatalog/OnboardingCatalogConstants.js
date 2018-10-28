@@ -47,10 +47,13 @@ export const migrationStatusMapper = {
     OLD_VERSION: 'True'
 };
 
-export const actionTypes = keyMirror({
-    ONBOARDING_CATALOG_OPEN_VENDOR_PAGE: null,
-    CHANGE_ACTIVE_CATALOG_TAB: null,
-    CHANGE_SEARCH_VALUE: null,
-    CHANGE_VSP_OVERLAY: null,
-    CLOSE_VSP_OVERLAY: null
-});
+export const actionTypes = keyMirror(
+    {
+        ONBOARDING_CATALOG_OPEN_VENDOR_PAGE: null,
+        CHANGE_ACTIVE_CATALOG_TAB: null,
+        CHANGE_SEARCH_VALUE: null,
+        CHANGE_VSP_OVERLAY: null,
+        CLOSE_VSP_OVERLAY: null
+    },
+    'onboardingCatalog'
+);

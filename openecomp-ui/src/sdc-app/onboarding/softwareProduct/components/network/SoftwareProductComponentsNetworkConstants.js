@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,23 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    NIC_LIST_EDIT: null,
-    NIC_LIST_UPDATE: null,
+export const actionTypes = keyMirror(
+    {
+        NIC_LIST_EDIT: null,
+        NIC_LIST_UPDATE: null,
 
-    NICEditor: {
-        FILL_DATA: null,
-        CLEAR_DATA: null
+        NICEditor: {
+            FILL_DATA: null,
+            CLEAR_DATA: null
+        },
+        NICCreation: {
+            OPEN: null,
+            CLEAR_DATA: null,
+            DATA_CHANGED: null
+        }
     },
-    NICCreation: {
-        OPEN: null,
-        CLEAR_DATA: null,
-        DATA_CHANGED: null
-    }
-});
+    'componentsNetwork'
+);
 
 export const networkTypes = {
     EXTERNAL: 'External',

@@ -16,8 +16,8 @@
 import UUID from 'uuid-js';
 
 export const actionTypes = {
-    ADD_NOTIFICATION: 'ADD_NOTIFICATION',
-    REMOVE_NOTIFICATION: 'REMOVE_NOTIFICATION'
+    ADD_NOTIFICATION: 'notifications/ADD_NOTIFICATION',
+    REMOVE_NOTIFICATION: 'notifications/REMOVE_NOTIFICATION'
 };
 
 export const notificationActions = {

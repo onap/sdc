@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ export const tabsMapping = {
     VALIDATION: 2
 };
 
-export const actionTypes = keyMirror({
-    SET_ACTIVE_TAB: null
-});
+export const actionTypes = keyMirror(
+    {
+        SET_ACTIVE_TAB: null
+    },
+    'softwareProductAttachments'
+);

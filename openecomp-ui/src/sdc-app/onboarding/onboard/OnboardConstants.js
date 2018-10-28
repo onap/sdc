@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ export const tabsMapping = {
     CATALOG: 2
 };
 
-export const actionTypes = keyMirror({
-    CHANGE_ACTIVE_ONBOARD_TAB: null,
-    CHANGE_SEARCH_VALUE: null,
-    RESET_ONBOARD_STORE: null,
-    VSP_MIGRATION: null
-});
+export const actionTypes = keyMirror(
+    {
+        CHANGE_ACTIVE_ONBOARD_TAB: null,
+        CHANGE_SEARCH_VALUE: null,
+        RESET_ONBOARD_STORE: null,
+        VSP_MIGRATION: null
+    },
+    'onboard'
+);

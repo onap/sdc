@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS: null,
+export const actionTypes = keyMirror(
+    {
+        FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS: null,
 
-    deploymentFlavorEditor: {
-        DATA_CHANGED: null,
-        SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA: null,
-        SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA: null
-    }
-});
+        deploymentFlavorEditor: {
+            DATA_CHANGED: null,
+            SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA: null,
+            SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA: null
+        }
+    },
+    'softwareProductDeployment'
+);
 
 export const DEPLOYMENT_FLAVORS_FORM_NAME = 'DEPLOYMENT_FLAVORS_FORM_NAME';
