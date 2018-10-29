@@ -16,6 +16,7 @@
 
 package org.openecomp.sdcrests.togglz.rest;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
@@ -29,6 +30,7 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0/togglz")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Api(value = "Togglz")
 @Validated
 public interface TogglzFeatures {
 
