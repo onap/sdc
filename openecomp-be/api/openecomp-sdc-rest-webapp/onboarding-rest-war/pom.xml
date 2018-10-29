@@ -216,6 +216,7 @@
                             </includes>
                         </resource>
                     </webResources>
+                    <packagingExcludes>WEB-INF/lib/togglz-console*.jar</packagingExcludes>
                 </configuration>
             </plugin>
             <plugin>
