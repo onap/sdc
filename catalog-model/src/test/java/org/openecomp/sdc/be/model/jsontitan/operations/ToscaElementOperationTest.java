@@ -12,8 +12,10 @@ import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -60,6 +62,7 @@ public class ToscaElementOperationTest extends ModelTestBase{
             isInitialized = true;
         }
     }
+
 
     @Test
     public void testGetAllHighestResourcesNoFilter() {
@@ -216,6 +219,18 @@ public class ToscaElementOperationTest extends ModelTestBase{
             }
         });
         assertEquals(highestResources.stream().count(), highestResourcesExpectedCount);
+    }
+
+    @Test
+    public void testUpdateToscaElement_NotFound() {
+        Either<TopologyTemplate, StorageOperationStatus> result;
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+        String userID = "userID";
+        topologyTemplate.setLastUpdaterUserId(userID);
+        GraphVertex graphVertex = new GraphVertex();
+        ComponentParametersView componentParametersView = new ComponentParametersView();
+        result = toscaElementOperation.updateToscaElement(topologyTemplate, graphVertex, componentParametersView);
+        assertEquals(null, result);
     }
 
     private boolean genericTestGetResourcesWithExcludeList(List<ResourceTypeEnum> excludeList) {
