@@ -15,138 +15,180 @@
  */
 
 import React from 'react';
-import {Provider} from 'react-redux';
-import {storeCreator} from 'sdc-app/AppStore.js';
+import { Provider } from 'react-redux';
+import { storeCreator } from 'sdc-app/AppStore.js';
 
 import TestUtils from 'react-dom/test-utils';
-import {defaultStoreFactory} from 'test-utils/factories/onboard/OnboardingCatalogFactories.js';
-import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
-import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
-import {mapStateToProps} from 'sdc-app/onboarding/onboard/Onboard.js';
-import {catalogItemTypes} from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
+import { defaultStoreFactory } from 'test-utils/factories/onboard/OnboardingCatalogFactories.js';
+import { FinalizedLicenseModelFactory } from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
+import { VSPEditorFactory } from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
+import { mapStateToProps } from 'sdc-app/onboarding/onboard/Onboard.js';
+import { catalogItemTypes } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import OnboardingCatalogView from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogView.jsx';
 import VendorItem from 'sdc-app/onboarding/onboard/onboardingCatalog/VendorItem.jsx';
 import VSPOverlay from 'sdc-app/onboarding/onboard/onboardingCatalog/VSPOverlay.jsx';
 import CatalogItemDetails from 'sdc-app/onboarding/onboard/CatalogItemDetails.jsx';
 import DetailsCatalogView from 'sdc-app/onboarding/onboard/DetailsCatalogView.jsx';
+import { searchValueObj } from 'sdc-app/onboarding/onboard/OnboardConstants';
 
-describe('OnBoarding Catalog test - View: ', function () {
+describe('OnBoarding Catalog test - View: ', function() {
+    it('mapStateToProps mapper exists', () => {
+        expect(mapStateToProps).toBeTruthy();
+    });
 
+    it('mapStateToProps data test', () => {
+        const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
+        const softwareProductList = VSPEditorFactory.buildList(4);
+        const data = defaultStoreFactory.build({
+            licenseModelList,
+            softwareProductList
+        });
 
-	it('mapStateToProps mapper exists', () => {
-		expect(mapStateToProps).toBeTruthy();
-	});
+        var results = mapStateToProps(data);
+        expect(results.softwareProductList).toBeTruthy();
+        expect(results.licenseModelList).toBeTruthy();
+        expect(results.activeTab).toBeTruthy();
+        expect(results.licenseModelList.length).toEqual(3);
+    });
 
-	it('mapStateToProps data test', () => {
+    it('licenseModelList creating algorithm test', () => {
+        const finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(
+            3
+        );
+        const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
+        const finalizedSoftwareProductList = VSPEditorFactory.buildList(4, {
+            vendorId: finalizedLicenseModelList[0].id
+        });
+        const softwareProductList = VSPEditorFactory.buildList(4, {
+            vendorId: finalizedLicenseModelList[1].id
+        });
+        const data = defaultStoreFactory.build({
+            licenseModelList,
+            finalizedLicenseModelList,
+            softwareProductList,
+            finalizedSoftwareProductList
+        });
 
-		const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const softwareProductList = VSPEditorFactory.buildList(4);
-		const data = defaultStoreFactory.build({licenseModelList, softwareProductList});
+        var results = mapStateToProps(data);
+        expect(
+            results.finalizedLicenseModelList[0].softwareProductList.length
+        ).toEqual(finalizedSoftwareProductList.length);
+    });
 
-		var results = mapStateToProps(data);
-		expect(results.softwareProductList).toBeTruthy();
-		expect(results.licenseModelList).toBeTruthy();
-		expect(results.activeTab).toBeTruthy();
-		expect(results.licenseModelList.length).toEqual(3);
-	});
+    it('Catalog view test', () => {
+        const dummyFunc = () => {};
+        const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
+        const softwareProductList = VSPEditorFactory.buildList(4, {
+            vendorId: licenseModelList[0].id
+        });
+        const data = defaultStoreFactory.build({
+            licenseModelList,
+            softwareProductList
+        });
 
-	it('licenseModelList creating algorithm test', () => {
+        const func = {
+            onAddLicenseModelClick: dummyFunc,
+            onAddSoftwareProductClick: dummyFunc,
+            closeVspOverlay: dummyFunc,
+            onVspOverlayChange: dummyFunc,
+            onTabClick: dummyFunc,
+            onSearch: dummyFunc,
+            onSelectLicenseModel: dummyFunc,
+            onSelectSoftwareProduct: dummyFunc,
+            resetOnboardingCatalogStore: ''
+        };
 
-		const finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const finalizedSoftwareProductList = VSPEditorFactory.buildList(4, {vendorId: finalizedLicenseModelList[0].id});
-		const softwareProductList = VSPEditorFactory.buildList(4, {vendorId: finalizedLicenseModelList[1].id});
-		const data = defaultStoreFactory.build({licenseModelList, finalizedLicenseModelList, softwareProductList, finalizedSoftwareProductList});
+        let params = { ...func, ...mapStateToProps(data) };
+        const store = storeCreator();
 
-		var results = mapStateToProps(data);
-		expect(results.finalizedLicenseModelList[0].softwareProductList.length).toEqual(finalizedSoftwareProductList.length);
-	});
+        let CatalogView = TestUtils.renderIntoDocument(
+            <Provider store={store}>
+                <OnboardingCatalogView {...params} />
+            </Provider>
+        );
+        expect(CatalogView).toBeTruthy();
+    });
 
+    it('VendorItem view test', () => {
+        let vendor = FinalizedLicenseModelFactory.build();
+        const dummyFunc = () => {};
+        let params = {
+            softwareProductList: VSPEditorFactory.buildList(4, {
+                vendorId: vendor.id
+            }),
+            vendor,
+            onSelectVSP: dummyFunc,
+            shouldShowOverlay: false,
+            onVendorSelect: dummyFunc,
+            onAddVSP: dummyFunc,
+            onVSPIconClick: dummyFunc
+        };
 
-	it('Catalog view test', () => {
+        let VendorItemView = TestUtils.renderIntoDocument(
+            <VendorItem {...params} />
+        );
+        expect(VendorItemView).toBeTruthy();
+    });
 
-		const dummyFunc = () => {};
-		const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const softwareProductList = VSPEditorFactory.buildList(4, {vendorId: licenseModelList[0].id});
-		const data = defaultStoreFactory.build({licenseModelList, softwareProductList});
+    it('VSPOverlay view test', () => {
+        let params = {
+            VSPList: VSPEditorFactory.buildList(10, { vendorId: '1' }),
+            onSelectVSP: () => {}
+        };
 
-		const func = {
-			onAddLicenseModelClick: dummyFunc,
-			onAddSoftwareProductClick: dummyFunc,
-			closeVspOverlay: dummyFunc,
-			onVspOverlayChange: dummyFunc,
-			onTabClick: dummyFunc,
-			onSearch: dummyFunc,
-			onSelectLicenseModel: dummyFunc,
-			onSelectSoftwareProduct: dummyFunc,
-			resetOnboardingCatalogStore: ''
-		};
+        let VSPOverlayView = TestUtils.renderIntoDocument(
+            <div>
+                <VSPOverlay {...params} />
+            </div>
+        );
+        expect(VSPOverlayView).toBeTruthy();
+    });
 
-		let params = {...func, ...mapStateToProps(data)};
-		const store = storeCreator();
+    it('CatalogItemDetails view test', () => {
+        let params = {
+            catalogItemData: FinalizedLicenseModelFactory.build(),
+            onSelect: () => {},
+            catalogItemTypeClass: catalogItemTypes.LICENSE_MODEL
+        };
 
-		let CatalogView = TestUtils.renderIntoDocument(
-			<Provider store={store}>
-				<OnboardingCatalogView
-					{...params}/>
-			</Provider>);
-		expect(CatalogView).toBeTruthy();
-	});
+        let CatalogItemDetailsView = TestUtils.renderIntoDocument(
+            <div>
+                <CatalogItemDetails {...params} />
+            </div>
+        );
+        expect(CatalogItemDetailsView).toBeTruthy();
+    });
 
-	it('VendorItem view test', () => {
-		let vendor = FinalizedLicenseModelFactory.build();
-		const dummyFunc = () => {};
-		let params = {
-			softwareProductList: VSPEditorFactory.buildList(4 ,{vendorId: vendor.id}),
-			vendor,
-			onSelectVSP: dummyFunc,
-			shouldShowOverlay: false,
-			onVendorSelect: dummyFunc,
-			onAddVSP: dummyFunc,
-			onVSPIconClick: dummyFunc,
-		};
+    it('DetailsCatalogView view test when filter is empty string', () => {
+        let params = {
+            VLMList: FinalizedLicenseModelFactory.buildList(3),
+            VSPList: VSPEditorFactory.buildList(4),
+            onSelectVLM: () => {},
+            onSelectVSP: () => {},
+            onAddVLM: () => {},
+            onAddVSP: () => {},
+            filter: ''
+        };
 
-		let VendorItemView = TestUtils.renderIntoDocument(<VendorItem{...params}/>);
-		expect(VendorItemView).toBeTruthy();
-	});
+        let AllCatalog = TestUtils.renderIntoDocument(
+            <DetailsCatalogView {...params} />
+        );
+        expect(AllCatalog).toBeTruthy();
+    });
+    it('DetailsCatalogView view test when filter is initial obj', () => {
+        let params = {
+            VLMList: FinalizedLicenseModelFactory.buildList(3),
+            VSPList: VSPEditorFactory.buildList(4),
+            onSelectVLM: () => {},
+            onSelectVSP: () => {},
+            onAddVLM: () => {},
+            onAddVSP: () => {},
+            filter: searchValueObj['WORKSPACE']
+        };
 
-
-	it('VSPOverlay view test', () => {
-
-		let params = {
-			VSPList: VSPEditorFactory.buildList(10 ,{vendorId: '1'}),
-			onSelectVSP: () => {}
-		};
-
-		let VSPOverlayView = TestUtils.renderIntoDocument(<div><VSPOverlay {...params}/></div>);
-		expect(VSPOverlayView).toBeTruthy();
-	});
-
-	it('CatalogItemDetails view test', () => {
-
-		let params = {
-			catalogItemData: FinalizedLicenseModelFactory.build(),
-			onSelect: () => {},
-			catalogItemTypeClass: catalogItemTypes.LICENSE_MODEL
-		};
-
-		let CatalogItemDetailsView = TestUtils.renderIntoDocument(<div><CatalogItemDetails {...params}/></div>);
-		expect(CatalogItemDetailsView).toBeTruthy();
-	});
-
-	it('DetailsCatalogView view test', () => {
-
-		let params = {
-			VLMList: FinalizedLicenseModelFactory.buildList(3),
-			VSPList:  VSPEditorFactory.buildList(4),
-			onSelectVLM: () => {},
-			onSelectVSP: () => {},
-			onAddVLM: () => {},
-			onAddVSP: () => {},
-			filter: ''
-		};
-
-		let AllCatalog = TestUtils.renderIntoDocument(<DetailsCatalogView {...params}/>);
-		expect(AllCatalog).toBeTruthy();
-	});
+        let AllCatalog = TestUtils.renderIntoDocument(
+            <DetailsCatalogView {...params} />
+        );
+        expect(AllCatalog).toBeTruthy();
+    });
 });

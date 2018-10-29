@@ -20,9 +20,15 @@ export const tabsMapping = {
     CATALOG: 2
 };
 
+export const searchValueObj = {
+    WORKSPACE: '',
+    CATALOG: ''
+};
+
 export const actionTypes = keyMirror({
     CHANGE_ACTIVE_ONBOARD_TAB: null,
     CHANGE_SEARCH_VALUE: null,
+    CLEAR_SEARCH_VALUE: null,
     RESET_ONBOARD_STORE: null,
     VSP_MIGRATION: null
 });
