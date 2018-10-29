@@ -4,16 +4,20 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { tabsMapping, actionTypes } from './OnboardConstants.js';
+import {
+    tabsMapping,
+    actionTypes,
+    searchValueObj
+} from './OnboardConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
@@ -30,7 +34,6 @@ const OnboardActionHelper = {
         });
     },
     changeActiveTab(dispatch, activeTab) {
-        this.clearSearchValue(dispatch);
         dispatch({
             type: actionTypes.CHANGE_ACTIVE_ONBOARD_TAB,
             activeTab
@@ -47,16 +50,18 @@ const OnboardActionHelper = {
                       }
         });
     },
-    changeSearchValue(dispatch, searchValue) {
+    changeSearchValue(dispatch, searchValue, activeTab) {
         dispatch({
             type: actionTypes.CHANGE_SEARCH_VALUE,
-            searchValue
+            payload: { searchValue, activeTab }
         });
     },
     clearSearchValue(dispatch) {
         dispatch({
-            type: actionTypes.CHANGE_SEARCH_VALUE,
-            searchValue: ''
+            type: actionTypes.CLEAR_SEARCH_VALUE,
+            payload: {
+                searchValue: searchValueObj
+            }
         });
     },
 

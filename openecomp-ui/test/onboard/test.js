@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,10 +60,19 @@ describe('Onboard Module Tests', () => {
 
     it('should change searchValue', () => {
         const store = storeCreator();
+        const searchValue = 'test';
+        const searchValueObj = {
+            WORKSPACE: searchValue,
+            CATALOG: ''
+        };
         const expectedStore = OnboardStoreFactory.build({
-            searchValue: 'hello'
+            searchValue: searchValueObj
         });
-        OnboardActionHelper.changeSearchValue(store.dispatch, 'hello');
+        OnboardActionHelper.changeSearchValue(
+            store.dispatch,
+            searchValue,
+            'WORKSPACE'
+        );
         expect(store.getState().onboard).toEqual(expectedStore);
     });
 

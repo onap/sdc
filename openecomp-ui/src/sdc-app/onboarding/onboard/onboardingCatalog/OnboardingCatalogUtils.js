@@ -16,6 +16,7 @@
 
 export const filterCatalogItemsByType = ({ items, filter }) => {
     return items.filter(
-        item => item.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
+        item =>
+            item.name.toLowerCase().indexOf(filter && filter.toLowerCase()) > -1
     );
 };
