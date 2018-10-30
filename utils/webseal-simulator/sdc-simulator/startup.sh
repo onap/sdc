@@ -15,7 +15,7 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
                 -Dconfig.home=${JETTY_BASE}/config/sdc-simulator \
                 -Dlog.home=${JETTY_BASE}/logs \
                 -Dlogback.configurationFile=${JETTY_BASE}/config/sdc-simulator/logback.xml \
-                -Djetty.logging.dir=${JETTY_BASE}/logs"
+                -Djetty.console-capture.dir=${JETTY_BASE}/logs"
 
 
 cd /var/lib/jetty
