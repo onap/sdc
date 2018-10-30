@@ -266,6 +266,53 @@ public class ToscaOperationFacadeTest {
         assertThat(result.isLeft());
     }
 
+    @Test
+    public void testValidateCompExists() {
+        Either<Boolean, StorageOperationStatus> result;
+        String componentId = "componentId";
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        when(titanDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
+        result = testInstance.validateComponentExists(componentId);
+        assertEquals(true, result.left().value());
+    }
+
+    @Test
+    public void testValidateCompExists_NotFound() {
+        Either<Boolean, StorageOperationStatus> result;
+        String componentId = "componentId";
+        when(titanDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        result = testInstance.validateComponentExists(componentId);
+        assertEquals(false, result.left().value());
+    }
+
+    @Test
+    public void testValidateToscaResourceNameExists() {
+        Either<Boolean, StorageOperationStatus> result;
+        String templateName = "templateName";
+        Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
+        properties.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, templateName);
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertexList.add(graphVertex);
+        when(titanDaoMock.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
+        result = testInstance.validateToscaResourceNameExists(templateName);
+        assertEquals(true, result.left().value());
+    }
+
+    @Test
+    public void testValidateToscaResourceNameExists_false() {
+        Either<Boolean, StorageOperationStatus> result;
+        String templateName = "templateName";
+        Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
+        properties.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, templateName);
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertexList.add(graphVertex);
+        when(titanDaoMock.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        result = testInstance.validateToscaResourceNameExists(templateName);
+        assertEquals(false, result.left().value());
+    }
+
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
