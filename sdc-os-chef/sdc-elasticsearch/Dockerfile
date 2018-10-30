@@ -1,4 +1,4 @@
-FROM onap/base_sdc-elasticsearch:1.4.0
+FROM onap/base_sdc-elasticsearch:1.4.1-SNAPSHOT-latest
 
 COPY chef-solo /root/chef-solo/
 
