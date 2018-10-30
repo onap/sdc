@@ -12,7 +12,7 @@ cwd "#{ENV['JETTY_BASE']}"
 code <<-EOH
    cd "#{ENV['JETTY_BASE']}"
    java -jar "#{ENV['JETTY_HOME']}"/start.jar --add-to-start=deploy
-   java -jar "#{ENV['JETTY_HOME']}"/start.jar --add-to-startd=http,https,logging,setuid
+   java -jar "#{ENV['JETTY_HOME']}"/start.jar --create-startd --add-to-start=http,https,console-capture,setuid
 EOH
 end
 

@@ -6,7 +6,7 @@ cwd "#{jetty_base}"
 code <<-EOH
    cd "#{jetty_base}"
    java -jar "/#{jetty_home}"/start.jar --add-to-start=deploy
-   java -jar "/#{jetty_home}"/start.jar --add-to-startd=http,https,logging,setuid
+   java -jar "/#{jetty_home}"/start.jar --create-startd --add-to-start=http,https,console-capture,setuid
 EOH
 end
 
