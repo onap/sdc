@@ -247,7 +247,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     private boolean hasPreviousVersion(GraphVertex toscaElementVertex) {
         boolean hasPreviousVersion = true;
         String version = (String) toscaElementVertex.getMetadataProperty(GraphPropertyEnum.VERSION);
-        if (StringUtils.isEmpty(version) || version.equals("0.1"))
+        if (StringUtils.isEmpty(version) || "0.1".equals(version))
             hasPreviousVersion = false;
         return hasPreviousVersion;
     }
@@ -1293,7 +1293,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
         GraphVertex nextVersionToscaElementVertex = new GraphVertex();
         String uniqueId = IdBuilderUtils.generateUniqueId();
-        Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>(toscaElementVertex.getMetadataProperties());
+        Map<GraphPropertyEnum, Object> metadataProperties = new EnumMap<>(toscaElementVertex.getMetadataProperties());
         nextVersionToscaElementVertex.setMetadataProperties(metadataProperties);
         nextVersionToscaElementVertex.setUniqueId(uniqueId);
         nextVersionToscaElementVertex.setLabel(toscaElementVertex.getLabel());
@@ -1322,12 +1322,6 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return nextVersionToscaElementVertex;
     }
 
-    private ComponentParametersView buildComponentParametersViewAfterCheckin() {
-        ComponentParametersView componentParametersView = new ComponentParametersView();
-        componentParametersView.disableAll();
-        componentParametersView.setIgnoreUsers(false);
-        return componentParametersView;
-    }
 
     private Either<GraphVertex, StorageOperationStatus> checkinToscaELement(LifecycleStateEnum currState, GraphVertex toscaElementVertex, GraphVertex ownerVertex, GraphVertex modifierVertex, LifecycleStateEnum nextState) {
         Either<GraphVertex, StorageOperationStatus> updateRelationsRes;
@@ -1368,7 +1362,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
         if (currState == LifecycleStateEnum.READY_FOR_CERTIFICATION) {
             // In case of cancel "ready for certification" remove last state edge with "STATE" property equals to "NOT_CERTIFIED_CHECKIN"
-            Map<GraphPropertyEnum, Object> vertexProperties = new HashMap<>();
+            Map<GraphPropertyEnum, Object> vertexProperties = new EnumMap<>(GraphPropertyEnum.class);
             vertexProperties.put(GraphPropertyEnum.STATE, nextState);
             Either<Edge, TitanOperationStatus> deleteResult = titanDao.deleteBelongingEdgeByCriteria(toscaElementVertex, EdgeLabelEnum.LAST_STATE, vertexProperties);
             if (deleteResult.isRight()) {
@@ -1387,7 +1381,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         }
         if (result == null) {
             // Create CHECKIN relation
-            Map<EdgePropertyEnum, Object> edgeProperties = new HashMap<>();
+            Map<EdgePropertyEnum, Object> edgeProperties = new EnumMap<>(EdgePropertyEnum.class);
             edgeProperties.put(EdgePropertyEnum.STATE, nextState);
             TitanOperationStatus createEdgeRes = titanDao.createEdge(modifierVertex.getVertex(), toscaElementVertex.getVertex(), EdgeLabelEnum.STATE, edgeProperties);
             if (createEdgeRes != TitanOperationStatus.OK) {
