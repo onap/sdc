@@ -1,10 +1,8 @@
-FROM onap/base_sdc-jetty:1.4.0
+FROM onap/base_sdc-jetty:1.4.1
 
 COPY chef-solo /root/chef-solo/
 
 COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
-
-RUN cp ${JETTY_HOME}/resources/log4j.properties ${JETTY_BASE}/resources/log4j.properties
 
 ADD onboarding*.war         ${JETTY_BASE}/webapps/
 
