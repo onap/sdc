@@ -1,9 +1,6 @@
 {
    "name": "xxx",
    "description": "OpenSource-xxx",
-   "cookbook_versions": {
-            "Deploy-SDandC": "= 1.0.0"
-   },
    "json_class": "Chef::Environment",
    "chef_type": "environment",
 
