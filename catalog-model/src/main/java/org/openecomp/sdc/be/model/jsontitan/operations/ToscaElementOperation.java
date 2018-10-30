@@ -84,16 +84,17 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     private static final Gson gson = new Gson();
 
+    @Autowired
+    protected CategoryOperation categoryOperation;
+
     protected Gson getGson() {
         return gson;
     }
 
-    @Autowired
-    protected CategoryOperation categoryOperation;
 
     protected Either<GraphVertex, StorageOperationStatus> getComponentByLabelAndId(String uniqueId, ToscaElementTypeEnum nodeType, JsonParseFlagEnum parseFlag) {
 
-        Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.UNIQUE_ID, uniqueId);
 
         VertexTypeEnum vertexType = ToscaElementTypeEnum.getVertexTypeByToscaType(nodeType);
@@ -330,7 +331,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 updaterVertex = findUser.left().value();
             }
         }
-        Map<EdgePropertyEnum, Object> props = new HashMap<>();
+        Map<EdgePropertyEnum, Object> props = new EnumMap<>(EdgePropertyEnum.class);
         props.put(EdgePropertyEnum.STATE, (String) toscaElement.getMetadataValue(JsonPresentationFields.LIFECYCLE_STATE));
 
         TitanOperationStatus result = titanDao.createEdge(updaterVertex, nodeTypeVertex, EdgeLabelEnum.STATE, props);
@@ -672,7 +673,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         Map<GraphPropertyEnum, Object> props = null;
 
         if (userId != null) {
-            props = new HashMap<>();
+            props = new EnumMap<>(GraphPropertyEnum.class);
             // for Designer retrieve specific user
             props.put(GraphPropertyEnum.USERID, userId);
         }
@@ -1235,8 +1236,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum
                                                                                               componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
-        Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
-        Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new HashMap<>();
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
@@ -1256,8 +1257,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
         long startFetchAllStates = System.currentTimeMillis();
         Either<List<GraphVertex>, TitanOperationStatus> highestNodes = getListOfHighestComponents(componentType, excludeTypes, JsonParseFlagEnum.ParseMetadata);
 
-        Map<GraphPropertyEnum, Object> propertiesToMatchCertified = new HashMap<>();
-        Map<GraphPropertyEnum, Object> propertiesHasNotToMatchCertified = new HashMap<>();
+        Map<GraphPropertyEnum, Object> propertiesToMatchCertified = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> propertiesHasNotToMatchCertified = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatchCertified.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         propertiesToMatchCertified.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         if (componentType == ComponentTypeEnum.RESOURCE) {
@@ -1293,7 +1294,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                                                                                                           componentType) {
 
         // get all components marked for delete
-        Map<GraphPropertyEnum, Object> props = new HashMap<>();
+        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.IS_DELETED, true);
         props.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
 

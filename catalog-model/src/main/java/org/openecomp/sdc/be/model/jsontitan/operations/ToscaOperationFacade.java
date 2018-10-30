@@ -25,7 +25,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -1270,10 +1269,10 @@ public class ToscaOperationFacade {
                 ComponentInstanceDataDefinition componentInstance = new ComponentInstanceDataDefinition(entry.getKey());
                 MapListCapabilityDataDefinition capMap = nodeTemplateOperation.prepareCalculatedCapabiltyForNodeType(mapToscaDataDefinition, componentInstance);
 
-                MapCapabilityProperty MapCapabilityProperty = ModelConverter.convertToMapOfMapCapabiltyProperties(caps, componentInstance.getUniqueId(), true);
+                MapCapabilityProperty mapCapabilityProperty = ModelConverter.convertToMapOfMapCapabiltyProperties(caps, componentInstance.getUniqueId(), true);
 
                 calcCapabilty.put(entry.getKey().getUniqueId(), capMap);
-                calculatedCapabilitiesProperties.put(entry.getKey().getUniqueId(), MapCapabilityProperty);
+                calculatedCapabilitiesProperties.put(entry.getKey().getUniqueId(), mapCapabilityProperty);
             }
         }
 
