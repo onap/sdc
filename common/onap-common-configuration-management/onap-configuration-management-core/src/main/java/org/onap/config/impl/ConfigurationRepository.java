@@ -18,7 +18,6 @@ package org.onap.config.impl;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,7 +30,6 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
 
@@ -105,29 +103,16 @@ public final class ConfigurationRepository {
     }
 
     public void populateOverrideConfiguration(String key, File file) {
+
         ConfigurationHolder holder = store.get(key);
+
         if (holder == null) {
             holder = new ConfigurationHolder(new CombinedConfiguration());
             store.put(key, holder);
         }
-        holder.addOverrideConfiguration(file.getAbsolutePath(), ConfigurationUtils.getConfigurationBuilder(file, true));
+
+        holder.addOverrideConfiguration(file.getAbsolutePath(), ConfigurationUtils.getConfigurationBuilder(file));
         populateTenantsNamespace(key);
-    }
-
-    public void refreshOverrideConfigurationFor(String key, int index) {
-        ConfigurationHolder holder = store.get(key);
-        if (holder != null) {
-            holder.refreshOverrideConfiguration(index);
-        }
-    }
-
-    public void removeOverrideConfiguration(File file) {
-        for (String s : (Iterable<String>) new ArrayList(store.keySet())) {
-            ConfigurationHolder holder = store.get(s);
-            if (holder.containsOverrideConfiguration(file.getAbsolutePath())) {
-                holder.removeOverrideConfiguration(file.getAbsolutePath());
-            }
-        }
     }
 
     private class ConfigurationHolder {
@@ -145,20 +130,6 @@ public final class ConfigurationRepository {
 
         public ConfigurationHolder(Configuration builder) {
             this.config = builder;
-        }
-
-        public void refreshOverrideConfiguration(int index) {
-            int count = -1;
-            for (FileBasedConfigurationBuilder overrides : overrideConfiguration.values()) {
-                try {
-                    if (++count == index) {
-                        overrides.save();
-                        overrides.resetResult();
-                    }
-                } catch (ConfigurationException exception) {
-                    //do nothing
-                }
-            }
         }
 
         public void addOverrideConfiguration(String path, BasicConfigurationBuilder<FileBasedConfiguration> builder) {
@@ -179,15 +150,6 @@ public final class ConfigurationRepository {
             } catch (Exception exception) {
                 return null;
             }
-        }
-
-        public void removeOverrideConfiguration(String path) {
-            overrideConfiguration.remove(path.toUpperCase());
-            getEffectiveConfiguration(config, overrideConfiguration.values());
-        }
-
-        public boolean containsOverrideConfiguration(String path) {
-            return overrideConfiguration.containsKey(path.toUpperCase());
         }
 
         public Configuration getConfiguration(String namespace) throws Exception {

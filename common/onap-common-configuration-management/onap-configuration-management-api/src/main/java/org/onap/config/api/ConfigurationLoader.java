@@ -16,24 +16,25 @@
 
 package org.onap.config.api;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
-public interface ConfigurationManager extends Configuration {
+/**
+ * Loads a Java SPI binding for the configuration service.
+ *
+ * @author evitaliy
+ * @since 29 Oct 2018
+ */
+class ConfigurationLoader {
 
-    Configuration CONFIG = ConfigurationLoader.load();
+    static Configuration load() {
 
-    static Configuration lookup() {
-        return CONFIG;
+        ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
+        Iterator<ConfigurationManager> configManagers = loader.iterator();
+        if (configManagers.hasNext()) {
+            return configManagers.next();
+        }
+
+        throw new IllegalStateException("No binding found for configuration service");
     }
-
-    String getConfigurationValue(Map<String, Object> queryData);
-
-    Map<String, String> listConfiguration(Map<String, Object> query);
-
-    Collection<String> getTenants();
-
-    Collection<String> getNamespaces();
-
-    Collection<String> getKeys(String tenant, String namespace);
 }
