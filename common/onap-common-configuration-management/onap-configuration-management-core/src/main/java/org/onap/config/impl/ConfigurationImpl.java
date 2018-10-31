@@ -21,6 +21,7 @@ import static org.onap.config.ConfigurationUtils.isBlank;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
 import org.onap.config.NonConfigResource;
@@ -42,22 +44,18 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
 
-    private static final Object LOCK = new Object();
+    private static final NonConfigResource nonConfigResource = new NonConfigResource();
 
-    private static boolean instantiated = false;
+    static {
 
-    public ConfigurationImpl() throws Exception {
-
-        synchronized (LOCK) {
+        try {
             init();
+        } catch (ConfigurationException e) {
+            throw new IllegalStateException("Failed to initialize configuration");
         }
     }
 
-    private void init() throws Exception {
-
-        if (instantiated) {
-            return;
-        }
+    private static void init() throws ConfigurationException {
 
         Map<String, AggregateConfiguration> moduleConfigStore = new HashMap<>();
         List<URL> classpathResources = ConfigurationUtils.getAllClassPathResources();
@@ -72,7 +70,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
                 moduleConfig.addConfig(url);
             } else {
-                NonConfigResource.add(url);
+                nonConfigResource.add(url);
             }
         }
         String configLocation = System.getProperty("config.location");
@@ -90,7 +88,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                     }
                     moduleConfig.addConfig(file);
                 } else {
-                    NonConfigResource.add(file);
+                    nonConfigResource.add(file);
                 }
             }
         }
@@ -135,11 +133,9 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
             }
         }
-
-        instantiated = true;
     }
 
-    private void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
+    private static void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
 
         if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE) != null) {
             ConfigurationRepository.lookup().populateConfiguration(
@@ -362,7 +358,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     }
 
     private <T> T read(String tenant, String namespace, Class<T> clazz, String keyPrefix, Hint... hints)
-            throws Exception {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+
         Config confAnnotation = clazz.getAnnotation(Config.class);
         if (confAnnotation != null && confAnnotation.key().length() > 0 && !keyPrefix.endsWith(".")) {
             keyPrefix += (confAnnotation.key() + ".");
@@ -455,7 +452,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         if (String.class.equals(clazz)) {
             if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
                 String contents = ConfigurationUtils.getFileContents(
-                        NonConfigResource.locate(obj.toString().substring(1).trim()));
+                        nonConfigResource.locate(obj.toString().substring(1).trim()));
                 if (contents == null) {
                     contents = ConfigurationUtils.getFileContents(obj.toString().substring(1).trim());
                 }
