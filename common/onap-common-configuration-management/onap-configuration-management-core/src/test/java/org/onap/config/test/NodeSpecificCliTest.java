@@ -21,18 +21,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.config.Constants;
 import org.onap.config.api.ConfigurationManager;
+import org.onap.config.impl.CliConfigurationImpl;
 import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
@@ -63,9 +59,7 @@ public class NodeSpecificCliTest {
         input.put("namespace", NAMESPACE);
         input.put("key", ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH);
 
-        MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
-        ObjectName mbeanName = new ObjectName(Constants.MBEAN_NAME);
-        ConfigurationManager conf = JMX.newMBeanProxy(mbsc, mbeanName, ConfigurationManager.class, true);
+        ConfigurationManager conf = new CliConfigurationImpl();
         String maxLength = conf.getConfigurationValue(input);
 
         //Verify Property from Namespace configurations

@@ -38,10 +38,9 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -55,7 +54,6 @@ import java.util.concurrent.TransferQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.sf.corn.cps.CPScanner;
 import net.sf.corn.cps.ResourceFilter;
 import org.apache.commons.configuration2.CompositeConfiguration;
@@ -64,6 +62,7 @@ import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -72,7 +71,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.onap.config.api.Config;
 import org.onap.config.api.ConfigurationManager;
-import org.onap.config.impl.ConfigurationRepository;
 import org.onap.config.impl.YamlConfiguration;
 import org.onap.config.type.ConfigurationMode;
 import org.onap.config.type.ConfigurationType;
@@ -82,7 +80,9 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtils.class);
+
     private static final String CONFIGURATION_TYPE_NOT_SUPPORTED = "Configuration type not supported:";
+
     private static final Map<Class, Class> ARRAY_CLASS_MAP;
 
     static {
@@ -104,6 +104,7 @@ public class ConfigurationUtils {
     }
 
     public static Collection<File> getAllFiles(File file, boolean recursive, boolean onlyDirectory) {
+
         ArrayList<File> collection = new ArrayList<>();
         if (file.isDirectory() && file.exists()) {
             File[] files = file.listFiles();
@@ -113,7 +114,7 @@ public class ConfigurationUtils {
                 } else if (innerFile.isDirectory()) {
                     collection.add(innerFile);
                     if (recursive) {
-                        collection.addAll(getAllFiles(innerFile, recursive, onlyDirectory));
+                        collection.addAll(getAllFiles(innerFile, true, onlyDirectory));
                     }
                 }
             }
@@ -122,12 +123,17 @@ public class ConfigurationUtils {
     }
 
     public static String getCommaSeparatedList(String[] list) {
-        return getCommaSeparatedList(list == null ? Collections.emptyList() : Arrays.asList(list));
+        return (list == null) || (list.length == 0) ? "" : getCommaSeparatedList(Arrays.asList(list));
     }
 
-    public static String getCommaSeparatedList(List list) {
-        return ((Stream<String>) list.stream().filter(o -> o != null && !o.toString().trim().isEmpty())
-                                         .map(o -> o.toString().trim())).collect(Collectors.joining(","));
+    public static String getCommaSeparatedList(List<?> list) {
+
+        if ((list == null) || list.isEmpty()) {
+            return "";
+        }
+
+        return list.stream().filter(o -> o != null && !o.toString().trim().isEmpty())
+                                         .map(o -> o.toString().trim()).collect(Collectors.joining(","));
     }
 
     public static boolean isConfig(URL url) {
@@ -150,16 +156,57 @@ public class ConfigurationUtils {
         return file != null && file.exists() && isConfig(file.getName());
     }
 
-    private static Optional<String> getNamespace(Configuration config) {
+    private static Optional<String> readNamespace(Configuration config) {
         return ofNullable(config).flatMap(configuration -> ofNullable(configuration.getString(Constants.NAMESPACE_KEY)))
                        .map(String::toUpperCase);
     }
 
+    private static Optional<String> readMergeStrategy(Configuration config) {
+        return ofNullable(config).flatMap(configuration -> ofNullable(configuration.getString(Constants.MODE_KEY)))
+                       .map(String::toUpperCase);
+    }
+
+    public static ConfigurationMode getMergeStrategy(File file) {
+        Optional<ConfigurationMode> configurationMode =
+                getConfiguration(file).flatMap(ConfigurationUtils::readMergeStrategy)
+                        .flatMap(ConfigurationUtils::convertConfigurationMode);
+        return configurationMode.orElseGet(() -> getMergeStrategy(file.getName().toUpperCase()));
+    }
+
     public static ConfigurationMode getMergeStrategy(URL url) {
         Optional<ConfigurationMode> configurationMode =
-                getConfiguration(url).flatMap(ConfigurationUtils::getMergeStrategy)
+                getConfiguration(url).flatMap(ConfigurationUtils::readMergeStrategy)
                         .flatMap(ConfigurationUtils::convertConfigurationMode);
         return configurationMode.orElseGet(() -> getMergeStrategy(url.getFile().toUpperCase()));
+    }
+
+    public static ConfigurationMode getMergeStrategy(String file) {
+
+        file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
+        file = file.substring(file.lastIndexOf('/') + 1);
+
+        Pattern pattern = Pattern.compile(
+                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|"
+                        + ConfigurationMode.UNION + ")){0,1}" + "\\.(" + ConfigurationType.PROPERTIES.name() + "|"
+                        + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
+                        + ConfigurationType.YAML.name() + ")$");
+        Matcher matcher = pattern.matcher(file);
+        boolean b1 = matcher.matches();
+        if (b1) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                String modeName = matcher.group(i);
+                if (modeName != null) {
+                    modeName = modeName.substring(1);
+                }
+                try {
+                    return Enum.valueOf(ConfigurationMode.class, modeName);
+                } catch (Exception exception) {
+                    //do nothing
+                }
+            }
+        }
+
+        return null;
     }
 
     public static Optional<FileBasedConfiguration> getConfiguration(URL url) {
@@ -195,34 +242,14 @@ public class ConfigurationUtils {
         }
     }
 
-    public static ConfigurationMode getMergeStrategy(String file) {
-        file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
-        file = file.substring(file.lastIndexOf('/') + 1);
-        Pattern pattern = Pattern.compile(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|"
-                        + ConfigurationMode.UNION + ")){0,1}" + "\\.(" + ConfigurationType.PROPERTIES.name() + "|"
-                        + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
-                        + ConfigurationType.YAML.name() + ")$");
-        Matcher matcher = pattern.matcher(file);
-        boolean b1 = matcher.matches();
-        if (b1) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                String modeName = matcher.group(i);
-                if (modeName != null) {
-                    modeName = modeName.substring(1);
-                }
-                try {
-                    return Enum.valueOf(ConfigurationMode.class, modeName);
-                } catch (Exception exception) {
-                    //do nothing
-                }
-            }
-        }
-
-        return null;
+    public static ConfigurationType getConfigType(File file) {
+        Objects.requireNonNull(file, "File cannot be null");
+        return Enum.valueOf(ConfigurationType.class,
+                file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('.') + 1).toUpperCase());
     }
 
     public static ConfigurationType getConfigType(URL url) {
+        Objects.requireNonNull(url, "URL cannot be null");
         return Enum.valueOf(ConfigurationType.class,
                 url.getFile().substring(url.getFile().lastIndexOf('.') + 1).toUpperCase());
     }
@@ -237,23 +264,6 @@ public class ConfigurationUtils {
         return Optional.ofNullable(configurationMode);
     }
 
-    private static Optional<String> getMergeStrategy(Configuration config) {
-        return ofNullable(config).flatMap(configuration -> ofNullable(configuration.getString(Constants.MODE_KEY)))
-                       .map(String::toUpperCase);
-    }
-
-    public static ConfigurationMode getMergeStrategy(File file) {
-        Optional<ConfigurationMode> configurationMode =
-                getConfiguration(file).flatMap(ConfigurationUtils::getMergeStrategy)
-                        .flatMap(ConfigurationUtils::convertConfigurationMode);
-        return configurationMode.orElseGet(() -> getMergeStrategy(file.getName().toUpperCase()));
-    }
-
-    public static ConfigurationType getConfigType(File file) {
-        return Enum.valueOf(ConfigurationType.class,
-                file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('.') + 1).toUpperCase());
-    }
-
     public static Class getCollectionGenericType(Field field) {
         Type type = field.getGenericType();
 
@@ -266,7 +276,7 @@ public class ConfigurationUtils {
                 if (isWrapperClass(clazz)) {
                     return clazz;
                 } else {
-                    throw new RuntimeException("Collection of type " + clazz.getName() + " not supported.");
+                    throw new IllegalArgumentException("Collection of type " + clazz.getName() + " not supported.");
                 }
             }
         }
@@ -275,9 +285,8 @@ public class ConfigurationUtils {
     }
 
     public static boolean isWrapperClass(Class clazz) {
-        return clazz == String.class || clazz == Boolean.class || clazz == Character.class || Number.class
-                                                                                                      .isAssignableFrom(
-                                                                                                              clazz);
+        return clazz == String.class || clazz == Boolean.class || clazz == Character.class
+                       || Number.class.isAssignableFrom(clazz);
     }
 
     public static Class getArrayClass(Class clazz) {
@@ -288,16 +297,25 @@ public class ConfigurationUtils {
         return CPScanner.scanResources(new ResourceFilter());
     }
 
+    public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file) {
+        FileBasedConfigurationBuilder<FileBasedConfiguration> builder;
+        ConfigurationType configType = ConfigurationUtils.getConfigType(file);
+        builder = getFileBasedConfigurationBuilder(configType);
+        builder.configure(new Parameters().fileBased().setFile(file)
+                                  .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+        return builder;
+    }
+
     public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(URL url) {
         ConfigurationType configType = ConfigurationUtils.getConfigType(url);
         ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder =
-                getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(configType);
+                getFileBasedConfigurationBuilder(configType);
         builder.configure(
                 new Parameters().fileBased().setURL(url).setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         return builder;
     }
 
-    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> getFileBasedConfigurationBuilder(
             ConfigurationType configType) {
 
         ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
@@ -317,17 +335,6 @@ public class ConfigurationUtils {
             default:
                 throw new IllegalArgumentException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
         }
-        return builder;
-    }
-
-    public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file,
-            boolean autoSave) {
-        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
-        ConfigurationType configType = ConfigurationUtils.getConfigType(file);
-        builder = getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(configType);
-        builder.configure(new Parameters().fileBased().setFile(file)
-                                  .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
-        builder.setAutoSave(autoSave);
         return builder;
     }
 
@@ -535,6 +542,11 @@ public class ConfigurationUtils {
                 ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SEPARATOR));
     }
 
+    public static String getConfigurationRepositoryKey(URL url) {
+        return getConfigurationRepositoryKey(
+                ConfigurationUtils.getNamespace(url).split(Constants.TENANT_NAMESPACE_SEPARATOR));
+    }
+
     public static String getConfigurationRepositoryKey(String[] array) {
         Deque<String> stack = new ArrayDeque<>();
         stack.push(Constants.DEFAULT_TENANT);
@@ -547,7 +559,7 @@ public class ConfigurationUtils {
 
     public static String getNamespace(File file) {
         Optional<String> namespace =
-                getConfiguration(file).flatMap(ConfigurationUtils::getNamespace).map(String::toUpperCase);
+                getConfiguration(file).flatMap(ConfigurationUtils::readNamespace).map(String::toUpperCase);
         return namespace.orElseGet(() -> getNamespace(file.getName().toUpperCase()));
     }
 
@@ -577,78 +589,30 @@ public class ConfigurationUtils {
         return null;
     }
 
-    public static String getConfigurationRepositoryKey(URL url) {
-        return getConfigurationRepositoryKey(
-                ConfigurationUtils.getNamespace(url).split(Constants.TENANT_NAMESPACE_SEPARATOR));
-    }
-
     public static String getNamespace(URL url) {
 
         Optional<String> namespace =
-                getConfiguration(url).flatMap(ConfigurationUtils::getNamespace).map(String::toUpperCase);
+                getConfiguration(url).flatMap(ConfigurationUtils::readNamespace).map(String::toUpperCase);
 
         return namespace.orElseGet(() -> getNamespace(url.getFile().toUpperCase()));
     }
 
-    public static LinkedHashMap toMap(Configuration config) {
-        Iterator<String> iterator = config.getKeys();
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            if (!(key.equals(Constants.MODE_KEY) || key.equals(Constants.NAMESPACE_KEY) || key.equals(
-                    Constants.LOAD_ORDER_KEY))) {
-                map.put(key, config.getProperty(key).toString());
-            }
-        }
-
-        return map;
-    }
-
-    public static Map diff(LinkedHashMap orig, LinkedHashMap latest) {
-        orig = new LinkedHashMap<>(orig);
-        latest = new LinkedHashMap<>(latest);
-        List<String> set = new ArrayList(orig.keySet());
-        for (String key : set) {
-            if (latest.remove(key, orig.get(key))) {
-                orig.remove(key);
-            }
-        }
-        Set<String> keys = latest.keySet();
-        for (String key : keys) {
-            orig.remove(key);
-        }
-        set = new ArrayList(orig.keySet());
-        for (String key : set) {
-            latest.put(key, "");
-        }
-        return new HashMap<>(latest);
-    }
-
-    public static boolean isArray(String tenant, String namespace, String key, int processingHints) throws Exception {
-        Object obj = ConfigurationUtils
-                             .getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key,
-                                     processingHints);
-        return (obj != null) && ConfigurationUtils.isCollection(obj.toString());
-    }
-
     public static Object getProperty(Configuration config, String key, int processingHints) {
 
-        if (!isDirectLookup(processingHints)) {
+        if (!isDirectLookup(processingHints) && (config instanceof CompositeConfiguration)) {
 
-            if (config instanceof CompositeConfiguration) {
+            CompositeConfiguration conf = (CompositeConfiguration) config;
+            for (int i = 0; i < conf.getNumberOfConfigurations(); i++) {
 
-                CompositeConfiguration conf = (CompositeConfiguration) config;
-                for (int i = 0; i < conf.getNumberOfConfigurations(); i++) {
-
-                    if (isNodeSpecific(processingHints)) {
-                        Object obj = conf.getConfiguration(i).getProperty(key);
-                        if (obj != null) {
-                            return obj;
-                        }
+                if (isNodeSpecific(processingHints)) {
+                    Object obj = conf.getConfiguration(i).getProperty(key);
+                    if (obj != null) {
+                        return obj;
                     }
                 }
             }
         }
+
         return config.getProperty(key);
     }
 
@@ -695,6 +659,6 @@ public class ConfigurationUtils {
     }
 
     public static boolean isBlank(String value) {
-        return value == null || value.trim().length() == 0;
+        return value == null || value.trim().isEmpty();
     }
 }
