@@ -19,24 +19,19 @@ package org.onap.config.impl;
 import static org.onap.config.Constants.DEFAULT_NAMESPACE;
 import static org.onap.config.Constants.DEFAULT_TENANT;
 import static org.onap.config.Constants.LOAD_ORDER_KEY;
-import static org.onap.config.Constants.MBEAN_NAME;
 import static org.onap.config.Constants.MODE_KEY;
 import static org.onap.config.Constants.NAMESPACE_KEY;
 
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.StandardMBean;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.Hint;
@@ -44,13 +39,10 @@ import org.onap.config.type.ConfigurationQuery;
 
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 
+    private static final List<String> KEYS_TO_FILTER = Arrays.asList(NAMESPACE_KEY, MODE_KEY, LOAD_ORDER_KEY);
+
     public CliConfigurationImpl() throws Exception {
-        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        ObjectName name = new ObjectName(MBEAN_NAME);
-        if (mbs.isRegistered(name)) {
-            mbs.unregisterMBean(name);
-        }
-        mbs.registerMBean(new StandardMBean(this, ConfigurationManager.class), name);
+        super();
     }
 
     public String getConfigurationValue(Map<String, Object> input) {
@@ -58,26 +50,34 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     }
 
     private String getConfigurationValue(ConfigurationQuery queryData) {
+
         try {
+
+            Hint[] hints = getHints(queryData);
+
+            String[] value;
             if (queryData.isFallback()) {
-                return ConfigurationUtils.getCommaSeparatedList(
-                        get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
-                                queryData.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT,
-                                queryData.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT,
-                                queryData.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT));
+                value = get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
             } else {
-                String[] list =
-                        getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
-                                queryData.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT,
-                                queryData.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT,
-                                queryData.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
-                return ConfigurationUtils
-                               .getCommaSeparatedList(list == null ? Collections.emptyList() : Arrays.asList(list));
+                value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
+                                hints);
             }
+
+            return ConfigurationUtils.getCommaSeparatedList(value);
+
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+
         return null;
+    }
+
+    private Hint[] getHints(ConfigurationQuery query) {
+        List<Hint> hints = new ArrayList<>(Hint.values().length);
+        hints.add(query.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT);
+        hints.add(query.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT);
+        hints.add(query.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
+        return hints.toArray(new Hint[0]);
     }
 
     private Object getInput(Map<String, Object> input) {
@@ -85,13 +85,16 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         Object toReturn = null;
 
         try {
+
             toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
+
             Method[] methods = toReturn.getClass().getMethods();
             for (Method method : methods) {
                 if (input.containsKey(method.getName())) {
                     method.invoke(toReturn, input.get(method.getName()));
                 }
             }
+
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -104,16 +107,21 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     }
 
     private Map<String, String> listConfiguration(ConfigurationQuery query) {
+
         Map<String, String> map = new HashMap<>();
+
         try {
+
             Collection<String> keys = getKeys(query.getTenant(), query.getNamespace());
             for (String key : keys) {
                 map.put(key, getConfigurationValue(query.key(key)));
             }
+
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }
+
         return map;
     }
 
@@ -122,13 +130,16 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         ArrayList<String> keys = new ArrayList<>();
 
         try {
+
             Iterator<String> iter = ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).getKeys();
             while (iter.hasNext()) {
+
                 String key = iter.next();
-                if (!(key.equals(NAMESPACE_KEY) || key.equals(MODE_KEY) || key.equals(LOAD_ORDER_KEY))) {
+                if (!KEYS_TO_FILTER.contains(key)) {
                     keys.add(key);
                 }
             }
+
         } catch (Exception exception) {
             //do nothing
         }

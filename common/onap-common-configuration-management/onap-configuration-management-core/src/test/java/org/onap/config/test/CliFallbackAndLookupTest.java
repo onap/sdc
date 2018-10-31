@@ -17,18 +17,14 @@
 package org.onap.config.test;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.config.Constants;
 import org.onap.config.api.ConfigurationManager;
+import org.onap.config.impl.CliConfigurationImpl;
 import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
@@ -60,22 +56,18 @@ public class CliFallbackAndLookupTest {
         input.put("namespace", NAMESPACE);
         input.put("key", ConfigTestConstant.ARTIFACT_MAXSIZE);
 
-        MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
-        ObjectName mbeanName = new ObjectName(Constants.MBEAN_NAME);
-        ConfigurationManager conf = JMX.newMBeanProxy(mbsc, mbeanName, ConfigurationManager.class, true);
+        ConfigurationManager conf = new CliConfigurationImpl();
         String maxSizeWithNoFallback = conf.getConfigurationValue(input);
         Assert.assertEquals("", maxSizeWithNoFallback);
 
         //Verify underlying resource without lookup switch
         input.put("key", ConfigTestConstant.ARTIFACT_JSON_SCHEMA);
         String jsonSchema = conf.getConfigurationValue(input);
-        System.out.println("jsonSchema==" + jsonSchema);
         Assert.assertEquals("@" + System.getProperty("user.home") + "/TestResources/GeneratorsList.json", jsonSchema);
 
         //Verify underlying resource with lookup switch
         input.put("externalLookup", true);
         jsonSchema = conf.getConfigurationValue(input);
-        System.out.println("jsonSchema==" + jsonSchema);
         Assert.assertEquals("{name:\"SCM\"}", jsonSchema);
 
         //Verify with fallback
