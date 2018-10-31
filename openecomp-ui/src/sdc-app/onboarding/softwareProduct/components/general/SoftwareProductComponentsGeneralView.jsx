@@ -50,22 +50,18 @@ const GeneralSection = ({
                 disabled={!isManual || isReadOnlyMode}
                 type="text"
             />
-            {!isManual && (
-                <Input
-                    data-test-id="vfcCode"
-                    label={i18n('Naming Code')}
-                    disabled={isReadOnlyMode}
-                    type="text"
-                    onChange={nfcFunction =>
-                        onQDataChanged({ 'general/nfcNamingCode': nfcFunction })
-                    }
-                    isValid={qgenericFieldInfo['general/nfcNamingCode'].isValid}
-                    errorText={
-                        qgenericFieldInfo['general/nfcNamingCode'].errorText
-                    }
-                    value={dataMap['general/nfcNamingCode']}
-                />
-            )}
+            <Input
+                data-test-id="vfcCode"
+                label={i18n('Naming Code')}
+                disabled={isReadOnlyMode}
+                type="text"
+                onChange={nfcFunction =>
+                    onQDataChanged({ 'general/nfcNamingCode': nfcFunction })
+                }
+                isValid={qgenericFieldInfo['general/nfcNamingCode'].isValid}
+                errorText={qgenericFieldInfo['general/nfcNamingCode'].errorText}
+                value={dataMap['general/nfcNamingCode']}
+            />
             <Input
                 data-test-id="nfcFunction"
                 label={i18n('Function')}
