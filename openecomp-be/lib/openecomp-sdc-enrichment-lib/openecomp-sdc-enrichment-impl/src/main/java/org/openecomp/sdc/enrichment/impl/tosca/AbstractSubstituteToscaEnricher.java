@@ -20,30 +20,17 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AV
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_FUNCTION;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VM_TYPE_TAG;
 import static org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType.NATIVE_NODE;
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType.NATIVE_DEPENDS_ON;
 import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.VNF_NODE_TEMPLATE_ID_SUFFIX;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +38,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class AbstractSubstituteToscaEnricher {
@@ -80,79 +80,83 @@ public class AbstractSubstituteToscaEnricher {
             return errors;
         }
 
-        final Map<String, NodeTemplate> node_templates = serviceTemplate.getTopology_template().getNode_templates();
-        if (node_templates == null) {
+        final Map<String, NodeTemplate> nodeTemplates = serviceTemplate.getTopology_template().getNode_templates();
+        if (nodeTemplates == null) {
             return errors;
         }
 
-        final Map<String, List<String>> componentDisplayNameToNodeTempalteIds =
-                populateAllNodeTemplateIdForComponent(node_templates, serviceTemplate, toscaModel);
+        final Map<String, List<String>> componentDisplayNameToNodeTemplateIds =
+                populateAllNodeTemplateIdForComponent(nodeTemplates, serviceTemplate, toscaModel);
 
-        node_templates.keySet().stream().forEach(nodeTemplateId -> {
-            final Optional<NodeTemplate> nodeTemplateById =
-                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
-            final NodeTemplate nodeTemplate = nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
+        nodeTemplates.keySet().forEach(nodeTemplateId -> {
+            final NodeTemplate nodeTemplate =
+                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId).orElse(null);
 
             if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate, toscaModel)) {
 
                 String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
 
-                setProperty(nodeTemplate, VM_TYPE_TAG, componentDisplayName);
-
-                if (componentProperties != null && componentProperties.containsKey(componentDisplayName)) {
-                    final String mandatory =
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, MANDATORY);
-
-                    boolean isServiceTemplateFilterNotExists = false;
-                    if (!StringUtils.isEmpty(mandatory)) {
-                        Map innerProps = (Map<String, Object>) nodeTemplate.getProperties()
-                                                                           .get(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
-
-                        if (innerProps == null) {
-                            innerProps = new HashMap<String, Object>();
-                            isServiceTemplateFilterNotExists = true;
-                        }
-
-                        innerProps.put(MANDATORY, getValue(mandatory));
-
-                        if (isServiceTemplateFilterNotExists) {
-                            nodeTemplate.getProperties().put(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME, innerProps);
-                        }
-                    }
-
-                    setProperty(nodeTemplate, HIGH_AVAIL_MODE,
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
-                                    HIGH_AVAIL_MODE));
-
-                    setProperty(nodeTemplate, NFC_NAMING_CODE,
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
-                                    NFC_NAMING_CODE));
-
-                    setProperty(nodeTemplate, VFC_CODE,
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_CODE));
-
-                    setProperty(nodeTemplate, NFC_FUNCTION,
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, NFC_FUNCTION));
-
-                    if (componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
-                        nodeTemplate.getProperties().put(MIN_INSTANCES,
-                                componentProperties.get(componentDisplayName).get(MIN_INSTANCES));
-                    }
-
-                    if (componentProperties.get(componentDisplayName).get(MAX_INSTANCES) != null) {
-                        nodeTemplate.getProperties().put(MAX_INSTANCES,
-                                componentProperties.get(componentDisplayName).get(MAX_INSTANCES));
-                    }
-                }
+                enrichProperties(nodeTemplate, componentDisplayName, componentProperties);
 
                 enrichRequirements(sourceToTargetDependencies, componentDisplayName, nodeTemplate,
-                        componentDisplayNameToNodeTempalteIds, serviceTemplate, toscaModel);
+                        componentDisplayNameToNodeTemplateIds, serviceTemplate, toscaModel);
             }
         });
         return errors;
     }
 
-    private Map<String, List<String>> populateAllNodeTemplateIdForComponent(Map<String, NodeTemplate> node_templates,
+    private void enrichProperties(NodeTemplate nodeTemplate, String componentDisplayName,
+            Map<String, Map<String, Object>> componentProperties) {
+        setProperty(nodeTemplate, VM_TYPE_TAG, componentDisplayName);
+
+        if (componentProperties != null && componentProperties.containsKey(componentDisplayName)) {
+            final String mandatory =
+                    getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, MANDATORY);
+
+            boolean isServiceTemplateFilterNotExists = false;
+            if (!StringUtils.isEmpty(mandatory)) {
+                Map innerProps = (Map<String, Object>) nodeTemplate.getProperties()
+                                                                   .get(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+
+                if (innerProps == null) {
+                    innerProps = new HashMap<String, Object>();
+                    isServiceTemplateFilterNotExists = true;
+                }
+
+                innerProps.put(MANDATORY, getValue(mandatory));
+
+                if (isServiceTemplateFilterNotExists) {
+                    nodeTemplate.getProperties().put(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME, innerProps);
+                }
+            }
+
+            setProperty(nodeTemplate, HIGH_AVAIL_MODE,
+                    getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
+                            HIGH_AVAIL_MODE));
+
+            setProperty(nodeTemplate, NFC_NAMING_CODE,
+                    getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
+                            NFC_NAMING_CODE));
+
+            setProperty(nodeTemplate, VFC_CODE,
+                    getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_CODE));
+
+            setProperty(nodeTemplate, NFC_FUNCTION,
+                    getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, NFC_FUNCTION));
+
+            if (componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
+                nodeTemplate.getProperties().put(MIN_INSTANCES,
+                        componentProperties.get(componentDisplayName).get(MIN_INSTANCES));
+            }
+
+            if (componentProperties.get(componentDisplayName).get(MAX_INSTANCES) != null) {
+                nodeTemplate.getProperties().put(MAX_INSTANCES,
+                        componentProperties.get(componentDisplayName).get(MAX_INSTANCES));
+            }
+        }
+    }
+
+    private Map<String, List<String>> populateAllNodeTemplateIdForComponent(Map<String, NodeTemplate> nodeTemplates,
                                                                                    ServiceTemplate serviceTemplate,
                                                                                    ToscaServiceModel toscaModel) {
 
@@ -160,11 +164,9 @@ public class AbstractSubstituteToscaEnricher {
         Map<String, List<String>> componentDisplayNameToNodeTempalteIds = new HashMap<>();
 
         //set dependency target
-        node_templates.keySet().stream().forEach(nodeTemplateId -> {
-
-            final Optional<NodeTemplate> nodeTemplateById =
-                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
-            final NodeTemplate nodeTemplate = nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
+        nodeTemplates.keySet().forEach(nodeTemplateId -> {
+            final NodeTemplate nodeTemplate =
+                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId).orElse(null);
 
             if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate, toscaModel)) {
 
@@ -242,9 +244,9 @@ public class AbstractSubstituteToscaEnricher {
             componentDisplayName = removedSuffix[0];
         } else {
             final String type = nodeTemplate.getType();
-            final String[] splitted = type.split("\\.");
-            componentDisplayName = splitted[splitted.length - 1];
-
+            componentDisplayName = MULTIDEPLOYMENTFLAVOR_NODE_TYPE.equals(type)
+                            ? nodeTemplateId.substring(0, nodeTemplateId.lastIndexOf(VNF_NODE_TEMPLATE_ID_SUFFIX))
+                            : type.substring(type.lastIndexOf('.') + 1);
         }
         return componentDisplayName;
     }
@@ -264,7 +266,6 @@ public class AbstractSubstituteToscaEnricher {
     }
 
     private Boolean getValue(String value) {
-        String returnValue = null;
         switch (value) {
             case "YES":
                 return true;

@@ -41,6 +41,7 @@ public class Constants {
     static final String PORT_IDENTICAL_VALUE_PROPERTY_PREFIX = "port_";
     static final String SUB_INTERFACE_PROPERTY_VALUE_PREFIX = "subinterface_";
     public static final String ABSTRACT_NODE_TEMPLATE_ID_PREFIX = "abstract_";
+    public static final String VNF_NODE_TEMPLATE_ID_SUFFIX = "_VNF";
     //GlobalTypesServiceTemplates
     public static final String INVALID_ONBOARDING_TYPE = "Invalid Onboarding Type";
     public static final String GLOBAL_TYPES_READ_ERROR = "GlobalTypes Read Error";
