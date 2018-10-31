@@ -171,14 +171,14 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListCapabilityDataDefinition> serverCap = additionalCap.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, en -> new ListCapabilityDataDefinition(en.getValue().stream().map(CapabilityDataDefinition::new).collect(Collectors.toList()))));
 
-            serverCap.entrySet().forEach(entryPerType -> {
+            serverCap.entrySet().forEach(entryPerType ->
                 entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
                     cap.addToPath(componentInstance.getUniqueId());
                     allCalculatedCap.add(entryPerType.getKey(), cap);
-                });
-            });
+                }));
 
-            status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap, componentInstance.getUniqueId());
+
+            addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap, componentInstance.getUniqueId());
 
             /******** capability property ****************************/
             status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceData.getUniqueId());
@@ -205,7 +205,7 @@ public class NodeTemplateOperation extends BaseOperation {
                                     dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
                                 }
 
-                                StringBuffer sb = new StringBuffer(componentInstance.getUniqueId());
+                                StringBuilder sb = new StringBuilder(componentInstance.getUniqueId());
                                 sb.append(ModelConverter.CAP_PROP_DELIM);
 
                                 sb.append(cap.getOwnerId());
@@ -220,7 +220,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 }
             });
 
-            status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp, componentInstance.getUniqueId());
+            addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp, componentInstance.getUniqueId());
         }
 
         /******** Requirements property ****************************/
@@ -236,14 +236,14 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListRequirementDataDefinition> serverReq = additionalReq.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, en -> new ListRequirementDataDefinition(en.getValue().stream().map(RequirementDataDefinition::new).collect(Collectors.toList()))));
 
-            serverReq.entrySet().forEach(entryPerType -> {
+            serverReq.entrySet().forEach(entryPerType ->
                 entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
                     cap.addToPath(componentInstance.getUniqueId());
                     allCalculatedReq.add(entryPerType.getKey(), cap);
-                });
-            });
+                }));
 
-            status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, allCalculatedReq, componentInstance.getUniqueId());
+
+            addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, allCalculatedReq, componentInstance.getUniqueId());
 
         }
 
@@ -639,12 +639,11 @@ public class NodeTemplateOperation extends BaseOperation {
             MapListCapabilityDataDefinition allCalculatedCap = new MapListCapabilityDataDefinition();
             calculatedCapabilities.entrySet().forEach(enntryPerInstance -> {
                 Map<String, ListCapabilityDataDefinition> mapByType = enntryPerInstance.getValue().getMapToscaDataDefinition();
-                mapByType.entrySet().forEach(entryPerType -> {
+                mapByType.entrySet().forEach(entryPerType ->
                     entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
                         cap.addToPath(componentInstance.getUniqueId());
                         allCalculatedCap.add(entryPerType.getKey(), cap);
-                    });
-                });
+                    }));
             });
 
             StorageOperationStatus calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap,
@@ -666,12 +665,11 @@ public class NodeTemplateOperation extends BaseOperation {
             MapListRequirementDataDefinition allCalculatedReq = new MapListRequirementDataDefinition();
             calculatedRequirements.entrySet().forEach(enntryPerInstance -> {
                 Map<String, ListRequirementDataDefinition> mapByType = enntryPerInstance.getValue().getMapToscaDataDefinition();
-                mapByType.entrySet().forEach(entryPerType -> {
+                mapByType.entrySet().forEach(entryPerType ->
                     entryPerType.getValue().getListToscaDataDefinition().forEach(req -> {
                         req.addToPath(componentInstance.getUniqueId());
                         allCalculatedReq.add(entryPerType.getKey(), req);
-                    });
-                });
+                    }));
             });
 
             StorageOperationStatus calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, allCalculatedReq,
@@ -696,8 +694,8 @@ public class NodeTemplateOperation extends BaseOperation {
                     updateKeyMap.put(newKey, entry.getValue());
                 }
             }
-            MapCapabilityProperty MapCapabilityProperty = new MapCapabilityProperty(updateKeyMap);
-            StorageOperationStatus calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, MapCapabilityProperty,
+            MapCapabilityProperty mapCapabilityProperty = new MapCapabilityProperty(updateKeyMap);
+            StorageOperationStatus calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, mapCapabilityProperty,
                     componentInstance.getUniqueId());
             if (calculatedResult != StorageOperationStatus.OK) {
                 return calculatedResult;
@@ -836,8 +834,8 @@ public class NodeTemplateOperation extends BaseOperation {
         Map<String, MapPropertiesDataDefinition> capabiltiesProperties = originNodeType.getCapabiltiesProperties();
         if (capabiltiesProperties != null) {
             Map<String, MapPropertiesDataDefinition> updateKeyMap = capabiltiesProperties.entrySet().stream().collect(Collectors.toMap(e -> createCapPropertyKey(e.getKey(), componentInstance.getUniqueId()), Entry::getValue));
-            MapCapabilityProperty MapCapabilityProperty = new MapCapabilityProperty(updateKeyMap);
-            calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, MapCapabilityProperty, componentInstance.getUniqueId());
+            MapCapabilityProperty mapCapabilityProperty = new MapCapabilityProperty(updateKeyMap);
+            calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, mapCapabilityProperty, componentInstance.getUniqueId());
             if (calculatedResult != StorageOperationStatus.OK) {
                 return calculatedResult;
             }
@@ -862,13 +860,13 @@ public class NodeTemplateOperation extends BaseOperation {
             }
         }
         MapListRequirementDataDefinition fullCalculatedReq = new MapListRequirementDataDefinition();
-        status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
+        addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
         return StorageOperationStatus.OK;
 
     }
 
     public static String createCapPropertyKey(String key, String instanceId) {
-        StringBuffer sb = new StringBuffer(instanceId);
+        StringBuilder sb = new StringBuilder(instanceId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(instanceId).append(ModelConverter.CAP_PROP_DELIM).append(key);
         return sb.toString();
     }
@@ -1628,14 +1626,14 @@ public class NodeTemplateOperation extends BaseOperation {
         // capability
 
         String toInstId = toResInstance.getUniqueId();
-        MapListCapabilityDataDefinition MapListCapabilityDataDefinition = calculatedCapabilty.get(toInstId);
+        MapListCapabilityDataDefinition mapListCapabilityDataDefinition = calculatedCapabilty.get(toInstId);
         Map<JsonPresentationFields, T> capReqRelationship = new EnumMap<>(JsonPresentationFields.class);
 
-        if (MapListCapabilityDataDefinition == null) {
+        if (mapListCapabilityDataDefinition == null) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch calculated capabilities for instance {} in container {}.", toInstId, containerId);
             return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
         }
-        ListCapabilityDataDefinition listCapabilityDataDefinition = MapListCapabilityDataDefinition.getMapToscaDataDefinition().get(type);
+        ListCapabilityDataDefinition listCapabilityDataDefinition = mapListCapabilityDataDefinition.getMapToscaDataDefinition().get(type);
         if (listCapabilityDataDefinition == null) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch calculated capabilities for type {} for instance {} in container {}.", type, toInstId, containerId);
             return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
@@ -1782,15 +1780,11 @@ public class NodeTemplateOperation extends BaseOperation {
         if (!validateInstanceNames(resourcesInstancesMap)) {
             result = StorageOperationStatus.INCONSISTENCY;
         }
-        if (result == null) {
-            if (!validateInstanceNames(resourcesInstancesMap)) {
-                result = StorageOperationStatus.INCONSISTENCY;
-            }
+        if (result == null && !validateInstanceNames(resourcesInstancesMap)) {
+            result = StorageOperationStatus.INCONSISTENCY;
         }
-        if (result == null && !allowDeleted) {
-            if (!validateDeletedResources(resourcesInstancesMap)) {
-                result = StorageOperationStatus.INCONSISTENCY;
-            }
+        if (result == null && !allowDeleted && !validateDeletedResources(resourcesInstancesMap)) {
+            result = StorageOperationStatus.INCONSISTENCY;
         }
         if (result == null) {
             instancesJsonData = convertToComponentInstanceDataDefinition(resourcesInstancesMap, containerId);
