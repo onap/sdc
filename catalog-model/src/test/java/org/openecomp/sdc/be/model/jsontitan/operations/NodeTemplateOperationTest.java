@@ -272,7 +272,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
 
 	
 	@Test
-	public void testPrepareCalculatedCapabiltyForNodeType() throws Exception {
+	public void testPrepareCalculatedCapabiltyForNodeType() {
         NodeTemplateOperation testSubject;
         Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
         ListCapabilityDataDefinition listCapDataDefinition = new ListCapabilityDataDefinition();
@@ -282,11 +282,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         listToscaDataDefinition.add(capabilityDataDefinition);
         listCapDataDefinition.setListToscaDataDefinition(listToscaDataDefinition);
         capabilities.put("1", listCapDataDefinition);
-        ComponentInstanceDataDefinition componentInstance = new ComponentInstance();
-        String id = "id";
-        componentInstance.setComponentUid(id);
-        componentInstance.setUniqueId(id);
-        componentInstance.setName(id);
+        ComponentInstance componentInstance = createCompInstance();
         MapListCapabilityDataDefinition result;
 
         // test 1
@@ -295,22 +291,27 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
 	}
 
-	
-	@Test
-	public void testPrepareCalculatedRequirementForNodeType() throws Exception {
-		NodeTemplateOperation testSubject;
-		Map<String, ListRequirementDataDefinition> requirements = null;
-		ComponentInstanceDataDefinition componentInstance = null;
-		MapListRequirementDataDefinition result;
 
-		// test 1
-		testSubject = createTestSubject();
-		requirements = null;
-		result = testSubject.prepareCalculatedRequirementForNodeType(requirements, componentInstance);
-		Assert.assertEquals(null, result);
-	}
+    @Test
+    public void testPrepareCalculatedReqForNodeType() {
+        NodeTemplateOperation testSubject;
+        Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
+        ListRequirementDataDefinition listReqDataDef = new ListRequirementDataDefinition();
+        List<RequirementDataDefinition> listToscaDataDefinition = new ArrayList<>();
+        RequirementDataDefinition reqDataDefinition = new RequirementDataDefinition();
+        reqDataDefinition.setMaxOccurrences("1");
+        listToscaDataDefinition.add(reqDataDefinition);
+        listReqDataDef.setListToscaDataDefinition(listToscaDataDefinition);
+        requirements.put("1", listReqDataDef);
+        ComponentInstance componentInstance = createCompInstance();
+        MapListRequirementDataDefinition result;
 
-	
+        // test 1
+        testSubject = createTestSubject();
+        result = testSubject.prepareCalculatedRequirementForNodeType(requirements, componentInstance);
+        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
+    }
+
 	@Test
 	public void testAddGroupInstancesToComponentInstance() throws Exception {
 		NodeTemplateOperation testSubject;
@@ -343,4 +344,12 @@ public class NodeTemplateOperationTest extends ModelTestBase {
 		Assert.assertEquals(StorageOperationStatus.OK, result);
 	}
 
+    private ComponentInstance createCompInstance() {
+        ComponentInstance componentInstance = new ComponentInstance();
+        String id = "id";
+        componentInstance.setComponentUid(id);
+        componentInstance.setUniqueId(id);
+        componentInstance.setName(id);
+        return componentInstance;
+    }
 }
