@@ -17,77 +17,137 @@
 package org.onap.config;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class NonConfigResource {
 
-    private static final Set<URL> urls = Collections.synchronizedSet(new HashSet<>());
-    private static final Set<File> files = Collections.synchronizedSet(new HashSet<>());
+    static final String NODE_CONFIG_LOCATION = "node.config.location";
+    static final String CONFIG_LOCATION = "config.location";
 
-    public static void add(URL url) {
+    private final List<Function<String, Path>> lookupFunctions =
+            Arrays.asList(this::getFromFile, this::findInFiles, this::getForNode, this::getGlobal, this::findInUrls);
+
+    private final Set<URL> urls = Collections.synchronizedSet(new HashSet<>());
+    private final Set<File> files = Collections.synchronizedSet(new HashSet<>());
+
+    private final Function<String, String> propertyGetter;
+
+    NonConfigResource(Function<String, String> propertyGetter) {
+        this.propertyGetter = propertyGetter;
+    }
+
+    public NonConfigResource() {
+        this(System::getProperty);
+    }
+
+    private Path getFromFile(String resource) {
+        return new File(resource).exists() ? Paths.get(resource) : null;
+    }
+
+    private Path findInUrls(String resource) {
+
+        for (URL url : urls) {
+
+            if (url.getFile().endsWith(resource)) {
+                return Paths.get(toUri(url));
+            }
+        }
+
+        return null;
+    }
+
+    private static URI toUri(URL url) {
+
+        try {
+            return url.toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Unexpected URL syntax: " + url.toString(), e);
+        }
+    }
+
+    private Path findInFiles(String resource) {
+
+        for (File availableFile : files) {
+
+            String absolutePath = availableFile.getAbsolutePath();
+            if (absolutePath.endsWith(resource) && availableFile.exists()) {
+                return Paths.get(absolutePath);
+            }
+        }
+
+        return null;
+    }
+
+    private Path getForNode(String resource) {
+        return getFromProperty(NODE_CONFIG_LOCATION, resource);
+    }
+
+    private Path getGlobal(String resource) {
+        return getFromProperty(CONFIG_LOCATION, resource);
+    }
+
+    private Path getFromProperty(String property, String resource) {
+        String value = propertyGetter.apply(property);
+        return (value == null) ? null : locate(new File(value), resource);
+    }
+
+    private Path locate(File root, String resource) {
+
+        if (!root.exists()) {
+            return null;
+        }
+
+        Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
+        Predicate<File> f1 = ConfigurationUtils::isConfig;
+        for (File file : filesystemResources) {
+            if (!f1.test(file)) {
+                add(file);
+                if (file.getAbsolutePath().endsWith(resource)) {
+                    return Paths.get(file.getAbsolutePath());
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Path locate(String resource) {
+
+        if (resource == null) {
+            return null;
+        }
+
+        try {
+
+            return lookupFunctions.stream()
+                           .map(f -> f.apply(resource))
+                           .filter(Objects::nonNull)
+                           .findFirst().orElse(null);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public void add(URL url) {
         urls.add(url);
     }
 
-    public static Path locate(String resource) {
-        try {
-            if (resource != null) {
-                File file = new File(resource);
-                if (file.exists()) {
-                    return Paths.get(resource);
-                }
-                for (File availableFile : files) {
-                    if (availableFile.getAbsolutePath().endsWith(resource) && availableFile.exists()) {
-                        return Paths.get(availableFile.getAbsolutePath());
-                    }
-                }
-                if (System.getProperty("node.config.location") != null) {
-                    Path path = locate(new File(System.getProperty("node.config.location")), resource);
-                    if (path != null) {
-                        return path;
-                    }
-                }
-                if (System.getProperty("config.location") != null) {
-                    Path path = locate(new File(System.getProperty("config.location")), resource);
-                    if (path != null) {
-                        return path;
-                    }
-                }
-                for (URL url : urls) {
-                    if (url.getFile().endsWith(resource)) {
-                        return Paths.get(url.toURI());
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    private static Path locate(File root, String resource) {
-        if (root.exists()) {
-            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-            Predicate<File> f1 = ConfigurationUtils::isConfig;
-            for (File file : filesystemResources) {
-                if (!f1.test(file)) {
-                    add(file);
-                    if (file.getAbsolutePath().endsWith(resource)) {
-                        return Paths.get(file.getAbsolutePath());
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public static void add(File file) {
+    public void add(File file) {
         files.add(file);
     }
 }
