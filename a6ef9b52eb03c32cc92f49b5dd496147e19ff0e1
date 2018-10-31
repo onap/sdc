@@ -1,0 +1,220 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_1eb911e9",
+        "filename": "openecomp-ui/package.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "Please update react-select as well",
+      "range": {
+        "startLine": 43,
+        "startChar": 19,
+        "endLine": 43,
+        "endChar": 30
+      },
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_becfa57e",
+        "filename": "openecomp-ui/resources/scss/bootstrap.scss",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "please remove these commented imports",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5ea6b9c2",
+        "filename": "openecomp-ui/resources/scss/components/_loader.scss",
+        "patchSetId": 10
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "please see if there is a color variable for this, otherwise create one",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_feac4da2",
+        "filename": "openecomp-ui/resources/scss/components/_userNotifications.scss",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "use variables",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7e213dfa",
+        "filename": "openecomp-ui/resources/scss/modules/_mergeEditor.scss",
+        "patchSetId": 10
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove this (super high priority)",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_be6ec52d",
+        "filename": "openecomp-ui/resources/scss/modules/onboardingCatalog/_vlmTile.scss",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove this file",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5e655943",
+        "filename": "openecomp-ui/src/sdc-app/flows/FlowsListEditor.js",
+        "patchSetId": 10
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove isDisplayModal and isModalInEditMode",
+      "range": {
+        "startLine": 23,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 22
+      },
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_fe5bed84",
+        "filename": "openecomp-ui/src/sdc-app/flows/FlowsListEditorView.jsx",
+        "patchSetId": 10
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove isDisplaymodal",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1e5fd173",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsListEditorView.jsx",
+        "patchSetId": 10
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "combine the ... \u003d this.props",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_be032541",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/attachments/setup/HeatSetupActionHelper.js",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove comments",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_feb76d84",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/attachments/setup/components/SortableModuleFileList.js",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "remove comments",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_be26c5cc",
+        "filename": "openecomp-ui/yarn.lock",
+        "patchSetId": 10
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2018-10-31T13:19:52Z",
+      "side": 1,
+      "message": "looks good",
+      "revId": "a6ef9b52eb03c32cc92f49b5dd496147e19ff0e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
