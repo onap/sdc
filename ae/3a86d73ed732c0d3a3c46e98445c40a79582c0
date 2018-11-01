@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Michael Lando <michael.lando@intl.att.com>
+Code-Review+2: Vitaly Emporopulo <Vitaliy.Emporopulo@amdocs.com>
+Submitted-by: Tal  Gitelman <tal.gitelman@att.com>
+Submitted-at: Thu, 01 Nov 2018 09:02:27 +0000
+Reviewed-on: https://gerrit.onap.org/r/71489
+Project: sdc
+Branch: refs/heads/master
