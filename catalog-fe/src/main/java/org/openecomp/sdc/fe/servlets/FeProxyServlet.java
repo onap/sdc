@@ -185,7 +185,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			String workflowPluginURL = getPluginConfiguration(request).getPluginsList()
 					.stream()
 					.filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW))
-					.map(Plugin::getPluginSourceUrl)
+					.map(Plugin::getPluginDiscoveryUrl)
 					.findFirst().orElse(null);
 
 			java.net.URL workflowURL = new URL(workflowPluginURL);

@@ -112,6 +112,7 @@ public class FeProxyServletTest {
 		List<PluginsConfiguration.Plugin> pluginList = new ArrayList<PluginsConfiguration.Plugin>();
 		when(plugin.getPluginId()).thenReturn("WORKFLOW");
 		when(plugin.getPluginSourceUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT);
+		when(plugin.getPluginDiscoveryUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT);
 		pluginList.add(plugin);
 		when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
 		when(pluginsConfiguration.getPluginsList()).thenReturn(pluginList);
