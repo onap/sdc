@@ -15,10 +15,10 @@
  */
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
-import org.junit.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
+import org.testng.annotations.Test;
 
 public class MapLimitEntityToLimitCreationDtoTest {
 

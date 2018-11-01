@@ -22,9 +22,9 @@ package org.openecomp.core.utilities.json;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class JsonSchemaDataGeneratorTest {
 
@@ -53,7 +53,7 @@ public class JsonSchemaDataGeneratorTest {
                         + "\"phoneNumber\":[{\"code\":1,\"location\":\"Home\"},{\"code\":2,\"location\":\"Office\"}]}"));
     }
 
-    @Test(expectedExceptions = JSONException.class)
+    @Test(expected = JSONException.class)
     public void testSchemaWithInvalidDefault() {
         testGenerate(SCHEMA_WITH_INVALID_DEFAULT, null);
     }
@@ -64,7 +64,7 @@ public class JsonSchemaDataGeneratorTest {
                 new JSONObject("{\"ipConfiguration\":{\"ipv4Required\":true,\"ipv6Required\":false}}"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testConstructorException() {
         Assert.assertNull(new JsonSchemaDataGenerator(null));
     }

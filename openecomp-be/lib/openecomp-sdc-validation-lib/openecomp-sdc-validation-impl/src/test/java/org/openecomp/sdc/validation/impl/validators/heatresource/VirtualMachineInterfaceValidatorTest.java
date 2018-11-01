@@ -16,14 +16,13 @@
 
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.validation.impl.validators.HeatResourceValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Map;
 
 /**
  * @author KATYR

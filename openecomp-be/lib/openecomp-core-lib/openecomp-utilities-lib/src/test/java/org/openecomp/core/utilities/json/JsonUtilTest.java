@@ -26,10 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class JsonUtilTest {
 
@@ -70,7 +69,7 @@ public class JsonUtilTest {
                 + "It does not match pattern (0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)");
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testInValidJsonValidateNullJson() {
         JsonUtil.validate(null, null);
     }
@@ -102,7 +101,7 @@ public class JsonUtilTest {
         Assert.assertEquals(list.size(), 3);
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testJson2ObjectIncorrectJson() {
         String inputStr = "{[Json, Util, Test]}";
         List list = JsonUtil.json2Object(inputStr, ArrayList.class);
@@ -117,7 +116,7 @@ public class JsonUtilTest {
         Assert.assertEquals(list.size(), 3);
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testJson2ObjectIncorrectJsonInputStream() {
         String inputStr = "{[Json, Util, Test]}";
         List list = JsonUtil.json2Object(new ByteArrayInputStream(inputStr.getBytes()), ArrayList.class);

@@ -16,16 +16,15 @@
 
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
+import java.util.Map;
+import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.validation.impl.validators.HeatResourceValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by TALIO on 2/28/2017.

@@ -16,6 +16,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.NotDirectoryException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
@@ -30,16 +39,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.NotDirectoryException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author shiria

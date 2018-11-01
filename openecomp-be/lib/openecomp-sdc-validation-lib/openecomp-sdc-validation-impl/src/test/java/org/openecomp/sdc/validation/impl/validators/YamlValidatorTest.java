@@ -21,13 +21,12 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Map;
 
 public class YamlValidatorTest {
 

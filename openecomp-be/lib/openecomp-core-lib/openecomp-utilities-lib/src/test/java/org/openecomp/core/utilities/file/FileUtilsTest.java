@@ -16,9 +16,9 @@
 
 package org.openecomp.core.utilities.file;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +31,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.io.IOUtils;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author EVITALIY
@@ -64,12 +63,12 @@ public class FileUtilsTest {
         assertTrue(FileUtils.readViaInputStream(TEST_RESOURCE, TEST_FUNCTION) > 0);
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testReadViaInputStreamNull() {
         FileUtils.readViaInputStream((String) null, TEST_FUNCTION);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testReadViaInputStreamNotFound() {
         FileUtils.readViaInputStream("notfound.txt", TEST_FUNCTION);
     }
@@ -176,7 +175,7 @@ public class FileUtilsTest {
         Assert.assertNotNull(inputStream);
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testLoadFileToInputStreamIncorrectFilePath() {
         FileUtils.loadFileToInputStream("invalidfilepath");
     }

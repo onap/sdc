@@ -16,15 +16,15 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import org.junit.Test;
+import static org.testng.Assert.assertEquals;
+
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 
 public class MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntityTest {

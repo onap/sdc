@@ -1,20 +1,29 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.versioning.dao.impl.zusammen;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusammenContext;
 
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.item.Info;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.types.Item;
-import org.openecomp.sdc.versioning.types.ItemStatus;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,12 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusammenContext;
-import static org.testng.Assert.assertEquals;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.core.zusammen.api.ZusammenAdaptor;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 
 public class ItemZusammenDaoImplTest {
 
@@ -45,7 +60,7 @@ public class ItemZusammenDaoImplTest {
   @InjectMocks
   private ItemZusammenDaoImpl itemDao;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     SessionContextProviderFactory.getInstance().createInterface().create(USER, tenant);
@@ -79,7 +94,7 @@ public class ItemZusammenDaoImplTest {
     doReturn(returnedItems).when(zusammenAdaptorMock).listItems(eq(createZusammenContext(USER)));
 
     Collection<Item> items = itemDao.list();
-    Assert.assertEquals(items.size(), 3);
+    assertEquals(items.size(), 3);
 
     Iterator<Item> itemIterator = items.iterator();
     assertItemEquals(itemIterator.next(), returnedItems.get(0));
@@ -136,17 +151,17 @@ public class ItemZusammenDaoImplTest {
     Item item = itemDao.create(inputItem);
 
     Info capturedInfo = capturedZusammenInfo.getValue();
-    Assert.assertEquals(capturedInfo.getName(), inputItem.getName());
-    Assert.assertEquals(capturedInfo.getDescription(), inputItem.getDescription());
-    Assert.assertEquals(capturedInfo.getProperty(ITEM_TYPE), inputItem.getType());
-    Assert.assertEquals(capturedInfo.getProperty(ITEM_VERSIONS_STATUSES),
+    assertEquals(capturedInfo.getName(), inputItem.getName());
+    assertEquals(capturedInfo.getDescription(), inputItem.getDescription());
+    assertEquals(capturedInfo.getProperty(ITEM_TYPE), inputItem.getType());
+    assertEquals(capturedInfo.getProperty(ITEM_VERSIONS_STATUSES),
         inputItem.getVersionStatusCounters());
 
-    Assert.assertEquals(item.getId(), itemId);
-    Assert.assertEquals(item.getName(), inputItem.getName());
-    Assert.assertEquals(item.getDescription(), inputItem.getDescription());
-    Assert.assertEquals(item.getType(), inputItem.getType());
-    Assert.assertEquals(item.getVersionStatusCounters(), inputItem.getVersionStatusCounters());
+    assertEquals(item.getId(), itemId);
+    assertEquals(item.getName(), inputItem.getName());
+    assertEquals(item.getDescription(), inputItem.getDescription());
+    assertEquals(item.getType(), inputItem.getType());
+    assertEquals(item.getVersionStatusCounters(), inputItem.getVersionStatusCounters());
   }
 
   @Test
@@ -169,10 +184,10 @@ public class ItemZusammenDaoImplTest {
             capturedZusammenInfo.capture());
 
     Info capturedInfo = capturedZusammenInfo.getValue();
-    Assert.assertEquals(capturedInfo.getName(), item.getName());
-    Assert.assertEquals(capturedInfo.getDescription(), item.getDescription());
-    Assert.assertEquals(capturedInfo.getProperty(ITEM_TYPE), item.getType());
-    Assert.assertEquals(capturedInfo.getProperty(ITEM_VERSIONS_STATUSES),
+    assertEquals(capturedInfo.getName(), item.getName());
+    assertEquals(capturedInfo.getDescription(), item.getDescription());
+    assertEquals(capturedInfo.getProperty(ITEM_TYPE), item.getType());
+    assertEquals(capturedInfo.getProperty(ITEM_VERSIONS_STATUSES),
         item.getVersionStatusCounters());
   }
 
@@ -197,24 +212,24 @@ public class ItemZusammenDaoImplTest {
   }
 
   private void assertItemEquals(Item item, com.amdocs.zusammen.datatypes.item.Item zusammenItem) {
-    Assert.assertEquals(item.getId(), zusammenItem.getId().getValue());
-    Assert.assertEquals(item.getName(), zusammenItem.getInfo().getName());
-    Assert.assertEquals(item.getDescription(), zusammenItem.getInfo().getDescription());
-    Assert.assertEquals(item.getType(), zusammenItem.getInfo().getProperty(ITEM_TYPE));
-    Assert.assertEquals(item.getProperties().get(APP_PROP_1),
+    assertEquals(item.getId(), zusammenItem.getId().getValue());
+    assertEquals(item.getName(), zusammenItem.getInfo().getName());
+    assertEquals(item.getDescription(), zusammenItem.getInfo().getDescription());
+    assertEquals(item.getType(), zusammenItem.getInfo().getProperty(ITEM_TYPE));
+    assertEquals(item.getProperties().get(APP_PROP_1),
         zusammenItem.getInfo().getProperty(APP_PROP_1));
-    Assert.assertEquals(item.getProperties().get(APP_PROP_2),
+    assertEquals(item.getProperties().get(APP_PROP_2),
         zusammenItem.getInfo().getProperty(APP_PROP_2));
 
     Map<String, Number> zusammenStatusesMap =
         zusammenItem.getInfo().getProperty(ITEM_VERSIONS_STATUSES);
     Map<VersionStatus, Integer> statusesMap = item.getVersionStatusCounters();
 
-    zusammenStatusesMap.entrySet().forEach(entry -> Assert
-        .assertEquals(statusesMap.get(VersionStatus.valueOf(entry.getKey())), entry.getValue()));
+    zusammenStatusesMap.entrySet()
+            .forEach(entry -> assertEquals(statusesMap.get(VersionStatus.valueOf(entry.getKey())), entry.getValue()));
 
-    Assert.assertEquals(item.getCreationTime(), zusammenItem.getCreationTime());
-    Assert.assertEquals(item.getModificationTime(), zusammenItem.getModificationTime());
+    assertEquals(item.getCreationTime(), zusammenItem.getCreationTime());
+    assertEquals(item.getModificationTime(), zusammenItem.getModificationTime());
   }
 
 }

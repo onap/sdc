@@ -16,11 +16,11 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import org.junit.Test;
+import static org.testng.Assert.assertEquals;
+
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 
 public class MapVendorLicenseModelRequestDtoToVendorLicenseModelEntityTest {

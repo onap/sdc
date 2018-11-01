@@ -1,13 +1,28 @@
-package org.openecomp.sdc.validation.impl.validators;
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import org.openecomp.core.validation.types.MessageContainer;
-import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+package org.openecomp.sdc.validation.impl.validators;
 
 import java.io.IOException;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openecomp.core.validation.types.MessageContainer;
+import org.openecomp.sdc.validation.util.ValidationTestUtil;
 
 /**
  * Created by TALIO on 2/16/2017.
@@ -19,17 +34,15 @@ public class ForbiddenResourceGuideLineValidatorTest {
   private static String mockConfigFileName =
       "/org/openecomp/validation/configuration/mock_resource_validator_configuration.json";
 
-  ForbiddenResourceGuideLineValidator forbiddenResourceGuideLineValidator = new
+  private static ForbiddenResourceGuideLineValidator forbiddenResourceGuideLineValidator = new
       ForbiddenResourceGuideLineValidator();
 
   @BeforeClass
-  public void init() throws IOException {
+  public static void init() throws IOException {
     Map<String, Object> resourcesMap = ValidationTestUtil.getResourceMap(mockConfigFileName);
 
     Map<String, Object> resourceBaseValidatorMap =
         (Map<String, Object>) resourcesMap.get("forbiddenResourceGuideLineValidator");
-    String implementationClass =
-        (String) resourceBaseValidatorMap.get("implementationClass");
     Map<String, Object> properties =
         (Map<String, Object>) resourceBaseValidatorMap.get("properties");
 

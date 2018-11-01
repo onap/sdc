@@ -16,11 +16,11 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import org.junit.Test;
+import static org.testng.Assert.assertEquals;
+
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupDescriptorDto;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 
 public class MapFeatureGroupEntityToFeatureGroupDescriptorDtoTest {

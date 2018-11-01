@@ -16,10 +16,10 @@
 
 package org.openecomp.core.utilities;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -31,10 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.ArrayUtils;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 public class CommonMethodsTest {
 
@@ -71,7 +69,7 @@ public class CommonMethodsTest {
         assertEquals(CommonMethods.arrayToCommaSeparatedString(new String[] {"", ""}), ",");
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testArrayToCommaSeparatedStringNull() {
         CommonMethods.arrayToCommaSeparatedString(null);
     }
@@ -96,7 +94,7 @@ public class CommonMethodsTest {
         assertEquals(CommonMethods.arrayToSeparatedString(new String[] {"", ""}, '/'), "/");
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testArrayToSeparatedStringNull() {
         CommonMethods.arrayToSeparatedString(null, '/');
     }
@@ -121,7 +119,7 @@ public class CommonMethodsTest {
         assertEquals(CommonMethods.collectionToCommaSeparatedString(Collections.emptySet()), "");
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testCollectionToCommaSeparatedStringNull() {
         assertNull(CommonMethods.collectionToCommaSeparatedString(null));
     }
@@ -138,8 +136,8 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(firstArray, secondArray);
 
-        Assert.assertEquals(resultArray.length, 4);
-        Assert.assertTrue(ArrayUtils.contains(resultArray, secondArray[0])
+        assertEquals(resultArray.length, 4);
+        assertTrue(ArrayUtils.contains(resultArray, secondArray[0])
                 && ArrayUtils.contains(resultArray, firstArray[0]));
     }
 
@@ -149,8 +147,8 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(firstArray, null);
 
-        Assert.assertEquals(resultArray.length, 2);
-        Assert.assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(firstArray)));
+        assertEquals(resultArray.length, 2);
+        assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(firstArray)));
     }
 
     @Test
@@ -159,45 +157,45 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(null, secondArray);
 
-        Assert.assertEquals(resultArray.length, 2);
-        Assert.assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(secondArray)));
+        assertEquals(resultArray.length, 2);
+        assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(secondArray)));
     }
 
     @Test
     public void testConcatBothValueNull() {
-        Assert.assertNull(CommonMethods.concat(null, null));
+        assertNull(CommonMethods.concat(null, null));
     }
 
     @Test
     public void testNewInstance() {
         Object obj = CommonMethods.newInstance(JAVA_LANG_STRING);
-        Assert.assertNotNull(obj);
-        Assert.assertTrue(obj instanceof String);
+        assertNotNull(obj);
+        assertTrue(obj instanceof String);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNewInstanceIncorrectClassProvided() {
-        Assert.assertNull(CommonMethods.newInstance("java.lang.Stringss"));
+        assertNull(CommonMethods.newInstance("java.lang.Stringss"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNewInstanceClassNotProvided() {
-        Assert.assertNull(CommonMethods.newInstance(null, Object.class));
+        assertNull(CommonMethods.newInstance(null, Object.class));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNewInstanceObjectNotProvided() {
-        Assert.assertNull(CommonMethods.newInstance(JAVA_LANG_STRING, null));
+        assertNull(CommonMethods.newInstance(JAVA_LANG_STRING, null));
     }
 
-    @Test(expectedExceptions = ClassCastException.class)
+    @Test(expected = ClassCastException.class)
     public void testNewInstanceClassCastException() {
-        Assert.assertNull(CommonMethods.newInstance(JAVA_LANG_STRING, ArrayList.class));
+        assertNull(CommonMethods.newInstance(JAVA_LANG_STRING, ArrayList.class));
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testNewInstanceInvalidClassProvided() {
-        Assert.assertNull(CommonMethods.newInstance(List.class));
+        assertNull(CommonMethods.newInstance(List.class));
     }
 
     @Test
@@ -206,26 +204,26 @@ public class CommonMethodsTest {
         String result = CommonMethods.listToSeparatedString(
                 Stream.of("Concat", "String").collect(Collectors.toList()), ',');
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(str, result);
+        assertNotNull(result);
+        assertEquals(str, result);
     }
 
     @Test
     public void testDuplicateStringWithDelimiter() {
         String duplicateStr = CommonMethods.duplicateStringWithDelimiter("Duplicate", '#', 4);
 
-        Assert.assertNotNull(duplicateStr);
+        assertNotNull(duplicateStr);
 
         String[] duplicateStrArray = duplicateStr.split("#");
-        Assert.assertTrue(duplicateStr.contains("Duplicate"));
-        Assert.assertEquals(duplicateStrArray.length, 4);
+        assertTrue(duplicateStr.contains("Duplicate"));
+        assertEquals(duplicateStrArray.length, 4);
     }
 
     @Test
     public void testRoSingleElement() {
         Set<String> stringSet = CommonMethods.toSingleElementSet("Set Element");
-        Assert.assertNotNull(stringSet);
-        Assert.assertTrue(stringSet.contains("Set Element"));
+        assertNotNull(stringSet);
+        assertTrue(stringSet.contains("Set Element"));
     }
 
     @Test
@@ -253,7 +251,7 @@ public class CommonMethodsTest {
 
         List<Map<String, String>> resultList = CommonMethods.mergeListsOfMap(list1, list2);
 
-        Assert.assertEquals(resultList.size(), 6);
+        assertEquals(resultList.size(), 6);
 
         //Verify for duplicate key
         int count = 0;
@@ -262,7 +260,7 @@ public class CommonMethodsTest {
                 count++;
         }
 
-        Assert.assertEquals(1, count);
+        assertEquals(1, count);
     }
 
     @Test
@@ -272,9 +270,9 @@ public class CommonMethodsTest {
 
         List<String> resultList = CommonMethods.mergeLists(list1, list2);
 
-        Assert.assertEquals(resultList.size(), 4);
-        Assert.assertTrue(resultList.containsAll(list1));
-        Assert.assertTrue(resultList.containsAll(list2));
+        assertEquals(resultList.size(), 4);
+        assertTrue(resultList.containsAll(list1));
+        assertTrue(resultList.containsAll(list2));
     }
 
     @Test
@@ -294,7 +292,7 @@ public class CommonMethodsTest {
 
         Map<String, String> resultMap = CommonMethods.mergeMaps(map1, map2);
 
-        Assert.assertEquals(resultMap.size(), 4);
-        Assert.assertEquals(resultMap.get("Port"), "VMI");
+        assertEquals(resultMap.size(), 4);
+        assertEquals(resultMap.get("Port"), "VMI");
     }
 }

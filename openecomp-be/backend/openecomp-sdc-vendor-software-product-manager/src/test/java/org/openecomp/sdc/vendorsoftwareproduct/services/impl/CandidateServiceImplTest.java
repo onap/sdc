@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl;
 
+import static org.mockito.Mockito.doReturn;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,15 +47,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.doReturn;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Avrahamg

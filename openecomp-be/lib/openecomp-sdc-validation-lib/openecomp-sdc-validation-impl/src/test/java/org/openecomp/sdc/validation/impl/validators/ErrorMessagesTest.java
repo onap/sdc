@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
-import org.testng.Assert;
 
 
 public class ErrorMessagesTest {

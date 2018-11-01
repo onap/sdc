@@ -21,17 +21,16 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 
 public class HeatValidatorTest {

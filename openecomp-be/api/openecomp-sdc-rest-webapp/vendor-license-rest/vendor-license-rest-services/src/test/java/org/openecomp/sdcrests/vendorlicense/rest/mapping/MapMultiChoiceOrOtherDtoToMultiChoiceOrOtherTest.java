@@ -16,14 +16,13 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import org.junit.Test;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
+import static org.testng.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
+import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
+import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
+import org.testng.annotations.Test;
 
 
 public class MapMultiChoiceOrOtherDtoToMultiChoiceOrOtherTest {
