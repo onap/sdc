@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_95b8e42b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3148,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-01T11:25:03Z",
+      "side": 1,
+      "message": "Please fix the concatenation (+) in the log string and use formatting",
+      "range": {
+        "startLine": 3148,
+        "startChar": 8,
+        "endLine": 3148,
+        "endChar": 81
+      },
+      "revId": "e32a0209e8e6694958fb8df1a0863065cc2a4f30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
