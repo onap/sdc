@@ -118,6 +118,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     public static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
     public static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
     public static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
+    public static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
+    public static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
 
     @Autowired
     private IComponentInstanceOperation componentInstanceOperation;
@@ -282,7 +284,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     return Either.right(lockComponent.right().value());
                 }
             }
-            log.debug("Try to create entry on graph");
+            log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             resultOp = createComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
             return resultOp;
 
@@ -383,7 +385,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             }
 
-            log.debug("Entity on graph is created.");
+            log.debug(ENTITY_ON_GRAPH_IS_CREATED);
             ComponentInstance resResourceInfo = result.left().value();
             if (associationInfo.getFromNode() == null || associationInfo.getFromNode().isEmpty()) {
                 associationInfo.setFromNode(resResourceInfo.getUniqueId());
@@ -394,7 +396,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             RequirementCapabilityRelDef requirementCapabilityRelDef = associationInfo;
             Either<RequirementCapabilityRelDef, StorageOperationStatus> resultReqCapDef = toscaOperationFacade.associateResourceInstances(containerComponentId, requirementCapabilityRelDef);
             if (resultReqCapDef.isLeft()) {
-                log.debug("Enty on graph is created.");
+                log.debug(ENTITY_ON_GRAPH_IS_CREATED);
                 RequirementCapabilityRelDef resReqCapabilityRelDef = resultReqCapDef.left().value();
                 CreateAndAssotiateInfo resInfo = new CreateAndAssotiateInfo(resResourceInfo, resReqCapabilityRelDef);
                 resultOp = Either.left(resInfo);
@@ -437,12 +439,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
 
         if (result.isRight()) {
-            log.debug("Failed to create entry on graph for component instance {}", componentInstance.getName());
+            log.debug(FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE, componentInstance.getName());
             resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(result.right().value(), true), "", null));
             return resultOp;
         }
 
-        log.debug("Entity on graph is created.");
+        log.debug(ENTITY_ON_GRAPH_IS_CREATED);
         Component updatedComponent = result.left().value().getLeft();
         Map<String, String> existingEnvVersions = new HashMap<>();
         // TODO existingEnvVersions ??
@@ -486,7 +488,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Map<String, ArtifactDefinition> componentDeploymentArtifacts = componentInstance.getDeploymentArtifacts();
         if (MapUtils.isNotEmpty(componentDeploymentArtifacts)) {
 
-            Map<String, ArtifactDefinition> finalDeploymentArtifacts = new HashMap<String, ArtifactDefinition>();
+            Map<String, ArtifactDefinition> finalDeploymentArtifacts = new HashMap<>();
             Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = new HashMap<>();
 
             for (ArtifactDefinition artifact : componentDeploymentArtifacts.values()) {
@@ -555,7 +557,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ActionStatus setResourceArtifactsOnResourceInstance(ComponentInstance resourceInstance) {
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts = artifactBusinessLogic.getArtifacts(resourceInstance.getComponentUid(), NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null);
 
-        Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<String, ArtifactDefinition>();
+        Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
         if (getResourceDeploymentArtifacts.isRight()) {
             StorageOperationStatus status = getResourceDeploymentArtifacts.right().value();
             if (!status.equals(StorageOperationStatus.NOT_FOUND)) {
@@ -567,7 +569,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
 
         if (!deploymentArtifacts.isEmpty()) {
-            Map<String, ArtifactDefinition> tempDeploymentArtifacts = new HashMap<String, ArtifactDefinition>(deploymentArtifacts);
+            Map<String, ArtifactDefinition> tempDeploymentArtifacts = new HashMap<>(deploymentArtifacts);
             for (Entry<String, ArtifactDefinition> artifact : deploymentArtifacts.entrySet()) {
                 if (!artifact.getValue().checkEsIdExist()) {
                     tempDeploymentArtifacts.remove(artifact.getKey());
@@ -1493,14 +1495,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "create Or Update Properties Values", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertiesValues", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertiesValues", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", componentId);
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             return resultOp;
         }
@@ -1526,7 +1528,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.debug(FAILED_TO_LOCK_SERVICE, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1561,13 +1563,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property, String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
                                                                         String capabilityType, String capabilityName) {
         String componentInstanceUniqueId = foundResourceInstance.getUniqueId();
-        StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+        StringBuilder sb = new StringBuilder(componentInstanceUniqueId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(property.getOwnerId()).append(ModelConverter.CAP_PROP_DELIM).append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
         String capKey = sb.toString();
 
         Map<String, List<CapabilityDefinition>> capabilities = Optional.ofNullable(foundResourceInstance.getCapabilities())
                 .orElse(Collections.emptyMap());
-        List<CapabilityDefinition> capPerType = Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.EMPTY_LIST);
+        List<CapabilityDefinition> capPerType = Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.emptyList());
         Optional<CapabilityDefinition> cap = capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
         if (cap.isPresent()) {
             List<ComponentInstanceProperty> capProperties = cap.get().getProperties();
@@ -1648,7 +1650,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
-            if (res == false) {
+            if (!res) {
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
             }
         } else {
@@ -1692,7 +1694,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "create Or Update Property Value", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertyValue", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_OR_UPDATE_PROPERTY_VALUE, "invalid component type", ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
@@ -1729,7 +1731,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceInput input: inputs) {
                 Either<String, ResponseFormat> updatedInputValue = updatePropertyObjectValue(input, true);
                 updatedInputValue.bimap(updatedValue -> updateInputOnContainerComponent(input,updatedValue, containerComponent, foundResourceInstance),
-                        responseFormat -> Either.right(responseFormat));
+                        Either::right);
 
             }
             Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
@@ -2592,8 +2594,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 Either<String, ResponseFormat> newPropertyValueEither = updatePropertyObjectValue(property, false);
                 newPropertyValueEither.bimap(updatedValue ->
-                                updateCapabilityPropertyOnContainerComponent(property,updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName, ownerId),
-                        responseFormat -> Either.right(responseFormat));
+                                updateCapabilityPropertyOnContainerComponent(property, updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName, ownerId),
+                        Either::right);
             }
             Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
 
@@ -2654,8 +2656,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 Either<String, ResponseFormat> newPropertyValueEither = updatePropertyObjectValue(property, false);
                 newPropertyValueEither.bimap(updatedValue ->
-                                updateCapabilityPropertyOnContainerComponent(property,updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName),
-                        responseFormat -> Either.right(responseFormat));
+                                updateCapabilityPropertyOnContainerComponent(property, updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName),
+                        Either::right);
             }
             Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
 
@@ -2688,7 +2690,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (getOrigComponent.isRight()) {
             log.error("Failed to get the original component information");
             return Either.right(componentsUtils.getResponseFormat(
-                    ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+                    ActionStatus.USER_DEFINED, FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS));
         }
 
         Component origComponent = getOrigComponent.left().value();
@@ -2705,21 +2707,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             actionResponse = createComponentInstance(
                     "services", containerComponentId, userId, inputComponentInstance, true, false);
 
-
-        }
-        finally {
-
-            // on failure of the create instance unlock the resource and rollback the transaction.
-            if (null== actionResponse || actionResponse.isRight()) {
-                titanDao.rollback();
-                log.error("Failed to copy the component instance to the canvas");
-
-                unlockComponent(actionResponse, origComponent);
-
+            if (actionResponse.isRight()) {
+                log.error(FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS);
                 return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+                        ActionStatus.USER_DEFINED, FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS));
             }
 
+        } finally {
+
+            // on failure of the create instance unlock the resource and rollback the transaction.
+            if (null == actionResponse || actionResponse.isRight()) {
+                titanDao.rollback();
+            }
+            unlockComponent(actionResponse, origComponent);
         }
 
         Either<String, ResponseFormat> resultOp = null;
@@ -2732,24 +2732,25 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = deepCopyComponentInstance(
                     origComponent, containerComponentId, componentInstanceId, destComponentInstance, userId);
 
-            resultMap.put("componentInstance", destComponentInstance);
-        }
-        finally{
-            // unlock resource
-            unlockComponent(resultOp, origComponent);
-
-            if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+            if (resultOp.isRight()) {
                 log.error("Failed to deep copy component instance");
                 return Either.right(componentsUtils.getResponseFormat(
                         ActionStatus.USER_DEFINED, "Failed to deep copy the component instance to the canvas"));
+            }
+            resultMap.put("componentInstance", destComponentInstance);
+            return Either.left(resultMap);
+        } finally {
+
+            if (resultOp == null || resultOp.isRight()) {
+                titanDao.rollback();
+
             } else {
                 titanDao.commit();
                 log.debug("Success trasaction commit");
             }
+            // unlock resource
+            unlockComponent(resultOp, origComponent);
         }
-
-        return Either.left(resultMap);
     }
 
     private Either<String, ResponseFormat> deepCopyComponentInstance(
@@ -2780,7 +2781,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(
                     ActionStatus.USER_DEFINED, "Failed to copy the component instance with attributes as part of deep copy"));
         }
-        return Either.left("Copy component Instance OK");
+        return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
     private Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(
@@ -2833,8 +2834,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     log.debug("Now start to update inputs");
 
                     if (sourceProp.getGetInputValues() != null) {
-                        if (sourceProp.getGetInputValues().size() < 1) {
-                            log.debug("property is return from input, set by man");
+                        if (sourceProp.getGetInputValues().isEmpty()) {
+                            log.debug("source property input values empty");
                             break;
                         }
                         log.debug("Now starting to copy the {} property", destPropertyName);
@@ -2849,7 +2850,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-        return Either.left("Copy component Instance OK");
+        return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
     private Either<String, ResponseFormat> copyComponentInstanceWithAttributes(Component sourceComponent,
@@ -2905,7 +2906,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
         }
 
-        return Either.left("Copy component Instance OK");
+        return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
     private Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
