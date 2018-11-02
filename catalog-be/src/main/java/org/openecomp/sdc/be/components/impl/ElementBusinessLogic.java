@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -93,47 +93,41 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Either<Map<String, Set<? extends Component>>, ResponseFormat> response = null;
         // Getting the role
         String role = user.getRole();
-        String userId = null;
+        String userId = user.getUserId();
         Role currentRole = Role.valueOf(role);
 
         switch (currentRole) {
-        case DESIGNER:
-            userId = user.getUserId();
-            response = handleDesigner(userId);
-            break;
+            case DESIGNER:
+                response = handleDesigner(userId);
+                break;
 
-        case TESTER:
-            userId = user.getUserId();
-            response = handleTester();
-            break;
+            case TESTER:
+                response = handleTester();
+                break;
 
-        case GOVERNOR:
-            userId = user.getUserId();
-            response = handleGovernor();
-            break;
+            case GOVERNOR:
+                response = handleGovernor();
+                break;
 
-        case OPS:
-            userId = user.getUserId();
-            response = handleOps();
-            break;
+            case OPS:
+                response = handleOps();
+                break;
 
-        case PRODUCT_STRATEGIST:
-            userId = user.getUserId();
-            response = handleProductStrategist();
-            break;
+            case PRODUCT_STRATEGIST:
+                response = handleProductStrategist();
+                break;
 
-        case PRODUCT_MANAGER:
-            userId = user.getUserId();
-            response = handleProductManager(userId);
-            break;
+            case PRODUCT_MANAGER:
+                response = handleProductManager(userId);
+                break;
 
-        case ADMIN:
-            response = handleAdmin();
-            break;
+            case ADMIN:
+                response = handleAdmin();
+                break;
 
-        default:
-            response = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
-            break;
+            default:
+                response = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+                break;
         }
         // converting the Set to List so the rest of the code will handle it normally (Was changed because the same element with the same uuid was returned twice)
         return convertedToListResponse(response);
@@ -864,10 +858,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         boolean validResourceAction = componentType == ComponentTypeEnum.RESOURCE && (categoryType == CategoryTypeEnum.CATEGORY || categoryType == CategoryTypeEnum.SUBCATEGORY);
         boolean validServiceAction = componentType == ComponentTypeEnum.SERVICE && categoryType == CategoryTypeEnum.CATEGORY;
         boolean validProductAction = componentType == ComponentTypeEnum.PRODUCT; // can
-                                                                                 // be
-                                                                                 // any
-                                                                                 // category
-                                                                                 // type
+        // be
+        // any
+        // category
+        // type
 
         if (!(validResourceAction || validServiceAction || validProductAction)) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -957,7 +951,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return elementOperation.getDefaultHeatTimeout();
     }
 
-	public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(String userId, List<OriginTypeEnum> excludeTypes) {
+    public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(String userId, List<OriginTypeEnum> excludeTypes) {
         try {
             validateUserExists(userId, "get Catalog Components", true);
             return toscaOperationFacade.getCatalogOrArchiveComponents(true, excludeTypes)
@@ -986,12 +980,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
     private String cmptTypeToString(ComponentTypeEnum componentTypeEnum) {
         switch (componentTypeEnum) {
-        case RESOURCE:
-            return RESOURCES;
-        case SERVICE:
-            return SERVICES;
-        default:
-            throw new IllegalStateException("resources or services only");
+            case RESOURCE:
+                return RESOURCES;
+            case SERVICE:
+                return SERVICES;
+            default:
+                throw new IllegalStateException("resources or services only");
         }
     }
 
@@ -1022,7 +1016,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value()), params.get(0), params.get(1), params.get(2)));
         }
         if (result.left().value().isEmpty()) {// no assets found for requested
-                                              // criteria
+            // criteria
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.NO_ASSETS_FOUND, assetType, query));
         }
         return Either.left(result.left().value());
@@ -1090,15 +1084,15 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Map<GraphPropertyEnum, Object> additionalPropertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
 
         switch (assetTypeEnum) {
-        case RESOURCE:
-            additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
-            break;
-        case SERVICE:
-            additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
-            break;
-        default:
-            log.debug("getCatalogComponentsByUuidAndAssetType: Corresponding ComponentTypeEnum not allowed for this API");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+            case RESOURCE:
+                additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+                break;
+            case SERVICE:
+                additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+                break;
+            default:
+                log.debug("getCatalogComponentsByUuidAndAssetType: Corresponding ComponentTypeEnum not allowed for this API");
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
         Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade.getComponentListByUuid(uuid, additionalPropertiesToMatch);
