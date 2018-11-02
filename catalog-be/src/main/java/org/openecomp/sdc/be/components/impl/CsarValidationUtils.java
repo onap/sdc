@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,14 +65,15 @@ public class CsarValidationUtils {
     public static final String FILE_NOT_FOUND_IN_CSAR_WITH_ID = " file not found in CSAR with id ";
     public static final String CSAR_STRUCTURE_IS_INVALID = "CSAR structure is invalid";
     public static final String ENTRY_DEFINITIONS = "Entry-Definitions ";
+    private static final Pattern floatPattern = Pattern.compile("^\\d{1}[.]\\d{1}$");
 
     /**
- * Validates Csar
- * @param csar
- * @param csarUUID
- * @param componentsUtils
- * @return
- */
+     * Validates Csar
+     * @param csar
+     * @param csarUUID
+     * @param componentsUtils
+     * @return
+     */
     public static Either<Boolean, ResponseFormat> validateCsar(Map<String, byte[]> csar, String csarUUID, ComponentsUtils componentsUtils) {
         Either<Boolean, ResponseFormat> validateStatus = validateIsTOSCAMetadataExist(csar, csarUUID, componentsUtils);
         if (validateStatus.isRight()) {
@@ -126,7 +127,7 @@ public class CsarValidationUtils {
         String vfcToscaName = parsedPath.length == 5 ? parsedPath[1] : null;
 
         if(artifactName.equalsIgnoreCase(otherArtifactName) && groupType.equalsIgnoreCase(otherGroupType)){
-            isEqualArtifactNames = vfcToscaName == null ? true : vfcToscaName.equalsIgnoreCase(otherParsedPath[1]);
+            isEqualArtifactNames = vfcToscaName == null || vfcToscaName.equalsIgnoreCase(otherParsedPath[1]);
         }
         return isEqualArtifactNames;
     }
@@ -161,7 +162,7 @@ public class CsarValidationUtils {
         keyOp = csar.keySet().stream().filter(k -> Pattern.compile(result).matcher(k).matches()).findAny();
         if(!keyOp.isPresent()){
             log.debug(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID, csarUUID);
-            BeEcompErrorManager.getInstance().logInternalDataError("Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file in CSAR with id " + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInternalDataError(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.YAML_NOT_FOUND_IN_CSAR, csarUUID, yamlFileName));
         }
 
@@ -182,7 +183,7 @@ public class CsarValidationUtils {
 
         if( !csar.containsKey(CsarUtils.ARTIFACTS_PATH + ARTIFACTS_METADATA_FILE) ) {
             log.debug(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID, csarUUID);
-            BeEcompErrorManager.getInstance().logInternalDataError("Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file in CSAR with id " + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInternalDataError(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.YAML_NOT_FOUND_IN_CSAR, csarUUID, ARTIFACTS_METADATA_FILE));
         }
 
@@ -202,7 +203,7 @@ public class CsarValidationUtils {
     public static Either<ImmutablePair<String, byte[]>, ResponseFormat> getArtifactsContent(String csarUUID, Map<String, byte[]> csar, String artifactPath, String artifactName, ComponentsUtils componentsUtils) {
         if (!csar.containsKey(artifactPath)) {
             log.debug("Entry-Definitions entry not found in Artifacts/HEAT.meta file, csar ID {}", csarUUID);
-            BeEcompErrorManager.getInstance().logInternalDataError("Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file in CSAR with id " + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInternalDataError(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND_IN_CSAR, CsarUtils.ARTIFACTS_PATH + artifactName, csarUUID));
         }
 
@@ -236,16 +237,16 @@ public class CsarValidationUtils {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID));
         }
 
-        Either<Boolean, ResponseFormat> block_0Status = validateBlock_0(csarUUID, splited, componentsUtils);
-        if (block_0Status.isRight()) {
-            return Either.right(block_0Status.right().value());
+        Either<Boolean, ResponseFormat> blockStatus = validateBlock(csarUUID, splited, componentsUtils);
+        if (blockStatus.isRight()) {
+            return Either.right(blockStatus.right().value());
         }
 
         return Either.left(true);
 
     }
 
-    private static Either<Boolean, ResponseFormat> validateBlock_0(String csarUUID, String[] splited, ComponentsUtils componentsUtils) {
+    private static Either<Boolean, ResponseFormat> validateBlock(String csarUUID, String[] splited, ComponentsUtils componentsUtils) {
         int index = 0;
         for (String toscaField : TOSCA_METADATA_FIELDS) {
 
@@ -275,7 +276,7 @@ public class CsarValidationUtils {
             if ((toscaField.equals(TOSCA_META_FILE_VERSION) || toscaField.equals(CSAR_VERSION)) && !validateTOSCAMetaProperty(value)) {
                 log.debug("TOSCA-Metadata/TOSCA.meta file contains {} in wrong format (digit.digit), csar ID {}", toscaField, csarUUID);
                 BeEcompErrorManager.getInstance()
-                                   .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+                        .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID));
             }
             index++;
@@ -284,10 +285,7 @@ public class CsarValidationUtils {
     }
 
     private static boolean validateTOSCAMetaProperty(String toscaProperty) {
-        final String FLOAT_STRING = "^\\d{1}[.]\\d{1}$";
-        final Pattern FLOAT_PATTERN = Pattern.compile(FLOAT_STRING);
-
-        Matcher floatMatcher = FLOAT_PATTERN.matcher(toscaProperty);
+        Matcher floatMatcher = floatPattern.matcher(toscaProperty);
         return floatMatcher.matches();
     }
 

@@ -60,6 +60,12 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     private static List<Role> updateRoles;
     private static List<Role> contactsRoles;
 
+    @Autowired
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+
+    @Autowired
+    private ICacheMangerOperation cacheManagerOperation;
+
     public ProductBusinessLogic() {
         creationRoles = new ArrayList<>();
         updateRoles = new ArrayList<>();
@@ -72,11 +78,6 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         contactsRoles.add(Role.PRODUCT_MANAGER);
     }
 
-    @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
-    @Autowired
-    private ICacheMangerOperation cacheManagerOperation;
 
     public Either<Product, ResponseFormat> createProduct(Product product, User user) {
         AuditingActionEnum actionEnum = AuditingActionEnum.CREATE_RESOURCE;
