@@ -103,22 +103,18 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             break;
 
         case TESTER:
-            userId = user.getUserId();
             response = handleTester();
             break;
 
         case GOVERNOR:
-            userId = user.getUserId();
             response = handleGovernor();
             break;
 
         case OPS:
-            userId = user.getUserId();
             response = handleOps();
             break;
 
         case PRODUCT_STRATEGIST:
-            userId = user.getUserId();
             response = handleProductStrategist();
             break;
 

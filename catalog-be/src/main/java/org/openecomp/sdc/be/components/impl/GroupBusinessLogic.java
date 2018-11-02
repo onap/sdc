@@ -598,7 +598,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesOnGraph(List<GroupDefinition> groups, Component component) {
         List<GroupDefinition> updatedGroups = new ArrayList<>();
-        Either<List<GroupDefinition>, ResponseFormat> result = Either.left(updatedGroups);
+        Either<List<GroupDefinition>, ResponseFormat> result;
 
         for (GroupDefinition group : groups) {
             String groupType = group.getType();

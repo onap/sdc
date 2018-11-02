@@ -123,12 +123,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
     private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
 
-    /**
-     * Default constructor
-     */
-    public ResourceBusinessLogic() {
-        log.debug("ResourceBusinessLogic started");
-    }
 
     @Autowired
     private ICapabilityTypeOperation capabilityTypeOperation = null;
@@ -168,6 +162,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     @Autowired
     private CsarBusinessLogic csarBusinessLogic;
+
+    /**
+     * Default constructor
+     */
+    public ResourceBusinessLogic() {
+        log.debug("ResourceBusinessLogic started");
+    }
 
     public LifecycleBusinessLogic getLifecycleBusinessLogic() {
         return lifecycleBusinessLogic;
