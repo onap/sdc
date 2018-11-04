@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7bc76a13",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/SearchReducer.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-11-04T12:10:57Z",
+      "side": 1,
+      "message": "two copyright notices",
+      "revId": "842a4d7528b01167306fb29b166a8e51e48c64b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9bcc8e37",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogUtils.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-11-04T12:10:57Z",
+      "side": 1,
+      "message": "license",
+      "revId": "842a4d7528b01167306fb29b166a8e51e48c64b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
