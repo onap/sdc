@@ -17,7 +17,6 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { actionTypes } from './OnboardingCatalogConstants.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
-import OnboardActionHelper from '../OnboardActionHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 
 function getMessageForMigration(name) {
@@ -47,14 +46,12 @@ const OnboardingCatalogActionHelper = {
         });
     },
     changeActiveTab(dispatch, activeTab) {
-        OnboardActionHelper.clearSearchValue(dispatch);
         dispatch({
             type: actionTypes.CHANGE_ACTIVE_CATALOG_TAB,
             activeTab
         });
     },
     onVendorSelect(dispatch, { vendor }) {
-        OnboardActionHelper.clearSearchValue(dispatch);
         dispatch({
             type: actionTypes.ONBOARDING_CATALOG_OPEN_VENDOR_PAGE,
             selectedVendor: vendor
