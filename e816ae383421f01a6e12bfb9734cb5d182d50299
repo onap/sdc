@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_1b23be06",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CsarValidationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-04T06:47:35Z",
+      "side": 1,
+      "message": "floatPattern should be a static.\nhttps://stackoverflow.com/questions/4935216/shouldnt-static-patterns-always-be-static",
+      "revId": "e816ae383421f01a6e12bfb9734cb5d182d50299",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bb1f12b7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-04T06:47:35Z",
+      "side": 1,
+      "message": "userId should be initialized at line 96 once instead of being set at lines 101 and 122",
+      "revId": "e816ae383421f01a6e12bfb9734cb5d182d50299",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
