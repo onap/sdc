@@ -39,11 +39,12 @@ class VendorItem extends React.Component {
         onSelectVSP: PropTypes.func,
         onVendorSelect: PropTypes.func,
         onAddVSP: PropTypes.func,
-        onVSPButtonClick: PropTypes.func
+        onVSPButtonClick: PropTypes.func,
+        activeTabName: PropTypes.string
     };
     handleSeeMore = () => {
-        const { onVendorSelect, vendor } = this.props;
-        onVendorSelect(vendor);
+        const { onVendorSelect, vendor, activeTabName } = this.props;
+        onVendorSelect(vendor, activeTabName);
     };
     render() {
         let { vendor, onSelectVSP, shouldShowOverlay, onMigrate } = this.props;

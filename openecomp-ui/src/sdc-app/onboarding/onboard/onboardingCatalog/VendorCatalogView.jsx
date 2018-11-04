@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,8 @@ const VendorList = ({
     filter,
     onMigrate,
     users,
-    isArchived
+    isArchived,
+    activeTabName
 }) => {
     const showAddButtons = !isArchived;
     const handeleSelectVSP = vsp => onSelectVSP(vsp, users);
@@ -42,21 +43,22 @@ const VendorList = ({
         <CatalogList
             onAddVLM={showAddButtons ? onAddVLM : false}
             onAddVSP={showAddButtons ? onAddVSP : false}>
-            {filterCatalogItemsByType({ items: licenseModelList, filter }).map(
-                vlm => (
-                    <VendorItem
-                        key={vlm.id}
-                        vlm={vlm}
-                        onAddVSP={onAddVSP}
-                        onSelectVSP={handeleSelectVSP}
-                        shouldShowOverlay={currentOverlay === vlm.id}
-                        onVSPButtonClick={handleOnVspButtonClick}
-                        onVendorSelect={onVendorSelect}
-                        onMigrate={onMigrate}
-                        vendor={vlm}
-                    />
-                )
-            )}
+            {filterCatalogItemsByType({
+                items: licenseModelList,
+                filter: filter[activeTabName]
+            }).map(vlm => (
+                <VendorItem
+                    key={vlm.id}
+                    vlm={vlm}
+                    onAddVSP={onAddVSP}
+                    onSelectVSP={handeleSelectVSP}
+                    shouldShowOverlay={currentOverlay === vlm.id}
+                    onVSPButtonClick={handleOnVspButtonClick}
+                    onVendorSelect={onVendorSelect}
+                    onMigrate={onMigrate}
+                    vendor={vlm}
+                />
+            ))}
         </CatalogList>
     );
 };
@@ -70,7 +72,8 @@ const SoftwareProductListByVendor = ({
     filter,
     onMigrate,
     users,
-    isArchived
+    isArchived,
+    activeTabName
 }) => {
     const handleAddVsp = !isArchived
         ? () => onAddVSP(selectedVendor.id)
@@ -93,7 +96,7 @@ const SoftwareProductListByVendor = ({
                 />
                 {filterCatalogItemsByType({
                     items: selectedVendor.softwareProductList,
-                    filter
+                    filter: filter[activeTabName]
                 }).map(vsp => (
                     <CatalogItemDetails
                         key={vsp.id}
@@ -109,6 +112,10 @@ const SoftwareProductListByVendor = ({
 };
 
 class VendorCatalogView extends React.Component {
+    componentDidMount() {
+        const { onVendorSelect } = this.props;
+        onVendorSelect(false);
+    }
     render() {
         let { selectedVendor } = this.props;
         return selectedVendor ? (

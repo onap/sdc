@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,6 @@ import SoftwareProductComponentProcessesActionHelper from './softwareProduct/com
 import SoftwareProductComponentsNetworkActionHelper from './softwareProduct/components/network/SoftwareProductComponentsNetworkActionHelper.js';
 import SoftwareProductDependenciesActionHelper from './softwareProduct/dependencies/SoftwareProductDependenciesActionHelper.js';
 import ComputeFlavorActionHelper from './softwareProduct/components/compute/ComputeFlavorActionHelper.js';
-import OnboardActionHelper from './onboard/OnboardActionHelper.js';
 import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import { actionTypes, enums } from './OnboardingConstants.js';
@@ -82,7 +81,6 @@ const OnboardingActionHelper = {
         await FeaturesActionHelper.getFeaturesList(dispatch);
         UsersActionHelper.fetchUsersList(dispatch);
         this.loadItemsLists(dispatch);
-        OnboardActionHelper.resetOnboardStore(dispatch);
         setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
         dispatch({
             type: filterActionTypes.FILTER_DATA_CHANGED,

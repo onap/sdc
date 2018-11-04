@@ -13,10 +13,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+import { actionTypes, searchValueObj } from '../onboard/OnboardConstants.js';
 
-export const filterCatalogItemsByType = ({ items, filter }) => {
-    return items.filter(
-        item =>
-            item.name.toLowerCase().indexOf(filter && filter.toLowerCase()) > -1
-    );
+export default (state = searchValueObj, action) => {
+    switch (action.type) {
+        case actionTypes.CHANGE_SEARCH_VALUE:
+            return {
+                ...state,
+                ...{
+                    [action.payload.activeTab]: action.payload.searchValue
+                }
+            };
+        case actionTypes.CLEAR_SEARCH_VALUE:
+            return {
+                ...action.payload.searchValue
+            };
+        default:
+            return state;
+    }
 };

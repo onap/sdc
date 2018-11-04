@@ -27,10 +27,12 @@ function renderCatalogItems({
     filter,
     onSelect,
     onMigrate,
-    users
+    users,
+    activeTabName
 }) {
+    const filteredValue = filter[activeTabName];
     const filteredItems = items.length
-        ? filterCatalogItemsByType({ items, filter })
+        ? filterCatalogItemsByType({ items, filter: filteredValue })
         : [];
     return filteredItems.map(item => (
         <CatalogItemDetails
@@ -51,7 +53,8 @@ class DetailsCatalogView extends React.Component {
         onSelectVSP: PropTypes.func.isRequired,
         onAddVLM: PropTypes.func,
         onAddVSP: PropTypes.func,
-        filter: PropTypes.string.isRequired
+        filter: PropTypes.object.isRequired,
+        activeTabName: PropTypes.string
     };
 
     shouldComponentUpdate(nextProps) {
@@ -71,8 +74,9 @@ class DetailsCatalogView extends React.Component {
             onAddVLM,
             onSelectVLM,
             onSelectVSP,
-            filter = '',
-            onMigrate
+            filter,
+            onMigrate,
+            activeTabName
         } = this.props;
         return (
             <CatalogList onAddVLM={onAddVLM} onAddVSP={onAddVSP}>
@@ -82,7 +86,8 @@ class DetailsCatalogView extends React.Component {
                     filter,
                     onSelect: onSelectVLM,
                     onMigrate,
-                    users
+                    users,
+                    activeTabName
                 })}
                 {renderCatalogItems({
                     items: VSPList,
@@ -90,7 +95,8 @@ class DetailsCatalogView extends React.Component {
                     filter,
                     onSelect: onSelectVSP,
                     onMigrate,
-                    users
+                    users,
+                    activeTabName
                 })}
             </CatalogList>
         );

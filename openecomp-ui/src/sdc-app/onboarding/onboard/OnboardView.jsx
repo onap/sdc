@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,7 +78,7 @@ class OnboardView extends React.Component {
         onSearch: PropTypes.func.isRequired,
         activeTab: PropTypes.number.isRequired,
         catalogActiveTab: PropTypes.number.isRequired,
-        searchValue: PropTypes.string.isRequired,
+        searchValue: PropTypes.object.isRequired,
         onMigrate: PropTypes.func.isRequired
     };
     renderViewByTab(activeTab) {
@@ -93,7 +93,13 @@ class OnboardView extends React.Component {
     }
 
     render() {
-        let { activeTab, onTabClick, onSearch, searchValue } = this.props;
+        let {
+            activeTab,
+            activeTabName,
+            onTabClick,
+            onSearch,
+            searchValue
+        } = this.props;
         return (
             <div className="catalog-view">
                 <Filter />
@@ -101,8 +107,8 @@ class OnboardView extends React.Component {
                     <OnboardHeader
                         activeTab={activeTab}
                         onTabClick={onTabClick}
-                        searchValue={searchValue}
-                        onSearch={value => onSearch(value)}
+                        searchValue={searchValue[activeTabName]}
+                        onSearch={value => onSearch(value, activeTabName)}
                     />
                     {this.renderViewByTab(activeTab)}
                 </div>
