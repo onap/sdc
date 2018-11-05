@@ -17,14 +17,17 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const DATE_FORMAT = 'MM/DD/YYYY';
 
-export const actionTypes = keyMirror({
-    SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',
-    SET_CURRENT_LICENSE_MODEL: null,
-    SET_CURRENT_SCREEN_VERSION: null,
-    UPDATE_CURRENT_SCREEN_PROPS: 'UPDATE_CURRENT_SCREEN_PROPS',
-    UPDATE_ITEM_STATUS: 'UPDATE_ITEM_STATUS',
-    UPDATE_ITEM_ARCHIVE_STATUS: 'UPDATE_ITEM_ARCHIVE_STATUS'
-});
+export const actionTypes = keyMirror(
+    {
+        SET_CURRENT_SCREEN: null,
+        SET_CURRENT_LICENSE_MODEL: null,
+        SET_CURRENT_SCREEN_VERSION: null,
+        UPDATE_CURRENT_SCREEN_PROPS: null,
+        UPDATE_ITEM_STATUS: null,
+        UPDATE_ITEM_ARCHIVE_STATUS: null
+    },
+    'onboardingMain'
+);
 
 export const screenTypes = keyMirror({
     LICENSE_MODEL: null,

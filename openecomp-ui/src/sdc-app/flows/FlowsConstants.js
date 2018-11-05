@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,25 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    OPEN_FLOW_DETAILS_EDITOR: null,
-    CLOSE_FLOW_DETAILS_EDITOR: null,
+export const actionTypes = keyMirror(
+    {
+        OPEN_FLOW_DETAILS_EDITOR: null,
+        CLOSE_FLOW_DETAILS_EDITOR: null,
 
-    OPEN_FLOW_DIAGRAM_EDITOR: null,
-    CLOSE_FLOW_DIAGRAM_EDITOR: null,
+        OPEN_FLOW_DIAGRAM_EDITOR: null,
+        CLOSE_FLOW_DIAGRAM_EDITOR: null,
 
-    FLOW_LIST_LOADED: null,
-    ADD_OR_UPDATE_FLOW: null,
-    ARTIFACT_LOADED: null,
-    DELETE_FLOW: null,
+        FLOW_LIST_LOADED: null,
+        ADD_OR_UPDATE_FLOW: null,
+        ARTIFACT_LOADED: null,
+        DELETE_FLOW: null,
 
-    CURRENT_FLOW_DATA_CHANGED: null,
+        CURRENT_FLOW_DATA_CHANGED: null,
 
-    RESET: null
-});
+        RESET: null
+    },
+    'flow'
+);
 
 export const enums = {
     WORKFLOW: 'WORKFLOW',

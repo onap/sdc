@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,22 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const COMPUTE_FLAVOR_FORM = 'COMPUTE_FLAVOR_FORM';
 
-export const actionTypes = keyMirror({
-    ADD_COMPUTE: null,
-    COMPUTE_FLAVORS_LIST_LOADED: null,
-    COMPUTE_LIST_EDIT: null,
-    EDIT_COMPUTE_FLAVOR: null,
-    DELETE_COMPUTE: null,
-    CONFIRM_DELETE_COMPUTE: null,
-    computeEditor: {
-        LOAD_EDITOR_DATA: null,
-        CLEAR_DATA: null
-    }
-});
+export const actionTypes = keyMirror(
+    {
+        ADD_COMPUTE: null,
+        COMPUTE_FLAVORS_LIST_LOADED: null,
+        COMPUTE_LIST_EDIT: null,
+        EDIT_COMPUTE_FLAVOR: null,
+        DELETE_COMPUTE: null,
+        CONFIRM_DELETE_COMPUTE: null,
+        computeEditor: {
+            LOAD_EDITOR_DATA: null,
+            CLEAR_DATA: null
+        }
+    },
+    'computeFlavor'
+);

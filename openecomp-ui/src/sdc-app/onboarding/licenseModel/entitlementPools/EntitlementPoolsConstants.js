@@ -19,15 +19,18 @@ import InputOptions, {
     other as optionInputOther
 } from 'nfvo-components/input/validation/InputOptions.jsx';
 
-export const actionTypes = keyMirror({
-    ENTITLEMENT_POOLS_LIST_LOADED: 'ENTITLEMENT_POOLS_LIST_LOADED',
-    entitlementPoolsEditor: {
-        OPEN: 'epEditor/OPEN',
-        CLOSE: 'epEditor/CLOSE',
-        DATA_CHANGED: 'epEditor/DATA_CHANGED',
-        LIMITS_LIST_LOADED: 'epEditor/LIMITS_LIST_LOADED'
-    }
-});
+export const actionTypes = keyMirror(
+    {
+        ENTITLEMENT_POOLS_LIST_LOADED: null,
+        entitlementPoolsEditor: {
+            OPEN: null,
+            CLOSE: null,
+            DATA_CHANGED: null,
+            LIMITS_LIST_LOADED: null
+        }
+    },
+    'entitlementPoolsEditor'
+);
 
 export const enums = keyMirror({
     SELECTED_FEATURE_GROUP_TAB: {
