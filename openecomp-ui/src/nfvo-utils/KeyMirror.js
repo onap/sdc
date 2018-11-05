@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-var keyMirror = function(obj) {
-    var ret = {};
-    var key;
-    var val;
+import UUID from 'uuid-js';
+const keyMirror = (obj, namespace) => {
+    let ret = {};
+    let key;
+    let val;
     if (!(obj instanceof Object && !Array.isArray(obj))) {
         throw new Error('keyMirror(...): Argument must be an object.');
     }
@@ -24,11 +25,11 @@ var keyMirror = function(obj) {
         if (obj.hasOwnProperty(key)) {
             val = obj[key];
             if (val instanceof Object) {
-                ret[key] = keyMirror(obj[key]);
+                ret[key] = keyMirror(obj[key], namespace);
             } else if (val !== null && val !== undefined) {
                 ret[key] = val;
             } else {
-                ret[key] = Symbol(key);
+                ret[key] = `${namespace ? namespace : UUID.create()}/${key}`;
             }
         }
     }

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-export const actionTypes = keyMirror({
-    TOGGLE_EXPANDED: null,
-    SELECTED_NODE: null,
-    UNSELECTED_NODE: null
-});
+export const actionTypes = keyMirror(
+    {
+        TOGGLE_EXPANDED: null,
+        SELECTED_NODE: null,
+        UNSELECTED_NODE: null
+    },
+    'heatValidation'
+);
 
 export const errorTypes = keyMirror({
     MISSING_FILE_IN_ZIP: i18n('missing file in zip'),

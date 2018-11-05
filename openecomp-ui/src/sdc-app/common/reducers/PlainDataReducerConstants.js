@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    DATA_CHANGED: null,
-    VALIDATE_FORM: null,
-    VALIDATE_DATA: null
-});
+export const actionTypes = keyMirror(
+    {
+        DATA_CHANGED: null,
+        VALIDATE_FORM: null,
+        VALIDATE_DATA: null
+    },
+    'plainDataReducer'
+);

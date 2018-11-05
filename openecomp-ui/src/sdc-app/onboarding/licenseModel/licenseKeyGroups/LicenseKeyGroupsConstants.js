@@ -19,16 +19,19 @@ import InputOptions, {
     other as optionInputOther
 } from 'nfvo-components/input/validation/InputOptions.jsx';
 
-export const actionTypes = keyMirror({
-    LICENSE_KEY_GROUPS_LIST_LOADED: 'LICENSE_KEY_GROUPS_LIST_LOADED',
-    LICENSE_KEY_GROUPS_DELETE_CONFIRM: 'LICENSE_KEY_GROUPS_DELETE_CONFIRM',
-    licenseKeyGroupsEditor: {
-        OPEN: 'licenseKeyGroupsEditor/OPEN',
-        CLOSE: 'licenseKeyGroupsEditor/CLOSE',
-        DATA_CHANGED: 'licenseKeyGroupsEditor/DATA_CHANGED',
-        LIMITS_LIST_LOADED: 'licenseKeyGroupsEditor/LIMITS_LIST_LOADED'
-    }
-});
+export const actionTypes = keyMirror(
+    {
+        LICENSE_KEY_GROUPS_LIST_LOADED: 'LICENSE_KEY_GROUPS_LIST_LOADED',
+        LICENSE_KEY_GROUPS_DELETE_CONFIRM: 'LICENSE_KEY_GROUPS_DELETE_CONFIRM',
+        licenseKeyGroupsEditor: {
+            OPEN: 'licenseKeyGroupsEditor/OPEN',
+            CLOSE: 'licenseKeyGroupsEditor/CLOSE',
+            DATA_CHANGED: 'licenseKeyGroupsEditor/DATA_CHANGED',
+            LIMITS_LIST_LOADED: 'licenseKeyGroupsEditor/LIMITS_LIST_LOADED'
+        }
+    },
+    'licenseKeyGroups'
+);
 
 export const defaultState = {
     licenseKeyGroupsEditor: {

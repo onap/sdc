@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,25 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
-export const actionTypes = keyMirror({
-    ARTIFACT_LIST_CHANGE: null,
-    ADD_ALL_UNASSIGNED_TO_ARTIFACTS: null,
-    ADD_ALL_ARTIFACTS_TO_UNASSIGNED: null,
+export const actionTypes = keyMirror(
+    {
+        ARTIFACT_LIST_CHANGE: null,
+        ADD_ALL_UNASSIGNED_TO_ARTIFACTS: null,
+        ADD_ALL_ARTIFACTS_TO_UNASSIGNED: null,
 
-    ADD_MODULE: null,
-    REMOVE_MODULE: null,
-    RENAME_MODULE: null,
-    FILL_HEAT_SETUP_CACHE: null,
-    FILE_ASSIGN_CHANGED: null,
+        ADD_MODULE: null,
+        REMOVE_MODULE: null,
+        RENAME_MODULE: null,
+        FILL_HEAT_SETUP_CACHE: null,
+        FILE_ASSIGN_CHANGED: null,
 
-    MANIFEST_LOADED: null,
+        MANIFEST_LOADED: null,
 
-    GO_TO_VALIDATION: null,
-    IN_VALIDATION: null
-});
+        GO_TO_VALIDATION: null,
+        IN_VALIDATION: null
+    },
+    'heatSetup'
+);
 
 export const fileTypes = {
     YAML: { label: 'yaml', regex: /(yaml|yml)/g },

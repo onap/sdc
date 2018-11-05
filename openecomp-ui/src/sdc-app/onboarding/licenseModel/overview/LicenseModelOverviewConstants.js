@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,13 @@ export const overviewEditorHeaders = keyMirror({
     LICENSE_KEY_GROUP: 'License Key Group'
 });
 
-export const actionTypes = keyMirror({
-    LICENSE_MODEL_OVERVIEW_TAB_SELECTED: null,
-    LM_DATA_CHANGED: null
-});
+export const actionTypes = keyMirror(
+    {
+        LICENSE_MODEL_OVERVIEW_TAB_SELECTED: null,
+        LM_DATA_CHANGED: null
+    },
+    'licenseModelOverview'
+);
 
 export const selectedButton = {
     VLM_LIST_VIEW: 'VLM_LIST_VIEW',
