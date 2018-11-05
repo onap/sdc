@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_ae9ef261",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-05T07:05:03Z",
+      "side": 1,
+      "message": "Please declare this under dependencyManagement of onboarding/pom.xml",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 21
+      },
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8ea68ec0",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-05T07:05:03Z",
+      "side": 1,
+      "message": "Please don\u0027t forget a copyright header.",
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0e929e57",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-05T07:05:03Z",
+      "side": 1,
+      "message": "Unused import.",
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ee94fa45",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-05T07:05:03Z",
+      "side": 1,
+      "message": "I\u0027d rather use Lombok for the Backup class than test setters and getters.",
+      "range": {
+        "startLine": 19,
+        "startChar": 32,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4eb0a6f4",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-05T07:05:03Z",
+      "side": 1,
+      "message": "Please use meaningful names for tests. It should be clear from the name what a test actually verifies, what outcome it expects, and under what conditions. https://dzone.com/articles/7-popular-unit-test-naming",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 5
+      },
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
