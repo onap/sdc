@@ -61,30 +61,6 @@
             </plugin>
             <plugin>
                 <groupId>org.openecomp.sdc.onboarding</groupId>
-                <artifactId>artifact-copy-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>init-artifact-helper</goal>
-                            <!--<goal>copy-helper</goal>-->
-                            <goal>calibrate-artifact-helper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <groupId>org.openecomp.sdc</groupId>
-                    <artifactId>build-data-installer</artifactId>
-                    <version>${project.version}</version>
-                    <artifactHelper>
-                        <project>${project}</project>
-                        <session>${session}</session>
-                        <unicornRoot>org.openecomp.sdc:sdc-onboarding/target/build-data</unicornRoot>
-                    </artifactHelper>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openecomp.sdc.onboarding</groupId>
                 <artifactId>compile-helper-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
