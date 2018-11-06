@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_9df31e73",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T13:20:11Z",
+      "side": 1,
+      "message": "Even if you use it for multiple instance I don\u0027t see a reason to not use the original modal.\n\nJust update the original one to know how to handle multiple instances",
+      "parentUuid": "9adffdf1_bdf062ca",
+      "range": {
+        "startLine": 579,
+        "startChar": 15,
+        "endLine": 598,
+        "endChar": 20
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_1dc72e47",
         "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
         "patchSetId": 9
@@ -53,6 +77,30 @@
       "writtenOn": "2018-11-06T10:12:40Z",
       "side": 1,
       "message": "Please add an copiedInstance property to the scope instead of define everything here.\n\nAlso. What is the usage of this specific uniqueId creation?\n\nThis seems like something that is supposed to return from the BE at the end of the copy action",
+      "range": {
+        "startLine": 604,
+        "startChar": 10,
+        "endLine": 614,
+        "endChar": 13
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bd05c215",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T13:20:11Z",
+      "side": 1,
+      "message": "What I meant is that i don\u0027t want to use the scope to hold the data, create a private variable on the scope that will hold all this information instead of just putting it directly on the scope.\n\nAlso. Adding Timestamp to the unique ID is not the correct way to receive a new uniqueId.\n\nThis is a process that happens in the BE as part of creating a new instance so please remove this line of code",
+      "parentUuid": "9adffdf1_1dc72e47",
       "range": {
         "startLine": 604,
         "startChar": 10,
