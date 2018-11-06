@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_9dd8fe54",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bdf062ca",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "sdc already have a modal for deleting component instances from the graph.\nYou can view it be selecting a node on the graph and click on the trash bin icon in the top of the right panel.\n\nPlease use the same model and messages instead of a new one",
+      "range": {
+        "startLine": 579,
+        "startChar": 15,
+        "endLine": 598,
+        "endChar": 20
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_1dc72e47",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "Please add an copiedInstance property to the scope instead of define everything here.\n\nAlso. What is the usage of this specific uniqueId creation?\n\nThis seems like something that is supposed to return from the BE at the end of the copy action",
+      "range": {
+        "startLine": 604,
+        "startChar": 10,
+        "endLine": 614,
+        "endChar": 13
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3db472f1",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "Why use a string value in order to check for an undefined number value?\n\nI\u0027m not supporting this type of checking.\n\nPlease change it to return null value or undefined instead of a string value",
+      "range": {
+        "startLine": 619,
+        "startChar": 11,
+        "endLine": 624,
+        "endChar": 13
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3d823201",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "Please align whitespaces",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 3
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5d87f60f",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/utils/composition-graph-links-utils.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-06T10:12:40Z",
+      "side": 1,
+      "message": "Please remove whitespaces",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 146,
+        "endChar": 8
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
