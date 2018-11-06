@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_225bf355",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-06T09:12:24Z",
+      "side": 1,
+      "message": "Please optimize imports.",
+      "revId": "086217c8ea9a999476b397def373b9b0feef94d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c2578725",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-06T09:12:24Z",
+      "side": 1,
+      "message": "Use the correct class in logger\n LoggerFactory.getLogger(OnboardingToscaMetadata.class)",
+      "revId": "086217c8ea9a999476b397def373b9b0feef94d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a2360302",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/upload/csar/MetadataParsingTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-06T09:12:24Z",
+      "side": 1,
+      "message": "optimize imports",
+      "revId": "086217c8ea9a999476b397def373b9b0feef94d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
