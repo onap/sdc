@@ -111,7 +111,6 @@
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
                     </systemPropertyVariables>
                     <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
-                    <skip>${skipTestRun}</skip>
                 </configuration>
             </plugin>
         </plugins>           

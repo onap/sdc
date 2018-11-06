@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright © 2016-2018 European Support Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -28,110 +44,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mvn.compiler.version}</version>
-                <inherited>true</inherited>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <skipMain>${skipMainSourceCompile}</skipMain>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <configuration>
-                            <skip>${skipTestSourceCompile}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>${java.source}</source>
-                    <target>${java.target}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.openecomp.sdc.onboarding</groupId>
-                <artifactId>compile-helper-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>init-helper</goal>
-                            <goal>pre-compile-helper</goal>
-                            <goal>post-compile-helper</goal>
-                            <goal>pre-test-compile-helper</goal>
-                            <goal>post-test-run-helper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludePackaging>pom</excludePackaging>
-                    <excludeDependencies>test,runtime</excludeDependencies>
-                    <generatedSourceLocation>${project.build.directory}/generated-sources</generatedSourceLocation>
-                    <buildState>
-                        <project>${project}</project>
-                        <compileStateFilePath>
-                            org.openecomp.sdc:sdc-onboarding/target/build-data/compileState.dat
-                        </compileStateFilePath>
-                    </buildState>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${mvn.jar.version}</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                    </archive>
-                    <excludes>
-                        <exclude>${emptyJAR}</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>${mvn.license.version}</version>
-                <configuration>
-                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                    <processStartTag>============LICENSE_START=======================================================
-                    </processStartTag>
-                    <processEndTag>============LICENSE_END=========================================================
-                    </processEndTag>
-                    <sectionDelimiter>================================================================================
-                    </sectionDelimiter>
-                    <licenseName>apache_v2</licenseName>
-                    <inceptionYear>2017</inceptionYear>
-                    <organizationName>AT&amp;T Intellectual Property. All rights
-                        reserved.
-                    </organizationName>
-                    <projectName>SDC</projectName>
-                    <canUpdateCopyright>true</canUpdateCopyright>
-                    <canUpdateDescription>true</canUpdateDescription>
-                    <canUpdateLicense>true</canUpdateLicense>
-                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
-                    <verbose>false</verbose>
-                    <includes>
-                        <include>**/*.java</include>
-                        <include>**/*.js</include>
-                        <include>**/*.ts</include>
-                    </includes>
-                    <roots>
-                        <root>src</root>
-                        <root>app</root>
-                        <root>server-mock</root>
-                        <root>typings</root>
-                    </roots>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>first</id>
-                        <goals>
-                            <goal>update-file-header</goal>
-                        </goals>
-                        <!--phase>process-sources</phase-->
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
