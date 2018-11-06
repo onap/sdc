@@ -827,6 +827,227 @@ public class ComponentsUtilsTest {
 		Assert.assertNotNull(responseFormat);
 	}
 
+    @Test
+    public void testGetResponseFormatByPolicyType_POLICY_TYPE_ALREADY_EXIST() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        PolicyTypeDefinition policyType = new PolicyTypeDefinition();
+        policyType.setType("Demo");
+        ResponseFormat responseFormat = compUtils.getResponseFormatByPolicyType(ActionStatus.POLICY_TYPE_ALREADY_EXIST, policyType);
+        Assert.assertNotNull(responseFormat);
+        Assert.assertEquals((Integer) 409,responseFormat.getStatus());
+    }
+
+    @Test
+    public void testGetResponseFormatByPolicyType_PolicyID_NULL() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        ResponseFormat responseFormat = compUtils.getResponseFormatByPolicyType(ActionStatus.POLICY_TYPE_ALREADY_EXIST,  null);
+        Assert.assertNotNull(responseFormat);
+        Assert.assertEquals((Integer) 409,responseFormat.getStatus());
+    }
+
+    @Test
+    public void testGetResponseFormatByGroupType_GROUP_MEMBER_EMPTY() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        GroupTypeDefinition groupType = new GroupTypeDefinition();
+        groupType.setType("Demo");
+        ResponseFormat responseFormat = compUtils.getResponseFormatByGroupType(ActionStatus.GROUP_MEMBER_EMPTY, groupType);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByGroupType(ActionStatus.GROUP_TYPE_ALREADY_EXIST, groupType);
+        Assert.assertNotNull(responseFormat);
+    }
+
+    @Test
+    public void testConvertFromStorageResponseForDataType_ALL() throws Exception {
+
+	    AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.OK));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.CONNECTION_FAILURE));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.GRAPH_IS_LOCK));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.BAD_REQUEST));
+        Assert.assertEquals(ActionStatus.DATA_TYPE_ALREADY_EXIST,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.ENTITY_ALREADY_EXISTS));
+        Assert.assertEquals(ActionStatus.DATA_TYPE_ALREADY_EXIST,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.SCHEMA_VIOLATION));
+        Assert.assertEquals(ActionStatus.DATA_TYPE_CANNOT_BE_UPDATED_BAD_REQUEST,compUtils.convertFromStorageResponseForDataType(StorageOperationStatus.CANNOT_UPDATE_EXISTING_ENTITY));
+
+    }
+
+    @Test
+    public void testConvertFromStorageResponseForGroupType_ALL() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.OK));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.CONNECTION_FAILURE));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.GRAPH_IS_LOCK));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.BAD_REQUEST));
+        Assert.assertEquals(ActionStatus.GROUP_TYPE_ALREADY_EXIST,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.ENTITY_ALREADY_EXISTS));
+        Assert.assertEquals(ActionStatus.GROUP_TYPE_ALREADY_EXIST,compUtils.convertFromStorageResponseForGroupType(StorageOperationStatus.SCHEMA_VIOLATION));
+	}
+
+    @Test
+    public void testConvertFromStorageResponseForConsumer_ALL() throws Exception {
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.OK));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.CONNECTION_FAILURE));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.GRAPH_IS_LOCK));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.BAD_REQUEST));
+        Assert.assertEquals(ActionStatus.CONSUMER_ALREADY_EXISTS,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.ENTITY_ALREADY_EXISTS));
+        Assert.assertEquals(ActionStatus.CONSUMER_ALREADY_EXISTS,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.SCHEMA_VIOLATION));
+        Assert.assertEquals(ActionStatus.ECOMP_USER_NOT_FOUND,compUtils.convertFromStorageResponseForConsumer(StorageOperationStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void testGetResponseFormatAdditionalProperty_ALL() throws Exception {
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        AdditionalInfoParameterInfo additionalInfoParameterInfo = null;
+        NodeTypeEnum nodeType = null;
+        AdditionalInformationEnum labelOrValue = null;
+
+        ResponseFormat responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EXCEEDS_LIMIT, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_MAX_NUMBER_REACHED, additionalInfoParameterInfo, NodeTypeEnum.Group,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_KEY_NOT_ALLOWED_CHARACTERS, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_NOT_FOUND, additionalInfoParameterInfo, nodeType,
+                labelOrValue);
+        Assert.assertNotNull(responseFormat);
+
+    }
+
+    @Test
+    public void testConvertFromResultStatusEnum_ALL() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromResultStatusEnum(ResultStatusEnum.OK, null));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_DEFAULT_VALUE, null));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_TYPE, null));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_VALUE, null));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_NAME, null));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromResultStatusEnum(ResultStatusEnum.MISSING_ENTRY_SCHEMA_TYPE, null));
+    }
+
+    @Test
+    public void testconvertFromStorageResponseForAdditionalInformation() throws Exception{
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForAdditionalInformation(StorageOperationStatus.OK));
+        Assert.assertEquals(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,compUtils.convertFromStorageResponseForAdditionalInformation(StorageOperationStatus.ENTITY_ALREADY_EXISTS));
+        Assert.assertEquals(ActionStatus.ADDITIONAL_INFORMATION_NOT_FOUND,compUtils.convertFromStorageResponseForAdditionalInformation(StorageOperationStatus.INVALID_ID));
+    }
+
+    @Test
+    public void testgetResponseFormatByComponent() throws Exception{
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Component component = new Resource();
+        ResponseFormat responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.RESOURCE_NOT_FOUND, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.COMPONENT_IN_USE, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.SERVICE_DEPLOYMENT_ARTIFACT_NOT_FOUND, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+        responseFormat = compUtils.getResponseFormatByComponent(ActionStatus.ACCEPTED, component, ComponentTypeEnum.RESOURCE);
+        Assert.assertNotNull(responseFormat);
+    }
+
+
+    @Test
+    public void testConvertFromStorageResponseForResourceInstanceProperty_ALL() throws Exception {
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.OK));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.INVALID_ID));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.GRAPH_IS_LOCK));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.BAD_REQUEST));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.MATCH_NOT_FOUND));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.SCHEMA_VIOLATION));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void testConvertFromStorageResponseForResourceInstance_ALL() throws Exception {
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.ARTIFACT_NOT_FOUND, false));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.INVALID_ID, false));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.INVALID_PROPERTY, false));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.GRAPH_IS_LOCK, false));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.BAD_REQUEST, false));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.MATCH_NOT_FOUND, false));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.SCHEMA_VIOLATION, false));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_RELATION_NOT_FOUND,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.NOT_FOUND, true));
+        Assert.assertEquals(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.NOT_FOUND, false));
+	}
+
+    @Test
+    public void testConvertFromStorageResponse_ALL() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponse(StorageOperationStatus.CONNECTION_FAILURE, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponse(StorageOperationStatus.GRAPH_IS_LOCK, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,compUtils.convertFromStorageResponse(StorageOperationStatus.ENTITY_ALREADY_EXISTS, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.PARENT_RESOURCE_NOT_FOUND,compUtils.convertFromStorageResponse(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.MULTIPLE_PARENT_RESOURCE_FOUND,compUtils.convertFromStorageResponse(StorageOperationStatus.MULTIPLE_PARENT_RESOURCE_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.COMPONENT_IN_USE,compUtils.convertFromStorageResponse(StorageOperationStatus.FAILED_TO_LOCK_ELEMENT, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE,compUtils.convertFromStorageResponse(StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_FOUND,compUtils.convertFromStorageResponse(StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_INVALID,compUtils.convertFromStorageResponse(StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_TYPE, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.INVALID_CONTENT,compUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.CSAR_NOT_FOUND,compUtils.convertFromStorageResponse(StorageOperationStatus.CSAR_NOT_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,compUtils.convertFromStorageResponse(StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.COMPONENT_SUB_CATEGORY_NOT_FOUND_FOR_CATEGORY,compUtils.convertFromStorageResponse(StorageOperationStatus.MATCH_NOT_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.COMPONENT_CATEGORY_NOT_FOUND,compUtils.convertFromStorageResponse(StorageOperationStatus.CATEGORY_NOT_FOUND, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.INVALID_PROPERTY,compUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_PROPERTY, ComponentTypeEnum.RESOURCE));
+        Assert.assertEquals(ActionStatus.COMPONENT_IS_ARCHIVED,compUtils.convertFromStorageResponse(StorageOperationStatus.COMPONENT_IS_ARCHIVED, ComponentTypeEnum.RESOURCE));
+    }
+
+
 
 	@Test
 	public void testConvertFromStorageResponseForResourceInstanceProperty_ALL() throws Exception {
