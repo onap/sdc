@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +30,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
@@ -174,6 +177,7 @@ public class ResourceBusinessLogicTest {
     Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
+    List<Resource> reslist;
 
     public ResourceBusinessLogicTest() {
     }
@@ -214,6 +218,7 @@ public class ResourceBusinessLogicTest {
         Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
         Either<Boolean, StorageOperationStatus> eitherFalse = Either.left(true);
         when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherFalse);
+
 
         Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
         when(toscaOperationFacade.validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCountExist);
@@ -271,6 +276,18 @@ public class ResourceBusinessLogicTest {
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
         when(toscaOperationFacade.getToscaFullElement(resourceCsar.getUniqueId())).thenReturn(oldResourceRes);
         responseManager = ResponseFormatManager.getInstance();
+
+        reslist = new ArrayList<Resource>();
+        reslist.add(resourceResponse);
+        reslist.add(genericVF);
+        reslist.add(genericCR);
+        reslist.add(genericVFC);
+        reslist.add(genericPNF);
+        Either<List<Resource>, StorageOperationStatus> returneval= Either.left(reslist);
+        when(toscaOperationFacade.getAllCertifiedResources(true, true)).thenReturn(returneval);
+        when(toscaOperationFacade.validateComponentNameUniqueness("Resource", ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(true));
+        Either<List<Resource>, StorageOperationStatus> returnevalexception= Either.right(StorageOperationStatus.BAD_REQUEST);
+        when(toscaOperationFacade.getAllCertifiedResources(false, false)).thenReturn(returnevalexception);
 
     }
 
@@ -1862,5 +1879,25 @@ public class ResourceBusinessLogicTest {
     private void validateUserRoles(Role... roles) {
         List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
     }
+
+
+    @Test
+    public void testgetAllCertifiedResources() throws Exception {
+        List<Resource> list = bl.getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, "USER");
+        Assert.assertEquals(reslist,list);
+    }
+
+    @Test(expected = StorageException.class)
+    public void testgetAllCertifiedResources_exception() throws Exception {
+        List<Resource> list = bl.getAllCertifiedResources(false, HighestFilterEnum.NON_HIGHEST_ONLY, "USER");
+        Assert.assertEquals(reslist,list);
+    }
+
+    @Test
+    public void testvalidateResourceNameExists() throws Exception {
+        Either<Map<String, Boolean>, ResponseFormat> res = bl.validateResourceNameExists("Resource", ResourceTypeEnum.CR, "jh0003");
+        Assert.assertEquals(true,res.isLeft());
+    }
+
 
 }
