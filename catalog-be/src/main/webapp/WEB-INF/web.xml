@@ -148,14 +148,6 @@
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
-	<!-- ECOMP Portal -->
-	<servlet>
-		<servlet-name>ECOMPServlet</servlet-name>
-		<servlet-class>org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy</servlet-class>
-		<load-on-startup>3</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
-	
 	<servlet>
 		<servlet-name>ViewStatusMessages</servlet-name>
 		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
@@ -166,25 +158,6 @@
 		<servlet-name>ViewStatusMessages</servlet-name>
 		<url-pattern>/lbClassicStatus</url-pattern>
 	</servlet-mapping>
-
-<!--  	<filter>
-	   <filter-name>GzipFilter</filter-name>
-	   <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
-	   <async-supported>true</async-supported>
-	   <init-param>
-		<param-name>methods</param-name>
-		<param-value>GET,POST,PUT,DELETE</param-value>
-	   </init-param>
-	   <init-param>
-	      <param-name>mimeTypes</param-name>
-	      <param-value>text/html,text/plain,text/css,application/javascript,application/json</param-value>
-	   </init-param>
-	</filter>
-	<filter-mapping>
-	   <filter-name>GzipFilter</filter-name>
-		<url-pattern>/sdc2/rest/*</url-pattern>
-	</filter-mapping>
--->
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>

@@ -133,13 +133,14 @@ public class SdcProxy extends HttpServlet {
                 response.setContentType("image/svg+xml");
             }
 
-            InputStream responseBodyStream = closeableHttpResponse.getEntity().getContent();
-            Header contentEncodingHeader = closeableHttpResponse.getLastHeader("Content-Encoding");
-            if (contentEncodingHeader != null && contentEncodingHeader.getValue().equalsIgnoreCase("gzip")) {
-                responseBodyStream = new GZIPInputStream(responseBodyStream);
+            if(closeableHttpResponse.getEntity() != null) {
+                InputStream responseBodyStream = closeableHttpResponse.getEntity().getContent();
+                Header contentEncodingHeader = closeableHttpResponse.getLastHeader("Content-Encoding");
+                if (contentEncodingHeader != null && contentEncodingHeader.getValue().equalsIgnoreCase("gzip")) {
+                    responseBodyStream = new GZIPInputStream(responseBodyStream);
+                }
+                write(responseBodyStream, response.getOutputStream());
             }
-            write(responseBodyStream, response.getOutputStream());
-
         }
     }
 
