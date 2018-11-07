@@ -16,6 +16,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
@@ -34,7 +44,15 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
@@ -51,17 +69,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentQu
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class CompositionEntityDataManagerImpl implements CompositionEntityDataManager {
 
@@ -216,38 +223,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     }
 
     return new HashSet<>();
-  }
-
-  private boolean isThereErrorsInSubTree(CompositionEntityValidationData entity) {
-    if (Objects.isNull(entity)) {
-      return false;
-    }
-
-    if (CollectionUtils.isNotEmpty(entity.getErrors())) {
-      return true;
-    }
-
-    Collection<CompositionEntityValidationData> subEntitiesValidationData =
-        entity.getSubEntitiesValidationData();
-    return !CollectionUtils.isEmpty(subEntitiesValidationData) &&
-        checkForErrorsInChildren(subEntitiesValidationData);
-
-  }
-
-  private boolean checkForErrorsInChildren(
-      Collection<CompositionEntityValidationData> subEntitiesValidationData) {
-    boolean result = false;
-    for (CompositionEntityValidationData subEntity : subEntitiesValidationData) {
-      if (CollectionUtils.isNotEmpty(subEntity.getErrors())) {
-        return true;
-      }
-
-      result = isThereErrorsInSubTree(subEntity) || result;
-      if (result) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private void saveComponents(String vspId, Version version, CompositionData compositionData,

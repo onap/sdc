@@ -17,12 +17,8 @@
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -32,8 +28,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
-import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -124,44 +118,5 @@ public class NeutronPortResourceValidator implements ResourceValidator {
   private static boolean isThereMoreThanOneBindFromNovaToPort(List<String> pointingNovaServers) {
     return CollectionUtils.isNotEmpty(pointingNovaServers)
             && pointingNovaServers.size() > 1;
-  }
-
-  @SuppressWarnings("unchecked")
-  private static void validateAllSecurityGroupsAreUsed(String filename,
-                                                       Map.Entry<String, Resource> resourceEntry,
-                                                       List<String> securityGroupResourceNameList,
-                                                       GlobalValidationContext globalContext) {
-    Map<String, Object> propertiesMap = resourceEntry.getValue().getProperties();
-
-    if (MapUtils.isEmpty(propertiesMap)) {
-      return;
-    }
-
-    Object securityGroupsValue = propertiesMap.get("security_groups");
-
-    if (Objects.isNull(securityGroupsValue)) {
-      return;
-    }
-
-    if (securityGroupsValue instanceof List) {
-      List<Object> securityGroupsListFromCurrResource =
-              (List<Object>) propertiesMap.get("security_groups");
-      for (Object securityGroup : securityGroupsListFromCurrResource) {
-        removeSecurityGroupNamesFromListByGivenFunction(filename,
-                ResourceReferenceFunctions.GET_RESOURCE.getFunction(), securityGroup,
-                securityGroupResourceNameList, globalContext);
-      }
-    }
-  }
-
-  private static void removeSecurityGroupNamesFromListByGivenFunction(String filename,
-                                                                      String functionName,
-                                                                      Object securityGroup,
-                                                                      Collection<String>
-                                                                              securityGroupResourceNameList,
-                                                                      GlobalValidationContext globalContext) {
-    Set<String> securityGroupsNamesFromFunction = HeatStructureUtil
-            .getReferencedValuesByFunctionName(filename, functionName, securityGroup, globalContext);
-    securityGroupsNamesFromFunction.forEach(securityGroupResourceNameList::remove);
   }
 }

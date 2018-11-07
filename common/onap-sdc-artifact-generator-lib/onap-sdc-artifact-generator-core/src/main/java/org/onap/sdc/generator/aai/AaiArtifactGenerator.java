@@ -20,20 +20,6 @@
 
 package org.onap.sdc.generator.aai;
 
-import org.onap.sdc.generator.aai.model.*;
-import org.onap.sdc.generator.aai.tosca.GroupDefinition;
-import org.onap.sdc.generator.aai.tosca.NodeTemplate;
-import org.onap.sdc.generator.aai.tosca.ToscaTemplate;
-import org.onap.sdc.generator.aai.types.ModelType;
-import org.onap.sdc.generator.data.*;
-import org.onap.sdc.generator.intf.ArtifactGenerator;
-import org.onap.sdc.generator.intf.Generator;
-import org.onap.sdc.generator.logging.annotations.Audit;
-import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.slf4j.MDC;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,15 +30,42 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-
-import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
+import org.onap.sdc.generator.aai.model.AllotedResource;
+import org.onap.sdc.generator.aai.model.L3NetworkWidget;
+import org.onap.sdc.generator.aai.model.Model;
+import org.onap.sdc.generator.aai.model.ProvidingService;
+import org.onap.sdc.generator.aai.model.Resource;
+import org.onap.sdc.generator.aai.model.Service;
+import org.onap.sdc.generator.aai.model.TunnelXconnectWidget;
+import org.onap.sdc.generator.aai.model.VfModule;
+import org.onap.sdc.generator.aai.model.Widget;
+import org.onap.sdc.generator.aai.tosca.GroupDefinition;
+import org.onap.sdc.generator.aai.tosca.NodeTemplate;
+import org.onap.sdc.generator.aai.tosca.ToscaTemplate;
+import org.onap.sdc.generator.aai.types.ModelType;
+import org.onap.sdc.generator.data.AdditionalParams;
+import org.onap.sdc.generator.data.Artifact;
+import org.onap.sdc.generator.data.ArtifactType;
+import org.onap.sdc.generator.data.GenerationData;
+import org.onap.sdc.generator.data.GeneratorConstants;
+import org.onap.sdc.generator.data.GeneratorUtil;
+import org.onap.sdc.generator.data.GroupType;
+import org.onap.sdc.generator.data.WidgetConfigurationUtil;
+import org.onap.sdc.generator.intf.ArtifactGenerator;
+import org.onap.sdc.generator.intf.Generator;
+import org.onap.sdc.generator.logging.annotations.Audit;
+import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.slf4j.MDC;
 
 @Generator(artifactType = ArtifactType.AAI)
 public class AaiArtifactGenerator implements ArtifactGenerator {
 
-  private static Logger log = LoggerFactory.getLogger(AaiArtifactGenerator.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(AaiArtifactGenerator.class.getName());
 
   /**
    * Implementation of the method to generate AAI artifacts.
@@ -101,9 +114,8 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     } else {
       String versionRegex = "^[1-9]\\d*(\\.0)$";
       if (! (serviceVersion.matches(versionRegex))) {
-        throw new IllegalArgumentException(String
-            .format(GeneratorConstants
-                .GENERATOR_AAI_INVALID_SERVICE_VERSION));
+        throw new IllegalArgumentException(GeneratorConstants
+            .GENERATOR_AAI_INVALID_SERVICE_VERSION);
       }
     }
 
@@ -127,12 +139,11 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     if (serviceTosca.getTopology_template() != null
         && serviceTosca.getTopology_template().getNode_templates() != null) {
-      processServiceTosca(service, idTypeStore,resourcesVersion, serviceTosca,resources);
+      processServiceTosca(service, idTypeStore,resourcesVersion, serviceTosca);
     }
     validateResourceToscaAgainstService(idTypeStore, toscas);
 
     //Process the resource tosca files
-    int counter = 0;
     List<Resource> currentToscaResources = new LinkedList<>();
     while (toscas.size() > 0) {
       ToscaTemplate resourceTemplate = toscas.remove(0);
@@ -175,7 +186,6 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
       resources.add((Resource) model);
       currentToscaResources
           .clear();    //Clearing the current tosca resource list for the next iteration
-      counter = 0;
     }
 
     AaiModelGenerator modelGenerator = AaiModelGenerator.getInstance();
@@ -202,10 +212,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
   private void validateResourceToscaAgainstService(Map<String, String> idTypeStore,
                                                    List<ToscaTemplate> toscas) {
-    Iterator entries = idTypeStore.entrySet().iterator();
-    while (entries.hasNext()) {
-      Map.Entry entry = (Map.Entry) entries.next();
-      String resourceUuidFromService = (String)entry.getKey();
+    for (String resourceUuidFromService : idTypeStore.keySet()) {
       Iterator<ToscaTemplate> itr = toscas.iterator();
       boolean toscaFound = false;
       while (itr.hasNext()) {
@@ -216,21 +223,19 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
           break;
         }
       }
-      if (toscaFound == false) {
-        throw new IllegalArgumentException(String
-            .format(GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_RESOURCE_TOSCA,
-                resourceUuidFromService));
+      if (!toscaFound) {
+        throw new IllegalArgumentException(
+                String.format(GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_RESOURCE_TOSCA, resourceUuidFromService));
       }
     }
 
   }
 
   private ToscaTemplate preProcessingTosca(ToscaTemplate tosca) {
-    ToscaTemplate processedTosca = tosca;
     if (tosca.getTopology_template() != null
         && tosca.getTopology_template().getNode_templates() != null) {
       Collection<NodeTemplate> coll =
-          processedTosca.getTopology_template().getNode_templates().values();
+          tosca.getTopology_template().getNode_templates().values();
       for (NodeTemplate node : coll) {
 
         if (node.getType().contains("org.openecomp.resource.vf.") && node.getMetadata().get("category")
@@ -244,7 +249,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         }
       }
     }
-    return processedTosca;
+    return tosca;
   }
 
   private void processVfTosca(Map<String, String> idTypeStore, ToscaTemplate resourceTemplate,
@@ -276,7 +281,6 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         } else if (resourceNode instanceof Resource && !(resourceNode.getWidgetType().equals(
             Widget.Type
             .L3_NET))) {
-          //resourceNode.populateModelIdentificationInformation(node.getMetadata());
           idTypeStore.put(resourceNode.getModelNameVersionId(), node.getType());
           model.addResource((Resource) resourceNode);
         }
@@ -325,16 +329,15 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         group.populateModelIdentificationInformation(properties);
         if (group instanceof VfModule && !currentToscaResources.contains(group)) {
           if (gd.getMembers() != null && !gd.getMembers().isEmpty()) {
-            Set<String> groupMembers = new HashSet<>();
             ((VfModule) group).setMembers(gd.getMembers());
             nodeNameListForGroups.addAll(gd.getMembers());
-            groupMembers.addAll(gd.getMembers());
+            Set<String> groupMembers = new HashSet<>(gd.getMembers());
 
             for (String member : groupMembers) {
               NodeTemplate node =
                   resourceTemplate.getTopology_template().getNode_templates().get(member);
               if (node != null) {
-                Model resourceNode = null;
+                Model resourceNode;
                 //L3-network inside vf-module to be generated as Widget a special handling.
                 if (node.getType().contains("org.openecomp.resource.vl")) {
                   resourceNode = new L3NetworkWidget();
@@ -372,14 +375,13 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     Iterator<Widget> iter = model.getWidgets().iterator();
     while (iter.hasNext()) {
-      if (iter.next().allInstancesUsed(nodeNameListForGroups) || true) {
-        iter.remove();
-      }
+      iter.next().allInstancesUsed(nodeNameListForGroups);
+      iter.remove();
     }
   }
 
   private void processServiceTosca(Service service, Map<String, String> idTypeStore,Map<String,
-      String> resourcesVersion,ToscaTemplate serviceTosca, List<Resource> resources) {
+      String> resourcesVersion,ToscaTemplate serviceTosca) {
     Collection<NodeTemplate> coll =
         serviceTosca.getTopology_template().getNode_templates().values();
     log.debug("Inside Service Tosca ");
@@ -411,6 +413,10 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
    * @return Generated {@link Artifact} model for the service
    */
   private Artifact getServiceArtifact(Model serviceModel, String aaiServiceModel) {
+    return getArtifactForModel(serviceModel, aaiServiceModel);
+  }
+
+  private Artifact getArtifactForModel(Model serviceModel, String aaiServiceModel) {
     Artifact artifact =
         new Artifact(ArtifactType.MODEL_INVENTORY_PROFILE.name(), GroupType.DEPLOYMENT.name(),
             GeneratorUtil.checkSum(aaiServiceModel.getBytes()),
@@ -432,17 +438,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
    * @return Generated {@link Artifact} model for the resource
    */
   private Artifact getResourceArtifact(Model resourceModel, String aaiResourceModel) {
-    Artifact artifact =
-        new Artifact(ArtifactType.MODEL_INVENTORY_PROFILE.name(), GroupType.DEPLOYMENT.name(),
-            GeneratorUtil.checkSum(aaiResourceModel.getBytes()),
-            GeneratorUtil.encode(aaiResourceModel.getBytes()));
-    String resourceArtifactName = getArtifactName(resourceModel);
-    String resourceArtifactLabel = getArtifactLabel(resourceModel);
-    artifact.setName(resourceArtifactName);
-    artifact.setLabel(resourceArtifactLabel);
-    String description = getArtifactDescription(resourceModel);
-    artifact.setDescription(description);
-    return artifact;
+    return getArtifactForModel(resourceModel, aaiResourceModel);
   }
 
   /**
@@ -455,30 +451,25 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     StringBuilder artifactName = new StringBuilder(ArtifactType.AAI.name());
     artifactName.append("-");
 
-    String truncatedArtifactName = "";
-    truncatedArtifactName = truncateName(model.getModelName());
+    String truncatedArtifactName = truncateName(model.getModelName());
     artifactName.append(truncatedArtifactName);
 
     artifactName.append("-");
     artifactName.append(model.getModelType().name().toLowerCase());
     artifactName.append("-");
     artifactName.append(model.getModelVersion());
-
-    //artifactName.append(model.getModelVersion());
     artifactName.append(".");
     artifactName.append(GeneratorConstants.GENERATOR_AAI_GENERATED_ARTIFACT_EXTENSION);
     return artifactName.toString();
   }
 
   private String getArtifactLabel(Model model) {
-    // String label = "";
     StringBuilder artifactName = new StringBuilder(ArtifactType.AAI.name());
     artifactName.append("-");
     artifactName.append(model.getModelType().name().toLowerCase());
     artifactName.append("-");
     artifactName.append(hashCodeUuId(model.getModelNameVersionId()));
-    String label = (artifactName.toString()).replaceAll("[^a-zA-Z0-9 +]+", "-");
-    return label;
+    return (artifactName.toString()).replaceAll("[^a-zA-Z0-9 +]+", "-");
   }
 
   private int hashCodeUuId(String uuId) {
@@ -510,7 +501,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
   private void validateVersion(String version, String uuId) {
     String versionRegex = "^[0-9]\\d*(\\.\\d+)$";
-    if (null == version  || version == "") {
+    if (null == version  || Objects.equals(version, "")) {
       throw new IllegalArgumentException(String
           .format(GeneratorConstants.GENERATOR_AAI_ERROR_NULL_RESOURCE_VERSION_IN_SERVICE_TOSCA,
                uuId));
@@ -531,7 +522,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
       throws SecurityException {
     byte[] decodedInput = GeneratorUtil.decoder(input.getPayload());
     String checksum = GeneratorUtil.checkSum(decodedInput);
-    ToscaTemplate tosca = null;
+    ToscaTemplate tosca;
     if (checksum.equalsIgnoreCase(input.getChecksum())) {
       try {
         log.debug("Input yaml name " + input.getName() + "payload " + new String(decodedInput));
@@ -551,7 +542,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     log.debug("Validating tosca for Artifact: " + input.getName());
     if (tosca.getMetadata().containsKey("invariantUUID")) {
       if (tosca.getMetadata().get("invariantUUID") == null
-          || tosca.getMetadata().get("invariantUUID") == "") {
+          || Objects.equals(tosca.getMetadata().get("invariantUUID"), "")) {
         throw new IllegalArgumentException(String
             .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
                 "invariantUUID",
@@ -563,7 +554,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     }
 
     if (tosca.getMetadata().containsKey("UUID")) {
-      if (tosca.getMetadata().get("UUID") == null || tosca.getMetadata().get("UUID") == "") {
+      if (tosca.getMetadata().get("UUID") == null || Objects.equals(tosca.getMetadata().get("UUID"), "")) {
         throw new IllegalArgumentException(String
             .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION, "UUID",
                 input.getName()));
@@ -574,55 +565,59 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
 
     }
     if (tosca.getMetadata().containsKey("name")) {
-      if (tosca.getMetadata().get("name") == null || tosca.getMetadata().get("name") == "") {
+      if (tosca.getMetadata().get("name") == null || Objects.equals(tosca.getMetadata().get("name"), "")) {
         throw new IllegalArgumentException(String
             .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION, "name",
                 input.getName()));
       }
     }
 
-    //Validate VFmodule
     if (tosca.getTopology_template() != null && tosca.getTopology_template().getGroups() != null) {
-      Collection<GroupDefinition> groups = tosca.getTopology_template().getGroups().values();
-      for (GroupDefinition gd : groups) {
-        Model group = Model.getModelFor(gd.getType());
-        if (group != null && group instanceof VfModule) {
-          if (gd.getMetadata().containsKey("vfModuleModelName")
-              && gd.getMetadata().get("vfModuleModelName") == null) {
-            throw new IllegalArgumentException(String
-                .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
-                    "vfModuleModelName",
-                    input.getName()));
-          }
-          if (gd.getMetadata().containsKey("vfModuleModelInvariantUUID")
-              && gd.getMetadata().get("vfModuleModelInvariantUUID") == null) {
-            throw new IllegalArgumentException(String
-                .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
-                    "vfModuleModelInvariantUUID", input.getName()));
-          } else if (gd.getMetadata().get("vfModuleModelInvariantUUID").length() != GeneratorConstants.ID_LENGTH) {
-            throw new IllegalArgumentException(String.format(
-                 GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_ID, "vfModuleModelInvariantUUID",
-                 input.getName()));
-          }
+      validateVfModule(tosca, input);
+    }
+  }
 
-          if (gd.getMetadata().containsKey("vfModuleModelUUID")
-              && gd.getMetadata().get("vfModuleModelUUID") == null) {
-            throw new IllegalArgumentException(String
-                .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
-                    "vfModuleModelUUID",
-                    input.getName()));
-          } else if (gd.getMetadata().get("vfModuleModelUUID").length() != GeneratorConstants.ID_LENGTH) {
-            throw new IllegalArgumentException(String.format(
-                GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_ID, "vfModuleModelUUID",
-                input.getName()));
-          }
-          if (gd.getMetadata().containsKey("vfModuleModelVersion")
-              && gd.getMetadata().get("vfModuleModelVersion") == null) {
-            throw new IllegalArgumentException(String
-                .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
-                    "vfModuleModelVersion",
-                    input.getName()));
-          }
+  private void validateVfModule(ToscaTemplate tosca, Artifact input) {
+
+    Collection<GroupDefinition> groups = tosca.getTopology_template().getGroups().values();
+    for (GroupDefinition gd : groups) {
+      Model group = Model.getModelFor(gd.getType());
+      if (group instanceof VfModule) {
+        if (gd.getMetadata().containsKey("vfModuleModelName")
+            && gd.getMetadata().get("vfModuleModelName") == null) {
+          throw new IllegalArgumentException(String
+              .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
+                  "vfModuleModelName",
+                  input.getName()));
+        }
+        if (gd.getMetadata().containsKey("vfModuleModelInvariantUUID")
+            && gd.getMetadata().get("vfModuleModelInvariantUUID") == null) {
+          throw new IllegalArgumentException(String
+              .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
+                  "vfModuleModelInvariantUUID", input.getName()));
+        } else if (gd.getMetadata().get("vfModuleModelInvariantUUID").length() != GeneratorConstants.ID_LENGTH) {
+          throw new IllegalArgumentException(String.format(
+               GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_ID, "vfModuleModelInvariantUUID",
+               input.getName()));
+        }
+
+        if (gd.getMetadata().containsKey("vfModuleModelUUID")
+            && gd.getMetadata().get("vfModuleModelUUID") == null) {
+          throw new IllegalArgumentException(String
+              .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
+                  "vfModuleModelUUID",
+                  input.getName()));
+        } else if (gd.getMetadata().get("vfModuleModelUUID").length() != GeneratorConstants.ID_LENGTH) {
+          throw new IllegalArgumentException(String.format(
+              GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_ID, "vfModuleModelUUID",
+              input.getName()));
+        }
+        if (gd.getMetadata().containsKey("vfModuleModelVersion")
+            && gd.getMetadata().get("vfModuleModelVersion") == null) {
+          throw new IllegalArgumentException(String
+              .format(GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION,
+                  "vfModuleModelVersion",
+                  input.getName()));
         }
       }
     }
@@ -649,7 +644,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
   private void initWidgetConfiguration() throws IOException {
     log.debug("Getting Widget Configuration");
     String configLocation = System.getProperty("artifactgenerator.config");
-    Properties properties = null;
+    Properties properties;
     if (configLocation != null) {
       File file = new File(configLocation);
       if (file.exists()) {
