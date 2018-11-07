@@ -78,32 +78,6 @@
 		<servlet-name>KibanaProxy</servlet-name>
 		<url-pattern>/kibanaProxy/*</url-pattern>
 	</servlet-mapping>
-
- 
-<!--  <filter>
-		<filter-name>GzipFilter</filter-name>
-		<filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
-        <async-supported>true</async-supported>
-		<init-param>
-			<param-name>mimeTypes</param-name>
-			<param-value>*/*</param-value>
-		</init-param>
-		<init-param>
-			<param-name>methods</param-name>
-			<param-value>GET,POST,PUT,DELETE</param-value>
-		</init-param>
-		<init-param>
-			<param-name>excludePaths</param-name>
-			<param-value>/sdc1/feProxy/*</param-value>
-		</init-param>
-	</filter>
-
-
-	<filter-mapping>
-		<filter-name>GzipFilter</filter-name>
-		<url-pattern>/sdc1/*</url-pattern>
-	</filter-mapping>
- 	-->
 	
 	 <filter>
 	   <filter-name>gzipFilter</filter-name>

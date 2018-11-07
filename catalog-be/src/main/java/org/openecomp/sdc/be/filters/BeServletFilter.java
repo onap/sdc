@@ -148,8 +148,10 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
         log.debug("Close transaction from filter");
         TitanDao titanDao = getTitanDao();
         if (titanDao != null) {
-            if (responseContext.getStatus() == Response.Status.OK.getStatusCode() ||
-                    responseContext.getStatus() == Response.Status.CREATED.getStatusCode()) {
+            int status = responseContext.getStatus();
+            if (status == Response.Status.OK.getStatusCode() ||
+                    status == Response.Status.CREATED.getStatusCode() ||
+                    status == Response.Status.NO_CONTENT.getStatusCode()) {
                 titanDao.commit();
                 log.debug("Doing commit from filter");
             } else {

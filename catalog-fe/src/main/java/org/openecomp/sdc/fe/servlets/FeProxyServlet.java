@@ -24,6 +24,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.eclipse.jetty.client.api.Response;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
@@ -31,8 +33,6 @@ import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
 import org.openecomp.sdc.fe.impl.MdcData;
 import org.openecomp.sdc.fe.utils.BeProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +50,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private static final String SDC1_FE_PROXY = "/sdc1/feProxy";
 	private static final String PLUGIN_ID_WORKFLOW = "WORKFLOW";
 
-	private static final Logger log = LoggerFactory.getLogger(FeProxyServlet.class.getName());
+	private static final Logger log = Logger.getLogger(FeProxyServlet.class);
 	private static Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 
 
@@ -67,11 +67,11 @@ public class FeProxyServlet extends SSLProxyServlet {
 
 		} catch(MalformedURLException mue){
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
-			log.error("Unexpected FE request processing error :", mue);
+			log.error(EcompLoggerErrorCode.DATA_ERROR,"FeProxyServlet rewriteTarget", "sdc-FE", "Malformed URL Exception: ", mue);
 		}
 		catch (Exception e) {
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
-			log.error("Unexpected FE request logging error :", e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet rewriteTarget", "sdc-FE", "Unexpected FE request processing error: ", e);
 		}
 
 		log.debug("FeProxyServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
@@ -85,7 +85,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			logFeResponse(request, response);
 		} catch (Exception e) {
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-			log.error("Unexpected FE response logging error :", e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet onProxyResponseSuccess", "sdc-FE", "Unexpected FE response logging error: ", e);
 		}
 		super.onProxyResponseSuccess(request, proxyResponse, response);
 	}
@@ -158,7 +158,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private String getModifiedUrl(HttpServletRequest request) throws MalformedURLException {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
-			log.error("failed to retrive configuration.");
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet getModifiedUrl", "sdc-FE", "failed to retrive configuration.");
 			throw new RuntimeException("failed to read FE configuration");
 		}
 		String uri = request.getRequestURI();
