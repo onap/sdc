@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -22,10 +23,12 @@ import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -34,6 +37,8 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -76,6 +81,12 @@ public class ElementBLTest {
 
     @Mock
     private ElementOperation elementOperation;
+
+    @Mock
+    private UserBusinessLogic userAdminManager;
+
+    @Mock
+    protected ComponentsUtils componentsUtils;
 
     @InjectMocks
     private ElementBusinessLogic elementBusinessLogic;
@@ -200,6 +211,32 @@ public class ElementBLTest {
         when(elementBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
         when(elementOperation.deleteSubCategory(NodeTypeEnum.ResourceSubcategory, CATEGORY_UNIQUE_ID)).thenReturn(Either.left(subCategoryDef));
         result = elementBusinessLogic.deleteSubCategory(CATEGORY_UNIQUE_ID, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testDeleteGrouping() {
+        Either<GroupingDefinition, ResponseFormat> result;
+        GroupingDefinition groupDef = Mockito.mock(GroupingDefinition.class);
+        when(elementOperation.deleteGrouping(null, "groupId")).thenReturn(Either.left(groupDef));
+        result = elementBusinessLogic.deleteGrouping("groupId", ComponentTypeEnum.RESOURCE_PARAM_NAME, "userId");
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testCreateCategory() {
+        Either<CategoryDefinition, ResponseFormat> result;
+        CategoryDefinition categoryDef = new CategoryDefinition();
+        String name = "name";
+        categoryDef.setName(name);
+        User user = new User();
+        String userId = "userId";
+        user.setUserId(userId);
+        user.setRole(Role.ADMIN.name());
+        when(userAdminManager.getUser(userId, false)).thenReturn(Either.left(user));
+        when(elementOperation.isCategoryUniqueForType(NodeTypeEnum.ResourceNewCategory, name)).thenReturn(Either.left(true));
+        when(elementOperation.createCategory(categoryDef, NodeTypeEnum.ResourceNewCategory)).thenReturn(Either.left(categoryDef));
+        result = elementBusinessLogic.createCategory(categoryDef, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
         assertThat(result.isLeft());
     }
 }
