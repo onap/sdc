@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_aae25001",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-07T20:27:02Z",
+      "side": 1,
+      "message": "please use the error logger",
+      "range": {
+        "startLine": 69,
+        "startChar": 3,
+        "endLine": 69,
+        "endChar": 12
+      },
+      "revId": "b392354eea79b8803c24feddab89d4200c56d6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4ae72413",
+        "filename": "catalog-fe/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-07T20:27:02Z",
+      "side": 1,
+      "message": "please restore as it is used to expose on of our servlets.",
+      "range": {
+        "startLine": 58,
+        "startChar": 1,
+        "endLine": 58,
+        "endChar": 11
+      },
+      "revId": "b392354eea79b8803c24feddab89d4200c56d6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6ae4680d",
+        "filename": "catalog-fe/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-07T20:27:02Z",
+      "side": 1,
+      "message": "please remove commented out code.",
+      "range": {
+        "startLine": 83,
+        "startChar": 6,
+        "endLine": 89,
+        "endChar": 3
+      },
+      "revId": "b392354eea79b8803c24feddab89d4200c56d6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
