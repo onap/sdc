@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -39,7 +38,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatPseudoParameters;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -282,7 +280,7 @@ public class HeatValidator implements Validator {
                                              globalContext) {
     for (Output output : outputMap.values()) {
       Object outputValue = output.getValue();
-      if (outputValue != null && outputValue instanceof Map) {
+      if (outputValue instanceof Map) {
         Map<String, Object> outputValueMap = (Map<String, Object>) outputValue;
         List<String> getAttrValue =
             (List<String>) outputValueMap.get(
@@ -423,7 +421,7 @@ public class HeatValidator implements Validator {
                                                                     globalContext) {
     Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters();
 
-    if (parametersMap != null && MapUtils.isNotEmpty(parametersMap)) {
+    if (MapUtils.isNotEmpty(parametersMap)) {
       for (Map.Entry<String, Parameter> parameterEntry : parametersMap.entrySet()) {
           validateParameterEntryForParameterDefaultTypeAlignWithType(parameterEntry,
                         fileName, globalContext);
@@ -629,36 +627,4 @@ public class HeatValidator implements Validator {
                "The heat file does not contain any resources"));
     }
   }
-
-
-  @SuppressWarnings("unchecked")
-  private void getSecurityGroupsReferencedResourcesFromOutputs(
-      Set<String> securityGroupsNamesFromOutputsMap, Map<String, Output> outputMap,
-      Map<String, Resource> resourceMap) {
-    if (MapUtils.isNotEmpty(outputMap)) {
-      for (Map.Entry<String, Output> outputEntry : outputMap.entrySet()) {
-
-          validateOutputEntryForGetSecurityGroupsReferencedResourcesFromOutputs(outputEntry,
-                  resourceMap, securityGroupsNamesFromOutputsMap);
-
-      }
-    }
-  }
-    private void validateOutputEntryForGetSecurityGroupsReferencedResourcesFromOutputs(
-            Map.Entry<String, Output> outputEntry,
-            Map<String, Resource> resourceMap, Set<String> securityGroupsNamesFromOutputsMap){
-        Object outputValue = outputEntry.getValue().getValue();
-        if (Objects.nonNull(outputValue) && outputValue instanceof Map) {
-            String resourceName = (String) ((Map) outputValue)
-                    .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
-            if (Objects.nonNull(resourceName)) {
-                Resource resource = resourceMap.get(resourceName);
-                if (Objects.nonNull(resource) && resource.getType().equals(
-                        HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource())) {
-                    securityGroupsNamesFromOutputsMap.add(outputEntry.getKey());
-                }
-            }
-        }
-    }
-
 }
