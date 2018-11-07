@@ -35,8 +35,6 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntity
     target.setThresholdValue(source.getThresholdValue());
     target.setThresholdUnit(source.getThresholdUnits());
     target.setIncrements(source.getIncrements());
-    MapChoiceOrOtherDtoToChoiceOrOther choiceOrOtherMapper =
-        new MapChoiceOrOtherDtoToChoiceOrOther();
     target.setOperationalScope(new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther()
         .applyMapping(source.getOperationalScope(), MultiChoiceOrOther.class));
 

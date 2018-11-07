@@ -16,6 +16,17 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
@@ -27,18 +38,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
 
 
 public class ComponentQuestionnaireData {
@@ -59,10 +58,8 @@ public class ComponentQuestionnaireData {
 
   public Map<String, Map<String, Object>> getPropertiesfromCompQuestionnaire(String key,
                                                                              Version version) {
-    Map<String, Map<String, Object>> componentProperties =
-        new HashMap<String, Map<String, Object>>();
+    Map<String, Map<String, Object>> componentProperties = new HashMap<>();
 
-    ComponentEntity entity = new ComponentEntity(key, version, null);
     final Collection<ComponentEntity> componentEntities =
         componentDao.listCompositionAndQuestionnaire(key, version);
 
@@ -79,12 +76,10 @@ public class ComponentQuestionnaireData {
 
       sourceToTarget.put(component.getId(), componentData.getDisplayName());
 
-      String nfcNamingCode = componentQuestionnaire.getGeneral().getNfcNamingCode() != null ?
-                                     componentQuestionnaire.getGeneral().getNfcNamingCode() : null;
+      String nfcNamingCode = componentQuestionnaire.getGeneral().getNfcNamingCode();
       questionnaireParams.put(NFC_NAMING_CODE, nfcNamingCode);
 
-      String vfcDescription = componentQuestionnaire.getGeneral().getNfcFunction() != null ?
-                                      componentQuestionnaire.getGeneral().getNfcFunction() : null;
+      String vfcDescription = componentQuestionnaire.getGeneral().getNfcFunction();
       questionnaireParams.put(EnrichmentConstants.NFC_FUNCTION, vfcDescription);
 
 
@@ -128,21 +123,21 @@ public class ComponentQuestionnaireData {
     Collection<ComponentDependencyModelEntity> componentDependencies =
         componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
 
-    Map<String, List<String>> sourceToTargetComponent = new HashMap<String, List<String>>();
-    List<String> targetComponents = null;
+    Map<String, List<String>> dependencies = new HashMap<>();
+    List<String> targetComponents;
     for (ComponentDependencyModelEntity dependency : componentDependencies) {
       String sourceComponentName = componentNameData.get(dependency.getSourceComponentId());
       String targetComponentName = componentNameData.get(dependency.getTargetComponentId());
-      if (!sourceToTargetComponent.containsKey(sourceComponentName)) {
-        targetComponents = new ArrayList<String>();
+      if (!dependencies.containsKey(sourceComponentName)) {
+        targetComponents = new ArrayList<>();
       } else {
-        targetComponents = sourceToTargetComponent.get(sourceComponentName);
+        targetComponents = dependencies.get(sourceComponentName);
       }
       targetComponents.add(targetComponentName);
-      sourceToTargetComponent.put(sourceComponentName, targetComponents);
+      dependencies.put(sourceComponentName, targetComponents);
     }
 
-    return sourceToTargetComponent;
+    return dependencies;
   }
 
 }

@@ -16,9 +16,22 @@
 
 package org.openecomp.sdc.generator.core.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.generator.core.utils.GeneratorUtils;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
@@ -27,7 +40,6 @@ import org.openecomp.sdc.generator.util.GeneratorConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
@@ -35,8 +47,6 @@ import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
-
-import java.util.*;
 
 /**
  * The type Manual vsp tosca generator.
@@ -57,7 +67,6 @@ public class ManualVspToscaGenerationService {
    */
   public ToscaServiceModel createManualVspToscaServiceModel(VspModelInfo vspModelInfo) {
     ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
-    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     Map<String, ServiceTemplate> serviceTemplates = new HashMap<>(GlobalTypesGenerator
         .getGlobalTypesServiceTemplate(OnboardingTypesEnum.MANUAL));
     toscaServiceModel.setServiceTemplates(serviceTemplates);
@@ -74,7 +83,6 @@ public class ManualVspToscaGenerationService {
 
   private void createToscaFromVspData(VspModelInfo vspModelInfo,
                                         ToscaServiceModel toscaServiceModel) {
-    List<ServiceTemplate> serviceTemplates = new ArrayList<>();
     //Only one component supported
     Optional<String> componentName = getComponentNameFromVspModel(vspModelInfo);
     if (componentName.isPresent()) {
@@ -198,7 +206,6 @@ public class ManualVspToscaGenerationService {
         .GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME));
     globalSubstitutionTypeImportMap.put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
         globalSubstitutionTypeImport);
-    Map<String, Import> globalImports = new HashMap<>();
     List<Map<String, Import>> manualVspGlobalTypesImportList = GlobalTypesGenerator
         .getManualVspGlobalTypesImportList();
     manualVspGlobalTypesImportList.add(globalSubstitutionTypeImportMap);
@@ -211,10 +218,8 @@ public class ManualVspToscaGenerationService {
                                                             ToscaServiceModel toscaServiceModel) {
     ServiceTemplate substitutionServiceTemplate =
         createInitSubstitutionServiceTemplate(serviceTemplateName);
-    createSubstitutionServiceTemplateComponents(substitutionServiceTemplate, vspModelInfo,
-        toscaServiceModel);
-    createSubstitutionServiceTemplateNics(substitutionServiceTemplate, vspModelInfo,
-        toscaServiceModel);
+    createSubstitutionServiceTemplateComponents(substitutionServiceTemplate, vspModelInfo);
+    createSubstitutionServiceTemplateNics(substitutionServiceTemplate, vspModelInfo);
     handleSubstitutionMapping(substitutionServiceTemplate, toscaServiceModel,
         substitutionNodeTypeId, serviceTemplateName);
     return substitutionServiceTemplate;
@@ -222,12 +227,10 @@ public class ManualVspToscaGenerationService {
 
   private void createSubstitutionServiceTemplateComponents(ServiceTemplate
                                                                substitutionServiceTemplate,
-                                                           VspModelInfo vspModelInfo,
-                                                           ToscaServiceModel toscaServiceModel) {
+                                                           VspModelInfo vspModelInfo) {
     Map<String, String> components = vspModelInfo.getComponents();
     if (MapUtils.isNotEmpty(components)) {
-      for (String componentId : components.keySet()) {
-        String componentName = components.get(componentId);
+      for (String componentName : components.values()) {
         String localNodeTypeId =
             createComponentDefinitionNodeTemplate(substitutionServiceTemplate, componentName);
         createLocalNodeType(substitutionServiceTemplate, localNodeTypeId);
@@ -236,8 +239,7 @@ public class ManualVspToscaGenerationService {
   }
 
   private void createSubstitutionServiceTemplateNics(ServiceTemplate substitutionServiceTemplate,
-                                                     VspModelInfo vspModelInfo,
-                                                     ToscaServiceModel toscaServiceModel) {
+                                                     VspModelInfo vspModelInfo) {
     Map<String, List<Nic>> nics = vspModelInfo.getNics();
     if (MapUtils.isNotEmpty(nics)) {
       for (Map.Entry<String, List<Nic>> entry : nics.entrySet()) {
@@ -347,12 +349,11 @@ public class ManualVspToscaGenerationService {
         .createInitSubstitutionNodeType(substitutionServiceTemplate,
             ToscaNodeType.MULTIFLAVOR_VFC_NODE_TYPE);
     substitutionNodeType.setProperties(
-        getManualVspSubstitutionNodeTypeProperties(substitutionNodeType, componentName));
+        getManualVspSubstitutionNodeTypeProperties(componentName));
     return substitutionNodeType;
   }
 
-  private Map<String, PropertyDefinition> getManualVspSubstitutionNodeTypeProperties(
-      NodeType substitutionNodeType, String componentName) {
+  private Map<String, PropertyDefinition> getManualVspSubstitutionNodeTypeProperties(String componentName) {
     //Create num_cpus property
     PropertyDefinition numCpus = new PropertyDefinition();
     numCpus.setType(PropertyType.INTEGER.getDisplayName());
@@ -375,10 +376,6 @@ public class ManualVspToscaGenerationService {
     manualVspProperties.put(GeneratorConstants.MEM_SIZE, memSize);
 
     return manualVspProperties;
-  }
-
-  private String getSubstitutionNodeTypeId(String componentName) {
-    return ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE + "." + componentName;
   }
 
   /**
