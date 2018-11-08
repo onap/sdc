@@ -136,6 +136,63 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_e36883f7",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-08T12:30:30Z",
+      "side": 1,
+      "message": "The uniqueId property is being created by the BE each time a new instance is created.\n\nPlease remove the uniqueId property from the copyComponentInstance object because it is redundant by the BE in the creation process",
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_03aa6719",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-08T12:30:30Z",
+      "side": 1,
+      "message": "Please merge the for loop and check to one action (using lodash)\n\nin order to get the component instance with the right uniqueId",
+      "range": {
+        "startLine": 653,
+        "startChar": 23,
+        "endLine": 657,
+        "endChar": 29
+      },
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_836df706",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 780,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-11-08T12:30:30Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "19c0311f5c162938753ed45685f633557584a554",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_3d823201",
         "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.html",
         "patchSetId": 9
