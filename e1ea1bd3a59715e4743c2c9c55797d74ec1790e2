@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_80b64d89",
+        "filename": "common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-core/src/main/java/org/onap/sdc/generator/aai/AaiArtifactGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-08T06:32:37Z",
+      "side": 1,
+      "message": "this should be a constant",
+      "revId": "e1ea1bd3a59715e4743c2c9c55797d74ec1790e2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
