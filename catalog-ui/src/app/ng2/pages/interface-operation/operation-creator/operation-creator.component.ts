@@ -246,10 +246,33 @@ export class OperationCreatorComponent {
         this.tableParameters.push(new OperationParameter(param));
     }
 
+    canAdd(): boolean {
+        let valid = true;
+        if (this.currentTab === this.TYPE_INPUT) {
+            _.forEach(this.inputParameters, param => {
+                if (!param.name || !param.property) {
+                    valid = false;
+                }
+            });
+        } else {
+            _.forEach(this.outputParameters, param => {
+                if (!param.name || !param.type) {
+                    valid = false;
+                }
+            });
+        }
+        return valid;
+    }
+
     isParamsValid(): boolean {
         let valid = true;
-        _.forEach(this.tableParameters, param => {
-            if (!param.name || (this.currentTab == this.TYPE_INPUT && !param.property)) {
+        _.forEach(this.inputParameters, param => {
+            if (!param.name || !param.property) {
+                valid = false;
+            }
+        });
+        _.forEach(this.outputParameters, param => {
+            if (!param.name || !param.type) {
                 valid = false;
             }
         });

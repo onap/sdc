@@ -90,7 +90,7 @@
                 class="add-param-link add-btn"
                 *ngIf="!isUsingExistingWF() && !readonly"
                 data-tests-id="addInputParameter"
-                [ngClass]="{'disabled':!isParamsValid()}"
+                [ngClass]="{'disabled':!canAdd()}"
                 (click)="addParam()">Add Parameter</a>
         </div>
 
