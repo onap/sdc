@@ -65,16 +65,6 @@
 
 				<exclusion>
 					<groupId>org.onap.sdc.common</groupId>
-					<artifactId>onap-sdc-artifact-generator-api</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>org.onap.sdc.common</groupId>
-					<artifactId>onap-sdc-artifact-generator-core</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>org.onap.sdc.common</groupId>
 					<artifactId>onap-common-lib</artifactId>
 				</exclusion>
 

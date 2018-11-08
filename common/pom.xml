@@ -33,7 +33,6 @@
     </parent>
 
     <modules>
-        <module>onap-sdc-artifact-generator-lib</module>
         <module>onap-common-configuration-management</module>
         <module>onap-tosca-datatype</module>
     </modules>

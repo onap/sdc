@@ -141,7 +141,6 @@ public class Configuration extends BasicConfiguration {
     private Map<String, String> genericAssetNodeTypes;
 
     private String appVersion;
-    private String artifactGeneratorConfig;
 
     public String getAutoHealingOwner() {
         return autoHealingOwner;
@@ -229,14 +228,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
-    }
-
-    public String getArtifactGeneratorConfig() {
-        return artifactGeneratorConfig;
-    }
-
-    public void setArtifactGeneratorConfig(String artifactGeneratorConfig) {
-        this.artifactGeneratorConfig = artifactGeneratorConfig;
     }
 
     private String workloadContext;
