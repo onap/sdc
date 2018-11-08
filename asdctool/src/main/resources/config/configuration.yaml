@@ -29,7 +29,6 @@ minToscaConformanceLevel: 3.0
 # These values are necessary for running upgrade migration 1710.0 process
 enableAutoHealing: false
 appVersion: 1.1.0
-artifactGeneratorConfig: Artifact-Generator.properties
 resourcesForUpgrade:
  8.0:
   - org.openecomp.resource.cp.extCP

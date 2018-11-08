@@ -702,7 +702,6 @@
                                     </directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
-                                        <include>Artifact-Generator.properties</include>
                                         <include>error-configuration.yaml</include>
                                         <include>ecomp-error-configuration.yaml</include>
                                         <include>logback.xml</include>
@@ -768,7 +767,6 @@
                                     <directory>${project.parent.basedir}/catalog-be/src/main/resources/config
                                     </directory>
                                     <includes>
-                                        <include>Artifact-Generator.properties</include>
                                         <include>error-configuration.yaml</include>
                                         <include>ecomp-error-configuration.yaml</include>
                                         <include>logback.xml</include>

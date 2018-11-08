@@ -134,8 +134,6 @@ catalog-ui/node_modules/
 catalog-ui/npm-debug.log
 catalog-ui/tests/Coverage/*
 common-app-api/bin/
-common/openecomp-common-configuration-management/openecomp-configuration-management-cli/dependency-reduced-pom.xml
-common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-core/logs/*
 data/compute.png
 data/loadbalancer.png
 data/mysql.png
@@ -186,7 +184,6 @@ openecomp-be/tools/swagger-ui/api-docs/api.json
 openecomp-ui/node/*
 sdc-os-chef/.idea/*
 
-catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
