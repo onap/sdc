@@ -33,14 +33,11 @@ import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.ArgumentMatchers;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -53,6 +50,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
@@ -88,6 +86,9 @@ public class ToscaOperationFacadeTest {
 
     @Mock
     private TopologyTemplateOperation topologyTemplateOperationMock;
+
+    @Mock
+    private NodeTypeOperation nodeTypeOperation;
 
     @Before
     public void setUp() throws Exception {
@@ -311,6 +312,28 @@ public class ToscaOperationFacadeTest {
         when(titanDaoMock.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
         result = testInstance.validateToscaResourceNameExists(templateName);
         assertEquals(false, result.left().value());
+    }
+
+    @Test
+    public void testOverrideComponent() {
+        Either<Resource, StorageOperationStatus> result;
+        Resource resource = new Resource();
+        String id = "id";
+        resource.setUniqueId(id);
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        NodeType nodeType = new NodeType();
+        nodeType.setComponentType(ComponentTypeEnum.RESOURCE);
+        ToscaElement toscaElement = new TopologyTemplate();
+        toscaElement.setComponentType(ComponentTypeEnum.SERVICE);
+        when(titanDaoMock.getVertexById(id, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
+        when(titanDaoMock.getParentVertex(graphVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
+        when(nodeTypeOperation.createToscaElement(any(ToscaElement.class))).thenReturn(Either.left(nodeType));
+        when(titanDaoMock.getVertexById(null, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
+        when(titanDaoMock.createEdge(graphVertex, graphVertex, EdgeLabelEnum.VERSION, null)).thenReturn(TitanOperationStatus.OK);
+        result = testInstance.overrideComponent(resource, resource);
+        assertTrue(result.isLeft());
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
