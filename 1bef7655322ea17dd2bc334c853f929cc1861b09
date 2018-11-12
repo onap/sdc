@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_85ddf272",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use UniqueIdBuilder to generate the uuid and appened to it the combination and name of the combiantion.",
+      "range": {
+        "startLine": 74,
+        "startChar": 12,
+        "endLine": 74,
+        "endChar": 76
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_65e48e3b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "why is this needed?",
+      "range": {
+        "startLine": 75,
+        "startChar": 72,
+        "endLine": 75,
+        "endChar": 125
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_059ca2bf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use debug",
+      "range": {
+        "startLine": 77,
+        "startChar": 20,
+        "endLine": 77,
+        "endChar": 25
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_25a1a6f8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use debug",
+      "range": {
+        "startLine": 81,
+        "startChar": 20,
+        "endLine": 81,
+        "endChar": 25
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e5aabed3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "missing debug log",
+      "range": {
+        "startLine": 87,
+        "startChar": 15,
+        "endLine": 87,
+        "endChar": 37
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c5a53a05",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use debug",
+      "range": {
+        "startLine": 95,
+        "startChar": 20,
+        "endLine": 95,
+        "endChar": 25
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4534eadd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "this is not needed as we are logging all requests in the filter",
+      "range": {
+        "startLine": 81,
+        "startChar": 7,
+        "endLine": 82,
+        "endChar": 53
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6531eeeb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "thsi should be done in the buisnes logic just pass the id and create the user ther.",
+      "range": {
+        "startLine": 85,
+        "startChar": 8,
+        "endLine": 87,
+        "endChar": 47
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c5577a01",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please validate the server existence in the business logic",
+      "range": {
+        "startLine": 92,
+        "startChar": 12,
+        "endLine": 100,
+        "endChar": 64
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e5739eaf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use error",
+      "range": {
+        "startLine": 104,
+        "startChar": 16,
+        "endLine": 104,
+        "endChar": 25
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_05758297",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "this should be done in the business logic",
+      "range": {
+        "startLine": 108,
+        "startChar": 10,
+        "endLine": 109,
+        "endChar": 69
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c56e9ac9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-12T12:57:11Z",
+      "side": 1,
+      "message": "please use error",
+      "range": {
+        "startLine": 122,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 21
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
