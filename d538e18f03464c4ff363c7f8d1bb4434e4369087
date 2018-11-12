@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_3a0301ba",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/Login.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-12T07:05:04Z",
+      "side": 1,
+      "message": "same typo issue here.",
+      "revId": "d538e18f03464c4ff363c7f8d1bb4434e4369087",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
