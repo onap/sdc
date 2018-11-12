@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_9a51cd64",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-12T10:38:05Z",
+      "side": 1,
+      "message": "Please use more meaningful names for unit tests. \"testMethodX()\" tells nothing about the scenario you are trying to test. What about something along the lines of  valueFoundWhenDefaultKeyUsedForPutButAliasForRetrieval()? Please review https://dzone.com/articles/7-popular-unit-test-naming",
+      "range": {
+        "startLine": 29,
+        "startChar": 16,
+        "endLine": 29,
+        "endChar": 34
+      },
+      "revId": "36cbbc5f294a3d2e8d4a01c02bc7a6238766ef1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3a4ea1c2",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-12T10:38:05Z",
+      "side": 1,
+      "message": "Why not use Collections.singletonMap() here? See https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#singletonMap-K-V-",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 40
+      },
+      "revId": "36cbbc5f294a3d2e8d4a01c02bc7a6238766ef1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fac7b910",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-12T10:38:05Z",
+      "side": 1,
+      "message": "Why do you need a local variable here? What\u0027s its purpose? It would be more concise to write assertTrue(newMap.containsKey(CommonUtil._DEFAULT));",
+      "range": {
+        "startLine": 34,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 65
+      },
+      "revId": "36cbbc5f294a3d2e8d4a01c02bc7a6238766ef1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
