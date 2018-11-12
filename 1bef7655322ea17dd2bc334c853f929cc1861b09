@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_c5269a68",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Please do commit in this layer, and add rollback statements",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 108
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_85ddf272",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 21
@@ -36,6 +59,30 @@
       "writtenOn": "2018-11-12T12:57:11Z",
       "side": 1,
       "message": "why is this needed?",
+      "range": {
+        "startLine": 75,
+        "startChar": 72,
+        "endLine": 75,
+        "endChar": 125
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_854bb22a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Please Ignore this comment",
+      "parentUuid": "9adffdf1_65e48e3b",
       "range": {
         "startLine": 75,
         "startChar": 72,
@@ -133,6 +180,52 @@
         "startChar": 20,
         "endLine": 95,
         "endChar": 25
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6569ee8a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Please use CollectionUtils.isEmpty to check if empty list received",
+      "range": {
+        "startLine": 124,
+        "startChar": 12,
+        "endLine": 124,
+        "endChar": 58
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8572d27a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Try and catch statement is redundant here",
+      "range": {
+        "startLine": 134,
+        "startChar": 8,
+        "endLine": 137,
+        "endChar": 9
       },
       "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -271,6 +364,75 @@
         "startChar": 12,
         "endLine": 122,
         "endChar": 21
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_65000eab",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/CombinationOperation.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Please log to debug",
+      "range": {
+        "startLine": 45,
+        "startChar": 16,
+        "endLine": 45,
+        "endChar": 69
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_052d8246",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/CombinationOperation.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Please commit in Business Logic layer",
+      "range": {
+        "startLine": 48,
+        "startChar": 12,
+        "endLine": 48,
+        "endChar": 30
+      },
+      "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_45038ab8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/CombinationOperation.java",
+        "patchSetId": 21
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-12T13:31:16Z",
+      "side": 1,
+      "message": "Service is unnecessary argument",
+      "range": {
+        "startLine": 57,
+        "startChar": 69,
+        "endLine": 57,
+        "endChar": 85
       },
       "revId": "1bef7655322ea17dd2bc334c853f929cc1861b09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
