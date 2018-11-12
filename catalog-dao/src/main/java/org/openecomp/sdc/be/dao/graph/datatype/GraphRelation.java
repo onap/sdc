@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.dao.graph.datatype;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class GraphRelation extends GraphElement {
 
@@ -105,4 +106,21 @@ public class GraphRelation extends GraphElement {
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+
+        if (obj == null)
+            return false;
+
+        if (!(obj instanceof GraphRelation)) {
+            return false;
+        }
+
+        GraphRelation other = (GraphRelation) obj;
+
+        return  new EqualsBuilder().append(from, other.from).append(properties, other.properties).append(to, other.to).append(type, other.type).isEquals();
+    }
 }
