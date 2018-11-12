@@ -107,13 +107,13 @@ public class Login extends HttpServlet {
 		String password = request.getParameter("password");
 		request.setAttribute("message", "OK");
 
-		System.out.println("Login -> doPOst userId=" + userId);
+		System.out.println("Login -> doPost userId=" + userId);
 		User user = getUser(userId, password);
 		if (user == null) {
 			response.sendError(500, "ERROR: userId or password incorrect");
 //			doGet(request, response);
 		} else {
-			System.out.println("Login -> doPOst redirext to /sdc1 (to proxy)");
+			System.out.println("Login -> doPost redirect to /sdc1 (to proxy)");
 			Cookie cookieUser = new Cookie("HTTP_IV_USER", user.getUserId());
 			Cookie cookieUserId = new Cookie("USER_ID", user.getUserId());
 			Cookie cookieFirstName = new Cookie("HTTP_CSP_FIRSTNAME", user.getFirstName());
