@@ -24,6 +24,7 @@ import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -37,6 +38,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -47,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -87,6 +91,12 @@ public class ElementBLTest {
 
     @Mock
     protected ComponentsUtils componentsUtils;
+
+    @Mock
+    private SubCategoryDefinition subCategoryDef;
+
+    @Mock
+    private CategoryDefinition categoryDef;
 
     @InjectMocks
     private ElementBusinessLogic elementBusinessLogic;
@@ -194,7 +204,6 @@ public class ElementBLTest {
         User user = new User();
         String userId = "userId";
         user.setUserId(userId);
-        CategoryDefinition categoryDef = new CategoryDefinition();
         when(elementBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
         when(elementOperation.deleteCategory(NodeTypeEnum.ResourceNewCategory, CATEGORY_UNIQUE_ID)).thenReturn(Either.left(categoryDef));
         result = elementBusinessLogic.deleteCategory(CATEGORY_UNIQUE_ID, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
@@ -207,7 +216,6 @@ public class ElementBLTest {
         User user = new User();
         String userId = "userId";
         user.setUserId(userId);
-        SubCategoryDefinition subCategoryDef = new SubCategoryDefinition();
         when(elementBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
         when(elementOperation.deleteSubCategory(NodeTypeEnum.ResourceSubcategory, CATEGORY_UNIQUE_ID)).thenReturn(Either.left(subCategoryDef));
         result = elementBusinessLogic.deleteSubCategory(CATEGORY_UNIQUE_ID, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
@@ -226,17 +234,68 @@ public class ElementBLTest {
     @Test
     public void testCreateCategory() {
         Either<CategoryDefinition, ResponseFormat> result;
-        CategoryDefinition categoryDef = new CategoryDefinition();
-        String name = "name";
-        categoryDef.setName(name);
         User user = new User();
         String userId = "userId";
         user.setUserId(userId);
         user.setRole(Role.ADMIN.name());
         when(userAdminManager.getUser(userId, false)).thenReturn(Either.left(user));
-        when(elementOperation.isCategoryUniqueForType(NodeTypeEnum.ResourceNewCategory, name)).thenReturn(Either.left(true));
-        when(elementOperation.createCategory(categoryDef, NodeTypeEnum.ResourceNewCategory)).thenReturn(Either.left(categoryDef));
         result = elementBusinessLogic.createCategory(categoryDef, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testGetAllCategories() {
+        Either<UiCategories, ResponseFormat> result;
+        String userId = "userId";
+        List<CategoryDefinition> categoryDefList = new ArrayList<>();
+        when(elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(categoryDefList));
+        when(elementOperation.getAllCategories(NodeTypeEnum.ServiceNewCategory, false)).thenReturn(Either.left(categoryDefList));
+        when(elementOperation.getAllCategories(NodeTypeEnum.ProductCategory, false)).thenReturn(Either.left(categoryDefList));
+        result = elementBusinessLogic.getAllCategories(userId);
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testGetAllCategories_NodeType() {
+        Either<List<CategoryDefinition>, ResponseFormat> result;
+        String userId = "userId";
+        List<CategoryDefinition> categoryDefList = new ArrayList<>();
+        when(elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(categoryDefList));
+        result = elementBusinessLogic.getAllCategories("resources", userId);
+        assertEquals(0, result.left().value().size());
+    }
+
+    @Test
+    public void testGetCatalogComp_UuidAndAssetType() {
+        Either<List<? extends Component>, ResponseFormat> result;
+        String uuid = "userId";
+        List<Component> components = new ArrayList<>();
+        when(toscaOperationFacade.getComponentListByUuid(anyString(), anyMap())).thenReturn(Either.left(components));
+        result = elementBusinessLogic.getCatalogComponentsByUuidAndAssetType("resources", uuid);
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testCreateGrouping() {
+        Either<GroupingDefinition, ResponseFormat> result;
+        GroupingDefinition groupDef = new GroupingDefinition();
+        String name = "name";
+        groupDef.setName(name);
+        String componentTypeParamName = "products";
+        String grandParentCatId = "gpCatId";
+        String parentSubCatId = "pSubCatId";
+        User user = new User();
+        String userId = "userId";
+        user.setUserId(userId);
+        user.setRole(Role.PRODUCT_STRATEGIST.name());
+        when(elementBusinessLogic.validateUserExists(userId, "create Grouping", false)).thenReturn(user);
+        when(elementOperation.getCategory(NodeTypeEnum.ProductCategory, grandParentCatId)).thenReturn(Either.left(categoryDef));
+        when(elementOperation.getSubCategory(NodeTypeEnum.ProductSubcategory, parentSubCatId)).thenReturn(Either.left(subCategoryDef));
+        when(elementOperation.isGroupingUniqueForSubCategory(NodeTypeEnum.ProductGrouping, name, parentSubCatId)).thenReturn(Either.left(true));
+        when(elementOperation.getGroupingUniqueForType(NodeTypeEnum.ProductGrouping, name)).thenReturn(Either.left(groupDef));
+        when(elementOperation.createGrouping(parentSubCatId, groupDef, NodeTypeEnum.ProductGrouping)).thenReturn(Either.left(groupDef));
+
+        result = elementBusinessLogic.createGrouping(groupDef, componentTypeParamName, grandParentCatId, parentSubCatId, userId);
         assertThat(result.isLeft());
     }
 }
