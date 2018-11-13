@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_2db6683e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-13T13:41:16Z",
+      "side": 1,
+      "message": "Why there is need to rename this variable?",
+      "revId": "6a9d6aef365aa42e6ac1bbb2470f6b04fe01a99d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2d8d087c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3032,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-13T13:41:16Z",
+      "side": 1,
+      "message": "error should be logged and return appropriate error code. In this business flow isLeft boolean value should probably change to false.But you need to the test your solution and make sure it is behaving correctly.",
+      "revId": "6a9d6aef365aa42e6ac1bbb2470f6b04fe01a99d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2dbbc80f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4565,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-13T13:41:16Z",
+      "side": 1,
+      "message": "The bug is that updatedHeatArt is removing the error message.",
+      "revId": "6a9d6aef365aa42e6ac1bbb2470f6b04fe01a99d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
