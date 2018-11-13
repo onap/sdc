@@ -30,6 +30,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -44,7 +45,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.User;
@@ -56,7 +56,6 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,100 +80,104 @@ public class AdditionalInformationBusinessLogicTest {
 	private TitanDao titanDao;
 	@Mock
 	private IAdditionalInformationOperation additionalInformationOperation;
+	@Mock
+	private Resource resource;
 
-	private AdditionalInformationBusinessLogic createTestSubject() {
-		return new AdditionalInformationBusinessLogic();
-	}
-
+	NodeTypeEnum nodeType = NodeTypeEnum.Resource;
 	static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-
 
 	@Test
 	public void testCreateAdditionalInformation() {
 		Either<AdditionalInfoParameterInfo, ResponseFormat> result;
 		String resourceId = "resourceId";
-		AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
-		additionalInfoParameterInfo.setKey("key");
-		additionalInfoParameterInfo.setValue("value");
-		AdditionalInformationDefinition additionalInformationDefinition = new AdditionalInformationDefinition();
-		List<AdditionalInfoParameterInfo> parameters = new ArrayList<>();
-		parameters.add(additionalInfoParameterInfo);
-		additionalInformationDefinition.setParameters(parameters);
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = getAdditionalInfoParamInfo();
+		AdditionalInformationDefinition additionalInformationDefinition = getAdditionalInfoDef(additionalInfoParameterInfo);
 		User user = new User();
 		String userId = "userId";
 		user.setUserId(userId);
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 		configurationManager.setConfiguration(new Configuration());
 		configurationManager.getConfiguration().setAdditionalInformationMaxNumberOfKeys(0);
-		Resource component = new Resource();
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-		component.setLastUpdaterUserId(userId);
 		when(additionalInformationBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
-		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq("resourceId"), ArgumentMatchers.eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.left(component));
-		when(graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource)).thenReturn(StorageOperationStatus.OK);
-		when(additionalInformationOperation.getNumberOfAdditionalInformationParameters(NodeTypeEnum.Resource,resourceId,true)).thenReturn(Either.left(0));
-		when(additionalInformationOperation.createAdditionalInformationParameter(NodeTypeEnum.Resource, resourceId, additionalInfoParameterInfo.getKey(),additionalInfoParameterInfo.getValue(), true)).thenReturn(Either.left(additionalInformationDefinition));
+		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq("resourceId"), ArgumentMatchers.eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.left(resource));
+		when(graphLockOperation.lockComponent(resourceId, nodeType)).thenReturn(StorageOperationStatus.OK);
+		when(additionalInformationOperation.getNumberOfAdditionalInformationParameters(nodeType,resourceId,true)).thenReturn(Either.left(0));
+		when(additionalInformationOperation.createAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getKey(),additionalInfoParameterInfo.getValue(), true)).thenReturn(Either.left(additionalInformationDefinition));
 
-		result = additionalInformationBusinessLogic.createAdditionalInformation(NodeTypeEnum.Resource,resourceId,additionalInfoParameterInfo,userId);
-		assertThat(result.isLeft());
+		result = additionalInformationBusinessLogic.createAdditionalInformation(nodeType,resourceId,additionalInfoParameterInfo,userId);
+		Assert.assertTrue(result.isLeft());
 	}
 
-
 	@Test
-	public void testUpdateAdditionalInformation() throws Exception {
-		AdditionalInformationBusinessLogic testSubject;
-		NodeTypeEnum nodeType = null;
-		String resourceId = "";
-		AdditionalInfoParameterInfo additionalInfoParameterInfo = null;
-		String additionalInformationUid = "";
-		String userId = "";
+	public void testUpdateAdditionalInformation() {
 		Either<AdditionalInfoParameterInfo, ResponseFormat> result;
+		String resourceId = "resourceId";
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = getAdditionalInfoParamInfo();
+		additionalInfoParameterInfo.setUniqueId(resourceId);
+		AdditionalInformationDefinition additionalInformationDefinition = getAdditionalInfoDef(additionalInfoParameterInfo);
+		User user = new User();
+		String userId = "userId";
+		user.setUserId(userId);
+		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq("resourceId"), ArgumentMatchers.eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.left(resource));
+		when(graphLockOperation.lockComponent(resourceId, nodeType)).thenReturn(StorageOperationStatus.OK);
+		when(additionalInformationOperation.updateAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), additionalInfoParameterInfo.getKey(), additionalInfoParameterInfo.getValue(), true)).thenReturn(Either.left(additionalInformationDefinition));
 
-		// default test
-		testSubject = createTestSubject();
+		result = additionalInformationBusinessLogic.updateAdditionalInformation(nodeType, resourceId, additionalInfoParameterInfo, userId);
+		Assert.assertTrue(result.isLeft());
 	}
 
-
 	@Test
-	public void testDeleteAdditionalInformation() throws Exception {
-		AdditionalInformationBusinessLogic testSubject;
-		NodeTypeEnum nodeType = null;
-		String resourceId = "";
-		AdditionalInfoParameterInfo additionalInfoParameterInfo = null;
-		String additionalInformationUid = "";
-		String userId = "";
+	public void testDeleteAdditionalInformation() {
 		Either<AdditionalInfoParameterInfo, ResponseFormat> result;
+		String resourceId = "resourceId";
+		String userId = "userId";
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = getAdditionalInfoParamInfo();
+		AdditionalInformationDefinition additionalInformationDefinition = getAdditionalInfoDef(additionalInfoParameterInfo);
+		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq("resourceId"), ArgumentMatchers.eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.left(resource));
+		when(graphLockOperation.lockComponent(resourceId, nodeType)).thenReturn(StorageOperationStatus.OK);
+		when(additionalInformationOperation.getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true)).thenReturn(Either.left(additionalInfoParameterInfo));
+		when(additionalInformationOperation.deleteAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true)).thenReturn(Either.left(additionalInformationDefinition));
 
-		// default test
-		testSubject = createTestSubject();
+		result = additionalInformationBusinessLogic.deleteAdditionalInformation(nodeType, resourceId, additionalInfoParameterInfo, userId);
+		Assert.assertTrue(result.isLeft());
 	}
 
-
 	@Test
-	public void testGetAdditionalInformation() throws Exception {
-		AdditionalInformationBusinessLogic testSubject;
-		NodeTypeEnum nodeType = null;
-		String resourceId = "";
-		AdditionalInfoParameterInfo additionalInfoParameterInfo = null;
-		String additionalInformationUid = "";
-		String userId = "";
+	public void testGetAdditionalInformation() {
 		Either<AdditionalInfoParameterInfo, ResponseFormat> result;
+		String resourceId = "resourceId";
+		String userId = "userId";
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = getAdditionalInfoParamInfo();
+		when(additionalInformationOperation.getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true)).thenReturn(Either.left(additionalInfoParameterInfo));
 
-		// default test
-		testSubject = createTestSubject();
+		result = additionalInformationBusinessLogic.getAdditionalInformation(nodeType, resourceId, additionalInfoParameterInfo, userId);
+		Assert.assertTrue(result.isLeft());
 	}
 
-
 	@Test
-	public void testGetAllAdditionalInformation() throws Exception {
-		AdditionalInformationBusinessLogic testSubject;
-		NodeTypeEnum nodeType = null;
-		String resourceId = "";
-		String additionalInformationUid = "";
-		String userId = "";
+	public void testGetAllAdditionalInformation() {
 		Either<AdditionalInformationDefinition, ResponseFormat> result;
+		String resourceId = "resourceId";
+		String userId = "userId";
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = getAdditionalInfoParamInfo();
+		AdditionalInformationDefinition additionalInformationDefinition = getAdditionalInfoDef(additionalInfoParameterInfo);
+		when(additionalInformationOperation.getAllAdditionalInformationParameters(nodeType, resourceId, false)).thenReturn(Either.left(additionalInformationDefinition));
+		result = additionalInformationBusinessLogic.getAllAdditionalInformation(nodeType, resourceId, userId);
+		Assert.assertTrue(result.isLeft());
+	}
 
-		// default test
-		testSubject = createTestSubject();
+	private AdditionalInfoParameterInfo getAdditionalInfoParamInfo() {
+		AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
+		additionalInfoParameterInfo.setKey("key");
+		additionalInfoParameterInfo.setValue("value");
+		return additionalInfoParameterInfo;
+	}
+
+	private AdditionalInformationDefinition getAdditionalInfoDef(AdditionalInfoParameterInfo additionalInfoParameterInfo) {
+		AdditionalInformationDefinition additionalInformationDefinition = new AdditionalInformationDefinition();
+		List<AdditionalInfoParameterInfo> parameters = new ArrayList<>();
+		parameters.add(additionalInfoParameterInfo);
+		additionalInformationDefinition.setParameters(parameters);
+		return additionalInformationDefinition;
 	}
 }
