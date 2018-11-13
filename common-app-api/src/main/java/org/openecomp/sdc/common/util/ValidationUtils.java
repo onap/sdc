@@ -96,7 +96,7 @@ public class ValidationUtils {
 	public final static Integer ARTIFACT_LABEL_LENGTH = 255;
 	public final static Pattern ARTIFACT_DISPLAY_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
 	public final static Pattern CATEGORY_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
-	public final static Integer CATEGORY_LABEL_MIN_LENGTH = 4;
+	public final static Integer CATEGORY_LABEL_MIN_LENGTH = 3;
 	public final static Integer CATEGORY_LABEL_MAX_LENGTH = 25;
 
 	public final static Pattern COMPONENT_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-\\_]+");

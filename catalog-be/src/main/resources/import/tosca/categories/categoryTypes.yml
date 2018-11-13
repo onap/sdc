@@ -148,7 +148,7 @@ resources:
           name: "Allotted Resource"
           icons: ['allotted_resource']
       TunnelXConnect:
-          name: "Tunnel XConnect"
+          name: "TunnelXConn"
           icons: ['tunnel_x_connect'] 
       IpMuxDemux:
           name: "IP Mux Demux"

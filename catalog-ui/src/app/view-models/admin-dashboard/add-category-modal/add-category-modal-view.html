@@ -37,14 +37,14 @@
                            type="text"
                            name="categoryName"
                            required="required"
-                           data-ng-minlength="4"
+                           data-ng-minlength="3"
                            data-ng-pattern="namePattern"
                            maxlength="25"
                            autofocus />
 
                     <div class="input-error" data-ng-show="forms.editForm.categoryName.$dirty && forms.editForm.categoryName.$invalid">
                         <span ng-show="forms.editForm.categoryName.$error.required" translate="CREATE_CATEGORY_MODAL_REQUIRED" translate-values="{'modelType': '{{modelType}}' }"></span>
-                        <span ng-show="forms.editForm.categoryName.$error.minlength" translate="CREATE_CATEGORY_MODAL_MINLENGTH" translate-values="{'minlength': '4', 'modelType': '{{modelType}}' }"></span>
+                        <span ng-show="forms.editForm.categoryName.$error.minlength" translate="CREATE_CATEGORY_MODAL_MINLENGTH" translate-values="{'minlength': '3', 'modelType': '{{modelType}}' }"></span>
                         <span ng-show="forms.editForm.categoryName.$error.pattern" translate="CREATE_CATEGORY_MODAL_PATTERN" translate-values="{'modelType': '{{modelType}}' }"></span>
                     </div>
 

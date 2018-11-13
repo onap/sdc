@@ -421,7 +421,7 @@ public class CommonUtilsTest {
 		assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@"));
 		assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Nete"));
 		assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@1"));
-		assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Net"));
+		assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Ne"));
 		assertFalse(ValidationUtils.validateCategoryDisplayNameLength(null));
 	}
 
