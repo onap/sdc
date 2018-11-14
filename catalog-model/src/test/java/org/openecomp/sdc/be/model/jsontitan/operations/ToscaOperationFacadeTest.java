@@ -340,6 +340,32 @@ public class ToscaOperationFacadeTest {
         assertTrue(result.isLeft());
     }
 
+    @Test
+    public void testGetToscaElement() {
+        Either<Component, StorageOperationStatus> result;
+        String id = "id";
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        ToscaElement toscaElement = new TopologyTemplate();
+        toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
+        when(titanDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        result = testInstance.getToscaElement(id, JsonParseFlagEnum.ParseAll);
+        assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testMarkComponentToDelete() {
+        StorageOperationStatus result;
+        Component component = new Resource();
+        String id = "id";
+        component.setUniqueId(id);
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        when(titanDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+        when(nodeTypeOperation.markComponentToDelete(graphVertex)).thenReturn(Either.left(graphVertex));
+        result = testInstance.markComponentToDelete(component);
+        assertEquals(result, StorageOperationStatus.OK);
+    }
+
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
