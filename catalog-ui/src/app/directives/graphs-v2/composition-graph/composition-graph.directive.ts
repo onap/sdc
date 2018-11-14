@@ -137,7 +137,6 @@ export interface ICompositionGraphScope extends ng.IScope {
 export class CompositionGraph implements ng.IDirective {
     private _cy: Cy.Instance;
     private _currentlyCLickedNodePosition: Cy.Position;
-    // private $document:JQuery = $(document);
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
     private cyBackgroundClickEvent: any;
@@ -604,22 +603,22 @@ export class CompositionGraph implements ng.IDirective {
             scope.origComponentId = scope.component.uniqueId;
             if (scope.component.selectedInstance) {
                 scope.origSelectedInstance = scope.component.selectedInstance;
-                scope.componentInstanceId = scope.component.selectedInstance.uniqueId;
+                /*scope.componentInstanceId = scope.component.selectedInstance.uniqueId;
                 scope.name = scope.component.selectedInstance.componentName;
                 scope.componentVersion = scope.component.selectedInstance.componentVersion;
                 scope.originType = scope.component.selectedInstance.originType;
                 scope.icon = scope.component.selectedInstance.icon;
                 scope.componentUid = scope.component.selectedInstance.componentUid;
-                scope.uniqueId = scope.component.selectedInstance.componentUid + (new Date()).getTime();
+                scope.uniqueId = scope.component.selectedInstance.componentUid + (new Date()).getTime();*/
             }
         };
 
 
         scope.pasteComponentInstance = (event: IDragDropEvent): void => {
-            event.clientX = event.clientX ? event.clientX : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientX : "no";
-            event.clientY = event.clientY ? event.clientY : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientY : "no";
+            event.clientX = event.clientX ? event.clientX : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientX : null;
+            event.clientY = event.clientY ? event.clientY : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientY : null;
 
-            if (isNaN(event.clientX) || isNaN(event.clientY)) {
+            if (event.clientX == null || event.clientY == null) {
                 return;
             }
             let offsetPosition = {
@@ -636,11 +635,11 @@ export class CompositionGraph implements ng.IDirective {
                 "uniqueId": "${scope.uniqueId}",
                 "posX":"${newPositionX}",
                 "posY":"${newPositionY}",
-                "name":"${scope.name}",
-                "componentVersion":"${scope.componentVersion}",
-                "originType":"${scope.originType}",
-                "icon":"${scope.icon}",
-                "componentUid":"${scope.componentUid}"
+                "name":"${origSelectedInstance.componentName}",
+                "componentVersion":"${origSelectedInstance.componentVersion}",
+                "originType":"${origSelectedInstance.originType}",
+                "icon":"${origSelectedInstance.icon}",
+                "componentUid":"${origSelectedInstance.componentUid}"
             }`;
 
             this.isComponentPasteValid(scope, this._cy, event, offsetPosition, origSelectedInstance);
@@ -650,12 +649,12 @@ export class CompositionGraph implements ng.IDirective {
                 let success = (component: Component) => {
                     scope.component.componentInstances = component.componentInstances;
                     if (component.isService() && component.componentInstances.length > 0) {
-                        for (var i = 0; i < component.componentInstances.length; i++) {
-                            if (component.componentInstances[i].uniqueId == response.componentInstance.uniqueId) {
-                                let compositionGraphNode = this.NodesFactory.createNode(component.componentInstances[i]);
+                        _.each(component.componentInstances, (instance) => {
+                            if (instance.uniqueId == response.componentInstance.uniqueId) {
+                                let compositionGraphNode: CompositionCiNodeBase = this.NodesFactory.createNode(instance);
                                 this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, compositionGraphNode);
                             }
-                        }
+                        });
                     }
                     scope.isLoading = false;
                 };
@@ -668,7 +667,7 @@ export class CompositionGraph implements ng.IDirective {
 
             if (scope.pasteValid) {
                 scope.isLoading = true;
-                scope.component.pasteMenuComponentInstance(scope.componentInstanceId, copyComponentInstance).then(onSuccess, onFailed);
+                scope.component.pasteMenuComponentInstance(origSelectedInstance.uniqueId, copyComponentInstance).then(onSuccess, onFailed);
             }
         };
 
@@ -777,7 +776,6 @@ export class CompositionGraph implements ng.IDirective {
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED);
                 }
                 this.cyBackgroundClickEvent = event;
-                //console.log(this.cyBackgroundClickEvent);
                 scope.hideRelationMenu();
             }
 

@@ -149,8 +149,30 @@ export class CompositionGraphNodesUtils {
             );
         }
 
-            return nodesToDeleteIds;
+        return nodesToDeleteIds;
     };
+
+    private removeDeletedNodesOnGraph(cy:Cy.Instance, nodesToDelete:Cy.CollectionNodes, deleteFailedIds:Array<string>, componentInstances:Array<ComponentInstance>):void {
+        nodesToDelete.each((j:number, nodeToDelete:Cy.CollectionNodes) => {
+            if(deleteFailedIds.indexOf(nodeToDelete.data('id')) < 0) {
+                //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
+                if (nodeToDelete.data().isUcpe) {
+                    _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
+                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node , nodeToDelete);
+                    });
+                }
+
+                //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
+                if(!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
+                    let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
+                    this.handleConnectedVlsToDelete(connectedVls);
+                }
+
+
+                cy.remove(nodeToDelete);
+            }
+        });
+    }    
 
     private deleteNodeSuccess(cy:Cy.Instance, component:Component, nodeToDelete:Cy.CollectionNodes):void{
         //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
@@ -184,27 +206,7 @@ export class CompositionGraphNodesUtils {
         cy.remove(nodeToDelete);
     }
 
-    private removeDeletedNodesOnGraph(cy:Cy.Instance, nodesToDelete:Cy.CollectionNodes, deleteFailedIds:Array<string>, componentInstances:Array<ComponentInstance>):void {
-        nodesToDelete.each((j:number, nodeToDelete:Cy.CollectionNodes) => {
-            if(deleteFailedIds.indexOf(nodeToDelete.data('id')) < 0) {
-                //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
-                if (nodeToDelete.data().isUcpe) {
-                    _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
-                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node , nodeToDelete);
-                    });
-                }
-
-                //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
-                if(!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
-                    let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
-                    this.handleConnectedVlsToDelete(connectedVls);
-                }
-
-
-                cy.remove(nodeToDelete);
-            }
-        });
-    }
+    
  
     /**
      * Finds all VLs connected to a single node
