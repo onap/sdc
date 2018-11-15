@@ -5086,12 +5086,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(responseFormat);
             log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
+            nodeTypeArtifactsToHandleRes = Either.right(responseWrapper.getInnerElement());
         }
         return nodeTypeArtifactsToHandleRes;
     }
 
     ImmutablePair<String, String> buildNestedToscaResourceName(String nodeResourceType, String vfResourceName,
-                                                                       String nodeTypeFullName) {
+                                                               String nodeTypeFullName) {
         String actualType;
         String actualVfName;
         if (ResourceTypeEnum.CVFC.name().equals(nodeResourceType)) {
@@ -5102,25 +5103,31 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             actualType = nodeResourceType;
         }
 
-        StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-        String nameWithouNamespacePrefix = nodeTypeFullName
-                .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
-        String[] findTypes = nameWithouNamespacePrefix.split("\\.");
-        String resourceType = findTypes[0];
-        String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
+        try {
+            StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
+            String nameWithouNamespacePrefix = nodeTypeFullName
+                    .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+            String[] findTypes = nameWithouNamespacePrefix.split("\\.");
+            String resourceType = findTypes[0];
+            String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
 
-        if (actualName.startsWith(Constants.ABSTRACT)) {
-            toscaResourceName.append(resourceType.toLowerCase()).append('.')
-                    .append(ValidationUtils.convertToSystemName(actualVfName));
-        } else {
-            toscaResourceName.append(actualType.toLowerCase()).append('.')
-                    .append(ValidationUtils.convertToSystemName(actualVfName)).append('.').append(Constants.ABSTRACT);
+            if (actualName.startsWith(Constants.ABSTRACT)) {
+                toscaResourceName.append(resourceType.toLowerCase()).append('.')
+                        .append(ValidationUtils.convertToSystemName(actualVfName));
+            } else {
+                toscaResourceName.append(actualType.toLowerCase()).append('.')
+                        .append(ValidationUtils.convertToSystemName(actualVfName)).append('.').append(Constants.ABSTRACT);
+            }
+            StringBuilder previousToscaResourceName = new StringBuilder(toscaResourceName);
+            return new ImmutablePair<>(toscaResourceName.append(actualName.toLowerCase()).toString(),
+                    previousToscaResourceName
+                            .append(actualName.substring(actualName.split("\\.")[1].length() + 1).toLowerCase())
+                            .toString());
+        } catch (Exception e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
+            log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
         }
-        StringBuilder previousToscaResourceName = new StringBuilder(toscaResourceName);
-        return new ImmutablePair<>(toscaResourceName.append(actualName.toLowerCase()).toString(),
-                previousToscaResourceName
-                        .append(actualName.substring(actualName.split("\\.")[1].length() + 1).toLowerCase())
-                        .toString());
     }
 
     public ICacheMangerOperation getCacheManagerOperation() {
