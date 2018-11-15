@@ -8,11 +8,11 @@
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>io.swagger.jaxrs.json, org.openecomp.sdc.be.servlets</param-value>
+			<param-value>org.openecomp.sdc.be.servlets</param-value>
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON,
+			<param-value>
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
                 org.openecomp.sdc.be.filters.BeServletFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
@@ -23,14 +23,14 @@
             </param-value>
 
 		</init-param>
-		<init-param>
-			<param-name>swagger.scanner.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
-		<init-param>
-			<param-name>swagger.config.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
+		<!--<init-param>-->
+			<!--<param-name>swagger.scanner.id</param-name>-->
+			<!--<param-value>test.1</param-value>-->
+		<!--</init-param>-->
+		<!--<init-param>-->
+			<!--<param-name>swagger.config.id</param-name>-->
+			<!--<param-value>test.1</param-value>-->
+		<!--</init-param>-->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
@@ -88,38 +88,38 @@
 		<url-pattern>/sdc/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>Internal-APIs-Configurations</servlet-name>
-		<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
-		
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.2.0</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.api.title</param-name>
-			<param-value>Internal API's</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<param-value>/sdc2/rest</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.scanner.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
+	<!--<servlet>-->
+		<!--<servlet-name>Internal-APIs-Configurations</servlet-name>-->
+		<!--<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>-->
+		<!---->
+		<!--<init-param>-->
+			<!--<param-name>api.version</param-name>-->
+			<!--<param-value>1.2.0</param-value>-->
+		<!--</init-param>-->
+		<!---->
+		<!--<init-param>-->
+			<!--<param-name>swagger.api.title</param-name>-->
+			<!--<param-value>Internal API's</param-value>-->
+		<!--</init-param>-->
+		<!---->
+		<!--<init-param>-->
+			<!--<param-name>swagger.api.basepath</param-name>-->
+			<!--<param-value>/sdc2/rest</param-value>-->
+		<!--</init-param>-->
+		<!---->
+		<!--<init-param>-->
+			<!--<param-name>swagger.scanner.id</param-name>-->
+			<!--<param-value>test.1</param-value>-->
+		<!--</init-param>-->
 
-		<init-param>
-			<param-name>swagger.config.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
-		
-		<load-on-startup>2</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
+		<!--<init-param>-->
+			<!--<param-name>swagger.config.id</param-name>-->
+			<!--<param-value>test.1</param-value>-->
+		<!--</init-param>-->
+		<!---->
+		<!--<load-on-startup>2</load-on-startup>-->
+		<!--<async-supported>true</async-supported>-->
+	<!--</servlet>-->
 	
 	<servlet>
 		<servlet-name>External and Distribution API's</servlet-name>

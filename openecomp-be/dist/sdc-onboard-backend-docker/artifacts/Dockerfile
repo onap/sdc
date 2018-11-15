@@ -6,7 +6,7 @@ COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
 
 ADD onboarding-be-*.war    ${JETTY_BASE}/webapps/
 
-ADD api-docs.war           ${JETTY_BASE}/webapps/
+#ADD api-docs.war           ${JETTY_BASE}/webapps/
 
 USER root
 

@@ -579,12 +579,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>2.4.8</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
         </dependency>
@@ -616,7 +610,6 @@
                     <webResources>
                         <resource>
                             <directory>src/main/resources</directory>
-                            <directory>src/main/resources/swagger</directory>
                         </resource>
                     </webResources>
                     <attachClasses>true</attachClasses>
