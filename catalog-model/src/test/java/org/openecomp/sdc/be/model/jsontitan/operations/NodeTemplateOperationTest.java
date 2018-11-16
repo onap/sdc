@@ -31,20 +31,26 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import com.google.common.collect.Lists;
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.config.Configuration;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
@@ -56,9 +62,11 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NodeTemplateOperationTest extends ModelTestBase {
 
     private final static String COMPONENT_ID = "componentId";
@@ -79,8 +87,14 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     private static RequirementDataDefinition requirement;
     private static RequirementCapabilityRelDef relation;
 
-    private static TitanDao titanDao;
+    @InjectMocks
     private static NodeTemplateOperation operation;
+
+    @Mock
+    private static TitanDao titanDao;
+
+    @Mock
+    private static TopologyTemplateOperation topologyTemplateOperation;
 
     @BeforeClass
     public static void setup() {
@@ -152,7 +166,133 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         assertTrue(result.isRight());
         assertSame(result.right().value(), StorageOperationStatus.NOT_FOUND);
     }
- 
+
+    @Test
+    public void testUpdateCIMetadataOfTopologyTemplate() {
+        Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result;
+        String id = "id";
+        TopologyTemplate container = new TopologyTemplate();
+        ToscaElement toscaElement = new TopologyTemplate();
+        toscaElement.setResourceType(ResourceTypeEnum.VF);
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setName(id);
+        componentInstance.setComponentUid(id);
+        container.setUniqueId(id);
+        GraphVertex graphVertex = new GraphVertex();
+        when(titanDao.getVertexById(container.getUniqueId(), JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertex));
+        when(titanDao.updateVertex(graphVertex)).thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperation.getToscaElement(anyString())).thenReturn(Either.left(toscaElement));
+
+        result = operation.updateComponentInstanceMetadataOfTopologyTemplate(container, toscaElement, componentInstance);
+        assertTrue(result.isLeft());
+    }
+
+	@Test
+	public void testGetDefaultHeatTimeout() {
+		Integer result;
+
+		// default test
+		result = NodeTemplateOperation.getDefaultHeatTimeout();
+    }
+
+	@Test
+    public void testPrepareInstDeploymentArtifactPerInstance() {
+        Map<String, Object> deploymentResourceArtifacts = new HashMap<>();
+        Map<String, ArtifactDataDefinition> deploymentArtifacts = new HashMap<>();
+        ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactType("HEAT");
+        artifactDataDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        deploymentArtifacts.put("1", artifactDataDefinition);
+        deploymentResourceArtifacts.put("1", artifactDataDefinition);
+        String componentInstanceId = "componentInstanceId";
+        User user = new User();
+        user.setUserId("userId");
+        user.setFirstName("first");
+        user.setLastName("last");
+        String envType = "VfHeatEnv";
+        MapArtifactDataDefinition result;
+
+        result = operation.prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstanceId, user,
+                envType);
+        Assert.assertEquals(2, result.getMapToscaDataDefinition().size());
+    }
+
+	@Test
+	public void testCreateCapPropertyKey() throws Exception {
+		String key = "";
+		String instanceId = "";
+		String result;
+
+		// default test
+		result = NodeTemplateOperation.createCapPropertyKey(key, instanceId);
+	}
+
+	@Test
+	public void testPrepareCalculatedCapabiltyForNodeType() {
+        Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
+        ListCapabilityDataDefinition listCapDataDefinition = new ListCapabilityDataDefinition();
+        List<CapabilityDataDefinition> listToscaDataDefinition = new ArrayList<>();
+        CapabilityDataDefinition capabilityDataDefinition = new CapabilityDefinition();
+        capabilityDataDefinition.setMaxOccurrences("1");
+        listToscaDataDefinition.add(capabilityDataDefinition);
+        listCapDataDefinition.setListToscaDataDefinition(listToscaDataDefinition);
+        capabilities.put("1", listCapDataDefinition);
+        ComponentInstance componentInstance = createCompInstance();
+        MapListCapabilityDataDefinition result;
+
+        result = operation.prepareCalculatedCapabiltyForNodeType(capabilities, componentInstance);
+        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
+	}
+
+    @Test
+    public void testPrepareCalculatedReqForNodeType() {
+        Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
+        ListRequirementDataDefinition listReqDataDef = new ListRequirementDataDefinition();
+        List<RequirementDataDefinition> listToscaDataDefinition = new ArrayList<>();
+        RequirementDataDefinition reqDataDefinition = new RequirementDataDefinition();
+        reqDataDefinition.setMaxOccurrences("1");
+        listToscaDataDefinition.add(reqDataDefinition);
+        listReqDataDef.setListToscaDataDefinition(listToscaDataDefinition);
+        requirements.put("1", listReqDataDef);
+        ComponentInstance componentInstance = createCompInstance();
+        MapListRequirementDataDefinition result;
+
+        result = operation.prepareCalculatedRequirementForNodeType(requirements, componentInstance);
+        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
+    }
+
+	@Test
+	public void testAddGroupInstancesToComponentInstance() throws Exception {
+		Component containerComponent = null;
+		ComponentInstanceDataDefinition componentInstance = null;
+		List<GroupDefinition> groups = null;
+		Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = null;
+		StorageOperationStatus result;
+
+		result = operation.addGroupInstancesToComponentInstance(containerComponent, componentInstance, groups,
+				groupInstancesArtifacts);
+		Assert.assertEquals(StorageOperationStatus.OK, result);
+	}
+
+	@Test
+	public void testGenerateCustomizationUUIDOnInstanceGroup() throws Exception {
+		String componentId = "";
+		String instanceId = "";
+		List<String> groupInstances = null;
+		StorageOperationStatus result;
+
+		result = operation.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
+		Assert.assertEquals(StorageOperationStatus.OK, result);
+	}
+
+    private ComponentInstance createCompInstance() {
+        ComponentInstance componentInstance = new ComponentInstance();
+        String id = "id";
+        componentInstance.setComponentUid(id);
+        componentInstance.setUniqueId(id);
+        componentInstance.setName(id);
+        return componentInstance;
+    }
     private static void buildRequirementDataDefinition() {
         buildRequirement();
         fulfilledRequirement = new HashMap<>();
@@ -219,137 +359,6 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         return     cap.getName().equals(relationshipInfo.getCapability()) &&
                 cap.getUniqueId().equals(relationshipInfo.getCapabilityUid()) &&
                 cap.getOwnerId().equals(relationshipInfo.getCapabilityOwnerId());
-	}
-
-	private NodeTemplateOperation createTestSubject() {
-		return operation;
-	}
-
-	@Test
-	public void testGetDefaultHeatTimeout() {
-		Integer result;
-
-		// default test
-		result = NodeTemplateOperation.getDefaultHeatTimeout();
     }
 
-	@Test
-    public void testPrepareInstDeploymentArtifactPerInstance() {
-        NodeTemplateOperation testSubject;
-        Map<String, Object> deploymentResourceArtifacts = new HashMap<>();
-        Map<String, ArtifactDataDefinition> deploymentArtifacts = new HashMap<>();
-        ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
-        artifactDataDefinition.setArtifactType("HEAT");
-        artifactDataDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-        deploymentArtifacts.put("1", artifactDataDefinition);
-        deploymentResourceArtifacts.put("1", artifactDataDefinition);
-        String componentInstanceId = "componentInstanceId";
-        User user = new User();
-        user.setUserId("userId");
-        user.setFirstName("first");
-        user.setLastName("last");
-        String envType = "VfHeatEnv";
-        MapArtifactDataDefinition result;
-
-        testSubject = createTestSubject();
-
-        result = testSubject.prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstanceId, user,
-                envType);
-        Assert.assertEquals(2, result.getMapToscaDataDefinition().size());
-    }
-
-
-
-	@Test
-	public void testCreateCapPropertyKey() throws Exception {
-		String key = "";
-		String instanceId = "";
-		String result;
-
-		// default test
-		result = NodeTemplateOperation.createCapPropertyKey(key, instanceId);
-	}
-
-	
-	@Test
-	public void testPrepareCalculatedCapabiltyForNodeType() {
-        NodeTemplateOperation testSubject;
-        Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
-        ListCapabilityDataDefinition listCapDataDefinition = new ListCapabilityDataDefinition();
-        List<CapabilityDataDefinition> listToscaDataDefinition = new ArrayList<>();
-        CapabilityDataDefinition capabilityDataDefinition = new CapabilityDefinition();
-        capabilityDataDefinition.setMaxOccurrences("1");
-        listToscaDataDefinition.add(capabilityDataDefinition);
-        listCapDataDefinition.setListToscaDataDefinition(listToscaDataDefinition);
-        capabilities.put("1", listCapDataDefinition);
-        ComponentInstance componentInstance = createCompInstance();
-        MapListCapabilityDataDefinition result;
-
-        // test 1
-        testSubject = createTestSubject();
-        result = testSubject.prepareCalculatedCapabiltyForNodeType(capabilities, componentInstance);
-        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
-	}
-
-
-    @Test
-    public void testPrepareCalculatedReqForNodeType() {
-        NodeTemplateOperation testSubject;
-        Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
-        ListRequirementDataDefinition listReqDataDef = new ListRequirementDataDefinition();
-        List<RequirementDataDefinition> listToscaDataDefinition = new ArrayList<>();
-        RequirementDataDefinition reqDataDefinition = new RequirementDataDefinition();
-        reqDataDefinition.setMaxOccurrences("1");
-        listToscaDataDefinition.add(reqDataDefinition);
-        listReqDataDef.setListToscaDataDefinition(listToscaDataDefinition);
-        requirements.put("1", listReqDataDef);
-        ComponentInstance componentInstance = createCompInstance();
-        MapListRequirementDataDefinition result;
-
-        // test 1
-        testSubject = createTestSubject();
-        result = testSubject.prepareCalculatedRequirementForNodeType(requirements, componentInstance);
-        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
-    }
-
-	@Test
-	public void testAddGroupInstancesToComponentInstance() throws Exception {
-		NodeTemplateOperation testSubject;
-		Component containerComponent = null;
-		ComponentInstanceDataDefinition componentInstance = null;
-		List<GroupDefinition> groups = null;
-		Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = null;
-		StorageOperationStatus result;
-
-		// test 1
-		testSubject = createTestSubject();
-		groupInstancesArtifacts = null;
-		result = testSubject.addGroupInstancesToComponentInstance(containerComponent, componentInstance, groups,
-				groupInstancesArtifacts);
-		Assert.assertEquals(StorageOperationStatus.OK, result);
-	}
-
-	@Test
-	public void testGenerateCustomizationUUIDOnInstanceGroup() throws Exception {
-		NodeTemplateOperation testSubject;
-		String componentId = "";
-		String instanceId = "";
-		List<String> groupInstances = null;
-		StorageOperationStatus result;
-
-		// test 1
-		testSubject = createTestSubject();
-		groupInstances = null;
-		result = testSubject.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
-		Assert.assertEquals(StorageOperationStatus.OK, result);
-	}
-
-    private ComponentInstance createCompInstance() {
-        ComponentInstance componentInstance = new ComponentInstance();
-        String id = "id";
-        componentInstance.setComponentUid(id);
-        componentInstance.setUniqueId(id);
-        componentInstance.setName(id);
-        return componentInstance;
-    }
 }
