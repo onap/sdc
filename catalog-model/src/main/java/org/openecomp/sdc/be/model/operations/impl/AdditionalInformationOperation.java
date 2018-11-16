@@ -55,6 +55,11 @@ import java.util.Map.Entry;
 @Component("additional-information-operation")
 public class AdditionalInformationOperation implements IAdditionalInformationOperation {
 
+    private static final Logger log = Logger.getLogger(AdditionalInformationOperation.class.getName());
+
+    @javax.annotation.Resource
+    private TitanGenericDao titanGenericDao;
+
     private static final String GOING_TO_EXECUTE_COMMIT_ON_GRAPH = "Going to execute commit on graph.";
 	private static final String GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH = "Going to execute rollback on graph.";
 	private static final String ADDITIONAL_INFORMATION_OF = "additional information of ";
@@ -64,10 +69,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         super();
     }
 
-    private static final Logger log = Logger.getLogger(AdditionalInformationOperation.class.getName());
-
-    @javax.annotation.Resource
-    private TitanGenericDao titanGenericDao;
 
     @Override
     public Either<AdditionalInformationDefinition, TitanOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String key, String value) {
