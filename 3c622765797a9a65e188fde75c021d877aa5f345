@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_49371200",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-11-16T13:04:22Z",
+      "side": 1,
+      "message": "onboarding and openecomp are 2 different modules. Will the test work if I put the dependancy in a different module pom ?",
+      "parentUuid": "9adffdf1_ae9ef261",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 21
+      },
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_8ea68ec0",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
         "patchSetId": 5
