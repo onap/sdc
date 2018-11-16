@@ -5,6 +5,7 @@ import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 
 public class ConfigurationTest {
@@ -508,5 +509,134 @@ public class ConfigurationTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.toString();
+	}
+
+	@Test
+	public void testSetOnboarding() throws Exception {
+		Configuration testSubject;
+		Configuration.OnboardingConfig onboardingConfig = new Configuration.OnboardingConfig();
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setOnboarding(onboardingConfig);
+	}
+
+	@Test
+	public void testGetOnboarding() throws Exception {
+		Configuration testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.getOnboarding();
+	}
+
+	@Test
+	public void testSetDcae() throws Exception {
+		Configuration testSubject;
+		Configuration.DcaeConfig dcaeConfig = new Configuration.DcaeConfig ();
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setDcae(dcaeConfig);
+	}
+
+	@Test
+	public void testGetDcae() throws Exception {
+		Configuration testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.getDcae();
+	}
+
+	@Test
+	public void testSetHealthStatusExclude() throws Exception {
+		Configuration testSubject;
+
+		List<String> healthStatusExclude = new ArrayList<String>();
+		healthStatusExclude.add("abc");
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setHealthStatusExclude(healthStatusExclude);
+	}
+
+	@Test
+	public void testGetHealthStatusExclude() throws Exception {
+		Configuration testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.getHealthStatusExclude();
+	}
+
+	@Test
+	public void testOnboarding() throws Exception {
+
+		Configuration.OnboardingConfig onboardingConfig = new Configuration.OnboardingConfig();
+
+		String protocalFe = onboardingConfig.getProtocolFe();
+
+		onboardingConfig.setProtocolFe(protocalFe) ;
+
+		String protocalBe = onboardingConfig.getProtocolBe();
+
+		onboardingConfig.setProtocolBe(protocalBe) ;
+
+		String hostFe = onboardingConfig.getHostFe();
+
+		onboardingConfig.setHostFe(hostFe) ;
+
+		String hostBe = onboardingConfig.getHostBe();
+
+		onboardingConfig.setHostBe(hostBe) ;
+
+		Integer portFe = onboardingConfig.getPortFe();
+
+		onboardingConfig.setPortFe(portFe) ;
+
+		Integer portBe = onboardingConfig.getPortBe();
+
+		onboardingConfig.setPortBe(portBe) ;
+
+		String uriFe = onboardingConfig.getHealthCheckUriFe();
+
+		onboardingConfig.setHealthCheckUriFe(uriFe) ;
+	}
+
+	@Test
+	public void testFeMonitoringConfig() throws Exception {
+
+		Configuration.FeMonitoringConfig feMonitoringConfig = new Configuration.FeMonitoringConfig();
+
+		Boolean enabled = feMonitoringConfig.getEnabled();
+		feMonitoringConfig.setEnabled(enabled);
+
+		Boolean isproxy = feMonitoringConfig.getIsProxy();
+		feMonitoringConfig.setIsProxy(isproxy);
+
+		Integer intervalInSec = feMonitoringConfig.getProbeIntervalInSeconds();
+		feMonitoringConfig.setProbeIntervalInSeconds(intervalInSec);
+
+		Integer intervalInSecDef = feMonitoringConfig.getProbeIntervalInSeconds(10);
+
+	}
+
+	@Test
+	public void testDcaeConfig() throws Exception {
+
+		Configuration.DcaeConfig dcaeConfig = new Configuration.DcaeConfig();
+
+        String protocol = dcaeConfig.getProtocol();
+		dcaeConfig.setProtocol(protocol);
+
+		String host = dcaeConfig.getHost();
+		dcaeConfig.setHost(host);
+
+		String healthCheckUri = dcaeConfig.getHealthCheckUri();
+		dcaeConfig.setHealthCheckUri(healthCheckUri);
+
+		Integer port = dcaeConfig.getPort();
+		dcaeConfig.setPort(port);
 	}
 }
