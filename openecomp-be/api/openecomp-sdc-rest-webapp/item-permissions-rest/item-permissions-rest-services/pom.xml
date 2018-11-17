@@ -12,33 +12,27 @@
 
     <artifactId>item-permissions-rest-services</artifactId>
 
-
     <dependencies>
-
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>item-permissions-rest-types</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-common-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-item-permissions-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${javax.inject.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
@@ -47,7 +41,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
