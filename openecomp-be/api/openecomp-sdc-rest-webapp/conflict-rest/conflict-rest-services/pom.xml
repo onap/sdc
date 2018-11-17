@@ -12,10 +12,7 @@
 
     <artifactId>conflict-rest-services</artifactId>
 
-
-
     <dependencies>
-
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-common-rest</artifactId>
@@ -51,6 +48,11 @@
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>vendor-license-rest-services</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
