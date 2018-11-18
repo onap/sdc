@@ -40,6 +40,8 @@ import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdc.versioning.types.NotificationEventTypes;
 import org.openecomp.sdcrests.item.rest.Items;
 import org.openecomp.sdcrests.item.rest.mapping.MapItemToDto;
+import org.openecomp.sdcrests.item.rest.services.catalog.notification.Notifier;
+import org.openecomp.sdcrests.item.rest.services.catalog.notification.NotifierFactory;
 import org.openecomp.sdcrests.item.types.ItemAction;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 import org.openecomp.sdcrests.item.types.ItemDto;
@@ -113,9 +115,9 @@ public class ItemsImpl implements Items {
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
         try {
-            CatalogNotifier catalogNotifier = new CatalogNotifier();
-            catalogNotifier.execute(Collections.singleton(itemId), request.getAction(), 2);
-        } catch (Exception e){
+            Notifier notifier = NotifierFactory.getInstance();
+            notifier.execute(Collections.singleton(itemId), request.getAction());
+        } catch (Exception e) {
             LOGGER.error("Failed to send catalog notification on item " + itemId + " Error: " + e.getMessage());
         }
 
@@ -323,6 +325,6 @@ public class ItemsImpl implements Items {
 
     //Do not delete - is in use, duplicates code to prevent dependency on openecomp-sdc-vendor-software-product-api
     private enum OnboardingMethod {
-        NetworkPackage, Manual;
+        NetworkPackage, Manual
     }
 }

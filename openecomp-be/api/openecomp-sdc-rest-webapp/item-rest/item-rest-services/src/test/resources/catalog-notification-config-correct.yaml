@@ -1,0 +1,6 @@
+catalogNotificationsConfig:
+  catalogBeProtocol: Http
+  catalogBeHttpPort: E
+  catalogBeSslPort: L
+  catalogBeFqdn: L
+  catalogNotificationUrl: O
