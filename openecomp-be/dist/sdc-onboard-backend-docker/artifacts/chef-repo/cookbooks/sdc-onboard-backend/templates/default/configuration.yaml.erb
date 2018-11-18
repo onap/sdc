@@ -1,3 +1,16 @@
+catalogNotificationsConfig:
+    # catalog backend protocol
+    <% if node[:disableHttp] -%>
+    catalogBeProtocol: https
+    <% else %>
+    catalogBeProtocol: http
+    <% end -%>
+    catalogBeHttpPort: <%= @catalog_be_http_port %>
+    catalogBeSslPort: <%= @catalog_be_ssl_port %>
+    catalogBeFqdn: <%= @catalog_be_fqdn %>
+    # do not remove the "" from catalog_notification_url. it is escaping % characters coming from AUTO.json
+    catalogNotificationUrl: "<%= @catalog_notification_url %>"
+
 notifications:
     pollingIntervalMsec: 2000
     selectionSize: 100
