@@ -46,75 +46,121 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
- class CatalogNotifier {
+class CatalogNotifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogNotifier.class);
 
     private static final String USER_ID_HEADER_PARAM = "USER_ID";
-    private static final String CONFIG_FILE = "configuration.yaml";
-    private static final String PROTOCOL_KEY = "beProtocol";
-    private static final String HTTP_PROTOCOL = "http|HTTP";
-    private static final String HTTPS_PROTOCOL = "https|HTTPS";
-    private static final String HOST_KEY = "beFqdn";
-    private static final String HTTP_PORT_KEY = "beHttpPort";
-    private static final String HTTPS_PORT_KEY = "beSslPort";
-    private static final String URL_KEY = "onboardCatalogNotificationUrl";
+    private static final String CONFIG_FILE_PROPERTY = "configuration.yaml";
+    private static final String CONFIG_FILE = System.getProperty(CONFIG_FILE_PROPERTY);
+    private static final String CATALOG_NOTIFICATION_CONFIG = "catalogNotificationsConfig";
+    private static final String CATALOG_PROTOCOL_KEY = "catalogBeProtocol";
+    private static final String CATALOG_HTTP_PROTOCOL = "http|HTTP";
+    private static final String CATALOG_HTTPS_PROTOCOL = "https|HTTPS";
+    private static final String CATALOG_HOST_KEY = "catalogBeFqdn";
+    private static final String CATALOG_HTTP_PORT_KEY = "catalogBeHttpPort";
+    private static final String CATALOG_HTTPS_PORT_KEY = "catalogBeSslPort";
+    private static final String CATALOG_NOTIFICATION_URL = "catalogNotificationUrl";
     private static final String URL_DEFAULT_FORMAT = "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/";
 
-    private static String configurationYamlFile = System.getProperty(CONFIG_FILE);
+    private static final CatalogNotifier SINGLETON = new CatalogNotifier();
+
     private static String notifyCatalogUrl;
 
-    private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private final static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
+    public static CatalogNotifier getInstance() {
+        return SINGLETON;
+    }
 
-    static {
+    private CatalogNotifier() {
+        init();
+    }
+
+    private void init() {
+
+        LinkedHashMap<String, Object> catalogNotificationConfigurationMap = getCatalogNotificationConfiguration();
+
+        Object protocol = catalogNotificationConfigurationMap.get(CATALOG_PROTOCOL_KEY);
+        Object host = catalogNotificationConfigurationMap.get(CATALOG_HOST_KEY);
+
+        if (protocol == null || host == null) {
+            throw new ExceptionInInitializerError("Could not read configuration file " + CONFIG_FILE);
+        }
+
+        initCatalogNotificationUrl(catalogNotificationConfigurationMap, protocol, host);
+    }
+
+    private void initCatalogNotificationUrl(LinkedHashMap<String, Object> catalogNotificationConfigurationMap, Object protocol, Object host) {
+        String portString = String.valueOf(protocol).toUpperCase();
+        Object port = getPortConfiguration(catalogNotificationConfigurationMap, portString);
+
+        if (catalogNotificationConfigurationMap.get(CATALOG_NOTIFICATION_URL) != null) {
+            String urlFormat = String.valueOf(catalogNotificationConfigurationMap.get(CATALOG_NOTIFICATION_URL));
+            notifyCatalogUrl =
+                    String.format(urlFormat, String.valueOf(protocol), String.valueOf(host), String.valueOf(port));
+
+        } else {
+            notifyCatalogUrl = String.format(URL_DEFAULT_FORMAT, String.valueOf(protocol), String.valueOf(host),
+                    String.valueOf(port));
+        }
+    }
+
+    private Object getPortConfiguration(LinkedHashMap<String, Object> catalogNotificationConfigurationMap, String portString) {
+        Object port;
+        if (portString.matches(CATALOG_HTTP_PROTOCOL)) {
+            port = catalogNotificationConfigurationMap.get(CATALOG_HTTP_PORT_KEY);
+        } else if (portString.matches(CATALOG_HTTPS_PROTOCOL)) {
+            port = catalogNotificationConfigurationMap.get(CATALOG_HTTPS_PORT_KEY);
+        }
+        else {
+            throw new ExceptionInInitializerError("Invalid protocol defined in configuration file" +
+                    " " + CONFIG_FILE + ". Notifications will not be sent to Catalog BE");
+        }
+        return port;
+    }
+
+    private static LinkedHashMap<String, Object> getCatalogNotificationConfiguration() {
+        Map<String, LinkedHashMap<String, Object>> configurationMap;
         Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader = is -> {
             YamlUtil yamlUtil = new YamlUtil();
             return yamlUtil.yamlToMap(is);
         };
 
+        configurationMap = geConfigurationMap(reader);
+
+        LinkedHashMap<String, Object> catalogNotificationConfigurationMap = configurationMap.get(CATALOG_NOTIFICATION_CONFIG);
+        if(catalogNotificationConfigurationMap == null){
+            throw new ExceptionInInitializerError("Could not read configuration for catalog notification" +
+                    " from file " + CONFIG_FILE + ". Notifications will not be sent to Catalog BE");
+        }
+        return catalogNotificationConfigurationMap;
+    }
+
+    private static Map<String, LinkedHashMap<String, Object>> geConfigurationMap(Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader) {
         Map<String, LinkedHashMap<String, Object>> configurationMap;
 
+        if (CONFIG_FILE == null) {
+            throw new ExceptionInInitializerError("Property " + CONFIG_FILE_PROPERTY
+                    + " must be specified and point to a configuration file");
+        }
+
         try {
-            configurationMap = readFromFile(configurationYamlFile, reader);
-            Object protocol = configurationMap.get(PROTOCOL_KEY);
-            Object host = configurationMap.get(HOST_KEY);
-
-            if (protocol == null || host == null) {
-                throw new ExceptionInInitializerError("Could not read configuration file configuration.yaml.");
-            }
-
-            Object port = null;
-            if (String.valueOf(protocol).matches(HTTP_PROTOCOL)) {
-                port = configurationMap.get(HTTP_PORT_KEY);
-            }
-            if (String.valueOf(protocol).matches(HTTPS_PROTOCOL)) {
-                port = configurationMap.get(HTTPS_PORT_KEY);
-            }
-
-            if (configurationMap.get(URL_KEY) != null) {
-                String urlFormat = String.valueOf(configurationMap.get(URL_KEY));
-                notifyCatalogUrl =
-                        String.format(urlFormat, String.valueOf(protocol), String.valueOf(host), String.valueOf(port));
-
-            } else {
-                notifyCatalogUrl = String.format(URL_DEFAULT_FORMAT, String.valueOf(protocol), String.valueOf(host),
-                        String.valueOf(port));
-            }
-
+            configurationMap = readFromFile(reader);
         } catch (Exception e) {
             throw new ExceptionInInitializerError(
-                    "Could not read configuration file configuration.yaml. Error: " + e.getMessage());
-
+                    "Could not read configuration file " + CONFIG_FILE + "." +
+                            "Notifications will not be sent to Catalog BE. Error: " + e.getMessage());
         }
+        return configurationMap;
     }
 
 
-    public void execute(Collection<String> itemIds, ItemAction action, int numOfRetries) {
+    void execute(Collection<String> itemIds, ItemAction action) {
 
         String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
 
-        Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, numOfRetries, userId);
+        Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, 2, userId);
 
         executor.submit(callable);
 
@@ -127,7 +173,7 @@ import java.util.function.Function;
     }
 
     private Void handleHttpRequest(String url, String itemIds, ItemAction action, String userId,
-            int numOfRetries) {
+                                   int numOfRetries) {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPost request = createPostRequest(url, itemIds, userId);
@@ -136,7 +182,7 @@ import java.util.function.Function;
                     action.name(), response.getStatusLine()));
 
             if (numOfRetries > 1 && response.getStatusLine().getStatusCode() == Response.Status.INTERNAL_SERVER_ERROR
-                                                                                        .getStatusCode()) {
+                    .getStatusCode()) {
                 Callable callable =
                         createCallable(getFailedIds(itemIds, response.getEntity()), action, --numOfRetries, userId);
                 executor.schedule(callable, 5, TimeUnit.SECONDS);
@@ -185,8 +231,8 @@ import java.util.function.Function;
         return notifyCatalogUrl + actionStr;
     }
 
-    private static <T> T readFromFile(String file, Function<InputStream, T> reader) throws IOException {
-        try (InputStream is = new FileInputStream(file)) {
+    private static <T> T readFromFile(Function<InputStream, T> reader) throws IOException {
+        try (InputStream is = new FileInputStream(CatalogNotifier.CONFIG_FILE)) {
             return reader.apply(is);
         }
     }
