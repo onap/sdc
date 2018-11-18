@@ -15,7 +15,11 @@ template "onboard-be-config" do
       :cassandra_pwd          => node['cassandra'][:cassandra_password],
       :cassandra_usr          => node['cassandra'][:cassandra_user],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
-      :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
+      :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}",
+      :catalog_notification_url => node['catalog_notification_url'],
+      :catalog_be_http_port   => node['BE'][:http_port],
+      :catalog_be_ssl_port       => node['BE'][:https_port],
+      :catalog_be_fqdn          => node['Nodes']['BE']
    })
 end
 
