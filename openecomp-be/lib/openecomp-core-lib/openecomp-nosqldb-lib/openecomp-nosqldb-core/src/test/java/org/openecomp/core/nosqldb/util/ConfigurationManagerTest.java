@@ -49,7 +49,7 @@ public class ConfigurationManagerTest {
     public void testGetInstanceSystemProperty() throws Throwable {
 
         expectedException.expect(IOException.class);
-        expectedException.expectMessage(containsString(NON_EXISTENT));
+        expectedException.expectMessage((NON_EXISTENT));
 
         try (ConfigurationSystemPropertyUpdater updater = new ConfigurationSystemPropertyUpdater(NON_EXISTENT)) {
             ConfigurationManager.getInstance();
