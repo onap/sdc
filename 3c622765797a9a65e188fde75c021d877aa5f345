@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_9513c95b",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-18T08:43:26Z",
+      "side": 1,
+      "message": "https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Management",
+      "parentUuid": "9adffdf1_49371200",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 21
+      },
+      "revId": "3c622765797a9a65e188fde75c021d877aa5f345",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_8ea68ec0",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/questionnaire/component/storage/BackupTest.java",
         "patchSetId": 5
