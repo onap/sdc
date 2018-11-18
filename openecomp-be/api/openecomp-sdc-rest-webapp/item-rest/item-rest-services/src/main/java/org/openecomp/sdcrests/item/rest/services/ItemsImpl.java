@@ -113,9 +113,9 @@ public class ItemsImpl implements Items {
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
         try {
-            CatalogNotifier catalogNotifier = new CatalogNotifier();
-            catalogNotifier.execute(Collections.singleton(itemId), request.getAction(), 2);
-        } catch (Exception e){
+            CatalogNotifier catalogNotifier = CatalogNotifier.getInstance();
+            catalogNotifier.execute(Collections.singleton(itemId), request.getAction());
+        } catch (Throwable e){
             LOGGER.error("Failed to send catalog notification on item " + itemId + " Error: " + e.getMessage());
         }
 
@@ -323,6 +323,6 @@ public class ItemsImpl implements Items {
 
     //Do not delete - is in use, duplicates code to prevent dependency on openecomp-sdc-vendor-software-product-api
     private enum OnboardingMethod {
-        NetworkPackage, Manual;
+        NetworkPackage, Manual
     }
 }
