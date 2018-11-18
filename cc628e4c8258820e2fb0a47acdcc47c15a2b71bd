@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5a810e8e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/test/java/org/openecomp/sdcrests/mapping/EchoMapMappingTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-18T07:03:33Z",
+      "side": 1,
+      "message": "using constructor with size has no meaning in this case",
+      "revId": "cc628e4c8258820e2fb0a47acdcc47c15a2b71bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_1a4b8688",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/test/java/org/openecomp/sdcrests/mapping/EchoMapMappingTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-18T07:03:33Z",
+      "side": 1,
+      "message": "no need in here too to use constructor with size.",
+      "revId": "cc628e4c8258820e2fb0a47acdcc47c15a2b71bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3a50ca31",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/validation-rest/validation-rest-services/src/test/java/org/openecomp/sdcrests/validation/rest/mapping/MapValidationFileResponseToValidationFileResponseDtoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-18T07:03:33Z",
+      "side": 1,
+      "message": "line longer than 120",
+      "revId": "cc628e4c8258820e2fb0a47acdcc47c15a2b71bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
