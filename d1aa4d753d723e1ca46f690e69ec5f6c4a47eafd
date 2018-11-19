@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_f0f823e7",
+        "filename": "sdc-os-chef/environments/Template.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-11-19T09:41:47Z",
+      "side": 1,
+      "message": "what is thsi and why do we need it?",
+      "revId": "d1aa4d753d723e1ca46f690e69ec5f6c4a47eafd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
