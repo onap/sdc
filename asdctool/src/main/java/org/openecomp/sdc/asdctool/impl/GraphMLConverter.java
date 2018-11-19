@@ -70,11 +70,11 @@ public class GraphMLConverter {
 			graph = openGraph(titanFileLocation);
 
 			List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
-			ImmutablePair<String, String> immutablePair1 = new ImmutablePair<String, String>("healthcheckis", "GOOD");
-			ImmutablePair<String, String> immutablePair2 = new ImmutablePair<String, String>("nodeLabel", "user");
-			ImmutablePair<String, String> immutablePair3 = new ImmutablePair<String, String>("nodeLabel",
+			ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
+			ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>("nodeLabel", "user");
+			ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>("nodeLabel",
 					"resourceCategory");
-			ImmutablePair<String, String> immutablePair4 = new ImmutablePair<String, String>("nodeLabel",
+			ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>("nodeLabel",
 					"serviceCategory");
 
 			propertiesCriteriaToDelete.add(immutablePair1);
@@ -82,16 +82,13 @@ public class GraphMLConverter {
 			propertiesCriteriaToDelete.add(immutablePair3);
 			propertiesCriteriaToDelete.add(immutablePair4);
 
-			boolean result = importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
-
-			return result;
+			return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
 
 		} catch (Exception e) {
 			log.info("import graph failed - {} " , e);
 			return false;
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
@@ -118,7 +115,6 @@ public class GraphMLConverter {
 			return false;
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
@@ -179,9 +175,7 @@ public class GraphMLConverter {
 
 	public TitanGraph openGraph(String titanFileLocation) {
 
-		TitanGraph graph = TitanFactory.open(titanFileLocation);
-
-		return graph;
+		return TitanFactory.open(titanFileLocation);
 
 	}
 
@@ -269,7 +263,7 @@ public class GraphMLConverter {
 				}
 			}
 			File file = new File(graphJsonFile);
-			if (false == file.isFile()) {
+			if (!file.isFile()) {
 				System.out.println("File " + graphJsonFile + " cannot be found.");
 				return result;
 			}
@@ -287,7 +281,6 @@ public class GraphMLConverter {
 		} catch (Exception e) {
 			System.out.println("Failed to import graph " + e.getMessage());
 			log.info("Failed to import graph - {}" , e);
-			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
 			try {
@@ -381,7 +374,7 @@ public class GraphMLConverter {
 
 						vertex = iteratorVertex.next();
 						Iterator<Edge> iterator2 = vertex.edges(Direction.BOTH);
-						if (false == iterator2.hasNext()) {
+						if (!iterator2.hasNext()) {
 
 							BaseConfiguration conf = new BaseConfiguration();
 							conf.setProperty("storage.backend", "inmemory");
@@ -510,10 +503,10 @@ public class GraphMLConverter {
 
 	public Map<String, Object> getProperties(Element element) {
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		;
 
-		if (element.keys() != null && element.keys().size() > 0) {
+		if (element.keys() != null && !element.keys().isEmpty()) {
 			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
 					element.keys().toArray(new String[element.keys().size()]));
 

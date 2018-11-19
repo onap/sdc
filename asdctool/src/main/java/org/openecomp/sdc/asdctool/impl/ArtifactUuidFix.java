@@ -50,14 +50,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
@@ -90,16 +83,16 @@ public class ArtifactUuidFix {
 
 		doFixTosca(nodeToFixTosca, vfToFixTosca, serviceToFixTosca);
 
-		if (fixComponent.equals("vf_only")) {
-			if (fetchFaultVf(fixComponent, vfLst, time) == false) {
+		if ("vf_only".equals(fixComponent)) {
+			if (!fetchFaultVf(fixComponent, vfLst, time)) {
 				return false;
 			}
 		} else {
-			if (fetchServices(fixComponent, serviceList, time) == false) {
+			if (!fetchServices(fixComponent, serviceList, time)) {
 				return false;
 			}
 		}
-		if (runMode.equals("service_vf") || runMode.equals("fix")) {
+		if ("service_vf".equals(runMode) || "fix".equals(runMode)) {
 			log.info("Mode {}. Find problem VFs", runMode);
 			if (fetchVf(serviceList, vfLst, time) == false) {
 				log.info("Mode {}. Find problem VFs finished with failure", runMode);
@@ -107,7 +100,7 @@ public class ArtifactUuidFix {
 			}
 			log.info("Mode {}. Find problem VFs finished with success", runMode);
 		}
-		if (runMode.equals("fix") || runMode.equals("fix_only_services")) {
+		if ("fix".equals(runMode) || "fix_only_services".equals(runMode)) {
 			log.info("Mode {}. Start fix", runMode);
 			if (fix(vfLst, serviceList, nodeToFixTosca, vfToFixTosca, serviceToFixTosca) == false) {
 				log.info("Mode {}. Fix finished with failure", runMode);
@@ -125,11 +118,11 @@ public class ArtifactUuidFix {
 		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("vf name, vf id, state, version\n");
 
-			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
+			Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
 			hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
 			hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF.name());
 
-			Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
+			Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
 			hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
 			log.info("Try to fetch resources with properties {} and not {}", hasProps, hasNotProps);
 
@@ -241,14 +234,14 @@ public class ArtifactUuidFix {
 		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("service name, service id, state, version\n");
 
-			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
+			Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
 			hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
-			if (fixServices.equals("distributed_only")) {
+			if ("distributed_only".equals(fixServices)) {
 				hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());			
 				hasProps.put(GraphPropertyEnum.DISTRIBUTION_STATUS, DistributionStatusEnum.DISTRIBUTED.name());
 			}
 
-			Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
+			Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
 			hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
 			log.info("Try to fetch services with properties {} and not {}", hasProps, hasNotProps);
 
@@ -378,7 +371,7 @@ public class ArtifactUuidFix {
 			log.info(" artifacts.size() < artifactsUuid.size() group {} in resource {} ", gr.getName(), resourceName);
 			return true;
 		}
-		if (artifacts.size() > 0 && (artifactsUuid == null || artifactsUuid.isEmpty())) {
+		if (!artifacts.isEmpty() && (artifactsUuid == null || artifactsUuid.isEmpty())) {
 			log.info(
 					" artifacts.size() > 0 && (artifactsUuid == null || artifactsUuid.isEmpty() group {} in resource {} ",
 					gr.getName(), resourceName);
@@ -511,7 +504,7 @@ public class ArtifactUuidFix {
 		}
 		for (String artifactUUID : artifactsUuid) {
 			String label = findArtifactLabelFromArtifactId(artifactUUID);
-			if (label != null && !label.isEmpty() && !label.equals("")) {
+			if (label != null && !label.isEmpty() && !"".equals(label)) {
 				return true;
 			}
 		}
@@ -817,15 +810,15 @@ public class ArtifactUuidFix {
 
 			Optional<ArtifactDefinition> optionalVfModuleArtifact = artifactsMap.values().stream()
 					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
-			ArtifactDefinition vfModuleAertifact = null;
+			ArtifactDefinition vfModuleArtifact;
 			if(!optionalVfModuleArtifact.isPresent()){
-				vfModuleAertifact = createVfModuleArtifact(instance, service);
-				artifactsMap.put(vfModuleAertifact.getArtifactLabel(), vfModuleAertifact);
+				vfModuleArtifact = createVfModuleArtifact(instance, service);
+				artifactsMap.put(vfModuleArtifact.getArtifactLabel(), vfModuleArtifact);
 			}
 			else {
-				vfModuleAertifact = optionalVfModuleArtifact.get();				
+				vfModuleArtifact = optionalVfModuleArtifact.get();
 			}
-			fillVfModuleInstHeatEnvPayload(service, instance, groupsList, vfModuleAertifact);
+			fillVfModuleInstHeatEnvPayload(service, instance, groupsList, vfModuleArtifact);
 		}
 	}
 
@@ -1043,7 +1036,7 @@ public class ArtifactUuidFix {
 	public boolean doFixTosca(Map<String, List<Component>> nodeToFix, Map<String, List<Component>> vfToFix,
 			Map<String, List<Component>> serviceToFix) {
 
-		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
+		Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
@@ -1084,7 +1077,7 @@ public class ArtifactUuidFix {
 			componentsList.forEach(vertex -> {
 				String ivariantUuid = (String) vertex.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID);
 				if (!result.containsKey(ivariantUuid)) {
-					List<Component> compList = new ArrayList<Component>();
+					List<Component> compList = new ArrayList<>();
 					result.put(ivariantUuid, compList);
 				}
 				List<Component> compList = result.get(ivariantUuid);
@@ -1149,8 +1142,8 @@ public class ArtifactUuidFix {
 						Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
 								.getToscaElement(c.getUniqueId(), filter);
 						if (toscaElement.isRight()) {
-							System.out.println("getVerticesToValidate: failed to find element" + c.getUniqueId()
-									+ " staus is" + toscaElement.right().value());
+							log.debug("getVerticesToValidate: failed to find element" + c.getUniqueId()
+									+ " status is" + toscaElement.right().value());
 						} else {
 							compListfull.add(toscaElement.left().value());
 						}
@@ -1258,7 +1251,6 @@ public class ArtifactUuidFix {
 	   private ArtifactDefinition createVfModuleArtifact(ComponentInstance currVF, Service service) {
 
 	        ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
-	        String newCheckSum = null;
 
 	        vfModuleArtifactDefinition.setDescription("Auto-generated VF Modules information artifact");
 	        vfModuleArtifactDefinition.setArtifactDisplayName("Vf Modules Metadata");
