@@ -1,0 +1,187 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_d0ab9f87",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "Usually the convention is to call it INSTANCE.",
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b0929b55",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "Do you expect anything else than Strings here? If so, convert the objects to Strings right away - if they aren\u0027t null (e.g. using String.valueOf()). It will simplify the rest of the code.",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 84
+      },
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_709c336a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "Why not to use CATALOG_HTTP_PROTOCOL.equalsIgnoreCase()?",
+      "range": {
+        "startLine": 131,
+        "startChar": 16,
+        "endLine": 131,
+        "endChar": 57
+      },
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_30a78bbf",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "Url and numOfRetries are unlikely to change, you may have them as instance members and init in the constructor.",
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_10a287ae",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "This is not a good way to log. SLF4J have a built-in formatting that uses {} as placeholders.",
+      "range": {
+        "startLine": 201,
+        "startChar": 1,
+        "endLine": 202,
+        "endChar": 66
+      },
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_70c5135a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "The right way to log it is LOGGER.error(\"Catalog notification on VSP IDs \u0027{}\u0027, action \u0027{}\u0027 failed\", itemIds, action, e);\n\nThis is the correct platform for SLF4J, and including \"e\" will print the stack trace (as opposed to e.getMessage(), which can be empty or null).",
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f0b903ea",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "I think there\u0027s already a similar method org.openecomp.core.utilities.file.FileUtils#readViaInputStream(java.lang.String, java.util.function.Function\u003cjava.io.InputStream,T\u003e)",
+      "range": {
+        "startLine": 254,
+        "startChar": 2,
+        "endLine": 258,
+        "endChar": 9
+      },
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_50f1efcb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/NotifierFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "This is probably not a suitable name. It doesn\u0027t do nothing, but throws an exception.",
+      "range": {
+        "startLine": 261,
+        "startChar": 25,
+        "endLine": 261,
+        "endChar": 38
+      },
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f0b023f6",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/recipes/ON_5_setup_configuration.rb",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-19T11:10:45Z",
+      "side": 1,
+      "message": "It seems like they tried to align the formatting.",
+      "revId": "0c5a7f5e5a6d6be006d779bda04fe50290f6dc23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
