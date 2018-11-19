@@ -101,7 +101,8 @@ public class PropertyBusinessLogicTest {
     private User user = null;
     private String resourceId = "resourceforproperty.0.1";
 
-    TitanDao titanDao = Mockito.mock(TitanDao.class);
+    @Mock
+    TitanDao titanDao;
 
     @Before
     public void setup() {
