@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_6b73e64d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/PropertyBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-11-19T15:58:30Z",
+      "side": 1,
+      "message": "Please use the @Mock annotation for consistency",
+      "range": {
+        "startLine": 104,
+        "startChar": 4,
+        "endLine": 104,
+        "endChar": 53
+      },
+      "revId": "3151549ec1ffd398bf3291436ccfd9016cdb8570",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
