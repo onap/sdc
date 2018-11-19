@@ -271,6 +271,12 @@ public class ComponentsUtilsTest {
 				currentArtifactUuid, null);
 	}
 
+
+	
+
+
+
+	
 	@Test
 	public void testConvertFromStorageResponse() throws Exception {
 		ComponentsUtils testSubject;
