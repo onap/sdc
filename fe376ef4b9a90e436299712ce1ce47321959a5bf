@@ -197,6 +197,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_1e3b873b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-11-19T05:56:02Z",
+      "side": 1,
+      "message": "This api is used to save a Service as a Combination from the Composition page once the Service is checked in.",
+      "parentUuid": "bada0100_b6ece9c8",
+      "range": {
+        "startLine": 66,
+        "startChar": 3,
+        "endLine": 73,
+        "endChar": 56
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_96fe856a",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
         "patchSetId": 10
@@ -294,6 +318,30 @@
       "writtenOn": "2018-10-11T08:00:25Z",
       "side": 1,
       "message": "please clarify the purpose of the api?",
+      "range": {
+        "startLine": 180,
+        "startChar": 4,
+        "endLine": 187,
+        "endChar": 45
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_feb6c389",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-11-19T05:56:02Z",
+      "side": 1,
+      "message": "this API is used to create a replica of the saved Combination when it is drag dropped into the canvas of a new Service.",
+      "parentUuid": "bada0100_763c4130",
       "range": {
         "startLine": 180,
         "startChar": 4,
