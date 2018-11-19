@@ -3,10 +3,17 @@ package org.openecomp.sdc.be.components.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.att.aft.dme2.internal.apache.commons.lang.ObjectUtils;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.PropertyScope;
@@ -16,17 +23,31 @@ import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.ui.model.UiCategories;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
 
+import javax.validation.constraints.Null;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ElementBusinessLogicTest {
 
 	private ElementBusinessLogic createTestSubject() {
 		return new ElementBusinessLogic();
 	}
 
+    @Mock
+    ComponentsUtils componentsUtils;
+
+    @Mock
+    UserBusinessLogic userAdminManager;
+
+    @InjectMocks
+    ElementBusinessLogic elementBusinessLogic;
 	
 	@Test
 	public void testGetFollowed() throws Exception {
@@ -327,6 +348,74 @@ public class ElementBusinessLogicTest {
 		testSubject = createTestSubject();
 	}
 
-	
+
+	@Test
+    public void testcreateCategory_VALIDATION_OF_USER_FAILED() throws Exception {
+
+
+        CategoryDefinition catdefinition = new CategoryDefinition();
+        String userid=null;
+        ResponseFormat responseFormat = new ResponseFormat(7);
+        when(componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION)).thenReturn(responseFormat);
+        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", userid);
+        Assert.assertEquals(true,response.isRight());
+        Assert.assertEquals((Integer) 7, response.right().value().getStatus());
+    }
+
+    @Test
+    public void testcreateCategory_MISSING_INFORMATION() throws Exception {
+
+        CategoryDefinition catdefinition = new CategoryDefinition();
+        ResponseFormat responseFormat = new ResponseFormat(9);
+        User user = new User();
+        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
+        Assert.assertEquals(true,response.isRight());
+        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+    }
+
+    @Test
+    public void testcreateCategory_RESTRICTED_OPERATION() throws Exception {
+
+        CategoryDefinition catdefinition = new CategoryDefinition();
+        ResponseFormat responseFormat = new ResponseFormat(9);
+        User user = new User();
+        when(userAdminManager.getUser("USR", false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
+        when(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
+        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
+        Assert.assertEquals(true,response.isRight());
+        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+    }
+
+    @Test
+    public void testcreateCategory_Invalid_componentType() throws Exception {
+
+        CategoryDefinition catdefinition = new CategoryDefinition();
+        catdefinition.setName("CAT01");
+        ResponseFormat responseFormat = new ResponseFormat(9);
+        User user = new User();
+
+        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
+        Assert.assertEquals(true,response.isRight());
+        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+    }
+
+    @Test
+    public void testcreateCategory_Invalid() throws Exception {
+
+        CategoryDefinition catdefinition = new CategoryDefinition();
+        catdefinition.setName("CAT01");
+        ResponseFormat responseFormat = new ResponseFormat(9);
+        User user = new User();
+
+        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"SERVICE_PARAM_NAME", "USR");
+        Assert.assertEquals(true,response.isRight());
+        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+    }
 
 }
