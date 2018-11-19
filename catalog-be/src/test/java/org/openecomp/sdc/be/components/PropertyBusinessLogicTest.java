@@ -23,26 +23,21 @@ package org.openecomp.sdc.be.components;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -53,24 +48,19 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
+
 import javax.servlet.ServletContext;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.runner.Request.method;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 public class PropertyBusinessLogicTest {
 
@@ -93,15 +83,10 @@ public class PropertyBusinessLogicTest {
     @Mock
     private UserValidations userValidations;
 
-    @Mock
-    IGraphLockOperation graphLockOperation;
-
     @InjectMocks
     private PropertyBusinessLogic bl = new PropertyBusinessLogic();
     private User user = null;
     private String resourceId = "resourceforproperty.0.1";
-
-    TitanDao titanDao = Mockito.mock(TitanDao.class);
 
     @Before
     public void setup() {
@@ -186,120 +171,5 @@ public class PropertyBusinessLogicTest {
         pd.setOwnerId(resourceId);
         pd.setUniqueId(resourceId + "." + propertyName);
         return pd;
-    }
-
-    @Test
-    public void deleteProperty_CONNECTION_FAILURE() {
-        StorageOperationStatus lockResult = StorageOperationStatus.CONNECTION_FAILURE;
-        when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        assertTrue(bl.deleteProperty("resourceforproperty.0.1", "someProperty","i726").isRight());
-    }
-
-    @Test
-    public void deleteProperty_RESOURCE_NOT_FOUND() throws Exception {
-
-        Resource resource = new Resource();
-        PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
-
-        resource.setProperties(Arrays.asList(property1));
-        String resourceId = "myResource";
-        resource.setUniqueId(resourceId);
-
-        Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
-        baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
-
-
-        Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-
-        StorageOperationStatus lockResult = StorageOperationStatus.OK;
-        when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
-
-        Either<PropertyDefinition, ResponseFormat> result;
-
-        Component resourcereturn= new Resource();
-        resourcereturn.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        resourcereturn.setIsDeleted(false);
-        resourcereturn.setLastUpdaterUserId("USR01");
-
-        Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
-        when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-
-
-        assertTrue(bl.deleteProperty("RES01", "someProperty","i726").isRight());
-    }
-
-    @Test
-    public void deleteProperty_RESTRICTED_OPERATION() throws Exception {
-
-        Resource resource = new Resource();
-        PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
-
-        resource.setProperties(Arrays.asList(property1));
-        String resourceId = "myResource";
-        resource.setUniqueId(resourceId);
-
-        Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
-        baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
-
-
-        Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-
-        StorageOperationStatus lockResult = StorageOperationStatus.OK;
-        when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
-
-        Either<PropertyDefinition, ResponseFormat> result;
-
-        Component resourcereturn= new Resource();
-        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        resource.setIsDeleted(false);
-        resource.setLastUpdaterUserId("USR01");
-
-        Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
-        when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-
-
-        assertTrue(bl.deleteProperty("RES01", "someProperty","i726").isRight());
-    }
-
-    @Test
-    public void deleteProperty_RESTRICTED_() throws Exception {
-
-        Resource resource = new Resource();
-        PropertyDefinition property1 = createPropertyObject("PROP", "RES01");
-        property1.setUniqueId("PROP");
-        resource.setProperties(Arrays.asList(property1));
-        String resourceId = "myResource";
-        resource.setUniqueId(resourceId);
-
-        Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
-        baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
-
-
-        Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-
-        StorageOperationStatus lockResult = StorageOperationStatus.OK;
-        when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
-
-        Either<PropertyDefinition, ResponseFormat> result;
-
-        Component resourcereturn= new Resource();
-        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        resource.setIsDeleted(false);
-        resource.setLastUpdaterUserId("USR01");
-
-        Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
-        when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-        when(toscaOperationFacade.deletePropertyOfResource(anyObject(),anyString())).thenReturn(StorageOperationStatus.OK);
-
-        assertTrue(bl.deleteProperty("RES01", "PROP","USR01").isRight());
     }
 }
