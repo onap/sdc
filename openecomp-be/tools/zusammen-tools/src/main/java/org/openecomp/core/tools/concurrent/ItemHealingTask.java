@@ -1,3 +1,24 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 Amdocs Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 AT&T. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.core.tools.concurrent;
 
 import org.openecomp.sdc.healing.api.HealingManager;
@@ -11,45 +32,28 @@ import java.util.concurrent.Callable;
  */
 public class ItemHealingTask implements Callable<String> {
 
-  private String itemId;
-  private Version version;
-  private VendorSoftwareProductManager vspManager;
-  private HealingManager healingManager;
+    private String itemId;
+    private Version version;
+    private VendorSoftwareProductManager vspManager;
+    private HealingManager healingManager;
 
-  public String getItemId() {
-    return itemId;
-  }
+    public ItemHealingTask(String itemId, String versionId, VendorSoftwareProductManager vspManager,
+            HealingManager healingManager) {
+        this.vspManager = vspManager;
+        this.healingManager = healingManager;
+    }
 
-  public String getVersionId() {
-//    return version.getId();
-    return null;
-  }
+    public String getItemId() {
+        return itemId;
+    }
 
+    public String getVersionId() {
+        // return version.getId();
+        return null;
+    }
 
-  public ItemHealingTask(String itemId, String versionId,
-                         VendorSoftwareProductManager vspManager,
-                         HealingManager healingManager) {
-//    this.itemId = itemId;
-//    this.version = new Version(versionId);
-    this.vspManager = vspManager;
-    this.healingManager = healingManager;
-
-  }
-
-  @Override
-  public String call() throws Exception {
-//    VspDetails vspDetails = vspManager.getVsp(itemId, version);
-//
-//    try {
-//      healingManager.healItemVersion(itemId, version, ItemType.vsp, true);
-//    } catch (Exception e) {
-//      return (String
-//          .format("healing failed on vsp: %s with id: %s, versionId: %s, with message: %s",
-//              vspDetails.getName(), itemId, version.getId(), e.getMessage()));
-//    }
-//
-//    return String.format("healed vsp: %s, with id: %s, versionId: %s",
-//        vspDetails.getName(), itemId, version.getId());
-    return null;
-  }
+    @Override
+    public String call() throws Exception {
+        return null;
+    }
 }

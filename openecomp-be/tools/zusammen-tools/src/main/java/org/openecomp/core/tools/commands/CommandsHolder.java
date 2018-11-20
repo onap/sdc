@@ -27,6 +27,9 @@ public class CommandsHolder {
                 Option.builder(COMMAND_OPTION).hasArg().argName("command").desc("command name, mandatory").build());
         registerCommands();
     }
+    
+    private CommandsHolder() {
+    }
 
     private static void registerCommands() {
         new SetHealingFlag().register();
@@ -38,9 +41,6 @@ public class CommandsHolder {
         new CleanUserDataCommand().register();
         new DeletePublicVersionCommand().register();
         new SetHealingFlagByItemVersionCommand().register();
-    }
-
-    private CommandsHolder() {
     }
 
     public static Optional<Command> getCommand(String[] args) {
