@@ -18,6 +18,8 @@ package org.openecomp.sdc.action.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.core.dao.UniqueValueDao;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
@@ -73,40 +75,38 @@ public class ActionManagerImpl implements ActionManager {
     private final ActionVersioningManager versioningManager;
     private final ActionArtifactDao actionArtifactDao;
     private final VersionInfoDao versionInfoDao;
+    private final UniqueValueDao uniqueValueDao;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass()
             .getName());
 
-    public ActionManagerImpl() {
-        actionDao = ActionDaoFactory.getInstance()
-                .createInterface();
-        versioningManager = ActionVersioningManagerFactory.getInstance()
-                .createInterface();
-        actionArtifactDao = ActionArtifactDaoFactory.getInstance()
-                .createInterface();
-        versionInfoDao = VersionInfoDaoFactory.getInstance()
-                .createInterface();
-        actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
-    }
+  public ActionManagerImpl() {
+    actionDao = ActionDaoFactory.getInstance().createInterface();
+    versioningManager = ActionVersioningManagerFactory.getInstance().createInterface();
+    actionArtifactDao = ActionArtifactDaoFactory.getInstance().createInterface();
+    versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
+    actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
+    uniqueValueDao = UniqueValueDaoFactory.getInstance().createInterface();
+  }
 
-    public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager,
-            ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao) {
-        this.actionDao = actionDao;
-        this.versioningManager = versioningManager;
-        this.actionArtifactDao = actionArtifactDao;
-        this.versionInfoDao = versionInfoDao;
-    }
-
-    /**
-     * List All Major, Last Minor and Candidate version (if any) for Given
-     * Action Invariant UUID
-     *
-     * @param invariantId
-     *            Invariant UUID of the action for which the information is
-     *            required
-     * @return List of All Major, Last Minor and Candidate version if any Of
-     *         {@link Action} with given actionInvariantUuId.
-     */
+  public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager,
+                           ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao,
+                           UniqueValueDao uniqueValueDao) {
+    this.actionDao = actionDao;
+    this.versioningManager = versioningManager;
+    this.actionArtifactDao = actionArtifactDao;
+    this.versionInfoDao = versionInfoDao;
+    this.uniqueValueDao = uniqueValueDao;
+  }
+  /**
+   * List All Major, Last Minor and Candidate version (if any) for Given Action Invariant UUID
+   *
+   * @param invariantId Invariant UUID of the action for which the information is required
+   * @return List of All Major, Last Minor and Candidate version if any Of {@link Action} with given
+   * actionInvariantUuId.
+   * @throws ActionException Exception with an action library specific code, short description and
+   *                         detailed message for the error occurred during the operation
+   */
 
     @Override
     public List<Action> getActionsByActionInvariantUuId(String invariantId) {
@@ -239,8 +239,7 @@ public class ActionManagerImpl implements ActionManager {
      */
     @Override
     public Action createAction(Action action, String user) {
-        UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance()
-                .createInterface());
+        UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
         try {
             actionLogPreProcessor(ActionSubOperation.VALIDATE_ACTION_UNIQUE_NAME, TARGET_ENTITY_API);
             uniqueValueUtil.validateUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
@@ -403,8 +402,7 @@ public class ActionManagerImpl implements ActionManager {
 
             if (version.equals(new Version(0, 0))) {
                 actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
-                UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance()
-                        .createInterface());
+                UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
                 uniqueValueUtil.deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
                 actionLogPostProcessor(StatusCode.COMPLETE);
                 log.metrics("");

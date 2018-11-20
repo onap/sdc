@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.sdc.action.ActionConstants;
 import org.openecomp.sdc.action.dao.ActionArtifactDao;
 import org.openecomp.sdc.action.dao.ActionDao;
@@ -57,6 +58,7 @@ import java.util.Map;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -71,14 +73,26 @@ public class ActionManagerImplTest {
     private  ActionArtifactDao actionArtifactDao;
     @Mock
     private VersionInfoDao versionInfoDao;
+    @Mock
+    private UniqueValueDao uniqueValueDao;
 
     private ActionManagerImpl actionManager;
-
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        actionManager = new ActionManagerImpl(actionDao, versioningManager, actionArtifactDao, versionInfoDao);
+        actionManager = new ActionManagerImpl(actionDao, versioningManager, actionArtifactDao,
+            versionInfoDao, uniqueValueDao);
+    }
+
+    @Test
+    public void testCreateAction() {
+      Action action = createAction();
+      Version version = createVersion();
+      doReturn(version).when(versioningManager).create(anyString(), anyString(), anyString());
+      doReturn(action).when(actionDao).createAction(any());
+      actionManager.createAction(action, "USER");
+      Mockito.verify(actionDao,times(1)).createAction(any());
     }
 
     @Test
