@@ -33,37 +33,34 @@ import java.util.List;
  */
 
 public interface ActionManager {
-  public Action createAction(Action action, String user) throws ActionException;
+  public Action createAction(Action action, String user);
 
-  public Action updateAction(Action action, String user) throws ActionException;
+  public Action updateAction(Action action, String user);
 
-  public void deleteAction(String actionInvariantUuId, String user) throws ActionException;
+  public void deleteAction(String actionInvariantUuId, String user);
 
-  public List<Action> getFilteredActions(String filterType, String filterValue)
-      throws ActionException;
+  public List<Action> getFilteredActions(String filterType, String filterValue);
 
-  public List<OpenEcompComponent> getOpenEcompComponents() throws ActionException;
+  public List<OpenEcompComponent> getOpenEcompComponents();
 
-  public List<Action> getActionsByActionInvariantUuId(String invariantId) throws ActionException;
+  public List<Action> getActionsByActionInvariantUuId(String invariantId);
 
-  public Action getActionsByActionUuId(String actionUuId) throws ActionException;
+  public Action getActionsByActionUuId(String actionUuId);
 
-  public Action checkout(String invariantUuId, String user) throws ActionException;
+  public Action checkout(String invariantUuId, String user);
 
-  public void undoCheckout(String invariantUuId, String user) throws ActionException;
+  public void undoCheckout(String invariantUuId, String user);
 
-  public Action checkin(String invariantUuId, String user) throws ActionException;
+  public Action checkin(String invariantUuId, String user);
 
-  public Action submit(String invariantUuId, String user) throws ActionException;
+  public Action submit(String invariantUuId, String user);
 
   public ActionArtifact uploadArtifact(ActionArtifact data, String actionInvariantUuId,
                                        String user);
 
-  public ActionArtifact downloadArtifact(String actionUuId, String artifactUuId)
-      throws ActionException;
+  public ActionArtifact downloadArtifact(String actionUuId, String artifactUuId);
 
-  public void deleteArtifact(String actionInvariantUuId, String artifactUuId, String user)
-      throws ActionException;
+  public void deleteArtifact(String actionInvariantUuId, String artifactUuId, String user);
 
   public void updateArtifact(ActionArtifact data, String actionInvariantUuId, String user);
 }

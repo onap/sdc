@@ -24,7 +24,7 @@ package org.openecomp.core.validation.errors;
 import org.openecomp.core.validation.ErrorMessageCode;
 
 public class ErrorMessagesFormatBuilder {
-  private static final String messagePattern = "[%s]: %s";
+  private static final String MESSAGE_PATTERN = "[%s]: %s";
 
   public static String getErrorWithParameters(String error, String... params) {
     return String.format(error, params);
@@ -42,7 +42,7 @@ public class ErrorMessagesFormatBuilder {
     String message = getErrorWithParameters(errorMessage, params);
 
     return ( null != messageCode && null != messageCode.getMessageCode() )  ?
-            String.format(messagePattern, messageCode.getMessageCode(), message) : message;
+            String.format(MESSAGE_PATTERN, messageCode.getMessageCode(), message) : message;
   }
 
 }
