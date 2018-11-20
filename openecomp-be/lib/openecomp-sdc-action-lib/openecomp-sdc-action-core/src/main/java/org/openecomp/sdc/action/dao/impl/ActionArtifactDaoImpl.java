@@ -53,7 +53,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
       noSqlDb.getMappingManager().mapper(ActionArtifactEntity.class);
   private static ActionArtifactAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(ActionArtifactAccessor.class);
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   protected Mapper<ActionArtifactEntity> getMapper() {
