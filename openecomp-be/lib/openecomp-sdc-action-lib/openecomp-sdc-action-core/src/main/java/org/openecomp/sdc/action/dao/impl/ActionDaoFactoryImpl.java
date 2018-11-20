@@ -25,10 +25,10 @@ import org.openecomp.sdc.action.dao.ActionDaoFactory;
 
 
 public class ActionDaoFactoryImpl extends ActionDaoFactory {
-  private static ActionDao INSTANCE = new ActionDaoImpl();
+  private static ActionDao instance = new ActionDaoImpl();
 
   @Override
   public ActionDao createInterface() {
-    return INSTANCE;
+    return instance;
   }
 }
