@@ -85,6 +85,14 @@ public class NetworkPackageHealer implements Healer {
     this.candidateService = CandidateServiceFactory.getInstance().createInterface();
   }
 
+  public NetworkPackageHealer(VendorSoftwareProductInfoDao vspInfoDao,
+                              ZusammenAdaptor zusammenAdaptor,
+                              CandidateService candidateService) {
+    this.vspInfoDao = vspInfoDao;
+    this.zusammenAdaptor = zusammenAdaptor;
+    this.candidateService = candidateService;
+  }
+
   @Override
   public boolean isHealingNeeded(String itemId, Version version) {
     return OnboardingMethod.NetworkPackage.name()
