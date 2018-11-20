@@ -41,8 +41,7 @@ public class FileValidationContext {
   }
 
   public InputStream getContent() {
-    ByteArrayInputStream is = new ByteArrayInputStream(content);
-    return is;
+    return new ByteArrayInputStream(content);
   }
 
   public String getFileName() {

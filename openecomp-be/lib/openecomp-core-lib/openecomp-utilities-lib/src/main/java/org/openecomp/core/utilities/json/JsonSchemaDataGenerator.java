@@ -32,7 +32,7 @@ public class JsonSchemaDataGenerator {
 
   private static final String ROOT = "root";
   private static final Logger logger =
-      (Logger) LoggerFactory.getLogger(JsonSchemaDataGenerator.class);
+      LoggerFactory.getLogger(JsonSchemaDataGenerator.class);
   boolean includeDefaults = true;
   private JSONObject root;
   private Map<String, Object> referencesData;

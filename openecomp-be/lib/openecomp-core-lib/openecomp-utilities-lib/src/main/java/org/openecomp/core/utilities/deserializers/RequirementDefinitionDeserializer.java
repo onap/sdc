@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -24,8 +23,7 @@ public class RequirementDefinitionDeserializer implements JsonDeserializer<Requi
 
   @Override
   public RequirementDefinition deserialize(JsonElement jsonElement, Type type,
-                                           JsonDeserializationContext jsonDeserializationContext)
-      throws JsonParseException {
+                                           JsonDeserializationContext jsonDeserializationContext) {
 
     JsonObject jsonObject = jsonElement.getAsJsonObject();
 
