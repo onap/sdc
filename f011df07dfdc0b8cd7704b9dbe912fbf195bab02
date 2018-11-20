@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_bb1cb778",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/concurrent/ItemHealingTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-20T15:31:52Z",
+      "side": 1,
+      "message": "License?",
+      "revId": "f011df07dfdc0b8cd7704b9dbe912fbf195bab02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fb2a3f8f",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/concurrent/ItemHealingTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-20T15:31:52Z",
+      "side": 1,
+      "message": "please remove dead code",
+      "revId": "f011df07dfdc0b8cd7704b9dbe912fbf195bab02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9b19b38a",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/concurrent/ItemHealingTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-20T15:31:52Z",
+      "side": 1,
+      "message": "please remove dead code",
+      "revId": "f011df07dfdc0b8cd7704b9dbe912fbf195bab02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
