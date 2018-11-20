@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.core.tools.concurrent.ItemHealingTask;
 import org.openecomp.core.tools.exceptions.HealingRuntimeException;
 import org.openecomp.core.tools.loaders.VersionInfoCassandraLoader;
 import org.openecomp.sdc.healing.api.HealingManager;
@@ -34,7 +33,6 @@ public class HealAll extends Command {
 
     private static final int DEFAULT_THREAD_NUMBER = 100;
     private static final String THREAD_NUM_OPTION = "t";
-    private static List<ItemHealingTask> tasks = new ArrayList<>();
     private VendorSoftwareProductManager vspManager;
     private HealingManager healingManager;
 
@@ -83,27 +81,7 @@ public class HealAll extends Command {
     }
 
     private static void executeAllTasks(ExecutorService executor, BufferedWriter log) {
-        List<Future<String>> futureTasks;
-        try {
-            futureTasks = executor.invokeAll(tasks);
-            futureTasks.forEach(future -> {
-                try {
-                    log.write(future.get());
-                    log.newLine();
-                } catch (Exception e) {
-                    writeToLog(e.getMessage(), log);
-                }
-            });
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            writeToLog("migration tasks failed with message: " + e.getMessage(), log);
-            throw new HealingRuntimeException(e);
-        }
 
-        boolean isThreadOpen = true;
-        while (isThreadOpen) {
-            isThreadOpen = futureTasks.stream().anyMatch(future -> !future.isDone());
-        }
     }
 
 
@@ -133,8 +111,7 @@ public class HealAll extends Command {
     }
 
     private void addTaskToTasks(VersionInfoEntity versionInfoEntity) {
-        tasks.add(new ItemHealingTask(versionInfoEntity.getEntityId(), resolveVersion(versionInfoEntity).toString(),
-                vspManager, healingManager));
+        
     }
 
 }

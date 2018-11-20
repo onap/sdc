@@ -20,10 +20,9 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
   @Override
   public Map<String, Object> readServiceTemplate(byte[] serviceTemplateContent) {
 
-    Map<String, Object> readSt =
+    return
         new YamlUtil().yamlToObject(new String(serviceTemplateContent), Map.class);
 
-    return readSt;
   }
 
   @Override
