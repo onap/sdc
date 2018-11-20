@@ -24,10 +24,10 @@ import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 
 public class UniqueValueDaoFactoryImpl extends UniqueValueDaoFactory {
-  private static UniqueValueDao INSTANCE = new UniqueValueCassandraDaoImpl();
+  private static UniqueValueDao instance = new UniqueValueCassandraDaoImpl();
 
   @Override
   public UniqueValueDao createInterface() {
-    return INSTANCE;
+    return instance;
   }
 }

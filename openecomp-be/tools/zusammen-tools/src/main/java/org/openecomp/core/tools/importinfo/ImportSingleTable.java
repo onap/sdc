@@ -32,6 +32,8 @@ public class ImportSingleTable {
     private static final String INSERT_INTO = "INSERT INTO ";
     private static final String VALUES = " VALUES ";
     private static final Map<String, PreparedStatement> statementsCache = new HashMap<>();
+    
+    public static final ImmutableMap<String, Name> dataTypesMap;
 
     public void importFile(Path file) {
         try {
@@ -141,7 +143,6 @@ public class ImportSingleTable {
         return sb.toString();
     }
 
-    public static final ImmutableMap<String, Name> dataTypesMap;
 
     static {
         Builder<String, Name> builder = ImmutableMap.builder();

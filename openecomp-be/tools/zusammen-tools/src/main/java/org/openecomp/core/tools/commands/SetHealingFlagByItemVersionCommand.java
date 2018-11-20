@@ -37,11 +37,13 @@ public class SetHealingFlagByItemVersionCommand extends Command {
     private static final String ITEM_ID_OPTION = "i";
     private static final String VERSION_ID_OPTION = "v";
     private static final String PROJECT_OPTION = "o";
+    private static final String ITEM_ID = "item_id";
+    private static final String VERSION_ID = "version_id";
 
     SetHealingFlagByItemVersionCommand() {
-        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item_id")
+        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName(ITEM_ID)
                                 .desc("id of the item to reset healing flag, mandatory").build());
-        options.addOption(Option.builder(VERSION_ID_OPTION).hasArg().argName("version_id")
+        options.addOption(Option.builder(VERSION_ID_OPTION).hasArg().argName(VERSION_ID)
                                 .desc("id of the version to delete from public, mandatory").build());
         options.addOption(Option.builder(PROJECT_OPTION).hasArg().argName("old_project_version")
                                 .desc("old project version, mandatory").build());
@@ -62,10 +64,10 @@ public class SetHealingFlagByItemVersionCommand extends Command {
         ResultSet listItemVersion = versionCassandraLoader.listItemVersion();
 
         List<HealingEntity> healingEntities = listItemVersion.all().stream().filter(
-                entry -> (entry.getString("item_id").equals(itemId)
-                && entry.getString("version_id").equals(versionId))).map(entry ->
-                new HealingEntity(entry.getString("space"), entry.getString("item_id"),
-                entry.getString("version_id"), true, projectVersion)).collect(Collectors.toList());
+                entry -> (entry.getString(ITEM_ID).equals(itemId)
+                && entry.getString(VERSION_ID).equals(versionId))).map(entry ->
+                new HealingEntity(entry.getString("space"), entry.getString(ITEM_ID),
+                entry.getString(VERSION_ID), true, projectVersion)).collect(Collectors.toList());
 
         HealingHandler healingHandler = new HealingHandler();
         healingHandler.populateHealingTable(healingEntities);
