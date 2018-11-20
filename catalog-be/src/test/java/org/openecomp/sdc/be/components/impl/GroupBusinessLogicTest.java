@@ -36,14 +36,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.policy.PolicyTargetsUpdateHandler;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
@@ -72,6 +83,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.when;
 
 
@@ -95,6 +108,10 @@ public class GroupBusinessLogicTest {
     private ToscaOperationFacade toscaOperationFacade;
     @Mock
     private PropertyOperation propertyOperation;
+    @Mock
+    private TitanDao titanDao;
+    @Mock
+    PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
 
     private final static ServletContext servletContext = Mockito.mock(ServletContext.class);
     private final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
@@ -208,5 +225,81 @@ public class GroupBusinessLogicTest {
         property.setDescription(description);
         property.setType(ToscaType.STRING.name().toLowerCase());
         return property;
+    }
+
+    @Test
+    public void testUpdateGroup() throws Exception {
+
+        Component component= new Resource();
+        GroupDefinition updatedGroup = new GroupDefinition();
+        List<GroupDefinition> grpdefList = new ArrayList<>();
+        updatedGroup.setName("GRP.01");
+        grpdefList.add(updatedGroup);
+        component.setUniqueId("GRP.01");
+        component.setGroups(grpdefList);
+        updatedGroup.setUniqueId("GRP.01");
+        when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "UpdateGroup")).thenReturn(component);
+        when(groupsOperation.updateGroup(component, updatedGroup)).thenReturn(Either.left(updatedGroup));
+        GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+                "USR01", updatedGroup);
+        Assert.assertEquals(Gdefinition,updatedGroup);
+    }
+
+
+    @Test(expected = ComponentException.class)
+    public void testUpdateGroup_Invalidname() throws Exception {
+
+        Component component= new Resource();
+        GroupDefinition updatedGroup = new GroupDefinition();
+        List<GroupDefinition> grpdefList = new ArrayList<>();
+        updatedGroup.setName("GRP~01");
+        updatedGroup.setUniqueId("GRP.01");
+        grpdefList.add(updatedGroup);
+        component.setUniqueId("GRP.01");
+        component.setGroups(grpdefList);
+        when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "UpdateGroup")).thenReturn(component);
+        GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+                "USR01", updatedGroup);
+
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testDeleteGroup_exception() throws Exception {
+
+        Component component= new Resource();
+        GroupDefinition updatedGroup = new GroupDefinition();
+        List<GroupDefinition> grpdefList = new ArrayList<>();
+        updatedGroup.setName("GRP~01");
+        updatedGroup.setUniqueId("GRP.01");
+        grpdefList.add(updatedGroup);
+        component.setUniqueId("GRP.01");
+        component.setGroups(grpdefList);
+        when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
+        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+
+        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+                "USR01");
+    }
+
+    @Test
+    public void testDeleteGroup() throws Exception {
+
+        Component component= new Resource();
+        GroupDefinition updatedGroup = new GroupDefinition();
+        List<GroupDefinition> grpdefList = new ArrayList<>();
+        updatedGroup.setName("GRP~01");
+        updatedGroup.setUniqueId("GRP.01");
+        grpdefList.add(updatedGroup);
+        component.setUniqueId("GRP.01");
+        component.setGroups(grpdefList);
+        when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
+        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.left(grpdefList));
+        when(groupsOperation.deleteCalculatedCapabilitiesWithProperties(anyString(), anyObject())).thenReturn(StorageOperationStatus.OK);
+        when(policyTargetsUpdateHandler.removePoliciesTargets(anyObject(),anyString(),anyObject())).thenReturn(ActionStatus.OK);
+
+        GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+                "USR01");
+        Assert.assertEquals(Gdefinition,updatedGroup);
     }
 }
