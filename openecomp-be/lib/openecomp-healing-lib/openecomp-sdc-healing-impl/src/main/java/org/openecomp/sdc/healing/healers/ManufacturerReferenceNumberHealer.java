@@ -33,10 +33,19 @@ import java.util.Set;
 public class ManufacturerReferenceNumberHealer implements Healer {
 
   private static final String MANUFACTURER_REFERENCE_NUMBER = "MRN";
-  private VendorLicenseFacade vendorLicenseFacade = VendorLicenseFacadeFactory.getInstance()
-      .createInterface();
-  private static final FeatureGroupDao featureGroupDao =
-      FeatureGroupDaoFactory.getInstance().createInterface();
+  private VendorLicenseFacade vendorLicenseFacade;
+  private FeatureGroupDao featureGroupDao;
+
+  public ManufacturerReferenceNumberHealer() {
+    vendorLicenseFacade = VendorLicenseFacadeFactory.getInstance().createInterface();
+    featureGroupDao = FeatureGroupDaoFactory.getInstance().createInterface();;
+  }
+
+  public ManufacturerReferenceNumberHealer(VendorLicenseFacade vendorLicenseFacade,
+                                           FeatureGroupDao featureGroupDao) {
+    this.vendorLicenseFacade = vendorLicenseFacade;
+    this.featureGroupDao = featureGroupDao;
+  }
 
   @Override
   public boolean isHealingNeeded(String itemId, Version version) {
