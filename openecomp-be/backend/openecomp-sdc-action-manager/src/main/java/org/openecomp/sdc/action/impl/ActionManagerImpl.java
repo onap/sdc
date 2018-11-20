@@ -18,6 +18,7 @@ package org.openecomp.sdc.action.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
@@ -67,6 +68,7 @@ public class ActionManagerImpl implements ActionManager {
   private   final ActionVersioningManager versioningManager;
   private  final ActionArtifactDao actionArtifactDao;
   private  final VersionInfoDao versionInfoDao;
+  private final UniqueValueDao uniqueValueDao;
 
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
@@ -76,14 +78,17 @@ public class ActionManagerImpl implements ActionManager {
     actionArtifactDao = ActionArtifactDaoFactory.getInstance().createInterface();
     versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
     actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
+    uniqueValueDao = UniqueValueDaoFactory.getInstance().createInterface();
   }
 
   public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager,
-                           ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao) {
+                           ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao,
+                           UniqueValueDao uniqueValueDao) {
     this.actionDao = actionDao;
     this.versioningManager = versioningManager;
     this.actionArtifactDao = actionArtifactDao;
     this.versionInfoDao = versionInfoDao;
+    this.uniqueValueDao = uniqueValueDao;
   }
   /**
    * List All Major, Last Minor and Candidate version (if any) for Given Action Invariant UUID
@@ -238,7 +243,7 @@ public class ActionManagerImpl implements ActionManager {
   @Override
   public Action createAction(Action action, String user) throws ActionException {
     UniqueValueUtil uniqueValueUtil =
-        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        new UniqueValueUtil(uniqueValueDao);
     try {
       actionLogPreProcessor(ActionSubOperation.VALIDATE_ACTION_UNIQUE_NAME, TARGET_ENTITY_API);
       uniqueValueUtil
@@ -414,7 +419,7 @@ public class ActionManagerImpl implements ActionManager {
       if (version.equals(new Version(0, 0))) {
         actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
         UniqueValueUtil uniqueValueUtil =
-            new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+            new UniqueValueUtil(uniqueValueDao);
         uniqueValueUtil
             .deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
         actionLogPostProcessor(StatusCode.COMPLETE);
