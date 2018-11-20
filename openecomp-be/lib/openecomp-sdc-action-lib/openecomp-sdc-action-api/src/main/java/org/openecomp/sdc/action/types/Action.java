@@ -261,11 +261,8 @@ public class Action implements Comparable {
     if (!version.equals(action.version)) {
       return false;
     }
-    if (!name.equals(action.name)) {
-      return false;
-    }
 
-    return true;
+    return name.equals(action.name);
   }
 
   @Override
