@@ -75,14 +75,22 @@ public class NetworkPackageHealer implements Healer {
       "Vsp with invalid structure: does not contain element OrchestrationTemplateValidationData"
           + " under OrchestrationTemplate element";
 
-  private VendorSoftwareProductInfoDao vspInfoDao;
-  private ZusammenAdaptor zusammenAdaptor;
-  private CandidateService candidateService;
+  private final VendorSoftwareProductInfoDao vspInfoDao;
+  private final ZusammenAdaptor zusammenAdaptor;
+  private final CandidateService candidateService;
 
   public NetworkPackageHealer() {
-    this.vspInfoDao = VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
-    this.zusammenAdaptor = ZusammenAdaptorFactory.getInstance().createInterface();
-    this.candidateService = CandidateServiceFactory.getInstance().createInterface();
+    this(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
+        ZusammenAdaptorFactory.getInstance().createInterface(), CandidateServiceFactory
+            .getInstance().createInterface());
+  }
+
+  public NetworkPackageHealer(VendorSoftwareProductInfoDao vspInfoDao,
+                              ZusammenAdaptor zusammenAdaptor,
+                              CandidateService candidateService) {
+    this.vspInfoDao = vspInfoDao;
+    this.zusammenAdaptor = zusammenAdaptor;
+    this.candidateService = candidateService;
   }
 
   @Override
