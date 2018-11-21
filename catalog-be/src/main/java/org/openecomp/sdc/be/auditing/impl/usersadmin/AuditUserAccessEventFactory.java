@@ -9,7 +9,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
 public class AuditUserAccessEventFactory extends AuditBaseEventFactory {
 
-    private final static String LOG_STR = "ACTION = \"%s\" USER = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
+    private static final String LOG_STR = "ACTION = \"%s\" USER = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
     private final UserAccessEvent event;
 
     public AuditUserAccessEventFactory(CommonAuditData commonFields, User user) {

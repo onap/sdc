@@ -103,6 +103,7 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
+    private static final String RESOURCE_INSTANCE = "resource instance";
     private static final String ARTIFACT_TYPE_OTHER = "OTHER";
     private static final String ARTIFACT_DESCRIPTION = "artifact description";
     private static final String ARTIFACT_LABEL = "artifact label";
@@ -470,7 +471,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 });
                 Either<List<GroupDefinition>, StorageOperationStatus> status = toscaOperationFacade.updateGroupsOnComponent(parent, groupToUpdate);
                 if (status.isRight()) {
-                    log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+                    log.debug(FAILED_UPDATE_GROUPS, parent.getUniqueId());
                     return componentsUtils.convertFromStorageResponse(status.right().value());
                 }
             }
@@ -497,7 +498,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 });
                 Either<List<GroupDefinition>, StorageOperationStatus> status = toscaOperationFacade.updateGroupsOnComponent(parent, groupToUpdate);
                 if (status.isRight()) {
-                    log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+                    log.debug(FAILED_UPDATE_GROUPS, parent.getUniqueId());
                     return componentsUtils.convertFromStorageResponse(status.right().value());
                 }
             }
@@ -540,7 +541,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(parent, parentId, updatedGroupInstances);
         if (status.isRight()) {
-            log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+            log.debug(FAILED_UPDATE_GROUPS, parent.getUniqueId());
             return componentsUtils.convertFromStorageResponse(status.right().value());
         }
         return ActionStatus.OK;
@@ -603,7 +604,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         // lock resource
         if (shouldLock) {
-            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, "Update Artifact - lock ");
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, UPDATE_ARTIFACT_LOCK);
             if (lockComponent.isRight()) {
                 handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, lockComponent.right()
                                                                                                             .value(), componentType, null);
@@ -619,13 +620,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         finally {
             // unlock resource
             if (resultOp == null || resultOp.isRight()) {
-                log.debug("all changes rollback");
+                log.debug(ROLLBACK);
                 if (!inTransaction) {
                     titanDao.rollback();
                 }
             }
             else {
-                log.debug("all changes committed");
+                log.debug(COMMIT);
                 if (!inTransaction) {
                     titanDao.commit();
                 }
@@ -718,7 +719,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             return resultOp;
         }
         component = validateComponent.left().value();
-        Either<Boolean, ResponseFormat> lockComponent = lockComponent(component, "Update Artifact - lock ");
+        Either<Boolean, ResponseFormat> lockComponent = lockComponent(component, UPDATE_ARTIFACT_LOCK);
         if (lockComponent.isRight()) {
 
             resultOp = Either.right(lockComponent.right().value());
@@ -772,11 +773,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         finally {
             // unlock resource
             if (resultOp == null || resultOp.isRight()) {
-                log.debug("all changes rollback");
+                log.debug(ROLLBACK);
                 titanDao.rollback();
             }
             else {
-                log.debug("all changes committed");
+                log.debug(COMMIT);
                 titanDao.commit();
             }
 
@@ -900,7 +901,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         // lock resource
         if (shouldLock) {
-            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, "Update Artifact - lock ");
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, UPDATE_ARTIFACT_LOCK);
 
             if (lockComponent.isRight()) {
                 handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, lockComponent.right()
@@ -1357,7 +1358,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 needCloneRes = artifactToscaOperation.isCloneNeeded(parent.getUniqueId(), foundArtifact, convertParentType(parent
                         .getComponentType()));
                 if (needCloneRes.isRight()) {
-                    log.debug("Failed to delete or update the artifact {}. Parent uniqueId is {}", artifactId, parentId);
+                    log.debug(FAILED_UPDATE_ARTIFACT, artifactId, parentId);
                     responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(needCloneRes
                             .right()
                             .value()), foundArtifact.getArtifactDisplayName());
@@ -1373,7 +1374,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     Either<Boolean, ActionStatus> isOnlyResourceInstanceArtifact = isArtifactOnlyResourceInstanceArtifact(foundArtifact, fetchedContainerComponent, instanceId);
 
                     if (isOnlyResourceInstanceArtifact.isRight()) {
-                        log.debug("Failed to delete or update the artifact {}. Parent uniqueId is {}", artifactId, parentId);
+                        log.debug(FAILED_UPDATE_ARTIFACT, artifactId, parentId);
                         responseFormat = componentsUtils.getResponseFormatByArtifactId(isOnlyResourceInstanceArtifact.right()
                                                                                                                      .value(), foundArtifact
                                 .getArtifactDisplayName());
@@ -1387,7 +1388,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                         .left()
                         .value());
                 if (updatedArtifactRes.isRight()) {
-                    log.debug("Failed to delete or update the artifact {}. Parent uniqueId is {}", artifactId, parentId);
+                    log.debug(FAILED_UPDATE_ARTIFACT, artifactId, parentId);
                     responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(updatedArtifactRes
                             .right()
                             .value()), foundArtifact.getArtifactDisplayName());
@@ -1420,7 +1421,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 if (CollectionUtils.isNotEmpty(updatedGroupInstances)) {
                     Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(fetchedContainerComponent, parentId, updatedGroupInstances);
                     if (status.isRight()) {
-                        log.debug("Failed to update groups of the component {}. ", fetchedContainerComponent.getUniqueId());
+                        log.debug(FAILED_UPDATE_GROUPS, fetchedContainerComponent.getUniqueId());
                         responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(status
                                 .right()
                                 .value()), foundArtifact.getArtifactDisplayName());
@@ -1445,7 +1446,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 if (CollectionUtils.isNotEmpty(updatedGroups)) {
                     Either<List<GroupDefinition>, StorageOperationStatus> status = toscaOperationFacade.updateGroupsOnComponent(fetchedContainerComponent, updatedGroups);
                     if (status.isRight()) {
-                        log.debug("Failed to update groups of the component {}. ", fetchedContainerComponent.getUniqueId());
+                        log.debug(FAILED_UPDATE_GROUPS, fetchedContainerComponent.getUniqueId());
                         responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(status
                                 .right()
                                 .value()), foundArtifact.getArtifactDisplayName());
@@ -2024,7 +2025,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             boolean res = saveArtifacts(artifactData, parentId);
 
             if (res) {
-                log.debug("Artifact saved into ES - {}", artifactUniqueId);
+                log.debug(ARTIFACT_SAVED, artifactUniqueId);
 
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
                 handleAuditing(auditingActionEnum, parent, parentId, user, artifactInfo, artifactUniqueId, artifactUniqueId, responseFormat, componentTypeEnum, instanceName);
@@ -2032,7 +2033,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
             else {
                 BeEcompErrorManager.getInstance().logBeDaoSystemError("Upload Artifact");
-                log.debug("Failed to save the artifact.");
+                log.debug(FAILED_SAVE_ARTIFACT);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 handleAuditing(auditingActionEnum, parent, parentId, user, artifactInfo, null, artifactUniqueId, responseFormat, componentTypeEnum, instanceName);
 
@@ -3045,12 +3046,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
 
             if (res) {
-                log.debug("Artifact saved into ES - {}", artifactUniqueId);
+                log.debug(ARTIFACT_SAVED, artifactUniqueId);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
                 handleAuditing(auditingAction, parent, parentId, user, artifactInfo, prevArtifactId, currArtifactId, responseFormat, componentType, null);
             } else {
-                BeEcompErrorManager.getInstance().logBeDaoSystemError("Update Artifact");
-                log.debug("Failed to save the artifact.");
+                BeEcompErrorManager.getInstance().logBeDaoSystemError(UPDATE_ARTIFACT);
+                log.debug(FAILED_SAVE_ARTIFACT);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 handleAuditing(auditingAction, parent, parentId, user, artifactInfo, prevArtifactId, currArtifactId, responseFormat, componentType, null);
                 resultOp = Either.right(responseFormat);
@@ -3379,7 +3380,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         // General validation
         if (serviceName == null || serviceVersion == null || resourceName == null || resourceVersion == null || artifactName == null) {
-            log.debug("One of the function parameteres is null");
+            log.debug(NULL_PARAMETER);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
@@ -3412,7 +3413,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         for (ArtifactDefinition artifactDefinition : artifacts.values()) {
             if (artifactDefinition.getArtifactName() != null && artifactDefinition.getArtifactName()
                                                                                   .equals(artifactName)) {
-                log.debug("Found deployment artifact {}", artifactName);
+                log.debug(FOUND_DEPLOYMENT_ARTIFACT, artifactName);
                 deploymentArtifact = artifactDefinition;
                 break;
             }
@@ -3426,7 +3427,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // Downloading the artifact
         Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deploymentArtifact);
         if (downloadArtifactEither.isRight()) {
-            log.debug("Download artifact {} failed", artifactName);
+            log.debug(FAILED_DOWNLOAD_ARTIFACT, artifactName);
             return Either.right(downloadArtifactEither.right().value());
         }
         log.trace("Download of resource artifact succeeded, uniqueId {}", deploymentArtifact.getUniqueId());
@@ -3438,7 +3439,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         // General validation
         if (serviceName == null || serviceVersion == null || resourceInstanceName == null || artifactName == null) {
-            log.debug("One of the function parameteres is null");
+            log.debug(NULL_PARAMETER);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
@@ -3476,13 +3477,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, artifactName));
         }
 
-        log.debug("Found deployment artifact {}", artifactName);
+        log.debug(FOUND_DEPLOYMENT_ARTIFACT, artifactName);
         deployableArtifact = artifacts.values().stream().filter(filterArtifactByName).findFirst().get();
         // Downloading the artifact
         Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deployableArtifact);
 
         if (downloadArtifactEither.isRight()) {
-            log.debug("Download artifact {} failed", artifactName);
+            log.debug(FAILED_DOWNLOAD_ARTIFACT, artifactName);
             return Either.right(downloadArtifactEither.right().value());
         }
         log.trace("Download of resource artifact succeeded, uniqueId {}", deployableArtifact.getUniqueId());
@@ -3549,7 +3550,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // Validation
         log.trace("Starting download of service interface artifact, serviceName {}, serviceVersion {}, artifact name {}", serviceName, serviceVersion, artifactName);
         if (serviceName == null || serviceVersion == null || artifactName == null) {
-            log.debug("One of the function parameteres is null");
+            log.debug(NULL_PARAMETER);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
@@ -3588,12 +3589,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             log.debug("The artifact {} was not found for service {}", normalizedArtifactName, serviceId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, normalizedArtifactName));
         }
-        log.debug("Found deployment artifact {}", normalizedArtifactName);
+        log.debug(FOUND_DEPLOYMENT_ARTIFACT, normalizedArtifactName);
         // Downloading the artifact
         Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(foundArtifactOptl
                 .get());
         if (downloadArtifactEither.isRight()) {
-            log.debug("Download artifact {} failed", normalizedArtifactName);
+            log.debug(FAILED_DOWNLOAD_ARTIFACT, normalizedArtifactName);
             return Either.right(downloadArtifactEither.right().value());
         }
         log.trace("Download of service artifact succeeded, uniqueId {}", foundArtifactOptl.get().getUniqueId());
@@ -3975,7 +3976,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                         });
                         Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(component, instanceId, updatedGroupInstances);
                         if (status.isRight()) {
-                            log.debug("Failed to update groups of the component {}. ", component.getUniqueId());
+                            log.debug(FAILED_UPDATE_GROUPS, component.getUniqueId());
                             ResponseFormat responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils
                                     .convertFromStorageResponse(status.right()
                                                                       .value()), clonedBeforeGenerate.getArtifactDisplayName());
@@ -4332,7 +4333,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         // lock resource
         if (shouldLock) {
-            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, "Update Artifact - lock ");
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(parent, UPDATE_ARTIFACT_LOCK);
             if (lockComponent.isRight()) {
                 handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, lockComponent.right()
                                                                                                             .value(), componentType, null);
@@ -4348,13 +4349,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         finally {
             // unlock resource
             if (resultOp == null || resultOp.isRight()) {
-                log.debug("all changes rollback");
+                log.debug(ROLLBACK);
                 if (!inTransaction) {
                     titanDao.rollback();
                 }
             }
             else {
-                log.debug("all changes committed");
+                log.debug(COMMIT);
                 if (!inTransaction) {
                     titanDao.commit();
                 }
@@ -4552,14 +4553,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 res = saveArtifacts(esArtifactData, parent.getUniqueId());
 
                 if (res) {
-                    log.debug("Artifact saved into ES - {}", updatedHeatArt.getUniqueId());
+                    log.debug(ARTIFACT_SAVED, updatedHeatArt.getUniqueId());
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
                     handleAuditing(auditingAction, parent, parent.getUniqueId(), user, updatedHeatArt, currentHeatId, updatedHeatArt
                             .getUniqueId(), responseFormat, componentType, null);
                 }
                 else {
-                    BeEcompErrorManager.getInstance().logBeDaoSystemError("Update Artifact");
-                    log.debug("Failed to save the artifact.");
+                    BeEcompErrorManager.getInstance().logBeDaoSystemError(UPDATE_ARTIFACT);
+                    log.debug(FAILED_SAVE_ARTIFACT);
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                     handleAuditing(auditingAction, parent, parent.getUniqueId(), user, updatedHeatArt, currentHeatId, updatedHeatArt
                             .getUniqueId(), responseFormat, componentType, null);
@@ -4865,7 +4866,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             actionResult = handleArtifactRequest(componentInstanceId, userId, ComponentTypeEnum.RESOURCE_INSTANCE, operation, null, artifactInfo, origMd5, data, null, null, componentId, ComponentTypeEnum
                     .findParamByType(componentType));
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ", resourceInstanceName, componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -4934,7 +4935,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (errorWrapper.isEmpty()) {
             actionResult = handleArtifactRequest(componentId, userId, componentType, operation, artifactId, artifactInfo, origMd5, data, null, null, null, null);
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -5013,7 +5014,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             actionResult = handleArtifactRequest(componentInstanceId, userId, ComponentTypeEnum.RESOURCE_INSTANCE, operation, artifactId, artifactInfo, origMd5, data, null, null, componentId, ComponentTypeEnum
                     .findParamByType(componentType));
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ", resourceInstanceName, componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -5086,7 +5087,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                         artifactUUID, artifactInfo, origMd5, data, interfaceName.left().value(),
                         operationUUID, null, null);
                 if (actionResult.isRight()) {
-                    log.debug("Failed to upload artifact to component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, actionResult
+                    log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                             .right()
                             .value());
                     errorWrapper.setInnerElement(actionResult.right().value());
@@ -5172,7 +5173,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (errorWrapper.isEmpty()) {
             actionResult = handleArtifactRequest(componentId, userId, componentType, operation, artifactId, null, origMd5, null, null, null, null, null);
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -5248,7 +5249,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     .findParamByType(componentType));
 
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ", resourceInstanceName, componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -5459,10 +5460,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                          .findFirst()
                                          .orElse(null);
             if (componentInstance == null) {
-                errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, "resource instance", component
+                errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, RESOURCE_INSTANCE, component
                         .getComponentType()
                         .getValue(), component.getName()));
-                log.debug("Component instance {} was not found for component {}", resourceInstanceName, component.getName());
+                log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
             }
         }
         return componentInstance;
@@ -5479,10 +5480,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                                        .findFirst()
                                                        .orElse(null);
         if (componentInstance == null) {
-            errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, "resource instance", component
+            errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, RESOURCE_INSTANCE, component
                     .getComponentType()
                     .getValue(), component.getName()));
-            log.debug("Component instance {} was not found for component {}", resourceInstanceName, component.getName());
+            log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
         }
         else {
             relatedComponentComponentInstancePair = new ImmutablePair<>(component, componentInstance);
@@ -5501,10 +5502,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                          .findFirst()
                                          .orElse(null);
             if (componentInstance == null) {
-                errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, "resource instance", component
+                errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName, RESOURCE_INSTANCE, component
                         .getComponentType()
                         .getValue(), component.getName()));
-                log.debug("Component instance {} was not found for component {}", resourceInstanceName, component.getName());
+                log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
             }
             else {
                 relatedComponentComponentInstancePair = new ImmutablePair<>(component, componentInstance);

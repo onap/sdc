@@ -368,7 +368,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
 
         try {
-            log.debug("Try to create entry on graph");
+            log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             Either<Component, ResponseFormat> eitherResourceName = getOriginComponentFromComponentInstance(resourceInstance);
 
             if (eitherResourceName.isRight()) {
@@ -1062,7 +1062,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     public Either<RequirementCapabilityRelDef, ResponseFormat> associateRIToRIOnGraph(Component containerComponent, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum, boolean inTransaction) {
 
-        log.debug("Try to create entry on graph");
+        log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
 
         Either<RequirementCapabilityRelDef, StorageOperationStatus> result = toscaOperationFacade.associateResourceInstances(containerComponent.getUniqueId(), requirementDef);
@@ -1179,7 +1179,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             String componentId, RequirementCapabilityRelDef requirementDef, Component containerComponent) {
 
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
-        log.debug("Try to create entry on graph");
+        log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
         Either<RequirementCapabilityRelDef, StorageOperationStatus> result = toscaOperationFacade.dissociateResourceInstances(
                 componentId, requirementDef);
         if (result.isLeft()) {
@@ -1694,14 +1694,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "create Or Update Property Value", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_OR_UPDATE_PROPERTY_VALUE, "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_OR_UPDATE_PROPERTY_VALUE, INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", componentId);
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             return resultOp;
         }
@@ -1723,7 +1723,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.debug(FAILED_TO_LOCK_SERVICE, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1764,7 +1764,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "create Or Update Property Value", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertyValue", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_OR_UPDATE_PROPERTY_VALUE, INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
@@ -1777,7 +1777,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.debug(FAILED_TO_LOCK_SERVICE, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1858,7 +1858,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "create Or Update Input Value", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("createOrUpdateInputValue", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError("createOrUpdateInputValue", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
@@ -1871,7 +1871,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.debug(FAILED_TO_LOCK_SERVICE, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1947,7 +1947,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertyValue", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_OR_UPDATE_PROPERTY_VALUE, INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }
@@ -1960,7 +1960,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(serviceId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", serviceId);
+            log.debug(FAILED_TO_LOCK_SERVICE, serviceId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -2556,13 +2556,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "update instance capability property", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
         }
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", containerComponentId);
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Component containerComponent = getResourceResult.left().value();
@@ -2625,13 +2625,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateUserExists(userId, "update instance capability property", false);
 
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", "invalid component type", ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
         }
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", containerComponentId);
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Component containerComponent = getResourceResult.left().value();
@@ -2921,7 +2921,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError(
-                    "createOrUpdateAttributeValue", "invalid component type", ErrorSeverity.INFO);
+                    "createOrUpdateAttributeValue", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }

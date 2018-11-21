@@ -63,6 +63,10 @@ public class DistributionEngineInitTask implements Runnable {
 
     private CambriaHandler cambriaHandler = new CambriaHandler();
 
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    private static final Logger logger = Logger.getLogger(DistributionEngineInitTask.class.getName());
+    ScheduledFuture<?> scheduledFuture = null;
+    
     public DistributionEngineInitTask(Long delayBeforeStartFlow, DistributionEngineConfiguration deConfiguration, String envName, AtomicBoolean status, ComponentsUtils componentsUtils, DistributionEnginePollingTask distributionEnginePollingTask, OperationalEnvironmentEntry environmentEntry) {
         super();
         this.delayBeforeStartFlow = delayBeforeStartFlow;
@@ -76,12 +80,6 @@ public class DistributionEngineInitTask implements Runnable {
         this.distributionEnginePollingTask = distributionEnginePollingTask;
         this.environmentEntry = environmentEntry;
     }
-
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-
-    private static final Logger logger = Logger.getLogger(DistributionEngineInitTask.class.getName());
-
-    ScheduledFuture<?> scheduledFuture = null;
 
     public void startTask() {
         if (scheduledExecutorService != null) {
@@ -208,11 +206,7 @@ public class DistributionEngineInitTask implements Runnable {
 
         CambriaErrorResponse registerConcumerStatus = registerToTopic(statusTopic, SubscriberTypeEnum.CONSUMER);
 
-        if (registerConcumerStatus.getOperationStatus() != CambriaOperationStatus.OK) {
-            return false;
-        }
-
-        return true;
+        return registerConcumerStatus.getOperationStatus() == CambriaOperationStatus.OK;
     }
 
     private CambriaErrorResponse registerToTopic(String topicName, SubscriberTypeEnum subscriberType) {
