@@ -61,6 +61,9 @@ public class InputsBusinessLogicTest {
     @Mock
     private UserValidations userValidations;
 
+    @Mock
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+
     @InjectMocks
     private InputsBusinessLogic testInstance;
 
@@ -116,6 +119,32 @@ public class InputsBusinessLogicTest {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, COMPONENT_INSTANCE_ID);
         assertEquals("inputId", componentInstanceInputs.left().value().get(0).getInputId());
+    }
+
+    @Test
+    public void testGetInputs() {
+        String userId = "userId";
+        String componentId = "compId";
+        Component component = new Resource();
+        when(toscaOperationFacadeMock.getToscaElement(Mockito.any(String.class), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        testInstance.getInputs(userId, componentId);
+        assertEquals(null, component.getInputs());
+    }
+
+    @Test
+    public void testGetCIPropertiesByInputId() {
+        Either<List<ComponentInstanceProperty>, ResponseFormat> result;
+        String userId = "userId";
+        String componentId = "compId";
+        Component component = new Resource();
+        List<InputDefinition> listDef = new ArrayList<>();
+        InputDefinition inputDef = new InputDefinition();
+        inputDef.setUniqueId(componentId);
+        listDef.add(inputDef);
+        component.setInputs(listDef);
+        when(toscaOperationFacadeMock.getToscaElement(Mockito.any(String.class), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        result = testInstance.getComponentInstancePropertiesByInputId(userId, componentId, componentId, componentId);
+        assertTrue(result.isLeft());
     }
 
     private void getComponents_emptyInputs(Service service) {
