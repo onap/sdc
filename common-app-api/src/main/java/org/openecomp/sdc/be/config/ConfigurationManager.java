@@ -34,6 +34,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
 	ConfigurationSource configurationSource = null;
 	private static ConfigurationManager instance;
+    Map<String, Object> configurations = new HashMap<>();
 
 	public ConfigurationManager(ConfigurationSource configurationSource) {
 		super();
@@ -41,8 +42,6 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		loadConfigurationFiles();
 		instance = this;
 	}
-
-	Map<String, Object> configurations = new HashMap<>();
 
 	private void loadConfigurationFiles() {
 

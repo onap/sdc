@@ -40,6 +40,17 @@ import java.util.function.Supplier;
 
 public class SdcSchemaBuilder {
 
+    /**
+     * creat key space statment for SimpleStrategy
+     */
+    private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
+    /**
+     * creat key space statment for NetworkTopologyStrategy
+     */
+    private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
+
+    private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
+    
 	private SdcSchemaUtils sdcSchemaUtils;
 	private Supplier<Configuration.CassandrConfig> cassandraConfigSupplier;
 
@@ -47,16 +58,6 @@ public class SdcSchemaBuilder {
 		this.sdcSchemaUtils = sdcSchemaUtils;
 		this.cassandraConfigSupplier = cassandraConfigSupplier;
 	}
-	/**
-	 * creat key space statment for SimpleStrategy
-	 */
-	private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
-	/**
-	 * creat key space statment for NetworkTopologyStrategy
-	 */
-	private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
-
-	private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
 
 	//TODO remove after 1707_OS migration
 	private static void handle1707OSMigration(Map<String, Map<String, List<String>>> cassndraMetadata, Map<String, List<ITableDescription>> schemeData){

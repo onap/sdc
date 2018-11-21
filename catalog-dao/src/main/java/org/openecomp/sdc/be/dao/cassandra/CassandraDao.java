@@ -52,7 +52,7 @@ public abstract class CassandraDao {
 		Statement select = QueryBuilder.select().countAll().from(tableName).limit(10);
 		try {
 			ResultSet res = session.execute(select);
-			return Either.left((res.one().getLong("count") != 0 ? false : true));
+			return Either.left(res.one().getLong("count") == 0);
 
 		} catch (Exception e) {
 			logger.debug("Failed check if table is empty", e);
