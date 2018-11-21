@@ -55,7 +55,7 @@ def main(argv):
 	adminUser = 'jh0003'
 	debugf = None
 	updateversion = 'true'
-	updateOnapVersion = 'false'
+	updateOnapVersion = 'true'
 	importCommon.debugFlag = False
 	scheme = 'http'
 
