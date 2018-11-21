@@ -85,7 +85,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 
 		T ret = null;
 		try {
-			ret = (T) jsonMapper.readValue(response.getSourceAsString(), clazz);
+			ret = jsonMapper.readValue(response.getSourceAsString(), clazz);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

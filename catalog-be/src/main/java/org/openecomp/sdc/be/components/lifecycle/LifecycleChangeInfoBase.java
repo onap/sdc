@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 public class LifecycleChangeInfoBase {
 
+    private String userRemarks;
+
     public LifecycleChangeInfoBase() {
     }
 
@@ -29,8 +31,6 @@ public class LifecycleChangeInfoBase {
         super();
         this.userRemarks = userRemarks;
     }
-
-    private String userRemarks;
 
     public String getUserRemarks() {
         return userRemarks;
