@@ -57,7 +57,23 @@ import java.util.Map.Entry;
 
 public class GraphMLConverter {
 
-	private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
+	private static final String FROM_VERTEX = "fromVertex={}";
+
+    private static final String STORAGE_BACKEND = "storage.backend";
+
+    private static final String INMEMORY = "inmemory";
+
+    private static final String CLOSE_FILE_OUTPUT_STREAM_FAILED = "close FileOutputStream failed - {}";
+
+    private static final String EXPORT_GRAPH = "exportGraph.";
+
+    private static final String DOT_JSON = ".json";
+
+    private static final String EXPORTED_FILE = "Exported file=";
+
+    private static final String NODE_LABEL = "nodeLabel";
+
+    private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
 
 	private Gson gson = new Gson();
 
@@ -71,10 +87,10 @@ public class GraphMLConverter {
 
 			List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
 			ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
-			ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>("nodeLabel", "user");
-			ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>("nodeLabel",
+			ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>(NODE_LABEL, "user");
+			ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>(NODE_LABEL,
 					"resourceCategory");
-			ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>("nodeLabel",
+			ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>(NODE_LABEL,
 					"serviceCategory");
 
 			propertiesCriteriaToDelete.add(immutablePair1);
@@ -109,7 +125,7 @@ public class GraphMLConverter {
 				return false;
 			}
 
-			System.out.println("Exported file=" + result);
+			System.out.println(EXPORTED_FILE + result);
 		} catch (Exception e) {
 			log.info("export graph failed -{}" , e);
 			return false;
@@ -133,7 +149,7 @@ public class GraphMLConverter {
 
 			result = exportGraphMl(graph, outputDirectory);
 
-			System.out.println("Exported file=" + result);
+			System.out.println(EXPORTED_FILE + result);
 		} catch (Exception e) {
 			log.info("export exportGraphMl failed - {}" , e);
 			return null;
@@ -160,7 +176,7 @@ public class GraphMLConverter {
 				return false;
 			}
 
-			System.out.println("Exported file=" + result);
+			System.out.println(EXPORTED_FILE + result);
 		} catch (Exception e) {
 			log.info("find Error In Json Graph failed - {}" , e);
 			return false;
@@ -183,7 +199,7 @@ public class GraphMLConverter {
 
 		String result = null;
 
-		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".json";
+		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
 
 		OutputStream out = null;
 		try {
@@ -208,7 +224,7 @@ public class GraphMLConverter {
 					out.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
 			}
 		}
 		return result;
@@ -217,7 +233,7 @@ public class GraphMLConverter {
 
 	public String exportGraphMl(TitanGraph graph, String outputDirectory) {
 		String result = null;
-		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".graphml";
+		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
 		try {
 			try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 				graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
@@ -288,7 +304,7 @@ public class GraphMLConverter {
 					is.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
 			}
 		}
 
@@ -303,7 +319,7 @@ public class GraphMLConverter {
 
 		String result = null;
 
-		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".json";
+		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
 
 		OutputStream out = null;
 		try {
@@ -327,7 +343,7 @@ public class GraphMLConverter {
 						vertexTo = edge.inVertex();
 
 						BaseConfiguration conf = new BaseConfiguration();
-						conf.setProperty("storage.backend", "inmemory");
+						conf.setProperty(STORAGE_BACKEND, INMEMORY);
 						TitanGraph openGraph = Utils.openGraph(conf);
 
 						TitanVertex addVertexFrom = openGraph.addVertex();
@@ -339,7 +355,7 @@ public class GraphMLConverter {
 						Edge addEdge = addVertexFrom.addEdge(edge.label(), addVertexTo);
 						Utils.setProperties(addEdge, Utils.getProperties(edge));
 
-						log.info("fromVertex={}", Utils.getProperties(vertexFrom));
+						log.info(FROM_VERTEX, Utils.getProperties(vertexFrom));
 						log.info("toVertex={}", Utils.getProperties(vertexTo));
 						log.info("edge={} {} ",edge.label(),Utils.getProperties(edge));
 
@@ -351,7 +367,7 @@ public class GraphMLConverter {
 					} catch (Exception e) {
 						log.info("run Edge Scan failed - {}" , e);
 
-						log.error("fromVertex={}", Utils.getProperties(vertexFrom));
+						log.error(FROM_VERTEX, Utils.getProperties(vertexFrom));
 						log.error("toVertex={}", Utils.getProperties(vertexTo));
 						log.error("edge={} {} ",edge.label(),Utils.getProperties(edge));
 
@@ -377,13 +393,13 @@ public class GraphMLConverter {
 						if (!iterator2.hasNext()) {
 
 							BaseConfiguration conf = new BaseConfiguration();
-							conf.setProperty("storage.backend", "inmemory");
+							conf.setProperty(STORAGE_BACKEND, INMEMORY);
 							TitanGraph openGraph = Utils.openGraph(conf);
 
 							TitanVertex addVertexFrom = openGraph.addVertex();
 							Utils.setProperties(addVertexFrom, Utils.getProperties(vertex));
 
-							log.info("fromVertex={}", Utils.getProperties(addVertexFrom));
+							log.info(FROM_VERTEX, Utils.getProperties(addVertexFrom));
 
 							GraphSONWriter create = GraphSONWriter.build().create();
 							create.writeGraph(out, openGraph);
@@ -415,7 +431,7 @@ public class GraphMLConverter {
 			;
 
 			BaseConfiguration conf = new BaseConfiguration();
-			conf.setProperty("storage.backend", "inmemory");
+			conf.setProperty(STORAGE_BACKEND, INMEMORY);
 			for (NodeTypeEnum nodeTypeEnum : NodeTypeEnum.values()) {
 				removeNodesByLabel(graph, nodeTypeEnum.getName());
 			}
@@ -435,7 +451,7 @@ public class GraphMLConverter {
 					out.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
 			}
 		}
 		return result;
@@ -457,7 +473,7 @@ public class GraphMLConverter {
 		List<Map<String, Object>> users = new ArrayList<>();
 		String result = null;
 
-		String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + ".json";
+		String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + DOT_JSON;
 
 		FileWriter fileWriter = null;
 		try {
@@ -494,7 +510,7 @@ public class GraphMLConverter {
 					fileWriter.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
 			}
 		}
 		return result;
@@ -534,7 +550,7 @@ public class GraphMLConverter {
 				return false;
 			}
 
-			System.out.println("Exported file=" + result);
+			System.out.println(EXPORTED_FILE + result);
 		} catch (Exception e) {
 			log.info("export Users failed - {}" , e);
 			return false;

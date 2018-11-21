@@ -88,10 +88,8 @@ public class ProductLogic {
 
 	private TitanGraph openGraph(String titanFileLocation) {
 
-		TitanGraph graph = TitanFactory.open(titanFileLocation);
-
-		return graph;
-
+		return TitanFactory.open(titanFileLocation);
+		
 	}
 
 }

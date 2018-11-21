@@ -63,7 +63,13 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
 public class ArtifactUuidFix {
+	
+	private static final String MIGRATION1707_ARTIFACT_UUID_FIX = "Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ";
 
+    private static final String FAILED_TO_FETCH_VF_RESOURCES = "Failed to fetch vf resources ";
+
+    private static final String UTF8 = "utf-8";
+	
 	@Autowired
 	private TitanDao titanDao;
 
@@ -102,7 +108,7 @@ public class ArtifactUuidFix {
 		}
 		if ("service_vf".equals(runMode) || "fix".equals(runMode)) {
 			log.info("Mode {}. Find problem VFs", runMode);
-			if (fetchVf(serviceList, vfLst, time) == false) {
+			if (!fetchVf(serviceList, vfLst, time)) {
 				log.info("Mode {}. Find problem VFs finished with failure", runMode);
 				return false;
 			}
@@ -110,7 +116,7 @@ public class ArtifactUuidFix {
 		}
 		if ("fix".equals(runMode) || "fix_only_services".equals(runMode)) {
 			log.info("Mode {}. Start fix", runMode);
-			if (fix(vfLst, serviceList, nodeToFixTosca, vfToFixTosca, serviceToFixTosca) == false) {
+			if (!fix(vfLst, serviceList, nodeToFixTosca, vfToFixTosca, serviceToFixTosca)) {
 				log.info("Mode {}. Fix finished with failure", runMode);
 				return false;
 			}
@@ -123,7 +129,7 @@ public class ArtifactUuidFix {
 	private boolean fetchFaultVf(String fixComponent, List<Resource> vfLst, long time) {
 		log.info("Find fault VF ");
 		String fileName = "fault_" + time + ".csv";
-		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("vf name, vf id, state, version\n");
 
 			Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
@@ -180,7 +186,7 @@ public class ArtifactUuidFix {
 			}
 
 		} catch (Exception e) {
-			log.info("Failed to fetch vf resources ", e);
+			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 			return false;
 		} finally {
 			titanDao.commit();
@@ -195,7 +201,7 @@ public class ArtifactUuidFix {
 			return true;
 		}
 		String fileName = "problemVf_" + time + ".csv";
-		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("vf name, vf id, state, version, example service name\n");
 			Set<String> vfIds = new HashSet<>();
 			for (Service service : serviceList) {
@@ -239,7 +245,7 @@ public class ArtifactUuidFix {
 	private boolean fetchServices(String fixServices, List<Service> serviceList, long time) {
 		log.info("Find problem Services {}", fixServices);
 		String fileName = "problemService_" + time + ".csv";
-		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("service name, service id, state, version\n");
 
 			Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
@@ -571,7 +577,7 @@ public class ArtifactUuidFix {
 
 		long time = System.currentTimeMillis();
 		String fileName = "FailedGenerateTosca" + "_" + time + ".csv";
-		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("componentType, name, version, UID, UUID, invariantUUID, state\n");
 			List<Component> failedList = new ArrayList<>();
 
@@ -899,7 +905,7 @@ public class ArtifactUuidFix {
 				}
 				if (isAddToGroup) {
 					log.debug(
-							"Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ",
+							MIGRATION1707_ARTIFACT_UUID_FIX,
 							group.getName(), correctArtifactId, correctArtifactUUID);
 					group.getArtifacts().add(correctArtifactId);
 					if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {
@@ -908,7 +914,7 @@ public class ArtifactUuidFix {
 				}
 			} else {
 				log.debug(
-						"Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ",
+						MIGRATION1707_ARTIFACT_UUID_FIX,
 						group.getName(), correctArtifactId, correctArtifactUUID);				
 				Set<String> tmpSet = new HashSet<>(group.getGroupInstanceArtifacts());
 				tmpSet.add(correctArtifactId);
@@ -987,7 +993,7 @@ public class ArtifactUuidFix {
 			}
 			if (isAddToGroup) {
 				log.debug(
-						"Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ",
+						MIGRATION1707_ARTIFACT_UUID_FIX,
 						group.getName(), correctArtifactId, correctArtifactUUID);
 				group.getArtifacts().add(correctArtifactId);
 				if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {
@@ -1106,7 +1112,7 @@ public class ArtifactUuidFix {
 			});
 
 		} catch (Exception e) {
-			log.info("Failed to fetch vf resources ", e);
+			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 
 		} finally {
 			titanDao.commit();
@@ -1120,7 +1126,7 @@ public class ArtifactUuidFix {
 		boolean result = true;
 		long time = System.currentTimeMillis();
 		String fileName = name + "_" + time + ".csv";
-		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("name, UUID, invariantUUID, state, version\n");
 			for (Map.Entry<String, List<Component>> entry : vertices.entrySet()) {
 				List<Component> compList = entry.getValue();
@@ -1165,7 +1171,7 @@ public class ArtifactUuidFix {
 			}
 
 		} catch (Exception e) {
-			log.info("Failed to fetch vf resources ", e);
+			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 			return false;
 		} finally {
 			titanDao.commit();

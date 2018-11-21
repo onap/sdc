@@ -32,7 +32,7 @@ import java.util.Properties;
  */
 public class RestUtils {
 
-	final static String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
+    static final String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
 
 	private static Logger log = Logger.getLogger(RestUtils.class.getName());
 

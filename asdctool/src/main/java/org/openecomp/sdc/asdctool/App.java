@@ -23,7 +23,6 @@ package org.openecomp.sdc.asdctool;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.openecomp.sdc.asdctool.main.ArtifactUUIDFixMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
