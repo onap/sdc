@@ -131,11 +131,8 @@ public class DataMigration {
 				}
 			}
 		}
-		if (importToCassandra && !importToCassndra(files)) {
-			return false;
-		}
 
-		return true;
+		return !importToCassandra || importToCassndra(files);
 	}
 
 	private boolean initEsClient() {

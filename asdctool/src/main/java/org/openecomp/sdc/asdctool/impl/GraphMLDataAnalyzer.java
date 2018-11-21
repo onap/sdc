@@ -65,7 +65,7 @@ public class GraphMLDataAnalyzer {
 		// Parse ML file
 		SAXBuilder builder = new SAXBuilder();
 		File xmlFile = new File(mlFileLocation);
-		Document document = (Document) builder.build(xmlFile);
+		Document document = builder.build(xmlFile);
 		
 		// XLS data file name
 		String outputFile = mlFileLocation.replace(".graphml", ".xls");

@@ -92,7 +92,7 @@ public class Utils {
 					}
 				}
 
-				if (false == leftValue.equals(rightValue)) {
+				if (!leftValue.equals(rightValue)) {
 					log.trace("The value of key {} is differnet between properties. {} vs {}",key,leftValue,rightValue);
 					return false;
 				}
@@ -105,7 +105,7 @@ public class Utils {
 
 	public static void setProperties(Element element, Map<String, Object> properties) {
 
-		if (properties != null && false == properties.isEmpty()) {
+		if (properties != null && !properties.isEmpty()) {
 
 			Object[] propertyKeyValues = new Object[properties.size() * 2];
 			int i = 0;
