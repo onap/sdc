@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7a6f20c6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/InterfaceOperationValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-22T14:52:35Z",
+      "side": 1,
+      "message": "Do not trust reader of the code to remember who has precedence \u0026\u0026 or || \n\nPlease put bracets around the block.\n\n (input.getInputId().contains(\".\")\n                \u0026\u0026 inputs.stream().anyMatch(inp -\u003e inp.getUniqueId().equals(\n                    input.getInputId().substring(0, input.getInputId().lastIndexOf(\".\")))))",
+      "revId": "bbf4025d7ef68c7ffdcf389a0d6da865973cf9c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
