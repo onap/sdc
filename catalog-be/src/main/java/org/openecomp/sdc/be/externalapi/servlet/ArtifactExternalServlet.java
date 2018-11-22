@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,14 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import com.jcabi.aspects.Loggable;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -65,11 +73,12 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 /**
  * This Servlet serves external users operations on artifacts.
- * 
+ *
  * @author mshitrit
  *
  */
@@ -89,7 +98,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     private static String startLog = "Start handle request of ";
 
     @POST
-    @Path("/resources/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}")
+    @Path("/{assetType}/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "uploads of artifact to VF operation workflow", httpMethod = "POST", notes = "uploads of artifact to VF operation workflow")
     @ApiResponses(value = {
@@ -116,6 +125,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
             @ApiParam(value = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @ApiParam(value = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @ApiParam(value = "Asset type") @PathParam("assetType") String assetType,
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
             @ApiParam(value = "The uuid of the operation", required = true)@PathParam("operationUUID") final String operationUUID,
             @ApiParam(value = "The uuid of the artifact", required = true)@PathParam("artifactUUID") final String artifactUUID,
@@ -125,9 +135,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("{} {}", startLog, url);
-        ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        String componentTypeValue = componentType.getValue();
-        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(assetType);
         ArtifactDefinition artifactDefinition = null;
 
         if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
@@ -144,7 +152,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             if (responseWrapper.isEmpty()) {
                 ServletContext context = request.getSession().getServletContext();
                 ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request, componentType, uuid, artifactUUID, operationUUID,
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic
+                        .updateArtifactOnInterfaceOperationByResourceUUID(data, request, ComponentTypeEnum
+                                        .findByParamName(assetType), uuid,  artifactUUID, operationUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);

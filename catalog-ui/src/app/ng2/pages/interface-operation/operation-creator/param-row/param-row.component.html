@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright © 2016-2018 European Support Limited
+  ~ Copyright ï¿½ 2016-2018 European Support Limited
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -38,14 +38,14 @@
 
 <div class="cell field-property" *ngIf="isInputParam">
     <ui-element-dropdown
-        *ngIf="filteredInputProps.length > 0 || !isAssociateWorkflow"
+        *ngIf="filteredInputProps.length || !isAssociateWorkflow"
         data-tests-id="paramProperty"
         [values]="filteredInputProps"
         [(value)]="param.property"
         [readonly]="readonly">
     </ui-element-dropdown>
     <span
-        *ngIf="filteredInputProps.length == 0 && isAssociateWorkflow"
+        *ngIf="!filteredInputProps.length && isAssociateWorkflow"
         class="no-properties-error">
         No available properties of this type.
     </span>

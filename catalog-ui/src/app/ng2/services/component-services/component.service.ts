@@ -128,9 +128,7 @@ export class ComponentServiceNg2 {
 
     getInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
         return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => {
-                return res.json();
-            });
+            .map((res:Response) => res.json());
     }
 
     createInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
@@ -140,9 +138,7 @@ export class ComponentServiceNg2 {
             }
         };
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => {
-                return res.json();
-            });
+            .map((res:Response) => res.json());
     }
 
     updateInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
@@ -152,16 +148,12 @@ export class ComponentServiceNg2 {
             }
         };
         return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => {
-                return res.json();
-            });
+            .map((res:Response) => res.json());
     }
 
     deleteInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => {
-                return res.json();
-            });
+            .map((res:Response) => res.json());
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId:string):Observable<ComponentGenericResponse> {
@@ -189,7 +181,6 @@ export class ComponentServiceNg2 {
 
 
     deleteInput(component:Component, input:InputBEModel):Observable<InputBEModel> {
-
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
             .map((res:Response) => {
                 return new InputBEModel(res.json());
@@ -197,7 +188,6 @@ export class ComponentServiceNg2 {
     }
 
     updateComponentInputs(component:Component, inputs:InputBEModel[]):Observable<InputBEModel[]> {
-
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
             .map((res:Response) => {
                 return res.json().map((input) => new InputBEModel(input));

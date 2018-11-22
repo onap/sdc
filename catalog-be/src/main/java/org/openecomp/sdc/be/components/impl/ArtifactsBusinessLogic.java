@@ -3100,24 +3100,23 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         NodeTypeEnum convertParentType = convertParentType(componentType);
         // fetch the resource from storage
-        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
+        Either<Component, StorageOperationStatus> componentStorageOperationStatusEither =
                 toscaOperationFacade.getToscaElement(parentId);
-        if (resourceStorageOperationStatusEither.isRight()) {
-            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
+        if (componentStorageOperationStatusEither.isRight()) {
+            StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
             log.debug("Failed to fetch resource information by resource id, error {}", errorStatus);
             return Either.right(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
-        Resource storedResource = resourceStorageOperationStatusEither.left().value();
+        Component storedComponent = componentStorageOperationStatusEither.left().value();
 
         String interfaceToscaName = InterfaceUtils.createInterfaceToscaResourceName(
-                storedResource.getName());
+                storedComponent.getName());
         //fetch the interface from storage
-        Optional<InterfaceDefinition> interfaceDefinition = storedResource.getInterfaces().values()
-                                                                          .stream()
-                                                                          .filter(interfaceDef -> interfaceDef.getToscaResourceName()
-                        .equals(interfaceToscaName))
-                                                                          .findFirst();
+        Optional<InterfaceDefinition> interfaceDefinition =
+                storedComponent.getInterfaces().values().stream()
+                        .filter(interfaceDef -> interfaceDef.getToscaResourceName()
+                        .equals(interfaceToscaName)).findFirst();
         if (!interfaceDefinition.isPresent()) {
             log.debug("Failed to get resource interface for resource Id {}", parentId);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(
@@ -3154,7 +3153,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         operation.setImplementation(implementationArtifact);
         gotInterface.setOperationsMap(operationsMap);
         Either<InterfaceDefinition, StorageOperationStatus> interfaceDefinitionStorageOperationStatusEither =
-                interfaceOperation.updateInterface(storedResource.getUniqueId(), gotInterface);
+                interfaceOperation.updateInterface(storedComponent.getUniqueId(), gotInterface);
         if (interfaceDefinitionStorageOperationStatusEither.isRight()){
             StorageOperationStatus storageOperationStatus = interfaceDefinitionStorageOperationStatusEither.right().value();
             ActionStatus actionStatus =
@@ -3163,16 +3162,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         String uniqueId = implementationArtifact.getUniqueId();
-        Either<Long, CassandraOperationStatus> artifactCount = artifactCassandraDao.getCountOfArtifactById(uniqueId);
-        if(artifactCount.isLeft()){
-            CassandraOperationStatus cassandraOperationStatus = artifactCassandraDao.deleteArtifact(uniqueId);
-            if(cassandraOperationStatus != CassandraOperationStatus.OK){
-                log.debug("Failed to persist operation {} artifact, error is {}",operation.getName(),cassandraOperationStatus);
-                StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraOperationStatus);
-                ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-                return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
-            }
-        }
         artifactData.setId(uniqueId);
         CassandraOperationStatus cassandraOperationStatus = artifactCassandraDao.saveArtifact(artifactData);
         if(cassandraOperationStatus != CassandraOperationStatus.OK){
@@ -3647,23 +3636,25 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-        switch (component.getComponentType()) {
-            case RESOURCE:
-                Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-                if (!found && interfaces != null) {
-                    for (Map.Entry<String, InterfaceDefinition> entry : interfaces.entrySet()) {
-                        Map<String, Operation> operations = entry.getValue().getOperationsMap();
-                        for (Map.Entry<String, Operation> entryOp : operations.entrySet()) {
-                            if (entryOp.getValue().getImplementation() != null && entryOp.getValue()
-                                                                                         .getImplementation()
-                                                                                         .getUniqueId()
-                                                                                         .equals(artifactId)) {
-                                found = true;
-                                break;
-                            }
-                        }
+
+        Map<String, InterfaceDefinition> interfaces = component.getInterfaces();
+        if (!found && interfaces != null) {
+            for (Map.Entry<String, InterfaceDefinition> entry : interfaces.entrySet()) {
+                Map<String, Operation> operations = entry.getValue().getOperationsMap();
+                for (Map.Entry<String, Operation> entryOp : operations.entrySet()) {
+                    if (entryOp.getValue().getImplementation() != null && entryOp.getValue()
+                            .getImplementation()
+                            .getUniqueId()
+                            .equals(artifactId)) {
+                        found = true;
+                        break;
                     }
                 }
+            }
+        }
+
+        switch (component.getComponentType()) {
+            case RESOURCE:
                 break;
             case SERVICE:
                 Map<String, ArtifactDefinition> apiArtifacts = ((Service) component).getServiceApiArtifacts();
@@ -5106,18 +5097,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<String, ResponseFormat> fetchInterfaceName(String componentId) {
-        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
+        Either<Component, StorageOperationStatus> componentStorageOperationStatusEither =
                 toscaOperationFacade.getToscaElement(componentId);
-        if (resourceStorageOperationStatusEither.isRight()) {
-            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
-            log.debug("Failed to fetch resource information by resource id, error {}", errorStatus);
+        if (componentStorageOperationStatusEither.isRight()) {
+            StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
+            log.debug("Failed to fetch component information by component id, error {}", errorStatus);
             return Either.right(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
-        Resource storedResource = resourceStorageOperationStatusEither.left().value();
+        Component storedComponent = componentStorageOperationStatusEither.left().value();
 
         return Either.left(InterfaceUtils.createInterfaceToscaResourceName(
-                storedResource.getName()));
+                storedComponent.getName()));
     }
 
 

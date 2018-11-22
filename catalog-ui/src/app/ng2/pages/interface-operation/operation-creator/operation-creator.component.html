@@ -127,11 +127,10 @@
             <param-row
                 *ngFor="let param of tableParameters"
                 class="data-row"
-                [isInputParam]="currentTab == TYPE_INPUT"
+                [isInputParam]="currentTab === TYPE_INPUT"
                 [isAssociateWorkflow]="isUsingExistingWF()"
                 [param]="param"
                 [inputProps]="inputProperties"
-                [propTypes]="inputPropertyTypes"
                 [onRemoveParam]="onRemoveParam"
                 [readonly]="readonly">
             </param-row>
