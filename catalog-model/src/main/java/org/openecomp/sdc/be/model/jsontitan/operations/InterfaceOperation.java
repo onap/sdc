@@ -17,6 +17,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,17 @@ public class InterfaceOperation extends BaseOperation {
     Either<GraphVertex, TitanOperationStatus> getToscaElementRes;
     Either<GraphVertex, TitanOperationStatus> getToscaElementInt;
 
+    if(isUpdateAction && operation.getImplementationArtifact() != null){
+      String artifactUUID = operation.getImplementationArtifact().getArtifactUUID();
+      Either<Long, CassandraOperationStatus> artifactCount = artifactCassandraDao.getCountOfArtifactById(artifactUUID);
+      if(artifactCount.isLeft()){
+        CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUUID);
+        if (cassandraStatus != CassandraOperationStatus.OK) {
+          return Either.right(DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraStatus));
+        }
+      }
+    }
+
     getToscaElementRes = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
     if (getToscaElementRes.isRight()) {
       TitanOperationStatus status = getToscaElementRes.right().value();
@@ -138,6 +150,21 @@ public class InterfaceOperation extends BaseOperation {
     if (getInterfaceVertex.isRight()) {
       return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getInterfaceVertex.right().value()));
     }
+
+      if (!interfaceDef.getOperationsMap().isEmpty()) {
+          Either<GraphVertex, TitanOperationStatus> getInterfaceOpVertex =
+                  titanDao.getChildVertex(getInterfaceVertex.left().value(), EdgeLabelEnum.INTERFACE_OPERATION,
+                          JsonParseFlagEnum.NoParse);
+          if (getInterfaceOpVertex.isRight()) {
+              List<ToscaDataDefinition> toscaDataList = new ArrayList<>(interfaceDef.getOperationsMap().values());
+              StorageOperationStatus statusRes =
+                      addToscaDataToToscaElement(getInterfaceVertex.left().value(), EdgeLabelEnum.INTERFACE_OPERATION,
+                              VertexTypeEnum.INTERFACE_OPERATION, toscaDataList, JsonPresentationFields.UNIQUE_ID);
+              if (!statusRes.equals(StorageOperationStatus.OK)) {
+                  return Either.right(statusRes);
+              }
+          }
+      }
 
     Optional<Entry<String, Operation>> operationToRemove = interfaceDef.getOperationsMap().entrySet().stream()
         .filter(entry -> entry.getValue().getUniqueId().equals(operationToDelete)).findAny();

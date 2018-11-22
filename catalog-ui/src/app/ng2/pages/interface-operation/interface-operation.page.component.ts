@@ -174,12 +174,11 @@ export class InterfaceOperationComponent {
             this.operationList.sort((a, b) => a.operationType.localeCompare(b.operationType));
 
             if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
-                const resourceId = this.component.uuid;
                 const operationId = response.uniqueId;
                 const workflowId = response.workflowId;
                 const versionId = response.workflowVersionId;
                 const artifactId = response.artifactUUID;
-                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
+                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, operationId, workflowId, versionId, artifactId).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
                 this.$state.go('workspace.plugins', { path: 'workflowDesigner' });
             }
@@ -193,13 +192,12 @@ export class InterfaceOperationComponent {
             this.operationList.splice(index, 1, newOperation);
             this.component.interfaceOperations = this.operationList;
 
-            if (newOperation.workflowId) {
-                const resourceId = this.component.uuid;
+            if (newOperation.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 const operationId = newOperation.uniqueId;
                 const workflowId = newOperation.workflowId;
                 const versionId = newOperation.workflowVersionId;
                 const artifactId = newOperation.artifactUUID;
-                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
+                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, operationId, workflowId, versionId, artifactId).subscribe();
             }
         });
     }

@@ -208,7 +208,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 if (getOperationEither.isRight()){
                     return Either.right(getOperationEither.right().value());
                 }
-                operation.setImplementation(getOperationEither.left().value().getImplementation());
+                updateExistingOperation(operation, getOperationEither.left().value().getImplementation().getArtifactUUID());
                 result = interfaceOperation.updateInterfaceOperation(componentId, interfaceDefinition, operation);
             }
 
@@ -262,6 +262,15 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         operation.setUniqueId(UUID.randomUUID().toString());
+        operation.setImplementation(artifactDefinition);
+    }
+
+    private void updateExistingOperation(Operation operation, String artifactUUID){
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactUUID(artifactUUID);
+        artifactDefinition.setUniqueId(artifactUUID);
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
+        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         operation.setImplementation(artifactDefinition);
     }
 

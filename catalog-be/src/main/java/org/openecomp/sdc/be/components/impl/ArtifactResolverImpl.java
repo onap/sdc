@@ -54,20 +54,20 @@ public class ArtifactResolverImpl implements ArtifactsResolver {
         Map<String, ArtifactDefinition> deploymentArtifacts = Optional.ofNullable(component.getDeploymentArtifacts()).orElse(Collections.emptyMap());
         Map<String, ArtifactDefinition> artifacts = Optional.ofNullable(component.getArtifacts()).orElse(Collections.emptyMap());
         Map<String, ArtifactDefinition> interfaceArtifacts= Collections.emptyMap();
-        if (componentType == ComponentTypeEnum.RESOURCE) {
-            Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-            if (MapUtils.isNotEmpty(interfaces)) {
-                interfaceArtifacts = interfaces.values().stream()
-                        .flatMap(inte -> inte.getOperationsMap().values().stream())
-                        .map(operation -> operation.getImplementationArtifact())
-                        .collect(Collectors.toMap(artifactDefinition -> artifactDefinition.getUniqueId(), artifactDefinition -> artifactDefinition));
-            }
+        Map<String, InterfaceDefinition> interfaces = component.getInterfaces();
+        if (MapUtils.isNotEmpty(interfaces)) {
+            interfaceArtifacts = interfaces.values().stream()
+                    .flatMap(inte -> inte.getOperationsMap().values().stream())
+                    .map(operation -> operation.getImplementationArtifact())
+                    .collect(Collectors.toMap(artifactDefinition -> artifactDefinition.getUniqueId(),
+                            artifactDefinition -> artifactDefinition));
         }
 
         Map<String, ArtifactDefinition> serviceApiArtifacts = Collections.emptyMap();
         if (componentType.equals(ComponentTypeEnum.SERVICE)) {
             serviceApiArtifacts = Optional.ofNullable(((Service) component).getServiceApiArtifacts()).orElse(Collections.emptyMap());
         }
+
         return appendAllArtifacts(deploymentArtifacts, artifacts, interfaceArtifacts, serviceApiArtifacts);
     }
 

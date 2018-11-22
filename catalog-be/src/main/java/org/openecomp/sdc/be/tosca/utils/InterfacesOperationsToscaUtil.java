@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,9 +182,13 @@ public class InterfacesOperationsToscaUtil {
         for (OperationInputDefinition input : operation.getInputs().getListToscaDataDefinition()) {
             ToscaProperty toscaInput = new ToscaProperty();
             toscaInput.setDescription(input.getDescription());
-            String mappedPropertyName = getLastPartOfName(input.getInputId());
-            toscaInput.setType(input.getType());
+            String mappedPropertyName = null;
+            if (Objects.nonNull(input.getInputId())) {
+                mappedPropertyName = input.getInputId().substring(input.getInputId().indexOf(DOT) + 1);
+            }
             toscaInput.setDefaultp(createDefaultValue(mappedPropertyName));
+
+            toscaInput.setType(input.getType());
             toscaInput.setRequired(input.isRequired());
             toscaInputs.put(input.getName(), toscaInput);
         }
@@ -195,12 +200,14 @@ public class InterfacesOperationsToscaUtil {
         Map<String, List<String>> getPropertyMap = new HashMap<>();
         List<String> values = new ArrayList<>();
         values.add(SELF);
-        values.add(propertyName);
+        if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
+            values.addAll(Arrays.asList(propertyName.split("\\.")));
+        }
+
         getPropertyMap.put(GET_PROPERTY, values);
 
         return getPropertyMap;
     }
-
 
     private static Map<String, Object> getObjectAsMap(Object obj) {
         ObjectMapper objectMapper = new ObjectMapper();

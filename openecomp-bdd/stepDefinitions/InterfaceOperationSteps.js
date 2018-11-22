@@ -26,7 +26,7 @@ When('I want to create a VF', function()  {
 
     var type = "resources";
     let path = '/catalog/' + type;
-    return util.request(this.context, 'POST', path,  inputData, false, 'vf').then(result => {
+    return util.request(this.context, 'POST', path,  inputData, false, 'catalog').then(result => {
         this.context.component = {uniqueId : result.data.uniqueId, type : type, id : result.data.inputs[0].uniqueId};
 });
 });
@@ -39,7 +39,7 @@ When('I want to create a Service', function()  {
 
     var type = "services";
     let path = '/catalog/' + type;
-    return util.request(this.context, 'POST', path,  inputData, false, 'vf').then(result => {
+    return util.request(this.context, 'POST', path,  inputData, false, 'catalog').then(result => {
         this.context.component = {uniqueId : result.data.uniqueId, type : type, id : result.data.inputs[0].uniqueId};
 });
 });
@@ -64,33 +64,48 @@ When('I want to create an Operation with input output', function()  {
     inputData.interfaceOperations.operation.operationType = makeType();
     inputData.interfaceOperations.operation.description = makeType();
 
-    return util.request(this.context, 'POST', path, inputData, false, 'vf').then(result => {
-    this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
-});
-});
-
-
-When('I want to create an Operation', function()  {
-    let path = '/catalog/' + this.context.component.type + '/' + this.context.component.uniqueId + '/interfaceOperations';
-       let inputData  = util.getJSONFromFile('resources/json/operation/createOperation.json');
-    inputData.interfaceOperations.operation.operationType = makeType();
-    inputData.interfaceOperations.operation.description = makeType();
-
-    return util.request(this.context, 'POST', path, inputData, false, 'vf').then(result => {
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then(result => {
         this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
 });
 });
 
+When('I want to create an Operation', function()  {
+    let path = '/catalog/' + this.context.component.type + '/' + this.context.component.uniqueId + '/interfaceOperations';
+    let inputData  = util.getJSONFromFile('resources/json/operation/createOperation.json');
+    inputData.interfaceOperations.operation.operationType = makeType();
+    inputData.interfaceOperations.operation.description = makeType();
+
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then(result => {
+        this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
+});
+});
+
+When('I want to create an Operation with workflow', function()  {
+    let path = '/catalog/' + this.context.component.type + '/' + this.context.component.uniqueId + '/interfaceOperations';
+    let inputData = util.getJSONFromFile('resources/json/operation/createOperation-with-workflow.json');
+
+    inputData.interfaceOperations.operation.inputParams.listToscaDataDefinition[0].name = util.random();
+    inputData.interfaceOperations.operation.inputParams.listToscaDataDefinition[0].property = this.context.component.id;
+    inputData.interfaceOperations.operation.outputParams.listToscaDataDefinition[0].name = util.random();
+    inputData.interfaceOperations.operation.operationType = makeType();
+    inputData.interfaceOperations.operation.description = makeType();
+    inputData.interfaceOperations.operation.workflowId = makeType();
+    inputData.interfaceOperations.operation.workflowVersionId = makeType();
+
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then(result => {
+        this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
+});
+});
 
 When('I want to list Operations', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/filteredDataByParams?include=interfaces';
-    return util.request(this.context, 'GET', path, null, false, 'vf').then((result)=> {
+    return util.request(this.context, 'GET', path, null, false, 'catalog').then((result)=> {
     });
 });
 
 When('I want to get an Operation by Id', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/interfaceOperations/' + this.context.operation.uniqueId;
-    return util.request(this.context, 'GET', path, null, false, 'vf').then((result)=> {
+    return util.request(this.context, 'GET', path, null, false, 'catalog').then((result)=> {
     this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
 });
 });
@@ -103,7 +118,7 @@ When('I want to update an Operation', function () {
     inputData.interfaceOperations.operation.inputParams.listToscaDataDefinition[0].name = util.random();
     inputData.interfaceOperations.operation.inputParams.listToscaDataDefinition[0].property = this.context.component.id;
     inputData.interfaceOperations.operation.outputParams.listToscaDataDefinition[0].name = util.random();
-    return util.request(this.context, 'PUT', path, inputData, false, 'vf').then((result)=> {
+    return util.request(this.context, 'PUT', path, inputData, false, 'catalog').then((result)=> {
     this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
 });
 });
@@ -111,14 +126,14 @@ When('I want to update an Operation', function () {
 
 When('I want to delete an Operation', function()  {
     let path = '/catalog/'+ this.context.component.type + '/'+ this.context.component.uniqueId +'/interfaceOperations/' + this.context.operation.uniqueId;
-    return util.request(this.context, 'DELETE', path, null, false, 'vf');
+    return util.request(this.context, 'DELETE', path, null, false, 'catalog');
 });
 
 
 When('I want to checkin this component', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/lifecycleState/CHECKIN' ;
     let inputData = {userRemarks: 'checkin'};
-    return util.request(this.context, 'POST', path, inputData, false, 'vf').then((result)=> {
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
     this.context.component = {uniqueId : result.data.uniqueId, type : this.context.component.type};
 });
 });
@@ -127,15 +142,15 @@ When('I want to checkin this component', function () {
 Then('I want to submit this component', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/lifecycleState/certificationRequest' ;
     let inputData = {userRemarks: 'submit'};
-    return util.request(this.context, 'POST', path, inputData, false, 'vf').then((result)=> {
-    this.context.vf = {uniqueId : result.data.uniqueId};
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
+    this.context.component = {uniqueId : result.data.uniqueId};
 });
 });
 
 Then('I want to certify this component', function () {
     let path = '/catalog/'+ this.context.component.type +'/' + this.context.component.uniqueId + '/lifecycleState/certify' ;
     let inputData = {userRemarks: 'certify'};
-    return util.request(this.context, 'POST', path, inputData, false, 'vf').then((result)=> {
+    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
     this.context.component = {uniqueId : result.data.uniqueId};
 });
 });

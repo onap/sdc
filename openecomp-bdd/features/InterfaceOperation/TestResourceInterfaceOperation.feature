@@ -7,7 +7,7 @@ Feature: Interface Operation Feature
     #Create Operations
   When I want to create an Operation
   Then I want to check property "uniqueId" exists
-  And  I want to create an Operation
+  And  I want to create an Operation with workflow
   Then I want to check property "uniqueId" exists
   And  I want to create an Operation
   Then I want to check property "uniqueId" exists

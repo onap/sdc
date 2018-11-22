@@ -16,6 +16,17 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -32,17 +43,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Component("interfaceOperationValidation")
 public class InterfaceOperationValidation {
@@ -279,8 +279,8 @@ public class InterfaceOperationValidation {
             .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
     }
     private Boolean isOutputParameterNameEmpty(Operation operationDataDefinition) {
-        return operationDataDefinition.getInputs().getListToscaDataDefinition().stream()
-            .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
+        return operationDataDefinition.getOutputs().getListToscaDataDefinition().stream()
+            .anyMatch(outputParam -> outputParam.getName() == null || outputParam.getName().trim().equals(StringUtils.EMPTY));
     }
 
     private  Either<Boolean, ResponseFormat> validateInputPropertyExistInComponent(Operation operation,
@@ -305,7 +305,10 @@ public class InterfaceOperationValidation {
 
     private boolean validateInputExistsInComponent(OperationInputDefinition input,
                                                    List<InputDefinition> inputs) {
-        return inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()));
+        return inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()))
+                || (input.getInputId().contains(".")
+                && inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(
+                    input.getInputId().substring(0, input.getInputId().lastIndexOf(".")))));
     }
 
     private ResponseFormatManager getResponseFormatManager() {

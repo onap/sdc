@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -53,7 +54,7 @@ public class OperationArtifactUtil {
      */
     static String createOperationArtifactPath(Component component, OperationDataDefinition operation,
                                                      boolean isAssociatedResourceComponent) {
-        if (!(component instanceof Resource)) {
+        if (!(component instanceof Resource || component instanceof Service)) {
             return null;
         }
         if (isAssociatedResourceComponent) {

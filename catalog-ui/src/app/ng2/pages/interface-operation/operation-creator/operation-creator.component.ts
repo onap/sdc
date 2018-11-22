@@ -18,7 +18,6 @@ export interface OperationCreatorInput {
     isService: boolean
 }
 
-
 @Component({
     selector: 'operation-creator',
     templateUrl: './operation-creator.component.html',
@@ -33,7 +32,7 @@ export class OperationCreatorComponent {
 
     workflows: Array<DropdownValue> = [];
     workflowVersions: Array<DropdownValue> = [];
-    inputProperties: Array<DropdownValue> = [];
+    inputProperties: Array<InputBEModel> = [];
     inputPropertyTypes: { [key: string]: string };
 
     inputParameters: Array<OperationParameter> = [];
@@ -76,19 +75,10 @@ export class OperationCreatorComponent {
     }
 
     ngOnInit() {
-
         this.readonly = this.input.readonly;
         this.isService = this.input.isService;
-        this.enableWorkflowAssociation = this.input.enableWorkflowAssociation && !this.isService;
-
-        this.inputProperties = _.map(this.input.inputProperties,
-            (input: InputBEModel) => new DropdownValue(input.uniqueId, input.name)
-        );
-
-        this.inputPropertyTypes = {};
-        _.forEach(this.input.inputProperties, (input: InputBEModel) => {
-            this.inputPropertyTypes[input.uniqueId] = input.type;
-        });
+        this.enableWorkflowAssociation = this.input.enableWorkflowAssociation;
+        this.inputProperties = this.input.inputProperties;
 
         const inputOperation = this.input.operation;
         this.operation = new OperationModel(inputOperation || {});
@@ -108,13 +98,12 @@ export class OperationCreatorComponent {
         } else {
             this.reconstructOperation();
         }
-
     }
 
     reconstructOperation = () => {
         const inputOperation = this.input.operation;
         if (inputOperation) {
-            if (!this.enableWorkflowAssociation || !inputOperation.workflowVersionId || this.isService) {
+            if (!this.enableWorkflowAssociation || !inputOperation.workflowVersionId) {
                 this.inputParameters = this.noAssignInputParameters;
                 this.outputParameters = this.noAssignOutputParameters;
                 this.buildParams();
