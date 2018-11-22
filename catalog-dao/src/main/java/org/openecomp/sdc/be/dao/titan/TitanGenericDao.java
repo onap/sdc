@@ -44,7 +44,10 @@ import java.util.stream.StreamSupport;
 @Component("titan-generic-dao")
 public class TitanGenericDao {
 
-	private TitanGraphClient titanClient;
+	private static final String FAILED_TO_RETRIEVE_GRAPH_STATUS_IS = "Failed to retrieve graph. status is {}";
+    private static final String NO_EDGES_IN_GRAPH_FOR_CRITERIA = "No edges in graph for criteria";
+    private static final String FAILED_TO_CREATE_EDGE_FROM_TO = "Failed to create edge from [{}] to [{}]";
+    private TitanGraphClient titanClient;
 	private static Logger log = Logger.getLogger(TitanGenericDao.class.getName());
 	private static final String LOCK_NODE_PREFIX = "lock_";
 
@@ -210,7 +213,7 @@ public class TitanGenericDao {
 
 				return Either.left(newRelation);
 			} catch (Exception e) {
-				log.debug("Failed to create edge from [{}] to [{}]", from, to, e);
+				log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, from, to, e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
@@ -223,7 +226,7 @@ public class TitanGenericDao {
 		try {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 		} catch (Exception e) {
-			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, vertexOut, vertexIn, e);
 			return TitanGraphClient.handleTitanException(e);
 		}
 		return TitanOperationStatus.OK;
@@ -260,7 +263,7 @@ public class TitanGenericDao {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 			return Either.left(edge);
 		} catch (Exception e) {
-			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, vertexOut, vertexIn, e);
 			return Either.right(TitanGraphClient.handleTitanException(e));
 		}
 
@@ -452,7 +455,7 @@ public class TitanGenericDao {
 		Edge matchingEdge = null;
 		Iterable<TitanEdge> edges = query.edges();
 		if (edges == null) {
-			log.debug("No edges in graph for criteria");
+			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		Iterator<TitanEdge> eIter = edges.iterator();
@@ -461,7 +464,7 @@ public class TitanGenericDao {
 		}
 
 		if (matchingEdge == null) {
-			log.debug("No edges in graph for criteria");
+			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		return Either.left(matchingEdge);
@@ -476,7 +479,7 @@ public class TitanGenericDao {
 				if (vertexFrom.isRight()) {
 					return Either.right(vertexFrom.right().value());
 				}
-				Iterable<TitanEdge> edges = ((TitanVertex) vertexFrom.left().value()).query().labels(label).edges();
+				Iterable<TitanEdge> edges = vertexFrom.left().value().query().labels(label).edges();
 				Iterator<TitanEdge> eIter = edges.iterator();
 				while (eIter.hasNext()) {
 					Edge edge = eIter.next();
@@ -1295,7 +1298,7 @@ public class TitanGenericDao {
 
 		Either<TitanGraph, TitanOperationStatus> graphRes = titanClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error("Failed to retrieve graph. status is {}", graphRes);
+			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1343,7 +1346,7 @@ public class TitanGenericDao {
 
 		Either<TitanGraph, TitanOperationStatus> graphRes = titanClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error("Failed to retrieve graph. status is {}", graphRes);
+			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1467,7 +1470,7 @@ public class TitanGenericDao {
 
 		Either<TitanGraph, TitanOperationStatus> graphRes = titanClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error("Failed to retrieve graph. status is {}", graphRes);
+			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1590,7 +1593,7 @@ public class TitanGenericDao {
 		Edge matchingEdge = null;
 		Iterable<TitanEdge> edges = query.edges();
 		if (edges == null) {
-			log.debug("No edges in graph for criteria");
+			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		Iterator<TitanEdge> eIter = edges.iterator();
@@ -1599,7 +1602,7 @@ public class TitanGenericDao {
 		}
 
 		if (matchingEdge == null) {
-			log.debug("No edges in graph for criteria");
+			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		return Either.left(matchingEdge);

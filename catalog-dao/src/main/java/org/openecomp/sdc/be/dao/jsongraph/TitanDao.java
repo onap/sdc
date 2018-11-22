@@ -253,7 +253,7 @@ public class TitanDao {
         }
     }
 
-    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) throws IOException {
+    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (entry.getValue() != null) {
                 vertex.property(entry.getKey(), entry.getValue());

@@ -34,14 +34,14 @@ public abstract class GraphNode extends GraphElement {
 
 	private NodeTypeEnum label;
 
+    protected GraphNode(NodeTypeEnum label) {
+        super(GraphElementTypeEnum.Node);
+
+        this.label = label;
+    }
+	
 	protected Gson getGson() {
 		return gson;
-	}
-
-	protected GraphNode(NodeTypeEnum label) {
-		super(GraphElementTypeEnum.Node);
-
-		this.label = label;
 	}
 
 	public String getLabel() {

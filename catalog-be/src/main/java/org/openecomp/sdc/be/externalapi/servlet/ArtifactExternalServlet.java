@@ -65,7 +65,6 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -79,6 +78,8 @@ import java.util.Map;
 @Api(value = "Artifact External Servlet", description = "Servlet serves external users operations on artifacts.")
 @Singleton
 public class ArtifactExternalServlet extends AbstractValidationsServlet {
+
+    private static final String FAILED_TO_UPDATE_ARTIFACT = "failed to update artifact";
 
     @Context
     private HttpServletRequest request;
@@ -146,7 +147,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request, componentType, uuid, artifactUUID, operationUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -452,7 +453,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -552,7 +553,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
                          artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
