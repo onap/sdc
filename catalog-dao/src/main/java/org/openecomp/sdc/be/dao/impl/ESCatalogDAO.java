@@ -48,6 +48,9 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 
 	private static Logger log = Logger.getLogger(ESCatalogDAO.class.getName());
 
+	// Index Checking Variables
+    private boolean initCompleted = false;
+	
 	//TODO use LoggerMetric instead
 	private static Logger healthCheckLogger = Logger.getLogger("elasticsearch.healthcheck");
 
@@ -122,11 +125,8 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 		initCompleted = true;
 	}
 
-	// Index Checking Variables
-	private boolean initCompleted = false;
-
 	@Override
-	public void writeArtifact(ESArtifactData artifactData) throws ResourceDAOException {
+	public void writeArtifact(ESArtifactData artifactData) {
 		try {
 			saveResourceData(artifactData);
 		} catch (Exception e) {

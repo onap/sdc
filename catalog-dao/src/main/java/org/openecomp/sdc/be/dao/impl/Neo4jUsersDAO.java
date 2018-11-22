@@ -41,7 +41,9 @@ import java.util.Map;
 //@Component("users-dao")
 public class Neo4jUsersDAO implements IUsersDAO {
 
-	// @Resource
+	private static final String USER_ID = "userId";
+
+    // @Resource
 	Neo4jClient neo4jClient;
 
 	private static Logger logger = Logger.getLogger(Neo4jUsersDAO.class.getName());
@@ -75,7 +77,7 @@ public class Neo4jUsersDAO implements IUsersDAO {
 			if (createIndexStatus.equals(Neo4jOperationStatus.OK)) {
 				logger.info("Users indexes created in Neo4j");
 				List<String> propertyUnique = new ArrayList<>();
-				propertyUnique.add("userId");
+				propertyUnique.add(USER_ID);
 
 				logger.info("Start create Users constraints in Neo4jGraph");
 				Neo4jOperationStatus createUniquenessStatus = neo4jClient
@@ -100,7 +102,7 @@ public class Neo4jUsersDAO implements IUsersDAO {
 	@Override
 	public Either<UserData, ActionStatus> getUserData(String id) {
 		MatchFilter filter = new MatchFilter();
-		filter.addToMatch("userId", id);
+		filter.addToMatch(USER_ID, id);
 		Either<List<GraphElement>, Neo4jOperationStatus> status = neo4jClient.getByFilter(GraphElementTypeEnum.Node,
 				NodeTypeEnum.User.getName(), filter);
 		if (status.isRight()) {
@@ -128,7 +130,7 @@ public class Neo4jUsersDAO implements IUsersDAO {
 	@Override
 	public ActionStatus updateUserData(UserData userData) {
 		UpdateFilter filter = new UpdateFilter();
-		filter.addToMatch("userId", userData.getUserId());
+		filter.addToMatch(USER_ID, userData.getUserId());
 		filter.setToUpdate(userData.toGraphMap());
 		Neo4jOperationStatus status = neo4jClient.updateElement(GraphElementTypeEnum.Node, NodeTypeEnum.User.getName(),
 				filter);
@@ -142,7 +144,7 @@ public class Neo4jUsersDAO implements IUsersDAO {
 	@Override
 	public ActionStatus deleteUserData(String id) {
 		MatchFilter filter = new MatchFilter();
-		filter.addToMatch("userId", id);
+		filter.addToMatch(USER_ID, id);
 		Neo4jOperationStatus status = neo4jClient.deleteElement(GraphElementTypeEnum.Node, NodeTypeEnum.User.getName(),
 				filter);
 		if (status.equals(Neo4jOperationStatus.OK)) {

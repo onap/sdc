@@ -54,7 +54,12 @@ public abstract class ESTimeBasedDao {
 	private Map<String, String> indexPrefix2CreationPeriod;
 
 	private ConfigurationManager configurationManager;
+    
+	@Resource(name = "elasticsearch-client")
+    private ElasticSearchClient esClient;
 
+    protected final Map<String, Class<?>> typesToClasses = new HashMap<>();
+    
 	protected ESTimeBasedDao() {
 		gson = new GsonBuilder().setPrettyPrinting().create();
 		configurationManager = ConfigurationManager.getConfigurationManager();
@@ -64,11 +69,6 @@ public abstract class ESTimeBasedDao {
 	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-
-	@Resource(name = "elasticsearch-client")
-	private ElasticSearchClient esClient;
-
-	protected final Map<String, Class<?>> typesToClasses = new HashMap<>();
 
 	public abstract String getIndexPrefix();
 
@@ -240,8 +240,7 @@ public abstract class ESTimeBasedDao {
 		}
 	}
 
-	public List<ESTimeBasedEvent> customFindEvent(String typeName, QueryBuilder query, SortBuilder sortBuilder)
-			throws JSONException {
+	public List<ESTimeBasedEvent> customFindEvent(String typeName, QueryBuilder query, SortBuilder sortBuilder) {
 		List<ESTimeBasedEvent> results = doCustomFindForEvent(typeName, query, sortBuilder, MAX_SEARCH_SIZE);
 		if (results == null) {
 			results = new ArrayList<>();
@@ -271,11 +270,8 @@ public abstract class ESTimeBasedDao {
 	}
 
 	private boolean somethingFound(final SearchResponse searchResponse) {
-		if (searchResponse == null || searchResponse.getHits() == null || searchResponse.getHits().getHits() == null
-				|| searchResponse.getHits().getHits().length == 0) {
-			return false;
-		}
-		return true;
+		return searchResponse == null && searchResponse.getHits() == null && searchResponse.getHits().getHits() == null
+				&& searchResponse.getHits().getHits().length == 0;
 	}
 
 	public String getEsHost() {
