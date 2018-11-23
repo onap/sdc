@@ -2067,7 +2067,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private Either<Boolean, ResponseFormat> validateDeploymentArtifact(Component parentComponent, String parentId, boolean isCreate, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact, NodeTypeEnum parentType) {
 
         Either<Boolean, ResponseFormat> result = Either.left(true);
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<ResponseFormat>();
+        Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
 
         validateArtifactTypeExists(responseWrapper, artifactInfo);
 
@@ -2272,8 +2272,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Boolean, ResponseFormat> validateHeatEnvDeploymentArtifact(Component parentComponent, String parentId, ArtifactDefinition artifactInfo, NodeTypeEnum parentType) {
 
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<ResponseFormat>();
-        Wrapper<ArtifactDefinition> heatMDWrapper = new Wrapper<ArtifactDefinition>();
+        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+        Wrapper<ArtifactDefinition> heatMDWrapper = new Wrapper<>();
         Wrapper<byte[]> payloadWrapper = new Wrapper<>();
 
         if (errorWrapper.isEmpty()) {
@@ -2671,7 +2671,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(NodeTypeEnum parentType) {
 
         Map<String, ArtifactTypeConfig> deploymentArtifacts ;
-        List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
+        List<ArtifactType> artifactTypes = new ArrayList<>();
 
         if (parentType.equals(NodeTypeEnum.Service)) {
             deploymentArtifacts = ConfigurationManager.getConfigurationManager()
@@ -4243,7 +4243,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public Map<String, Object> buildJsonForUpdateArtifact(String artifactId, String artifactName, String artifactType, ArtifactGroupTypeEnum artifactGroupType, String label, String displayName, String description, byte[] artifactContent,
                                                           List<ArtifactTemplateInfo> updatedRequiredArtifacts, List<HeatParameterDefinition> heatParameters) {
 
-        Map<String, Object> json = new HashMap<String, Object>();
+        Map<String, Object> json = new HashMap<>();
         if (artifactId != null && !artifactId.isEmpty()) {
             json.put(Constants.ARTIFACT_ID, artifactId);
         }
@@ -4758,8 +4758,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public Either<ArtifactDefinition, ResponseFormat> uploadArtifactToComponentByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
-        Either<ArtifactDefinition, ResponseFormat> uploadArtifactResult;
-        ArtifactDefinition uploadArtifact = null;
         Component component = null;
         String componentId = null;
         ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
