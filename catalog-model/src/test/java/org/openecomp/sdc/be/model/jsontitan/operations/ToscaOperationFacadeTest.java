@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
@@ -67,6 +68,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -191,8 +194,7 @@ public class ToscaOperationFacadeTest {
         props.put(GraphPropertyEnum.UUID, component.getUUID());
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        TopologyTemplate toscaElement = new TopologyTemplate();
-        toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
+        ToscaElement toscaElement = getToscaElementForTest();
         when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex),any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
         when(titanDaoMock.getByCriteria(ModelConverter.getVertexType(component), props)).thenReturn(Either.left(list));
         result = testInstance.findLastCertifiedToscaElementByUUID(component);
@@ -345,8 +347,7 @@ public class ToscaOperationFacadeTest {
         Either<Component, StorageOperationStatus> result;
         String id = "id";
         GraphVertex graphVertex = getTopologyTemplateVertex();
-        ToscaElement toscaElement = new TopologyTemplate();
-        toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
+        ToscaElement toscaElement = getToscaElementForTest();
         when(titanDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
         when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
         result = testInstance.getToscaElement(id, JsonParseFlagEnum.ParseAll);
@@ -364,6 +365,120 @@ public class ToscaOperationFacadeTest {
         when(nodeTypeOperation.markComponentToDelete(graphVertex)).thenReturn(Either.left(graphVertex));
         result = testInstance.markComponentToDelete(component);
         assertEquals(result, StorageOperationStatus.OK);
+    }
+
+    @Test
+    public void testDelToscaComponent() {
+        Either<Component, StorageOperationStatus> result;
+        String componentId = "compId";
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        ToscaElement toscaElement = getToscaElementForTest();
+        when(titanDaoMock.getVertexById(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
+        result = testInstance.deleteToscaComponent(componentId);
+        assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testGetLatestByToscaResourceName() {
+        Either<Component, StorageOperationStatus> result;
+        String toscaResourceName = "name";
+        ToscaElement toscaElement = getToscaElementForTest();
+
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId(toscaResourceName);
+        Map<GraphPropertyEnum, Object> props = new HashMap<>();
+        props.put(GraphPropertyEnum.VERSION, "1.0");
+        graphVertex.setMetadataProperties(props);
+        graphVertexList.add(graphVertex);
+
+        when(titanDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        result = testInstance.getLatestByToscaResourceName(toscaResourceName);
+        assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testGetFollowed() {
+        Either<Set<Component>, StorageOperationStatus> result;
+        String userId = "id";
+        Set<LifecycleStateEnum> lifecycleStates = new HashSet<>();
+        Set<LifecycleStateEnum> lastStateStates = new HashSet<>();
+        lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
+        lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        lifecycleStates.add(LifecycleStateEnum.CERTIFIED);
+        lastStateStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
+        ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
+        List<ToscaElement> toscaEleList = new ArrayList<>();
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaEleList.add(toscaElement);
+        when(nodeTypeOperation.getFollowedComponent(userId, lifecycleStates, lastStateStates, componentType)).thenReturn(Either.left(toscaEleList));
+        result = testInstance.getFollowed(userId, lifecycleStates, lastStateStates, componentType);
+        assertTrue(result.isLeft());
+        assertEquals(1, result.left().value().size());
+    }
+
+    @Test
+    public void testGetBySystemName() {
+        Either<List<Component>, StorageOperationStatus> result;
+        String sysName = "sysName";
+        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+        ToscaElement toscaElement = getToscaElementForTest();
+        List<GraphVertex> componentVertices = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        componentVertices.add(graphVertex);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
+
+        propertiesToMatch.put(GraphPropertyEnum.SYSTEM_NAME, sysName);
+        propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentTypeEnum.name());
+
+        propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+
+        when(titanDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(componentVertices));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        result = testInstance.getBySystemName(componentTypeEnum, sysName);
+        assertTrue(result.isLeft());
+        assertEquals(1, result.left().value().size());
+    }
+
+    @Test
+    public void testGetCompByNameAndVersion() {
+        Either<Component, StorageOperationStatus> result;
+        ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
+        String name = "name";
+        String version = "1.0";
+        JsonParseFlagEnum parseFlag = JsonParseFlagEnum.ParseAll;
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertexList.add(graphVertex);
+        ToscaElement toscaElement = getToscaElementForTest();
+        Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> hasNotProperties = new EnumMap<>(GraphPropertyEnum.class);
+
+        hasProperties.put(GraphPropertyEnum.NAME, name);
+        hasProperties.put(GraphPropertyEnum.VERSION, version);
+        hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
+        hasProperties.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+        when(titanDaoMock.getByCriteria(null, hasProperties, hasNotProperties, parseFlag)).thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        result = testInstance.getComponentByNameAndVersion(componentType, name, version, parseFlag);
+        assertTrue(result.isLeft());
+    }
+
+    private ToscaElement getToscaElementForTest() {
+        ToscaElement toscaElement = new TopologyTemplate();
+        toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
+        return toscaElement;
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
