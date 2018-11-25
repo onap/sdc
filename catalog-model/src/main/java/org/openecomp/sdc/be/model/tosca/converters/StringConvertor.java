@@ -45,7 +45,7 @@ public class StringConvertor implements PropertyValueConverter {
         String coverted = ValidationUtils.removeNoneUtf8Chars(original);
 
         // coverted = ValidationUtils.convertHtmlTagsToEntities(coverted);
-        coverted = ValidationUtils.normaliseWhitespace(coverted);
+        //coverted = ValidationUtils.normaliseWhitespace(coverted);
         coverted = ValidationUtils.stripOctets(coverted);
         coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
 

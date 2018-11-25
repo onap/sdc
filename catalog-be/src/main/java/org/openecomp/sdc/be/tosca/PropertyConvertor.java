@@ -198,7 +198,7 @@ public class PropertyConvertor {
     }
 
     private boolean valueStartsWithNonJsonChar(String value) {
-        return value.startsWith("/") || value.startsWith(":");
+        return value.startsWith("/") || value.startsWith(":") || value.startsWith("#");
     }
     
     public void convertAndAddValue(Map<String, DataTypeDefinition> dataTypes,

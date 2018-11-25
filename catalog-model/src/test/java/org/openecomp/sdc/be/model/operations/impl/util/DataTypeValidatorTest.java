@@ -411,7 +411,7 @@ public class DataTypeValidatorTest {
 
         // 1 - check Spaces eliminated + html square brackets eliminated
         map_1.put("key1", "<b>test</b>");
-        map_1.put("key2", "        test");
+        map_1.put("key2", " test");
         resMap_1.put("key1", "test");
         resMap_1.put("key2", " test");
         String value = gson.toJson(map_1);
