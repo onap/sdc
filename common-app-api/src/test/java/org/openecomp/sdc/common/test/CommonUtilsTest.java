@@ -146,7 +146,7 @@ public class CommonUtilsTest {
 	public void testnormaliseWhitespace() {
 
         assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo boo"));
-        assertEquals("goo boo ", ValidationUtils.normaliseWhitespace("goo boo	"));
+        assertEquals("goo boo ", ValidationUtils.normaliseWhitespace("goo boo   "));
         assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo    boo"));
 	}
 
