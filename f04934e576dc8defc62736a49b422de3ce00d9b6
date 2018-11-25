@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_df0cf944",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/http/HttpNotificationTask.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T19:09:54Z",
+      "side": 1,
+      "message": "You\u0027ve introduced a bug :(. The itemIds member is never re-assigned, so you will always re-try with the original itemIds (every time call() is called, that is).",
+      "range": {
+        "startLine": 84,
+        "startChar": 16,
+        "endLine": 84,
+        "endChar": 81
+      },
+      "revId": "f04934e576dc8defc62736a49b422de3ce00d9b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ff077d1b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/http/HttpNotificationTask.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T19:09:54Z",
+      "side": 1,
+      "message": "What happens to the caller of this? Won\u0027t it generate a NullPointerException.",
+      "range": {
+        "startLine": 116,
+        "startChar": 12,
+        "endLine": 116,
+        "endChar": 64
+      },
+      "revId": "f04934e576dc8defc62736a49b422de3ce00d9b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
