@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_1fffe168",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-25T08:48:56Z",
+      "side": 1,
+      "message": "please rename to componentInstanceBusinessLogic. There are many BusinessLogic and reader of the code need clear identification of variable types.",
+      "revId": "b51f28ad4e514f6decf708d6553142c2c3b2df65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
