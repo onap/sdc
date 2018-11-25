@@ -259,7 +259,35 @@ public class ValidationUtils {
 	}
 
 	public static String normaliseWhitespace(String str) {
-		return StringUtil.normaliseWhitespace(str);
+		StringBuilder sb = new StringBuilder(str.length());
+		appendNormalisedWhitespace(sb, str, false);
+		return sb.toString();
+	}
+
+	private static void appendNormalisedWhitespace(StringBuilder accum, String string, boolean stripLeading) {
+		boolean lastWasWhite = false;
+		boolean reachedNonWhite = false;
+
+		int len = string.length();
+		int c;
+		for (int i = 0; i < len; i+= Character.charCount(c)) {
+			c = string.codePointAt(i);
+			if (isWhitespace(c)) {
+				if ((stripLeading && !reachedNonWhite) || lastWasWhite)
+					continue;
+				accum.append(' ');
+				lastWasWhite = true;
+			}
+			else {
+				accum.appendCodePoint(c);
+				lastWasWhite = false;
+				reachedNonWhite = true;
+			}
+		}
+	}
+
+	private static boolean isWhitespace(int c){
+		return c == ' ';
 	}
 
 	public static String stripOctets(String str) {
