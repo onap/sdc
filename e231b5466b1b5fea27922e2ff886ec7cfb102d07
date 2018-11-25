@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_df6dd933",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ManufacturerReferenceNumberHealer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T11:16:47Z",
+      "side": 1,
+      "message": "These can be final.",
+      "range": {
+        "startLine": 36,
+        "startChar": 1,
+        "endLine": 37,
+        "endChar": 42
+      },
+      "revId": "e231b5466b1b5fea27922e2ff886ec7cfb102d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ff68dd22",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ManufacturerReferenceNumberHealer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T11:16:47Z",
+      "side": 1,
+      "message": "Instead call this(VendorLicenseFacadeFactory.getInstance().createInterface(), FeatureGroupDaoFactory.getInstance().createInterface());",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 78
+      },
+      "revId": "e231b5466b1b5fea27922e2ff886ec7cfb102d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bf72550f",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T11:16:47Z",
+      "side": 1,
+      "message": "These can be final, can\u0027t they?",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 44
+      },
+      "revId": "e231b5466b1b5fea27922e2ff886ec7cfb102d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9f775102",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T11:16:47Z",
+      "side": 1,
+      "message": "Is this constructor has the field assignments, the other constructor should call this(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(), ZusammenAdaptorFactory.getInstance().createInterface(), CandidateServiceFactory.getInstance().createInterface()); This may help ensure that you don\u0027t omit a field initialization by mistake.",
+      "revId": "e231b5466b1b5fea27922e2ff886ec7cfb102d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5f61e937",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/test/java/org/openecomp/sdc/healing/healers/ManufacturerReferenceNumberHealerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-25T11:16:47Z",
+      "side": 1,
+      "message": "This method seems too long. Please split it into multiple tests or methods.",
+      "revId": "e231b5466b1b5fea27922e2ff886ec7cfb102d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
