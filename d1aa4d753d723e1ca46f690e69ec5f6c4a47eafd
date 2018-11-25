@@ -16,6 +16,24 @@
       "revId": "d1aa4d753d723e1ca46f690e69ec5f6c4a47eafd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f0cfc3ae",
+        "filename": "sdc-os-chef/environments/Template.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-11-25T12:37:54Z",
+      "side": 1,
+      "message": "once a VSP is archived we are calling to this catalog API to notify. if for some reason this API will change, we do not want to do a fix in the code(although this URL is defined in the code as a fallback)",
+      "parentUuid": "9adffdf1_f0f823e7",
+      "revId": "d1aa4d753d723e1ca46f690e69ec5f6c4a47eafd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
