@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review-1: Oren  Kleks <orenkle@amdocs.com>
+Code-Review+2: Michael Lando <michael.lando@intl.att.com>
+Submitted-by: Michael Lando <michael.lando@intl.att.com>
+Submitted-at: Mon, 26 Nov 2018 17:17:40 +0000
+Reviewed-on: https://gerrit.onap.org/r/73515
+Project: sdc
+Branch: refs/heads/casablanca
