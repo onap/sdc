@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_d36872bc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T16:04:10Z",
+      "side": 1,
+      "message": "Consider creating a set of invalid chars, and iterate over them",
+      "revId": "806757f7e17bb4159a967223b456350137705df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_739f46b5",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ValidationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T16:04:10Z",
+      "side": 1,
+      "message": "This conversion is dangerous. \nYou presume that the encoding of the \u0027 \u0027 and the c char is the same.\n\njava.lang.Character has: \nCharacter.isSpaceChar(c)\nCharacter.isWhitespace(c)",
+      "revId": "806757f7e17bb4159a967223b456350137705df6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
