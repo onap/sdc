@@ -17,3 +17,4 @@ SDC Documentation
    logging.rst
    release-notes.rst
    sdcsdks.rst
+   dcaedesigner.rst
