@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_9393caf9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "sonar remark - rename notifier which hides field from line 80",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b3e04e97",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/AsyncNotifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "size of pool and default should be taken from configuration framework",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_13e91a80",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/AsyncNotifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "no error ? exceptions?",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3371bee0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/AsyncNotifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "if somehow retries is a negative number we will be in endless loop.\nChange to retries \u003c\u003d 0",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_73c0a6e0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/NotifierFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "Sonar remark\nAdd private constructor",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d302b23d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/http/HttpNotificationTask.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "why synchronized is needed?\nWhy Exception was hidden from the original function?",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_33a3fe50",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/http/HttpTaskProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "should be constant",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f3ab361c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/http/HttpTaskProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-26T19:45:28Z",
+      "side": 1,
+      "message": "should be constant",
+      "revId": "c3b2704174dddcc1a748ce248e1acc1c2e48dfde",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
