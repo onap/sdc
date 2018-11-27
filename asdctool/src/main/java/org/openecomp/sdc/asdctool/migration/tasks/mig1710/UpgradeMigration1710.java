@@ -1110,6 +1110,7 @@ public class UpgradeMigration1710 implements PostMigration {
                 }
             } catch (InterruptedException e) {
                 log.error("Error occurred: {}", e.getMessage());
+                Thread.currentThread().interrupt();
             }
         }
         return false;

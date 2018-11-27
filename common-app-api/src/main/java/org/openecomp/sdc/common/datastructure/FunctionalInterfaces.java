@@ -491,7 +491,11 @@ public class FunctionalInterfaces {
 			try {
 				T calcValue = future.get(timeoutInMs, TimeUnit.MILLISECONDS);
 				result = Either.left(calcValue);
-			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			} catch (InterruptedException e) {
+				LOGGER.debug("InterruptedException in runMethodWithTimeOut", e);
+				Thread.currentThread().interrupt();
+				result = Either.right(false);
+			} catch (ExecutionException | TimeoutException e) {
 				LOGGER.debug("method run was canceled because it has passed its time limit of {} MS", timeoutInMs, e);
 				result = Either.right(false);
 			} finally {

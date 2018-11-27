@@ -91,7 +91,7 @@ public class CacheMangerOperation implements ICacheMangerOperation {
             Integer syncWorkerExacutionIntrval = applicationL2CacheConfig.getQueue().getSyncIntervalInSecondes();
             log.debug("starting Sync worker:{} with executions interval:{} ", workerName, syncWorkerExacutionIntrval);
             SyncWorker syncWorker = new SyncWorker(workerName, this);
-            this.syncExecutor.scheduleAtFixedRate(syncWorker, 5 * 60, syncWorkerExacutionIntrval, TimeUnit.SECONDS);
+            this.syncExecutor.scheduleAtFixedRate(syncWorker, 5 * 60L, syncWorkerExacutionIntrval, TimeUnit.SECONDS);
             this.workerExecutor = Executors.newFixedThreadPool(numberOfWorkers, threadFactory);
             CacheWorker cacheWorker;
             for (int i = 0; i < numberOfWorkers; i++) {
@@ -170,6 +170,7 @@ public class CacheMangerOperation implements ICacheMangerOperation {
             log.debug("all Cache workers finished");
         } catch (InterruptedException e) {
             log.error("failed while waiting for Cache worker", e);
+            Thread.currentThread().interrupt();
         }
         try {
             if (!workerExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
@@ -178,6 +179,7 @@ public class CacheMangerOperation implements ICacheMangerOperation {
             log.debug("sync worker finished");
         } catch (InterruptedException e) {
             log.error("failed while waiting for sync worker", e);
+            Thread.currentThread().interrupt();
         }
     }
 
