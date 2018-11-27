@@ -17,6 +17,8 @@
 package org.openecomp.sdcrests.item.rest.services.catalog.notification.http;
 
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
@@ -40,6 +42,13 @@ public class HttpTaskProducer
 
     private static final String CATALOG_HTTP_PROTOCOL = "HTTP";
     private static final String CATALOG_HTTPS_PROTOCOL = "HTTPS";
+    private static final Map<ItemAction, String> ACTION_PATHS;
+
+    static {
+        ACTION_PATHS = new EnumMap<>(ItemAction.class);
+        ACTION_PATHS.put(ItemAction.ARCHIVE, "archived");
+        ACTION_PATHS.put(ItemAction.RESTORE, "restored");
+    }
 
     private final String notifyCatalogUrl;
 
@@ -81,15 +90,21 @@ public class HttpTaskProducer
         return createNotificationTask(itemIds, action);
     }
 
-    private static String getEndpoint(ItemAction action) {
+    private HttpNotificationTask createNotificationTask(Collection<String> itemIds, ItemAction action) {
+        String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
+        String notificationEndpoint = notifyCatalogUrl + getApiPath(action);
+        LOGGER.debug("Catalog notification URL: {}", notificationEndpoint);
+        return new HttpNotificationTask(notificationEndpoint, userId, itemIds);
+    }
 
-        if (action == ItemAction.ARCHIVE) {
-            return "archived";
-        } else if (action == ItemAction.RESTORE) {
-            return "restored";
-        } else {
+    static String getApiPath(ItemAction action) {
+
+        String path = ACTION_PATHS.get(action);
+        if (path == null) {
             throw new IllegalArgumentException("Unsupported action: " + action.name());
         }
+
+        return path;
     }
 
     @Override
@@ -98,10 +113,4 @@ public class HttpTaskProducer
         task.call();
     }
 
-    private HttpNotificationTask createNotificationTask(Collection<String> itemIds, ItemAction action) {
-        String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
-        String notificationEndpoint = notifyCatalogUrl + getEndpoint(action);
-        LOGGER.debug("Catalog notification URL: " + notificationEndpoint);
-        return new HttpNotificationTask(notificationEndpoint, userId, itemIds);
-    }
 }

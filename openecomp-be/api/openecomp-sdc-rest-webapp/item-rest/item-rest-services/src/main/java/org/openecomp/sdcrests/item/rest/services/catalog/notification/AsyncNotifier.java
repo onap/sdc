@@ -17,10 +17,12 @@
 package org.openecomp.sdcrests.item.rest.services.catalog.notification;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -41,9 +43,19 @@ public class AsyncNotifier implements Notifier {
     private static final long DEFAULT_INTERVAL = 5000;
 
     private final BiFunction<Collection<String>, ItemAction, Callable<NextAction>> taskProducer;
+    private final int numberOfRetries;
+    private final long retryInterval;
+
 
     AsyncNotifier(BiFunction<Collection<String>, ItemAction, Callable<NextAction>> taskProducer) {
+        this(taskProducer, DEFAULT_NUM_OF_RETRIES, DEFAULT_INTERVAL);
+    }
+
+    AsyncNotifier(BiFunction<Collection<String>, ItemAction, Callable<NextAction>> taskProducer, int numOfRetries,
+            long retryInterval) {
         this.taskProducer = taskProducer;
+        this.numberOfRetries = numOfRetries;
+        this.retryInterval = retryInterval;
     }
 
     @Override
@@ -51,8 +63,7 @@ public class AsyncNotifier implements Notifier {
 
         Callable<AsyncNotifier.NextAction> worker = taskProducer.apply(itemIds, action);
 
-        RetryingTask retryingTask =
-                new RetryingTask(worker, DEFAULT_NUM_OF_RETRIES, DEFAULT_INTERVAL, EXECUTOR_SERVICE);
+        RetryingTask retryingTask = new RetryingTask(worker, numberOfRetries, retryInterval, EXECUTOR_SERVICE);
 
         EXECUTOR_SERVICE.submit(LoggingContext.copyToCallable(retryingTask));
     }
@@ -68,19 +79,37 @@ public class AsyncNotifier implements Notifier {
         private final Callable<AsyncNotifier.NextAction> worker;
         private final long delay;
         private final ScheduledExecutorService scheduler;
-        private volatile int retries;
+        private final AtomicInteger retries;
 
         RetryingTask(Callable<AsyncNotifier.NextAction> worker, int numOfRetries, long delay,
                 ScheduledExecutorService scheduler) {
 
-            this.worker = worker;
-            this.retries = numOfRetries;
-            this.delay = delay;
-            this.scheduler = scheduler;
+            this.worker = Objects.requireNonNull(worker);
+            this.retries = new AtomicInteger(requirePositiveRetries(numOfRetries));
+            this.delay = requirePositiveDelay(delay);
+            this.scheduler = Objects.requireNonNull(scheduler);
+        }
+
+        private int requirePositiveRetries(int number) {
+
+            if (number < 1) {
+                throw new IllegalArgumentException("Number of retries must be positive");
+            }
+
+            return number;
+        }
+
+        private long requirePositiveDelay(long number) {
+
+            if (number < 1) {
+                throw new IllegalArgumentException("Delay must be positive");
+            }
+
+            return number;
         }
 
         @Override
-        public synchronized Void call() throws Exception {
+        public Void call() throws Exception {
 
             NextAction next = worker.call();
             if (next == NextAction.DONE) {
@@ -88,8 +117,8 @@ public class AsyncNotifier implements Notifier {
                 return null;
             }
 
-            retries--;
-            if (retries == 0) {
+            int attempts = retries.decrementAndGet();
+            if (attempts < 1) {
                 LOGGER.warn("Exhausted number of retries for task {}, exiting", worker);
                 return null;
             }
