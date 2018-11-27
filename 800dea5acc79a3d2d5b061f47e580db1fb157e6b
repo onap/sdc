@@ -16,6 +16,29 @@
       "revId": "800dea5acc79a3d2d5b061f47e580db1fb157e6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_db1ba4c8",
+        "filename": "security-utils/src/main/java/org/openecomp/sdc/security/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-11-27T16:05:47Z",
+      "side": 1,
+      "message": "First, this will cause double-logging, because the exception is re-thrown and will probably be logged elsewhere. I\u0027d say catching it here is pointless. Second, the message is meaningless - how can \"cannot perform\" help understand the problem? Thirds, there must be a space after the comma according to ONAP Java coding style.",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 51
+      },
+      "revId": "800dea5acc79a3d2d5b061f47e580db1fb157e6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
