@@ -67,6 +67,8 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM
 @Validated
 public class ItemsImpl implements Items {
 
+    private static final String ONBOARDING_METHOD = "onboardingMethod";
+
     private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
 
     private static ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
@@ -92,8 +94,6 @@ public class ItemsImpl implements Items {
                 .put(ItemAction.RESTORE, new ActionSideAffects(ActivityType.Restore, NotificationEventTypes.RESTORE));
     }
 
-    private static final String ONBOARDING_METHOD = "onboardingMethod";
-
 
     @Override
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
@@ -115,10 +115,10 @@ public class ItemsImpl implements Items {
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
         try {
-            Notifier notifier = NotifierFactory.getInstance();
-            notifier.execute(Collections.singleton(itemId), request.getAction());
+            Notifier catalogNotifier = NotifierFactory.getInstance();
+            catalogNotifier.execute(Collections.singleton(itemId), request.getAction());
         } catch (Exception e) {
-            LOGGER.error("Failed to send catalog notification on item " + itemId + " Error: " + e.getMessage());
+            LOGGER.error("Failed to send catalog notification on item {}", itemId, e);
         }
 
         return Response.ok().build();
@@ -222,7 +222,7 @@ public class ItemsImpl implements Items {
             try {
                 notifier.notifySubscribers(syncEvent, userName);
             } catch (Exception e) {
-                LOGGER.error("Failed to send sync notification to users subscribed to item '" + itemId);
+                LOGGER.error("Failed to send sync notification to users subscribed to item '{}'", itemId, e);
             }
         }
     }
