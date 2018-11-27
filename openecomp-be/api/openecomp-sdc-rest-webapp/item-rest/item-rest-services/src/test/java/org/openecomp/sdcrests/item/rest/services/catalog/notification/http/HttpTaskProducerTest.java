@@ -17,11 +17,16 @@
 package org.openecomp.sdcrests.item.rest.services.catalog.notification.http;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.EntryNotConfiguredException;
+import org.openecomp.sdcrests.item.types.ItemAction;
 
 /**
  * @author evitaliy
@@ -31,6 +36,20 @@ public class HttpTaskProducerTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    @Test
+    public void uniquePathExistsForEveryAction() {
+
+        ItemAction[] availableActions = ItemAction.values();
+        Set<String> collectedPaths = new HashSet<>(availableActions.length);
+        for (ItemAction action : availableActions) {
+            String path = HttpTaskProducer.getApiPath(action);
+            assertFalse("Path empty for action '" + action.name() + "'", path == null || path.isEmpty());
+            collectedPaths.add(path);
+        }
+
+        assertEquals("Paths not unique for some actions", availableActions.length, collectedPaths.size());
+    }
 
     @Test
     public void errorWhenProtocolNotDefined() {

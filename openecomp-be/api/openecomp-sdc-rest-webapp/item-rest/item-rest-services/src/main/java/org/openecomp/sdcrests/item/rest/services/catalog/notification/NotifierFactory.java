@@ -43,6 +43,10 @@ public class NotifierFactory {
 
     private static final Notifier INSTANCE;
 
+    private NotifierFactory() {
+        // prevent instantiation
+    }
+
     static {
         INSTANCE = createInstance();
     }
