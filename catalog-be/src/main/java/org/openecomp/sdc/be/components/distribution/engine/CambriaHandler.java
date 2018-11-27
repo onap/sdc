@@ -473,6 +473,7 @@ public class CambriaHandler {
             }
             catch (InterruptedException e) {
                 log.debug("Failed during sleep after sending the message.", e);
+                Thread.currentThread().interrupt();
             }
 
             log.debug("After sending notification data to topic {}. result is {}", topicName, result);
@@ -516,6 +517,7 @@ public class CambriaHandler {
             }
             catch (InterruptedException e) {
                 log.debug("Failed during sleep after sending the message.", e);
+                Thread.currentThread().interrupt();
             }
 
             log.debug("After sending notification data to topic {}. result is {}", topicName, result);
@@ -546,7 +548,13 @@ public class CambriaHandler {
                 response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
             }
         }
-        catch (IOException | InterruptedException e) {
+        catch (InterruptedException e) {
+            log.debug("InterruptedException while closing cambria publisher", e);
+            Thread.currentThread().interrupt();
+            response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
+            writeErrorToLog(response, methodName, SEND_NOTIFICATION);
+        }
+        catch (IOException e) {
             log.debug("Failed to close cambria publisher", e);
             response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
             writeErrorToLog(response, methodName, SEND_NOTIFICATION);

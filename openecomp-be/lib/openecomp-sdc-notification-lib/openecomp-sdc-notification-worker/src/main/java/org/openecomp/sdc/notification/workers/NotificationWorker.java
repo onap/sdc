@@ -68,6 +68,7 @@ public class NotificationWorker {
 	}
 
 	public class Poller extends Thread {
+		@Override
 		public void run() {
 			try {
 				while (!stopRunning) {
@@ -77,6 +78,7 @@ public class NotificationWorker {
 			}
 			catch (InterruptedException e) {
 				LOGGER.error("Interrupted Exception during Notification poller launch.", e);
+	            Thread.currentThread().interrupt();
 			}
 		}
 
