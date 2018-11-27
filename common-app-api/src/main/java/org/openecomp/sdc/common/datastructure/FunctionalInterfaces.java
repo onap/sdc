@@ -493,6 +493,7 @@ public class FunctionalInterfaces {
 				result = Either.left(calcValue);
 			} catch (InterruptedException | ExecutionException | TimeoutException e) {
 				LOGGER.debug("method run was canceled because it has passed its time limit of {} MS", timeoutInMs, e);
+	            Thread.currentThread().interrupt();
 				result = Either.right(false);
 			} finally {
 				pool.shutdownNow();

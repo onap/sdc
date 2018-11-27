@@ -71,6 +71,7 @@ public class AddContributorCommand extends Command {
             executor = Executors.newFixedThreadPool(DEFAULT_THREAD_NUMBER);
             executeAllTasks(executor, tasks);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new CommandExecutionRuntimeException(COMMAND_ADD_CONTRIBUTOR_FAILED, e);
         } finally {
             if (executor != null) {

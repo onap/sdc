@@ -47,7 +47,7 @@ public class SecurityUtil {
                         LOG.warn("Unfamiliar command please use: \n>aes <encrypt/decrypt> 'message to encrypt/decrypt' ");
                 }
             }catch(Exception e){
-                LOG.debug( "cannot perform {}:" );
+                LOG.debug( "cannot perform {}:",e);
                 throw e;
             }
             LOG.debug( "output: {}", res!=null && res.isLeft() ? res.left().value() : "ERROR" );

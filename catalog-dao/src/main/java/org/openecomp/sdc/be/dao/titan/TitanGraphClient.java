@@ -381,7 +381,7 @@ public class TitanGraphClient {
 			PropertyKey propKey = null;
 			if (!graphMgt.containsPropertyKey(prop.getProperty())) {
 				Class<?> clazz = prop.getClazz();
-				if (!ArrayList.class.getName().equals(clazz.getName()) && !HashMap.class.getName().equals(clazz.getName())) {
+				if (!clazz.isAssignableFrom(ArrayList.class) && !clazz.isAssignableFrom(HashMap.class)) {
 					propKey = graphMgt.makePropertyKey(prop.getProperty()).dataType(prop.getClazz()).make();
 				}
 			} else {

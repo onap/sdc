@@ -63,6 +63,7 @@ public class Manager<T extends Job, E> {
 			log.debug("all workers finished");
 		} catch (InterruptedException e) {
 			log.error("failed while waiting for", e);
+            Thread.currentThread().interrupt();
 		}
 		return outputQueue;
 	}
