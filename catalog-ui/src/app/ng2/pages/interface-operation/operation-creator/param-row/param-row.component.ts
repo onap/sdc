@@ -29,7 +29,6 @@ export class ParamRowComponent {
                 prop => prop.type
             )
         );
-        console.log(this.dataTypeService.getAllDataTypes());
         this.onChangeType();
     }
 

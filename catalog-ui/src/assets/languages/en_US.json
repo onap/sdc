@@ -458,6 +458,23 @@
     "NEW_WORKFLOW_ASSOCIATION": "New Workflow",
     "EXISTING_WORKFLOW_ASSOCIATION": "Existing Workflow",
 
+    "OPERATION_NAME": "Operation Name",
+    "OPERATION_DESCRIPTION": "Description",
+    "OPERATION_WORKFLOW_ASSIGNMENT": "Workflow Assignment",
+    "OPERATION_WORKFLOW": "Workflow",
+    "OPERATION_WORKFLOW_ARCHIVED": "Archived",
+    "OPERATION_WORKFLOW_VERSION": "Workflow Version",
+    "OPERATION_ADD_PARAMS": "Add Paramaters",
+    "OPERATION_PARAM_NAME": "Name",
+    "OPERATION_PARAM_TYPE": "Type",
+    "OPERATION_PARAM_PROPERTY": "Property",
+    "OPERATION_PARAM_MANDATORY": "Mandatory",
+    "EMPTY_PARAM_TABLE_HEADER": "NO PARAMETERS TO SHOW",
+    "EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1": "Select Workflow and Workflow Version above",
+    "EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2": "in order to see the parameters",
+    "EMPTY_PARAM_TABLE_NO_WORKFLOWS": "Only <b>certified</b> workflow versions can be assigned to an operation",
+
+
     "=========== PLUGIN NOT CONNECTED ===========": "",
     "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
     "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later.",

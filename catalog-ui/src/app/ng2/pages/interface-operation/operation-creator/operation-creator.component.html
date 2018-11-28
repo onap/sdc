@@ -21,7 +21,7 @@
 
         <div class="side-by-side">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">Operation Name</label>
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">{{ 'OPERATION_NAME' | translate }}</label>
                 <input
                     type="text"
                     name="type"
@@ -32,7 +32,7 @@
             </div>
 
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label">Description</label>
+                <label class="i-sdc-form-label">{{ 'OPERATION_DESCRIPTION' | translate }}</label>
                 <input
                     type="text"
                     data-tests-id="operationDescription"
@@ -45,7 +45,7 @@
 
         <div class="side-by-side association-options">
             <div class="i-sdc-form-item" *ngIf="enableWorkflowAssociation">
-                <label class="i-sdc-form-label">Workflow Assignment</label>
+                <label class="i-sdc-form-label">{{ 'OPERATION_WORKFLOW_ASSIGNMENT' | translate }}</label>
                 <ui-element-dropdown
                     data-tests-id="association-type"
                     [(value)]="operation.workflowAssociationType"
@@ -59,7 +59,9 @@
 
         <div class="side-by-side" *ngIf="isUsingExistingWF()">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">Workflow</label>
+                <label class="i-sdc-form-label required">{{ 'OPERATION_WORKFLOW' | translate }}
+                    <span class="archive-warning" *ngIf="archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
+                </label>
                 <ui-element-dropdown
                     data-tests-id="associated-workflow"
                     [readonly]="readonly"
@@ -70,10 +72,10 @@
             </div>
 
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">Workflow Version</label>
+                <label class="i-sdc-form-label required">{{ 'OPERATION_WORKFLOW_VERSION' | translate }}</label>
                 <ui-element-dropdown
                     data-tests-id="associated-workflow-version"
-                    [readonly]="!operation.workflowId || readonly"
+                    [readonly]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly"
                     [values]="workflowVersions"
                     [(value)]="operation.workflowVersionId"
                     (valueChange)="changeWorkflowVersion()">
@@ -91,15 +93,15 @@
                 *ngIf="!isUsingExistingWF() && !readonly"
                 data-tests-id="addInputParameter"
                 [ngClass]="{'disabled':!canAdd()}"
-                (click)="addParam()">Add Parameter</a>
+                (click)="addParam()">{{ 'OPERATION_ADD_PARAMS' | translate }}</a>
         </div>
 
         <div class="generic-table">
             <div class="header-row table-row">
-                <span class="cell header-cell field-name">Name</span>
-                <span class="cell header-cell field-type">Type</span>
+                <span class="cell header-cell field-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
+                <span class="cell header-cell field-type">{{ 'OPERATION_PARAM_TYPE' | translate }}</span>
                 <span class="cell header-cell field-property" *ngIf="currentTab == TYPE_INPUT">
-                    Property
+                    {{ 'OPERATION_PARAM_PROPERTY' | translate }}
                     <span
                         *ngIf="!isUsingExistingWF()"
                         class="sprite-new info-icon"
@@ -107,20 +109,18 @@
                         tooltipDelay="0">
                     </span>
                 </span>
-                <span class="cell header-cell field-mandatory" *ngIf="!isUsingExistingWF()">Mandatory</span>
+                <span class="cell header-cell field-mandatory" *ngIf="!isUsingExistingWF()">{{ 'OPERATION_PARAM_MANDATORY' | translate }}</span>
                 <span class="cell header-cell remove" *ngIf="!isUsingExistingWF() && !readonly">●●●</span>
             </div>
 
             <div class="empty-msg data-row" *ngIf="tableParameters.length === 0">
-                <div>NO PARAMETERS TO SHOW</div>
+                <div>{{ 'EMPTY_PARAM_TABLE_HEADER' | translate }}</div>
                 <div *ngIf="isUsingExistingWF() && !operation.workflowVersionId">
                     <div *ngIf="workflows.length">
-                        <span class="bold-message">Select Workflow and Workflow Version above</span>
-                        <span>in order to see the parameters</span>
+                        <span class="bold-message">{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1' | translate }}</span>
+                        <span>{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2' | translate }}</span>
                     </div>
-                    <div *ngIf="!workflows.length">
-                        Only <span class="bold-message">certified</span> workflow versions can be assigned to an operation
-                    </div>
+                    <div *ngIf="!workflows.length" [innerHTML]="'EMPTY_PARAM_TABLE_NO_WORKFLOWS' | translate"></div>
                 </div>
             </div>
 

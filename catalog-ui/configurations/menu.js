@@ -463,7 +463,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},            
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
-            {"text":"Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
+            {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
@@ -473,6 +473,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text": "Operation", "action": "onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
         ],
