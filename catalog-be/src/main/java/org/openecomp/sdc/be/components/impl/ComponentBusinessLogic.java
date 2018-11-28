@@ -53,6 +53,8 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import java.util.Comparator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1075,6 +1077,75 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public List<GroupDefinition> throwComponentException(ResponseFormat responseFormat) {
         throw new ComponentException(responseFormat);
     }
+
+  private Either<Boolean, ActionStatus> validateComponentForDeletion(List<String> componentUniqueIdList, ComponentTypeEnum componentTypeEnum){
+    if(componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
+      Either<ComponentMetadataData, StorageOperationStatus> componentMetaData;
+      for (String componentUniqueId : componentUniqueIdList){
+        componentMetaData = toscaOperationFacade.getComponentMetadata(componentUniqueId);
+        if(componentMetaData.isLeft()){
+          String distStatus = ((ServiceMetadataDataDefinition)componentMetaData.left().value().getMetadataDataDefinition()).getDistributionStatus();
+          if(distStatus != null && distStatus.equals(DistributionStatusEnum.DISTRIBUTED.name())){
+            return Either.right(ActionStatus.COMPONENT_DELETION_NOT_ALLOWED_DISTRIBUTED);
+          }
+        }
+      }
+    }
+
+    Either<Boolean, StorageOperationStatus> isInUse;
+    for (String componentUniqueId : componentUniqueIdList){
+      isInUse = toscaOperationFacade.isContainedComponent(componentUniqueId);
+      if(isInUse.isLeft() && isInUse.left().value()){
+        return Either.right(ActionStatus.COMPONENT_DELETION_NOT_ALLOWED_CONTAINED);
+      }
+    }
+
+    return Either.left(Boolean.TRUE);
+  }
+
+
+  public Either<List<String>, ResponseFormat> deleteComponent(String componentInvariantUUId, ComponentTypeEnum componentTypeEnum, User user) {
+
+    validateUserExists(user.getUserId(), "Delete Component", true);
+
+    Either<List<Component>, StorageOperationStatus> componentListEither = toscaOperationFacade.getComponentListByInvariantUuid(componentInvariantUUId, null);
+    if(componentListEither.isRight()){
+      return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND_TO_DELETE, componentTypeEnum.getValue(), componentInvariantUUId));
+    }
+    List<String> componentList = componentListEither.left().value().stream().map(Component::getUniqueId).collect(Collectors.toList());
+    List<Component> latestVersionList = componentListEither.left().value();
+    Component latestComponent = latestVersionList.size() == 1 ? latestVersionList.get(0) : latestVersionList.stream().max(
+        Comparator.comparingDouble(c -> Double.parseDouble(c.getVersion()))).get();
+    if(latestComponent.getComponentType() != componentTypeEnum){
+        return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND_TO_DELETE, componentTypeEnum.getValue(), componentInvariantUUId));
+    }
+
+    try {
+      Either<Boolean, ActionStatus> validateEither = validateComponentForDeletion(componentList, componentTypeEnum);
+      if(validateEither.isLeft()){
+        Either<Component, StorageOperationStatus> deleteEither;
+        for(Component component : componentListEither.left().value()){
+          deleteEither = toscaOperationFacade.deleteToscaComponent(component.getUniqueId());
+          if (deleteEither.isRight()) {
+            titanDao.rollback();
+            log.debug("Failed to delete {} {}. Response is {}", componentTypeEnum.getValue(), component.getName(), deleteEither.right().value());
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteEither.right().value(), component.getComponentType())));
+          }
+        }
+        titanDao.commit();
+        return Either.left(componentList);
+      }
+      else {
+        log.debug("{} {} deletion is not allowed. Response is {}", componentTypeEnum.getValue(), latestComponent.getName(), validateEither.right().value());
+        return Either.right(componentsUtils.getResponseFormat(validateEither.right().value(), componentTypeEnum.getValue(), latestComponent.getName()));
+      }
+    }
+    catch(Exception e){
+      log.debug("Exception occurred during {}. Response is {}", "delete", e);
+      titanDao.rollback();
+      return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_DELETED, componentTypeEnum.getValue(), latestComponent.getName()));
+    }
+  }
 }
 
 

@@ -26,6 +26,7 @@ import io.swagger.annotations.*;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -63,6 +64,8 @@ import java.util.Map;
 public class ResourcesServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ResourcesServlet.class);
+    public static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    public static final String MODIFIER_ID_IS = "modifier id is {}";
 
     @POST
     @Path("/resources")
@@ -79,12 +82,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
         try {
@@ -177,13 +180,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
 
@@ -216,13 +219,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
         ResourceBusinessLogic businessLogic = getResourceBL(context);
@@ -248,12 +251,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
 
@@ -292,7 +295,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
             ResourceBusinessLogic businessLogic = getResourceBL(context);
@@ -321,12 +324,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     public Response validateResourceName(@PathParam("resourceName") final String resourceName, @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         ResourceBusinessLogic businessLogic = getResourceBL(context);
 
@@ -359,7 +362,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF , url);
         try {
             List<Resource> resources = getResourceBL(context)
                     .getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, userId);
@@ -379,7 +382,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF , url);
         try {
             ResourceBusinessLogic businessLogic = getResourceBL(context);
             List<Resource> resouces = businessLogic.getAllCertifiedResources(false, HighestFilterEnum.ALL, userId);
@@ -405,12 +408,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
             ResourceBusinessLogic businessLogic = getResourceBL(context);
@@ -447,11 +450,11 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         init();
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
             Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -494,7 +497,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // retrieve user details
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
@@ -528,4 +531,44 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             return response;
         }
     }
+
+  @DELETE
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/resource-data/{resourceInvariantUUId}")
+  @ApiOperation(value = "Delete Resource Data", httpMethod = "DELETE", notes = "Delete Resource")
+  @ApiResponses(value = {@ApiResponse(code = 201, message = "Delete Resource"),
+      @ApiResponse(code = 409, message = "Restricted operation"),
+      @ApiResponse(code = 400, message = "Invalid content / Missing content"),
+      @ApiResponse(code = 404, message = "Resource not found")})
+  public Response deleteResourceData(
+      @ApiParam(value = "Resource Invariant UUId") @PathParam("resourceInvariantUUId") String resourceInvariantUUId,
+      @Context final HttpServletRequest request,
+      @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+    ServletContext context = request.getSession().getServletContext();
+    String url = request.getMethod() + " " + request.getRequestURI();
+    log.debug(START_HANDLE_REQUEST_OF, url);
+
+    User modifier = new User();
+    modifier.setUserId(userId);
+    log.debug(MODIFIER_ID_IS, userId);
+
+    try {
+      ComponentBusinessLogic businessLogic = getComponentBL(ComponentTypeEnum.RESOURCE, context);
+      Either<List<String>, ResponseFormat> actionResponse = businessLogic.deleteComponent(resourceInvariantUUId, ComponentTypeEnum.RESOURCE, modifier);
+      if (actionResponse.isRight()) {
+        log.debug("failed to delete resource data");
+        return buildErrorResponse(actionResponse.right().value());
+      }
+
+      Object result = RepresentationUtils.toRepresentation(actionResponse.left().value());
+      return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+    }
+    catch (Exception e) {
+      BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource");
+      log.debug("delete resource data failed with exception", e);
+      return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+    }
+  }
 }

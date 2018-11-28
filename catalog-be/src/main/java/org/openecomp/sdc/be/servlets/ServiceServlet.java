@@ -26,6 +26,7 @@ import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
 import org.apache.http.HttpStatus;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -58,6 +59,8 @@ import java.util.Map;
 public class ServiceServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ServiceServlet.class);
+    public static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    public static final String MODIFIER_ID_IS = "modifier id is {}";
 
     @POST
     @Path("/services")
@@ -70,11 +73,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -120,12 +123,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response validateServiceName(@PathParam("serviceName") final String serviceName, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response = null;
         try {
             ServiceBusinessLogic businessLogic = getServiceBL(context);
@@ -156,11 +159,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
         init();
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<String> uuidWrapper = new Wrapper<>();
         Wrapper<String> versionWrapper = new Wrapper<>();
@@ -228,13 +231,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response deleteService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
 
@@ -265,13 +268,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response deleteServiceByNameAndVersion(@PathParam("serviceName") final String serviceName, @PathParam("version") final String version, @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
 
@@ -307,11 +310,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
 
@@ -369,11 +372,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
         Response response = null;
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}",userId);
+        log.debug(MODIFIER_ID_IS,userId);
 
         ServiceBusinessLogic businessLogic;
         Either<List<GroupInstanceProperty>, ResponseFormat> actionResponse = null;
@@ -418,12 +421,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -464,7 +467,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -501,11 +504,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -540,11 +543,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -578,11 +581,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -614,11 +617,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
         try {
@@ -649,12 +652,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -681,5 +684,45 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         }
     }
+
+  @DELETE
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/service-data/{serviceInvariantUUId}")
+  @ApiOperation(value = "Delete Service Data", httpMethod = "DELETE", notes = "Delete Service")
+  @ApiResponses(value = {@ApiResponse(code = 201, message = "Delete Service"),
+      @ApiResponse(code = 409, message = "Restricted operation"),
+      @ApiResponse(code = 400, message = "Invalid content / Missing content"),
+      @ApiResponse(code = 404, message = "Service not found")})
+  public Response deleteServiceData(
+      @ApiParam(value = "Service Invariant UUId") @PathParam("serviceInvariantUUId") String serviceInvariantUUId,
+      @Context final HttpServletRequest request,
+      @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+    ServletContext context = request.getSession().getServletContext();
+    String url = request.getMethod() + " " + request.getRequestURI();
+    log.debug(START_HANDLE_REQUEST_OF, url);
+
+    User modifier = new User();
+    modifier.setUserId(userId);
+    log.debug(MODIFIER_ID_IS, userId);
+
+    try {
+      ComponentBusinessLogic businessLogic = getComponentBL(ComponentTypeEnum.SERVICE, context);
+      Either<List<String>, ResponseFormat> actionResponse = businessLogic.deleteComponent(serviceInvariantUUId, ComponentTypeEnum.SERVICE, modifier);
+      if (actionResponse.isRight()) {
+        log.debug("failed to delete service data");
+        return buildErrorResponse(actionResponse.right().value());
+      }
+
+      Object result = RepresentationUtils.toRepresentation(actionResponse.left().value());
+      return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+    }
+    catch (Exception e) {
+      BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
+        log.debug("delete service data failed with exception", e);
+      return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+    }
+  }
 
 }

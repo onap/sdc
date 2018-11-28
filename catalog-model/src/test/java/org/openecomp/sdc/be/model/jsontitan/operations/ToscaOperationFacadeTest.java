@@ -29,7 +29,46 @@
  */
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import com.thinkaurelius.titan.core.EdgeLabel;
+import com.thinkaurelius.titan.core.PropertyKey;
+import com.thinkaurelius.titan.core.RelationType;
+import com.thinkaurelius.titan.core.TitanEdge;
+import com.thinkaurelius.titan.core.TitanTransaction;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.TitanVertexProperty;
+import com.thinkaurelius.titan.core.TitanVertexQuery;
+import com.thinkaurelius.titan.core.VertexLabel;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,27 +99,6 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
@@ -539,5 +557,352 @@ public class ToscaOperationFacadeTest {
         GraphVertex graphVertex = new GraphVertex();
         graphVertex.setLabel(VertexTypeEnum.NODE_TYPE);
         return graphVertex;
+    }
+
+    @Test
+    public void testGetComponentListByInvariantUuid() {
+        ArgumentCaptor<Map> criteriaCapture = ArgumentCaptor.forClass(Map.class);
+        List<GraphVertex> mockVertices = Arrays.asList(getMockVertex("1"));
+        Either<List<GraphVertex>, TitanOperationStatus> returnedVertices = Either.left(mockVertices);
+
+        when(titanDaoMock.getByCriteria(eq(null), criteriaCapture.capture(), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(returnedVertices);
+        when(topologyTemplateOperationMock.getToscaElement(eq(mockVertices.get(0)), any())).thenReturn(Either.left(getServiceToscaElement("1")));
+        Either<List<Component>, StorageOperationStatus> fetchedComponents = testInstance.getComponentListByInvariantUuid("1", null);
+
+        assertTrue(fetchedComponents.isLeft());
+        List<Component> cmpts = fetchedComponents.left().value();
+        assertEquals(1, cmpts.size());
+        assertEquals("1", cmpts.get(0).getUniqueId());
+
+    }
+
+    private ToscaElement getServiceToscaElement(String id) {
+        ToscaElement toscaElement = new TopologyTemplate();
+        toscaElement.setMetadata(new HashMap<>());
+        toscaElement.getMetadata().put(JsonPresentationFields.COMPONENT_TYPE.getPresentation(), "SERVICE");
+        toscaElement.getMetadata().put(JsonPresentationFields.UNIQUE_ID.getPresentation(), id);
+        toscaElement.getMetadata().put(JsonPresentationFields.INVARIANT_UUID.getPresentation(), id);
+        return toscaElement;
+    }
+
+    private GraphVertex getMockVertexWithEdge(String id) {
+        GraphVertex graphVertex = new GraphVertex();
+        graphVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        graphVertex.addMetadataProperty(GraphPropertyEnum.INVARIANT_UUID, id);
+
+        TitanVertex testVertex = new TestVertex(id);
+        testVertex.addEdge(EdgeLabelEnum.INSTANCE_OF.name(), testVertex, null);
+        graphVertex.setVertex(testVertex);
+        return graphVertex;
+    }
+
+    private GraphVertex getMockVertex(String id) {
+        GraphVertex graphVertex = new GraphVertex();
+        graphVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        graphVertex.addMetadataProperty(GraphPropertyEnum.INVARIANT_UUID, id);
+        TitanVertex testVertex = new TestVertex(id);
+        graphVertex.setVertex(testVertex);
+        return graphVertex;
+    }
+
+    private class TestEdge implements TitanEdge {
+        private String id;
+        public TestEdge(String id){
+            this.id = id;
+        }
+
+        @Override
+        public EdgeLabel edgeLabel() {
+            return null;
+        }
+
+        @Override
+        public TitanVertex outVertex() {
+            return null;
+        }
+
+        @Override
+        public TitanVertex inVertex() {
+            return null;
+        }
+
+        @Override
+        public Iterator<Vertex> vertices(Direction direction) {
+            return null;
+        }
+
+        @Override
+        public Object id() {
+            return null;
+        }
+
+        @Override
+        public Iterator<Vertex> bothVertices() {
+            return null;
+        }
+
+        @Override
+        public Set<String> keys() {
+            return null;
+        }
+
+        @Override
+        public <V> Property<V> property(String key) {
+            return null;
+        }
+
+        @Override
+        public <V> Iterator<V> values(String... propertyKeys) {
+            return null;
+        }
+
+        @Override
+        public TitanVertex vertex(Direction direction) {
+            return null;
+        }
+
+        @Override
+        public TitanVertex otherVertex(Vertex vertex) {
+            return null;
+        }
+
+        @Override
+        public <V> V value(String s) {
+            return null;
+        }
+
+        @Override
+        public RelationType getType() {
+            return null;
+        }
+
+        @Override
+        public Direction direction(Vertex vertex) {
+            return null;
+        }
+
+        @Override
+        public boolean isIncidentOn(Vertex vertex) {
+            return false;
+        }
+
+        @Override
+        public boolean isLoop() {
+            return false;
+        }
+
+        @Override
+        public boolean isProperty() {
+            return false;
+        }
+
+        @Override
+        public boolean isEdge() {
+            return false;
+        }
+
+        @Override
+        public TitanTransaction graph() {
+            return null;
+        }
+
+        @Override
+        public long longId() {
+            return 0;
+        }
+
+        @Override
+        public boolean hasId() {
+            return false;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+
+        @Override
+        public <V> Property<V> property(String s, V v) {
+            return null;
+        }
+
+        @Override
+        public <V> V valueOrNull(PropertyKey propertyKey) {
+            return null;
+        }
+
+        @Override
+        public boolean isNew() {
+            return false;
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return false;
+        }
+
+        @Override
+        public boolean isRemoved() {
+            return false;
+        }
+
+        @Override
+        public <V> Iterator<Property<V>> properties(String... strings) {
+            return null;
+        }
+
+        @Override
+        public String label() {
+            return null;
+        }
+    }
+
+    private class TestVertex implements TitanVertex {
+
+        private String id;
+        public TestVertex(String id){
+            this.id = id;
+        }
+        private TestEdge testEdge = null;
+
+        @Override
+        public <V> TitanVertexProperty<V> property(String key, V value) {
+            return null;
+        }
+
+        @Override
+        public String label() {
+            return null;
+        }
+
+        @Override
+        public Object id() {
+            return null;
+        }
+
+        @Override
+        public <V> VertexProperty<V> property(String key) {
+            return null;
+        }
+
+        @Override
+        public Set<String> keys() {
+            return null;
+        }
+
+        @Override
+        public <V> V value(String key) throws NoSuchElementException {
+            return null;
+        }
+
+        @Override
+        public <V> Iterator<V> values(String... propertyKeys) {
+            return null;
+        }
+
+        @Override
+        public TitanEdge addEdge(String s, Vertex vertex, Object... objects) {
+            testEdge = new TestEdge(s);
+            return testEdge;
+        }
+
+        @Override
+        public <V> TitanVertexProperty<V> property(String s, V v, Object... objects) {
+            return null;
+        }
+
+        @Override
+        public <V> TitanVertexProperty<V> property(Cardinality cardinality, String s, V v,
+            Object... objects) {
+            return null;
+        }
+
+        @Override
+        public VertexLabel vertexLabel() {
+            return null;
+        }
+
+        @Override
+        public TitanVertexQuery<? extends TitanVertexQuery> query() {
+            return null;
+        }
+
+        @Override
+        public boolean isModified() {
+            return false;
+        }
+
+        @Override
+        public TitanTransaction graph() {
+            return null;
+        }
+
+        @Override
+        public long longId() {
+            return 0;
+        }
+
+        @Override
+        public boolean hasId() {
+            return false;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+
+        @Override
+        public <V> V valueOrNull(PropertyKey propertyKey) {
+            return null;
+        }
+
+        @Override
+        public boolean isNew() {
+            return false;
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return false;
+        }
+
+        @Override
+        public boolean isRemoved() {
+            return false;
+        }
+
+        @Override
+        public Iterator<Edge> edges(Direction direction, String... strings) {
+            if(testEdge != null){
+                return Collections.singletonList((Edge) testEdge).iterator();
+            }
+            return null;
+        }
+
+        @Override
+        public Iterator<Vertex> vertices(Direction direction, String... strings) {
+            return null;
+        }
+
+        @Override
+        public <V> Iterator<VertexProperty<V>> properties(String... strings) {
+            return null;
+        }
+    }
+
+    @Test
+    public void testIsComponentInUse() {
+        GraphVertex graphVertex1 = getMockVertexWithEdge("1");
+        when(titanDaoMock.getVertexById("1")).thenReturn(Either.left(graphVertex1));
+        Either<Boolean, StorageOperationStatus> inUse = testInstance.isContainedComponent("1");
+        assertTrue(inUse.isLeft());
+        assertTrue(inUse.left().value());
+
+        GraphVertex graphVertex2 = getMockVertex("2");
+        when(titanDaoMock.getVertexById(eq("2"))).thenReturn(Either.left(graphVertex2));
+        Either<Boolean, StorageOperationStatus> notInUse = testInstance.isContainedComponent("2");
+        assertTrue(notInUse.isLeft());
+        assertFalse(notInUse.left().value());
     }
 }

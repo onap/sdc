@@ -482,6 +482,22 @@ public abstract class ToscaElementOperation extends BaseOperation {
             log.debug("Failed to disaccociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
+        Either<GraphVertex, TitanOperationStatus> getInterfaceVertex = titanDao.getChildVertex(toscaElementVertex, EdgeLabelEnum.INTERFACE, JsonParseFlagEnum.NoParse);
+        if (getInterfaceVertex.isLeft()) {
+            status = titanDao.disassociateAndDeleteLast(getInterfaceVertex.left().value(), Direction.OUT, EdgeLabelEnum.INTERFACE_OPERATION);
+            if (status != TitanOperationStatus.OK) {
+                log.debug("Failed to disassociate interface operations for {} error {}", getInterfaceVertex.left().value().getUniqueId(), status);
+                return status;
+            }
+            else {
+                status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE);
+                if (status != TitanOperationStatus.OK) {
+                    log.debug("Failed to disassociate interfaces for {} error {}", toscaElementVertex.getUniqueId(), status);
+                    return status;
+                }
+            }
+
+        }
         return TitanOperationStatus.OK;
     }
 

@@ -20,41 +20,74 @@
 
 package org.openecomp.sdc.be.components;
 
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.BeforeClass;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
+import org.openecomp.sdc.be.components.utils.ServiceBuilder;
+import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
+import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentBusinessLogicTest {
 
-    private static final User USER = new User();
     private static final String ARTIFACT_LABEL = "toscaArtifact1";
     private static final String ARTIFACT_LABEL2 = "toscaArtifact2";
+    public static final String TEST_RESOURCE_UNIQUE_ID = "TestResourceUniqueId";
+    public static final String TEST_RESOURCE_NAME = "TestResource";
+    public static final String TEST_RESOURCE_INVARIANTUUID = "TestResourceInvariantUUID";
+    public static final String TEST_SERVICE_UNIQUE_ID = "TestServiceUniqueId";
+    public static final String TEST_SERVICE_NAME = "TestService";
+    public static final String TEST_SERVICE_INVARIANTUUID = "TestServiceInvariantUUID";
+    private static User USER;
+    private static Resource resource;
+    private static Service service;
+
+    @Mock
+    private ComponentsUtils componentsUtils;
+    @Mock
+    private ToscaOperationFacade toscaOperationFacade;
+    @Mock
+    private UserValidations userValidations;
+    @Mock
+    private ArtifactsBusinessLogic artifactsBusinessLogic;
+    @Mock
+    private TitanDao titanDao;
 
     @InjectMocks
     private ComponentBusinessLogic testInstance = new ComponentBusinessLogic() {
@@ -79,12 +112,33 @@ public class ComponentBusinessLogicTest {
         }
     };
 
-    @Mock
-    private ArtifactsBusinessLogic artifactsBusinessLogic;
-
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
         new DummyConfigurationManager();
+
+        // User data and management
+        USER = new User();
+        USER.setUserId("jh003");
+        USER.setFirstName("Jimmi");
+        USER.setLastName("Hendrix");
+        USER.setRole(Role.ADMIN.name());
+
+        resource = new ResourceBuilder()
+            .setComponentType(ComponentTypeEnum.RESOURCE)
+            .setInvariantUUid(TEST_RESOURCE_INVARIANTUUID)
+            .setUniqueId(TEST_RESOURCE_UNIQUE_ID)
+            .setName(TEST_RESOURCE_NAME)
+            .build();
+        Mockito.when(toscaOperationFacade.getComponentListByInvariantUuid(TEST_RESOURCE_INVARIANTUUID, null)).thenReturn(Either.left(Arrays.asList(resource)));
+
+        service = new ServiceBuilder()
+            .setComponentType(ComponentTypeEnum.SERVICE)
+            .setInvariantUUid(TEST_SERVICE_INVARIANTUUID)
+            .setUniqueId(TEST_SERVICE_UNIQUE_ID)
+            .setName(TEST_SERVICE_NAME)
+            .build();
+        Mockito.when(toscaOperationFacade.getComponentListByInvariantUuid(TEST_SERVICE_INVARIANTUUID, null)).thenReturn(Either.left(Arrays.asList(service)));
     }
 
     @SuppressWarnings("unchecked")
@@ -105,11 +159,11 @@ public class ComponentBusinessLogicTest {
         testInstance.setToscaArtifactsPlaceHolders(resource, USER);
 
         Map<String, ArtifactDefinition> toscaArtifacts = resource.getToscaArtifacts();
-        assertThat(toscaArtifacts).hasSize(2);
+        Assert.assertEquals(2, toscaArtifacts.size());
         ArtifactDefinition artifactDefinition = toscaArtifacts.get(ARTIFACT_LABEL);
-        assertThat(artifactDefinition.getArtifactName()).isEqualTo("resource-myResourceartifactnot-normalized.yml");
+        Assert.assertEquals("resource-myResourceartifactnot-normalized.yml", artifactDefinition.getArtifactName());
         ArtifactDefinition artifactDefinition2 = toscaArtifacts.get(ARTIFACT_LABEL2);
-        assertThat(artifactDefinition2.getArtifactName()).isEqualTo("resource-myResourcealreadyNormalized.csar");
+        Assert.assertEquals("resource-myResourcealreadyNormalized.csar", artifactDefinition2.getArtifactName());
     }
 
     private Map<String, Object> buildArtifactMap(String artifactName) {
@@ -122,5 +176,49 @@ public class ComponentBusinessLogicTest {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setArtifactLabel(artifactLabel);
         return artifactDefinition;
+    }
+
+    @Test
+    public void testDeleteResourceNotInUse(){
+        Mockito.when(toscaOperationFacade.isContainedComponent(TEST_RESOURCE_UNIQUE_ID)).thenReturn(Either.left(Boolean.FALSE));
+        Mockito.when(toscaOperationFacade.deleteToscaComponent(TEST_RESOURCE_UNIQUE_ID)).thenReturn(Either.left(resource));
+        Either<List<String>, ResponseFormat> deleteEither = testInstance.deleteComponent(TEST_RESOURCE_INVARIANTUUID, ComponentTypeEnum.RESOURCE, USER);
+        Assert.assertEquals(deleteEither.left().value(), Arrays.asList(TEST_RESOURCE_UNIQUE_ID));
+    }
+
+    @Test
+    public void testDeleteResourceInUse(){
+        Mockito.when(toscaOperationFacade.isContainedComponent(TEST_RESOURCE_UNIQUE_ID)).thenReturn(Either.left(Boolean.TRUE));
+        testInstance.deleteComponent(TEST_RESOURCE_INVARIANTUUID, ComponentTypeEnum.RESOURCE, USER);
+        Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.COMPONENT_DELETION_NOT_ALLOWED_CONTAINED, ComponentTypeEnum.RESOURCE.getValue(), TEST_RESOURCE_NAME);
+    }
+
+    @Test
+    public void testDeleteServiceNotInUse(){
+        ComponentMetadataData serviceMetadataData = new ServiceMetadataData(new ServiceMetadataDataDefinition());
+        Mockito.when(toscaOperationFacade.getComponentMetadata(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(serviceMetadataData));
+        Mockito.when(toscaOperationFacade.isContainedComponent(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(Boolean.FALSE));
+        Mockito.when(toscaOperationFacade.deleteToscaComponent(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(service));
+        Either<List<String>, ResponseFormat> deleteEither = testInstance.deleteComponent(TEST_SERVICE_INVARIANTUUID, ComponentTypeEnum.SERVICE, USER);
+        Assert.assertEquals(deleteEither.left().value(), Arrays.asList(TEST_SERVICE_UNIQUE_ID));
+    }
+
+    @Test
+    public void testDeleteDistributedService(){
+        ServiceMetadataDataDefinition smdd = new ServiceMetadataDataDefinition();
+        smdd.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED.name());
+        ComponentMetadataData serviceMetadataData = new ServiceMetadataData(smdd);
+        Mockito.when(toscaOperationFacade.getComponentMetadata(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(serviceMetadataData));
+        testInstance.deleteComponent(TEST_SERVICE_INVARIANTUUID, ComponentTypeEnum.SERVICE, USER);
+        Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.COMPONENT_DELETION_NOT_ALLOWED_DISTRIBUTED, ComponentTypeEnum.SERVICE.getValue(), TEST_SERVICE_NAME);
+    }
+
+    @Test
+    public void testDeleteServiceInUse(){
+        ComponentMetadataData serviceMetadataData = new ServiceMetadataData(new ServiceMetadataDataDefinition());
+        Mockito.when(toscaOperationFacade.getComponentMetadata(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(serviceMetadataData));
+        Mockito.when(toscaOperationFacade.isContainedComponent(TEST_SERVICE_UNIQUE_ID)).thenReturn(Either.left(Boolean.TRUE));
+        testInstance.deleteComponent(TEST_SERVICE_INVARIANTUUID, ComponentTypeEnum.SERVICE, USER);
+        Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.COMPONENT_DELETION_NOT_ALLOWED_CONTAINED, ComponentTypeEnum.SERVICE.getValue(), TEST_SERVICE_NAME);
     }
 }

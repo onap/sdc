@@ -2154,3 +2154,28 @@ errors:
         messageId: "SVC4706"
     }
 
+  #---------SVC4715-----------------------------
+    COMPONENT_NOT_DELETED: {
+      code: 500,
+      message: "Error: Failed to delete %1 '%2'",
+      messageId: "SVC4715"
+    }
+  #---------SVC4716-----------------------------
+    COMPONENT_DELETION_NOT_ALLOWED_DISTRIBUTED: {
+      code: 409,
+      message: "Error: %1 '%2' can’t be deleted since it was already distributed",
+      messageId: "SVC4716"
+    }
+  #---------SVC4717-----------------------------
+    COMPONENT_DELETION_NOT_ALLOWED_CONTAINED: {
+      code: 409,
+      message: "Error: %1 '%2' can’t be deleted since it is a contained component",
+      messageId: "SVC4717"
+    }
+  #---------SVC4718-----------------------------
+    COMPONENT_NOT_FOUND_TO_DELETE: {
+      code: 404,
+      message: "Error: %1 not found for Invariant UUID '%2'",
+      messageId: "SVC4718"
+    }
+

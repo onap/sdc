@@ -25,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -2431,6 +2432,55 @@ public class ToscaOperationFacade {
 
     private ToscaElement throwStorageException(StorageOperationStatus status) {
         throw new StorageException(status);
+    }
+
+    public Either<Boolean, StorageOperationStatus> isContainedComponent(String componentId) {
+        final List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays.asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(componentId);
+        if (vertexById.isLeft()) {
+            for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+                Iterator<Edge> edgeItr = vertexById.left().value().getVertex().edges(Direction.IN, edgeLabelEnum.name());
+                if(edgeItr != null && edgeItr.hasNext()){
+                    return Either.left(true);
+                }
+            }
+        }
+        return Either.left(false);
+    }
+
+    public Either<List<Component>, StorageOperationStatus> getComponentListByInvariantUuid
+        (String componentInvariantUuid, Map<GraphPropertyEnum, Object> additionalPropertiesToMatch) {
+
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        if (MapUtils.isNotEmpty(additionalPropertiesToMatch)) {
+            propertiesToMatch.putAll(additionalPropertiesToMatch);
+        }
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, componentInvariantUuid);
+
+        Either<List<GraphVertex>, TitanOperationStatus> vertexEither = titanDao.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
+
+        if (vertexEither.isRight()) {
+            log.debug("Couldn't fetch metadata for component with type {} and invariantUUId {}, error: {}", componentInvariantUuid, vertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexEither.right().value()));
+        }
+        List<GraphVertex> vertexList = vertexEither.isLeft() ? vertexEither.left().value() : null;
+
+        if (vertexList == null || vertexList.isEmpty()) {
+            log.debug("Component with invariantUUId {} was not found", componentInvariantUuid);
+            return Either.right(StorageOperationStatus.NOT_FOUND);
+        }
+
+        ArrayList<Component> components = new ArrayList<>();
+        for (GraphVertex vertex : vertexList) {
+            Either<Component, StorageOperationStatus> toscaElementByOperation = getToscaElementByOperation(vertex);
+            if (toscaElementByOperation.isRight()) {
+                log.debug("Could not fetch the following Component by Invariant UUID {}", vertex.getUniqueId());
+                return Either.right(toscaElementByOperation.right().value());
+            }
+            components.add(toscaElementByOperation.left().value());
+        }
+
+        return Either.left(components);
     }
 
 }
