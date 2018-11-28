@@ -33,7 +33,7 @@ export class OperationCreatorComponent {
     workflows: Array<DropdownValue> = [];
     workflowVersions: Array<DropdownValue> = [];
     inputProperties: Array<InputBEModel> = [];
-    inputPropertyTypes: { [key: string]: string };
+    archivedWorkflowId: string = '&';
 
     inputParameters: Array<OperationParameter> = [];
     noAssignInputParameters: Array<OperationParameter> = [];
@@ -51,7 +51,6 @@ export class OperationCreatorComponent {
     isEditMode: boolean = false;
     isLoading: boolean = false;
     readonly: boolean;
-    isService: boolean;
 
     propertyTooltipText: String;
 
@@ -76,7 +75,6 @@ export class OperationCreatorComponent {
 
     ngOnInit() {
         this.readonly = this.input.readonly;
-        this.isService = this.input.isService;
         this.enableWorkflowAssociation = this.input.enableWorkflowAssociation;
         this.inputProperties = this.input.inputProperties;
 
@@ -90,9 +88,23 @@ export class OperationCreatorComponent {
             this.isLoading = true;
             this.workflowServiceNg2.getWorkflows().subscribe(workflows => {
                 this.isLoading = false;
-                this.workflows = _.map(workflows, (workflow: any) => {
-                    return new DropdownValue(workflow.id, workflow.name);
-                });
+                this.workflows = _.map(
+                    _.filter(
+                        workflows,
+                        (workflow: any) => {
+                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ACTIVE) {
+                                return true;
+                            }
+                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ARCHIVED &&
+                                workflow.id === this.operation.workflowId) {
+                                this.archivedWorkflowId = workflow.id;
+                                return true;
+                            }
+                            return false;
+                        }
+                    ),
+                    (workflow: any) => new DropdownValue(workflow.id, workflow.name)
+                );
                 this.reconstructOperation();
             });
         } else {
@@ -103,16 +115,16 @@ export class OperationCreatorComponent {
     reconstructOperation = () => {
         const inputOperation = this.input.operation;
         if (inputOperation) {
-            if (!this.enableWorkflowAssociation || !inputOperation.workflowVersionId) {
-                this.inputParameters = this.noAssignInputParameters;
-                this.outputParameters = this.noAssignOutputParameters;
-                this.buildParams();
-                this.updateTable();
-            } else {
+            if (this.enableWorkflowAssociation && inputOperation.workflowVersionId && this.isUsingExistingWF(inputOperation)) {
                 this.onSelectWorkflow(inputOperation.workflowVersionId).add(() => {
                     this.buildParams();
                     this.updateTable();
                 });
+            } else {
+                this.inputParameters = this.noAssignInputParameters;
+                this.outputParameters = this.noAssignOutputParameters;
+                this.buildParams();
+                this.updateTable();
             }
 
             if (inputOperation.uniqueId) {
@@ -239,15 +251,11 @@ export class OperationCreatorComponent {
         let valid = true;
         if (this.currentTab === this.TYPE_INPUT) {
             _.forEach(this.inputParameters, param => {
-                if (!param.name || !param.property) {
-                    valid = false;
-                }
+                if (!param.name || !param.property) valid = false;
             });
         } else {
             _.forEach(this.outputParameters, param => {
-                if (!param.name || !param.type) {
-                    valid = false;
-                }
+                if (!param.name || !param.type) valid = false;
             });
         }
         return valid;
@@ -278,11 +286,13 @@ export class OperationCreatorComponent {
         this.operation.createOutputParamsList(this.outputParameters);
     }
 
-    isUsingExistingWF = (): boolean => {
-        return this.operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
+    isUsingExistingWF = (operation?: OperationModel): boolean => {
+        operation = operation || this.operation;
+        return operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
     }
 
-    shouldCreateWF(): boolean {
+    shouldCreateWF(operation?: OperationModel): boolean {
+        operation = operation || this.operation;
         return this.operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW;
     }
 
