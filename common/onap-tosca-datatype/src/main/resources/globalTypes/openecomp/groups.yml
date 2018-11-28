@@ -24,6 +24,27 @@ imports:
 
 group_types:
 
+  org.openecomp.groups.Group:
+    derived_from: tosca.groups.Root
+    description: generic group with common properties
+    properties:
+      type:
+        type: string
+        description: The type of the members, supported by group.
+        required: false
+      role:
+        type: string
+        description: The role of the group.
+        required: false
+      function:
+        type: string
+        description: The function of the group.
+        required: false
+      description:
+        type: string
+        description: Description of the group.
+        required: false
+
   org.openecomp.groups.VfModule:
     derived_from: tosca.groups.Root
     description: Grouped all heat resources which are in the same VF Module
@@ -72,7 +93,7 @@ group_types:
         required: true
 
   org.openecomp.groups.VfcInstanceGroup:
-    derived_from: tosca.groups.Root
+    derived_from: org.openecomp.groups.Group
     description: groups VFCs with same parent port role
     properties:
       vfc_instance_group_function:
