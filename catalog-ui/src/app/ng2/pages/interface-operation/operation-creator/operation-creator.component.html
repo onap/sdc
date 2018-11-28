@@ -59,7 +59,9 @@
 
         <div class="side-by-side" *ngIf="isUsingExistingWF()">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">Workflow</label>
+                <label class="i-sdc-form-label required">Workflow
+                    <span class="archive-warning" *ngIf="archivedWorkflowId === operation.workflowId">(Archived)</span>
+                </label>
                 <ui-element-dropdown
                     data-tests-id="associated-workflow"
                     [readonly]="readonly"
@@ -73,7 +75,7 @@
                 <label class="i-sdc-form-label required">Workflow Version</label>
                 <ui-element-dropdown
                     data-tests-id="associated-workflow-version"
-                    [readonly]="!operation.workflowId || readonly"
+                    [readonly]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly"
                     [values]="workflowVersions"
                     [(value)]="operation.workflowVersionId"
                     (valueChange)="changeWorkflowVersion()">

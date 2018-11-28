@@ -11,6 +11,8 @@ export class WorkflowServiceNg2 {
     protected baseUrl;
     protected catalogBaseUrl;
 
+    WF_STATE_ACTIVE = 'ACTIVE';
+    WF_STATE_ARCHIVED = 'ARCHIVED';
     VERSION_STATE_CERTIFIED = 'CERTIFIED';
 
     constructor(private http: HttpService, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
