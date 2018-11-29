@@ -95,11 +95,16 @@ class ExpandableInput extends React.Component {
         value: PropTypes.string
     };
 
-    state = { showInput: false };
+    constructor(props) {
+        super(props);
+        this.state = {
+            showInput: !!props.value || false
+        };
+    }
 
-    closeInput() {
-        if (!this.props.value) {
-            this.setState({ showInput: false });
+    showInputChange() {
+        if (this.props.value) {
+            this.setState({ showInput: true });
         }
     }
 
@@ -118,7 +123,7 @@ class ExpandableInput extends React.Component {
                         onChange={onChange}
                         value={value}
                         handleKeyDown={e => this.handleKeyDown(e)}
-                        handleBlur={() => this.closeInput()}
+                        handleBlur={() => this.showInputChange()}
                     />
                 )}
                 {!this.state.showInput && (
