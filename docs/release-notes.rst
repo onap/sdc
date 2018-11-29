@@ -4,6 +4,99 @@
 Release Notes
 =============
 
+Version: 1.3.5
+==============
+
+:Release Date: 2018-11-28
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+       :Version: 1.3.0
+-  sdc-tosca
+       :Version: 1.4.7
+       `Readme <https://github.com/onap/sdc-sdc-tosca>`_
+
+Release Purpose
+----------------
+The Casablanca release was focused on improving platform stability and resiliency and introducing now platform capabilities.
+
+**New Features**
+
+The Casablanca release is the third release of the Service Design and Creation (SDC).
+
+The main goal of the Casablanca release was to:
+    - Improve code coverage of the SDC code.
+    - Complete E2E workflow design and distribution.
+    - Finalize DCAE-DS and integrate it with OOM
+    - Support HPA
+    - Security enchantments
+
+
+
+
+**Epics**
+
+-  [`SDC-1404 <https://jira.onap.org/browse/SDC-1404>`__\ ] - Technical debt
+-  [`SDC-1507 <https://jira.onap.org/browse/SDC-1507>`__\ ] - Create SDC - DCAE-DS documentation
+-  [`SDC-979 <https://jira.onap.org/browse/SDC-979>`__\ ] - Integrate WF Designer with SDC
+-  [`SDC-1411 <https://jira.onap.org/browse/SDC-1411>`__\ ] - Non-Functional requirements - Security
+-  [`SDC-1697 <https://jira.onap.org/browse/SDC-1697>`__\ ] - PNF enhancements
+
+
+
+**Stories**
+
+-  [`SDC-10 <https://jira.onap.org/browse/SDC-10>`__\ ] - Deploy a SDC high availability environment
+-  [`SDC-51 <https://jira.onap.org/browse/SDC-51>`__\ ] - vCPE_UC: Add Close-Loop (CL) Blueprint Monitoring-Template (MT) to a VNF-I
+-  [`SDC-73 <https://jira.onap.org/browse/SDC-73>`__\ ] - Import WorkFlow
+-  [`SDC-82 <https://jira.onap.org/browse/SDC-82>`__\ ] - support adding artifact type for node template
+-  [`SDC-118 <https://jira.onap.org/browse/SDC-118>`__\ ] - support sub process
+-  [`SDC-124 <https://jira.onap.org/browse/SDC-124>`__\ ] - support insert a sub process which is already defined
+-  [`SDC-143 <https://jira.onap.org/browse/SDC-143>`__\ ] - create local DEV environment based on onap vagrant
+-  [`SDC-242 <https://jira.onap.org/browse/SDC-242>`__\ ] - TDP 325252 - resolve get_input values
+-  [`SDC-243 <https://jira.onap.org/browse/SDC-243>`__\ ] - TDP 319197 - tosca parser port mirroring
+-  [`SDC-259 <https://jira.onap.org/browse/SDC-259>`__\ ] - TDP 316633 - TenantIsolation ContextDistribution
+-  [`SDC-277 <https://jira.onap.org/browse/SDC-277>`__\ ] - docker enhancements
+
+
+**Bugs**
+
+-  [`SDC-1958 <https://jira.onap.org/browse/SDC-1958>`__\ ] - SDC Parser can not be used for CCVPN Templates.
+-  [`SDC-1955 <https://jira.onap.org/browse/SDC-1955>`__\ ] - SDC distribution failed
+
+
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=45307682>`_
+
+**Known Issues**
+
+-  [`SDC-1380 <https://jira.onap.org/browse/SDC-1380>`__\ ] - Missing Inheritance of VduCp in SDC distributed CSAR package
+-  [`SDC-1182 <https://jira.onap.org/browse/SDC-1182>`__\ ] - SDC must no log serviceInstanceID and SERVICE_INSTANCE_ID
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
+
 Version: 1.2.0
 ==============
 
