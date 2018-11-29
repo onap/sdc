@@ -394,7 +394,7 @@ public class ConsolidationDataTestUtil {
                 portMap.put(portNode, new LinkedHashMap<>());
               }
               Map<String, List<String>> portTypMaps = portMap.get(portNode);
-              String id = ConsolidationDataUtil.getPortType(nodeName);
+              String id = ConsolidationDataUtil.getPortType(nodeName, "a");
               if (!portTypMaps.containsKey(id)) {
                 portTypMaps.put(id, new ArrayList<>());
               }

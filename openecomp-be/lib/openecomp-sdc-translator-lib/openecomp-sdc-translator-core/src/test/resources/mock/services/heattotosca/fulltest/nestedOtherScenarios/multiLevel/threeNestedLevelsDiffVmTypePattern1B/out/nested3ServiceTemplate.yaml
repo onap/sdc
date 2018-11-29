@@ -62,36 +62,36 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pd02_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
-        port_pd02_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_pd02_port_2_replacement_policy:
+        - AUTO
+        port_pd02_port_2_network:
+        - get_input: net
         vm_flavor_name:
           get_input: cmaui_flavor
-        vm_image_name:
-          get_input: cmaui_image
-        port_pd02_port_security_groups:
-        - - get_input: p1
-        compute_ps_availability_zone:
-        - get_input: availability_zone_0
-        port_pd02_port_replacement_policy:
-        - AUTO
-        compute_ps_name:
-        - get_input:
-          - ps_names
-          - 0
-        port_pd02_port_ip_requirements:
+        port_pd02_port_2_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd02_port_network:
-        - get_input: net
+        port_pd02_port_2_security_groups:
+        - - get_input: p1
+        port_pd02_port_2_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        vm_image_name:
+          get_input: cmaui_image
+        compute_ps_availability_zone:
+        - get_input: availability_zone_0
+        port_pd02_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_ps_name:
+        - get_input:
+          - ps_names
+          - 0
         service_template_filter:
           substitute_service_template: Nested_psServiceTemplate.yaml
           count: 1
@@ -105,37 +105,37 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pd01_port_replacement_policy:
-        - AUTO
-        vm_flavor_name:
-          get_input: cmaui_flavor
-        port_pd01_port_security_groups:
+        port_pd01_port_1_security_groups:
         - - get_input: p2
           - get_input: p1
-        port_pd01_port_mac_requirements:
+        port_pd01_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        vm_flavor_name:
+          get_input: cmaui_flavor
+        port_pd01_port_1_mac_requirements:
           mac_count_required:
             is_required: false
         vm_image_name:
           get_input: cmaui_image
         compute_ps_availability_zone:
         - get_input: availability_zone_0
-        port_pd01_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
-        port_pd01_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pd01_port_network:
-        - get_input: net
+        port_pd01_port_1_replacement_policy:
+        - AUTO
         compute_ps_name:
         - get_input:
           - ps_names
           - 0
+        port_pd01_port_1_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        port_pd01_port_1_network:
+        - get_input: net
         service_template_filter:
           substitute_service_template: Nested_ps_1ServiceTemplate.yaml
           count: 1
@@ -179,13 +179,13 @@ topology_template:
       - disk.capacity_ps
       network.outgoing.bytes_pd02_port_2:
       - abstract_ps
-      - network.outgoing.bytes_ps_pd02_port
+      - network.outgoing.bytes_ps_pd02_port_2
       disk.capacity_server_ps_2:
       - abstract_ps
       - disk.capacity_ps
       network.outgoing.bytes_pd01_port_1:
       - abstract_ps_1
-      - network.outgoing.bytes_ps_pd01_port
+      - network.outgoing.bytes_ps_pd01_port_1
       memory.usage_server_ps_1:
       - abstract_ps_1
       - memory.usage_ps
@@ -248,13 +248,13 @@ topology_template:
       - endpoint_ps
       binding_pd01_port_1:
       - abstract_ps_1
-      - binding_ps_pd01_port
+      - binding_ps_pd01_port_1
       disk.device.read.requests.rate_server_ps_1:
       - abstract_ps_1
       - disk.device.read.requests.rate_ps
       network.outgoing.bytes.rate_pd02_port_2:
       - abstract_ps
-      - network.outgoing.bytes.rate_ps_pd02_port
+      - network.outgoing.bytes.rate_ps_pd02_port_2
       host_server_ps_2:
       - abstract_ps
       - host_ps
@@ -275,13 +275,13 @@ topology_template:
       - scalable_ps
       network.incoming.packets.rate_pd02_port_2:
       - abstract_ps
-      - network.incoming.packets.rate_ps_pd02_port
+      - network.incoming.packets.rate_ps_pd02_port_2
       scalable_server_ps_2:
       - abstract_ps
       - scalable_ps
       network.outgoing.packets.rate_pd01_port_1:
       - abstract_ps_1
-      - network.outgoing.packets.rate_ps_pd01_port
+      - network.outgoing.packets.rate_ps_pd01_port_1
       disk.write.bytes.rate_server_ps_2:
       - abstract_ps
       - disk.write.bytes.rate_ps
@@ -302,7 +302,7 @@ topology_template:
       - disk.ephemeral.size_ps
       feature_pd02_port_2:
       - abstract_ps
-      - feature_ps_pd02_port
+      - feature_ps_pd02_port_2
       disk.ephemeral.size_server_ps_2:
       - abstract_ps
       - disk.ephemeral.size_ps
@@ -320,7 +320,7 @@ topology_template:
       - disk.allocation_ps
       attachment_pd01_port_1:
       - abstract_ps_1
-      - attachment_ps_pd01_port
+      - attachment_ps_pd01_port_1
       memory.resident_server_ps_1:
       - abstract_ps_1
       - memory.resident_ps
@@ -341,7 +341,7 @@ topology_template:
       - disk.device.read.requests_ps
       network.incoming.bytes.rate_pd01_port_1:
       - abstract_ps_1
-      - network.incoming.bytes.rate_ps_pd01_port
+      - network.incoming.bytes.rate_ps_pd01_port_1
       disk.read.bytes.rate_server_ps_1:
       - abstract_ps_1
       - disk.read.bytes.rate_ps
@@ -353,7 +353,7 @@ topology_template:
       - disk.device.iops_ps
       feature_pd01_port_1:
       - abstract_ps_1
-      - feature_ps_pd01_port
+      - feature_ps_pd01_port_1
       disk.device.iops_server_ps_2:
       - abstract_ps
       - disk.device.iops_ps
@@ -383,40 +383,40 @@ topology_template:
       - disk.root.size_ps
       attachment_pd02_port_2:
       - abstract_ps
-      - attachment_ps_pd02_port
+      - attachment_ps_pd02_port_2
       disk.root.size_server_ps_2:
       - abstract_ps
       - disk.root.size_ps
       network.outgoing.bytes.rate_pd01_port_1:
       - abstract_ps_1
-      - network.outgoing.bytes.rate_ps_pd01_port
+      - network.outgoing.bytes.rate_ps_pd01_port_1
       binding_pd02_port_2:
       - abstract_ps
-      - binding_ps_pd02_port
+      - binding_ps_pd02_port_2
       network.incoming.packets.rate_pd01_port_1:
       - abstract_ps_1
-      - network.incoming.packets.rate_ps_pd01_port
+      - network.incoming.packets.rate_ps_pd01_port_1
       disk.usage_server_ps_1:
       - abstract_ps_1
       - disk.usage_ps
       network.outpoing.packets_pd01_port_1:
       - abstract_ps_1
-      - network.outpoing.packets_ps_pd01_port
+      - network.outpoing.packets_ps_pd01_port_1
       disk.usage_server_ps_2:
       - abstract_ps
       - disk.usage_ps
       network.outpoing.packets_pd02_port_2:
       - abstract_ps
-      - network.outpoing.packets_ps_pd02_port
+      - network.outpoing.packets_ps_pd02_port_2
       network.incoming.bytes_pd01_port_1:
       - abstract_ps_1
-      - network.incoming.bytes_ps_pd01_port
+      - network.incoming.bytes_ps_pd01_port_1
       network.incoming.bytes_pd02_port_2:
       - abstract_ps
-      - network.incoming.bytes_ps_pd02_port
+      - network.incoming.bytes_ps_pd02_port_2
       network.outgoing.packets.rate_pd02_port_2:
       - abstract_ps
-      - network.outgoing.packets.rate_ps_pd02_port
+      - network.outgoing.packets.rate_ps_pd02_port_2
       vcpus_server_ps_1:
       - abstract_ps_1
       - vcpus_ps
@@ -425,22 +425,22 @@ topology_template:
       - vcpus_ps
       forwarder_pd01_port_1:
       - abstract_ps_1
-      - forwarder_ps_pd01_port
+      - forwarder_ps_pd01_port_1
       forwarder_pd02_port_2:
       - abstract_ps
-      - forwarder_ps_pd02_port
+      - forwarder_ps_pd02_port_2
       network.incoming.packets_pd01_port_1:
       - abstract_ps_1
-      - network.incoming.packets_ps_pd01_port
+      - network.incoming.packets_ps_pd01_port_1
       network.incoming.packets_pd02_port_2:
       - abstract_ps
-      - network.incoming.packets_ps_pd02_port
+      - network.incoming.packets_ps_pd02_port_2
       disk.device.write.bytes.rate_server_ps_1:
       - abstract_ps_1
       - disk.device.write.bytes.rate_ps
       network.incoming.bytes.rate_pd02_port_2:
       - abstract_ps
-      - network.incoming.bytes.rate_ps_pd02_port
+      - network.incoming.bytes.rate_ps_pd02_port_2
       disk.write.requests_server_ps_1:
       - abstract_ps_1
       - disk.write.requests_ps
@@ -477,16 +477,16 @@ topology_template:
     requirements:
       dependency_pd02_port_2:
       - abstract_ps
-      - dependency_ps_pd02_port
+      - dependency_ps_pd02_port_2
       local_storage_server_ps_2:
       - abstract_ps
       - local_storage_ps
       link_pd01_port_1:
       - abstract_ps_1
-      - link_ps_pd01_port
+      - link_ps_pd01_port_1
       link_pd02_port_2:
       - abstract_ps
-      - link_ps_pd02_port
+      - link_ps_pd02_port_2
       local_storage_server_ps_1:
       - abstract_ps_1
       - local_storage_ps
@@ -498,4 +498,4 @@ topology_template:
       - dependency_ps
       dependency_pd01_port_1:
       - abstract_ps_1
-      - dependency_ps_pd01_port
+      - dependency_ps_pd01_port_1

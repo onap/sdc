@@ -50,10 +50,10 @@ public class PortConsolidationData {
     * @return port template consolidation data
     */
     PortTemplateConsolidationData addPortTemplateConsolidationData(String serviceTemplateFileName,
-            String portNodeTemplateId, String portResourceId, String portResourceType) {
+            String portNodeTemplateId, String portResourceId, String portResourceType, String portType) {
         FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
         return consolidationData
-                   .addPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType);
+                   .addPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType, portType);
     }
 
     /**

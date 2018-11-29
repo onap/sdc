@@ -147,7 +147,8 @@ public class ConsolidationService {
       Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
       for (String portNodeTemplateId : portNodeTemplateIds) {
         consolidationEntityIdToType
-            .put(portNodeTemplateId, ConsolidationDataUtil.getPortType(portNodeTemplateId));
+            .put(portNodeTemplateId,
+                    filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId).getPortType());
       }
     }
 

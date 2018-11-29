@@ -488,7 +488,7 @@ topology_template:
       properties:
         subinterface_nested_parent_interface:
         - vdbe_untr_port_1
-        - vdbe_untr_port_2
+        - vdbe_1_untr_port_1
         subinterface_nested_aap_address_mode:
         - get_input: aap_address_mode
         - get_input: aap_address_mode
@@ -501,8 +501,14 @@ topology_template:
         subinterface_nested_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        port_vdbe_untr_port_1_name:
+        - Untr_Port_1
+        - Untr_Port_2
         vm_flavor_name:
           get_input: vdbe_flavor_name
+        port_vdbe_untr_port_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
+        - - get_input: vdbe_hw_untr_mac_1
         subinterface_nested_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
         - get_input: vdbe_aap_untrusted_ip_prefix
@@ -536,9 +542,6 @@ topology_template:
         subinterface_nested_ip_address:
         - get_input: vdbe_untrusted_ip_1
         - get_input: vdbe_untrusted_ip_1
-        port_vdbe_untr_port_virtual_network_refs:
-        - - control_int_net
-        - - control_int_net
         subinterface_nested_ip_v6_address:
         - get_input: vdbe_untrusted_v6_ip_1
         - get_input: vdbe_untrusted_v6_ip_1
@@ -548,12 +551,6 @@ topology_template:
         subinterface_nested_vn_network_list:
         - get_input: untrusted_vn_networks
         - get_input: untrusted_vn_networks
-        port_vdbe_untr_port_name:
-        - Untr_Port_1
-        - Untr_Port_2
-        port_vdbe_untr_port_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_1
-        - - get_input: vdbe_hw_untr_mac_1
         subinterface_nested_aap_untrusted_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_ip_prefix_len
         - get_input: vdbe_aap_untrusted_ip_prefix_len
@@ -584,6 +581,9 @@ topology_template:
         subinterface_nested_optional_property_2:
         - null
         - OPTIONAL_VALUE_SUBPORT_2
+        port_vdbe_untr_port_1_virtual_network_refs:
+        - - control_int_net
+        - - control_int_net
         service_template_filter:
           substitute_service_template: Nested_vdbeServiceTemplate.yaml
           count: 2
@@ -593,7 +593,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_vdbe_vdbe_untr_port:
+      - link_vdbe_vdbe_untr_port_1:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo

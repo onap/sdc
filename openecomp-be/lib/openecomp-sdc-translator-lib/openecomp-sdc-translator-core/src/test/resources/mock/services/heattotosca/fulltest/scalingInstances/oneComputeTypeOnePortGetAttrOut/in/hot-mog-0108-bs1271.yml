@@ -33,7 +33,7 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd_server_0_mgmt_port_0}
       user_data_format:  {get_attr: [network_policy_server, name]}
   server_pd_02:
     type: OS::Nova::Server
@@ -43,15 +43,15 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_1}
+        - port: {get_resource: pd_server_1_mgmt_port_0}
       metadata: {get_attr: [network_policy_server, name]}
       user_data_format:  RAW_SERVER_PD_2
-  pd01_port_0:
+  pd_server_0_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: Network-0
       replacement_policy: AUTO_PORT_0
-  pd01_port_1:
+  pd_server_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: Network-1

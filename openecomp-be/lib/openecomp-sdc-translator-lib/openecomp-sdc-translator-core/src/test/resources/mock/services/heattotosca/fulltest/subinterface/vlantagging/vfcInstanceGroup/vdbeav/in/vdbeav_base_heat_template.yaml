@@ -252,7 +252,7 @@ resources:
       network: 
         get_resource: fabric_int_net
     type: "OS::Neutron::Subnet"
-  vdbe_0_untr_vmi_0: 
+  vdbe_0_untr_vmi_1: 
     properties: 
       name: 
         str_replace: 
@@ -502,7 +502,7 @@ resources:
             get_resource: vdbe_fabr_0_port
         - 
           port: 
-            get_resource: vdbe_0_untr_vmi_0
+            get_resource: vdbe_0_untr_vmi_1
         - 
           port: 
             get_resource: vdbe_trst_0_port
@@ -772,7 +772,7 @@ resources:
           get_param: trusted_net_name
     type: "OS::ContrailV2::InstanceIp"
   vdbe_untr_0_subports: 
-    depends_on: vdbe_0_untr_vmi_0
+    depends_on: vdbe_0_untr_vmi_1
     properties: 
       count: 
         get_param: untrusted_num_vn
@@ -800,7 +800,7 @@ resources:
           mac_address: 
             get_param: vdbe_hw_untr_mac_0
           parent_interface: 
-            get_resource: vdbe_0_untr_vmi_0
+            get_resource: vdbe_0_untr_vmi_1
           subinterfaces_name_prefix: 
             str_replace: 
               params: 
@@ -865,13 +865,13 @@ resources:
     type: "OS::Heat::ResourceGroup"
   vdbe_untrusted_Iip_0: 
     depends_on: 
-      - vdbe_0_untr_vmi_0
+      - vdbe_0_untr_vmi_1
     properties: 
       instance_ip_address: 
         get_param: vdbe_untrusted_ip_0
       virtual_machine_interface_refs: 
         - 
-          get_resource: vdbe_0_untr_vmi_0
+          get_resource: vdbe_0_untr_vmi_1
       virtual_network_refs: 
         - 
           get_param: untrusted_net_name
@@ -891,14 +891,14 @@ resources:
     type: "OS::ContrailV2::InstanceIp"
   vdbe_untrusted_v6_Iip_0: 
     depends_on: 
-      - vdbe_0_untr_vmi_0
+      - vdbe_0_untr_vmi_1
     properties: 
       instance_ip_address: 
         get_param: vdbe_untrusted_v6_ip_0
       instance_ip_family: v6
       virtual_machine_interface_refs: 
         - 
-          get_resource: vdbe_0_untr_vmi_0
+          get_resource: vdbe_0_untr_vmi_1
       virtual_network_refs: 
         - 
           get_param: untrusted_net_name

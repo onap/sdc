@@ -11,74 +11,63 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_FSB1_Internal_mac_address:
-      type: string
-      required: true
-    port_FSB1_Internal_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_FSB2_Internal_related_networks:
+    port_FSB_Internal_port_1_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_FSB1_Internal_subnetpoolid:
-      type: string
+    port_FSB_Internal_port_1_order:
+      type: integer
       required: true
     compute_FSB1_metadata:
       type: list
       required: true
       entry_schema:
         type: json
-    port_FSB2_Internal_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_FSB2_Internal_order:
-      type: integer
-      required: true
-    port_FSB2_Internal_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    vm_flavor_name:
+    port_FSB_Internal_port_1_network_role:
       type: string
       required: true
-    port_FSB2_Internal_network_role:
+    port_FSB_Internal_port_0_network_role:
       type: string
       required: true
-    port_FSB1_Internal_related_networks:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_FSB1_Internal_network_role_tag:
-      type: string
-      required: true
-    port_FSB1_Internal_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_FSB2_Internal_subnetpoolid:
-      type: string
-      required: true
-    port_FSB1_Internal_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_FSB1_Internal_network_role:
-      type: string
-      required: true
-    compute_FSB1_availability_zone:
+    port_FSB_Internal_port_0_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_FSB1_Internal_network:
+    port_FSB_Internal_port_1_network_role_tag:
+      type: string
+      required: true
+    port_FSB_Internal_port_0_mac_address:
+      type: string
+      required: true
+    port_FSB_Internal_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vm_flavor_name:
+      type: string
+      required: true
+    port_FSB_Internal_port_1_mac_address:
+      type: string
+      required: true
+    port_FSB_Internal_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_FSB_Internal_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_FSB_Internal_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_FSB1_availability_zone:
       type: list
       required: true
       entry_schema:
@@ -90,95 +79,106 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_FSB2_Internal_mac_requirements:
+    port_FSB_Internal_port_0_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_FSB2_Internal_mac_address:
-      type: string
-      required: true
-    port_FSB2_Internal_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_FSB1_Internal_order:
+    port_FSB_Internal_port_0_order:
       type: integer
       required: true
-    port_FSB2_Internal_network:
+    port_FSB_Internal_port_1_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: string
-    port_FSB1_Internal_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_FSB_Internal_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_FSB_Internal_port_0_network_role_tag:
+      type: string
       required: true
     compute_FSB1_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_FSB2_Internal_network_role_tag:
+    port_FSB_Internal_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_FSB_Internal_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_FSB_Internal_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_FSB_Internal_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB_Internal_port_1_subnetpoolid:
       type: string
       required: true
   node_templates:
-    FSB1_FSB1_Internal:
+    FSB1_FSB_1_Internal_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_requirements:
-          get_input: port_FSB1_Internal_mac_requirements
+          get_input: port_FSB_Internal_port_1_mac_requirements
         order:
-          get_input: port_FSB1_Internal_order
+          get_input: port_FSB_Internal_port_1_order
         mac_address:
-          get_input: port_FSB1_Internal_mac_address
+          get_input: port_FSB_Internal_port_1_mac_address
         exCP_naming:
-          get_input: port_FSB1_Internal_exCP_naming
+          get_input: port_FSB_Internal_port_1_exCP_naming
         vlan_requirements:
-          get_input: port_FSB1_Internal_vlan_requirements
+          get_input: port_FSB_Internal_port_1_vlan_requirements
         subinterface_indicator: false
         ip_requirements:
-          get_input: port_FSB1_Internal_ip_requirements
+          get_input: port_FSB_Internal_port_1_ip_requirements
         related_networks:
-          get_input: port_FSB1_Internal_related_networks
+          get_input: port_FSB_Internal_port_1_related_networks
         network_role_tag:
-          get_input: port_FSB1_Internal_network_role_tag
+          get_input: port_FSB_Internal_port_1_network_role_tag
         network_role:
-          get_input: port_FSB1_Internal_network_role
+          get_input: port_FSB_Internal_port_1_network_role
         subnetpoolid:
-          get_input: port_FSB1_Internal_subnetpoolid
+          get_input: port_FSB_Internal_port_1_subnetpoolid
         network:
           get_input:
-          - port_FSB1_Internal_network
+          - port_FSB_Internal_port_1_network
           - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
           node: FSB1
           relationship: tosca.relationships.network.BindsTo
-    FSB1_FSB2_Internal:
+    FSB1_FSB_1_Internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_requirements:
-          get_input: port_FSB2_Internal_mac_requirements
+          get_input: port_FSB_Internal_port_0_mac_requirements
         order:
-          get_input: port_FSB2_Internal_order
+          get_input: port_FSB_Internal_port_0_order
         mac_address:
-          get_input: port_FSB2_Internal_mac_address
+          get_input: port_FSB_Internal_port_0_mac_address
         exCP_naming:
-          get_input: port_FSB2_Internal_exCP_naming
+          get_input: port_FSB_Internal_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_FSB2_Internal_vlan_requirements
+          get_input: port_FSB_Internal_port_0_vlan_requirements
         subinterface_indicator: false
         ip_requirements:
-          get_input: port_FSB2_Internal_ip_requirements
+          get_input: port_FSB_Internal_port_0_ip_requirements
         related_networks:
-          get_input: port_FSB2_Internal_related_networks
+          get_input: port_FSB_Internal_port_0_related_networks
         network_role_tag:
-          get_input: port_FSB2_Internal_network_role_tag
+          get_input: port_FSB_Internal_port_0_network_role_tag
         network_role:
-          get_input: port_FSB2_Internal_network_role
+          get_input: port_FSB_Internal_port_0_network_role
         subnetpoolid:
-          get_input: port_FSB2_Internal_subnetpoolid
+          get_input: port_FSB_Internal_port_0_subnetpoolid
         network:
           get_input:
-          - port_FSB2_Internal_network
+          - port_FSB_Internal_port_0_network
           - index_value
       requirements:
       - binding:
@@ -210,18 +210,18 @@ topology_template:
           type: tosca.artifacts.Deployment
           file: ../Artifacts/nimbus-ethernet
   outputs:
-    FSB1_FSB2_Internal_tenant_id:
+    FSB1_FSB_1_Internal_port_1_network_id:
       type: string
       value:
         get_attribute:
-        - FSB1_FSB2_Internal
-        - tenant_id
-    FSB1_FSB1_Internal_network_id:
-      type: string
-      value:
-        get_attribute:
-        - FSB1_FSB1_Internal
+        - FSB1_FSB_1_Internal_port_1
         - network_id
+    FSB1_FSB_1_Internal_port_1_device_owner:
+      type: string
+      value:
+        get_attribute:
+        - FSB1_FSB_1_Internal_port_1
+        - device_owner
     FSB1_user_data_format:
       type: string
       value:
@@ -242,36 +242,33 @@ topology_template:
         - addresses
       entry_schema:
         type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
-    FSB1_FSB2_Internal_network_id:
-      type: string
-      value:
-        get_attribute:
-        - FSB1_FSB2_Internal
-        - network_id
-    FSB1_FSB1_Internal_status:
-      type: string
-      value:
-        get_attribute:
-        - FSB1_FSB1_Internal
-        - status
-    FSB1_FSB1_Internal_device_owner:
-      type: string
-      value:
-        get_attribute:
-        - FSB1_FSB1_Internal
-        - device_owner
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.FSB1
     capabilities:
-      binding_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - binding
+      network.outgoing.packets.rate_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.outgoing.packets.rate
+      network.outpoing.packets_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.outpoing.packets
+      network.outpoing.packets_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.outpoing.packets
       disk.capacity_FSB1:
       - FSB1
       - disk.capacity
       disk.read.bytes.rate_FSB1:
       - FSB1
       - disk.read.bytes.rate
+      forwarder_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - forwarder
+      forwarder_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - forwarder
       disk.device.latency_FSB1:
       - FSB1
       - disk.device.latency
@@ -293,36 +290,12 @@ topology_template:
       disk.root.size_FSB1:
       - FSB1
       - disk.root.size
-      forwarder_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - forwarder
       feature_FSB1:
       - FSB1
       - feature
-      network.incoming.packets.rate_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.incoming.packets.rate
-      network.outgoing.bytes_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.outgoing.bytes
-      feature_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - feature
-      attachment_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - attachment
-      network.incoming.packets_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.incoming.packets
       memory.resident_FSB1:
       - FSB1
       - memory.resident
-      forwarder_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - forwarder
-      network.incoming.packets.rate_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.incoming.packets.rate
       cpu_FSB1:
       - FSB1
       - cpu
@@ -341,18 +314,36 @@ topology_template:
       disk.write.bytes_FSB1:
       - FSB1
       - disk.write.bytes
-      binding_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - binding
+      attachment_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - attachment
+      network.incoming.bytes.rate_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.incoming.bytes.rate
       disk.device.read.requests.rate_FSB1:
       - FSB1
       - disk.device.read.requests.rate
-      feature_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
+      attachment_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - attachment
+      network.incoming.bytes.rate_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.outgoing.bytes.rate
+      feature_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
       - feature
       disk.device.read.requests_FSB1:
       - FSB1
       - disk.device.read.requests
+      feature_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - feature
       disk.ephemeral.size_FSB1:
       - FSB1
       - disk.ephemeral.size
@@ -362,21 +353,21 @@ topology_template:
       disk.device.write.bytes_FSB1:
       - FSB1
       - disk.device.write.bytes
-      network.incoming.packets_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
+      network.incoming.bytes_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.incoming.bytes
+      network.incoming.bytes_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.incoming.bytes
+      network.incoming.packets_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
       - network.incoming.packets
-      attachment_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - attachment
+      network.incoming.packets_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.incoming.packets
       memory_FSB1:
       - FSB1
       - memory
-      network.outpoing.packets_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.outpoing.packets
-      network.outgoing.bytes.rate_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.outgoing.bytes.rate
       disk.device.read.bytes_FSB1:
       - FSB1
       - disk.device.read.bytes
@@ -392,6 +383,12 @@ topology_template:
       disk.usage_FSB1:
       - FSB1
       - disk.usage
+      binding_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - binding
+      binding_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - binding
       host_FSB1:
       - FSB1
       - host
@@ -407,30 +404,15 @@ topology_template:
       disk.write.requests_FSB1:
       - FSB1
       - disk.write.requests
-      network.outgoing.bytes_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
+      network.outgoing.bytes_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
       - network.outgoing.bytes
-      network.incoming.bytes_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.incoming.bytes
-      network.outpoing.packets_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.outpoing.packets
       disk.device.write.bytes.rate_FSB1:
       - FSB1
       - disk.device.write.bytes.rate
-      network.outgoing.bytes.rate_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.outgoing.bytes.rate
       endpoint_FSB1:
       - FSB1
       - endpoint
-      network.outgoing.packets.rate_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.outgoing.packets.rate
-      network.incoming.bytes.rate_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - network.incoming.bytes.rate
       disk.latency_FSB1:
       - FSB1
       - disk.latency
@@ -440,40 +422,40 @@ topology_template:
       disk.read.requests_FSB1:
       - FSB1
       - disk.read.requests
+      network.incoming.packets.rate_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - network.incoming.packets.rate
       disk.device.write.requests_FSB1:
       - FSB1
       - disk.device.write.requests
-      network.incoming.bytes.rate_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.incoming.bytes.rate
-      network.incoming.bytes_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.incoming.bytes
+      network.incoming.packets.rate_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.incoming.packets.rate
       disk.iops_FSB1:
       - FSB1
       - disk.iops
-      network.outgoing.packets.rate_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - network.outgoing.packets.rate
+      network.outgoing.bytes_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - network.outgoing.bytes
       disk.device.iops_FSB1:
       - FSB1
       - disk.device.iops
     requirements:
+      dependency_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - dependency
       dependency_FSB1:
       - FSB1
       - dependency
-      link_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - link
-      dependency_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
+      dependency_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
       - dependency
-      link_FSB1_FSB1_Internal:
-      - FSB1_FSB1_Internal
-      - link
       local_storage_FSB1:
       - FSB1
       - local_storage
-      dependency_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - dependency
+      link_FSB1_FSB_1_Internal_port_0:
+      - FSB1_FSB_1_Internal_port_0
+      - link
+      link_FSB1_FSB_1_Internal_port_1:
+      - FSB1_FSB_1_Internal_port_1
+      - link

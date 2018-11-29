@@ -411,23 +411,23 @@ topology_template:
           get_attribute:
           - test_nested_no_compute
           - no_compute_attr_1
-        port_pd_server_port_2_ip_requirements:
+        port_pd_server_2_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd_server_port_2_mac_requirements:
+        port_pd_server_1_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd_server_port_1_ip_requirements:
+        port_pd_server_2_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: false
-        port_pd_server_port_1_mac_requirements:
-          mac_count_required:
             is_required: false
     test_nested_no_compute:
       type: org.openecomp.resource.abstract.nodes.heat.nested-no-compute
@@ -449,32 +449,30 @@ topology_template:
           substitute_service_template: nested-pattern-4ServiceTemplate.yaml
         p2:
           get_input: p2
-        port_pd_server_port_2_ip_requirements:
+        port_pd_server_2_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd_server_port_2_mac_requirements:
+        port_pd_server_1_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd_server_port_1_ip_requirements:
+        port_pd_server_2_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: false
-        port_pd_server_port_1_mac_requirements:
-          mac_count_required:
             is_required: false
     abstract_osm_server_1c2_0:
       type: org.openecomp.resource.abstract.nodes.osm_server_1c2
       directives:
       - substitutable
       properties:
-        port_osm_port_replacement_policy:
-        - AUTO
-        port_osm_port_network:
+        port_osm_server_1c2_mgmt_port_0_network:
         - packet_internal_network_2
         compute_osm_server_1c2_name:
         - get_input:
@@ -482,24 +480,26 @@ topology_template:
           - 0
         vm_flavor_name:
           get_input: osm_server_1c2_flavor
-        port_osm_port_ip_requirements:
+        port_osm_server_1c2_mgmt_port_0_replacement_policy:
+        - AUTO
+        port_osm_server_1c2_mgmt_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: osm_server_1c2_image
+        port_osm_server_1c2_mgmt_port_0_fixed_ips:
+        - ip_address:
+            get_input:
+            - BE_osm_ips
+            - 1
+        compute_osm_server_1c2_availability_zone:
+        - get_input: availability_zone_0
+        port_osm_server_1c2_mgmt_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_osm_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - BE_osm_ips
-            - 1
-        vm_image_name:
-          get_input: osm_server_1c2_image
-        port_osm_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_osm_server_1c2_availability_zone:
-        - get_input: availability_zone_0
         service_template_filter:
           substitute_service_template: Nested_osm_server_1c2ServiceTemplate.yaml
           count: 1
@@ -509,7 +509,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_osm_server_1c2_osm_port:
+      - link_osm_server_1c2_osm_server_1c2_mgmt_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network_2
           relationship: tosca.relationships.network.LinksTo
@@ -518,9 +518,7 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_osm_port_replacement_policy:
-        - AUTO
-        port_osm_port_network:
+        port_osm_server_1c2_mgmt_port_0_network:
         - packet_external_network_2
         compute_osm_server_1c2_name:
         - get_input:
@@ -528,22 +526,18 @@ topology_template:
           - 1
         vm_flavor_name:
           get_input: osm_server_1c2_flavor
-        port_osm_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
+        port_osm_server_1c2_mgmt_port_0_replacement_policy:
+        - AUTO
+        port_osm_server_1c2_mgmt_port_0_mac_requirements:
+          mac_count_required:
             is_required: false
-        port_osm_port_fixed_ips:
+        vm_image_name:
+          get_input: osm_server_1c2_image
+        port_osm_server_1c2_mgmt_port_0_fixed_ips:
         - ip_address:
             get_input:
             - BE_osm_ips
             - 1
-        vm_image_name:
-          get_input: osm_server_1c2_image
-        port_osm_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         compute_osm_server_1c2_metadata:
         - connectivity_to_server_1c1_BE_1:
             get_attribute:
@@ -563,6 +557,12 @@ topology_template:
             - rd_server_1b_accessIPv4
         compute_osm_server_1c2_availability_zone:
         - get_input: availability_zone_0
+        port_osm_server_1c2_mgmt_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_osm_server_1c2ServiceTemplate.yaml
           count: 1
@@ -572,7 +572,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_osm_server_1c2_osm_port:
+      - link_osm_server_1c2_osm_server_1c2_mgmt_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network_2
           relationship: tosca.relationships.network.LinksTo
@@ -593,32 +593,35 @@ topology_template:
       properties:
         vm_flavor_name:
           get_input: BE_1c1_flavor
-        port_BE_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_BE_port_fixed_ips:
-        - - ip_address:
-              get_input:
-              - BE_osm_ips
-              - 0
-        - - ip_address:
-              get_input:
-              - BE_osm_ips
-              - 0
-        compute_BE_1c1_availability_zone:
-        - get_input: availability_zone_0
-        - get_input: availability_zone_0
-        port_BE_port_network:
-        - packet_internal_network_2
-        - packet_internal_network_2
-        port_BE_port_ip_requirements:
+        port_BE_1c1_mgmt_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        compute_BE_1c1_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        port_BE_1c1_mgmt_port_0_fixed_ips:
+        - - ip_address:
+              get_input:
+              - BE_osm_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - BE_osm_ips
+              - 0
+        port_BE_1c1_mgmt_port_0_network:
+        - packet_internal_network_2
+        - packet_internal_network_2
         vm_image_name:
           get_input: BE_1c1_image
+        port_BE_1c1_mgmt_port_0_replacement_policy:
+        - AUTO
+        - AUTO
+        port_BE_1c1_mgmt_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         compute_BE_1c1_name:
         - get_input:
           - BE_1c1_names
@@ -626,9 +629,6 @@ topology_template:
         - get_input:
           - BE_1c1_names
           - 0
-        port_BE_port_replacement_policy:
-        - AUTO
-        - AUTO
         service_template_filter:
           substitute_service_template: Nested_BE_1c1ServiceTemplate.yaml
           count: 2
@@ -638,7 +638,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_BE_1c1_BE_port:
+      - link_BE_1c1_BE_1c1_mgmt_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network_2
           relationship: tosca.relationships.network.LinksTo

@@ -8,25 +8,45 @@ node_types:
   org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_template_VMInt_OAM_lb_4_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
       compute_pd_server_key_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_replacement_policy:
+      port_pd01_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_pd01_port_0_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_pd_server_personality:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_pd01_port_0_replacement_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_pd_server_image_update_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_0_name:
         type: list
         required: true
         status: SUPPORTED
@@ -36,80 +56,70 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_security_groups:
+      port_pd01_port_0_binding:vnic_type:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      port_pd01_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
+          type: string
+      port_pd01_port_0_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_template_VMInt_OAM_lb_4_virtual_machine_interface_allowed_address_pairs:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
         status: SUPPORTED
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
-      port_template_VMInt_OAM_lb_virtual_machine_interface_properties:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
-        required: true
-        status: SUPPORTED
-      port_template_VMInt_OAM_lb_related_networks:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-      port_pd01_port_device_id:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_pd01_port_admin_state_up:
+      port_pd01_port_0_port_security_enabled:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: boolean
-      port_pd01_port_vlan_requirements:
+      port_pd01_port_0_value_specs:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
+          type: json
+      port_pd01_port_0_admin_state_up:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_pd01_port_0_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_template_VMInt_OAM_lb_4_virtual_network_refs:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       compute_pd_server_metadata:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_template_VMInt_OAM_lb_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
       compute_pd_server_diskConfig:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_mac_address:
+      port_pd01_port_0_mac_address:
         type: string
         required: true
         status: SUPPORTED
-      port_template_VMInt_OAM_lb_network_role:
+      port_pd01_port_0_network_role_tag:
         type: string
-        required: true
-        status: SUPPORTED
-      port_pd01_port_allowed_address_pairs:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.network.AddressPair
-      port_pd01_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
       compute_pd_server_admin_pass:
@@ -124,39 +134,39 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_related_networks:
+      port_pd01_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_template_VMInt_OAM_lb_4_security_group_refs:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_template_VMInt_OAM_lb_4_virtual_machine_interface_mac_addresses:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_template_VMInt_OAM_lb_4_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_template_VMInt_OAM_lb_4_related_networks:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-      port_template_VMInt_OAM_lb_ip_requirements:
+      port_pd01_port_0_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_template_VMInt_OAM_lb_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        required: true
-        status: SUPPORTED
-      port_pd01_port_value_specs:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       compute_pd_server_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_template_VMInt_OAM_lb_port_tuple_refs:
         type: list
         required: true
         status: SUPPORTED
@@ -168,28 +178,40 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_network_role_tag:
-        type: string
+      port_pd01_port_0_security_groups:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: json
       compute_pd_server_scheduler_hints:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_pd01_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       compute_pd_server_contrail_service_instance_ind:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: boolean
+      port_template_VMInt_OAM_lb_4_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_pd01_port_0_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_0_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
       compute_pd_server_availability_zone:
         type: list
         required: true
@@ -202,40 +224,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_template_VMInt_OAM_lb_network_role_tag:
-        type: string
+      port_template_VMInt_OAM_lb_4_virtual_machine_interface_properties:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
         required: true
         status: SUPPORTED
-      port_pd01_port_binding:vnic_type:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_pd01_port_device_owner:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_pd01_port_fixed_ips:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_pd01_port_ip_requirements:
+      port_template_VMInt_OAM_lb_4_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_pd01_port_qos_policy:
-        type: list
+      port_template_VMInt_OAM_lb_4_subnetpoolid:
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
+      port_template_VMInt_OAM_lb_4_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
       compute_pd_server_config_drive:
         type: list
         required: true
@@ -248,12 +254,30 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_template_VMInt_OAM_lb_virtual_network_refs:
+      port_pd01_port_0_allowed_address_pairs:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.network.AddressPair
+      port_pd01_port_0_device_id:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_0_qos_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -262,178 +286,154 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_template_VMInt_OAM_lb_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_template_VMInt_OAM_lb_name:
+      port_template_VMInt_OAM_lb_4_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_port_security_enabled:
-        type: list
+      port_template_VMInt_OAM_lb_4_order:
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: boolean
-      port_template_VMInt_OAM_lb_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       compute_pd_server_user_data_update_policy:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_network:
+      port_pd01_port_0_device_owner:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_template_VMInt_OAM_lb_4_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
       compute_pd_server_reservation_id:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_pd01_port_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_template_VMInt_OAM_lb_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_pd01_port_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_template_VMInt_OAM_lb_security_group_refs:
+      port_template_VMInt_OAM_lb_4_port_tuple_refs:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_pd01_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
     attributes:
-      pd_server_pd01_port_allowed_address_pairs:
-        type: list
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.network.AddressPair
-      pd_server_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses:
-        type: list
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      pd_server_template_VMInt_OAM_lb_virtual_network_refs:
-        type: list
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      pd_server_template_VMInt_OAM_lb_fq_name:
-        type: string
+      pd_server_pd01_port_0_port_security_enabled:
+        type: boolean
         status: SUPPORTED
       pd_server_show:
         type: string
         status: SUPPORTED
+      pd_server_template_VMInt_OAM_lb_4_name:
+        type: string
+        status: SUPPORTED
+      pd_server_pd01_port_0_allowed_address_pairs:
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AddressPair
       pd_server_console_urls:
         type: string
         status: SUPPORTED
-      pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        status: SUPPORTED
-      pd_server_pd01_port_security_groups:
+      pd_server_pd01_port_0_security_groups:
         type: list
         status: SUPPORTED
         entry_schema:
           type: string
-      pd_server_pd01_port_port_security_enabled:
-        type: boolean
-        status: SUPPORTED
-      pd_server_pd01_port_status:
+      pd_server_pd01_port_0_tenant_id:
         type: string
         status: SUPPORTED
-      pd_server_template_VMInt_OAM_lb_port_tuple_refs:
+      pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_mac_addresses:
         type: list
         status: SUPPORTED
         entry_schema:
           type: string
-      pd_server_pd01_port_fixed_ips:
+      pd_server_template_VMInt_OAM_lb_4_fq_name:
+        type: string
+        status: SUPPORTED
+      pd_server_pd01_port_0_name:
+        type: string
+        status: SUPPORTED
+      pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_properties:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
+        status: SUPPORTED
+      pd_server_pd01_port_0_subnets:
         type: list
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+          type: string
+      pd_server_pd01_port_0_show:
+        type: string
+        status: SUPPORTED
+      pd_server_pd01_port_0_status:
+        type: string
+        status: SUPPORTED
+      pd_server_pd01_port_0_qos_policy:
+        type: string
+        status: SUPPORTED
       pd_server_accessIPv6:
         type: string
         status: SUPPORTED
-      pd_server_pd01_port_admin_state_up:
-        type: boolean
-        status: SUPPORTED
       pd_server_instance_name:
-        type: string
-        status: SUPPORTED
-      pd_server_template_VMInt_OAM_lb_name:
         type: string
         status: SUPPORTED
       pd_server_accessIPv4:
         type: string
         status: SUPPORTED
-      pd_server_pd01_port_device_owner:
-        type: string
+      pd_server_pd01_port_0_admin_state_up:
+        type: boolean
         status: SUPPORTED
-      pd_server_pd01_port_show:
-        type: string
+      pd_server_template_VMInt_OAM_lb_4_virtual_network_refs:
+        type: list
         status: SUPPORTED
-      pd_server_pd01_port_network:
-        type: string
-        status: SUPPORTED
-      pd_server_pd01_port_qos_policy:
-        type: string
-        status: SUPPORTED
-      pd_server_pd01_port_mac_address:
-        type: string
-        status: SUPPORTED
+        entry_schema:
+          type: string
       pd_server_addresses:
         type: map
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
-      pd_server_pd01_port_tenant_id:
+      pd_server_pd01_port_0_device_id:
         type: string
         status: SUPPORTED
-      pd_server_template_VMInt_OAM_lb_virtual_machine_interface_properties:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
-        status: SUPPORTED
-      pd_server_pd01_port_device_id:
+      pd_server_pd01_port_0_network:
         type: string
         status: SUPPORTED
-      pd_server_pd01_port_name:
+      pd_server_pd01_port_0_mac_address:
         type: string
         status: SUPPORTED
-      pd_server_template_VMInt_OAM_lb_show:
+      pd_server_pd01_port_0_device_owner:
         type: string
         status: SUPPORTED
-      pd_server_pd01_port_subnets:
+      pd_server_pd01_port_0_fixed_ips:
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      pd_server_template_VMInt_OAM_lb_4_port_tuple_refs:
         type: list
         status: SUPPORTED
         entry_schema:
           type: string
+      pd_server_template_VMInt_OAM_lb_4_show:
+        type: string
+        status: SUPPORTED
+      pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_allowed_address_pairs:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        status: SUPPORTED
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node
@@ -449,39 +449,53 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_pd_server_template_VMInt_OAM_lb:
+    - dependency_pd_server_template_VMInt_OAM_lb_4:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_pd_server_template_VMInt_OAM_lb:
+    - link_pd_server_template_VMInt_OAM_lb_4:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - dependency_pd_server_pd01_port:
+    - dependency_pd_server_pd01_port_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_pd_server_pd01_port:
+    - link_pd_server_pd01_port_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
     capabilities:
+      binding_pd_server_pd01_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
       scalable_pd_server:
         type: tosca.capabilities.Scalable
         occurrences:
         - 1
         - UNBOUNDED
       disk.read.bytes.rate_pd_server:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_pd_server_template_VMInt_OAM_lb_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -505,13 +519,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_pd_server_pd01_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_pd_server_template_VMInt_OAM_lb:
+      network.incoming.packets_pd_server_template_VMInt_OAM_lb_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -528,19 +536,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_pd_server_pd01_port:
+      network.outgoing.bytes.rate_pd_server_template_VMInt_OAM_lb_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       cpu_pd_server:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_pd_server_template_VMInt_OAM_lb:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -570,19 +572,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_pd_server_pd01_port:
+      network.incoming.packets_pd_server_pd01_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       disk.iops_pd_server:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_pd_server_template_VMInt_OAM_lb:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -600,7 +596,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_pd_server_pd01_port:
+      network.incoming.packets.rate_pd_server_pd01_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_pd_server_pd01_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_pd_server_pd01_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -618,6 +626,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_template_VMInt_OAM_lb_4:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pd_server_pd01_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.requests_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -629,20 +647,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_pd_server_pd01_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_pd_server_template_VMInt_OAM_lb:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.capacity_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd_server_pd01_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -669,6 +681,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.bytes_pd_server_template_VMInt_OAM_lb_4:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_pd_server_pd01_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_pd_server:
         type: tosca.capabilities.Node
         occurrences:
@@ -680,27 +704,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_pd_server_pd01_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       disk.write.bytes_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_pd_server_pd01_port:
+      network.outgoing.bytes_pd_server_pd01_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_pd_server_pd01_port:
+      network.incoming.bytes_pd_server_pd01_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -724,36 +740,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_pd_server_template_VMInt_OAM_lb:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.write.bytes_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      feature_pd_server_template_VMInt_OAM_lb:
-        type: tosca.capabilities.Node
+      network.outpoing.packets_pd_server_pd01_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_pd_server_template_VMInt_OAM_lb_4:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       disk.device.read.requests_pd_server:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_pd_server_template_VMInt_OAM_lb:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_pd_server_template_VMInt_OAM_lb:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -772,27 +777,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_pd_server_pd01_port:
+      network.incoming.packets.rate_pd_server_template_VMInt_OAM_lb_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_pd_server_template_VMInt_OAM_lb:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_pd_server_template_VMInt_OAM_lb:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
-      forwarder_pd_server_pd01_port:
-        type: org.openecomp.capabilities.Forwarder
+      feature_pd_server_pd01_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -808,20 +800,21 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_pd_server_template_VMInt_OAM_lb_4:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.requests_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_pd_server_template_VMInt_OAM_lb:
+      network.outgoing.bytes_pd_server_template_VMInt_OAM_lb_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_pd_server_pd01_port:
-        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -843,11 +836,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_pd_server_pd01_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_pd_server_template_VMInt_OAM_lb_4:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
+        - UNBOUNDED
+      binding_pd_server_template_VMInt_OAM_lb_4:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
         - UNBOUNDED
       disk.device.iops_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer

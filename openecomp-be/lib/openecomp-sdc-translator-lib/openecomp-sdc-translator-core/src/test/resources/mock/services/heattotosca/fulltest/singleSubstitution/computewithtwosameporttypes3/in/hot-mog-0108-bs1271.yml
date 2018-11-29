@@ -215,15 +215,15 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd_oam1_port_0}
-        - port: {get_resource: pd_oam1_port_1}
+        - port: {get_resource: pd_server_0_oam_port_0}
+        - port: {get_resource: pd_server_1_oam_port_0}
       user_data_format:  RAW
 
-  pd_oam1_port_0:
+  pd_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  pd_oam1_port_1:
+  pd_server_1_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}

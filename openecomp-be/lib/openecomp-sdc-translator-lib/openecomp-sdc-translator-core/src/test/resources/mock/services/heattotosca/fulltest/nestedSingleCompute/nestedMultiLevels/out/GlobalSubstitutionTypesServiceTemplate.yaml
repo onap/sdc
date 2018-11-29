@@ -3906,11 +3906,11 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_cmaui_port_1_exCP_naming:
+      port_cmaui_port_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-      port_cmaui_port_2_exCP_naming:
+      port_cmaui_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED

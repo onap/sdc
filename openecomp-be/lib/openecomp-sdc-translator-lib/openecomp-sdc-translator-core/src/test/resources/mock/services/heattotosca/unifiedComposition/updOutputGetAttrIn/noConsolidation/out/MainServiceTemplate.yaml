@@ -268,13 +268,13 @@ topology_template:
         - FSB1_addresses
         - get_attribute:
           - FSB1
-          - FSB1_FSB2_Internal_tenant_id
+          - FSB1_FSB2_Internal_2_tenant_id
     complexOutput2:
       description: cgi fw01 left interface Mac-Address
       value:
         get_attribute:
         - FSB1
-        - FSB1_FSB1_Internal_device_owner
+        - FSB1_FSB1_Internal_1_device_owner
         - get_input:
           - CMAUI_volume_type
           - get_attribute:

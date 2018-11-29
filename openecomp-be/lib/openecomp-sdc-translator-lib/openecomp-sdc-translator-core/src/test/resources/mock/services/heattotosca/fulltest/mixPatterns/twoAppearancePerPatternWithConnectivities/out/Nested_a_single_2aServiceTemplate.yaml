@@ -11,14 +11,27 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_a_single_2a_t1_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_a_single_2a_t1_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
     compute_a_single_2a_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1a_t1_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_a_single_2a_t1_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
+    port_a_single_2a_t1_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -26,30 +39,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_1a_t1_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_1a_t1_port_related_networks:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_1a_t1_port_network_role_tag:
-      type: string
-      required: true
-    port_1a_t1_port_network_role:
-      type: string
-      required: true
     compute_a_single_2a_scheduler_hints:
       type: list
       required: true
       entry_schema:
         type: json
-    port_1a_t1_port_order:
-      type: integer
-      required: true
     compute_a_single_2a_availability_zone:
       type: list
       required: true
@@ -58,16 +52,11 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_1a_t1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_1a_t1_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_1a_t1_port_subnetpoolid:
+    port_a_single_2a_t1_port_0_network_role_tag:
       type: string
+      required: true
+    port_a_single_2a_t1_port_0_order:
+      type: integer
       required: true
     compute_a_single_2a_name:
       type: list
@@ -77,11 +66,22 @@ topology_template:
     vm_image_name:
       type: string
       required: true
-    port_1a_t1_port_vlan_requirements:
+    port_a_single_2a_t1_port_0_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
+    port_a_single_2a_t1_port_0_network_role:
+      type: string
+      required: true
+    port_a_single_2a_t1_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_a_single_2a_t1_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     compute_a_single_2a_metadata:
       type: list
       required: true
@@ -115,31 +115,31 @@ topology_template:
           get_input:
           - compute_a_single_2a_user_data_format
           - index_value
-    a_single_2a_1a_t1_port:
+    a_single_2a_a_single_2a_t1_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_1a_t1_port_exCP_naming
+          get_input: port_a_single_2a_t1_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_1a_t1_port_vlan_requirements
+          get_input: port_a_single_2a_t1_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_1a_t1_port_related_networks
+          get_input: port_a_single_2a_t1_port_0_related_networks
         ip_requirements:
-          get_input: port_1a_t1_port_ip_requirements
+          get_input: port_a_single_2a_t1_port_0_ip_requirements
         network_role_tag:
-          get_input: port_1a_t1_port_network_role_tag
+          get_input: port_a_single_2a_t1_port_0_network_role_tag
         mac_requirements:
-          get_input: port_1a_t1_port_mac_requirements
+          get_input: port_a_single_2a_t1_port_0_mac_requirements
         order:
-          get_input: port_1a_t1_port_order
+          get_input: port_a_single_2a_t1_port_0_order
         network_role:
-          get_input: port_1a_t1_port_network_role
+          get_input: port_a_single_2a_t1_port_0_network_role
         subnetpoolid:
-          get_input: port_1a_t1_port_subnetpoolid
+          get_input: port_a_single_2a_t1_port_0_subnetpoolid
         network:
           get_input:
-          - port_1a_t1_port_network
+          - port_a_single_2a_t1_port_0_network
           - index_value
       requirements:
       - binding:
@@ -159,6 +159,12 @@ topology_template:
       disk.capacity_a_single_2a:
       - a_single_2a
       - disk.capacity
+      network.incoming.bytes_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.incoming.bytes
+      feature_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - feature
       disk.ephemeral.size_a_single_2a:
       - a_single_2a
       - disk.ephemeral.size
@@ -180,18 +186,12 @@ topology_template:
       disk.device.usage_a_single_2a:
       - a_single_2a
       - disk.device.usage
-      forwarder_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - forwarder
       disk.read.bytes.rate_a_single_2a:
       - a_single_2a
       - disk.read.bytes.rate
       disk.device.write.requests.rate_a_single_2a:
       - a_single_2a
       - disk.device.write.requests.rate
-      network.incoming.bytes.rate_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.incoming.bytes.rate
       disk.write.requests.rate_a_single_2a:
       - a_single_2a
       - disk.write.requests.rate
@@ -210,21 +210,15 @@ topology_template:
       disk.latency_a_single_2a:
       - a_single_2a
       - disk.latency
-      network.incoming.packets.rate_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.incoming.packets.rate
+      forwarder_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - forwarder
       disk.usage_a_single_2a:
       - a_single_2a
       - disk.usage
-      network.incoming.bytes_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.incoming.bytes
       scalable_a_single_2a:
       - a_single_2a
       - scalable
-      feature_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - feature
       disk.device.write.bytes_a_single_2a:
       - a_single_2a
       - disk.device.write.bytes
@@ -237,21 +231,27 @@ topology_template:
       disk.root.size_a_single_2a:
       - a_single_2a
       - disk.root.size
+      network.outpoing.packets_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.outpoing.packets
       disk.device.write.requests_a_single_2a:
       - a_single_2a
       - disk.device.write.requests
-      attachment_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - attachment
       disk.iops_a_single_2a:
       - a_single_2a
       - disk.iops
       vcpus_a_single_2a:
       - a_single_2a
       - vcpus
+      network.outgoing.bytes.rate_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.outgoing.bytes.rate
       os_a_single_2a:
       - a_single_2a
       - os
+      network.incoming.packets_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.incoming.packets
       disk.write.bytes.rate_a_single_2a:
       - a_single_2a
       - disk.write.bytes.rate
@@ -267,33 +267,36 @@ topology_template:
       memory.usage_a_single_2a:
       - a_single_2a
       - memory.usage
-      network.outgoing.packets.rate_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.outgoing.packets.rate
-      network.outpoing.packets_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.outpoing.packets
+      attachment_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - attachment
+      network.incoming.packets.rate_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.incoming.packets.rate
+      binding_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - binding
       binding_a_single_2a:
       - a_single_2a
       - binding
       instance_a_single_2a:
       - a_single_2a
       - instance
-      network.outgoing.bytes_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.outgoing.bytes
+      network.incoming.bytes.rate_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.incoming.bytes.rate
       disk.write.bytes_a_single_2a:
       - a_single_2a
       - disk.write.bytes
-      binding_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - binding
-      network.incoming.packets_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.incoming.packets
+      network.outgoing.packets.rate_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.outgoing.packets.rate
       host_a_single_2a:
       - a_single_2a
       - host
+      network.outgoing.bytes_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - network.outgoing.bytes
       disk.device.write.bytes.rate_a_single_2a:
       - a_single_2a
       - disk.device.write.bytes.rate
@@ -306,9 +309,6 @@ topology_template:
       memory.resident_a_single_2a:
       - a_single_2a
       - memory.resident
-      network.outgoing.bytes.rate_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - network.outgoing.bytes.rate
       cpu.delta_a_single_2a:
       - a_single_2a
       - cpu.delta
@@ -316,15 +316,15 @@ topology_template:
       - a_single_2a
       - feature
     requirements:
+      link_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
+      - link
       dependency_a_single_2a:
       - a_single_2a
       - dependency
-      dependency_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
+      dependency_a_single_2a_a_single_2a_t1_port_0:
+      - a_single_2a_a_single_2a_t1_port_0
       - dependency
-      link_a_single_2a_1a_t1_port:
-      - a_single_2a_1a_t1_port
-      - link
       local_storage_a_single_2a:
       - a_single_2a
       - local_storage

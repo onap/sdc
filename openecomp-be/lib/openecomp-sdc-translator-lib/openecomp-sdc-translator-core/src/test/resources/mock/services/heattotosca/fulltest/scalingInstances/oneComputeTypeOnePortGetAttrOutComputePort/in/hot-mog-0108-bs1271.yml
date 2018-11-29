@@ -30,8 +30,8 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_0}
-      user_data_format:  {get_attr: [pd01_port_0, device_id]}
+        - port: {get_resource: pd_server_0_mgmt_port_0}
+      user_data_format:  {get_attr: [pd_server_0_mgmt_port_0, device_id]}
   server_pd_02:
     type: OS::Nova::Server
     properties:
@@ -40,14 +40,14 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_1}
-      user_data_format:  {get_attr: [pd01_port_1, device_id]}
-  pd01_port_0:
+        - port: {get_resource: pd_server_1_mgmt_port_0}
+      user_data_format:  {get_attr: [pd_server_1_mgmt_port_0, device_id]}
+  pd_server_0_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: Network-0
       replacement_policy: {get_attr: [server_pd_01, accessIPv4]}
-  pd01_port_1:
+  pd_server_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: Network-1

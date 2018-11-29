@@ -18,18 +18,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_0_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_1_security_groups:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_pd01_port_0_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_0_network_role:
         type: string
         required: true
@@ -76,22 +76,28 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_0_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
       port_pd01_port_1_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_0_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
       compute_pd_server_user_data_format:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_0_network_role_tag:
         type: string
         required: true
@@ -102,12 +108,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-      port_pd01_port_1_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance

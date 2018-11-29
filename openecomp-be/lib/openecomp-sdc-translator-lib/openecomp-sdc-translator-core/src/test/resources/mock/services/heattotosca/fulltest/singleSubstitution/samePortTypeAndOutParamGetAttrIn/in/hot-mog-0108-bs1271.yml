@@ -215,15 +215,15 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_0}
-        - port: {get_resource: pd01_port_1}
+        - port: {get_resource: pd_server_0_oam_port_0}
+        - port: {get_resource: pd_server_1_oam_port_0}
       user_data_format:  RAW
 
-  pd01_port_0:
+  pd_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  pd01_port_1:
+  pd_server_1_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
@@ -234,8 +234,8 @@ outputs:
       value: {get_attr: [server_pd_01, accessIPv4]}
   out2:
       description: output_regula
-      value: {get_attr: [pd01_port_1, device_owner]}
+      value: {get_attr: [pd_server_1_oam_port_0, device_owner]}
   out3:
       description: output_regula
       value:
-        get_attr: [pd01_port_0, device_id]
+        get_attr: [pd_server_0_oam_port_0, device_id]

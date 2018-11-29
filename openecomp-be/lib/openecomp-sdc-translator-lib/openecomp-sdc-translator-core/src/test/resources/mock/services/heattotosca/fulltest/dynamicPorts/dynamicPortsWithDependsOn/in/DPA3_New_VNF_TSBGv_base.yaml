@@ -293,7 +293,7 @@ parameters:
          description: A valid OpenStack UUID must be provided
 
 resources:
-  sbg_sc_internal_0_port_0:
+  sbg_sc_internal_0_port:
     type: OS::Neutron::Port
     properties:
       replacement_policy: AUTO
@@ -306,7 +306,7 @@ resources:
       - ip_address: { get_param: sbg_boot_floating_ip }
       mac_address: { get_param: [sbg_internal_mac_addresses ,0] }
 
-  sbg_sc_management_1_port_0:
+  sbg_sc_management_1_port:
     type: OS::Neutron::Port
     properties:
       replacement_policy: AUTO
@@ -351,7 +351,7 @@ resources:
 
   sbg_sc_0:
     type: OS::Nova::Server
-    depends_on: [ sbg_sc_internal_0_port_0, sbg_sc_management_1_port_0 ]
+    depends_on: [ sbg_sc_internal_0_port, sbg_sc_management_1_port ]
     properties:
       name: { get_param: [sbg_sc_names, 0]}
       metadata:
@@ -367,7 +367,7 @@ resources:
         delete_on_termination : "false"
       flavor: { get_param: sbg_sc_flavor_name }
       networks:
-      - port: { get_resource: sbg_sc_internal_0_port_0 }
-      - port: { get_resource: sbg_sc_management_1_port_0 }
+      - port: { get_resource: sbg_sc_internal_0_port }
+      - port: { get_resource: sbg_sc_management_1_port }
       config_drive: "true"
       user_data_format: RAW

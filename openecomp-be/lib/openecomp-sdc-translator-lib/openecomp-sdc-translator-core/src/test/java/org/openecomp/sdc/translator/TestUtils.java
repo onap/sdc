@@ -270,6 +270,7 @@ public class TestUtils {
 
   public static void updateMultiplePortConsolidationDatas(String serviceTemplateName,
                                                           List<String> portNodeTemplateIds,
+                                                          List<String> portTypes,
                                                           List<List<String>> nodesConnectedInIds,
                                                           List<List<String>> nodesConnectedOutIds,
                                                           List<List<String>> groupIds,
@@ -277,7 +278,7 @@ public class TestUtils {
                                                           List<List<Pair<String, GetAttrFuncData>>> getAttrOutFuncDataList,
                                                           ConsolidationData consolidationData) {
     for (int i = 0; i < portNodeTemplateIds.size(); i++) {
-      updatePortConsolidationData(serviceTemplateName, portNodeTemplateIds.get(i),
+      updatePortConsolidationData(serviceTemplateName, portNodeTemplateIds.get(i), portTypes.get(i),
           nodesConnectedInIds.get(i), nodesConnectedOutIds.get(i),
           groupIds.get(i), getAttrInIds.get(i), getAttrOutFuncDataList.get(i), consolidationData);
     }
@@ -310,6 +311,7 @@ public class TestUtils {
 
   public static void updatePortConsolidationData(String serviceTemplateFileName,
                                                  String portNodeTemplateId,
+                                                 String portType,
                                                  List<String> nodesConnectedInIds,
                                                  List<String> nodesConnectedOutIds,
                                                  List<String> groupIds, List<String> getAttrInIds,
@@ -317,7 +319,7 @@ public class TestUtils {
                                                  ConsolidationData consolidationData) {
 
     PortTemplateConsolidationData portTemplateConsolidationData =
-        createPortTemplateConsolidationData(portNodeTemplateId);
+        createPortTemplateConsolidationData(portNodeTemplateId, portType);
 
     updateRelationsForEntityConsolidationData(nodesConnectedInIds,
         nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOutFuncDataList,
@@ -328,11 +330,12 @@ public class TestUtils {
         .setPortTemplateConsolidationData(portNodeTemplateId, portTemplateConsolidationData);
   }
 
-  public static PortTemplateConsolidationData createPortTemplateConsolidationData(
-      String portNodeTemplateId) {
+  public static PortTemplateConsolidationData createPortTemplateConsolidationData(String portNodeTemplateId,
+                                                                                  String portType) {
     PortTemplateConsolidationData portTemplateConsolidationData =
         new PortTemplateConsolidationData();
     portTemplateConsolidationData.setNodeTemplateId(portNodeTemplateId);
+    portTemplateConsolidationData.setPortType(portType);
     return portTemplateConsolidationData;
   }
 

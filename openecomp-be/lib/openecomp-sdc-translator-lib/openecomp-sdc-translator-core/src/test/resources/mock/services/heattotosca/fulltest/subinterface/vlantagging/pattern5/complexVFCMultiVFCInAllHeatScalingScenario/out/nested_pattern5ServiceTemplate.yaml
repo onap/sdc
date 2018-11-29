@@ -100,17 +100,7 @@ topology_template:
         - get_input:
           - pd_server_1b_names
           - 0
-        vm_flavor_name:
-          get_input: pd_server_1b_flavor
-        vm_image_name:
-          get_input: pd_server_1b_image
-        port_pd_server_1b_port_replacement_policy:
-        - AUTO
-        - AUTO
-        port_pd_server_1b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pd_server_1b_port_fixed_ips:
+        port_pd_server_1b_port_2_fixed_ips:
         - - ip_address:
               get_input:
               - pd_server_1b_ips
@@ -119,18 +109,28 @@ topology_template:
               get_input:
               - pd_server_1b_ips
               - 0
-        port_pd_server_1b_port_network:
-        - packet_int_network
-        - packet_int_network
-        compute_pd_server_1b_availability_zone:
-        - get_input: availability_zone_0
-        - get_input: availability_zone_0
-        port_pd_server_1b_port_ip_requirements:
+        vm_flavor_name:
+          get_input: pd_server_1b_flavor
+        port_pd_server_1b_port_2_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_pd_server_1b_port_2_replacement_policy:
+        - AUTO
+        - AUTO
+        vm_image_name:
+          get_input: pd_server_1b_image
+        port_pd_server_1b_port_2_network:
+        - packet_int_network
+        - packet_int_network
+        port_pd_server_1b_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
         service_template_filter:
           substitute_service_template: Nested_pd_server_1bServiceTemplate.yaml
           count: 2
@@ -140,7 +140,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_pd_server_1b_pd_server_1b_port:
+      - link_pd_server_1b_pd_server_1b_port_2:
           capability: tosca.capabilities.network.Linkable
           node: packet_int_network
           relationship: tosca.relationships.network.LinksTo
@@ -159,13 +159,24 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_ps_server_1b_port_mac_requirements:
-          mac_count_required:
+        port_ps_server_1b_port_2_network:
+        - packet_int_network
+        - packet_int_network
+        port_ps_server_1b_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
             is_required: false
         subinterface_nested_vlan_service_template_filter_count:
         - 9
         - 9
-        port_ps_server_1b_port_fixed_ips:
+        vm_flavor_name:
+          get_input: ps_server_1b_flavor
+        subinterface_nested_vlan_net1:
+        - packet_ext_network
+        - packet_ext_network
+        port_ps_server_1b_port_2_fixed_ips:
         - - ip_address:
               get_input:
               - ps_server_1b_ips
@@ -174,27 +185,16 @@ topology_template:
               get_input:
               - ps_server_1b_ips
               - 0
-        vm_flavor_name:
-          get_input: ps_server_1b_flavor
-        port_ps_server_1b_port_network:
-        - packet_int_network
-        - packet_int_network
-        subinterface_nested_vlan_net1:
-        - packet_ext_network
-        - packet_ext_network
-        port_ps_server_1b_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
+        port_ps_server_1b_port_2_mac_requirements:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: ps_server_1b_image
-        port_ps_server_1b_port_replacement_policy:
+        port_ps_server_1b_port_2_replacement_policy:
         - AUTO
         - AUTO
         subinterface_nested_vlan_parent_interface:
-        - ps_server_1b_port_3
+        - ps_server_1b_1_port_2
         - ps_server_1b_port_2
         compute_ps_server_1b_availability_zone:
         - get_input: availability_zone_0
@@ -215,11 +215,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_ps_server_1b_ps_server_1b_port:
+      - link_ps_server_1b_ps_server_1b_port_2:
           capability: tosca.capabilities.network.Linkable
           node: packet_int_network
           relationship: tosca.relationships.network.LinksTo
-      - subinterface_link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - subinterface_link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_2_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo
@@ -239,10 +239,7 @@ topology_template:
     capabilities:
       binding_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - binding_ps_server_1b_ps_server_1b_port
-      binding_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - binding_ps_server_1b_ps_server_1b_port
+      - binding_ps_server_1b_ps_server_1b_port_2
       disk.device.usage_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.usage_ps_server_1b
@@ -257,28 +254,19 @@ topology_template:
       - disk.device.write.requests.rate_ps_server_1b
       feature_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - feature_pd_server_1b_pd_server_1b_port
+      - feature_pd_server_1b_pd_server_1b_port_2
       disk.capacity_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.capacity_pd_server_1b
-      feature_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - feature_pd_server_1b_pd_server_1b_port
       disk.capacity_server_1b_pd_2:
       - abstract_pd_server_1b
       - disk.capacity_pd_server_1b
       forwarder_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - forwarder_pd_server_1b_pd_server_1b_port
-      forwarder_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - forwarder_pd_server_1b_pd_server_1b_port
+      - forwarder_pd_server_1b_pd_server_1b_port_2
       network.outpoing.packets_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.outpoing.packets_pd_server_1b_pd_server_1b_port
-      network.outpoing.packets_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.outpoing.packets_pd_server_1b_pd_server_1b_port
+      - network.outpoing.packets_pd_server_1b_pd_server_1b_port_2
       disk.device.iops_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.iops_pd_server_1b
@@ -312,15 +300,12 @@ topology_template:
       memory_server_1b_ps_2:
       - abstract_ps_server_1b
       - memory_ps_server_1b
-      network.outgoing.packets.rate_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port
       instance_server_1b_ps_3:
       - abstract_ps_server_1b
       - instance_ps_server_1b
       network.outgoing.packets.rate_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port
+      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port_2
       instance_server_1b_ps_2:
       - abstract_ps_server_1b
       - instance_ps_server_1b
@@ -345,6 +330,9 @@ topology_template:
       disk.device.iops_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.device.iops_ps_server_1b
+      network.outgoing.packets.rate_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port_2
       disk.device.capacity_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.capacity_ps_server_1b
@@ -353,19 +341,25 @@ topology_template:
       - disk.device.capacity_ps_server_1b
       network.incoming.packets_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.incoming.packets_ps_server_1b_ps_server_1b_port
-      network.incoming.packets_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.incoming.packets_ps_server_1b_ps_server_1b_port
+      - network.incoming.packets_ps_server_1b_ps_server_1b_port_2
       disk.device.iops_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.iops_ps_server_1b
+      network.outgoing.bytes_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port_2
+      attachment_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - attachment_pd_server_1b_pd_server_1b_port_2
+      network.incoming.packets.rate_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port_2
+      network.incoming.bytes.rate_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port_2
       network.outgoing.bytes_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port
-      network.outgoing.bytes_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port_2
       endpoint_server_1b_ps_3:
       - abstract_ps_server_1b
       - endpoint_ps_server_1b
@@ -375,18 +369,15 @@ topology_template:
       host_server_1b_ps_2:
       - abstract_ps_server_1b
       - host_ps_server_1b
-      network.outgoing.bytes.rate_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port
       feature_packet_int_network:
       - packet_int_network
       - feature
       network.outgoing.bytes.rate_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port
+      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port_2
       network.outgoing.packets.rate_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port
+      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port_2
       memory.resident_server_1b_pd_2:
       - abstract_pd_server_1b
       - memory.resident_pd_server_1b
@@ -399,18 +390,21 @@ topology_template:
       disk.device.allocation_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.allocation_ps_server_1b
-      network.outgoing.packets.rate_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port
+      network.outpoing.packets_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.outpoing.packets_ps_server_1b_ps_server_1b_port_2
       disk.allocation_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.allocation_ps_server_1b
+      network.incoming.bytes_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.incoming.bytes_pd_server_1b_pd_server_1b_port_2
       disk.allocation_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.allocation_ps_server_1b
-      network.outgoing.bytes.rate_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port
+      network.incoming.bytes_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.incoming.bytes_ps_server_1b_ps_server_1b_port_2
       vcpus_server_1b_ps_2:
       - abstract_ps_server_1b
       - vcpus_ps_server_1b
@@ -419,7 +413,7 @@ topology_template:
       - vcpus_ps_server_1b
       network.outgoing.bytes.rate_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port_2
       disk.write.requests_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.write.requests_ps_server_1b
@@ -441,21 +435,21 @@ topology_template:
       os_server_1b_pd_2:
       - abstract_pd_server_1b
       - os_pd_server_1b
+      network.outpoing.packets_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.outpoing.packets_pd_server_1b_pd_server_1b_port_2
       disk.write.requests_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.write.requests_ps_server_1b
       network.incoming.packets.rate_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port
+      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port_2
       disk.root.size_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.root.size_pd_server_1b
       disk.latency_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.latency_ps_server_1b
-      network.incoming.packets.rate_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port
       disk.root.size_server_1b_pd_2:
       - abstract_pd_server_1b
       - disk.root.size_pd_server_1b
@@ -489,15 +483,9 @@ topology_template:
       end_point_packet_int_network:
       - packet_int_network
       - end_point
-      binding_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - binding_pd_server_1b_pd_server_1b_port
-      attachment_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - attachment_ps_server_1b_ps_server_1b_port
       attachment_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - attachment_ps_server_1b_ps_server_1b_port
+      - attachment_ps_server_1b_ps_server_1b_port_2
       cpu_server_1b_ps_3:
       - abstract_ps_server_1b
       - cpu_ps_server_1b
@@ -506,7 +494,7 @@ topology_template:
       - attachment
       binding_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - binding_pd_server_1b_pd_server_1b_port
+      - binding_pd_server_1b_pd_server_1b_port_2
       disk.allocation_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.allocation_pd_server_1b
@@ -533,10 +521,7 @@ topology_template:
       - feature
       network.outgoing.bytes_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port
-      network.outgoing.bytes_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port
+      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port_2
       disk.usage_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.usage_ps_server_1b
@@ -611,10 +596,7 @@ topology_template:
       - disk.root.size_ps_server_1b
       network.incoming.bytes.rate_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port
-      network.incoming.bytes.rate_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port
+      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port_2
       disk.root.size_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.root.size_ps_server_1b
@@ -638,10 +620,7 @@ topology_template:
       - disk.write.requests.rate_pd_server_1b
       network.incoming.bytes_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.incoming.bytes_ps_server_1b_ps_server_1b_port
-      network.incoming.bytes_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - network.incoming.bytes_ps_server_1b_ps_server_1b_port
+      - network.incoming.bytes_ps_server_1b_ps_server_1b_port_2
       attachment_packet_int_network:
       - packet_int_network
       - attachment
@@ -701,10 +680,7 @@ topology_template:
       - cpu_util_pd_server_1b
       forwarder_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - forwarder_ps_server_1b_ps_server_1b_port
-      forwarder_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - forwarder_ps_server_1b_ps_server_1b_port
+      - forwarder_ps_server_1b_ps_server_1b_port_2
       feature_server_1b_pd_3:
       - abstract_pd_server_1b
       - feature_pd_server_1b
@@ -735,15 +711,27 @@ topology_template:
       end_point_packet_ext_network:
       - packet_ext_network
       - end_point
-      network.outpoing.packets_ps_server_1b_port_3:
+      network.outgoing.bytes_ps_server_1b_1_port_2:
       - abstract_ps_server_1b
-      - network.outpoing.packets_ps_server_1b_ps_server_1b_port
+      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port_2
+      network.outgoing.packets.rate_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port_2
       network.outpoing.packets_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - network.outpoing.packets_ps_server_1b_ps_server_1b_port
+      - network.outpoing.packets_ps_server_1b_ps_server_1b_port_2
+      network.incoming.bytes.rate_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port_2
       disk.write.requests.rate_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.write.requests.rate_ps_server_1b
+      network.incoming.packets.rate_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port_2
+      attachment_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - attachment_ps_server_1b_ps_server_1b_port_2
       cpu_util_server_1b_pd_3:
       - abstract_pd_server_1b
       - cpu_util_pd_server_1b
@@ -755,7 +743,7 @@ topology_template:
       - disk.write.requests.rate_ps_server_1b
       attachment_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - attachment_pd_server_1b_pd_server_1b_port
+      - attachment_pd_server_1b_pd_server_1b_port_2
       disk.write.bytes_server_1b_ps_3:
       - abstract_ps_server_1b
       - disk.write.bytes_ps_server_1b
@@ -768,9 +756,6 @@ topology_template:
       disk.device.write.bytes_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.write.bytes_ps_server_1b
-      attachment_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - attachment_pd_server_1b_pd_server_1b_port
       disk.device.read.bytes_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.read.bytes_pd_server_1b
@@ -798,9 +783,15 @@ topology_template:
       disk.device.capacity_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.capacity_pd_server_1b
+      network.outgoing.bytes.rate_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port_2
       feature_server_1b_ps_2:
       - abstract_ps_server_1b
       - feature_ps_server_1b
+      network.outgoing.bytes.rate_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port_2
       feature_server_1b_ps_3:
       - abstract_ps_server_1b
       - feature_ps_server_1b
@@ -824,7 +815,7 @@ topology_template:
       - disk.read.bytes_pd_server_1b
       network.incoming.packets.rate_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port
+      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port_2
       disk.iops_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.iops_ps_server_1b
@@ -834,15 +825,9 @@ topology_template:
       endpoint_server_1b_pd_2:
       - abstract_pd_server_1b
       - endpoint_pd_server_1b
-      network.incoming.packets.rate_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port
       network.incoming.bytes_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.incoming.bytes_pd_server_1b_pd_server_1b_port
-      network.incoming.bytes_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.incoming.bytes_pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes_pd_server_1b_pd_server_1b_port_2
       memory_server_1b_pd_2:
       - abstract_pd_server_1b
       - memory_pd_server_1b
@@ -861,18 +846,36 @@ topology_template:
       disk.device.usage_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.usage_pd_server_1b
+      binding_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - binding_pd_server_1b_pd_server_1b_port_2
+      forwarder_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - forwarder_pd_server_1b_pd_server_1b_port_2
       disk.device.latency_server_1b_pd_2:
       - abstract_pd_server_1b
       - disk.device.latency_pd_server_1b
+      network.incoming.packets_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - network.incoming.packets_ps_server_1b_ps_server_1b_port_2
       disk.device.latency_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.latency_pd_server_1b
+      binding_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - binding_ps_server_1b_ps_server_1b_port_2
       scalable_server_1b_pd_3:
       - abstract_pd_server_1b
       - scalable_pd_server_1b
+      feature_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - feature_ps_server_1b_ps_server_1b_port_2
       scalable_server_1b_pd_2:
       - abstract_pd_server_1b
       - scalable_pd_server_1b
+      network.incoming.packets_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - network.incoming.packets_pd_server_1b_pd_server_1b_port_2
       cpu.delta_server_1b_pd_2:
       - abstract_pd_server_1b
       - cpu.delta_pd_server_1b
@@ -882,15 +885,18 @@ topology_template:
       disk.device.read.requests_server_1b_pd_2:
       - abstract_pd_server_1b
       - disk.device.read.requests_pd_server_1b
-      network.incoming.packets_pd_server_1b_port_3:
+      feature_pd_server_1b_1_port_2:
       - abstract_pd_server_1b
-      - network.incoming.packets_pd_server_1b_pd_server_1b_port
+      - feature_pd_server_1b_pd_server_1b_port_2
       network.incoming.packets_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.incoming.packets_pd_server_1b_pd_server_1b_port
+      - network.incoming.packets_pd_server_1b_pd_server_1b_port_2
       disk.device.read.requests_server_1b_pd_3:
       - abstract_pd_server_1b
       - disk.device.read.requests_pd_server_1b
+      forwarder_ps_server_1b_1_port_2:
+      - abstract_ps_server_1b
+      - forwarder_ps_server_1b_ps_server_1b_port_2
       disk.device.read.bytes_server_1b_ps_2:
       - abstract_ps_server_1b
       - disk.device.read.bytes_ps_server_1b
@@ -899,16 +905,10 @@ topology_template:
       - disk.device.read.bytes_ps_server_1b
       network.incoming.bytes.rate_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port
-      network.incoming.bytes.rate_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port_2
       feature_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - feature_ps_server_1b_ps_server_1b_port
-      feature_ps_server_1b_port_3:
-      - abstract_ps_server_1b
-      - feature_ps_server_1b_ps_server_1b_port
+      - feature_ps_server_1b_ps_server_1b_port_2
     requirements:
       dependency_template_Vlan_vmi_1_test_resourceGroup_2:
       - test_resourceGroup_2
@@ -922,9 +922,6 @@ topology_template:
       local_storage_server_1b_pd_2:
       - abstract_pd_server_1b
       - local_storage_pd_server_1b
-      dependency_pd_server_1b_port_3:
-      - abstract_pd_server_1b
-      - dependency_pd_server_1b_pd_server_1b_port
       dependency_server_1b_ps_2:
       - abstract_ps_server_1b
       - dependency_ps_server_1b
@@ -933,16 +930,16 @@ topology_template:
       - dependency_ps_server_1b
       dependency_pd_server_1b_port_2:
       - abstract_pd_server_1b
-      - dependency_pd_server_1b_pd_server_1b_port
+      - dependency_pd_server_1b_pd_server_1b_port_2
       dependency_ps_server_1b_port_2:
       - abstract_ps_server_1b
-      - dependency_ps_server_1b_ps_server_1b_port
+      - dependency_ps_server_1b_ps_server_1b_port_2
       dependency_test_resourceGroup_2:
       - test_resourceGroup_2
       - dependency
-      dependency_ps_server_1b_port_3:
+      dependency_ps_server_1b_1_port_2:
       - abstract_ps_server_1b
-      - dependency_ps_server_1b_ps_server_1b_port
+      - dependency_ps_server_1b_ps_server_1b_port_2
       dependency_packet_int_network:
       - packet_int_network
       - dependency
@@ -952,6 +949,9 @@ topology_template:
       dependency_test_resourceGroup_3:
       - test_resourceGroup_3
       - dependency
+      dependency_pd_server_1b_1_port_2:
+      - abstract_pd_server_1b
+      - dependency_pd_server_1b_pd_server_1b_port_2
       local_storage_server_1b_ps_2:
       - abstract_ps_server_1b
       - local_storage_ps_server_1b

@@ -36,6 +36,8 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
     private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
             Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
+    private String portType;
+
     private String networkRole;
 
     public String getNetworkRole() {
@@ -44,6 +46,14 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
 
     public void setNetworkRole(String networkRole) {
         this.networkRole = networkRole;
+    }
+
+    public String getPortType() {
+        return portType;
+    }
+
+    public void setPortType(String portType) {
+        this.portType = portType;
     }
 
     public boolean isPortBoundToSubInterface() {

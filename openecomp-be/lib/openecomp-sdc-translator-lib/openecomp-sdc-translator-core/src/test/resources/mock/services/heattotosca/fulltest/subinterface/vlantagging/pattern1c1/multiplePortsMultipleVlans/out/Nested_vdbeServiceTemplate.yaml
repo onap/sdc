@@ -11,29 +11,21 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs:
-      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-      required: true
-    port_vdbe_untr_vmi_related_networks:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_vlan1_aap_untrusted_v6_ip_prefix:
       type: list
       required: true
       entry_schema:
         type: string
+    port_vdbe_oam_vmi_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     subinterface_vlan1_aap_sec_untrusted_ip_prefix:
       type: list
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_virtual_machine_interface_mac_addresses:
-      type: list
-      required: true
-      entry_schema:
-        type: json
     subinterface_vlan1_vmac_address:
       type: list
       required: true
@@ -44,10 +36,23 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_oam_vmi_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vdbe_oam_vmi_1_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     vm_flavor_name:
       type: string
       required: true
-    port_vdbe_oam_vmi_subnetpoolid:
+    port_vdbe_untr_vmi_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_vdbe_oam_vmi_1_network_role_tag:
       type: string
       required: true
     subinterface_vlan1_counter:
@@ -63,8 +68,8 @@ topology_template:
     vm_image_name:
       type: string
       required: true
-    port_vdbe_oam_vmi_network_role_tag:
-      type: string
+    port_vdbe_oam_vmi_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
     compute_vdbe_metadata:
       type: list
@@ -76,29 +81,24 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_virtual_network_refs:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_vdbe_untr_vmi_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_vdbe_oam_vmi_order:
-      type: integer
-      required: true
-    port_vdbe_oam_vmi_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_vdbe_oam_vmi_name:
+    port_vdbe_untr_vmi_1_name:
       type: list
       required: true
       entry_schema:
         type: string
+    port_vdbe_untr_vmi_1_order:
+      type: integer
+      required: true
+    port_vdbe_oam_vmi_1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_vmi_1_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     subinterface_vlan2_ip_address:
       type: list
       required: true
@@ -109,11 +109,16 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_network_role:
-      type: string
+    port_vdbe_oam_vmi_1_ip_requirements:
+      type: list
       required: true
-    port_vdbe_oam_vmi_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vdbe_untr_vmi_1_virtual_machine_interface_allowed_address_pairs:
+      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+      required: true
+    port_vdbe_untr_vmi_1_network_role:
+      type: string
       required: true
     subinterface_vlan2_parent_interface:
       type: list
@@ -125,6 +130,9 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_untr_vmi_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     subinterface_vlan1_mac_address:
       type: list
       required: true
@@ -150,25 +158,25 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     compute_vdbe_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_subnetpoolid:
-      type: string
-      required: true
     subinterface_vlan2_aap_untrusted_ip_prefix:
       type: list
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_network_role_tag:
+    port_vdbe_oam_vmi_1_subnetpoolid:
+      type: string
+      required: true
+    port_vdbe_untr_vmi_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vdbe_untr_vmi_1_subnetpoolid:
       type: string
       required: true
     subinterface_vlan1_ip_v6_address:
@@ -181,6 +189,12 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_oam_vmi_1_virtual_machine_interface_allowed_address_pairs:
+      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+      required: true
+    port_vdbe_oam_vmi_1_order:
+      type: integer
+      required: true
     subinterface_vlan1_aap_untrusted_ip_prefix:
       type: list
       required: true
@@ -191,27 +205,14 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
-      type: list
+    port_vdbe_untr_vmi_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     subinterface_vlan1_subinterfaces_name_prefix:
       type: list
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_network_role:
-      type: string
-      required: true
-    port_vdbe_untr_vmi_virtual_network_refs:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_vdbe_untr_vmi_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     subinterface_vlan2_vlan_tag_list:
       type: list
       required: true
@@ -227,13 +228,8 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_vdbe_oam_vmi_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_vdbe_untr_vmi_1_network_role_tag:
+      type: string
       required: true
     subinterface_vlan1_service_template_filter_count:
       type: list
@@ -245,9 +241,6 @@ topology_template:
       required: true
       entry_schema:
         type: float
-    port_vdbe_untr_vmi_order:
-      type: integer
-      required: true
     subinterface_vlan1_parent_interface:
       type: list
       required: true
@@ -280,9 +273,21 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_vdbe_untr_vmi_1_ip_requirements:
+      type: list
       required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_oam_vmi_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_vlan2_service_template_filter_count:
       type: list
       required: true
@@ -293,18 +298,13 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_related_networks:
+    port_vdbe_oam_vmi_1_virtual_machine_interface_mac_addresses:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_vdbe_untr_vmi_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_vdbe_oam_vmi_virtual_machine_interface_allowed_address_pairs:
-      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        type: json
+    port_vdbe_oam_vmi_1_network_role:
+      type: string
       required: true
     subinterface_vlan1_vlan_tag_list:
       type: list
@@ -312,6 +312,49 @@ topology_template:
       entry_schema:
         type: json
   node_templates:
+    vdbe_vdbe_untr_vmi_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        mac_requirements:
+          get_input: port_vdbe_untr_vmi_1_mac_requirements
+        order:
+          get_input: port_vdbe_untr_vmi_1_order
+        exCP_naming:
+          get_input: port_vdbe_untr_vmi_1_exCP_naming
+        virtual_machine_interface_allowed_address_pairs:
+          get_input:
+          - port_vdbe_untr_vmi_1_virtual_machine_interface_allowed_address_pairs
+          - index_value
+        vlan_requirements:
+          get_input: port_vdbe_untr_vmi_1_vlan_requirements
+        subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_vmi_1_related_networks
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_untr_vmi_1_virtual_network_refs
+          - index_value
+        ip_requirements:
+          get_input: port_vdbe_untr_vmi_1_ip_requirements
+        network_role_tag:
+          get_input: port_vdbe_untr_vmi_1_network_role_tag
+        virtual_machine_interface_mac_addresses:
+          get_input:
+          - port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses
+          - index_value
+        network_role:
+          get_input: port_vdbe_untr_vmi_1_network_role
+        subnetpoolid:
+          get_input: port_vdbe_untr_vmi_1_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_untr_vmi_1_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
     vdbe:
       type: org.openecomp.resource.vfc.compute.nodes.heat.vdbe
       properties:
@@ -331,174 +374,7 @@ topology_template:
           get_input:
           - compute_vdbe_name
           - index_value
-    vdbe_vdbe_untr_vmi_vlan1:
-      type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan1
-      directives:
-      - substitutable
-      properties:
-        aap_untrusted_ip_prefix:
-          get_input:
-          - subinterface_vlan1_aap_untrusted_ip_prefix
-          - index_value
-        aap_sec_untrusted_ip_prefix:
-          get_input:
-          - subinterface_vlan1_aap_sec_untrusted_ip_prefix
-          - index_value
-        ip_v6_address:
-          get_input:
-          - subinterface_vlan1_ip_v6_address
-          - index_value
-        counter:
-          get_input:
-          - subinterface_vlan1_counter
-          - index_value
-        ip_address:
-          get_input:
-          - subinterface_vlan1_ip_address
-          - index_value
-        subinterfaces_name_prefix:
-          get_input:
-          - subinterface_vlan1_subinterfaces_name_prefix
-          - index_value
-        aap_address_mode:
-          get_input:
-          - subinterface_vlan1_aap_address_mode
-          - index_value
-        service_template_filter:
-          count:
-            get_input:
-            - subinterface_vlan1_service_template_filter_count
-            - index_value
-          substitute_service_template: vlan1ServiceTemplate.yaml
-          mandatory: false
-        aap_untrusted_v6_ip_prefix:
-          get_input:
-          - subinterface_vlan1_aap_untrusted_v6_ip_prefix
-          - index_value
-        parent_interface:
-          get_input:
-          - subinterface_vlan1_parent_interface
-          - index_value
-        vn_network_list:
-          get_input:
-          - subinterface_vlan1_vn_network_list
-          - index_value
-        mac_address:
-          get_input:
-          - subinterface_vlan1_mac_address
-          - index_value
-        vlan_tag_list:
-          get_input:
-          - subinterface_vlan1_vlan_tag_list
-          - index_value
-        aap_sec_untrusted_ip_prefix_len:
-          get_input:
-          - subinterface_vlan1_aap_sec_untrusted_ip_prefix_len
-          - index_value
-        vmac_address:
-          get_input:
-          - subinterface_vlan1_vmac_address
-          - index_value
-        aap_untrusted_v6_ip_prefix_len:
-          get_input:
-          - subinterface_vlan1_aap_untrusted_v6_ip_prefix_len
-          - index_value
-        aap_untrusted_ip_prefix_len:
-          get_input:
-          - subinterface_vlan1_aap_untrusted_ip_prefix_len
-          - index_value
-      requirements:
-      - binding_vdbe_0_subint_untr_vmi_0:
-          capability: tosca.capabilities.network.Bindable
-          node: vdbe_vdbe_untr_vmi
-          relationship: tosca.relationships.network.BindsTo
-    vdbe_vdbe_untr_vmi:
-      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
-      properties:
-        mac_requirements:
-          get_input: port_vdbe_untr_vmi_mac_requirements
-        order:
-          get_input: port_vdbe_untr_vmi_order
-        exCP_naming:
-          get_input: port_vdbe_untr_vmi_exCP_naming
-        virtual_machine_interface_allowed_address_pairs:
-          get_input:
-          - port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs
-          - index_value
-        vlan_requirements:
-          get_input: port_vdbe_untr_vmi_vlan_requirements
-        subinterface_indicator: true
-        related_networks:
-          get_input: port_vdbe_untr_vmi_related_networks
-        virtual_network_refs:
-          get_input:
-          - port_vdbe_untr_vmi_virtual_network_refs
-          - index_value
-        ip_requirements:
-          get_input: port_vdbe_untr_vmi_ip_requirements
-        network_role_tag:
-          get_input: port_vdbe_untr_vmi_network_role_tag
-        virtual_machine_interface_mac_addresses:
-          get_input:
-          - port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses
-          - index_value
-        network_role:
-          get_input: port_vdbe_untr_vmi_network_role
-        subnetpoolid:
-          get_input: port_vdbe_untr_vmi_subnetpoolid
-        name:
-          get_input:
-          - port_vdbe_untr_vmi_name
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: vdbe
-          relationship: tosca.relationships.network.BindsTo
-    vdbe_vdbe_oam_vmi:
-      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
-      properties:
-        mac_requirements:
-          get_input: port_vdbe_oam_vmi_mac_requirements
-        order:
-          get_input: port_vdbe_oam_vmi_order
-        exCP_naming:
-          get_input: port_vdbe_oam_vmi_exCP_naming
-        virtual_machine_interface_allowed_address_pairs:
-          get_input:
-          - port_vdbe_oam_vmi_virtual_machine_interface_allowed_address_pairs
-          - index_value
-        vlan_requirements:
-          get_input: port_vdbe_oam_vmi_vlan_requirements
-        subinterface_indicator: true
-        related_networks:
-          get_input: port_vdbe_oam_vmi_related_networks
-        virtual_network_refs:
-          get_input:
-          - port_vdbe_oam_vmi_virtual_network_refs
-          - index_value
-        ip_requirements:
-          get_input: port_vdbe_oam_vmi_ip_requirements
-        network_role_tag:
-          get_input: port_vdbe_oam_vmi_network_role_tag
-        virtual_machine_interface_mac_addresses:
-          get_input:
-          - port_vdbe_oam_vmi_virtual_machine_interface_mac_addresses
-          - index_value
-        network_role:
-          get_input: port_vdbe_oam_vmi_network_role
-        subnetpoolid:
-          get_input: port_vdbe_oam_vmi_subnetpoolid
-        name:
-          get_input:
-          - port_vdbe_oam_vmi_name
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: vdbe
-          relationship: tosca.relationships.network.BindsTo
-    vdbe_vdbe_oam_vmi_vlan2:
+    vdbe_vdbe_oam_vmi_1_vlan2:
       type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan2
       directives:
       - substitutable
@@ -577,50 +453,174 @@ topology_template:
       requirements:
       - binding_vdbe_1_subint_oam_vmi_1:
           capability: tosca.capabilities.network.Bindable
-          node: vdbe_vdbe_oam_vmi
+          node: vdbe_vdbe_oam_vmi_1
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_untr_vmi_1_vlan1:
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan1
+      directives:
+      - substitutable
+      properties:
+        aap_untrusted_ip_prefix:
+          get_input:
+          - subinterface_vlan1_aap_untrusted_ip_prefix
+          - index_value
+        aap_sec_untrusted_ip_prefix:
+          get_input:
+          - subinterface_vlan1_aap_sec_untrusted_ip_prefix
+          - index_value
+        ip_v6_address:
+          get_input:
+          - subinterface_vlan1_ip_v6_address
+          - index_value
+        counter:
+          get_input:
+          - subinterface_vlan1_counter
+          - index_value
+        ip_address:
+          get_input:
+          - subinterface_vlan1_ip_address
+          - index_value
+        subinterfaces_name_prefix:
+          get_input:
+          - subinterface_vlan1_subinterfaces_name_prefix
+          - index_value
+        aap_address_mode:
+          get_input:
+          - subinterface_vlan1_aap_address_mode
+          - index_value
+        service_template_filter:
+          count:
+            get_input:
+            - subinterface_vlan1_service_template_filter_count
+            - index_value
+          substitute_service_template: vlan1ServiceTemplate.yaml
+          mandatory: false
+        aap_untrusted_v6_ip_prefix:
+          get_input:
+          - subinterface_vlan1_aap_untrusted_v6_ip_prefix
+          - index_value
+        parent_interface:
+          get_input:
+          - subinterface_vlan1_parent_interface
+          - index_value
+        vn_network_list:
+          get_input:
+          - subinterface_vlan1_vn_network_list
+          - index_value
+        mac_address:
+          get_input:
+          - subinterface_vlan1_mac_address
+          - index_value
+        vlan_tag_list:
+          get_input:
+          - subinterface_vlan1_vlan_tag_list
+          - index_value
+        aap_sec_untrusted_ip_prefix_len:
+          get_input:
+          - subinterface_vlan1_aap_sec_untrusted_ip_prefix_len
+          - index_value
+        vmac_address:
+          get_input:
+          - subinterface_vlan1_vmac_address
+          - index_value
+        aap_untrusted_v6_ip_prefix_len:
+          get_input:
+          - subinterface_vlan1_aap_untrusted_v6_ip_prefix_len
+          - index_value
+        aap_untrusted_ip_prefix_len:
+          get_input:
+          - subinterface_vlan1_aap_untrusted_ip_prefix_len
+          - index_value
+      requirements:
+      - binding_vdbe_0_subint_untr_vmi_0:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe_vdbe_untr_vmi_1
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_oam_vmi_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        mac_requirements:
+          get_input: port_vdbe_oam_vmi_1_mac_requirements
+        order:
+          get_input: port_vdbe_oam_vmi_1_order
+        exCP_naming:
+          get_input: port_vdbe_oam_vmi_1_exCP_naming
+        virtual_machine_interface_allowed_address_pairs:
+          get_input:
+          - port_vdbe_oam_vmi_1_virtual_machine_interface_allowed_address_pairs
+          - index_value
+        vlan_requirements:
+          get_input: port_vdbe_oam_vmi_1_vlan_requirements
+        subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_oam_vmi_1_related_networks
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_oam_vmi_1_virtual_network_refs
+          - index_value
+        ip_requirements:
+          get_input: port_vdbe_oam_vmi_1_ip_requirements
+        network_role_tag:
+          get_input: port_vdbe_oam_vmi_1_network_role_tag
+        virtual_machine_interface_mac_addresses:
+          get_input:
+          - port_vdbe_oam_vmi_1_virtual_machine_interface_mac_addresses
+          - index_value
+        network_role:
+          get_input: port_vdbe_oam_vmi_1_network_role
+        subnetpoolid:
+          get_input: port_vdbe_oam_vmi_1_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_oam_vmi_1_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
           relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.vdbe
     capabilities:
-      feature_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
+      feature_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_1_vlan1:
+      - vdbe_vdbe_untr_vmi_1_vlan1
+      - feature_vdbe_0_subint_untr_vmi_0
+      feature_vdbe_vdbe_oam_vmi_1_vlan2:
+      - vdbe_vdbe_oam_vmi_1_vlan2
       - feature
-      network.incoming.bytes_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.incoming.bytes
-      network.incoming.packets.rate_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.incoming.packets.rate
+      network.outgoing.packets.rate_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.outgoing.packets.rate
       feature_vdbe:
       - vdbe
       - feature
       disk.device.iops_vdbe:
       - vdbe
       - disk.device.iops
+      network.outgoing.packets.rate_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.outgoing.packets.rate
       endpoint_vdbe:
       - vdbe
       - endpoint
       disk.ephemeral.size_vdbe:
       - vdbe
       - disk.ephemeral.size
-      feature_vdbe_vdbe_oam_vmi_vlan2:
-      - vdbe_vdbe_oam_vmi_vlan2
-      - feature
+      network.outgoing.bytes.rate_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.outgoing.bytes.rate
       cpu_util_vdbe:
       - vdbe
       - cpu_util
-      network.incoming.bytes.rate_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.incoming.bytes.rate
       vcpus_vdbe:
       - vdbe
       - vcpus
       disk.write.requests_vdbe:
       - vdbe
       - disk.write.requests
-      feature_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - feature
+      network.outgoing.bytes_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.outgoing.bytes
       disk.device.latency_vdbe:
       - vdbe
       - disk.device.latency
@@ -630,9 +630,9 @@ topology_template:
       disk.write.bytes.rate_vdbe:
       - vdbe
       - disk.write.bytes.rate
-      feature_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
-      - vdbe_vdbe_oam_vmi_vlan2
-      - feature_vdbe_1_subint_oam_vmi_1
+      network.incoming.packets_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.incoming.packets
       scalable_vdbe:
       - vdbe
       - scalable
@@ -645,42 +645,48 @@ topology_template:
       disk.device.capacity_vdbe:
       - vdbe
       - disk.device.capacity
-      forwarder_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - forwarder
+      feature_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_1_vlan2:
+      - vdbe_vdbe_oam_vmi_1_vlan2
+      - feature_vdbe_1_subint_oam_vmi_1
       disk.device.allocation_vdbe:
       - vdbe
       - disk.device.allocation
-      feature_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
-      - vdbe_vdbe_untr_vmi_vlan1
-      - feature_vdbe_0_subint_untr_vmi_0
       disk.usage_vdbe:
       - vdbe
       - disk.usage
       memory.usage_vdbe:
       - vdbe
       - memory.usage
+      forwarder_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - forwarder
+      network.incoming.packets_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.incoming.packets
       disk.read.requests_vdbe:
       - vdbe
       - disk.read.requests
-      network.outgoing.packets.rate_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.outgoing.packets.rate
-      network.incoming.packets_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.incoming.packets
+      network.outgoing.bytes.rate_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.outgoing.bytes.rate
+      feature_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - feature
+      network.outpoing.packets_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.outpoing.packets
+      network.outpoing.packets_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.outpoing.packets
       instance_vdbe:
       - vdbe
       - instance
-      binding_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - binding
-      network.outpoing.packets_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.outpoing.packets
       cpu.delta_vdbe:
       - vdbe
       - cpu.delta
+      binding_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - binding
       disk.device.read.bytes.rate_vdbe:
       - vdbe
       - disk.device.read.bytes.rate
@@ -690,30 +696,18 @@ topology_template:
       memory.resident_vdbe:
       - vdbe
       - memory.resident
-      network.incoming.packets_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.incoming.packets
       disk.write.requests.rate_vdbe:
       - vdbe
       - disk.write.requests.rate
-      network.incoming.bytes.rate_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.incoming.bytes.rate
       cpu_vdbe:
       - vdbe
       - cpu
       disk.write.bytes_vdbe:
       - vdbe
       - disk.write.bytes
-      network.incoming.packets.rate_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.incoming.packets.rate
-      binding_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - binding
-      network.outgoing.bytes.rate_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.incoming.bytes.rate
       disk.device.usage_vdbe:
       - vdbe
       - disk.device.usage
@@ -723,12 +717,21 @@ topology_template:
       disk.latency_vdbe:
       - vdbe
       - disk.latency
-      feature_vdbe_vdbe_untr_vmi_vlan1:
-      - vdbe_vdbe_untr_vmi_vlan1
-      - feature
-      network.outgoing.bytes.rate_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.outgoing.bytes.rate
+      network.outgoing.bytes_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.outgoing.bytes
+      network.incoming.bytes.rate_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.incoming.bytes.rate
+      network.incoming.packets.rate_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.incoming.packets.rate
+      forwarder_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - forwarder
+      network.incoming.packets.rate_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - network.incoming.packets.rate
       disk.capacity_vdbe:
       - vdbe
       - disk.capacity
@@ -738,36 +741,33 @@ topology_template:
       disk.allocation_vdbe:
       - vdbe
       - disk.allocation
-      network.outpoing.packets_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.outpoing.packets
+      feature_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - feature
       disk.read.bytes.rate_vdbe:
       - vdbe
       - disk.read.bytes.rate
-      network.outgoing.packets.rate_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.outgoing.packets.rate
-      network.incoming.bytes_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
+      feature_vdbe_vdbe_untr_vmi_1_vlan1:
+      - vdbe_vdbe_untr_vmi_1_vlan1
+      - feature
+      network.incoming.bytes_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
       - network.incoming.bytes
       os_vdbe:
       - vdbe
       - os
-      forwarder_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - forwarder
+      binding_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - binding
       disk.device.read.requests_vdbe:
       - vdbe
       - disk.device.read.requests
+      network.incoming.bytes_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - network.incoming.bytes
       disk.root.size_vdbe:
       - vdbe
       - disk.root.size
-      network.outgoing.bytes_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - network.outgoing.bytes
-      network.outgoing.bytes_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - network.outgoing.bytes
       memory_vdbe:
       - vdbe
       - memory
@@ -784,39 +784,39 @@ topology_template:
       - vdbe
       - disk.read.bytes
     requirements:
-      subinterface_link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
-      - vdbe_vdbe_untr_vmi_vlan1
-      - subinterface_link_vdbe_0_subint_untr_vmi_0
-      link_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
-      - link
-      dependency_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
-      - vdbe_vdbe_untr_vmi_vlan1
-      - dependency_vdbe_0_subint_untr_vmi_0
-      subinterface_link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
-      - vdbe_vdbe_oam_vmi_vlan2
-      - subinterface_link_vdbe_1_subint_oam_vmi_1
-      dependency_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
+      dependency_vdbe_vdbe_oam_vmi_1_vlan2:
+      - vdbe_vdbe_oam_vmi_1_vlan2
       - dependency
-      link_vdbe_vdbe_oam_vmi:
-      - vdbe_vdbe_oam_vmi
-      - link
-      dependency_vdbe_vdbe_untr_vmi_vlan1:
-      - vdbe_vdbe_untr_vmi_vlan1
+      dependency_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - dependency
+      subinterface_link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_1_vlan2:
+      - vdbe_vdbe_oam_vmi_1_vlan2
+      - subinterface_link_vdbe_1_subint_oam_vmi_1
+      dependency_vdbe_vdbe_untr_vmi_1_vlan1:
+      - vdbe_vdbe_untr_vmi_1_vlan1
       - dependency
       local_storage_vdbe:
       - vdbe
       - local_storage
-      dependency_vdbe_vdbe_untr_vmi:
-      - vdbe_vdbe_untr_vmi
+      link_vdbe_vdbe_untr_vmi_1:
+      - vdbe_vdbe_untr_vmi_1
+      - link
+      dependency_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_1_vlan1:
+      - vdbe_vdbe_untr_vmi_1_vlan1
+      - dependency_vdbe_0_subint_untr_vmi_0
+      subinterface_link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_1_vlan1:
+      - vdbe_vdbe_untr_vmi_1_vlan1
+      - subinterface_link_vdbe_0_subint_untr_vmi_0
+      dependency_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
       - dependency
-      dependency_vdbe_vdbe_oam_vmi_vlan2:
-      - vdbe_vdbe_oam_vmi_vlan2
-      - dependency
-      dependency_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
-      - vdbe_vdbe_oam_vmi_vlan2
-      - dependency_vdbe_1_subint_oam_vmi_1
+      link_vdbe_vdbe_oam_vmi_1:
+      - vdbe_vdbe_oam_vmi_1
+      - link
       dependency_vdbe:
       - vdbe
       - dependency
+      dependency_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_1_vlan2:
+      - vdbe_vdbe_oam_vmi_1_vlan2
+      - dependency_vdbe_1_subint_oam_vmi_1

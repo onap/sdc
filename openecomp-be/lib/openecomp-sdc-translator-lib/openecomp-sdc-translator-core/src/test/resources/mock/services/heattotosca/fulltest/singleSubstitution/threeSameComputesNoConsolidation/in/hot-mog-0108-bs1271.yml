@@ -114,8 +114,8 @@ resources:
       flavor: {get_attr: [network_policy_server, name]}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_2}
-        - port: {get_resource: pd01_port_3}
+        - port: {get_resource: pd_server_2_oam_port_0}
+        - port: {get_resource: pd_server_0_oam_port_0}
       user_data_format:  RAW
 
   pd01_port_0:
@@ -126,11 +126,11 @@ resources:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  pd01_port_2:
+  pd_server_2_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  pd01_port_3:
+  pd_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}

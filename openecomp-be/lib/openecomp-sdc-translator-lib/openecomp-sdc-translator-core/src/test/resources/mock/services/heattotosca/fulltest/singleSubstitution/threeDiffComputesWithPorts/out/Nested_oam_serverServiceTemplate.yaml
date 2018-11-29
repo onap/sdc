@@ -11,6 +11,17 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_oam_server_oam_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_oam_server_oam_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_oam_server_oam_port_0_network_role_tag:
+      type: string
+      required: true
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -18,10 +29,7 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_pd01_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_pd01_port_related_networks:
+    port_oam_server_oam_port_0_related_networks:
       type: list
       required: true
       entry_schema:
@@ -29,9 +37,17 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_pd01_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_oam_server_oam_port_0_network_role:
+      type: string
       required: true
+    port_oam_server_oam_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_oam_server_oam_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_oam_server_availability_zone:
       type: list
       required: true
@@ -40,22 +56,14 @@ topology_template:
     vm_image_name:
       type: string
       required: true
-    port_pd01_port_ip_requirements:
+    port_oam_server_oam_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_oam_server_oam_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_pd01_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_pd01_port_order:
-      type: integer
-      required: true
-    port_pd01_port_subnetpoolid:
-      type: string
-      required: true
     compute_oam_server_user_data_format:
       type: list
       required: true
@@ -66,43 +74,35 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd01_port_network_role:
-      type: string
+    port_oam_server_oam_port_0_order:
+      type: integer
       required: true
-    port_pd01_port_network_role_tag:
-      type: string
-      required: true
-    port_pd01_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
   node_templates:
-    oam_server_pd01_port:
+    oam_server_oam_server_oam_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_pd01_port_exCP_naming
+          get_input: port_oam_server_oam_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_pd01_port_vlan_requirements
+          get_input: port_oam_server_oam_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_pd01_port_related_networks
+          get_input: port_oam_server_oam_port_0_related_networks
         ip_requirements:
-          get_input: port_pd01_port_ip_requirements
+          get_input: port_oam_server_oam_port_0_ip_requirements
         network_role_tag:
-          get_input: port_pd01_port_network_role_tag
+          get_input: port_oam_server_oam_port_0_network_role_tag
         mac_requirements:
-          get_input: port_pd01_port_mac_requirements
+          get_input: port_oam_server_oam_port_0_mac_requirements
         order:
-          get_input: port_pd01_port_order
+          get_input: port_oam_server_oam_port_0_order
         network_role:
-          get_input: port_pd01_port_network_role
+          get_input: port_oam_server_oam_port_0_network_role
         subnetpoolid:
-          get_input: port_pd01_port_subnetpoolid
+          get_input: port_oam_server_oam_port_0_subnetpoolid
         network:
           get_input:
-          - port_pd01_port_network
+          - port_oam_server_oam_port_0_network
           - index_value
       requirements:
       - binding:
@@ -140,9 +140,6 @@ topology_template:
       disk.usage_oam_server:
       - oam_server
       - disk.usage
-      network.incoming.bytes.rate_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.incoming.bytes.rate
       feature_oam_server:
       - oam_server
       - feature
@@ -161,17 +158,14 @@ topology_template:
       disk.read.bytes.rate_oam_server:
       - oam_server
       - disk.read.bytes.rate
-      binding_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - binding
       disk.write.bytes_oam_server:
       - oam_server
       - disk.write.bytes
       disk.write.requests_oam_server:
       - oam_server
       - disk.write.requests
-      forwarder_oam_server_pd01_port:
-      - oam_server_pd01_port
+      forwarder_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
       - forwarder
       cpu_oam_server:
       - oam_server
@@ -179,24 +173,30 @@ topology_template:
       vcpus_oam_server:
       - oam_server
       - vcpus
-      network.incoming.packets_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.incoming.packets
       disk.device.read.requests.rate_oam_server:
       - oam_server
       - disk.device.read.requests.rate
-      network.outpoing.packets_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.outpoing.packets
+      network.incoming.packets_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.incoming.packets
+      attachment_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - attachment
       disk.allocation_oam_server:
       - oam_server
       - disk.allocation
       disk.write.bytes.rate_oam_server:
       - oam_server
       - disk.write.bytes.rate
+      network.outgoing.bytes.rate_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.outgoing.bytes.rate
       disk.device.write.requests.rate_oam_server:
       - oam_server
       - disk.device.write.requests.rate
+      network.incoming.bytes_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.incoming.bytes
       instance_oam_server:
       - oam_server
       - instance
@@ -227,18 +227,15 @@ topology_template:
       disk.device.usage_oam_server:
       - oam_server
       - disk.device.usage
-      network.outgoing.packets.rate_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.outgoing.packets.rate
-      attachment_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - attachment
       disk.latency_oam_server:
       - oam_server
       - disk.latency
       disk.read.requests_oam_server:
       - oam_server
       - disk.read.requests
+      network.outgoing.packets.rate_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.outgoing.packets.rate
       disk.device.iops_oam_server:
       - oam_server
       - disk.device.iops
@@ -248,9 +245,9 @@ topology_template:
       disk.device.latency_oam_server:
       - oam_server
       - disk.device.latency
-      feature_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - feature
+      network.outgoing.bytes_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.outgoing.bytes
       memory.usage_oam_server:
       - oam_server
       - memory.usage
@@ -260,15 +257,15 @@ topology_template:
       scalable_oam_server:
       - oam_server
       - scalable
-      network.incoming.bytes_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.incoming.bytes
       disk.write.requests.rate_oam_server:
       - oam_server
       - disk.write.requests.rate
-      network.incoming.packets.rate_oam_server_pd01_port:
-      - oam_server_pd01_port
+      network.incoming.packets.rate_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
       - network.incoming.packets.rate
+      network.outpoing.packets_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.outpoing.packets
       disk.device.read.bytes.rate_oam_server:
       - oam_server
       - disk.device.read.bytes.rate
@@ -281,25 +278,28 @@ topology_template:
       disk.read.bytes_oam_server:
       - oam_server
       - disk.read.bytes
-      network.outgoing.bytes_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.outgoing.bytes
-      network.outgoing.bytes.rate_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - network.incoming.bytes.rate
+      feature_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - feature
       disk.ephemeral.size_oam_server:
       - oam_server
       - disk.ephemeral.size
+      binding_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - binding
     requirements:
-      link_oam_server_pd01_port:
-      - oam_server_pd01_port
+      link_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
       - link
-      dependency_oam_server_pd01_port:
-      - oam_server_pd01_port
-      - dependency
       local_storage_oam_server:
       - oam_server
       - local_storage
+      dependency_oam_server_oam_server_oam_port_0:
+      - oam_server_oam_server_oam_port_0
+      - dependency
       dependency_oam_server:
       - oam_server
       - dependency

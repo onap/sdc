@@ -16,7 +16,7 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_ps01_port_subnetpoolid:
+    port_ps01_port_0_network_role:
       type: string
       required: true
     compute_ps_server_availability_zone:
@@ -29,6 +29,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_ps01_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -36,7 +41,12 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_ps01_port_vlan_requirements:
+    port_ps01_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_ps01_port_0_vlan_requirements:
       type: list
       required: true
       entry_schema:
@@ -44,40 +54,61 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_ps01_port_related_networks:
-      type: list
+    port_ps01_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_ps01_port_order:
+    port_ps01_port_0_order:
       type: integer
       required: true
     vm_image_name:
       type: string
       required: true
-    port_ps01_port_network_role:
+    port_ps01_port_0_network_role_tag:
       type: string
       required: true
-    port_ps01_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_ps01_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_ps01_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_ps01_port_network_role_tag:
-      type: string
-      required: true
-    port_ps01_port_exCP_naming:
+    port_ps01_port_0_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
+    port_ps01_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_ps01_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
   node_templates:
+    ps_server_ps01_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_ps01_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_ps01_port_0_vlan_requirements
+        subinterface_indicator: false
+        related_networks:
+          get_input: port_ps01_port_0_related_networks
+        ip_requirements:
+          get_input: port_ps01_port_0_ip_requirements
+        network_role_tag:
+          get_input: port_ps01_port_0_network_role_tag
+        mac_requirements:
+          get_input: port_ps01_port_0_mac_requirements
+        order:
+          get_input: port_ps01_port_0_order
+        network_role:
+          get_input: port_ps01_port_0_network_role
+        subnetpoolid:
+          get_input: port_ps01_port_0_subnetpoolid
+        network:
+          get_input:
+          - port_ps01_port_0_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps_server
+          relationship: tosca.relationships.network.BindsTo
     ps_server:
       type: org.openecomp.resource.vfc.compute.nodes.heat.ps_server
       properties:
@@ -97,66 +128,29 @@ topology_template:
           get_input:
           - compute_ps_server_user_data_format
           - index_value
-    ps_server_ps01_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        exCP_naming:
-          get_input: port_ps01_port_exCP_naming
-        vlan_requirements:
-          get_input: port_ps01_port_vlan_requirements
-        subinterface_indicator: false
-        related_networks:
-          get_input: port_ps01_port_related_networks
-        ip_requirements:
-          get_input: port_ps01_port_ip_requirements
-        network_role_tag:
-          get_input: port_ps01_port_network_role_tag
-        mac_requirements:
-          get_input: port_ps01_port_mac_requirements
-        order:
-          get_input: port_ps01_port_order
-        network_role:
-          get_input: port_ps01_port_network_role
-        subnetpoolid:
-          get_input: port_ps01_port_subnetpoolid
-        network:
-          get_input:
-          - port_ps01_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: ps_server
-          relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.ps_server
     capabilities:
-      network.incoming.packets.rate_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.incoming.packets.rate
       instance_ps_server:
       - ps_server
       - instance
-      network.outpoing.packets_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.outpoing.packets
+      network.incoming.packets_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.incoming.packets
       host_ps_server:
       - ps_server
       - host
-      network.incoming.packets_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.incoming.packets
       cpu.delta_ps_server:
       - ps_server
       - cpu.delta
       disk.write.bytes.rate_ps_server:
       - ps_server
       - disk.write.bytes.rate
-      feature_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - feature
       feature_ps_server:
       - ps_server
+      - feature
+      feature_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
       - feature
       disk.root.size_ps_server:
       - ps_server
@@ -179,9 +173,6 @@ topology_template:
       disk.device.iops_ps_server:
       - ps_server
       - disk.device.iops
-      network.outgoing.packets.rate_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.outgoing.packets.rate
       disk.device.latency_ps_server:
       - ps_server
       - disk.device.latency
@@ -215,23 +206,26 @@ topology_template:
       disk.device.read.bytes.rate_ps_server:
       - ps_server
       - disk.device.read.bytes.rate
+      network.outpoing.packets_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.outpoing.packets
       cpu_util_ps_server:
       - ps_server
       - cpu_util
       memory.resident_ps_server:
       - ps_server
       - memory.resident
-      network.incoming.bytes_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.incoming.bytes
       disk.device.read.requests_ps_server:
       - ps_server
       - disk.device.read.requests
       disk.write.bytes_ps_server:
       - ps_server
       - disk.write.bytes
-      network.outgoing.bytes.rate_ps_server_ps01_port:
-      - ps_server_ps01_port
+      network.incoming.bytes_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
       - network.outgoing.bytes.rate
       disk.device.write.requests.rate_ps_server:
       - ps_server
@@ -248,20 +242,17 @@ topology_template:
       binding_ps_server:
       - ps_server
       - binding
-      attachment_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - attachment
       os_ps_server:
       - ps_server
       - os
       disk.device.usage_ps_server:
       - ps_server
       - disk.device.usage
-      binding_ps_server_ps01_port:
-      - ps_server_ps01_port
+      binding_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
       - binding
-      forwarder_ps_server_ps01_port:
-      - ps_server_ps01_port
+      forwarder_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
       - forwarder
       disk.device.write.bytes.rate_ps_server:
       - ps_server
@@ -269,6 +260,9 @@ topology_template:
       vcpus_ps_server:
       - ps_server
       - vcpus
+      attachment_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - attachment
       disk.usage_ps_server:
       - ps_server
       - disk.usage
@@ -281,25 +275,31 @@ topology_template:
       disk.capacity_ps_server:
       - ps_server
       - disk.capacity
-      network.incoming.bytes.rate_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.incoming.bytes.rate
+      network.outgoing.bytes_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.outgoing.bytes
+      network.outgoing.packets.rate_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.outgoing.packets.rate
       disk.device.allocation_ps_server:
       - ps_server
       - disk.device.allocation
-      network.outgoing.bytes_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - network.outgoing.bytes
+      network.incoming.packets.rate_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - network.incoming.bytes.rate
     requirements:
       dependency_ps_server:
       - ps_server
       - dependency
-      link_ps_server_ps01_port:
-      - ps_server_ps01_port
-      - link
-      dependency_ps_server_ps01_port:
-      - ps_server_ps01_port
+      dependency_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
       - dependency
+      link_ps_server_ps01_port_0:
+      - ps_server_ps01_port_0
+      - link
       local_storage_ps_server:
       - ps_server
       - local_storage

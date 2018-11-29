@@ -106,7 +106,7 @@ topology_template:
       type: string
       description: prop
   node_templates:
-    FSB2_Internal_2:
+    FSB_2_Internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -117,7 +117,7 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB1_template
           relationship: tosca.relationships.network.BindsTo
-    FSB1_Internal_1:
+    FSB_1_Internal_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -157,7 +157,7 @@ topology_template:
         network_name:
           get_attribute:
           - FSB1
-          - FSB1_FSB1_Internal_network_id
+          - FSB1_FSB_1_Internal_port_1_network_id
         dhcp_agent_ids:
           get_attribute:
           - FSB1
@@ -165,11 +165,11 @@ topology_template:
         tenant_id:
           get_attribute:
           - FSB1
-          - FSB1_FSB2_Internal_network_id
+          - FSB1_FSB_2_Internal_port_0_network_id
         qos_policy:
           get_attribute:
           - FSB1
-          - FSB1_FSB2_Internal_network_id
+          - FSB1_FSB_2_Internal_port_0_network_id
     FSB1_template:
       type: org.openecomp.resource.vfc.nodes.heat.FSB1
       properties:
@@ -177,19 +177,19 @@ topology_template:
           get_input: fsb1-flavor
         availability_zone:
           get_attribute:
-          - FSB1_Internal_1
+          - FSB_1_Internal_port_1
           - myAttr
           - get_attribute:
-            - FSB1_Internal_1
+            - FSB_1_Internal_port_1
             - index
         metadata:
           get_attribute:
-          - FSB1_Internal_1
+          - FSB_1_Internal_port_1
           - myAttr
           - get_input: index
         name:
           get_attribute:
-          - FSB1_Internal_1
+          - FSB_1_Internal_port_1
           - myAttr
           - get_attribute:
             - jsa_net1
@@ -219,11 +219,11 @@ topology_template:
           - FSB1_addresses
           - get_attribute:
             - FSB1
-            - FSB1_FSB2_Internal_tenant_id
+            - FSB1_FSB_2_Internal_port_0_tenant_id
         size:
           get_attribute:
           - FSB1
-          - FSB1_FSB1_Internal_device_owner
+          - FSB1_FSB_1_Internal_port_1_device_owner
           - get_input:
             - CMAUI_volume_type
             - get_attribute:
@@ -255,7 +255,7 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - FSB2_Internal_2
-      - FSB1_Internal_1
+      - FSB_2_Internal_port_0
+      - FSB_1_Internal_port_1
       - FSB1_OAM
       - FSB1_template

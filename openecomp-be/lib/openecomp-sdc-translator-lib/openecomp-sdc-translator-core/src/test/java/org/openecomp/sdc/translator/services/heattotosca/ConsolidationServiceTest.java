@@ -45,6 +45,8 @@ import static org.mockito.Mockito.verify;
 public class ConsolidationServiceTest {
 
 
+  private static final String CM_01_PORT_TYPE = "cm01_port";
+  private static final String SM_01_PORT_TYPE = "sm01_port";
   @Spy
   private TranslationContext translationContext = new TranslationContext();
   private static String mainST = "MainServiceTemplate.yaml";
@@ -80,8 +82,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -95,11 +97,11 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
@@ -121,8 +123,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -131,10 +133,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -156,8 +158,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_2"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -193,7 +195,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -202,7 +204,7 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -211,10 +213,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -237,8 +239,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -259,10 +261,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -285,8 +287,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -301,7 +303,7 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03",
@@ -309,10 +311,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -338,8 +340,8 @@ public class ConsolidationServiceTest {
         (mainST, computeNodeTypeName2, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -354,10 +356,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -385,8 +387,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName2, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -406,10 +408,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -432,8 +434,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -454,10 +456,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -482,8 +484,8 @@ public class ConsolidationServiceTest {
         mainST, computeNodeTypeName2, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -522,10 +524,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -548,8 +550,8 @@ public class ConsolidationServiceTest {
         mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -570,10 +572,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -595,8 +597,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -614,10 +616,10 @@ public class ConsolidationServiceTest {
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1", SM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -639,28 +641,28 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -687,28 +689,28 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -731,27 +733,27 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -774,27 +776,27 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         null, null, null, null, null,
         consolidationData);
 
@@ -817,38 +819,38 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
         portTypeToIdList, consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
@@ -872,7 +874,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -883,7 +885,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -894,7 +896,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -905,17 +907,17 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
         Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
@@ -940,7 +942,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -951,7 +953,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -962,7 +964,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_2"),
@@ -973,7 +975,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE, null, null, null, null, null,
         consolidationData);
 
 
@@ -995,7 +997,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1006,7 +1008,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1017,7 +1019,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1028,7 +1030,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE, null, null, null, null, null,
         consolidationData);
 
 
@@ -1050,7 +1052,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1061,7 +1063,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1072,7 +1074,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1083,7 +1085,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE, null, null, null, null, null,
         consolidationData);
 
 
@@ -1105,7 +1107,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1117,7 +1119,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1128,7 +1130,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1139,7 +1141,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE, null, null, null, null, null,
         consolidationData);
 
 
@@ -1161,7 +1163,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1173,7 +1175,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1184,7 +1186,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1195,18 +1197,18 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
@@ -1229,7 +1231,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1241,7 +1243,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1252,7 +1254,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1263,18 +1265,18 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_2"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_2"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
@@ -1297,7 +1299,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1309,7 +1311,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1320,7 +1322,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1331,18 +1333,18 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_2"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_2"),
         Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
@@ -1365,7 +1367,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1377,7 +1379,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1388,7 +1390,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1399,16 +1401,16 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_3"), null, null,
         consolidationData);
 
@@ -1430,7 +1432,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -1443,7 +1445,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1454,7 +1456,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1465,16 +1467,16 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
 
@@ -1496,7 +1498,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -1509,7 +1511,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1520,7 +1522,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1531,16 +1533,16 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
 
@@ -1562,7 +1564,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -1575,7 +1577,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1586,7 +1588,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1599,6 +1601,8 @@ public class ConsolidationServiceTest {
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"),
@@ -1618,7 +1622,7 @@ public class ConsolidationServiceTest {
         Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
-        mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
+        mainST, portNodeTemplateIds, toUpdatePortTypeIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
         getAttrInIds, getAttrOut, consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
@@ -1640,7 +1644,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -1653,7 +1657,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1664,7 +1668,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1677,6 +1681,8 @@ public class ConsolidationServiceTest {
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"),
@@ -1696,7 +1702,7 @@ public class ConsolidationServiceTest {
         Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
-        mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
+        mainST, portNodeTemplateIds, toUpdatePortTypeIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
         getAttrInIds, getAttrOut, consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
@@ -1718,7 +1724,7 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
@@ -1731,7 +1737,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1742,7 +1748,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1755,6 +1761,8 @@ public class ConsolidationServiceTest {
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"),
@@ -1774,7 +1782,7 @@ public class ConsolidationServiceTest {
         Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
-        mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
+        mainST, portNodeTemplateIds, toUpdatePortTypeIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
         getAttrInIds, getAttrOut, consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
@@ -1796,7 +1804,7 @@ public class ConsolidationServiceTest {
 
     GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "c1_name");
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1810,7 +1818,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1823,7 +1831,7 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1836,18 +1844,18 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"),
         Collections.singletonList("sm01_port_2"), null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"),
         Collections.singletonList("sm01_port_1"), null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_3", CM_01_PORT_TYPE,
+            Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"),
         Collections.singletonList("rm01_port_1"), null,
         consolidationData);
@@ -1871,8 +1879,8 @@ public class ConsolidationServiceTest {
 
     GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "c1_name");
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1886,8 +1894,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1900,8 +1908,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -1919,6 +1927,8 @@ public class ConsolidationServiceTest {
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
             "sm01_port_2",
             "sm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port", "sm01_port", "sm01_port", "sm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"), Collections.singletonList
@@ -1948,7 +1958,7 @@ public class ConsolidationServiceTest {
         Arrays.asList(null, null, null, null,
             null, null);
 
-    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
+    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds, toUpdatePortTypeIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
         consolidationData);
 
@@ -1970,8 +1980,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -1983,8 +1993,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -1995,8 +2005,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -2013,6 +2023,8 @@ public class ConsolidationServiceTest {
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
             "sm01_port_2",
             "sm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port", "sm01_port", "sm01_port", "sm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"), Collections.singletonList
@@ -2048,7 +2060,7 @@ public class ConsolidationServiceTest {
         Collections.singletonList(
             new ImmutablePair<>("cm01_port_3", getAttrFuncData)));
 
-    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
+    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds, toUpdatePortTypeIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
         consolidationData);
 
@@ -2070,8 +2082,8 @@ public class ConsolidationServiceTest {
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
@@ -2083,8 +2095,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_2"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
@@ -2095,8 +2107,8 @@ public class ConsolidationServiceTest {
         consolidationData);
 
     portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
-    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(CM_01_PORT_TYPE, "cm01_port_3"));
+    portTypeToIdList.add(new ImmutablePair<>(SM_01_PORT_TYPE, "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
         computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
@@ -2113,6 +2125,8 @@ public class ConsolidationServiceTest {
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
             "sm01_port_2",
             "sm01_port_3");
+    List<String> toUpdatePortTypeIds =
+            Arrays.asList("cm01_port", "cm01_port", "cm01_port", "sm01_port", "sm01_port", "sm01_port");
     List<List<String>> nodesConnectedInIds =
         Arrays.asList(Collections.singletonList("node_in_1"),
             Collections.singletonList("node_in_1"), Collections.singletonList
@@ -2147,7 +2161,7 @@ public class ConsolidationServiceTest {
         Collections.singletonList(
             new ImmutablePair<>("cm01_port_3", getAttrFuncData)));
 
-    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
+    TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds, toUpdatePortTypeIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
         consolidationData);
 
@@ -2337,18 +2351,18 @@ public class ConsolidationServiceTest {
     TestUtils
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
-    updateComputeConsolidationData("server_ps01", computeNodeTypeName, "cm01_port",
+    updateComputeConsolidationData("server_ps01", computeNodeTypeName, CM_01_PORT_TYPE,
         "cm01_port_1", consolidationData);
 
-    updateComputeConsolidationData("server_ps02", computeNodeTypeName, "cm01_port",
+    updateComputeConsolidationData("server_ps02", computeNodeTypeName, CM_01_PORT_TYPE,
         "cm01_port_2", consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
   }
 
@@ -2495,9 +2509,9 @@ public class ConsolidationServiceTest {
     TestUtils
         .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
-    updateComputeConsolidationData("server_ps01", computeNodeTypeName, "cm01_port",
+    updateComputeConsolidationData("server_ps01", computeNodeTypeName, CM_01_PORT_TYPE,
         "cm01_port_1", consolidationData);
-    updateComputeConsolidationData("server_ps02", computeNodeTypeName, "cm01_port",
+    updateComputeConsolidationData("server_ps02", computeNodeTypeName, CM_01_PORT_TYPE,
         "cm01_port_2", consolidationData);
 
     GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "c1_name");
@@ -2507,11 +2521,11 @@ public class ConsolidationServiceTest {
         new ImmutablePair<>("interface_2", getAttrFuncData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
-    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        null, null, null, null, null,
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2", CM_01_PORT_TYPE,
+            null, null, null, null, null,
         consolidationData);
 
     TestUtils

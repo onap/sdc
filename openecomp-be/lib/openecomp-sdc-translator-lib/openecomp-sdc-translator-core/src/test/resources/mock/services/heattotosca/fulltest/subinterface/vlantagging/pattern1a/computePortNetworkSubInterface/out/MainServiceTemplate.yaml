@@ -409,8 +409,6 @@ topology_template:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         vm_flavor_name:
           get_input: vdbe_flavor_name
-        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_1
         subinterface_nested_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
         vm_image_name:
@@ -430,19 +428,7 @@ topology_template:
             get_input: vnf_name
         subinterface_nested_mac_address:
         - get_input: vdbe_hw_untr_mac_1
-        port_vdbe_untr_vmi_virtual_network_refs:
-        - - control_int_net
-        subinterface_nested_ip_address:
-        - get_input: vdbe_untrusted_ip_1
-        subinterface_nested_ip_v6_address:
-        - get_input: vdbe_untrusted_v6_ip_1
-        subinterface_nested_vmac_address:
-        - get_input: vdbe_untrusted_vmac_address
-        subinterface_nested_vn_network_list:
-        - get_input: untrusted_vn_networks
-        subinterface_nested_aap_untrusted_ip_prefix_len:
-        - get_input: vdbe_aap_untrusted_ip_prefix_len
-        port_vdbe_untr_vmi_name:
+        port_vdbe_untr_vmi_1_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004
             params:
@@ -450,6 +436,20 @@ topology_template:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_1
+        subinterface_nested_ip_address:
+        - get_input: vdbe_untrusted_ip_1
+        port_vdbe_untr_vmi_1_virtual_network_refs:
+        - - control_int_net
+        subinterface_nested_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_1
+        subinterface_nested_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        subinterface_nested_vn_network_list:
+        - get_input: untrusted_vn_networks
+        port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
+        subinterface_nested_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
         subinterface_nested_subinterfaces_name_prefix:
         - str_replace:
             template: VM_NAMEDBE001p1n004
@@ -469,7 +469,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_vdbe_vdbe_untr_vmi:
+      - link_vdbe_vdbe_untr_vmi_1:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo

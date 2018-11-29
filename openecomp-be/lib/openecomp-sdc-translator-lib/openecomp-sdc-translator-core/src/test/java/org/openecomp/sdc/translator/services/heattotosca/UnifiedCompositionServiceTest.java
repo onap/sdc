@@ -75,13 +75,27 @@ public class UnifiedCompositionServiceTest {
     private static final String OUT_PREFIX = "/out";
     private static final String FSB1_template = "FSB1_template";
     private static final String FSB2_template = "FSB2_template";
-    private static final String FSB3_template = "FSB3_template";
     private static final String FSB1_INTERNAL = "FSB1_Internal";
     private static final String FSB2_INTERNAL = "FSB2_Internal";
     private static final String FSB1_INTERNAL_1 = "FSB1_Internal_1";
     private static final String FSB1_INTERNAL_2 = "FSB1_Internal_2";
     private static final String FSB2_INTERNAL_1 = "FSB2_Internal_1";
     private static final String FSB2_INTERNAL_2 = "FSB2_Internal_2";
+
+    //New ports according to naming convention
+    //Ports with same port types
+    private static final String FSB1_INTERNAL_PORT_TYPE_0 = "FSB1_Internal_port_0";
+    private static final String FSB1_0_INTERNAL_PORT_0 = "FSB1_0_Internal_port_0";
+    private static final String FSB1_1_INTERNAL_PORT_0 = "FSB1_1_Internal_port_0";
+
+    //For compute type FSB
+    private static final String FSB_INTERNAL_PORT_TYPE_0 = "FSB_Internal_port_0";
+    private static final String FSB_INTERNAL_PORT_TYPE_1 = "FSB_Internal_port_1";
+    private static final String FSB_2_INTERNAL_PORT_0 = "FSB_2_Internal_port_0";
+    private static final String FSB_2_INTERNAL_PORT_1 = "FSB_2_Internal_port_1";
+    private static final String FSB_1_INTERNAL_PORT_0 = "FSB_1_Internal_port_0";
+    private static final String FSB_1_INTERNAL_PORT_1 = "FSB_1_Internal_port_1";
+
     private static final String PORT = "port";
     private static final String PORT_1 = "port_1";
     private static final String PORT_2 = "port_2";
@@ -149,9 +163,9 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void createSubstitutionStNoOutputParamAndDuplicatePortType() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_PORT_TYPE_0, FSB1_0_INTERNAL_PORT_0));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_PORT_TYPE_0, FSB1_1_INTERNAL_PORT_0));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY + "creSubstitutionServiceTemplate/NoOutParamDuplicatePortType");
@@ -174,8 +188,8 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void createSubstitutionStWithOutputParamNoConsolidation() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL_2, FSB2_INTERNAL_2));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY + "creSubstitutionServiceTemplate/WithOutputParameters/noConsolidation");
@@ -201,8 +215,8 @@ public class UnifiedCompositionServiceTest {
     public void createSubstitutionStWithOutputParamWithConsolidation() throws Exception {
         List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
         List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_1_INTERNAL_PORT_0));
 
         loadInputAndOutputData(BASE_DIRECTORY + "creSubstitutionServiceTemplate/WithOutputParameters/consolidation");
         UnifiedCompositionData unifiedCompositionData1 =
@@ -212,8 +226,8 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData1);
 
         List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-        portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
-        portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_2_INTERNAL_PORT_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
 
         UnifiedCompositionData unifiedCompositionData2 =
                 createCompositionData(FSB2_template, portTypeToIdList2);
@@ -257,8 +271,8 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void createSubstitutionStWithIndex() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_1_INTERNAL_PORT_0));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY + "creSubstitutionServiceTemplate/WithIndex");
@@ -285,8 +299,8 @@ public class UnifiedCompositionServiceTest {
 
         UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
         addPortDataToCompositionData(portTypeToIdList, data);
 
@@ -316,8 +330,8 @@ public class UnifiedCompositionServiceTest {
 
         UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_2, FSB1_INTERNAL_2));
         addPortDataToCompositionData(portTypeToIdList, data);
 
         List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
@@ -403,8 +417,8 @@ public class UnifiedCompositionServiceTest {
 
         UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
         addPortDataToCompositionData(portTypeToIdList, data);
 
@@ -500,8 +514,8 @@ public class UnifiedCompositionServiceTest {
 
         UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
         addPortDataToCompositionData(portTypeToIdList, data);
 
@@ -558,8 +572,8 @@ public class UnifiedCompositionServiceTest {
         loadInputAndOutputData(BASE_DIRECTORY + "updGroupsConnectivity/noConsolidation");
         UnifiedCompositionData data = createComputeUnifiedCompositionData("server_smp1");
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(PORT, PORT_1));
-        portTypeToIdList.add(new ImmutablePair<>(PORT, PORT_2));
+        portTypeToIdList.add(new ImmutablePair<>(PORT_1, PORT_1));
+        portTypeToIdList.add(new ImmutablePair<>(PORT_2, PORT_2));
         addPortDataToCompositionData(portTypeToIdList, data);
 
         //Add groups
@@ -619,8 +633,8 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void updOutParamGetAttrInNoConsolidationTest() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL_2, FSB2_INTERNAL_2));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY + "updOutputGetAttrIn/noConsolidation");
@@ -646,8 +660,8 @@ public class UnifiedCompositionServiceTest {
     public void updOutParamGetAttrInWithConsolidationTest() throws Exception {
         List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
         List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL_2, FSB2_INTERNAL_2));
 
         loadInputAndOutputData(BASE_DIRECTORY + "updOutputGetAttrIn/consolidation");
         UnifiedCompositionData unifiedCompositionData1 =
@@ -657,8 +671,8 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData1);
 
         List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-        portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
-        portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL_2, FSB1_INTERNAL_2));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL_1, FSB2_INTERNAL_1));
 
         UnifiedCompositionData unifiedCompositionData2 =
                 createCompositionData(FSB2_template, portTypeToIdList2);
@@ -681,8 +695,8 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void updNodeGetAttrInNoConsolidationTest() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY + "updNodesGetAttrIn/noConsolidation");
@@ -709,8 +723,8 @@ public class UnifiedCompositionServiceTest {
     public void updNodeGetAttrInWithConsolidationTest() throws Exception {
         List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
         List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_1_INTERNAL_PORT_0));
 
         loadInputAndOutputData(BASE_DIRECTORY + "updNodesGetAttrIn/consolidation");
         UnifiedCompositionData unifiedCompositionData1 =
@@ -720,8 +734,8 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData1);
 
         List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-        portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
-        portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_2_INTERNAL_PORT_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
 
         UnifiedCompositionData unifiedCompositionData2 =
                 createCompositionData(FSB2_template, portTypeToIdList2);
@@ -746,8 +760,8 @@ public class UnifiedCompositionServiceTest {
     @Test
     public void updNodesGetAttrFromInnerNodesTest() throws Exception {
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_1_INTERNAL_PORT_0));
         portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
         loadInputAndOutputData(BASE_DIRECTORY +
@@ -779,8 +793,8 @@ public class UnifiedCompositionServiceTest {
     public void updNodesGetAttrFromConsolidationNodesTest() throws Exception {
         List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
         List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_1_INTERNAL_PORT_1));
+        portTypeToIdList1.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_1_INTERNAL_PORT_0));
 
         loadInputAndOutputData(BASE_DIRECTORY +
                 "creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/consolidation");
@@ -791,8 +805,8 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData1);
 
         List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-        portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
-        portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_2_INTERNAL_PORT_1));
+        portTypeToIdList2.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
 
         UnifiedCompositionData unifiedCompositionData2 =
                 createCompositionData(FSB2_template, portTypeToIdList2);
@@ -887,8 +901,8 @@ public class UnifiedCompositionServiceTest {
         loadInputAndOutputData(BASE_DIRECTORY + "fixNewAbstractNodeTemplate/noConsolidation");
 
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_1, FSB1_INTERNAL_1));
+        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL_2, FSB1_INTERNAL_2));
 
         NodeTemplate cleanedComputeNodeTemplate =
                 getMockNode(
@@ -969,11 +983,11 @@ public class UnifiedCompositionServiceTest {
         context.getTranslatedServiceTemplates()
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
-    UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
-    UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(
-        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName), null,
-        context, null);
-    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo, unifiedComposition);
+        UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
+        UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(
+                inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName), null,
+                context, null);
+        unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName,
                 context.getTranslatedServiceTemplates().get(nestedFileName),
@@ -1012,17 +1026,17 @@ public class UnifiedCompositionServiceTest {
         context.getTranslatedServiceTemplates()
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
-    UnifiedCompositionData unifiedComposition =
-        createUnifiedCompositionOnlyNested("server_pcm_001");
-    UnifiedCompositionTo unifiedCompositionTo1 = new UnifiedCompositionTo(inputServiceTemplates
-        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName1), null,
-        context, null);
-    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo1, unifiedComposition);
-    unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
-    UnifiedCompositionTo unifiedCompositionTo2 = new UnifiedCompositionTo(inputServiceTemplates
-        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName2), null,
-        context, null);
-    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo2, unifiedComposition);
+        UnifiedCompositionData unifiedComposition =
+                createUnifiedCompositionOnlyNested("server_pcm_001");
+        UnifiedCompositionTo unifiedCompositionTo1 = new UnifiedCompositionTo(inputServiceTemplates
+                .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName1), null,
+                context, null);
+        unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo1, unifiedComposition);
+        unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
+        UnifiedCompositionTo unifiedCompositionTo2 = new UnifiedCompositionTo(inputServiceTemplates
+                .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName2), null,
+                context, null);
+        unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo2, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName1,
                 context.getTranslatedServiceTemplates().get(nestedFileName1),
@@ -1144,8 +1158,8 @@ public class UnifiedCompositionServiceTest {
         loadInputAndOutputData(BASE_DIRECTORY + "inputoutputparamtype");
         ConsolidationData consolidationData = new ConsolidationData();
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        portTypeToIdList.add(new ImmutablePair<>("FSB1_Port", "FSB1_Port_1"));
-        portTypeToIdList.add(new ImmutablePair<>("VMI", "VMI_1"));
+        portTypeToIdList.add(new ImmutablePair<>("FSB1_Port_1", "FSB1_Port_1"));
+        portTypeToIdList.add(new ImmutablePair<>("VMI_1", "VMI_1"));
 
         UnifiedCompositionData unifiedCompositionData = createCompositionData(FSB1, portTypeToIdList);
 
@@ -1335,7 +1349,7 @@ public class UnifiedCompositionServiceTest {
                 Multimap<String, RequirementAssignmentData> nodeConnectedOut =
                         TestUtils.getNodeConnectedOutList(portNodeTemplate, "link");
                 PortTemplateConsolidationData portTemplateConsolidationData =
-                        TestUtils.createPortTemplateConsolidationData(port.getRight());
+                        TestUtils.createPortTemplateConsolidationData(port.getRight(), port.getLeft());
                 portTemplateConsolidationData.setNodesConnectedOut(nodeConnectedOut);
                 unifiedCompositionData.addPortTemplateConsolidationData(portTemplateConsolidationData);
             }
@@ -1349,17 +1363,17 @@ public class UnifiedCompositionServiceTest {
         UnifiedCompositionData data2 = createComputeUnifiedCompositionData(FSB2_template);
 
         List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-        ImmutablePair<String, String> portTypePair1 = new ImmutablePair<>(FSB1_INTERNAL,
-                FSB1_INTERNAL_1);
-        ImmutablePair<String, String> portTypePair2 = new ImmutablePair<>(FSB2_INTERNAL,
-                FSB2_INTERNAL_1);
+        ImmutablePair<String, String> portTypePair1 = new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0,
+                FSB_1_INTERNAL_PORT_0);
+        ImmutablePair<String, String> portTypePair2 = new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1,
+                FSB_1_INTERNAL_PORT_1);
         portTypeToIdList.add(portTypePair1);
         portTypeToIdList.add(portTypePair2);
         addPortDataToCompositionData(portTypeToIdList, data1);
         portTypeToIdList.remove(portTypePair1);
         portTypeToIdList.remove(portTypePair2);
-        portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_2));
-        portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_0, FSB_2_INTERNAL_PORT_0));
+        portTypeToIdList.add(new ImmutablePair<>(FSB_INTERNAL_PORT_TYPE_1, FSB_2_INTERNAL_PORT_1));
         addPortDataToCompositionData(portTypeToIdList, data2);
 
         unifiedCompositionDataList.add(data1);
@@ -1421,7 +1435,7 @@ public class UnifiedCompositionServiceTest {
             Multimap<String, RequirementAssignmentData> portNodeConnectedOut =
                     TestUtils.getNodeConnectedOutList(portNodeTemplate, "link");
             PortTemplateConsolidationData portTemplateConsolidationData = TestUtils
-                    .createPortTemplateConsolidationData(port.getRight());
+                    .createPortTemplateConsolidationData(port.getRight(), port.getLeft());
             portTemplateConsolidationData.setNodesConnectedOut(portNodeConnectedOut);
 
             //Add node connected in info to test data
@@ -1454,12 +1468,12 @@ public class UnifiedCompositionServiceTest {
     private void addGetAttrForPort(UnifiedCompositionData unifiedCompositionData) {
         for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
                 .getPortTemplateConsolidationDataList()) {
-            if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL_1)) {
+            if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB_1_INTERNAL_PORT_1)) {
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "network_name",
                         NETWORK_ID, JSA_NET1);
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, SIZE,
                         DEVICE_OWNER, CMAUI_VOLUME1);
-            } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL_2)) {
+            } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB_2_INTERNAL_PORT_0)) {
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, TENANT_ID,
                         NETWORK_ID, JSA_NET1);
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "qos_policy",
@@ -1491,7 +1505,7 @@ public class UnifiedCompositionServiceTest {
     private void addGetAttrForPortInnerUC(UnifiedCompositionData unifiedCompositionData) {
         for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
                 .getPortTemplateConsolidationDataList()) {
-            if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL_1)) {
+            if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB_1_INTERNAL_PORT_1)) {
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, AVAILABILITY_ZONE,
                         MYATTR, FSB1_template);
                 addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "metadata",

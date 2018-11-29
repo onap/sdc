@@ -137,6 +137,26 @@ topology_template:
         - 9
         - 9
         - 9
+        port_pd_server_1b_port_1_fixed_ips:
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 1
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 1
+        port_pd_server_1b_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_flavor_name:
           get_input: pd_server_1b_flavor
         subinterface_nested_vlan_net1:
@@ -146,52 +166,32 @@ topology_template:
         - packet_externalmain_network
         vm_image_name:
           get_input: pd_server_1b_image
-        port_pd_server_1b_port_replacement_policy:
-        - AUTO
-        - AUTO
-        - AUTO
-        - AUTO
-        port_pd_server_1b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_pd_server_1b_port_1_network:
+        - packet_internalmain_network
+        - packet_internalmain_network
+        - packet_internalmain_network
+        - packet_internalmain_network
         subinterface_nested_vlan_parent_interface:
-        - pd_server_1b_port_0
-        - pd_server_1b_port_01
-        - pd_server_1b_port_11
+        - pd_server_1b_1_port_1
+        - pd_server_1b_2_port_1
+        - pd_server_1b_3_port_1
         - pd_server_1b_port_1
-        port_pd_server_1b_port_fixed_ips:
-        - - ip_address:
-              get_input:
-              - pd_server_1b_ips
-              - 0
-        - - ip_address:
-              get_input:
-              - pd_server_1b_ips
-              - 0
-        - - ip_address:
-              get_input:
-              - pd_server_1b_ips
-              - 1
-        - - ip_address:
-              get_input:
-              - pd_server_1b_ips
-              - 1
-        port_pd_server_1b_port_network:
-        - packet_internalmain_network
-        - packet_internalmain_network
-        - packet_internalmain_network
-        - packet_internalmain_network
-        compute_pd_server_1b_availability_zone:
-        - get_input: availability_zone_0
-        - get_input: availability_zone_0
-        - get_input: availability_zone_0
-        - get_input: availability_zone_0
-        port_pd_server_1b_port_ip_requirements:
+        port_pd_server_1b_port_1_replacement_policy:
+        - AUTO
+        - AUTO
+        - AUTO
+        - AUTO
+        port_pd_server_1b_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
         service_template_filter:
           substitute_service_template: Nested_pd_server_1b_1ServiceTemplate.yaml
           count: 4
@@ -201,11 +201,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_pd_server_1b_pd_server_1b_port:
+      - link_pd_server_1b_pd_server_1b_port_1:
           capability: tosca.capabilities.network.Linkable
           node: packet_internalmain_network
           relationship: tosca.relationships.network.LinksTo
-      - subinterface_link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+      - subinterface_link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_1_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_externalmain_network
           relationship: tosca.relationships.network.LinksTo

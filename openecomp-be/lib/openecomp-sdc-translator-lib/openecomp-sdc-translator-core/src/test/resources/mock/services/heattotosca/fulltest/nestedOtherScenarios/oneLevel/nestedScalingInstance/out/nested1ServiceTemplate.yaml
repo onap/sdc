@@ -62,18 +62,9 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cmaui_port_fixed_ips:
-        - - ip_address:
-              get_input:
-              - cmaui_oam_ips
-              - 0
-        - - ip_address:
-              get_input:
-              - cmaui_oam_ips
-              - 0
-        port_cmaui_port_network:
-        - get_input: net
-        - get_input: net
+        port_cmaui_mgmt_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_flavor_name:
           get_input: cmaui_flavor
         compute_cmaui_name:
@@ -83,23 +74,32 @@ topology_template:
         - get_input:
           - cmaui_names
           - 0
-        port_cmaui_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_cmaui_mgmt_port_0_replacement_policy:
+        - AUTO
+        - AUTO
+        port_cmaui_mgmt_port_0_network:
+        - get_input: net
+        - get_input: net
         compute_cmaui_availability_zone:
         - get_input: availability_zone_0
         - get_input: availability_zone_0
-        port_cmaui_port_replacement_policy:
-        - AUTO
-        - AUTO
         vm_image_name:
           get_input: cmaui_image
-        port_cmaui_port_ip_requirements:
+        port_cmaui_mgmt_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_cmaui_mgmt_port_0_fixed_ips:
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
         service_template_filter:
           substitute_service_template: Nested_cmauiServiceTemplate.yaml
           count: 2
@@ -125,6 +125,9 @@ topology_template:
       disk.device.usage_server_cmaui_2:
       - abstract_cmaui
       - disk.device.usage_cmaui
+      binding_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - binding_cmaui_cmaui_mgmt_port_0
       disk.device.latency_server_cmaui_1:
       - abstract_cmaui
       - disk.device.latency_cmaui
@@ -146,15 +149,9 @@ topology_template:
       disk.read.requests_server_cmaui_2:
       - abstract_cmaui
       - disk.read.requests_cmaui
-      network.outgoing.bytes_cmaui_port_2:
-      - abstract_cmaui
-      - network.outgoing.bytes_cmaui_cmaui_port
       disk.read.requests_server_cmaui_1:
       - abstract_cmaui
       - disk.read.requests_cmaui
-      network.outgoing.bytes_cmaui_port_1:
-      - abstract_cmaui
-      - network.outgoing.bytes_cmaui_cmaui_port
       disk.device.iops_server_cmaui_1:
       - abstract_cmaui
       - disk.device.iops_cmaui
@@ -173,6 +170,9 @@ topology_template:
       disk.read.bytes_server_cmaui_2:
       - abstract_cmaui
       - disk.read.bytes_cmaui
+      network.incoming.bytes_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - network.incoming.bytes_cmaui_cmaui_mgmt_port_0
       disk.read.bytes_server_cmaui_1:
       - abstract_cmaui
       - disk.read.bytes_cmaui
@@ -197,30 +197,45 @@ topology_template:
       cpu_server_cmaui_1:
       - abstract_cmaui
       - cpu_cmaui
-      network.incoming.packets_cmaui_port_2:
-      - abstract_cmaui
-      - network.incoming.packets_cmaui_cmaui_port
-      network.incoming.packets_cmaui_port_1:
-      - abstract_cmaui
-      - network.incoming.packets_cmaui_cmaui_port
       disk.ephemeral.size_server_cmaui_1:
       - abstract_cmaui
       - disk.ephemeral.size_cmaui
+      network.outgoing.packets.rate_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.packets.rate_cmaui_cmaui_mgmt_port_0
       disk.ephemeral.size_server_cmaui_2:
       - abstract_cmaui
       - disk.ephemeral.size_cmaui
       disk.capacity_server_cmaui_1:
       - abstract_cmaui
       - disk.capacity_cmaui
+      network.outgoing.packets.rate_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.packets.rate_cmaui_cmaui_mgmt_port_0
       disk.capacity_server_cmaui_2:
       - abstract_cmaui
       - disk.capacity_cmaui
-      binding_cmaui_port_1:
+      forwarder_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - binding_cmaui_cmaui_port
-      binding_cmaui_port_2:
+      - forwarder_cmaui_cmaui_mgmt_port_0
+      network.incoming.bytes_cmaui_2_mgmt_port_0:
       - abstract_cmaui
-      - binding_cmaui_cmaui_port
+      - network.incoming.bytes_cmaui_cmaui_mgmt_port_0
+      forwarder_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - forwarder_cmaui_cmaui_mgmt_port_0
+      network.outgoing.bytes.rate_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.bytes.rate_cmaui_cmaui_mgmt_port_0
+      network.outgoing.bytes.rate_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.bytes.rate_cmaui_cmaui_mgmt_port_0
+      network.outpoing.packets_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - network.outpoing.packets_cmaui_cmaui_mgmt_port_0
+      network.outpoing.packets_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.outpoing.packets_cmaui_cmaui_mgmt_port_0
       disk.iops_server_cmaui_2:
       - abstract_cmaui
       - disk.iops_cmaui
@@ -233,27 +248,27 @@ topology_template:
       disk.device.write.requests_server_cmaui_1:
       - abstract_cmaui
       - disk.device.write.requests_cmaui
-      network.outgoing.bytes.rate_cmaui_port_2:
+      network.incoming.packets_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - network.outgoing.bytes.rate_cmaui_cmaui_port
+      - network.incoming.packets_cmaui_cmaui_mgmt_port_0
       disk.device.write.bytes.rate_server_cmaui_1:
       - abstract_cmaui
       - disk.device.write.bytes.rate_cmaui
+      network.incoming.bytes.rate_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.incoming.bytes.rate_cmaui_cmaui_mgmt_port_0
       cpu_util_server_cmaui_1:
       - abstract_cmaui
       - cpu_util_cmaui
-      network.outgoing.bytes.rate_cmaui_port_1:
+      binding_cmaui_2_mgmt_port_0:
       - abstract_cmaui
-      - network.outgoing.bytes.rate_cmaui_cmaui_port
-      network.incoming.bytes_cmaui_port_2:
-      - abstract_cmaui
-      - network.incoming.bytes_cmaui_cmaui_port
+      - binding_cmaui_cmaui_mgmt_port_0
       cpu_util_server_cmaui_2:
       - abstract_cmaui
       - cpu_util_cmaui
-      network.incoming.bytes_cmaui_port_1:
+      network.incoming.bytes.rate_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - network.incoming.bytes_cmaui_cmaui_port
+      - network.incoming.bytes.rate_cmaui_cmaui_mgmt_port_0
       disk.device.write.bytes.rate_server_cmaui_2:
       - abstract_cmaui
       - disk.device.write.bytes.rate_cmaui
@@ -269,18 +284,6 @@ topology_template:
       disk.device.write.bytes_server_cmaui_1:
       - abstract_cmaui
       - disk.device.write.bytes_cmaui
-      network.incoming.packets.rate_cmaui_port_1:
-      - abstract_cmaui
-      - network.incoming.packets.rate_cmaui_cmaui_port
-      network.incoming.packets.rate_cmaui_port_2:
-      - abstract_cmaui
-      - network.incoming.packets.rate_cmaui_cmaui_port
-      feature_cmaui_port_1:
-      - abstract_cmaui
-      - feature_cmaui_cmaui_port
-      feature_cmaui_port_2:
-      - abstract_cmaui
-      - feature_cmaui_cmaui_port
       disk.write.bytes_server_cmaui_1:
       - abstract_cmaui
       - disk.write.bytes_cmaui
@@ -299,6 +302,9 @@ topology_template:
       disk.allocation_server_cmaui_2:
       - abstract_cmaui
       - disk.allocation_cmaui
+      network.incoming.packets_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.incoming.packets_cmaui_cmaui_mgmt_port_0
       binding_server_cmaui_1:
       - abstract_cmaui
       - binding_cmaui
@@ -308,30 +314,24 @@ topology_template:
       vcpus_server_cmaui_2:
       - abstract_cmaui
       - vcpus_cmaui
-      attachment_cmaui_port_2:
-      - abstract_cmaui
-      - attachment_cmaui_cmaui_port
       scalable_server_cmaui_2:
       - abstract_cmaui
       - scalable_cmaui
       scalable_server_cmaui_1:
       - abstract_cmaui
       - scalable_cmaui
-      network.outgoing.packets.rate_cmaui_port_1:
+      network.incoming.packets.rate_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - network.outgoing.packets.rate_cmaui_cmaui_port
-      network.outgoing.packets.rate_cmaui_port_2:
-      - abstract_cmaui
-      - network.outgoing.packets.rate_cmaui_cmaui_port
-      attachment_cmaui_port_1:
-      - abstract_cmaui
-      - attachment_cmaui_cmaui_port
+      - network.incoming.packets.rate_cmaui_cmaui_mgmt_port_0
       disk.write.requests_server_cmaui_2:
       - abstract_cmaui
       - disk.write.requests_cmaui
       disk.write.requests_server_cmaui_1:
       - abstract_cmaui
       - disk.write.requests_cmaui
+      network.incoming.packets.rate_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.incoming.packets.rate_cmaui_cmaui_mgmt_port_0
       disk.usage_server_cmaui_1:
       - abstract_cmaui
       - disk.usage_cmaui
@@ -350,12 +350,6 @@ topology_template:
       os_server_cmaui_1:
       - abstract_cmaui
       - os_cmaui
-      forwarder_cmaui_port_2:
-      - abstract_cmaui
-      - forwarder_cmaui_cmaui_port
-      forwarder_cmaui_port_1:
-      - abstract_cmaui
-      - forwarder_cmaui_cmaui_port
       disk.device.allocation_server_cmaui_1:
       - abstract_cmaui
       - disk.device.allocation_cmaui
@@ -365,30 +359,36 @@ topology_template:
       memory_server_cmaui_1:
       - abstract_cmaui
       - memory_cmaui
+      attachment_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - attachment_cmaui_cmaui_mgmt_port_0
       host_server_cmaui_2:
       - abstract_cmaui
       - host_cmaui
       host_server_cmaui_1:
       - abstract_cmaui
       - host_cmaui
+      attachment_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - attachment_cmaui_cmaui_mgmt_port_0
       instance_server_cmaui_2:
       - abstract_cmaui
       - instance_cmaui
       disk.device.capacity_server_cmaui_1:
       - abstract_cmaui
       - disk.device.capacity_cmaui
+      feature_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - feature_cmaui_cmaui_mgmt_port_0
+      feature_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - feature_cmaui_cmaui_mgmt_port_0
       instance_server_cmaui_1:
       - abstract_cmaui
       - instance_cmaui
       disk.device.read.requests.rate_server_cmaui_1:
       - abstract_cmaui
       - disk.device.read.requests.rate_cmaui
-      network.incoming.bytes.rate_cmaui_port_1:
-      - abstract_cmaui
-      - network.incoming.bytes.rate_cmaui_cmaui_port
-      network.incoming.bytes.rate_cmaui_port_2:
-      - abstract_cmaui
-      - network.incoming.bytes.rate_cmaui_cmaui_port
       vcpus_server_cmaui_1:
       - abstract_cmaui
       - vcpus_cmaui
@@ -398,15 +398,9 @@ topology_template:
       disk.read.bytes.rate_server_cmaui_1:
       - abstract_cmaui
       - disk.read.bytes.rate_cmaui
-      network.outpoing.packets_cmaui_port_1:
-      - abstract_cmaui
-      - network.outpoing.packets_cmaui_cmaui_port
       disk.read.bytes.rate_server_cmaui_2:
       - abstract_cmaui
       - disk.read.bytes.rate_cmaui
-      network.outpoing.packets_cmaui_port_2:
-      - abstract_cmaui
-      - network.outpoing.packets_cmaui_cmaui_port
       disk.device.read.requests_server_cmaui_1:
       - abstract_cmaui
       - disk.device.read.requests_cmaui
@@ -422,9 +416,15 @@ topology_template:
       memory.resident_server_cmaui_2:
       - abstract_cmaui
       - memory.resident_cmaui
+      network.outgoing.bytes_cmaui_1_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.bytes_cmaui_cmaui_mgmt_port_0
       memory.resident_server_cmaui_1:
       - abstract_cmaui
       - memory.resident_cmaui
+      network.outgoing.bytes_cmaui_2_mgmt_port_0:
+      - abstract_cmaui
+      - network.outgoing.bytes_cmaui_cmaui_mgmt_port_0
       disk.latency_server_cmaui_2:
       - abstract_cmaui
       - disk.latency_cmaui
@@ -438,27 +438,27 @@ topology_template:
       - abstract_cmaui
       - memory.usage_cmaui
     requirements:
-      dependency_cmaui_port_1:
+      link_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - dependency_cmaui_cmaui_port
+      - link_cmaui_cmaui_mgmt_port_0
       local_storage_server_cmaui_2:
       - abstract_cmaui
       - local_storage_cmaui
-      link_cmaui_port_2:
+      dependency_cmaui_2_mgmt_port_0:
       - abstract_cmaui
-      - link_cmaui_cmaui_port
+      - dependency_cmaui_cmaui_mgmt_port_0
       dependency_server_cmaui_2:
       - abstract_cmaui
       - dependency_cmaui
-      link_cmaui_port_1:
+      dependency_cmaui_1_mgmt_port_0:
       - abstract_cmaui
-      - link_cmaui_cmaui_port
+      - dependency_cmaui_cmaui_mgmt_port_0
       dependency_server_cmaui_1:
       - abstract_cmaui
       - dependency_cmaui
-      dependency_cmaui_port_2:
+      link_cmaui_2_mgmt_port_0:
       - abstract_cmaui
-      - dependency_cmaui_cmaui_port
+      - link_cmaui_cmaui_mgmt_port_0
       local_storage_server_cmaui_1:
       - abstract_cmaui
       - local_storage_cmaui

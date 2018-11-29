@@ -108,52 +108,52 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pcm_port_1_network_role_tag: oam
-        port_pcm_port_0_fixed_ips:
-        - ip_address:
-            get_input: cps_net_ip
+        port_pcm_port_0_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_port_1_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_flavor_name:
           get_input: pcma_flavor_name
-        port_pcm_port_0_security_groups:
-        - - get_input: security_group_name
         compute_pcma_server_availability_zone:
         - get_input: availabilityzone_name
+        port_pcm_port_0_0_security_groups:
+        - - get_input: security_group_name
+        port_pcm_port_0_0_network:
+        - get_input: cps_net_name
         vm_image_name:
           get_input: pcma_image_name
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_1_network:
-        - get_input: oam_net_name
-        port_pcm_port_1_security_groups:
-        - - get_input: security_group_name
-        port_pcm_port_0_ip_requirements:
+        port_pcm_port_0_0_network_role_tag: cps
+        port_pcm_port_1_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_pcm_port_1_0_network_role_tag: oam
         compute_pcma_server_config_drive:
         - true
         compute_pcma_server_user_data_format:
         - RAW
-        port_pcm_port_0_network:
-        - get_input: cps_net_name
-        port_pcm_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pcm_port_1_fixed_ips:
-        - ip_address:
-            get_input: oam_net_ip
-        compute_pcma_server_name:
-        - get_input: pcma_server_name
-        port_pcm_port_1_ip_requirements:
+        port_pcm_port_0_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pcm_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_pcm_port_1_0_security_groups:
+        - - get_input: security_group_name
+        port_pcm_port_0_0_fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        port_pcm_port_1_0_fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        compute_pcma_server_name:
+        - get_input: pcma_server_name
+        port_pcm_port_1_0_network:
+        - get_input: oam_net_name
         service_template_filter:
           substitute_service_template: Nested_pcma_server_1ServiceTemplate.yaml
           count: 1
@@ -167,50 +167,50 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pcm_port_3_mac_requirements:
+        port_pcm_port_2_0_security_groups:
+        - - get_input: security_group_name
+        port_pcm_port_2_0_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pcm_port_2_fixed_ips:
+        port_pcm_port_3_0_fixed_ips:
         - ip_address:
-            get_input: cps_net_ip
+            get_input: oam_net_ip
         vm_flavor_name:
           get_input: pcma_flavor_name
-        port_pcm_port_3_security_groups:
-        - - get_input: security_group_name
+        port_pcm_port_3_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         compute_pcma_server_availability_zone:
         - get_input: availabilityzone_name
         vm_image_name:
           get_input: pcma_image_name
-        port_pcm_port_2_security_groups:
+        port_pcm_port_3_0_security_groups:
         - - get_input: security_group_name
-        port_pcm_port_3_ip_requirements:
+        port_pcm_port_2_0_network:
+        - get_input: cps_net_name
+        port_pcm_port_2_0_network_role_tag: cps
+        port_pcm_port_3_0_network_role_tag: oam
+        port_pcm_port_2_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pcm_port_2_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pcm_port_3_network_role_tag: oam
         compute_pcma_server_config_drive:
         - true
-        port_pcm_port_3_fixed_ips:
-        - ip_address:
-            get_input: oam_net_ip
         compute_pcma_server_user_data_format:
         - RAW
-        port_pcm_port_2_network:
-        - get_input: cps_net_name
-        port_pcm_port_2_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_2_network_role_tag: cps
-        port_pcm_port_3_network:
+        port_pcm_port_3_0_network:
         - get_input: oam_net_name
+        port_pcm_port_2_0_fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        port_pcm_port_3_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         compute_pcma_server_scheduler_hints:
         - group:
             get_input: server_group
@@ -241,19 +241,19 @@ topology_template:
     capabilities:
       network.outpoing.packets_pcm_port_2_0:
       - abstract_pcma_server
-      - network.outpoing.packets_pcma_server_pcm_port_2
+      - network.outpoing.packets_pcma_server_pcm_port_2_0
       disk.device.iops_server_pcma2:
       - abstract_pcma_server
       - disk.device.iops_pcma_server
       network.outgoing.bytes.rate_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.outgoing.bytes.rate_pcma_server_pcm_port_1
+      - network.outgoing.bytes.rate_pcma_server_pcm_port_1_0
       disk.device.iops_server_pcma1:
       - abstract_pcma_server_1
       - disk.device.iops_pcma_server
       network.incoming.bytes.rate_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.incoming.bytes.rate_pcma_server_pcm_port_0
+      - network.incoming.bytes.rate_pcma_server_pcm_port_0_0
       disk.device.capacity_server_pcma2:
       - abstract_pcma_server
       - disk.device.capacity_pcma_server
@@ -271,10 +271,10 @@ topology_template:
       - disk.write.requests.rate_pcma_server
       network.incoming.packets_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.incoming.packets_pcma_server_pcm_port_1
+      - network.incoming.packets_pcma_server_pcm_port_1_0
       network.incoming.bytes_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.incoming.bytes_pcma_server_pcm_port_0
+      - network.incoming.bytes_pcma_server_pcm_port_0_0
       disk.write.requests.rate_server_pcma2:
       - abstract_pcma_server
       - disk.write.requests.rate_pcma_server
@@ -289,13 +289,13 @@ topology_template:
       - disk.device.read.bytes.rate_pcma_server
       feature_pcm_port_0_0:
       - abstract_pcma_server_1
-      - feature_pcma_server_pcm_port_0
+      - feature_pcma_server_pcm_port_0_0
       disk.device.read.bytes.rate_server_pcma2:
       - abstract_pcma_server
       - disk.device.read.bytes.rate_pcma_server
       forwarder_pcm_port_0_0:
       - abstract_pcma_server_1
-      - forwarder_pcma_server_pcm_port_0
+      - forwarder_pcma_server_pcm_port_0_0
       disk.device.latency_server_pcma2:
       - abstract_pcma_server
       - disk.device.latency_pcma_server
@@ -313,16 +313,16 @@ topology_template:
       - disk.device.read.requests_pcma_server
       network.outgoing.packets.rate_pcm_port_3_0:
       - abstract_pcma_server
-      - network.outgoing.packets.rate_pcma_server_pcm_port_3
+      - network.outgoing.packets.rate_pcma_server_pcm_port_3_0
       disk.device.read.requests_server_pcma2:
       - abstract_pcma_server
       - disk.device.read.requests_pcma_server
       attachment_pcm_port_0_0:
       - abstract_pcma_server_1
-      - attachment_pcma_server_pcm_port_0
+      - attachment_pcma_server_pcm_port_0_0
       network.incoming.packets.rate_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.incoming.packets.rate_pcma_server_pcm_port_0
+      - network.incoming.packets.rate_pcma_server_pcm_port_0_0
       disk.write.bytes_server_pcma2:
       - abstract_pcma_server
       - disk.write.bytes_pcma_server
@@ -343,10 +343,10 @@ topology_template:
       - binding_pcma_server
       network.outgoing.bytes_pcm_port_3_0:
       - abstract_pcma_server
-      - network.outgoing.bytes_pcma_server_pcm_port_3
+      - network.outgoing.bytes_pcma_server_pcm_port_3_0
       binding_pcm_port_1_0:
       - abstract_pcma_server_1
-      - binding_pcma_server_pcm_port_1
+      - binding_pcma_server_pcm_port_1_0
       disk.write.bytes.rate_server_pcma2:
       - abstract_pcma_server
       - disk.write.bytes.rate_pcma_server
@@ -361,13 +361,13 @@ topology_template:
       - disk.root.size_pcma_server
       network.outgoing.bytes_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.outgoing.bytes_pcma_server_pcm_port_1
+      - network.outgoing.bytes_pcma_server_pcm_port_1_0
       network.outgoing.bytes.rate_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.outgoing.bytes.rate_pcma_server_pcm_port_0
+      - network.outgoing.bytes.rate_pcma_server_pcm_port_0_0
       network.outpoing.packets_pcm_port_3_0:
       - abstract_pcma_server
-      - network.outpoing.packets_pcma_server_pcm_port_3
+      - network.outpoing.packets_pcma_server_pcm_port_3_0
       disk.iops_server_pcma2:
       - abstract_pcma_server
       - disk.iops_pcma_server
@@ -376,7 +376,7 @@ topology_template:
       - disk.iops_pcma_server
       network.incoming.bytes.rate_pcm_port_3_0:
       - abstract_pcma_server
-      - network.incoming.bytes.rate_pcma_server_pcm_port_3
+      - network.incoming.bytes.rate_pcma_server_pcm_port_3_0
       disk.device.write.bytes.rate_server_pcma1:
       - abstract_pcma_server_1
       - disk.device.write.bytes.rate_pcma_server
@@ -385,22 +385,22 @@ topology_template:
       - disk.device.write.bytes.rate_pcma_server
       network.incoming.packets_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.incoming.packets_pcma_server_pcm_port_0
+      - network.incoming.packets_pcma_server_pcm_port_0_0
       network.incoming.bytes_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.incoming.bytes_pcma_server_pcm_port_1
+      - network.incoming.bytes_pcma_server_pcm_port_1_0
       disk.read.bytes_server_pcma1:
       - abstract_pcma_server_1
       - disk.read.bytes_pcma_server
       feature_pcm_port_3_0:
       - abstract_pcma_server
-      - feature_pcma_server_pcm_port_3
+      - feature_pcma_server_pcm_port_3_0
       disk.read.bytes_server_pcma2:
       - abstract_pcma_server
       - disk.read.bytes_pcma_server
       forwarder_pcm_port_1_0:
       - abstract_pcma_server_1
-      - forwarder_pcma_server_pcm_port_1
+      - forwarder_pcma_server_pcm_port_1_0
       cpu_util_server_pcma1:
       - abstract_pcma_server_1
       - cpu_util_pcma_server
@@ -409,16 +409,16 @@ topology_template:
       - cpu_util_pcma_server
       network.outgoing.packets.rate_pcm_port_2_0:
       - abstract_pcma_server
-      - network.outgoing.packets.rate_pcma_server_pcm_port_2
+      - network.outgoing.packets.rate_pcma_server_pcm_port_2_0
       attachment_pcm_port_3_0:
       - abstract_pcma_server
-      - attachment_pcma_server_pcm_port_3
+      - attachment_pcma_server_pcm_port_3_0
       feature_server_pcma2:
       - abstract_pcma_server
       - feature_pcma_server
       network.incoming.packets.rate_pcm_port_3_0:
       - abstract_pcma_server
-      - network.incoming.packets.rate_pcma_server_pcm_port_3
+      - network.incoming.packets.rate_pcma_server_pcm_port_3_0
       memory.usage_server_pcma2:
       - abstract_pcma_server
       - memory.usage_pcma_server
@@ -430,10 +430,10 @@ topology_template:
       - feature_pcma_server
       network.outgoing.bytes_pcm_port_2_0:
       - abstract_pcma_server
-      - network.outgoing.bytes_pcma_server_pcm_port_2
+      - network.outgoing.bytes_pcma_server_pcm_port_2_0
       binding_pcm_port_0_0:
       - abstract_pcma_server_1
-      - binding_pcma_server_pcm_port_0
+      - binding_pcma_server_pcm_port_0_0
       disk.read.bytes.rate_server_pcma1:
       - abstract_pcma_server_1
       - disk.read.bytes.rate_pcma_server
@@ -445,10 +445,10 @@ topology_template:
       - disk.device.read.bytes_pcma_server
       network.outpoing.packets_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.outpoing.packets_pcma_server_pcm_port_0
+      - network.outpoing.packets_pcma_server_pcm_port_0_0
       network.outgoing.bytes_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.outgoing.bytes_pcma_server_pcm_port_0
+      - network.outgoing.bytes_pcma_server_pcm_port_0_0
       endpoint_server_pcma2:
       - abstract_pcma_server
       - endpoint_pcma_server
@@ -472,10 +472,10 @@ topology_template:
       - host_pcma_server
       network.incoming.bytes.rate_pcm_port_2_0:
       - abstract_pcma_server
-      - network.incoming.bytes.rate_pcma_server_pcm_port_2
+      - network.incoming.bytes.rate_pcma_server_pcm_port_2_0
       network.outgoing.bytes.rate_pcm_port_3_0:
       - abstract_pcma_server
-      - network.outgoing.bytes.rate_pcma_server_pcm_port_3
+      - network.outgoing.bytes.rate_pcma_server_pcm_port_3_0
       disk.ephemeral.size_server_pcma1:
       - abstract_pcma_server_1
       - disk.ephemeral.size_pcma_server
@@ -496,7 +496,7 @@ topology_template:
       - disk.device.write.requests.rate_pcma_server
       network.incoming.packets_pcm_port_3_0:
       - abstract_pcma_server
-      - network.incoming.packets_pcma_server_pcm_port_3
+      - network.incoming.packets_pcma_server_pcm_port_3_0
       scalable_server_pcma2:
       - abstract_pcma_server
       - scalable_pcma_server
@@ -505,16 +505,16 @@ topology_template:
       - scalable_pcma_server
       network.incoming.bytes_pcm_port_2_0:
       - abstract_pcma_server
-      - network.incoming.bytes_pcma_server_pcm_port_2
+      - network.incoming.bytes_pcma_server_pcm_port_2_0
       feature_pcm_port_2_0:
       - abstract_pcma_server
-      - feature_pcma_server_pcm_port_2
+      - feature_pcma_server_pcm_port_2_0
       disk.device.write.requests_server_pcma1:
       - abstract_pcma_server_1
       - disk.device.write.requests_pcma_server
       forwarder_pcm_port_2_0:
       - abstract_pcma_server
-      - forwarder_pcma_server_pcm_port_2
+      - forwarder_pcma_server_pcm_port_2_0
       disk.device.write.requests_server_pcma2:
       - abstract_pcma_server
       - disk.device.write.requests_pcma_server
@@ -532,31 +532,31 @@ topology_template:
       - instance_pcma_server
       attachment_pcm_port_2_0:
       - abstract_pcma_server
-      - attachment_pcma_server_pcm_port_2
+      - attachment_pcma_server_pcm_port_2_0
       os_server_pcma1:
       - abstract_pcma_server_1
       - os_pcma_server
       network.outgoing.packets.rate_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.outgoing.packets.rate_pcma_server_pcm_port_1
+      - network.outgoing.packets.rate_pcma_server_pcm_port_1_0
       os_server_pcma2:
       - abstract_pcma_server
       - os_pcma_server
       network.incoming.packets.rate_pcm_port_2_0:
       - abstract_pcma_server
-      - network.incoming.packets.rate_pcma_server_pcm_port_2
+      - network.incoming.packets.rate_pcma_server_pcm_port_2_0
       binding_pcm_port_3_0:
       - abstract_pcma_server
-      - binding_pcma_server_pcm_port_3
+      - binding_pcma_server_pcm_port_3_0
       network.outpoing.packets_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.outpoing.packets_pcma_server_pcm_port_1
+      - network.outpoing.packets_pcma_server_pcm_port_1_0
       network.incoming.bytes.rate_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.incoming.bytes.rate_pcma_server_pcm_port_1
+      - network.incoming.bytes.rate_pcma_server_pcm_port_1_0
       network.outgoing.bytes.rate_pcm_port_2_0:
       - abstract_pcma_server
-      - network.outgoing.bytes.rate_pcma_server_pcm_port_2
+      - network.outgoing.bytes.rate_pcma_server_pcm_port_2_0
       disk.capacity_server_pcma1:
       - abstract_pcma_server_1
       - disk.capacity_pcma_server
@@ -565,7 +565,7 @@ topology_template:
       - disk.capacity_pcma_server
       network.incoming.packets_pcm_port_2_0:
       - abstract_pcma_server
-      - network.incoming.packets_pcma_server_pcm_port_2
+      - network.incoming.packets_pcma_server_pcm_port_2_0
       disk.write.requests_server_pcma1:
       - abstract_pcma_server_1
       - disk.write.requests_pcma_server
@@ -574,13 +574,13 @@ topology_template:
       - disk.write.requests_pcma_server
       network.incoming.bytes_pcm_port_3_0:
       - abstract_pcma_server
-      - network.incoming.bytes_pcma_server_pcm_port_3
+      - network.incoming.bytes_pcma_server_pcm_port_3_0
       forwarder_pcm_port_3_0:
       - abstract_pcma_server
-      - forwarder_pcma_server_pcm_port_3
+      - forwarder_pcma_server_pcm_port_3_0
       feature_pcm_port_1_0:
       - abstract_pcma_server_1
-      - feature_pcma_server_pcm_port_1
+      - feature_pcma_server_pcm_port_1_0
       disk.usage_server_pcma2:
       - abstract_pcma_server
       - disk.usage_pcma_server
@@ -601,7 +601,7 @@ topology_template:
       - memory.resident_pcma_server
       attachment_pcm_port_1_0:
       - abstract_pcma_server_1
-      - attachment_pcma_server_pcm_port_1
+      - attachment_pcma_server_pcm_port_1_0
       disk.device.write.bytes_server_pcma2:
       - abstract_pcma_server
       - disk.device.write.bytes_pcma_server
@@ -610,7 +610,7 @@ topology_template:
       - disk.allocation_pcma_server
       network.incoming.packets.rate_pcm_port_1_0:
       - abstract_pcma_server_1
-      - network.incoming.packets.rate_pcma_server_pcm_port_1
+      - network.incoming.packets.rate_pcma_server_pcm_port_1_0
       disk.allocation_server_pcma2:
       - abstract_pcma_server
       - disk.allocation_pcma_server
@@ -619,7 +619,7 @@ topology_template:
       - disk.device.write.bytes_pcma_server
       network.outgoing.packets.rate_pcm_port_0_0:
       - abstract_pcma_server_1
-      - network.outgoing.packets.rate_pcma_server_pcm_port_0
+      - network.outgoing.packets.rate_pcma_server_pcm_port_0_0
       cpu_server_pcma1:
       - abstract_pcma_server_1
       - cpu_pcma_server
@@ -628,7 +628,7 @@ topology_template:
       - cpu_pcma_server
       binding_pcm_port_2_0:
       - abstract_pcma_server
-      - binding_pcma_server_pcm_port_2
+      - binding_pcma_server_pcm_port_2_0
     requirements:
       dependency_server_pcma2:
       - abstract_pcma_server
@@ -644,25 +644,25 @@ topology_template:
       - local_storage_pcma_server
       dependency_pcm_port_3_0:
       - abstract_pcma_server
-      - dependency_pcma_server_pcm_port_3
+      - dependency_pcma_server_pcm_port_3_0
       link_pcm_port_1_0:
       - abstract_pcma_server_1
-      - link_pcma_server_pcm_port_1
+      - link_pcma_server_pcm_port_1_0
       dependency_pcm_port_2_0:
       - abstract_pcma_server
-      - dependency_pcma_server_pcm_port_2
+      - dependency_pcma_server_pcm_port_2_0
       link_pcm_port_2_0:
       - abstract_pcma_server
-      - link_pcma_server_pcm_port_2
+      - link_pcma_server_pcm_port_2_0
       dependency_pcm_port_1_0:
       - abstract_pcma_server_1
-      - dependency_pcma_server_pcm_port_1
+      - dependency_pcma_server_pcm_port_1_0
       dependency_pcm_port_0_0:
       - abstract_pcma_server_1
-      - dependency_pcma_server_pcm_port_0
+      - dependency_pcma_server_pcm_port_0_0
       link_pcm_port_0_0:
       - abstract_pcma_server_1
-      - link_pcma_server_pcm_port_0
+      - link_pcma_server_pcm_port_0_0
       link_pcm_port_3_0:
       - abstract_pcma_server
-      - link_pcma_server_pcm_port_3
+      - link_pcma_server_pcm_port_3_0

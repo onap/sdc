@@ -11,6 +11,16 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_pd01_port_1_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -18,15 +28,10 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_pd01_port_replacement_policy:
-      type: list
+    port_pd01_port_1_order:
+      type: integer
       required: true
-      entry_schema:
-        type: string
-    port_pd01_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_pd01_port_related_networks:
+    port_pd01_port_1_related_networks:
       type: list
       required: true
       entry_schema:
@@ -34,13 +39,19 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_pd01_port_security_groups:
+    port_pd01_port_1_network_role:
+      type: string
+      required: true
+    port_pd01_port_1_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
-    port_pd01_port_mac_requirements:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd01_port_1_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd01_port_1_subnetpoolid:
+      type: string
       required: true
     vm_image_name:
       type: string
@@ -50,43 +61,32 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd01_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_pd01_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_pd01_port_network:
+    port_pd01_port_1_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
+    port_pd01_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
     compute_ps_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_pd01_port_order:
-      type: integer
-      required: true
-    port_pd01_port_subnetpoolid:
-      type: string
-      required: true
-    port_pd01_port_network_role:
-      type: string
-      required: true
-    port_pd01_port_network_role_tag:
-      type: string
-      required: true
-    port_pd01_port_vlan_requirements:
+    port_pd01_port_1_fixed_ips:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_pd01_port_1_network_role_tag:
+      type: string
+      required: true
+    port_pd01_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
   node_templates:
     ps:
       type: org.openecomp.resource.vfc.compute.nodes.heat.ps
@@ -103,43 +103,43 @@ topology_template:
           get_input:
           - compute_ps_name
           - index_value
-    ps_pd01_port:
+    ps_pd01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy:
           get_input:
-          - port_pd01_port_replacement_policy
+          - port_pd01_port_1_replacement_policy
           - index_value
         mac_requirements:
-          get_input: port_pd01_port_mac_requirements
+          get_input: port_pd01_port_1_mac_requirements
         order:
-          get_input: port_pd01_port_order
+          get_input: port_pd01_port_1_order
         security_groups:
           get_input:
-          - port_pd01_port_security_groups
+          - port_pd01_port_1_security_groups
           - index_value
         exCP_naming:
-          get_input: port_pd01_port_exCP_naming
+          get_input: port_pd01_port_1_exCP_naming
         vlan_requirements:
-          get_input: port_pd01_port_vlan_requirements
+          get_input: port_pd01_port_1_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_pd01_port_related_networks
+          get_input: port_pd01_port_1_related_networks
         ip_requirements:
-          get_input: port_pd01_port_ip_requirements
+          get_input: port_pd01_port_1_ip_requirements
         network_role_tag:
-          get_input: port_pd01_port_network_role_tag
+          get_input: port_pd01_port_1_network_role_tag
         network_role:
-          get_input: port_pd01_port_network_role
+          get_input: port_pd01_port_1_network_role
         fixed_ips:
           get_input:
-          - port_pd01_port_fixed_ips
+          - port_pd01_port_1_fixed_ips
           - index_value
         subnetpoolid:
-          get_input: port_pd01_port_subnetpoolid
+          get_input: port_pd01_port_1_subnetpoolid
         network:
           get_input:
-          - port_pd01_port_network
+          - port_pd01_port_1_network
           - index_value
       requirements:
       - binding:
@@ -155,9 +155,6 @@ topology_template:
       disk.device.iops_ps:
       - ps
       - disk.device.iops
-      network.incoming.packets_ps_pd01_port:
-      - ps_pd01_port
-      - network.incoming.packets
       scalable_ps:
       - ps
       - scalable
@@ -179,30 +176,27 @@ topology_template:
       disk.device.usage_ps:
       - ps
       - disk.device.usage
+      network.incoming.bytes.rate_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.incoming.bytes.rate
       endpoint_ps:
       - ps
       - endpoint
-      network.incoming.bytes.rate_ps_pd01_port:
-      - ps_pd01_port
-      - network.incoming.bytes.rate
       disk.device.capacity_ps:
       - ps
       - disk.device.capacity
       cpu_ps:
       - ps
       - cpu
-      attachment_ps_pd01_port:
-      - ps_pd01_port
-      - attachment
       disk.device.write.bytes_ps:
       - ps
       - disk.device.write.bytes
-      forwarder_ps_pd01_port:
-      - ps_pd01_port
-      - forwarder
       cpu.delta_ps:
       - ps
       - cpu.delta
+      network.incoming.packets_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.incoming.packets
       disk.root.size_ps:
       - ps
       - disk.root.size
@@ -212,18 +206,12 @@ topology_template:
       binding_ps:
       - ps
       - binding
-      network.incoming.packets.rate_ps_pd01_port:
-      - ps_pd01_port
-      - network.incoming.packets.rate
       disk.device.write.requests.rate_ps:
       - ps
       - disk.device.write.requests.rate
-      feature_ps_pd01_port:
-      - ps_pd01_port
-      - feature
-      network.incoming.bytes_ps_pd01_port:
-      - ps_pd01_port
-      - network.incoming.bytes
+      network.outgoing.bytes_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.outgoing.bytes
       cpu_util_ps:
       - ps
       - cpu_util
@@ -233,39 +221,48 @@ topology_template:
       disk.device.read.bytes.rate_ps:
       - ps
       - disk.device.read.bytes.rate
+      forwarder_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - forwarder
       disk.read.requests_ps:
       - ps
       - disk.read.requests
       vcpus_ps:
       - ps
       - vcpus
+      network.incoming.packets.rate_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.incoming.packets.rate
+      attachment_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - attachment
+      network.incoming.bytes_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.incoming.bytes
       instance_ps:
       - ps
       - instance
       disk.latency_ps:
       - ps
       - disk.latency
-      network.outpoing.packets_ps_pd01_port:
-      - ps_pd01_port
-      - network.outpoing.packets
       disk.device.read.bytes_ps:
       - ps
       - disk.device.read.bytes
       memory.usage_ps:
       - ps
       - memory.usage
-      binding_ps_pd01_port:
-      - ps_pd01_port
-      - binding
+      network.outgoing.bytes.rate_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.outgoing.bytes.rate
+      feature_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - feature
       feature_ps:
       - ps
       - feature
       disk.device.write.bytes.rate_ps:
       - ps
       - disk.device.write.bytes.rate
-      network.outgoing.bytes_ps_pd01_port:
-      - ps_pd01_port
-      - network.outgoing.bytes
       disk.ephemeral.size_ps:
       - ps
       - disk.ephemeral.size
@@ -281,9 +278,12 @@ topology_template:
       os_ps:
       - ps
       - os
-      network.outgoing.packets.rate_ps_pd01_port:
-      - ps_pd01_port
+      network.outgoing.packets.rate_ps_pd01_port_1:
+      - ps_pd01_port_1
       - network.outgoing.packets.rate
+      binding_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - binding
       disk.iops_ps:
       - ps
       - disk.iops
@@ -299,9 +299,9 @@ topology_template:
       disk.device.latency_ps:
       - ps
       - disk.device.latency
-      network.outgoing.bytes.rate_ps_pd01_port:
-      - ps_pd01_port
-      - network.outgoing.bytes.rate
+      network.outpoing.packets_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - network.outpoing.packets
       disk.device.write.requests_ps:
       - ps
       - disk.device.write.requests
@@ -309,15 +309,15 @@ topology_template:
       - ps
       - disk.write.bytes
     requirements:
+      link_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - link
+      dependency_ps_pd01_port_1:
+      - ps_pd01_port_1
+      - dependency
       dependency_ps:
       - ps
       - dependency
       local_storage_ps:
       - ps
       - local_storage
-      dependency_ps_pd01_port:
-      - ps_pd01_port
-      - dependency
-      link_ps_pd01_port:
-      - ps_pd01_port
-      - link

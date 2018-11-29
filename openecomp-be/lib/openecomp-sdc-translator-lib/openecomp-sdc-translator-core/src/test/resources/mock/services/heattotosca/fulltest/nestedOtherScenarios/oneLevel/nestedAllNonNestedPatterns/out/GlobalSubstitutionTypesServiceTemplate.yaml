@@ -8,16 +8,24 @@ node_types:
   org.openecomp.resource.abstract.nodes.oam_server_1c2:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_oam_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
+      port_oam_server_1c2_mgmt_port_0_vlan_requirements:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_oam_server_1c2_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_oam_server_1c2_mgmt_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -26,32 +34,28 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_oam_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_oam_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_oam_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_oam_port_subnetpoolid:
+      port_oam_server_1c2_mgmt_port_0_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
-      port_oam_port_related_networks:
+      port_oam_server_1c2_mgmt_port_0_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_oam_server_1c2_mgmt_port_0_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       vm_flavor_name:
         type: string
+        required: true
+        status: SUPPORTED
+      port_oam_server_1c2_mgmt_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       compute_oam_server_1c2_availability_zone:
@@ -60,43 +64,52 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_oam_port_fixed_ips:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
-      port_oam_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_oam_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_oam_port_replacement_policy:
+      port_oam_server_1c2_mgmt_port_0_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_oam_port_network_role_tag:
+      port_oam_server_1c2_mgmt_port_0_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_oam_server_1c2_mgmt_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_oam_server_1c2_mgmt_port_0_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
-      port_oam_port_network_role:
+      port_oam_server_1c2_mgmt_port_0_replacement_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_oam_server_1c2_mgmt_port_0_network_role:
         type: string
         required: true
         status: SUPPORTED
     requirements:
+    - dependency_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_oam_server_1c2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -111,19 +124,6 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_oam_server_1c2_oam_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_oam_server_1c2_oam_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     capabilities:
       disk.device.usage_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -160,18 +160,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_oam_server_1c2_oam_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_oam_server_1c2_oam_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       cpu_util_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -184,18 +172,15 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      binding_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
       disk.device.allocation_oam_server_1c2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_oam_server_1c2_oam_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_oam_server_1c2_oam_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -219,7 +204,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_oam_server_1c2_oam_port:
+      network.outgoing.bytes.rate_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -237,13 +222,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_oam_server_1c2_oam_port:
+      network.incoming.packets_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_oam_server_1c2_oam_port:
+      network.incoming.packets.rate_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -261,13 +246,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_oam_server_1c2_oam_port:
+      cpu_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      cpu_oam_server_1c2:
+      network.outpoing.packets_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -309,14 +294,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_oam_server_1c2_oam_port:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.ephemeral.size_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -344,28 +329,30 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      attachment_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.usage_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_oam_server_1c2_oam_port:
+      network.outgoing.bytes_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      binding_oam_server_1c2_oam_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       os_oam_server_1c2:
         type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -381,8 +368,9 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_server_1c2_oam_port:
-        type: tosca.capabilities.Node
+      network.incoming.bytes_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -420,6 +408,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_oam_server_1c2_oam_server_1c2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.capacity_oam_server_1c2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -433,6 +427,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.iops_oam_server_1c2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_oam_server_1c2_oam_server_1c2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -989,7 +989,14 @@ node_types:
         entry_schema:
           type: string
     requirements:
-    - dependency_cmaui_port_2:
+    - dependency_oam_server_1c2_1_mgmt_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_oam_server_1c2_2_mgmt_port_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -1038,7 +1045,14 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_cmaui_port_1:
+    - dependency_cmaui_1c1_2_mgmt_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_cmaui_1c1_1_mgmt_port_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -1058,13 +1072,6 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_oam_port_1:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
     - dependency_packet_external_network:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -1134,15 +1141,14 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_oam_port_2:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
     capabilities:
       disk.capacity_server_1b_pd:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_oam_server_1c2_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1184,6 +1190,17 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cmaui_1c1_1_mgmt_port_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.iops_server_1c2_oam_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1196,7 +1213,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.read.requests_server_1c1_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cmaui_1c1_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1236,33 +1265,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.iops_server_1c2_oam_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_cmaui_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_oam_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_cmaui_1c1_2_mgmt_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -1340,6 +1350,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.requests_server_1c1_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1359,6 +1375,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.read.bytes_server_1c1_cmaui_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_oam_server_1c2_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1410,34 +1432,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_oam_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_cmaui_port_1:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
-      binding_cmaui_port_2:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       memory.usage_server_1b_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1457,6 +1451,12 @@ node_types:
         - 1
         - UNBOUNDED
       cpu_util_server_1c2_oam_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_oam_server_1c2_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1504,13 +1504,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes_cmaui_port_1:
+      network.outgoing.packets.rate_oam_server_1c2_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1567,13 +1561,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.bytes_server_1b_ps:
+      network.incoming.bytes_cmaui_1c1_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_cmaui_port_1:
+      disk.device.write.bytes_server_1b_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1585,31 +1579,9 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_cmaui_port_1:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.incoming.bytes.rate_pd_server_1b_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_oam_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_cmaui_port_2:
-        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -1621,12 +1593,6 @@ node_types:
         - UNBOUNDED
       feature_server_1c2_oam_1:
         type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -1648,9 +1614,26 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes.rate_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       instance_server_1c1_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cmaui_1c1_1_mgmt_port_0:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -1663,11 +1646,6 @@ node_types:
       disk.device.read.requests.rate_server_1c2_oam_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_oam_port_2:
-        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -1695,7 +1673,21 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_oam_port_1:
+      binding_oam_server_1c2_2_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outpoing.packets_oam_server_1c2_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_oam_server_1c2_1_mgmt_port_0:
         type: tosca.capabilities.Attachment
         occurrences:
         - 1
@@ -1769,6 +1761,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets_cmaui_1c1_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_ps_server_1b_port:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
@@ -1780,16 +1778,6 @@ node_types:
       disk.device.write.bytes.rate_server_1b_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_cmaui_port_2:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_cmaui_port_1:
-        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1834,6 +1822,20 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      binding_cmaui_1c1_2_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.bytes_oam_server_1c2_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.read.requests_server_1b_pd:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1841,6 +1843,12 @@ node_types:
         - 1
         - UNBOUNDED
       cpu_util_server_1c1_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_oam_server_1c2_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1896,14 +1904,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_oam_port_2:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       disk.write.bytes.rate_server_1c1_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1922,13 +1922,15 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_oam_port_1:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+      feature_oam_server_1c2_2_mgmt_port_0:
+        type: tosca.capabilities.Node
         occurrences:
-        - 0
+        - 1
+        - UNBOUNDED
+      forwarder_oam_server_1c2_1_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
         - UNBOUNDED
       disk.read.bytes.rate_server_1c1_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -1962,19 +1964,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_cmaui_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.allocation_server_1b_ps:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_cmaui_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2057,6 +2047,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.bytes.rate_cmaui_1c1_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.root.size_server_1c2_oam_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2075,14 +2071,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      os_server_1c1_cmaui_2:
+        type: tosca.capabilities.OperatingSystem
         occurrences:
         - 1
         - UNBOUNDED
-      os_server_1c1_cmaui_2:
-        type: tosca.capabilities.OperatingSystem
+      network.incoming.bytes.rate_oam_server_1c2_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -2097,19 +2093,31 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.bytes.rate_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       instance_server_1c2_oam_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_oam_port_2:
+      vcpus_server_1b_pd:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      vcpus_server_1b_pd:
+      network.outgoing.bytes.rate_cmaui_1c1_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2178,16 +2186,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_oam_port_1:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_oam_port_2:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
       binding_server_1c2_oam_2:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -2205,6 +2203,11 @@ node_types:
         - UNBOUNDED
       attachment_packet_internal_network:
         type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2238,6 +2241,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_1c1_2_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.requests_server_1c2_oam_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2258,6 +2266,12 @@ node_types:
         - UNBOUNDED
       os_server_1b_ps:
         type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -2303,12 +2317,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.write.bytes.rate_server_1c1_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2327,6 +2335,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets.rate_cmaui_1c1_1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.allocation_server_1c1_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2339,7 +2353,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_cmaui_port_1:
+      network.incoming.packets.rate_cmaui_1c1_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2455,19 +2469,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.write.bytes_server_1b_ps:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_oam_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2502,6 +2504,18 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.read.requests_server_1c1_cmaui_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cmaui_1c1_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cmaui_1c1_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2561,12 +2575,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.root.size_server_1b_pd:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2574,12 +2582,6 @@ node_types:
         - 1
         - UNBOUNDED
       cpu_server_1c1_cmaui_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_cmaui_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2645,7 +2647,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      attachment_cmaui_1c1_2_mgmt_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu.delta_server_1c2_oam_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_oam_server_1c2_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2658,6 +2671,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.write.requests.rate_server_1c2_oam_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cmaui_1c1_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2686,7 +2705,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_oam_port_2:
+      network.outgoing.packets.rate_cmaui_1c1_2_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2694,12 +2713,6 @@ node_types:
         - UNBOUNDED
       feature_packet_internal_network:
         type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -2714,23 +2727,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_cmaui_port_2:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_oam_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.iops_server_1b_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2740,23 +2736,6 @@ node_types:
       disk.capacity_server_1c1_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_cmaui_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_cmaui_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_cmaui_port_1:
-        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -2784,6 +2763,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      binding_oam_server_1c2_1_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
       disk.device.read.requests.rate_server_1c1_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2808,6 +2795,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      attachment_oam_server_1c2_2_mgmt_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.packets_ps_server_1b_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2815,6 +2807,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.write.requests_server_1b_ps:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cmaui_1c1_1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2895,13 +2893,23 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_port_2:
-        type: tosca.capabilities.Node
+      network.outgoing.bytes_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_port_1:
-        type: tosca.capabilities.Node
+      binding_cmaui_1c1_1_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.bytes_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -2925,6 +2933,11 @@ node_types:
         - UNBOUNDED
       scalable_server_1c1_cmaui_1:
         type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_oam_server_1c2_1_mgmt_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -2961,36 +2974,23 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outpoing.packets_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       endpoint_server_1b_ps:
         type: tosca.capabilities.Endpoint.Admin
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_oam_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_oam_port_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_cmaui_port_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      forwarder_oam_server_1c2_2_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
       network.outgoing.bytes_ps_server_1b_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_cmaui_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -3496,34 +3496,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.cmaui_1c1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_cmaui_port_vlan_requirements:
+      port_cmaui_1c1_mgmt_port_0_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_cmaui_port_fixed_ips:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_cmaui_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_cmaui_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_cmaui_port_related_networks:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+          type: org.openecomp.datatypes.network.IpRequirements
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -3532,35 +3510,59 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_cmaui_1c1_mgmt_port_0_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_cmaui_1c1_mgmt_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_cmaui_1c1_availability_zone:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_cmaui_port_network_role_tag:
-        type: string
+      port_cmaui_1c1_mgmt_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-      port_cmaui_port_order:
-        type: integer
+      port_cmaui_1c1_mgmt_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      port_cmaui_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
+      port_cmaui_1c1_mgmt_port_0_fixed_ips:
+        type: list
         required: true
         status: SUPPORTED
-      port_cmaui_port_replacement_policy:
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_cmaui_1c1_mgmt_port_0_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cmaui_1c1_mgmt_port_0_replacement_policy:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_cmaui_port_network_role:
+      port_cmaui_1c1_mgmt_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_cmaui_1c1_mgmt_port_0_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
@@ -3568,31 +3570,29 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_cmaui_port_ip_requirements:
-        type: list
+      port_cmaui_1c1_mgmt_port_0_order:
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
+      port_cmaui_1c1_mgmt_port_0_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
       compute_cmaui_1c1_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_cmaui_port_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
     requirements:
-    - dependency_cmaui_1c1_cmaui_port:
+    - dependency_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_cmaui_1c1_cmaui_port:
+    - link_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -3613,14 +3613,6 @@ node_types:
         - 0
         - UNBOUNDED
     capabilities:
-      binding_cmaui_1c1_cmaui_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       disk.iops_cmaui_1c1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3644,31 +3636,21 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_cmaui_1c1_cmaui_port:
+      binding_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_cmaui_1c1_cmaui_port:
+      network.outgoing.bytes_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -3687,6 +3669,17 @@ node_types:
         - 1
         - UNBOUNDED
       disk.read.bytes.rate_cmaui_1c1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -3722,12 +3715,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.read.bytes.rate_cmaui_1c1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3746,9 +3733,20 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.requests_cmaui_1c1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -3795,12 +3793,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.write.bytes.rate_cmaui_1c1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3841,20 +3833,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_cmaui_1c1:
-        type: tosca.capabilities.Node
+      network.incoming.bytes_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_cmaui_1c1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
       disk.allocation_cmaui_1c1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -3870,8 +3867,9 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_cmaui_1c1_cmaui_port:
-        type: org.openecomp.capabilities.Forwarder
+      network.outgoing.packets.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -3887,12 +3885,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_cmaui_1c1_cmaui_port:
-        type: tosca.capabilities.Attachment
+      disk.usage_cmaui_1c1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.usage_cmaui_1c1:
+      network.incoming.bytes.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -3915,8 +3914,9 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_cmaui_1c1_cmaui_port:
-        type: tosca.capabilities.Node
+      network.outpoing.packets_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED

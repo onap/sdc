@@ -29,6 +29,7 @@ import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
@@ -92,7 +93,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
                                                             String portNodeTemplateId) {
         TranslationContext translationContext = translateTo.getContext();
         String computeNodeTemplateId = translateTo.getTranslatedId();
-        String portType = getPortType(portNodeTemplateId);
+        String portType = getPortType(portNodeTemplateId, DataModelUtil.getNamespaceSuffix(computeNodeType));
 
         translationContext.getComputeConsolidationDataHandler().addPortToConsolidationData(
                 translateTo, computeNodeType, computeNodeTemplateId, portType, portNodeTemplateId);
@@ -100,7 +101,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         translationContext.getPortConsolidationDataHandler().addConsolidationData(
-                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId);
+                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
     }
 
     /**
@@ -243,24 +244,30 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param portNodeTemplateId the port node template id
      * @return the port type
      */
-    public static String getPortType(String portNodeTemplateId) {
+    public static String getPortType(String portNodeTemplateId, String vmType) {
 
-        if (StringUtils.isBlank(portNodeTemplateId)) {
+        if (StringUtils.isBlank(portNodeTemplateId) || !portNodeTemplateId.startsWith(vmType + UNDERSCORE)) {
+            return portNodeTemplateId;
+        }
+        String temp = portNodeTemplateId.substring(portNodeTemplateId.indexOf(vmType) + vmType.length());
+
+        StringBuilder sb = new StringBuilder(vmType + UNDERSCORE);
+        String[] tokens = temp.split(UNDERSCORE);
+
+        if (tokens.length == 0) {
             return portNodeTemplateId;
         }
 
-        String formattedName = portNodeTemplateId.replaceAll(UNDERSCORE + DIGIT_REGEX + "$", "");
-
-        StringBuilder sb = new StringBuilder();
-        int count = 0;
-        for (String token : formattedName.split(UNDERSCORE)) {
-
-            if (StringUtils.isNotBlank(token)) {
-                count++;
+        for (int i=0; i<tokens.length; i++) {
+            String token = tokens[i];
+            if (token.matches(DIGIT_REGEX) && i != 1) {
+                sb.append(token);
+                sb.append(UNDERSCORE);
             }
 
-            if (count != 2 || (!StringUtils.isBlank(token) && !token.matches(DIGIT_REGEX))) {
-                sb.append(token).append(UNDERSCORE);
+            if (StringUtils.isNotBlank(token) && !token.matches(DIGIT_REGEX)) {
+                sb.append(token);
+                sb.append(UNDERSCORE);
             }
         }
 

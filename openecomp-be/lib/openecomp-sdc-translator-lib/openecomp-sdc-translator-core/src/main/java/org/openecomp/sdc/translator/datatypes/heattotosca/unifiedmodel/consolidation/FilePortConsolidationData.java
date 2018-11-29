@@ -77,7 +77,7 @@ public class FilePortConsolidationData {
 
         PortTemplateConsolidationData consolidationData =
                 addPortTemplateConsolidationData(parentPortNodeTemplateId, parentPortResourceId,
-                parentPortResourceType);
+                parentPortResourceType, null);
 
         return consolidationData.addSubInterfaceTemplateConsolidationData(resource,
                 subInterfaceNodeTemplateId, parentPortNodeTemplateId);
@@ -90,12 +90,15 @@ public class FilePortConsolidationData {
     * @return port template consolidation data entity by given keys
     */
     PortTemplateConsolidationData addPortTemplateConsolidationData(
-            String portNodeTemplateId, String portResourceId, String portResourceType) {
+            String portNodeTemplateId, String portResourceId, String portResourceType, String portType) {
         PortTemplateConsolidationData consolidationData = getPortTemplateConsolidationData(portNodeTemplateId);
         if (consolidationData == null) {
             consolidationData = createPortTemplateConsolidationData(portNodeTemplateId,
-              portResourceId, portResourceType);
+              portResourceId, portResourceType, portType);
             setPortTemplateConsolidationData(portNodeTemplateId, consolidationData);
+        }
+        if (consolidationData.getPortType() == null) {
+            consolidationData.setPortType(portType);
         }
         return consolidationData;
     }
@@ -116,9 +119,10 @@ public class FilePortConsolidationData {
     }
     
     private PortTemplateConsolidationData createPortTemplateConsolidationData(String portNodeTemplateId,
-            String portResourceId, String portResourceType) {
+            String portResourceId, String portResourceType, String portType) {
         PortTemplateConsolidationData consolidationData = new PortTemplateConsolidationData();
         consolidationData.setNodeTemplateId(portNodeTemplateId);
+        consolidationData.setPortType(portType);
         Optional<String> portNetworkRole = HeatResourceUtil.evaluateNetworkRoleFromResourceId(portResourceId,
                 portResourceType);
         portNetworkRole.ifPresent(consolidationData::setNetworkRole);

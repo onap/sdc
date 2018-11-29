@@ -11,36 +11,48 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_cdi_internal_1_port_order:
-      type: integer
+    port_cdi_ims_core_1_port_1_fixed_ips:
+      type: list
       required: true
-    port_cdi_ims_core_1_port_security_groups:
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cdi_internal_1_port_0_security_groups:
       type: list
       required: true
       entry_schema:
         type: json
-    port_cdi_internal_1_port_network_role_tag:
+    port_cdi_ims_core_1_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vm_flavor_name:
       type: string
       required: true
-    port_cdi_internal_1_port_related_networks:
+    port_cdi_ims_core_1_port_1_order:
+      type: integer
+      required: true
+    port_cdi_internal_1_port_0_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    vm_flavor_name:
-      type: string
-      required: true
-    port_cdi_ims_core_1_port_order:
-      type: integer
-      required: true
-    port_cdi_internal_1_port_security_groups:
+    port_cdi_ims_core_1_port_1_security_groups:
       type: list
       required: true
       entry_schema:
         type: json
-    port_cdi_ims_core_1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_cdi_ims_core_1_port_1_network_role_tag:
+      type: string
       required: true
+    port_cdi_internal_1_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cdi_ims_core_1_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     vm_image_name:
       type: string
       required: true
@@ -49,70 +61,45 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_cdi_ims_core_1_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     compute_cdi_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cdi_ims_core_1_port_network_role_tag:
-      type: string
-      required: true
-    port_cdi_ims_core_1_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_cdi_ims_core_1_port_subnetpoolid:
-      type: string
-      required: true
     compute_cdi_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cdi_ims_core_1_port_network:
+    port_cdi_ims_core_1_port_1_network_role:
+      type: string
+      required: true
+    port_cdi_ims_core_1_port_1_network:
       type: list
       required: true
       entry_schema:
         type: string
+    port_cdi_internal_1_port_0_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cdi_internal_1_port_0_network_role:
+      type: string
+      required: true
+    port_cdi_ims_core_1_port_1_subnetpoolid:
+      type: string
+      required: true
     compute_cdi_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cdi_internal_1_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_cdi_ims_core_1_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_cdi_internal_1_port_allowed_address_pairs:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.network.AddressPair
     compute_cdi_config_drive:
       type: list
       required: true
       entry_schema:
         type: boolean
-    port_cdi_internal_1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_cdi_ims_core_1_port_allowed_address_pairs:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.network.AddressPair
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -120,96 +107,109 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_cdi_ims_core_1_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_cdi_ims_core_1_port_network_role:
-      type: string
-      required: true
-    port_cdi_internal_1_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_cdi_internal_1_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_cdi_internal_1_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_cdi_ims_core_1_port_exCP_naming:
+    port_cdi_internal_1_port_0_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
-    port_cdi_internal_1_port_ip_requirements:
+    port_cdi_internal_1_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_cdi_ims_core_1_port_1_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cdi_internal_1_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_cdi_ims_core_1_port_related_networks:
+    port_cdi_internal_1_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cdi_internal_1_port_0_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cdi_ims_core_1_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cdi_ims_core_1_port_1_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_cdi_ims_core_1_port_1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cdi_ims_core_1_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cdi_internal_1_port_0_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cdi_internal_1_port_0_network_role_tag:
+      type: string
+      required: true
     compute_cdi_metadata:
       type: list
       required: true
       entry_schema:
         type: json
-    port_cdi_internal_1_port_subnetpoolid:
-      type: string
+    port_cdi_internal_1_port_0_network:
+      type: list
       required: true
-    port_cdi_internal_1_port_network_role:
-      type: string
-      required: true
-    port_cdi_internal_1_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+      entry_schema:
+        type: string
+    port_cdi_internal_1_port_0_order:
+      type: integer
       required: true
   node_templates:
-    cdi_cdi_internal_1_port:
+    cdi_cdi_internal_1_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_requirements:
-          get_input: port_cdi_internal_1_port_mac_requirements
+          get_input: port_cdi_internal_1_port_0_mac_requirements
         allowed_address_pairs:
-          get_input: port_cdi_internal_1_port_allowed_address_pairs
+          get_input: port_cdi_internal_1_port_0_allowed_address_pairs
         order:
-          get_input: port_cdi_internal_1_port_order
+          get_input: port_cdi_internal_1_port_0_order
         security_groups:
           get_input:
-          - port_cdi_internal_1_port_security_groups
+          - port_cdi_internal_1_port_0_security_groups
           - index_value
         exCP_naming:
-          get_input: port_cdi_internal_1_port_exCP_naming
+          get_input: port_cdi_internal_1_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_cdi_internal_1_port_vlan_requirements
+          get_input: port_cdi_internal_1_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_cdi_internal_1_port_related_networks
+          get_input: port_cdi_internal_1_port_0_related_networks
         ip_requirements:
-          get_input: port_cdi_internal_1_port_ip_requirements
+          get_input: port_cdi_internal_1_port_0_ip_requirements
         network_role_tag:
-          get_input: port_cdi_internal_1_port_network_role_tag
+          get_input: port_cdi_internal_1_port_0_network_role_tag
         network_role:
-          get_input: port_cdi_internal_1_port_network_role
+          get_input: port_cdi_internal_1_port_0_network_role
         subnetpoolid:
-          get_input: port_cdi_internal_1_port_subnetpoolid
+          get_input: port_cdi_internal_1_port_0_subnetpoolid
         fixed_ips:
           get_input:
-          - port_cdi_internal_1_port_fixed_ips
+          - port_cdi_internal_1_port_0_fixed_ips
           - index_value
         name:
           get_input:
-          - port_cdi_internal_1_port_name
+          - port_cdi_internal_1_port_0_name
           - index_value
         network:
           get_input:
-          - port_cdi_internal_1_port_network
+          - port_cdi_internal_1_port_0_network
           - index_value
       requirements:
       - binding:
@@ -247,45 +247,45 @@ topology_template:
           get_input:
           - compute_cdi_user_data_format
           - index_value
-    cdi_cdi_ims_core_1_port:
+    cdi_cdi_ims_core_1_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_requirements:
-          get_input: port_cdi_ims_core_1_port_mac_requirements
+          get_input: port_cdi_ims_core_1_port_1_mac_requirements
         allowed_address_pairs:
-          get_input: port_cdi_ims_core_1_port_allowed_address_pairs
+          get_input: port_cdi_ims_core_1_port_1_allowed_address_pairs
         order:
-          get_input: port_cdi_ims_core_1_port_order
+          get_input: port_cdi_ims_core_1_port_1_order
         security_groups:
           get_input:
-          - port_cdi_ims_core_1_port_security_groups
+          - port_cdi_ims_core_1_port_1_security_groups
           - index_value
         exCP_naming:
-          get_input: port_cdi_ims_core_1_port_exCP_naming
+          get_input: port_cdi_ims_core_1_port_1_exCP_naming
         vlan_requirements:
-          get_input: port_cdi_ims_core_1_port_vlan_requirements
+          get_input: port_cdi_ims_core_1_port_1_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_cdi_ims_core_1_port_related_networks
+          get_input: port_cdi_ims_core_1_port_1_related_networks
         ip_requirements:
-          get_input: port_cdi_ims_core_1_port_ip_requirements
+          get_input: port_cdi_ims_core_1_port_1_ip_requirements
         network_role_tag:
-          get_input: port_cdi_ims_core_1_port_network_role_tag
+          get_input: port_cdi_ims_core_1_port_1_network_role_tag
         network_role:
-          get_input: port_cdi_ims_core_1_port_network_role
+          get_input: port_cdi_ims_core_1_port_1_network_role
         subnetpoolid:
-          get_input: port_cdi_ims_core_1_port_subnetpoolid
+          get_input: port_cdi_ims_core_1_port_1_subnetpoolid
         fixed_ips:
           get_input:
-          - port_cdi_ims_core_1_port_fixed_ips
+          - port_cdi_ims_core_1_port_1_fixed_ips
           - index_value
         name:
           get_input:
-          - port_cdi_ims_core_1_port_name
+          - port_cdi_ims_core_1_port_1_name
           - index_value
         network:
           get_input:
-          - port_cdi_ims_core_1_port_network
+          - port_cdi_ims_core_1_port_1_network
           - index_value
       requirements:
       - binding:
@@ -295,12 +295,9 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.cdi_1
     capabilities:
-      network.outpoing.packets_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.outpoing.packets
-      feature_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - feature
+      network.incoming.bytes_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.incoming.bytes
       host_cdi:
       - cdi
       - host
@@ -310,54 +307,42 @@ topology_template:
       disk.device.iops_cdi:
       - cdi
       - disk.device.iops
+      feature_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - feature
+      network.outgoing.bytes.rate_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.outgoing.bytes.rate
       disk.write.requests.rate_cdi:
       - cdi
       - disk.write.requests.rate
+      network.incoming.packets_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.incoming.packets
       disk.device.write.requests.rate_cdi:
       - cdi
       - disk.device.write.requests.rate
-      forwarder_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - forwarder
-      network.incoming.bytes_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.incoming.bytes
-      network.outgoing.bytes.rate_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.outgoing.bytes
-      attachment_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - attachment
       disk.write.bytes.rate_cdi:
       - cdi
       - disk.write.bytes.rate
-      network.outgoing.packets.rate_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.outgoing.packets.rate
+      network.outpoing.packets_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.outpoing.packets
       disk.ephemeral.size_cdi:
       - cdi
       - disk.ephemeral.size
       cpu_util_cdi:
       - cdi
       - cpu_util
-      network.incoming.bytes.rate_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.incoming.bytes.rate
       cpu.delta_cdi:
       - cdi
       - cpu.delta
       disk.device.write.bytes_cdi:
       - cdi
       - disk.device.write.bytes
-      network.outgoing.bytes_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.outgoing.bytes
-      network.incoming.packets.rate_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.incoming.packets.rate
+      forwarder_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - forwarder
       disk.device.read.requests.rate_cdi:
       - cdi
       - disk.device.read.requests.rate
@@ -370,18 +355,9 @@ topology_template:
       memory.usage_cdi:
       - cdi
       - memory.usage
-      binding_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - binding
-      binding_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - binding
       vcpus_cdi:
       - cdi
       - vcpus
-      network.incoming.bytes_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.incoming.bytes
       disk.device.read.requests_cdi:
       - cdi
       - disk.device.read.requests
@@ -391,15 +367,15 @@ topology_template:
       disk.read.requests_cdi:
       - cdi
       - disk.read.requests
-      attachment_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - attachment
       memory.resident_cdi:
       - cdi
       - memory.resident
       disk.latency_cdi:
       - cdi
       - disk.latency
+      network.incoming.bytes_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.incoming.bytes
       disk.read.bytes.rate_cdi:
       - cdi
       - disk.read.bytes.rate
@@ -412,60 +388,72 @@ topology_template:
       disk.device.write.requests_cdi:
       - cdi
       - disk.device.write.requests
-      network.incoming.packets_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.incoming.packets
+      forwarder_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - forwarder
+      network.incoming.packets.rate_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.incoming.packets.rate
       disk.allocation_cdi:
       - cdi
       - disk.allocation
-      network.outpoing.packets_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.outpoing.packets
-      forwarder_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - forwarder
+      network.outgoing.packets.rate_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.outgoing.packets.rate
       scalable_cdi:
       - cdi
       - scalable
       feature_cdi:
       - cdi
       - feature
+      binding_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - binding
       cpu_cdi:
       - cdi
       - cpu
       disk.device.usage_cdi:
       - cdi
       - disk.device.usage
+      attachment_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - attachment
+      network.incoming.bytes.rate_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.incoming.bytes.rate
       disk.iops_cdi:
       - cdi
       - disk.iops
+      attachment_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - attachment
       disk.usage_cdi:
       - cdi
       - disk.usage
-      network.incoming.packets.rate_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.incoming.packets.rate
-      feature_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - feature
+      network.outpoing.packets_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.outpoing.packets
       disk.device.write.bytes.rate_cdi:
       - cdi
       - disk.device.write.bytes.rate
       disk.read.bytes_cdi:
       - cdi
       - disk.read.bytes
-      network.outgoing.bytes.rate_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.outgoing.bytes.rate
+      feature_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - feature
       disk.capacity_cdi:
       - cdi
       - disk.capacity
-      network.outgoing.packets.rate_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - network.outgoing.packets.rate
-      network.incoming.bytes.rate_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
+      network.incoming.bytes.rate_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
       - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.outgoing.bytes.rate
+      binding_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - binding
       binding_cdi:
       - cdi
       - binding
@@ -478,15 +466,27 @@ topology_template:
       disk.device.latency_cdi:
       - cdi
       - disk.device.latency
+      network.outgoing.packets.rate_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.outgoing.packets.rate
+      network.incoming.packets_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.incoming.packets
       instance_cdi:
       - cdi
       - instance
-      network.incoming.packets_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - network.incoming.packets
+      network.incoming.packets.rate_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.incoming.packets.rate
       disk.device.allocation_cdi:
       - cdi
       - disk.device.allocation
+      network.outgoing.bytes_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
+      - network.outgoing.bytes
+      network.outgoing.bytes_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - network.outgoing.bytes
       disk.write.requests_cdi:
       - cdi
       - disk.write.requests
@@ -494,18 +494,18 @@ topology_template:
       local_storage_cdi:
       - cdi
       - local_storage
-      link_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
+      link_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
       - link
-      link_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
+      link_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
       - link
-      dependency_cdi_cdi_internal_1_port:
-      - cdi_cdi_internal_1_port
-      - dependency
-      dependency_cdi_cdi_ims_core_1_port:
-      - cdi_cdi_ims_core_1_port
-      - dependency
       dependency_cdi:
       - cdi
+      - dependency
+      dependency_cdi_cdi_ims_core_1_port_1:
+      - cdi_cdi_ims_core_1_port_1
+      - dependency
+      dependency_cdi_cdi_internal_1_port_0:
+      - cdi_cdi_internal_1_port_0
       - dependency

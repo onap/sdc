@@ -57,7 +57,7 @@ public class PortNewNodeTemplateIdGeneratorTest {
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, PCM_PORT_0);
     if (nodeTemplateId.isPresent()) {
-      Assert.assertEquals(nodeTemplateId.get(), "pcm_server_pcm_port");
+      Assert.assertEquals(nodeTemplateId.get(), "pcm_server_pcm_port_0");
     } else {
       Assert.fail();
     }

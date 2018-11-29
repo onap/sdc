@@ -98,7 +98,7 @@ topology_template:
       type: string
       description: prop
   node_templates:
-    FSB2_Internal_2:
+    FSB_2_Internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -113,7 +113,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: jsa_net
           relationship: tosca.relationships.network.LinksTo
-    FSB2_Internal_1:
+    FSB_1_Internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -128,7 +128,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: jsa_net
           relationship: tosca.relationships.network.LinksTo
-    FSB1_Internal_2:
+    FSB_2_Internal_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -143,7 +143,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: jsa_net1
           relationship: tosca.relationships.network.LinksTo
-    FSB1_Internal_1:
+    FSB_1_Internal_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -171,7 +171,7 @@ topology_template:
         network_name:
           get_attribute:
           - abstract_FSB
-          - FSB_FSB1_Internal_network_id
+          - FSB_FSB_Internal_port_1_network_id
         dhcp_agent_ids:
           get_attribute:
           - abstract_FSB
@@ -179,11 +179,11 @@ topology_template:
         tenant_id:
           get_attribute:
           - abstract_FSB
-          - FSB_FSB2_Internal_network_id
+          - FSB_FSB_Internal_port_0_network_id
         qos_policy:
           get_attribute:
           - abstract_FSB
-          - FSB_FSB2_Internal_network_id
+          - FSB_FSB_Internal_port_0_network_id
     FSB1_template:
       type: org.openecomp.resource.vfc.nodes.heat.FSB
       properties:
@@ -277,26 +277,23 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_FSB1_Internal_mac_address:
-          get_input: fsb1-Internal1-mac
+        port_FSB_Internal_port_0_network:
+        - Internal2-net-fsb2-Internal1
+        - Internal2-net-fsb2-Internal2
         compute_FSB_user_data:
         - OPTIONAL-DATA-FSB1
         - null
+        port_FSB_Internal_port_0_mac_address:
+          get_input: fsb2-Internal1-mac
         vm_flavor_name:
           get_input: fsb-flavor
+        port_FSB_Internal_port_1_mac_address:
+          get_input: fsb1-Internal1-mac
         vm_image_name:
           get_input: fsb-image
         compute_FSB_admin_pass:
         - STATIC-DATA-FSB1
         - STATIC-DATA-FSB2
-        port_FSB1_Internal_network:
-        - Internal1-net-fsb1-Internal1
-        - Internal1-net-fsb1-Internal2
-        port_FSB2_Internal_mac_address:
-          get_input: fsb2-Internal1-mac
-        port_FSB2_Internal_network:
-        - Internal2-net-fsb2-Internal1
-        - Internal2-net-fsb2-Internal2
         compute_FSB_metadata:
         - write_files:
           - path: /path1/etc/sysconfig/network-scripts/ifcfg-eth0
@@ -310,6 +307,9 @@ topology_template:
         compute_FSB_name:
         - get_input: fsb1-name
         - get_input: fsb2-name
+        port_FSB_Internal_port_1_network:
+        - Internal1-net-fsb1-Internal1
+        - Internal1-net-fsb1-Internal2
         service_template_filter:
           substitute_service_template: Nested_FSBServiceTemplate.yaml
           count: 2
@@ -323,13 +323,13 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn
-      - link_FSB_FSB1_Internal:
-          capability: tosca.capabilities.network.Linkable
-          node: jsa_net1
-          relationship: tosca.relationships.network.LinksTo
-      - link_FSB_FSB2_Internal:
+      - link_FSB_FSB_Internal_port_0:
           capability: tosca.capabilities.network.Linkable
           node: jsa_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_FSB_FSB_Internal_port_1:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
           relationship: tosca.relationships.network.LinksTo
       - local_storage_FSB:
           capability: tosca.capabilities.Attachment
@@ -347,10 +347,10 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - FSB1_Internal_1
-      - FSB1_Internal_2
-      - FSB2_Internal_1
-      - FSB2_Internal_2
+      - FSB_1_Internal_port_1
+      - FSB_2_Internal_port_1
+      - FSB_1_Internal_port_0
+      - FSB_2_Internal_port_0
       - FSB1_template
       - FSB2_template
       - jsa_net

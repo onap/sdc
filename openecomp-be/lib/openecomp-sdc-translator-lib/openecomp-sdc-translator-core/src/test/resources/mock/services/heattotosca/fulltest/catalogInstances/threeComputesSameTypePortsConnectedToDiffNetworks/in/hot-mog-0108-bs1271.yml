@@ -42,7 +42,7 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd_server_0_port_0}
       user_data_format:  RAW
 
   server_ps_02:
@@ -54,7 +54,7 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_1}
+        - port: {get_resource: pd_server_1_port_0}
       user_data_format:  RAW
 
   server_ps_3:
@@ -66,18 +66,18 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_2}
+        - port: {get_resource: pd_server_2_port_0}
       user_data_format:  RAW
 
-  pd01_port_0:
+  pd_server_0_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network}
-  pd01_port_1:
+  pd_server_1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network}
-  pd01_port_2:
+  pd_server_2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_external_network}
