@@ -23,7 +23,8 @@
             "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
             "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
             "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
-            "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI="
+            "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
+            "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
         },
         "UEB": {
             "PublicKey": "iPIxkpAMI8qTcQj8",

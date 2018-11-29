@@ -54,14 +54,17 @@ use_rest_for_functional_menu=true
 ##########################################################################
 
 # Name of java class that implements the OnBoardingApiService interface.
-portal.api.impl.class = org.openecomp.sdc.be.ecomp.EcompIntImpl
+portal.api.impl.class = org.openecomp.sdc.be.ecomp.PortalRestAPICentralServiceImpl
+role_access_centralized = remote
 
 # URL of the Portal where this app is onboarded
 ecomp_redirect_url = <%= @ecomp_redirect_url %>
 
 # URL of the ECOMP Portal REST API
 ecomp_rest_url = <%= @ecomp_rest_url %>
+
 #Portal user & key
 portal_user = <%= @ecomp_portal_user %>
 portal_pass = <%= @ecomp_portal_pass %>
+portal_app_name = <%= @portal_app_name %>
 
