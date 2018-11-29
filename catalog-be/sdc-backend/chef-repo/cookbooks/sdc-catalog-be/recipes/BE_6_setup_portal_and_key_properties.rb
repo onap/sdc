@@ -8,7 +8,8 @@ template "template portal.properties" do
         :ecomp_rest_url      => node['ECompP']['ecomp_rest_url'],
         :ecomp_redirect_url  => node['ECompP']['ecomp_redirect_url'],
         :ecomp_portal_user  => node['ECompP']['portal_user'],
-        :ecomp_portal_pass  => node['ECompP']['portal_pass']
+        :ecomp_portal_pass  => node['ECompP']['portal_pass'],
+        :portal_app_name  => node['ECompP']['portal_app_name'],
     })
 end
 
