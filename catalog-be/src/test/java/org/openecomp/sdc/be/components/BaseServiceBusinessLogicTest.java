@@ -48,6 +48,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
 public abstract class BaseServiceBusinessLogicTest {
     private static final String SERVICE_CATEGORY = "Mobility";
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
