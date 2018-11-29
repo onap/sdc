@@ -486,15 +486,15 @@ topology_template:
         subinterface_vlan1_aap_sec_untrusted_ip_prefix:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
-        port_vdbe_oam_vmi_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_1
-        - - get_input: vdbe_hw_untr_mac_1
         subinterface_vlan1_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
         - get_input: vdbe_untrusted_vmac_address
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         - get_input: availability_zone_1
+        port_vdbe_oam_vmi_1_virtual_network_refs:
+        - - fabric_int_net
+        - - fabric_int_net
         vm_flavor_name:
           get_input: vdbe_flavor_name
         subinterface_vlan1_counter:
@@ -521,12 +521,27 @@ topology_template:
         subinterface_vlan1_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-        port_vdbe_oam_vmi_virtual_network_refs:
-        - - fabric_int_net
-        - - fabric_int_net
-        port_vdbe_oam_vmi_name:
+        port_vdbe_untr_vmi_1_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        - str_replace:
+            template: Port 3
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        port_vdbe_oam_vmi_1_name:
         - Port_2
         - Port_4
+        port_vdbe_untr_vmi_1_virtual_network_refs:
+        - - control_int_net
+        - - control_int_net
         subinterface_vlan2_ip_address:
         - get_input: vdbe_untrusted_ip_1
         - get_input: vdbe_untrusted_ip_1
@@ -534,8 +549,8 @@ topology_template:
         - get_input: vdbe_untrusted_v6_ip_1
         - get_input: vdbe_untrusted_v6_ip_1
         subinterface_vlan2_parent_interface:
+        - vdbe_oam_vmi_1
         - vdbe_1_oam_vmi_1
-        - vdbe_2_oam_vmi_2
         subinterface_vlan2_aap_address_mode:
         - get_input: aap_address_mode
         - get_input: aap_address_mode
@@ -554,21 +569,6 @@ topology_template:
         subinterface_vlan2_aap_sec_untrusted_ip_prefix:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
-        port_vdbe_untr_vmi_name:
-        - str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
-        - str_replace:
-            template: Port 3
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
         compute_vdbe_name:
         - get_input: vdbe_name_1
         - get_input: vdbe_name_1
@@ -587,9 +587,6 @@ topology_template:
         subinterface_vlan2_vn_network_list:
         - fabric_int_net
         - fabric_int_net
-        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_1
-        - - get_input: vdbe_hw_untr_mac_1
         subinterface_vlan1_subinterfaces_name_prefix:
         - str_replace:
             template: VM_NAMEDBE001p1n004
@@ -605,9 +602,6 @@ topology_template:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_1
-        port_vdbe_untr_vmi_virtual_network_refs:
-        - - control_int_net
-        - - control_int_net
         subinterface_vlan2_vlan_tag_list:
         - get_input: untrusted_vlan_tags
         - get_input: untrusted_vlan_tags
@@ -624,8 +618,8 @@ topology_template:
         - get_input: counter
         - get_input: counter
         subinterface_vlan1_parent_interface:
+        - vdbe_untr_vmi_1
         - vdbe_1_untr_vmi_1
-        - vdbe_1_untr_vmi_2
         subinterface_vlan1_aap_address_mode:
         - get_input: aap_address_mode
         - get_input: aap_address_mode
@@ -650,12 +644,18 @@ topology_template:
         subinterface_vlan2_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
+        - - get_input: vdbe_hw_untr_mac_1
         subinterface_vlan2_service_template_filter_count:
         - 5
         - 5
         subinterface_vlan1_aap_sec_untrusted_ip_prefix_len:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
         - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        port_vdbe_oam_vmi_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
+        - - get_input: vdbe_hw_untr_mac_1
         subinterface_vlan1_vlan_tag_list:
         - get_input: untrusted_vlan_tags
         - get_input: untrusted_vlan_tags
@@ -668,15 +668,15 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_vdbe_vdbe_untr_vmi:
+      - link_vdbe_vdbe_untr_vmi_1:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo
-      - link_vdbe_vdbe_oam_vmi:
+      - link_vdbe_vdbe_oam_vmi_1:
           capability: tosca.capabilities.network.Linkable
           node: fabric_int_net
           relationship: tosca.relationships.network.LinksTo
-      - subinterface_link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
+      - subinterface_link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_1_vlan2:
           capability: tosca.capabilities.network.Linkable
           node: fabric_int_net
           relationship: tosca.relationships.network.LinksTo

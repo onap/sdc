@@ -100,14 +100,14 @@ resources:
       networks:
       - port: { get_resource: ps_server_1b_port_1 }
       
-  cmaui_port_1:
+  cmaui_1c1_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_external_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
-  cmaui_port_2:
+  cmaui_1c1_2_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_external_network_1}
@@ -122,7 +122,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_flavor }
       networks:
-      - port: { get_resource: cmaui_port_1 }
+      - port: { get_resource: cmaui_1c1_1_mgmt_port_0 }
 
   server_1c1_cmaui_2:
     type: OS::Nova::Server
@@ -132,16 +132,16 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_flavor }
       networks:
-      - port: { get_resource: cmaui_port_2 }
+      - port: { get_resource: cmaui_1c1_2_mgmt_port_0 }
 
-  oam_port_1:
+  oam_server_1c2_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
       replacement_policy: AUTO
 
-  oam_port_2:
+  oam_server_1c2_2_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_external_network_1}
@@ -156,7 +156,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: oam_server_1c2_flavor }
       networks:
-      - port: { get_resource: oam_port_1 }
+      - port: { get_resource: oam_server_1c2_1_mgmt_port_0 }
 
   server_1c2_oam_2:
     type: OS::Nova::Server
@@ -166,7 +166,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: oam_server_1c2_flavor }
       networks:
-      - port: { get_resource: oam_port_2 }
+      - port: { get_resource: oam_server_1c2_2_mgmt_port_0 }
       metadata: {
           connectivity_to_pd_server_1b: {get_attr: [server_1b_pd_1, accessIPv4]},
           connectivity_to_server_1c1_cmaui_1: {get_attr: [server_1c1_cmaui_1, accessIPv4]},

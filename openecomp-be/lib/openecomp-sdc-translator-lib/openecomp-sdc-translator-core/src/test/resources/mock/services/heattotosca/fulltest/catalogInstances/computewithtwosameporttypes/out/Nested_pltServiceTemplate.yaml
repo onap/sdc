@@ -11,151 +11,153 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_plt_data_0_port_related_networks:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_plt_oam_0_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_plt_oam_0_port_subnetpoolid:
+    port_plt_oam_port_0_network_role_tag:
       type: string
       required: true
-    port_plt_internal_0_port_allowed_address_pairs:
+    port_plt_data_port_0_allowed_address_pairs:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
-    port_plt_oam_0_port_security_groups:
+    port_plt_oam_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_plt_oam_port_0_network_role:
+      type: string
+      required: true
     compute_plt_config_drive:
       type: list
       required: true
       entry_schema:
         type: boolean
-    port_plt_data_0_port_subnetpoolid:
+    port_plt_data_port_0_network_role_tag:
       type: string
       required: true
     vm_flavor_name:
       type: string
       required: true
-    port_plt_internal_0_port_vlan_requirements:
+    port_plt_internal_port_0_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
-    port_plt_data_0_port_fixed_ips:
+    port_plt_data_port_0_network_role:
+      type: string
+      required: true
+    port_plt_internal_port_0_replacement_policy:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+        type: string
+    port_plt_data_port_0_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     vm_image_name:
       type: string
       required: true
+    port_plt_oam_port_0_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_plt_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_oam_0_port_name:
+    port_plt_internal_port_0_network_role:
+      type: string
+      required: true
+    port_plt_data_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_plt_data_port_0_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_internal_0_port_security_groups:
+    port_plt_internal_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_plt_data_port_0_order:
+      type: integer
+      required: true
+    port_plt_oam_port_0_security_groups:
       type: list
       required: true
       entry_schema:
         type: json
-    port_plt_internal_0_port_network_role_tag:
-      type: string
-      required: true
-    port_plt_oam_0_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_plt_data_0_port_mac_requirements:
+    port_plt_oam_port_0_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_plt_data_0_port_allowed_address_pairs:
+    port_plt_internal_port_0_allowed_address_pairs:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
-    port_plt_internal_0_port_subnetpoolid:
-      type: string
-      required: true
-    port_plt_data_0_port_ip_requirements:
+    port_plt_internal_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_plt_internal_0_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     compute_plt_metadata:
       type: list
       required: true
       entry_schema:
         type: json
-    port_plt_data_0_port_security_groups:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_plt_oam_0_port_related_networks:
+    port_plt_internal_port_0_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_plt_internal_0_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_plt_data_0_port_order:
-      type: integer
-      required: true
-    port_plt_data_0_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_plt_data_0_port_network_role_tag:
-      type: string
-      required: true
-    port_plt_internal_0_port_order:
-      type: integer
-      required: true
-    port_plt_internal_0_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_plt_oam_0_port_fixed_ips:
+    port_plt_oam_port_0_fixed_ips:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_plt_oam_0_port_network_role_tag:
-      type: string
+    port_plt_internal_port_0_security_groups:
+      type: list
       required: true
-    port_plt_internal_0_port_name:
+      entry_schema:
+        type: json
+    port_plt_data_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_plt_oam_port_0_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_internal_0_port_related_networks:
+    port_plt_oam_port_0_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_port_0_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_plt_oam_0_port_order:
+    port_plt_data_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_plt_internal_port_0_order:
+      type: integer
+      required: true
+    port_plt_internal_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_plt_oam_port_0_order:
       type: integer
       required: true
     compute_plt_image_update_policy:
@@ -163,46 +165,33 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_plt_oam_0_port_network_role:
+    port_plt_oam_port_0_subnetpoolid:
       type: string
       required: true
-    port_plt_oam_0_port_allowed_address_pairs:
-      type: list
+    port_plt_internal_port_0_network_role_tag:
+      type: string
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.network.AddressPair
-    port_plt_data_0_port_name:
-      type: list
+    port_plt_data_port_0_subnetpoolid:
+      type: string
       required: true
-      entry_schema:
-        type: string
-    port_plt_data_0_port_exCP_naming:
+    port_plt_data_port_0_exCP_naming:
       type: org.openecomp.datatypes.Naming
-      required: true
-    port_plt_internal_0_port_network_role:
-      type: string
       required: true
     compute_plt_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_internal_0_port_replacement_policy:
+    port_plt_internal_port_0_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_data_0_port_network:
+    port_plt_data_port_0_fixed_ips:
       type: list
       required: true
       entry_schema:
-        type: string
-    port_plt_data_0_port_network_role:
-      type: string
-      required: true
-    port_plt_internal_0_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -210,123 +199,138 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_plt_oam_0_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_plt_oam_0_port_replacement_policy:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_plt_data_0_port_replacement_policy:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_plt_oam_0_port_mac_requirements:
+    port_plt_data_port_0_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
+    port_plt_internal_port_0_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     compute_plt_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_plt_oam_0_port_vlan_requirements:
+    port_plt_internal_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_plt_data_port_0_name:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
+        type: string
+    port_plt_data_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_plt_oam_port_0_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
   node_templates:
-    plt_plt_internal_0_port:
+    plt_plt_data_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy:
           get_input:
-          - port_plt_internal_0_port_replacement_policy
+          - port_plt_data_port_0_replacement_policy
           - index_value
         mac_requirements:
-          get_input: port_plt_internal_0_port_mac_requirements
+          get_input: port_plt_data_port_0_mac_requirements
         allowed_address_pairs:
-          get_input: port_plt_internal_0_port_allowed_address_pairs
+          get_input: port_plt_data_port_0_allowed_address_pairs
         order:
-          get_input: port_plt_internal_0_port_order
+          get_input: port_plt_data_port_0_order
         security_groups:
           get_input:
-          - port_plt_internal_0_port_security_groups
+          - port_plt_data_port_0_security_groups
           - index_value
         exCP_naming:
-          get_input: port_plt_internal_0_port_exCP_naming
+          get_input: port_plt_data_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_plt_internal_0_port_vlan_requirements
+          get_input: port_plt_data_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_plt_internal_0_port_related_networks
+          get_input: port_plt_data_port_0_related_networks
         ip_requirements:
-          get_input: port_plt_internal_0_port_ip_requirements
+          get_input: port_plt_data_port_0_ip_requirements
         network_role_tag:
-          get_input: port_plt_internal_0_port_network_role_tag
+          get_input: port_plt_data_port_0_network_role_tag
         network_role:
-          get_input: port_plt_internal_0_port_network_role
+          get_input: port_plt_data_port_0_network_role
         subnetpoolid:
-          get_input: port_plt_internal_0_port_subnetpoolid
+          get_input: port_plt_data_port_0_subnetpoolid
+        fixed_ips:
+          get_input:
+          - port_plt_data_port_0_fixed_ips
+          - index_value
         name:
           get_input:
-          - port_plt_internal_0_port_name
+          - port_plt_data_port_0_name
           - index_value
         network:
           get_input:
-          - port_plt_internal_0_port_network
+          - port_plt_data_port_0_network
           - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
           node: plt
           relationship: tosca.relationships.network.BindsTo
-    plt_plt_data_0_port:
+    plt_plt_oam_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy:
           get_input:
-          - port_plt_data_0_port_replacement_policy
+          - port_plt_oam_port_0_replacement_policy
           - index_value
         mac_requirements:
-          get_input: port_plt_data_0_port_mac_requirements
+          get_input: port_plt_oam_port_0_mac_requirements
         allowed_address_pairs:
-          get_input: port_plt_data_0_port_allowed_address_pairs
+          get_input: port_plt_oam_port_0_allowed_address_pairs
         order:
-          get_input: port_plt_data_0_port_order
+          get_input: port_plt_oam_port_0_order
         security_groups:
           get_input:
-          - port_plt_data_0_port_security_groups
+          - port_plt_oam_port_0_security_groups
           - index_value
         exCP_naming:
-          get_input: port_plt_data_0_port_exCP_naming
+          get_input: port_plt_oam_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_plt_data_0_port_vlan_requirements
+          get_input: port_plt_oam_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_plt_data_0_port_related_networks
+          get_input: port_plt_oam_port_0_related_networks
         ip_requirements:
-          get_input: port_plt_data_0_port_ip_requirements
+          get_input: port_plt_oam_port_0_ip_requirements
         network_role_tag:
-          get_input: port_plt_data_0_port_network_role_tag
+          get_input: port_plt_oam_port_0_network_role_tag
         network_role:
-          get_input: port_plt_data_0_port_network_role
+          get_input: port_plt_oam_port_0_network_role
         subnetpoolid:
-          get_input: port_plt_data_0_port_subnetpoolid
+          get_input: port_plt_oam_port_0_subnetpoolid
         fixed_ips:
           get_input:
-          - port_plt_data_0_port_fixed_ips
+          - port_plt_oam_port_0_fixed_ips
           - index_value
         name:
           get_input:
-          - port_plt_data_0_port_name
+          - port_plt_oam_port_0_name
           - index_value
         network:
           get_input:
-          - port_plt_data_0_port_network
+          - port_plt_oam_port_0_network
           - index_value
       requirements:
       - binding:
@@ -364,49 +368,45 @@ topology_template:
           get_input:
           - compute_plt_user_data_format
           - index_value
-    plt_plt_oam_0_port:
+    plt_plt_internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy:
           get_input:
-          - port_plt_oam_0_port_replacement_policy
+          - port_plt_internal_port_0_replacement_policy
           - index_value
         mac_requirements:
-          get_input: port_plt_oam_0_port_mac_requirements
+          get_input: port_plt_internal_port_0_mac_requirements
         allowed_address_pairs:
-          get_input: port_plt_oam_0_port_allowed_address_pairs
+          get_input: port_plt_internal_port_0_allowed_address_pairs
         order:
-          get_input: port_plt_oam_0_port_order
+          get_input: port_plt_internal_port_0_order
         security_groups:
           get_input:
-          - port_plt_oam_0_port_security_groups
+          - port_plt_internal_port_0_security_groups
           - index_value
         exCP_naming:
-          get_input: port_plt_oam_0_port_exCP_naming
+          get_input: port_plt_internal_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_plt_oam_0_port_vlan_requirements
+          get_input: port_plt_internal_port_0_vlan_requirements
         subinterface_indicator: false
         related_networks:
-          get_input: port_plt_oam_0_port_related_networks
+          get_input: port_plt_internal_port_0_related_networks
         ip_requirements:
-          get_input: port_plt_oam_0_port_ip_requirements
+          get_input: port_plt_internal_port_0_ip_requirements
         network_role_tag:
-          get_input: port_plt_oam_0_port_network_role_tag
+          get_input: port_plt_internal_port_0_network_role_tag
         network_role:
-          get_input: port_plt_oam_0_port_network_role
+          get_input: port_plt_internal_port_0_network_role
         subnetpoolid:
-          get_input: port_plt_oam_0_port_subnetpoolid
-        fixed_ips:
-          get_input:
-          - port_plt_oam_0_port_fixed_ips
-          - index_value
+          get_input: port_plt_internal_port_0_subnetpoolid
         name:
           get_input:
-          - port_plt_oam_0_port_name
+          - port_plt_internal_port_0_name
           - index_value
         network:
           get_input:
-          - port_plt_oam_0_port_network
+          - port_plt_internal_port_0_network
           - index_value
       requirements:
       - binding:
@@ -416,219 +416,219 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.plt
     capabilities:
-      network.outgoing.bytes.rate_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.outgoing.bytes.rate
+      network.incoming.packets_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.incoming.packets
+      attachment_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - attachment
+      network.incoming.bytes.rate_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.incoming.bytes.rate
       disk.device.usage_plt:
       - plt
       - disk.device.usage
+      binding_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - binding
       disk.iops_plt:
       - plt
       - disk.iops
       disk.read.bytes.rate_plt:
       - plt
       - disk.read.bytes.rate
+      network.incoming.bytes.rate_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.incoming.bytes.rate
       disk.device.allocation_plt:
       - plt
       - disk.device.allocation
       disk.device.write.bytes.rate_plt:
       - plt
       - disk.device.write.bytes.rate
+      network.outgoing.packets.rate_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.outgoing.packets.rate
       disk.read.bytes_plt:
       - plt
       - disk.read.bytes
-      network.incoming.packets_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.incoming.packets
       disk.capacity_plt:
       - plt
       - disk.capacity
       disk.write.bytes_plt:
       - plt
       - disk.write.bytes
+      network.outpoing.packets_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.outpoing.packets
+      network.outgoing.bytes.rate_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.outgoing.bytes.rate
+      network.outgoing.packets.rate_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.outgoing.bytes
       disk.device.read.bytes.rate_plt:
       - plt
       - disk.device.read.bytes.rate
+      network.incoming.bytes.rate_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.incoming.bytes.rate
+      network.incoming.bytes_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.incoming.bytes
+      network.incoming.bytes_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.incoming.bytes
       endpoint_plt:
       - plt
       - endpoint
       disk.read.requests_plt:
       - plt
       - disk.read.requests
-      network.outpoing.packets_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.outpoing.packets
       disk.device.write.requests.rate_plt:
       - plt
       - disk.device.write.requests.rate
-      attachment_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - attachment
       feature_plt:
       - plt
       - feature
       cpu_plt:
       - plt
       - cpu
+      network.incoming.packets_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.incoming.packets
       disk.write.requests_plt:
       - plt
       - disk.write.requests
-      network.incoming.packets.rate_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.incoming.packets.rate
       disk.device.write.bytes_plt:
       - plt
       - disk.device.write.bytes
-      network.outgoing.bytes_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.outgoing.bytes
-      network.outpoing.packets_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.outpoing.packets
-      network.incoming.bytes_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.incoming.bytes
-      network.outgoing.packets.rate_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.outgoing.packets.rate
-      network.incoming.bytes_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.incoming.bytes
-      network.incoming.bytes_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.incoming.bytes
-      attachment_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - attachment
+      feature_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - feature
+      binding_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - binding
+      feature_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - feature
       binding_plt:
       - plt
       - binding
-      network.incoming.bytes.rate_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.incoming.bytes.rate
       disk.device.read.bytes_plt:
       - plt
       - disk.device.read.bytes
       disk.device.latency_plt:
       - plt
       - disk.device.latency
-      network.incoming.packets.rate_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.incoming.packets.rate
-      network.outgoing.bytes_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.outgoing.bytes
-      binding_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
+      forwarder_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - forwarder
+      forwarder_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - forwarder
+      binding_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
       - binding
-      feature_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - feature
       instance_plt:
       - plt
       - instance
       disk.latency_plt:
       - plt
       - disk.latency
+      network.incoming.packets.rate_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.incoming.packets.rate
+      network.outgoing.bytes_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.outgoing.bytes
+      feature_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - feature
       disk.write.bytes.rate_plt:
       - plt
       - disk.write.bytes.rate
+      network.outgoing.packets.rate_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.outgoing.packets.rate
       disk.ephemeral.size_plt:
       - plt
       - disk.ephemeral.size
       cpu_util_plt:
       - plt
       - cpu_util
-      binding_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - binding
+      attachment_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - attachment
+      network.incoming.packets.rate_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.incoming.packets.rate
+      network.outgoing.bytes_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.outgoing.bytes
       memory.usage_plt:
       - plt
       - memory.usage
-      attachment_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - attachment
-      network.incoming.packets_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.incoming.packets
+      network.outgoing.bytes.rate_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.outpoing.packets
       disk.device.capacity_plt:
       - plt
       - disk.device.capacity
-      forwarder_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - forwarder
-      binding_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - binding
       disk.device.read.requests_plt:
       - plt
       - disk.device.read.requests
+      forwarder_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - forwarder
       memory.resident_plt:
       - plt
       - memory.resident
-      network.outgoing.packets.rate_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.outgoing.packets.rate
       scalable_plt:
       - plt
       - scalable
-      network.incoming.packets.rate_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - network.incoming.packets.rate
-      network.outgoing.packets.rate_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.outgoing.packets.rate
-      network.incoming.bytes.rate_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.incoming.bytes.rate
+      network.outpoing.packets_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.outpoing.packets
+      network.incoming.bytes_plt_plt_data_port_0:
+      - plt_plt_data_port_0
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - network.outgoing.bytes.rate
       disk.usage_plt:
       - plt
       - disk.usage
-      feature_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - feature
-      network.incoming.bytes.rate_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.incoming.bytes.rate
+      network.incoming.packets_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - network.incoming.packets
       memory_plt:
       - plt
       - memory
       disk.root.size_plt:
       - plt
       - disk.root.size
-      network.outgoing.bytes_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.outgoing.bytes
       cpu.delta_plt:
       - plt
       - cpu.delta
       disk.device.write.requests_plt:
       - plt
       - disk.device.write.requests
-      feature_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - feature
-      network.outgoing.bytes.rate_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.outgoing.bytes.rate
       disk.device.read.requests.rate_plt:
       - plt
       - disk.device.read.requests.rate
-      network.outpoing.packets_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.outpoing.packets
       os_plt:
       - plt
       - os
-      network.outgoing.bytes.rate_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - network.outgoing.bytes.rate
-      forwarder_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
-      - forwarder
-      network.incoming.packets_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - network.incoming.packets
       disk.allocation_plt:
       - plt
       - disk.allocation
@@ -644,30 +644,30 @@ topology_template:
       disk.write.requests.rate_plt:
       - plt
       - disk.write.requests.rate
-      forwarder_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - forwarder
+      attachment_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - attachment
     requirements:
       local_storage_plt:
       - plt
       - local_storage
-      link_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
+      dependency_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
+      - dependency
+      dependency_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
+      - dependency
+      link_plt_plt_internal_port_0:
+      - plt_plt_internal_port_0
       - link
-      dependency_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
-      - dependency
-      dependency_plt_plt_data_0_port:
-      - plt_plt_data_0_port
-      - dependency
-      link_plt_plt_data_0_port:
-      - plt_plt_data_0_port
+      link_plt_plt_data_port_0:
+      - plt_plt_data_port_0
       - link
-      dependency_plt_plt_internal_0_port:
-      - plt_plt_internal_0_port
+      dependency_plt_plt_data_port_0:
+      - plt_plt_data_port_0
       - dependency
-      link_plt_plt_oam_0_port:
-      - plt_plt_oam_0_port
+      link_plt_plt_oam_port_0:
+      - plt_plt_oam_port_0
       - link
       dependency_plt:
       - plt

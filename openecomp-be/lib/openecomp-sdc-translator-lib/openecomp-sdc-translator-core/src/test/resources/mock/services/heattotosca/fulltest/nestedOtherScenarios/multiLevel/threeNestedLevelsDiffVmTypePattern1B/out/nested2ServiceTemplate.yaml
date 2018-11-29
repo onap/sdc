@@ -62,33 +62,33 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_oam01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_oam01_port_ip_requirements:
+        port_oam01_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_oam01_port_security_groups:
-        - - get_input: p2
-          - get_input: p1
-        port_oam01_port_network:
+        port_oam01_port_1_network:
         - get_input: net
-        port_oam01_port_replacement_policy:
-        - AUTO
         vm_flavor_name:
           get_input: cmaui_flavor
+        port_oam01_port_1_security_groups:
+        - - get_input: p2
+          - get_input: p1
         vm_image_name:
           get_input: cmaui_image
-        port_oam01_port_fixed_ips:
+        port_oam01_port_1_replacement_policy:
+        - AUTO
+        port_oam01_port_1_fixed_ips:
         - ip_address:
             get_input:
             - cmaui_oam_ips
             - 0
         compute_oam_availability_zone:
         - get_input: availability_zone_0
+        port_oam01_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
         compute_oam_name:
         - get_input:
           - oam_names
@@ -106,30 +106,30 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_oam02_port_network:
+        port_oam02_port_2_network:
         - get_input: net
-        port_oam02_port_ip_requirements:
+        port_oam02_port_2_security_groups:
+        - - get_input: p1
+        vm_flavor_name:
+          get_input: cmaui_flavor
+        port_oam02_port_2_replacement_policy:
+        - AUTO
+        port_oam02_port_2_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        vm_image_name:
+          get_input: cmaui_image
+        port_oam02_port_2_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_oam02_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
-        vm_flavor_name:
-          get_input: cmaui_flavor
-        port_oam02_port_security_groups:
-        - - get_input: p1
-        port_oam02_port_mac_requirements:
+        port_oam02_port_2_mac_requirements:
           mac_count_required:
             is_required: false
-        vm_image_name:
-          get_input: cmaui_image
-        port_oam02_port_replacement_policy:
-        - AUTO
         compute_oam_availability_zone:
         - get_input: availability_zone_0
         compute_oam_name:
@@ -168,7 +168,7 @@ topology_template:
     capabilities:
       network.incoming.packets.rate_oam02_port_2:
       - abstract_oam
-      - network.incoming.packets.rate_oam_oam02_port
+      - network.incoming.packets.rate_oam_oam02_port_2
       disk.latency_server_oam_2:
       - abstract_oam
       - disk.latency_oam
@@ -186,7 +186,7 @@ topology_template:
       - disk.latency_oam
       network.incoming.bytes_oam02_port_2:
       - abstract_oam
-      - network.incoming.bytes_oam_oam02_port
+      - network.incoming.bytes_oam_oam02_port_2
       endpoint_server_oam_1:
       - abstract_oam_1
       - endpoint_oam
@@ -210,7 +210,7 @@ topology_template:
       - disk.device.read.bytes_oam
       forwarder_oam01_port_1:
       - abstract_oam_1
-      - forwarder_oam_oam01_port
+      - forwarder_oam_oam01_port_1
       disk.device.read.bytes_server_oam_2:
       - abstract_oam
       - disk.device.read.bytes_oam
@@ -219,7 +219,7 @@ topology_template:
       - cpu.delta_oam
       attachment_oam01_port_1:
       - abstract_oam_1
-      - attachment_oam_oam01_port
+      - attachment_oam_oam01_port_1
       disk.write.bytes_server_ps_1_test_nested3Level:
       - test_nested3Level
       - disk.write.bytes_server_ps_1
@@ -285,7 +285,7 @@ topology_template:
       - disk.capacity_oam
       network.incoming.packets_oam01_port_1:
       - abstract_oam_1
-      - network.incoming.packets_oam_oam01_port
+      - network.incoming.packets_oam_oam01_port_1
       disk.device.read.requests.rate_server_ps_1_test_nested3Level:
       - test_nested3Level
       - disk.device.read.requests.rate_server_ps_1
@@ -300,7 +300,7 @@ topology_template:
       - disk.capacity_server_ps_2
       network.outgoing.bytes.rate_oam01_port_1:
       - abstract_oam_1
-      - network.outgoing.bytes.rate_oam_oam01_port
+      - network.outgoing.bytes.rate_oam_oam01_port_1
       disk.iops_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.iops_server_ps_2
@@ -396,7 +396,7 @@ topology_template:
       - disk.allocation_server_ps_2
       binding_oam02_port_2:
       - abstract_oam
-      - binding_oam_oam02_port
+      - binding_oam_oam02_port_2
       binding_server_oam_1:
       - abstract_oam_1
       - binding_oam
@@ -408,10 +408,10 @@ topology_template:
       - endpoint_server_ps_2
       network.outgoing.bytes_oam02_port_2:
       - abstract_oam
-      - network.outgoing.bytes_oam_oam02_port
+      - network.outgoing.bytes_oam_oam02_port_2
       network.outpoing.packets_oam01_port_1:
       - abstract_oam_1
-      - network.outpoing.packets_oam_oam01_port
+      - network.outpoing.packets_oam_oam01_port_1
       disk.device.read.bytes.rate_server_oam_1:
       - abstract_oam_1
       - disk.device.read.bytes.rate_oam
@@ -438,7 +438,7 @@ topology_template:
       - instance_oam
       network.incoming.packets_oam02_port_2:
       - abstract_oam
-      - network.incoming.packets_oam_oam02_port
+      - network.incoming.packets_oam_oam02_port_2
       disk.read.bytes_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.read.bytes_server_ps_2
@@ -465,7 +465,7 @@ topology_template:
       - host_server_ps_1
       attachment_oam02_port_2:
       - abstract_oam
-      - attachment_oam_oam02_port
+      - attachment_oam_oam02_port_2
       disk.device.iops_server_oam_2:
       - abstract_oam
       - disk.device.iops_oam
@@ -489,7 +489,7 @@ topology_template:
       - disk.device.capacity_server_ps_1
       network.incoming.bytes.rate_oam02_port_2:
       - abstract_oam
-      - network.incoming.bytes.rate_oam_oam02_port
+      - network.incoming.bytes.rate_oam_oam02_port_2
       disk.write.requests.rate_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.write.requests.rate_server_ps_2
@@ -498,7 +498,7 @@ topology_template:
       - disk.latency_server_ps_2
       network.incoming.packets.rate_oam01_port_1:
       - abstract_oam_1
-      - network.incoming.packets.rate_oam_oam01_port
+      - network.incoming.packets.rate_oam_oam01_port_1
       disk.device.latency_server_ps_1_test_nested3Level:
       - test_nested3Level
       - disk.device.latency_server_ps_1
@@ -519,13 +519,13 @@ topology_template:
       - attachment_pd02_port_2
       network.incoming.bytes_oam01_port_1:
       - abstract_oam_1
-      - network.incoming.bytes_oam_oam01_port
+      - network.incoming.bytes_oam_oam01_port_1
       cpu_server_ps_2_test_nested3Level:
       - test_nested3Level
       - cpu_server_ps_2
       forwarder_oam02_port_2:
       - abstract_oam
-      - forwarder_oam_oam02_port
+      - forwarder_oam_oam02_port_2
       network.incoming.packets.rate_pd01_port_1_test_nested3Level:
       - test_nested3Level
       - network.incoming.packets.rate_pd01_port_1
@@ -537,13 +537,13 @@ topology_template:
       - os_oam
       network.outgoing.packets.rate_oam02_port_2:
       - abstract_oam
-      - network.outgoing.packets.rate_oam_oam02_port
+      - network.outgoing.packets.rate_oam_oam02_port_2
       disk.device.latency_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.device.latency_server_ps_2
       feature_oam01_port_1:
       - abstract_oam_1
-      - feature_oam_oam01_port
+      - feature_oam_oam01_port_1
       disk.device.allocation_server_oam_2:
       - abstract_oam
       - disk.device.allocation_oam
@@ -558,7 +558,7 @@ topology_template:
       - cpu_util_server_ps_2
       network.incoming.bytes.rate_oam01_port_1:
       - abstract_oam_1
-      - network.incoming.bytes.rate_oam_oam01_port
+      - network.incoming.bytes.rate_oam_oam01_port_1
       vcpus_server_oam_2:
       - abstract_oam
       - vcpus_oam
@@ -588,7 +588,7 @@ topology_template:
       - network.incoming.bytes.rate_pd02_port_2
       network.outgoing.bytes.rate_oam02_port_2:
       - abstract_oam
-      - network.outgoing.bytes.rate_oam_oam02_port
+      - network.outgoing.bytes.rate_oam_oam02_port_2
       vcpus_server_oam_1:
       - abstract_oam_1
       - vcpus_oam
@@ -612,7 +612,7 @@ topology_template:
       - cpu_oam
       binding_oam01_port_1:
       - abstract_oam_1
-      - binding_oam_oam01_port
+      - binding_oam_oam01_port_1
       disk.device.write.requests_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.device.write.requests_server_ps_2
@@ -756,7 +756,7 @@ topology_template:
       - disk.device.capacity_oam
       network.outgoing.packets.rate_oam01_port_1:
       - abstract_oam_1
-      - network.outgoing.packets.rate_oam_oam01_port
+      - network.outgoing.packets.rate_oam_oam01_port_1
       disk.device.read.requests_server_ps_1_test_nested3Level:
       - test_nested3Level
       - disk.device.read.requests_server_ps_1
@@ -765,13 +765,13 @@ topology_template:
       - disk.read.bytes.rate_server_ps_2
       feature_oam02_port_2:
       - abstract_oam
-      - feature_oam_oam02_port
+      - feature_oam_oam02_port_2
       network.outgoing.bytes_oam01_port_1:
       - abstract_oam_1
-      - network.outgoing.bytes_oam_oam01_port
+      - network.outgoing.bytes_oam_oam01_port_1
       network.outpoing.packets_oam02_port_2:
       - abstract_oam
-      - network.outpoing.packets_oam_oam02_port
+      - network.outpoing.packets_oam_oam02_port_2
       network.incoming.packets_pd01_port_1_test_nested3Level:
       - test_nested3Level
       - network.incoming.packets_pd01_port_1
@@ -808,13 +808,13 @@ topology_template:
     requirements:
       link_oam02_port_2:
       - abstract_oam
-      - link_oam_oam02_port
+      - link_oam_oam02_port_2
       dependency_pd01_port_1_test_nested3Level:
       - test_nested3Level
       - dependency_pd01_port_1
       link_oam01_port_1:
       - abstract_oam_1
-      - link_oam_oam01_port
+      - link_oam_oam01_port_1
       dependency_server_oam_1:
       - abstract_oam_1
       - dependency_oam
@@ -841,10 +841,10 @@ topology_template:
       - link_pd01_port_1
       dependency_oam01_port_1:
       - abstract_oam_1
-      - dependency_oam_oam01_port
+      - dependency_oam_oam01_port_1
       dependency_oam02_port_2:
       - abstract_oam
-      - dependency_oam_oam02_port
+      - dependency_oam_oam02_port_2
       dependency_test_nested3Level:
       - test_nested3Level
       - dependency

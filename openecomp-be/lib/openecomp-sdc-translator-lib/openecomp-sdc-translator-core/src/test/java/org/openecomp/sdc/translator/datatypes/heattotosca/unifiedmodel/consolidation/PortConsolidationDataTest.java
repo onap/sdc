@@ -58,14 +58,14 @@ public class PortConsolidationDataTest {
     @Test
     public void testAddConsolidationData_noNewCreated() {
         String serviceTemplateName = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
-        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1,
+        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1, PORT_NODE_TYPE_1,
                 PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
         consolidationData.getFilePortConsolidationData(serviceTemplateName);
         Set<String> expectedServiceTemplateNames = new HashSet<>();
         expectedServiceTemplateNames.add(serviceTemplateName);
         checkPortConsolidationData(consolidationData, serviceTemplateName, expectedServiceTemplateNames);
 
-        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1,
+        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1, PORT_NODE_TYPE_1,
                 PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
         consolidationData.getFilePortConsolidationData(serviceTemplateName);
         checkPortConsolidationData(consolidationData, serviceTemplateName, expectedServiceTemplateNames);
@@ -74,12 +74,12 @@ public class PortConsolidationDataTest {
     @Test
     public void testAddConsolidationData_DiffNodeTypes() {
         String serviceTemplateName = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
-        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1,
+        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_1, PORT_NODE_TYPE_1,
                 PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
         Set<String> expectedServiceTemplateNames = new HashSet<>();
         expectedServiceTemplateNames.add(serviceTemplateName);
         checkPortConsolidationData(consolidationData, serviceTemplateName, expectedServiceTemplateNames);
-        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_2,
+        consolidationData.addPortTemplateConsolidationData(serviceTemplateName, PORT_NODE_TYPE_2, PORT_NODE_TYPE_2,
                 PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
         checkPortConsolidationData(consolidationData, serviceTemplateName, expectedServiceTemplateNames);
     }
@@ -88,14 +88,14 @@ public class PortConsolidationDataTest {
     public void testAddConsolidationData_DiffServiceTemplate() {
         String serviceTemplateName1 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
         consolidationData.addPortTemplateConsolidationData(
-                serviceTemplateName1, PORT_NODE_TYPE_1, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
+                serviceTemplateName1, PORT_NODE_TYPE_1, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE, PORT_NODE_TYPE_1);
         Set<String> expectedServiceTemplateNames =  new HashSet<>();
         expectedServiceTemplateNames.add(serviceTemplateName1);
         checkPortConsolidationData(consolidationData, serviceTemplateName1, expectedServiceTemplateNames);
 
         String serviceTemplateName2 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_2.name();
         consolidationData.addPortTemplateConsolidationData(
-                serviceTemplateName2, PORT_NODE_TYPE_2, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
+                serviceTemplateName2, PORT_NODE_TYPE_2, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE, PORT_NODE_TYPE_2);
         expectedServiceTemplateNames.add(serviceTemplateName2);
         checkPortConsolidationData(consolidationData, serviceTemplateName2, expectedServiceTemplateNames);
     }
@@ -160,10 +160,10 @@ public class PortConsolidationDataTest {
                 setFilePortConsolidationDataMock(serviceTemplateFileName);
 
         consolidationData.addPortTemplateConsolidationData(
-                serviceTemplateFileName, portNodeType, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
+                serviceTemplateFileName, portNodeType, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE, portNodeType);
 
         Mockito.verify(filePortConsolidationDataMock)
-               .addPortTemplateConsolidationData(portNodeType, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE);
+               .addPortTemplateConsolidationData(portNodeType, PORT_RESOURCE_ID, PORT_RESOURCE_TYPE, portNodeType);
     }
 
     private void addAndCheckSubInterfaceTemplateConsolidationData(String serviceTemplateFileName,

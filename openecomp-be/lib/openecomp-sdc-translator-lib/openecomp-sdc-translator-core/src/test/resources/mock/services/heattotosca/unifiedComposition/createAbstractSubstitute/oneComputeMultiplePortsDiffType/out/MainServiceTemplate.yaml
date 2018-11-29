@@ -68,7 +68,7 @@ topology_template:
       type: string
       description: prop
   node_templates:
-    FSB2_Internal_2:
+    FSB_2_Internal_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -79,7 +79,7 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB1_template
           relationship: tosca.relationships.network.BindsTo
-    FSB1_Internal_1:
+    FSB_1_Internal_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -116,7 +116,7 @@ topology_template:
         shared: true
         network_name:
           get_attribute:
-          - FSB1_Internal_1
+          - FSB_1_Internal_port_1
           - network_id
         dhcp_agent_ids:
           get_attribute:
@@ -124,11 +124,11 @@ topology_template:
           - addresses
         tenant_id:
           get_attribute:
-          - FSB2_Internal_2
+          - FSB_2_Internal_port_0
           - network_id
         qos_policy:
           get_attribute:
-          - FSB2_Internal_2
+          - FSB_2_Internal_port_0
           - network_id
     FSB1_template:
       type: org.openecomp.resource.vfc.nodes.heat.FSB
@@ -179,22 +179,20 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_FSB1_Internal_mac_address:
-          get_input: fsb1-Internal1-mac
+        port_FSB_Internal_port_0_network:
+        - Internal2-net
+        port_FSB_Internal_port_0_mac_address:
+          get_input: fsb1-Internal2-mac
         vm_flavor_name:
           get_input: fsb-flavor
+        port_FSB_Internal_port_1_mac_address:
+          get_input: fsb1-Internal1-mac
         vm_image_name:
           get_input: fsb-image
         compute_FSB_admin_pass:
         - STATIC-DATA-FSB1
-        port_FSB1_Internal_network:
-        - Internal1-net
-        port_FSB2_Internal_mac_address:
-          get_input: fsb1-Internal2-mac
         port_FSB1_OAM_network:
         - jsa_net1
-        port_FSB2_Internal_network:
-        - Internal2-net
         compute_FSB_metadata:
         - write_files:
           - path: /path1/etc/sysconfig/network-scripts/ifcfg-eth0
@@ -206,6 +204,8 @@ topology_template:
             get_input: fsb1-oam-ip
         compute_FSB_name:
         - get_input: fsb1-name
+        port_FSB_Internal_port_1_network:
+        - Internal1-net
         service_template_filter:
           substitute_service_template: Nested_FSBServiceTemplate.yaml
           count: 1
@@ -222,7 +222,7 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - FSB2_Internal_2
-      - FSB1_Internal_1
+      - FSB_2_Internal_port_0
+      - FSB_1_Internal_port_1
       - FSB1_OAM
       - FSB1_template

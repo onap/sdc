@@ -150,133 +150,133 @@ topology_template:
         availability_zone:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_ip_address
+          - FSB1_FSB1_Port_1_ip_address
         backup_id:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_network
+          - FSB1_FSB1_Port_1_network
         image:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_admin_state_up
+          - FSB1_FSB1_Port_1_admin_state_up
         metadata:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_allowed_address_pairs
+          - FSB1_FSB1_Port_1_allowed_address_pairs
         multiattach:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_binding:vnic_type
+          - FSB1_FSB1_Port_1_binding:vnic_type
         name:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_device_id
+          - FSB1_FSB1_Port_1_device_id
         read_only:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_device_owner
+          - FSB1_FSB1_Port_1_device_owner
         scheduler_hints:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_fixed_ips
+          - FSB1_FSB1_Port_1_fixed_ips
         snapshot_id:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_name
+          - FSB1_FSB1_Port_1_name
         source_volid:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_port_security_enabled
+          - FSB1_FSB1_Port_1_port_security_enabled
         volume_id:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_qos_policy
+          - FSB1_FSB1_Port_1_qos_policy
         volume_type:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_security_groups
+          - FSB1_FSB1_Port_1_security_groups
         delete_on_termination:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_value_specs
+          - FSB1_FSB1_Port_1_value_specs
         volume_size:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_replacement_policy
+          - FSB1_FSB1_Port_1_replacement_policy
         device_type:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_show
+          - FSB1_FSB1_Port_1_show
         disk_bus:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_subnets
+          - FSB1_FSB1_Port_1_subnets
         swap_size:
           get_attribute:
           - abstract_FSB1
-          - FSB1_FSB1_Port_tenant_id
+          - FSB1_FSB1_Port_1_tenant_id
     cmaui_volume_test_contrailv2_VMI_properties:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
         availability_zone:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_virtual_machine_interface_mac_addresses
+          - FSB1_VMI_1_virtual_machine_interface_mac_addresses
         description:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_virtual_network_refs
+          - FSB1_VMI_1_virtual_network_refs
         image:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_port_tuple_refs
+          - FSB1_VMI_1_port_tuple_refs
         metadata:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_security_group_refs
+          - FSB1_VMI_1_security_group_refs
         multiattach:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_virtual_machine_interface_properties
+          - FSB1_VMI_1_virtual_machine_interface_properties
         name:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_name
+          - FSB1_VMI_1_name
         size:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_virtual_machine_interface_allowed_address_pairs
+          - FSB1_VMI_1_virtual_machine_interface_allowed_address_pairs
         created_at:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_fq_name
+          - FSB1_VMI_1_fq_name
         display_description:
           get_attribute:
           - abstract_FSB1
-          - FSB1_VMI_show
+          - FSB1_VMI_1_show
     abstract_FSB1:
       type: org.openecomp.resource.abstract.nodes.FSB1
       directives:
       - substitutable
       properties:
-        port_FSB1_Port_network:
-        - Internal1-net
         vm_flavor_name:
           get_input: fsb1-flavor
-        port_FSB1_Port_mac_address:
-          get_input: fsb1-Internal1-mac
-        compute_FSB1_availability_zone:
-        - get_input: fsb_zone
-        port_VMI_port_tuple_refs:
-        - - get_input: port_name
-        port_VMI_name:
+        port_VMI_1_virtual_network_refs:
+        - - get_input: network_name
+        port_VMI_1_name:
         - str_replace:
             template: VM_NAME_PORT_3
             params:
               VM_NAME:
                 get_input: vipr_atm_name_0
-        port_VMI_virtual_network_refs:
-        - - get_input: network_name
+        port_FSB1_Port_1_mac_address:
+          get_input: fsb1-Internal1-mac
+        port_FSB1_Port_1_network:
+        - Internal1-net
+        compute_FSB1_availability_zone:
+        - get_input: fsb_zone
+        port_VMI_1_port_tuple_refs:
+        - - get_input: port_name
         service_template_filter:
           substitute_service_template: Nested_FSB1ServiceTemplate.yaml
           count: 1

@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,19 +28,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-//import org.openecomp.core.model.types.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 
 /**
  * Utility class for consolidation data collection helper methods.
@@ -123,6 +123,24 @@ public class UnifiedCompositionUtil {
     return null;
   }
 
+  public static PortTemplateConsolidationData getPortTemplateConsolidationDataForPort(List<UnifiedCompositionData>
+                                                                                             unifiedCompositionDataList,
+                                                                                      String portNodeTemplateId) {
+    for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
+      if (CollectionUtils.isEmpty(unifiedCompositionData.getPortTemplateConsolidationDataList())) {
+        continue;
+      }
+      List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
+              unifiedCompositionData.getPortTemplateConsolidationDataList();
+      for (PortTemplateConsolidationData portTemplateConsolidationData : portTemplateConsolidationDataList) {
+        if (portTemplateConsolidationData.getNodeTemplateId().equals(portNodeTemplateId)) {
+          return portTemplateConsolidationData;
+        }
+      }
+    }
+    return null;
+  }
+
   //The ID should be <vm_type>_<port_type> or <vm_type>_<portNodeTemplateId>
   public static String getNewPortNodeTemplateId(
       String portNodeTemplateId,
@@ -130,9 +148,11 @@ public class UnifiedCompositionUtil {
       ComputeTemplateConsolidationData computeTemplateConsolidationData) {
 
     StringBuilder newPortNodeTemplateId = new StringBuilder();
-    String portType = ConsolidationDataUtil.getPortType(portNodeTemplateId);
+    String portType = ConsolidationDataUtil.getPortType(portNodeTemplateId,
+            DataModelUtil.getNamespaceSuffix(connectedComputeNodeType));
     newPortNodeTemplateId.append(DataModelUtil.getNamespaceSuffix(connectedComputeNodeType));
-    if (computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
+    if (computeTemplateConsolidationData.getPorts().get(portType) != null
+           && computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
       //single port
       newPortNodeTemplateId.append("_").append(portNodeTemplateId);
     } else {

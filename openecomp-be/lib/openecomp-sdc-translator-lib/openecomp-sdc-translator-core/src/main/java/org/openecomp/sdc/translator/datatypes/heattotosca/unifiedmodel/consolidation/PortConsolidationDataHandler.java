@@ -66,7 +66,7 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
         Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(serviceTemplateFileName,
-                contrailSharedResourceId, resource.getType(), sharedTranslatedResourceId);
+                contrailSharedResourceId, resource.getType(), sharedTranslatedResourceId, null);
         entityConsolidationData.removeParamNameFromAttrFuncList(paramName);
 
     }
@@ -76,9 +76,9 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
      *
      */
     public void addConsolidationData(String serviceTemplateFileName,
-                String portResourceId, String portResourceType, String portNodeTemplateId) {
+                String portResourceId, String portResourceType, String portNodeTemplateId, String portType) {
         getPortTemplateConsolidationData(
-                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId);
+                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
         Resource resource = heatOrchestrationTemplate.getResources().get(targetResourceId);
         ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
         return getPortTemplateConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-                targetResourceId, resource.getType(), targetResourceTranslatedId);
+                targetResourceId, resource.getType(), targetResourceTranslatedId, null);
     }
 
     private PortTemplateConsolidationData getPortTemplateConsolidationData(TranslateTo translateTo,
@@ -141,14 +141,14 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         return getPortTemplateConsolidationData(serviceTemplateFileName,
-                portResourceId, portResourceType, portNodeTemplateId);
+                portResourceId, portResourceType, portNodeTemplateId, null);
     }
 
     private PortTemplateConsolidationData getPortTemplateConsolidationData(String serviceTemplateFileName,
-            String portResourceId, String portResourceType, String portNodeTemplateId) {
+            String portResourceId, String portResourceType, String portNodeTemplateId, String portType) {
 
         return portConsolidationData.addPortTemplateConsolidationData(serviceTemplateFileName,
-                        portNodeTemplateId, portResourceId, portResourceType);
+                        portNodeTemplateId, portResourceId, portResourceType, portType);
 
     }
 }

@@ -92,34 +92,34 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pcm_server_mgmt_port_0_network_role_tag: cps
         compute_pcm_server_availability_zone:
         - get_input: availabilityzone_name
-        port_pcm_port_fixed_ips:
-        - ip_address:
-            get_input: cps_net_ip
-        port_pcm_port_network_role_tag: cps
-        vm_flavor_name:
-          get_input: pcm_flavor_name
-        port_pcm_port_mac_requirements:
+        port_pcm_server_mgmt_port_0_mac_requirements:
           mac_count_required:
             is_required: false
-        compute_pcm_server_name:
-        - get_input: pcm_server_name
-        port_pcm_port_network:
-        - get_input: cps_net_name
-        port_pcm_port_ip_requirements:
+        port_pcm_server_mgmt_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        vm_flavor_name:
+          get_input: pcm_flavor_name
+        port_pcm_server_mgmt_port_0_network:
+        - get_input: cps_net_name
+        compute_pcm_server_name:
+        - get_input: pcm_server_name
         compute_pcm_server_user_data_format:
         - RAW
         vm_image_name:
           get_input: pcm_image_name
         compute_pcm_server_config_drive:
         - true
-        port_pcm_port_security_groups:
+        port_pcm_server_mgmt_port_0_fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        port_pcm_server_mgmt_port_0_security_groups:
         - - get_input: security_group_name
         service_template_filter:
           substitute_service_template: Nested_pcm_serverServiceTemplate.yaml
@@ -134,34 +134,34 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pcm_server_mgmt_port_0_network_role_tag: oam
         compute_pcm_server_availability_zone:
         - get_input: availabilityzone_name
-        port_pcm_port_fixed_ips:
-        - ip_address:
-            get_input: oam_net_ip
-        port_pcm_port_network_role_tag: oam
-        vm_flavor_name:
-          get_input: pcm_flavor_name
-        port_pcm_port_mac_requirements:
+        port_pcm_server_mgmt_port_0_mac_requirements:
           mac_count_required:
             is_required: false
-        compute_pcm_server_name:
-        - get_input: pcm_server_name
-        port_pcm_port_network:
-        - get_input: oam_net_name
-        port_pcm_port_ip_requirements:
+        port_pcm_server_mgmt_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        vm_flavor_name:
+          get_input: pcm_flavor_name
+        port_pcm_server_mgmt_port_0_network:
+        - get_input: oam_net_name
+        compute_pcm_server_name:
+        - get_input: pcm_server_name
         compute_pcm_server_user_data_format:
         - RAW
         vm_image_name:
           get_input: pcm_image_name
         compute_pcm_server_config_drive:
         - true
-        port_pcm_port_security_groups:
+        port_pcm_server_mgmt_port_0_fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        port_pcm_server_mgmt_port_0_security_groups:
         - - get_input: security_group_name
         service_template_filter:
           substitute_service_template: Nested_pcm_serverServiceTemplate.yaml
@@ -190,18 +190,6 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
     capabilities:
-      network.incoming.packets.rate_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.incoming.packets.rate_pcm_server_pcm_port
-      network.incoming.packets.rate_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.incoming.packets.rate_pcm_server_pcm_port
-      network.outpoing.packets_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.outpoing.packets_pcm_server_pcm_port
-      network.outpoing.packets_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.outpoing.packets_pcm_server_pcm_port
       disk.usage_server_pcm_2:
       - abstract_pcm_server_0
       - disk.usage_pcm_server
@@ -211,9 +199,6 @@ topology_template:
       disk.capacity_server_pcm_2:
       - abstract_pcm_server_0
       - disk.capacity_pcm_server
-      network.incoming.bytes_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.incoming.bytes_pcm_server_pcm_port
       disk.usage_server_pcm_1:
       - abstract_pcm_server_1
       - disk.usage_pcm_server
@@ -223,69 +208,42 @@ topology_template:
       memory.resident_server_pcm_1:
       - abstract_pcm_server_1
       - memory.resident_pcm_server
-      network.incoming.bytes_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.incoming.bytes_pcm_server_pcm_port
       vcpus_server_pcm_2:
       - abstract_pcm_server_0
       - vcpus_pcm_server
       memory.resident_server_pcm_2:
       - abstract_pcm_server_0
       - memory.resident_pcm_server
-      binding_pcm_port_0:
-      - abstract_pcm_server_1
-      - binding_pcm_server_pcm_port
-      binding_pcm_port_1:
-      - abstract_pcm_server_0
-      - binding_pcm_server_pcm_port
       cpu_server_pcm_2:
       - abstract_pcm_server_0
       - cpu_pcm_server
       feature_server_pcm_1:
       - abstract_pcm_server_1
       - feature_pcm_server
-      network.outgoing.packets.rate_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.outgoing.packets.rate_pcm_server_pcm_port
-      network.outgoing.packets.rate_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.outgoing.packets.rate_pcm_server_pcm_port
       feature_server_pcm_2:
       - abstract_pcm_server_0
       - feature_pcm_server
       disk.device.iops_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.iops_pcm_server
-      feature_pcm_port_1:
-      - abstract_pcm_server_0
-      - feature_pcm_server_pcm_port
-      network.outgoing.bytes_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.outgoing.bytes_pcm_server_pcm_port
-      feature_pcm_port_0:
-      - abstract_pcm_server_1
-      - feature_pcm_server_pcm_port
       cpu_server_pcm_1:
       - abstract_pcm_server_1
       - cpu_pcm_server
-      network.outgoing.bytes_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.outgoing.bytes_pcm_server_pcm_port
-      attachment_pcm_port_0:
-      - abstract_pcm_server_1
-      - attachment_pcm_server_pcm_port
-      attachment_pcm_port_1:
-      - abstract_pcm_server_0
-      - attachment_pcm_server_pcm_port
       host_server_pcm_2:
       - abstract_pcm_server_0
       - host_pcm_server
+      network.outpoing.packets_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.outpoing.packets_pcm_server_pcm_server_mgmt_port_0
       endpoint_server_pcm_2:
       - abstract_pcm_server_0
       - endpoint_pcm_server
       endpoint_server_pcm_1:
       - abstract_pcm_server_1
       - endpoint_pcm_server
+      network.outpoing.packets_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.outpoing.packets_pcm_server_pcm_server_mgmt_port_0
       disk.device.capacity_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.capacity_pcm_server
@@ -295,15 +253,24 @@ topology_template:
       disk.device.capacity_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.capacity_pcm_server
+      network.incoming.bytes.rate_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.incoming.bytes.rate_pcm_server_pcm_server_mgmt_port_0
       disk.latency_server_pcm_1:
       - abstract_pcm_server_1
       - disk.latency_pcm_server
       disk.latency_server_pcm_2:
       - abstract_pcm_server_0
       - disk.latency_pcm_server
+      forwarder_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - forwarder_pcm_server_pcm_server_mgmt_port_0
       disk.write.requests.rate_server_pcm_2:
       - abstract_pcm_server_0
       - disk.write.requests.rate_pcm_server
+      forwarder_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - forwarder_pcm_server_pcm_server_mgmt_port_0
       disk.write.requests.rate_server_pcm_1:
       - abstract_pcm_server_1
       - disk.write.requests.rate_pcm_server
@@ -322,6 +289,9 @@ topology_template:
       disk.write.bytes_server_pcm_2:
       - abstract_pcm_server_0
       - disk.write.bytes_pcm_server
+      network.incoming.bytes.rate_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.incoming.bytes.rate_pcm_server_pcm_server_mgmt_port_0
       disk.write.bytes_server_pcm_1:
       - abstract_pcm_server_1
       - disk.write.bytes_pcm_server
@@ -334,6 +304,12 @@ topology_template:
       disk.device.read.requests.rate_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.read.requests.rate_pcm_server
+      binding_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - binding_pcm_server_pcm_server_mgmt_port_0
+      binding_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - binding_pcm_server_pcm_server_mgmt_port_0
       disk.device.read.requests.rate_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.read.requests.rate_pcm_server
@@ -367,12 +343,21 @@ topology_template:
       disk.iops_server_pcm_1:
       - abstract_pcm_server_1
       - disk.iops_pcm_server
+      network.incoming.packets.rate_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.incoming.packets.rate_pcm_server_pcm_server_mgmt_port_0
+      network.incoming.packets_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.incoming.packets_pcm_server_pcm_server_mgmt_port_0
       disk.device.write.bytes.rate_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.write.bytes.rate_pcm_server
       disk.device.write.bytes.rate_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.write.bytes.rate_pcm_server
+      network.incoming.packets_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.incoming.packets_pcm_server_pcm_server_mgmt_port_0
       disk.write.requests_server_pcm_2:
       - abstract_pcm_server_0
       - disk.write.requests_pcm_server
@@ -391,6 +376,12 @@ topology_template:
       cpu_util_server_pcm_2:
       - abstract_pcm_server_0
       - cpu_util_pcm_server
+      network.incoming.packets.rate_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.incoming.packets.rate_pcm_server_pcm_server_mgmt_port_0
+      attachment_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - attachment_pcm_server_pcm_server_mgmt_port_0
       disk.device.write.bytes_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.write.bytes_pcm_server
@@ -406,6 +397,9 @@ topology_template:
       memory.usage_server_pcm_1:
       - abstract_pcm_server_1
       - memory.usage_pcm_server
+      attachment_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - attachment_pcm_server_pcm_server_mgmt_port_0
       memory.usage_server_pcm_2:
       - abstract_pcm_server_0
       - memory.usage_pcm_server
@@ -415,6 +409,9 @@ topology_template:
       disk.device.read.bytes_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.read.bytes_pcm_server
+      network.incoming.bytes_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.incoming.bytes_pcm_server_pcm_server_mgmt_port_0
       disk.read.bytes.rate_server_pcm_2:
       - abstract_pcm_server_0
       - disk.read.bytes.rate_pcm_server
@@ -427,18 +424,24 @@ topology_template:
       cpu.delta_server_pcm_1:
       - abstract_pcm_server_1
       - cpu.delta_pcm_server
+      network.incoming.bytes_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.incoming.bytes_pcm_server_pcm_server_mgmt_port_0
       cpu.delta_server_pcm_2:
       - abstract_pcm_server_0
       - cpu.delta_pcm_server
-      forwarder_pcm_port_0:
+      network.outgoing.packets.rate_pcm_server_1_mgmt_port_0:
       - abstract_pcm_server_1
-      - forwarder_pcm_server_pcm_port
-      forwarder_pcm_port_1:
-      - abstract_pcm_server_0
-      - forwarder_pcm_server_pcm_port
+      - network.outgoing.packets.rate_pcm_server_pcm_server_mgmt_port_0
+      feature_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - feature_pcm_server_pcm_server_mgmt_port_0
       disk.device.write.requests.rate_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.write.requests.rate_pcm_server
+      network.outgoing.bytes.rate_pcm_server_1_mgmt_port_0:
+      - abstract_pcm_server_1
+      - network.outgoing.bytes.rate_pcm_server_pcm_server_mgmt_port_0
       disk.read.requests_server_pcm_2:
       - abstract_pcm_server_0
       - disk.read.requests_pcm_server
@@ -454,9 +457,18 @@ topology_template:
       disk.ephemeral.size_server_pcm_2:
       - abstract_pcm_server_0
       - disk.ephemeral.size_pcm_server
+      feature_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - feature_pcm_server_pcm_server_mgmt_port_0
+      network.outgoing.packets.rate_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.outgoing.packets.rate_pcm_server_pcm_server_mgmt_port_0
       scalable_server_pcm_2:
       - abstract_pcm_server_0
       - scalable_pcm_server
+      network.outgoing.bytes.rate_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.outgoing.bytes.rate_pcm_server_pcm_server_mgmt_port_0
       scalable_server_pcm_1:
       - abstract_pcm_server_1
       - scalable_pcm_server
@@ -466,30 +478,24 @@ topology_template:
       disk.device.latency_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.latency_pcm_server
-      network.outgoing.bytes.rate_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.outgoing.bytes.rate_pcm_server_pcm_port
       disk.device.usage_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.usage_pcm_server
-      network.incoming.packets_pcm_port_0:
+      network.outgoing.bytes_pcm_server_1_mgmt_port_0:
       - abstract_pcm_server_1
-      - network.incoming.packets_pcm_server_pcm_port
+      - network.outgoing.bytes_pcm_server_pcm_server_mgmt_port_0
+      network.outgoing.bytes_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - network.outgoing.bytes_pcm_server_pcm_server_mgmt_port_0
       disk.device.usage_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.usage_pcm_server
-      network.outgoing.bytes.rate_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.outgoing.bytes.rate_pcm_server_pcm_port
       disk.device.write.requests_server_pcm_2:
       - abstract_pcm_server_0
       - disk.device.write.requests_pcm_server
       disk.device.write.requests_server_pcm_1:
       - abstract_pcm_server_1
       - disk.device.write.requests_pcm_server
-      network.incoming.packets_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.incoming.packets_pcm_server_pcm_port
       os_server_pcm_2:
       - abstract_pcm_server_0
       - os_pcm_server
@@ -502,31 +508,25 @@ topology_template:
       os_server_pcm_1:
       - abstract_pcm_server_1
       - os_pcm_server
-      network.incoming.bytes.rate_pcm_port_0:
-      - abstract_pcm_server_1
-      - network.incoming.bytes.rate_pcm_server_pcm_port
-      network.incoming.bytes.rate_pcm_port_1:
-      - abstract_pcm_server_0
-      - network.incoming.bytes.rate_pcm_server_pcm_port
     requirements:
-      link_pcm_port_0:
+      link_pcm_server_1_mgmt_port_0:
       - abstract_pcm_server_1
-      - link_pcm_server_pcm_port
-      link_pcm_port_1:
+      - link_pcm_server_pcm_server_mgmt_port_0
+      link_pcm_server_2_mgmt_port_0:
       - abstract_pcm_server_0
-      - link_pcm_server_pcm_port
+      - link_pcm_server_pcm_server_mgmt_port_0
       dependency_server_pcm_2:
       - abstract_pcm_server_0
       - dependency_pcm_server
+      dependency_pcm_server_2_mgmt_port_0:
+      - abstract_pcm_server_0
+      - dependency_pcm_server_pcm_server_mgmt_port_0
       dependency_server_pcm_1:
       - abstract_pcm_server_1
       - dependency_pcm_server
-      dependency_pcm_port_0:
+      dependency_pcm_server_1_mgmt_port_0:
       - abstract_pcm_server_1
-      - dependency_pcm_server_pcm_port
-      dependency_pcm_port_1:
-      - abstract_pcm_server_0
-      - dependency_pcm_server_pcm_port
+      - dependency_pcm_server_pcm_server_mgmt_port_0
       local_storage_server_pcm_2:
       - abstract_pcm_server_0
       - local_storage_pcm_server

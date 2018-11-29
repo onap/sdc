@@ -11,27 +11,19 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_ps_server_1b_port_vlan_requirements:
+    port_ps_server_1b_port_1_network_role_tag:
+      type: string
+      required: true
+    port_ps_server_1b_port_1_related_networks:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_ps_server_1b_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_nested_vlan_service_template_filter_count:
       type: list
       required: true
       entry_schema:
         type: float
-    port_ps_server_1b_port_network_role_tag:
-      type: string
-      required: true
-    port_ps_server_1b_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -39,59 +31,67 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_ps_server_1b_port_order:
-      type: integer
+    port_ps_server_1b_port_1_ip_requirements:
+      type: list
       required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     vm_flavor_name:
       type: string
       required: true
-    port_ps_server_1b_port_related_networks:
-      type: list
+    port_ps_server_1b_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_ps_server_1b_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_ps_server_1b_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_ps_server_1b_port_1_network_role:
+      type: string
       required: true
     subinterface_nested_vlan_net1:
       type: list
       required: true
       entry_schema:
         type: string
-    port_ps_server_1b_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     vm_image_name:
       type: string
       required: true
-    port_ps_server_1b_port_network_role:
-      type: string
-      required: true
-    port_ps_server_1b_port_replacement_policy:
+    port_ps_server_1b_port_1_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
+    port_ps_server_1b_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_ps_server_1b_port_1_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     subinterface_nested_vlan_parent_interface:
       type: list
       required: true
       entry_schema:
         type: string
-    port_ps_server_1b_port_subnetpoolid:
+    port_ps_server_1b_port_1_order:
+      type: integer
+      required: true
+    port_ps_server_1b_port_1_subnetpoolid:
       type: string
       required: true
+    port_ps_server_1b_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_ps_server_1b_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
+    port_ps_server_1b_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     compute_ps_server_1b_name:
       type: list
       required: true
@@ -113,7 +113,46 @@ topology_template:
           get_input:
           - compute_ps_server_1b_name
           - index_value
-    ps_server_1b_ps_server_1b_port_nested_vlan:
+    ps_server_1b_ps_server_1b_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_ps_server_1b_port_1_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_ps_server_1b_port_1_mac_requirements
+        order:
+          get_input: port_ps_server_1b_port_1_order
+        exCP_naming:
+          get_input: port_ps_server_1b_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_ps_server_1b_port_1_vlan_requirements
+        subinterface_indicator: true
+        ip_requirements:
+          get_input: port_ps_server_1b_port_1_ip_requirements
+        related_networks:
+          get_input: port_ps_server_1b_port_1_related_networks
+        network_role_tag:
+          get_input: port_ps_server_1b_port_1_network_role_tag
+        network_role:
+          get_input: port_ps_server_1b_port_1_network_role
+        fixed_ips:
+          get_input:
+          - port_ps_server_1b_port_1_fixed_ips
+          - index_value
+        subnetpoolid:
+          get_input: port_ps_server_1b_port_1_subnetpoolid
+        network:
+          get_input:
+          - port_ps_server_1b_port_1_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps_server_1b
+          relationship: tosca.relationships.network.BindsTo
+    ps_server_1b_ps_server_1b_port_1_nested_vlan:
       type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested_vlan
       directives:
       - substitutable
@@ -136,46 +175,7 @@ topology_template:
       requirements:
       - binding_template_Vlan_vmi_1:
           capability: tosca.capabilities.network.Bindable
-          node: ps_server_1b_ps_server_1b_port
-          relationship: tosca.relationships.network.BindsTo
-    ps_server_1b_ps_server_1b_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        replacement_policy:
-          get_input:
-          - port_ps_server_1b_port_replacement_policy
-          - index_value
-        mac_requirements:
-          get_input: port_ps_server_1b_port_mac_requirements
-        order:
-          get_input: port_ps_server_1b_port_order
-        exCP_naming:
-          get_input: port_ps_server_1b_port_exCP_naming
-        vlan_requirements:
-          get_input: port_ps_server_1b_port_vlan_requirements
-        subinterface_indicator: true
-        ip_requirements:
-          get_input: port_ps_server_1b_port_ip_requirements
-        related_networks:
-          get_input: port_ps_server_1b_port_related_networks
-        network_role_tag:
-          get_input: port_ps_server_1b_port_network_role_tag
-        network_role:
-          get_input: port_ps_server_1b_port_network_role
-        fixed_ips:
-          get_input:
-          - port_ps_server_1b_port_fixed_ips
-          - index_value
-        subnetpoolid:
-          get_input: port_ps_server_1b_port_subnetpoolid
-        network:
-          get_input:
-          - port_ps_server_1b_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: ps_server_1b
+          node: ps_server_1b_ps_server_1b_port_1
           relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.ps_server_1b
@@ -186,6 +186,9 @@ topology_template:
       disk.device.usage_ps_server_1b:
       - ps_server_1b
       - disk.device.usage
+      feature_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_1_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_1_nested_vlan
+      - feature_template_Vlan_vmi_1
       disk.device.allocation_ps_server_1b:
       - ps_server_1b
       - disk.device.allocation
@@ -198,27 +201,24 @@ topology_template:
       scalable_ps_server_1b:
       - ps_server_1b
       - scalable
+      network.outgoing.bytes_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.outgoing.bytes
       disk.device.read.bytes.rate_ps_server_1b:
       - ps_server_1b
       - disk.device.read.bytes.rate
       disk.device.latency_ps_server_1b:
       - ps_server_1b
       - disk.device.latency
+      network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.outgoing.packets.rate
       disk.device.iops_ps_server_1b:
       - ps_server_1b
       - disk.device.iops
-      attachment_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - attachment
-      network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.outgoing.packets.rate
       disk.device.capacity_ps_server_1b:
       - ps_server_1b
       - disk.device.capacity
-      forwarder_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - forwarder
       instance_ps_server_1b:
       - ps_server_1b
       - instance
@@ -243,17 +243,14 @@ topology_template:
       disk.read.requests_ps_server_1b:
       - ps_server_1b
       - disk.read.requests
-      feature_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - feature
       disk.device.read.requests.rate_ps_server_1b:
       - ps_server_1b
       - disk.device.read.requests.rate
       disk.capacity_ps_server_1b:
       - ps_server_1b
       - disk.capacity
-      network.incoming.bytes_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
+      network.incoming.bytes_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
       - network.incoming.bytes
       disk.write.requests.rate_ps_server_1b:
       - ps_server_1b
@@ -261,12 +258,21 @@ topology_template:
       disk.device.read.bytes_ps_server_1b:
       - ps_server_1b
       - disk.device.read.bytes
+      attachment_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - attachment
       disk.device.write.requests.rate_ps_server_1b:
       - ps_server_1b
       - disk.device.write.requests.rate
+      network.incoming.packets_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.incoming.packets
       disk.root.size_ps_server_1b:
       - ps_server_1b
       - disk.root.size
+      feature_ps_server_1b_ps_server_1b_port_1_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_1_nested_vlan
+      - feature
       binding_ps_server_1b:
       - ps_server_1b
       - binding
@@ -285,17 +291,8 @@ topology_template:
       disk.read.bytes_ps_server_1b:
       - ps_server_1b
       - disk.read.bytes
-      network.incoming.packets.rate_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.incoming.packets.rate
-      network.outgoing.bytes_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.outgoing.bytes
-      network.incoming.packets_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.incoming.packets
-      network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
+      network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
       - network.outgoing.bytes.rate
       feature_ps_server_1b:
       - ps_server_1b
@@ -303,6 +300,9 @@ topology_template:
       os_ps_server_1b:
       - ps_server_1b
       - os
+      forwarder_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - forwarder
       disk.iops_ps_server_1b:
       - ps_server_1b
       - disk.iops
@@ -312,58 +312,58 @@ topology_template:
       disk.write.requests_ps_server_1b:
       - ps_server_1b
       - disk.write.requests
-      network.outpoing.packets_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.outpoing.packets
+      network.incoming.packets.rate_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.incoming.packets.rate
+      binding_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - binding
       memory.usage_ps_server_1b:
       - ps_server_1b
       - memory.usage
       disk.latency_ps_server_1b:
       - ps_server_1b
       - disk.latency
+      network.outpoing.packets_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.outpoing.packets
       endpoint_ps_server_1b:
       - ps_server_1b
       - endpoint
-      network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - network.incoming.bytes.rate
-      feature_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - feature
       vcpus_ps_server_1b:
       - ps_server_1b
       - vcpus
+      network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - network.incoming.bytes.rate
       cpu.delta_ps_server_1b:
       - ps_server_1b
       - cpu.delta
       disk.ephemeral.size_ps_server_1b:
       - ps_server_1b
       - disk.ephemeral.size
-      binding_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - binding
-      feature_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - feature_template_Vlan_vmi_1
+      feature_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - feature
     requirements:
-      dependency_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - dependency_template_Vlan_vmi_1
-      subinterface_link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
+      subinterface_link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_1_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_1_nested_vlan
       - subinterface_link_template_Vlan_vmi_1
+      link_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
+      - link
       local_storage_ps_server_1b:
       - ps_server_1b
       - local_storage
-      dependency_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
+      dependency_ps_server_1b_ps_server_1b_port_1:
+      - ps_server_1b_ps_server_1b_port_1
       - dependency
-      dependency_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
+      dependency_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_1_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_1_nested_vlan
+      - dependency_template_Vlan_vmi_1
+      dependency_ps_server_1b_ps_server_1b_port_1_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_1_nested_vlan
       - dependency
-      link_ps_server_1b_ps_server_1b_port:
-      - ps_server_1b_ps_server_1b_port
-      - link
       dependency_ps_server_1b:
       - ps_server_1b
       - dependency

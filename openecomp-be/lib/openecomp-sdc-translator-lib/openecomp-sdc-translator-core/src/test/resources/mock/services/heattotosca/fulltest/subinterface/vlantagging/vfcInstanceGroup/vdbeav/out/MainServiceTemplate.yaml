@@ -903,6 +903,16 @@ topology_template:
             get_input: vnf_name
         subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix_len:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        port_vdbe_untr_vmi_1_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        port_vdbe_untr_vmi_1_virtual_network_refs:
+        - - get_input: untrusted_net_name
         port_vdbe_fabr_1_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n003
@@ -929,14 +939,6 @@ topology_template:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_1
-        port_vdbe_untr_vmi_name:
-        - str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_ip_prefix_len
         compute_vdbe_name:
@@ -949,8 +951,6 @@ topology_template:
         - get_input: vdbe_untrusted_ip_1
         subinterface_vdbeav_subinterface_heat_template_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
-        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_1
         port_vdbe_ctrl_1_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n002
@@ -963,8 +963,6 @@ topology_template:
         - group: vdbe_ServerGroup_group
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-        port_vdbe_untr_vmi_virtual_network_refs:
-        - - get_input: untrusted_net_name
         port_vdbe_trst_1_port_virtual_machine_interface_mac_addresses:
         - - get_input: vdbe_hw_trst_mac_1
         subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix:
@@ -973,6 +971,8 @@ topology_template:
         - - get_input: oam_net_name
         port_vdbe_ctrl_1_port_virtual_network_refs:
         - - control_int_net
+        port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix
         subinterface_vdbeav_subinterface_heat_template_ip_v6_address:
@@ -1030,6 +1030,14 @@ topology_template:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
         port_vdbe_oam_0_port_virtual_network_refs:
         - - get_input: oam_net_name
+        port_vdbe_untr_vmi_1_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
         port_vdbe_trst_0_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n005
@@ -1038,8 +1046,10 @@ topology_template:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_0
+        port_vdbe_untr_vmi_1_virtual_network_refs:
+        - - get_input: untrusted_net_name
         subinterface_vdbeav_subinterface_heat_template_parent_interface:
-        - vdbe_0_untr_vmi_0
+        - vdbe_0_untr_vmi_1
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
         subinterface_vdbeav_subinterface_heat_template_vlan_tag_list:
@@ -1047,14 +1057,6 @@ topology_template:
         subinterface_vdbeav_subinterface_heat_template_vn_network_list:
         - get_input: untrusted_vn_networks
         subinterface_vdbeav_subinterface_heat_template_subinterfaces_name_prefix:
-        - str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_0
-        port_vdbe_untr_vmi_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004
             params:
@@ -1076,14 +1078,10 @@ topology_template:
         - get_input: vdbe_untrusted_ip_0
         subinterface_vdbeav_subinterface_heat_template_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
-        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
-        - - get_input: vdbe_hw_untr_mac_0
         compute_vdbe_scheduler_hints:
         - group: vdbe_ServerGroup_group
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-        port_vdbe_untr_vmi_virtual_network_refs:
-        - - get_input: untrusted_net_name
         port_vdbe_oam_0_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n001
@@ -1096,6 +1094,8 @@ topology_template:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
         port_vdbe_oam_0_port_virtual_machine_interface_mac_addresses:
         - - get_input: vdbe_oam_mac_0
+        port_vdbe_untr_vmi_1_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_0
         subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix
         port_vdbe_fabr_0_port_name:

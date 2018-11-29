@@ -133,28 +133,28 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd02_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
         - get_input:
           - pd_server_names
           - 1
-        port_pd02_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd02_port_network_role_tag: oam
+        port_pd02_port_0_network:
+        - get_input: oam_net_name
+        port_pd02_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd02_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_pd02_port_network:
-        - get_input: oam_net_name
+        port_pd02_port_0_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -170,6 +170,18 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd01_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd01_port_0_network:
+        - get_input: oam_net_name
+        port_pd01_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_pd01_port_0_network_role_tag: oam
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -178,20 +190,8 @@ topology_template:
           - 0
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_pd01_port_network:
-        - get_input: oam_net_name
-        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

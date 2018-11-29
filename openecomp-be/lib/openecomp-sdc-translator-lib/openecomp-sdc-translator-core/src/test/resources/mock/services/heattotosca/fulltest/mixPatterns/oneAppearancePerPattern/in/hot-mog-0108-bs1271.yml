@@ -52,16 +52,16 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1a_t1_port_0}
-        - port: {get_resource: 1a_t2_port_0}
+        - port: {get_resource: 1a_t1_port}
+        - port: {get_resource: 1a_t2_port}
       user_data_format:  RAW
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1a_t1_port_0:
+  1a_t1_port:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: a_single_1a_network}
-  1a_t2_port_0:
+  1a_t2_port:
     type: OS::Neutron::Port
     properties:
       network: {get_param: ppds_net_name}
@@ -81,17 +81,17 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1b_t1_port_0}
-        - port: {get_resource: 1b_t2_port_0}
+        - port: {get_resource: b_single_1b_0_t1_port_0}
+        - port: {get_resource: b_single_1b_0_t2_port_0}
       user_data_format:  RAW
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1b_t1_port_0:
+  b_single_1b_0_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_attr: [1b01_single_1B, accessIPv6]}
 
-  1b_t2_port_0:
+  b_single_1b_0_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: b_single_1b_network}
@@ -110,17 +110,17 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1b_t1_port_1}
-        - port: {get_resource: 1b_t2_port_1}
+        - port: {get_resource: b_single_1b_1_t1_port_0}
+        - port: {get_resource: b_single_1b_1_t2_port_0}
       user_data_format:  RAW
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1b_t1_port_1:
+  b_single_1b_1_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
 
-  1b_t2_port_1:
+  b_single_1b_1_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: b_single_1b_network}
@@ -133,23 +133,23 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1c1_t1_port_0}
-        - port: {get_resource: 1c1_t2_port_0}
+        - port: {get_resource: 1c1_scalling_instance_0_t1_port_0}
+        - port: {get_resource: 1c1_scalling_instance_0_t2_port_0}
       user_data_format:  RAW1
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1c1_t1_port_0:
+  1c1_scalling_instance_0_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: 1c1_scalling_instance_network}
       fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
-      name: 1c1_t1_port_0
-  1c1_t2_port_0:
+      name: 1c1_scalling_instance_0_t1_port_0
+  1c1_scalling_instance_0_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: ppds_net_name}
       fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
-      name: 1c1_t2_port_0
+      name: 1c1_scalling_instance_0_t2_port_0
 
   1c1_scalling_instance_network:
     type: OS::Neutron::Net
@@ -165,24 +165,24 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1c1_t1_port_1}
-        - port: {get_resource: 1c1_t2_port_1}
+        - port: {get_resource: 1c1_scalling_instance_1_t1_port_0}
+        - port: {get_resource: 1c1_scalling_instance_1_t2_port_0}
       user_data_format:  RAW2
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1c1_t1_port_1:
+  1c1_scalling_instance_1_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: 1c1_scalling_instance_network}
       fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
-      name: 1c1_t1_port_1
+      name: 1c1_scalling_instance_1_t1_port_0
 
-  1c1_t2_port_1:
+  1c1_scalling_instance_1_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: ppds_net_name}
       fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
-      name: 1c1_t2_port_1
+      name: 1c1_scalling_instance_1_t2_port_0
 
   1c201_catalog_instance_1C2:
     type: OS::Nova::Server
@@ -192,16 +192,16 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1c2_t1_port_0}
-        - port: {get_resource: 1c2_t2_port_0}
+        - port: {get_resource: 1c2_catalog_instance_0_t1_port_0}
+        - port: {get_resource: 1c2_catalog_instance_0_t2_port_0}
       user_data_format:  RAW1
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1c2_t1_port_0:
+  1c2_catalog_instance_0_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  1c2_t2_port_0:
+  1c2_catalog_instance_0_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: 1c2_catalog_instance_network}
@@ -212,7 +212,7 @@ resources:
       name:
         get_param: net_name
 
-  1c202_scalling_instance_1C2:
+  1c202_catalog_instance_1C2:
     type: OS::Nova::Server
     properties:
       name: {get_param: [1c2_catalog_instance_names, 2]}
@@ -220,16 +220,16 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: 1c2_t1_port_1}
-        - port: {get_resource: 1c2_t2_port_1}
+        - port: {get_resource: 1c2_catalog_instance_1_t1_port_0}
+        - port: {get_resource: 1c2_catalog_instance_1_t2_port_0}
       user_data_format:  {get_attr: [1c201_catalog_instance_1C2, instance_name]}
       scheduler_hints: { group: { get_resource: BE_Affinity }  }
 
-  1c2_t1_port_1:
+  1c2_catalog_instance_1_t1_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  1c2_t2_port_1:
+  1c2_catalog_instance_1_t2_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: 1c2_catalog_instance_network}
@@ -284,20 +284,20 @@ resources:
     depends_on:
       - nestedNoUnified
       - 4p_nested
-      - 1c2_t1_port_1
-      - 1c2_t1_port_0
+      - 1c2_catalog_instance_1_t1_port_0
+      - 1c2_catalog_instance_0_t1_port_0
       - 1c201_catalog_instance_1C2
-      - 1c202_scalling_instance_1C2
+      - 1c202_catalog_instance_1C2
       - 1c101_scalling_instance_1C1
       - 1c102_scalling_instance_1C1
-      - 1c1_t2_port_0
-      - 1c1_t2_port_1
+      - 1c1_scalling_instance_0_t2_port_0
+      - 1c1_scalling_instance_1_t2_port_0
       - 1b01_single_1B
       - 1b02_single_1B
-      - 1b_t1_port_0
-      - 1b_t1_port_1
+      - b_single_1b_0_t1_port_0
+      - b_single_1b_1_t1_port_0
       - 1a_single_1A
-      - 1a_t1_port_0
+      - 1a_t1_port
     properties:
       name:
         get_param: net_name
@@ -306,11 +306,11 @@ resources:
     type: OS::Neutron::Net
     properties:
       name: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
-      dhcp_agent_ids: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
-      tenant_id: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_t2_port_0, tenant_id, {get_attr:[1c1_t2_port_1, tenant_id]}]}]}]}
-      value_specs: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[1b_t1_port_0, tenant_id, {get_attr:[1b_t1_port_1, tenant_id]}]}]] }
+      dhcp_agent_ids: { get_attr: [1c2_catalog_instance_1_t1_port_0, tenant_id, {get_attr: [1c2_catalog_instance_0_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_catalog_instance_1C2,instance_name]}]}]}]}
+      tenant_id: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_scalling_instance_0_t2_port_0, tenant_id, {get_attr:[1c1_scalling_instance_1_t2_port_0, tenant_id]}]}]}]}
+      value_specs: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[b_single_1b_0_t1_port_0, tenant_id, {get_attr:[b_single_1b_1_t1_port_0, tenant_id]}]}]] }
       qos_policy: {get_attr:[1a_single_1A, instance_name]}
-      admin_state_up: {get_attr:[1a_t1_port_0, tenant_id]}
+      admin_state_up: {get_attr:[1a_t1_port, tenant_id]}
 
   BE_Affinity:
     type: OS::Nova::ServerGroup
@@ -322,13 +322,13 @@ outputs:
   out1:
     value: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
   out2:
-    value: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
+    value: { get_attr: [1c2_catalog_instance_1_t1_port_0, tenant_id, {get_attr: [1c2_catalog_instance_0_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_catalog_instance_1C2,instance_name]}]}]}]}
   out3:
-    value: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_t2_port_0, tenant_id, {get_attr:[1c1_t2_port_1, tenant_id]}]}]}]}
+    value: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_scalling_instance_0_t2_port_0, tenant_id, {get_attr:[1c1_scalling_instance_1_t2_port_0, tenant_id]}]}]}]}
   out4:
-    value: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[1b_t1_port_0, tenant_id, {get_attr:[1b_t1_port_1, tenant_id]}]}]] }
+    value: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[b_single_1b_0_t1_port_0, tenant_id, {get_attr:[b_single_1b_1_t1_port_0, tenant_id]}]}]] }
   out5:
     value: {get_attr:[1a_single_1A, instance_name]}
   out6:
-    value: {get_attr:[1a_t1_port_0, tenant_id]}
+    value: {get_attr:[1a_t1_port, tenant_id]}
 

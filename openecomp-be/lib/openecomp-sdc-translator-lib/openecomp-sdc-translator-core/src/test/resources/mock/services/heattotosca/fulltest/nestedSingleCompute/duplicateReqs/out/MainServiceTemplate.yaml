@@ -1849,31 +1849,31 @@ topology_template:
           node: oam_oam_vip_1_port
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_internal_0_port
+          capability: attachment_oam_oam_internal_0_port_0
           node: abstract_oam
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_oam_0_port
+          capability: attachment_oam_oam_oam_0_port_1
           node: abstract_oam
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_internal_1_port
+          capability: attachment_oam_oam_internal_1_port_0
           node: abstract_oam_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_oam_1_port
+          capability: attachment_oam_oam_oam_1_port_1
           node: abstract_oam_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_internal_2_port
+          capability: attachment_oam_oam_internal_2_port_0
           node: abstract_oam_2
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_oam_oam_2_port
+          capability: attachment_oam_oam_oam_2_port_1
           node: abstract_oam_2
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_internal_0_port
+          capability: attachment_cif_cif_internal_0_port_0
           node: abstract_cif
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -1881,7 +1881,7 @@ topology_template:
           node: abstract_cif
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_ims_core_0_port
+          capability: attachment_cif_cif_ims_core_0_port_2
           node: abstract_cif
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -1889,11 +1889,11 @@ topology_template:
           node: abstract_cif
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_ims_li_0_port
+          capability: attachment_cif_cif_ims_li_0_port_4
           node: abstract_cif
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_internal_1_port
+          capability: attachment_cif_cif_internal_1_port_0
           node: abstract_cif_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -1901,7 +1901,7 @@ topology_template:
           node: abstract_cif_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_ims_core_1_port
+          capability: attachment_cif_cif_ims_core_1_port_2
           node: abstract_cif_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -1909,47 +1909,47 @@ topology_template:
           node: abstract_cif_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cif_cif_ims_li_1_port
+          capability: attachment_cif_cif_ims_li_1_port_4
           node: abstract_cif_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_internal_0_port
+          capability: attachment_lbd_lbd_internal_0_port_0
           node: abstract_lbd_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_dpdk_0_port
+          capability: attachment_lbd_lbd_dpdk_0_port_1
           node: abstract_lbd_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_ims_core_0_port
+          capability: attachment_lbd_lbd_ims_core_0_port_2
           node: abstract_lbd_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_internal_1_port
+          capability: attachment_lbd_lbd_internal_1_port_0
           node: abstract_lbd
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_dpdk_1_port
+          capability: attachment_lbd_lbd_dpdk_1_port_1
           node: abstract_lbd
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_lbd_lbd_ims_core_1_port
+          capability: attachment_lbd_lbd_ims_core_1_port_2
           node: abstract_lbd
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cdi_cdi_internal_0_port
+          capability: attachment_cdi_cdi_internal_0_port_0
           node: abstract_cdi
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cdi_cdi_ims_core_0_port
+          capability: attachment_cdi_cdi_ims_core_0_port_1
           node: abstract_cdi
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cdi_cdi_internal_1_port
+          capability: attachment_cdi_cdi_internal_1_port_0
           node: abstract_cdi_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cdi_cdi_ims_core_1_port
+          capability: attachment_cdi_cdi_ims_core_1_port_1
           node: abstract_cdi_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -2071,74 +2071,45 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cdi_ims_core_1_port_security_groups:
+        port_cdi_ims_core_1_port_1_fixed_ips:
+        - ip_address:
+            get_input: cdi_ims_core_v6_ip_1
+        port_cdi_internal_1_port_0_security_groups:
         - - cscf_RSG
         vm_flavor_name:
           get_input: cdi_flavor_name
-        port_cdi_internal_1_port_security_groups:
+        port_cdi_ims_core_1_port_1_security_groups:
         - - cscf_RSG
-        port_cdi_ims_core_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: cdi_image_name
-        compute_cdi_scheduler_hints:
-        - group: cdi_server_group_group
-        port_cdi_ims_core_1_port_fixed_ips:
-        - ip_address:
-            get_input: cdi_ims_core_v6_ip_1
-        compute_cdi_name:
-        - get_input: cdi_name_1
-        port_cdi_ims_core_1_port_network_role_tag: ims_core
-        port_cdi_ims_core_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth1
-            params:
-              $PREFIX:
-                get_input: cdi_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        compute_cdi_user_data_format:
-        - RAW
-        port_cdi_ims_core_1_port_network:
-        - get_input: ims_core_net_id
-        compute_cdi_availability_zone:
-        - get_input: availability_zone_1
-        port_cdi_internal_1_port_network:
-        - cscf_internal_network_0
-        port_cdi_ims_core_1_port_ip_requirements:
+        port_cdi_ims_core_1_port_1_network_role_tag: ims_core
+        port_cdi_ims_core_1_port_1_ip_requirements:
         - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_cdi_internal_1_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
-        compute_cdi_config_drive:
-        - true
-        port_cdi_internal_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cdi_ims_core_1_port_allowed_address_pairs:
-        - ip_address:
-            get_input: cdi_ims_core_v6_vip_0
-        port_cdi_internal_1_port_fixed_ips:
+        vm_image_name:
+          get_input: cdi_image_name
+        compute_cdi_scheduler_hints:
+        - group: cdi_server_group_group
+        compute_cdi_name:
+        - get_input: cdi_name_1
+        compute_cdi_user_data_format:
+        - RAW
+        port_cdi_ims_core_1_port_1_network:
+        - get_input: ims_core_net_id
+        port_cdi_internal_1_port_0_fixed_ips:
         - ip_address:
             get_input: cdi_internal_ip_1
         - ip_address:
             get_input: cdi_internal_v6_ip_1
-        port_cdi_internal_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth0
-            params:
-              $PREFIX:
-                get_input: cdi_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_cdi_internal_1_port_ip_requirements:
+        compute_cdi_availability_zone:
+        - get_input: availability_zone_1
+        compute_cdi_config_drive:
+        - true
+        port_cdi_ims_core_1_port_1_allowed_address_pairs:
+        - ip_address:
+            get_input: cdi_ims_core_v6_vip_0
+        port_cdi_internal_1_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
@@ -2149,6 +2120,33 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_cdi_internal_1_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cdi_internal_1_port_0_name:
+        - str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input: cdi_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_cdi_ims_core_1_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cdi_ims_core_1_port_1_name:
+        - str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input: cdi_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_cdi_internal_1_port_0_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
         compute_cdi_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -2159,6 +2157,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
+        port_cdi_internal_1_port_0_network:
+        - cscf_internal_network_0
         service_template_filter:
           substitute_service_template: Nested_cdi_1ServiceTemplate.yaml
           count: 1
@@ -2168,11 +2168,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_cdi_cdi_internal_1_port:
+      - link_cdi_cdi_internal_1_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cdi_cdi_internal_1_port:
+      - dependency_cdi_cdi_internal_1_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -2483,46 +2483,38 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_lbd_ims_core_1_port_allowed_address_pairs:
-        - ip_address:
-            get_input: lbd_ims_core_v6_vip_0
+        port_lbd_ims_core_1_port_2_security_groups:
+        - - cscf_RSG
         compute_lbd_user_data_format:
         - RAW
-        port_lbd_internal_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth0
-            params:
-              $PREFIX:
-                get_input: lbd_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_lbd_dpdk_1_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
-        vm_flavor_name:
-          get_input: lbd_flavor_name
-        port_lbd_ims_core_1_port_mac_requirements:
+        port_lbd_ims_core_1_port_2_mac_requirements:
           mac_count_required:
             is_required: false
+        vm_flavor_name:
+          get_input: lbd_flavor_name
         compute_lbd_availability_zone:
         - get_input: availability_zone_1
         vm_image_name:
           get_input: lbd_image_name
-        port_lbd_dpdk_1_port_network:
-        - cscf_internal_dpdk_network_0
-        port_lbd_ims_core_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth2
-            params:
-              $PREFIX:
-                get_input: lbd_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        compute_lbd_scheduler_hints:
-        - group: lbd_server_group_group
-        port_lbd_dpdk_1_port_name:
+        port_lbd_internal_1_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_lbd_dpdk_1_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_internal_1_port_0_network:
+        - cscf_internal_network_0
+        port_lbd_ims_core_1_port_2_network_role_tag: ims_core
+        port_lbd_ims_core_1_port_2_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_dpdk_1_port_1_name:
         - str_replace:
             template: $PREFIX$DELeth1
             params:
@@ -2530,54 +2522,46 @@ topology_template:
                 get_input: lbd_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_lbd_internal_1_port_network:
-        - cscf_internal_network_0
-        port_lbd_internal_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        compute_lbd_scheduler_hints:
+        - group: lbd_server_group_group
         compute_lbd_name:
         - get_input: lbd_name_1
-        port_lbd_ims_core_1_port_network_role_tag: ims_core
+        port_lbd_dpdk_1_port_1_network:
+        - cscf_internal_dpdk_network_0
         compute_lbd_config_drive:
         - true
-        port_lbd_ims_core_1_port_ip_requirements:
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_lbd_dpdk_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_lbd_internal_1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_lbd_internal_1_port_security_groups:
-        - - cscf_RSG
-        port_lbd_ims_core_1_port_security_groups:
-        - - cscf_RSG
-        port_lbd_ims_core_1_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_ims_core_v6_ip_1
-        port_lbd_internal_1_port_fixed_ips:
+        port_lbd_ims_core_1_port_2_name:
+        - str_replace:
+            template: $PREFIX$DELeth2
+            params:
+              $PREFIX:
+                get_input: lbd_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_lbd_internal_1_port_0_fixed_ips:
         - ip_address:
             get_input: lbd_internal_ip_1
-        port_lbd_ims_core_1_port_network:
-        - get_input: ims_core_net_id
-        port_lbd_dpdk_1_port_security_groups:
-        - - cscf_RSG
-        port_lbd_dpdk_1_port_fixed_ips:
+        port_lbd_ims_core_1_port_2_allowed_address_pairs:
+        - ip_address:
+            get_input: lbd_ims_core_v6_vip_0
+        port_lbd_dpdk_1_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_lbd_dpdk_1_port_1_fixed_ips:
         - ip_address:
             get_input: lbd_internal_dpdk_ip_1
-        port_lbd_dpdk_1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_lbd_ims_core_1_port_2_fixed_ips:
+        - ip_address:
+            get_input: lbd_ims_core_v6_ip_1
+        port_lbd_dpdk_1_port_1_security_groups:
+        - - cscf_RSG
+        port_lbd_dpdk_1_port_1_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        port_lbd_internal_1_port_0_security_groups:
+        - - cscf_RSG
         compute_lbd_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -2588,6 +2572,22 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
+        port_lbd_internal_1_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_internal_1_port_0_name:
+        - str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input: lbd_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_lbd_ims_core_1_port_2_network:
+        - get_input: ims_core_net_id
         service_template_filter:
           substitute_service_template: Nested_lbdServiceTemplate.yaml
           count: 1
@@ -2597,19 +2597,19 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_lbd_lbd_internal_1_port:
+      - link_lbd_lbd_internal_1_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_lbd_lbd_internal_1_port:
+      - dependency_lbd_lbd_internal_1_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
-      - link_lbd_lbd_dpdk_1_port:
+      - link_lbd_lbd_dpdk_1_port_1:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_lbd_lbd_dpdk_1_port:
+      - dependency_lbd_lbd_dpdk_1_port_1:
           capability: tosca.capabilities.Node
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.DependsOn
@@ -2757,7 +2757,7 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cdi_internal_0_port_ip_requirements:
+        port_cdi_internal_0_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
@@ -2770,35 +2770,50 @@ topology_template:
             is_required: false
         vm_flavor_name:
           get_input: cdi_flavor_name
-        port_cdi_ims_core_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth1
-            params:
-              $PREFIX:
-                get_input: cdi_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_cdi_internal_0_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
+        port_cdi_ims_core_0_port_1_security_groups:
+        - - cscf_RSG
+        port_cdi_ims_core_0_port_1_network:
+        - get_input: ims_core_net_id
         vm_image_name:
           get_input: cdi_image_name
         compute_cdi_scheduler_hints:
         - group: cdi_server_group_group
         compute_cdi_name:
         - get_input: cdi_name_0
-        port_cdi_ims_core_0_port_ip_requirements:
+        compute_cdi_user_data_format:
+        - RAW
+        port_cdi_internal_0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_cdi_availability_zone:
+        - get_input: availability_zone_0
+        port_cdi_ims_core_0_port_1_network_role_tag: ims_core
+        compute_cdi_config_drive:
+        - true
+        port_cdi_internal_0_port_0_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        port_cdi_internal_0_port_0_security_groups:
+        - - cscf_RSG
+        port_cdi_internal_0_port_0_network:
+        - cscf_internal_network_0
+        port_cdi_ims_core_0_port_1_ip_requirements:
         - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_cdi_ims_core_0_port_network_role_tag: ims_core
-        compute_cdi_user_data_format:
-        - RAW
-        port_cdi_internal_0_port_name:
+        port_cdi_internal_0_port_0_fixed_ips:
+        - ip_address:
+            get_input: cdi_internal_ip_0
+        - ip_address:
+            get_input: cdi_internal_v6_ip_0
+        port_cdi_ims_core_0_port_1_fixed_ips:
+        - ip_address:
+            get_input: cdi_ims_core_v6_ip_0
+        port_cdi_internal_0_port_0_name:
         - str_replace:
             template: $PREFIX$DELeth0
             params:
@@ -2806,32 +2821,14 @@ topology_template:
                 get_input: cdi_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
-        compute_cdi_availability_zone:
-        - get_input: availability_zone_0
-        port_cdi_ims_core_0_port_network:
-        - get_input: ims_core_net_id
-        port_cdi_internal_0_port_network:
-        - cscf_internal_network_0
-        port_cdi_internal_0_port_fixed_ips:
-        - ip_address:
-            get_input: cdi_internal_ip_0
-        - ip_address:
-            get_input: cdi_internal_v6_ip_0
-        compute_cdi_config_drive:
-        - true
-        port_cdi_internal_0_port_security_groups:
-        - - cscf_RSG
-        port_cdi_ims_core_0_port_security_groups:
-        - - cscf_RSG
-        port_cdi_ims_core_0_port_fixed_ips:
-        - ip_address:
-            get_input: cdi_ims_core_v6_ip_0
-        port_cdi_internal_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cdi_ims_core_0_port_allowed_address_pairs:
-        - ip_address:
-            get_input: cdi_ims_core_v6_vip_0
+        port_cdi_ims_core_0_port_1_name:
+        - str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input: cdi_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
         compute_cdi_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -2842,7 +2839,10 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_cdi_ims_core_0_port_mac_requirements:
+        port_cdi_ims_core_0_port_1_allowed_address_pairs:
+        - ip_address:
+            get_input: cdi_ims_core_v6_vip_0
+        port_cdi_ims_core_0_port_1_mac_requirements:
           mac_count_required:
             is_required: false
         service_template_filter:
@@ -2854,11 +2854,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_cdi_cdi_internal_0_port:
+      - link_cdi_cdi_internal_0_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cdi_cdi_internal_0_port:
+      - dependency_cdi_cdi_internal_0_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -2895,47 +2895,16 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_oam_internal_1_port_security_groups:
-        - - cscf_RSG
-        port_oam_oam_1_port_allowed_address_pairs:
-        - ip_address:
-            get_input: oam_oam_vip_0
         vm_flavor_name:
           get_input: oam_flavor_name
-        port_oam_oam_1_port_ip_requirements:
+        port_oam_internal_1_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_oam_oam_1_port_network_role_tag: oam
-        port_oam_oam_1_port_security_groups:
-        - - cscf_RSG
-        vm_image_name:
-          get_input: oam_image_name
-        compute_oam_config_drive:
-        - true
-        port_oam_internal_1_port_network:
-        - cscf_internal_network_0
-        port_oam_oam_1_port_fixed_ips:
-        - ip_address:
-            get_input: oam_oam_ip_1
-        port_oam_internal_1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_oam_oam_1_port_network:
-        - get_input: oam_net_id
-        port_oam_internal_1_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
-        compute_oam_user_data_format:
-        - RAW
-        port_oam_internal_1_port_name:
+        port_oam_oam_1_port_1_network_role_tag: oam
+        port_oam_internal_1_port_0_name:
         - str_replace:
             template: $PREFIX$DELeth0
             params:
@@ -2943,10 +2912,35 @@ topology_template:
                 get_input: oam_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_oam_internal_1_port_fixed_ips:
+        vm_image_name:
+          get_input: oam_image_name
+        compute_oam_config_drive:
+        - true
+        port_oam_internal_1_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam_oam_1_port_1_allowed_address_pairs:
         - ip_address:
-            get_input: oam_internal_ip_1
-        port_oam_oam_1_port_name:
+            get_input: oam_oam_vip_0
+        port_oam_oam_1_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_oam_user_data_format:
+        - RAW
+        port_oam_oam_1_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam_internal_1_port_0_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        port_oam_oam_1_port_1_network:
+        - get_input: oam_net_id
+        port_oam_oam_1_port_1_name:
         - str_replace:
             template: $PREFIX$DELeth1
             params:
@@ -2954,8 +2948,13 @@ topology_template:
                 get_input: oam_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
+        port_oam_internal_1_port_0_fixed_ips:
+        - ip_address:
+            get_input: oam_internal_ip_1
         compute_oam_scheduler_hints:
         - group: oam_server_group_group
+        port_oam_internal_1_port_0_security_groups:
+        - - cscf_RSG
         compute_oam_availability_zone:
         - get_input: availability_zone_1
         compute_oam_metadata:
@@ -2968,14 +2967,15 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_oam_internal_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_oam_oam_1_port_1_security_groups:
+        - - cscf_RSG
         compute_oam_name:
         - get_input: oam_name_1
-        port_oam_oam_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_oam_internal_1_port_0_network:
+        - cscf_internal_network_0
+        port_oam_oam_1_port_1_fixed_ips:
+        - ip_address:
+            get_input: oam_oam_ip_1
         service_template_filter:
           substitute_service_template: Nested_oam_1ServiceTemplate.yaml
           count: 1
@@ -2985,11 +2985,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_oam_oam_internal_1_port:
+      - link_oam_oam_internal_1_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_oam_oam_internal_1_port:
+      - dependency_oam_oam_internal_1_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -2998,18 +2998,9 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_oam_oam_2_port_network_role_tag: oam
-        port_oam_oam_2_port_security_groups:
-        - - cscf_RSG
-        port_oam_oam_2_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth1
-            params:
-              $PREFIX:
-                get_input: oam_name_2
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_oam_internal_2_port_name:
+        vm_flavor_name:
+          get_input: oam_flavor_name
+        port_oam_internal_2_port_0_name:
         - str_replace:
             template: $PREFIX$DELeth0
             params:
@@ -3017,51 +3008,63 @@ topology_template:
                 get_input: oam_name_2
               $DEL:
                 get_input: vcscf_name_delimeter
-        vm_flavor_name:
-          get_input: oam_flavor_name
-        port_oam_internal_2_port_mac_requirements:
+        port_oam_internal_2_port_0_mac_requirements:
           mac_count_required:
             is_required: false
+        port_oam_oam_2_port_1_allowed_address_pairs:
+        - ip_address:
+            get_input: oam_oam_vip_0
         vm_image_name:
           get_input: oam_image_name
         compute_oam_config_drive:
         - true
-        port_oam_internal_2_port_allowed_address_pairs:
+        port_oam_internal_2_port_0_allowed_address_pairs:
         - ip_address: 0.0.0.0/1
         - ip_address: 128.0.0.0/1
         - ip_address: ::/1
         - ip_address: 8000::/1
-        port_oam_internal_2_port_network:
-        - cscf_internal_network_0
-        port_oam_internal_2_port_fixed_ips:
-        - ip_address:
-            get_input: oam_internal_ip_2
-        port_oam_oam_2_port_fixed_ips:
+        port_oam_oam_2_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam_oam_2_port_1_security_groups:
+        - - cscf_RSG
+        port_oam_oam_2_port_1_network_role_tag: oam
+        port_oam_internal_2_port_0_security_groups:
+        - - cscf_RSG
+        port_oam_oam_2_port_1_fixed_ips:
         - ip_address:
             get_input: oam_oam_ip_2
-        port_oam_oam_2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_oam_oam_2_port_network:
-        - get_input: oam_net_id
         compute_oam_user_data_format:
         - RAW
-        port_oam_internal_2_port_security_groups:
-        - - cscf_RSG
-        port_oam_oam_2_port_ip_requirements:
+        port_oam_internal_2_port_0_fixed_ips:
+        - ip_address:
+            get_input: oam_internal_ip_2
+        port_oam_internal_2_port_0_network:
+        - cscf_internal_network_0
+        port_oam_internal_2_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_oam_oam_2_port_1_name:
+        - str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input: oam_name_2
+              $DEL:
+                get_input: vcscf_name_delimeter
         compute_oam_scheduler_hints:
         - group: oam_server_group_group
-        port_oam_internal_2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
+        port_oam_oam_2_port_1_mac_requirements:
+          mac_count_required:
             is_required: false
+        port_oam_oam_2_port_1_network:
+        - get_input: oam_net_id
         compute_oam_availability_zone:
         - get_input: availability_zone_0
         compute_oam_metadata:
@@ -3074,9 +3077,6 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_oam_oam_2_port_allowed_address_pairs:
-        - ip_address:
-            get_input: oam_oam_vip_0
         compute_oam_name:
         - get_input: oam_name_2
         service_template_filter:
@@ -3088,11 +3088,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_oam_oam_internal_2_port:
+      - link_oam_oam_internal_2_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_oam_oam_internal_2_port:
+      - dependency_oam_oam_internal_2_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -3171,35 +3171,36 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_oam_oam_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth1
-            params:
-              $PREFIX:
-                get_input: oam_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_oam_oam_0_port_fixed_ips:
-        - ip_address:
-            get_input: oam_oam_ip_0
-        vm_flavor_name:
-          get_input: oam_flavor_name
-        port_oam_oam_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_oam_internal_0_port_ip_requirements:
+        port_oam_oam_0_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_oam_internal_0_port_network:
+        port_oam_internal_0_port_0_fixed_ips:
+        - ip_address:
+            get_input: oam_internal_ip_0
+        vm_flavor_name:
+          get_input: oam_flavor_name
+        port_oam_internal_0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam_oam_0_port_1_fixed_ips:
+        - ip_address:
+            get_input: oam_oam_ip_0
+        port_oam_internal_0_port_0_network:
         - cscf_internal_network_0
         vm_image_name:
           get_input: oam_image_name
         compute_oam_config_drive:
         - true
-        port_oam_internal_0_port_name:
+        port_oam_oam_0_port_1_allowed_address_pairs:
+        - ip_address:
+            get_input: oam_oam_vip_0
+        port_oam_oam_0_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam_internal_0_port_0_name:
         - str_replace:
             template: $PREFIX$DELeth0
             params:
@@ -3207,35 +3208,30 @@ topology_template:
                 get_input: oam_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_oam_oam_0_port_allowed_address_pairs:
-        - ip_address:
-            get_input: oam_oam_vip_0
-        port_oam_internal_0_port_security_groups:
+        port_oam_oam_0_port_1_network:
+        - get_input: oam_net_id
+        port_oam_internal_0_port_0_security_groups:
         - - cscf_RSG
-        port_oam_internal_0_port_fixed_ips:
-        - ip_address:
-            get_input: oam_internal_ip_0
-        port_oam_oam_0_port_network_role_tag: oam
+        port_oam_oam_0_port_1_security_groups:
+        - - cscf_RSG
         compute_oam_user_data_format:
         - RAW
-        port_oam_oam_0_port_network:
-        - get_input: oam_net_id
-        port_oam_oam_0_port_ip_requirements:
+        port_oam_oam_0_port_1_name:
+        - str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input: oam_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_oam_internal_0_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_oam_internal_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         compute_oam_scheduler_hints:
         - group: oam_server_group_group
-        port_oam_internal_0_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
         compute_oam_availability_zone:
         - get_input: availability_zone_0
         compute_oam_metadata:
@@ -3250,8 +3246,12 @@ topology_template:
             get_input: vf_module_name
         compute_oam_name:
         - get_input: oam_name_0
-        port_oam_oam_0_port_security_groups:
-        - - cscf_RSG
+        port_oam_internal_0_port_0_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        port_oam_oam_0_port_1_network_role_tag: oam
         service_template_filter:
           substitute_service_template: Nested_oamServiceTemplate.yaml
           count: 1
@@ -3261,11 +3261,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_oam_oam_internal_0_port:
+      - link_oam_oam_internal_0_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_oam_oam_internal_0_port:
+      - dependency_oam_oam_internal_0_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -3276,78 +3276,23 @@ topology_template:
       properties:
         compute_lbd_user_data_format:
         - RAW
-        vm_flavor_name:
-          get_input: lbd_flavor_name
-        compute_lbd_availability_zone:
-        - get_input: availability_zone_0
-        port_lbd_dpdk_0_port_allowed_address_pairs:
-        - ip_address: 0.0.0.0/1
-        - ip_address: 128.0.0.0/1
-        - ip_address: ::/1
-        - ip_address: 8000::/1
-        vm_image_name:
-          get_input: lbd_image_name
-        port_lbd_dpdk_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_lbd_ims_core_0_port_network:
-        - get_input: ims_core_net_id
-        port_lbd_ims_core_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_lbd_ims_core_0_port_allowed_address_pairs:
-        - ip_address:
-            get_input: lbd_ims_core_v6_vip_0
-        port_lbd_internal_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth0
-            params:
-              $PREFIX:
-                get_input: lbd_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_lbd_ims_core_0_port_network_role_tag: ims_core
-        compute_lbd_scheduler_hints:
-        - group: lbd_server_group_group
-        port_lbd_internal_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_lbd_ims_core_0_port_ip_requirements:
+        port_lbd_ims_core_0_port_2_ip_requirements:
         - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_lbd_internal_0_port_network:
-        - cscf_internal_network_0
-        port_lbd_dpdk_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_lbd_name:
-        - get_input: lbd_name_0
-        port_lbd_ims_core_0_port_security_groups:
+        vm_flavor_name:
+          get_input: lbd_flavor_name
+        port_lbd_dpdk_0_port_1_network:
+        - cscf_internal_dpdk_network_0
+        compute_lbd_availability_zone:
+        - get_input: availability_zone_0
+        vm_image_name:
+          get_input: lbd_image_name
+        port_lbd_internal_0_port_0_security_groups:
         - - cscf_RSG
-        port_lbd_ims_core_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth2
-            params:
-              $PREFIX:
-                get_input: lbd_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
-        compute_lbd_config_drive:
-        - true
-        port_lbd_dpdk_0_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_internal_dpdk_ip_0
-        port_lbd_internal_0_port_security_groups:
-        - - cscf_RSG
-        port_lbd_dpdk_0_port_security_groups:
-        - - cscf_RSG
-        port_lbd_dpdk_0_port_name:
+        port_lbd_dpdk_0_port_1_name:
         - str_replace:
             template: $PREFIX$DELeth1
             params:
@@ -3355,14 +3300,67 @@ topology_template:
                 get_input: lbd_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_lbd_dpdk_0_port_network:
-        - cscf_internal_dpdk_network_0
-        port_lbd_ims_core_0_port_fixed_ips:
+        port_lbd_dpdk_0_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_lbd_scheduler_hints:
+        - group: lbd_server_group_group
+        port_lbd_ims_core_0_port_2_security_groups:
+        - - cscf_RSG
+        port_lbd_dpdk_0_port_1_fixed_ips:
         - ip_address:
-            get_input: lbd_ims_core_v6_ip_0
-        port_lbd_internal_0_port_fixed_ips:
+            get_input: lbd_internal_dpdk_ip_0
+        port_lbd_internal_0_port_0_fixed_ips:
         - ip_address:
             get_input: lbd_internal_ip_0
+        port_lbd_ims_core_0_port_2_fixed_ips:
+        - ip_address:
+            get_input: lbd_ims_core_v6_ip_0
+        compute_lbd_name:
+        - get_input: lbd_name_0
+        port_lbd_dpdk_0_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_lbd_config_drive:
+        - true
+        port_lbd_dpdk_0_port_1_security_groups:
+        - - cscf_RSG
+        port_lbd_ims_core_0_port_2_network_role_tag: ims_core
+        port_lbd_dpdk_0_port_1_allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        port_lbd_ims_core_0_port_2_name:
+        - str_replace:
+            template: $PREFIX$DELeth2
+            params:
+              $PREFIX:
+                get_input: lbd_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_lbd_internal_0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_ims_core_0_port_2_allowed_address_pairs:
+        - ip_address:
+            get_input: lbd_ims_core_v6_vip_0
+        port_lbd_ims_core_0_port_2_network:
+        - get_input: ims_core_net_id
+        port_lbd_internal_0_port_0_network:
+        - cscf_internal_network_0
+        port_lbd_internal_0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_lbd_ims_core_0_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
         compute_lbd_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -3373,12 +3371,14 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_lbd_internal_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_lbd_internal_0_port_0_name:
+        - str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input: lbd_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
         service_template_filter:
           substitute_service_template: Nested_lbd_1ServiceTemplate.yaml
           count: 1
@@ -3388,19 +3388,19 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_lbd_lbd_internal_0_port:
+      - link_lbd_lbd_internal_0_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_lbd_lbd_internal_0_port:
+      - dependency_lbd_lbd_internal_0_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
-      - link_lbd_lbd_dpdk_0_port:
+      - link_lbd_lbd_dpdk_0_port_1:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_lbd_lbd_dpdk_0_port:
+      - dependency_lbd_lbd_dpdk_0_port_1:
           capability: tosca.capabilities.Node
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.DependsOn
@@ -3579,8 +3579,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cif_ims_core_0_port_network:
-        - get_input: ims_core_net_id
         port_cif_oam_0_port_1_name:
         - str_replace:
             template: $PREFIX$DELeth1
@@ -3592,19 +3590,19 @@ topology_template:
         port_cif_oam_0_port_1_allowed_address_pairs:
         - ip_address:
             get_input: cif_oam_vip_0
+        port_cif_internal_0_port_0_security_groups:
+        - - cscf_RSG
         port_cif_oam_0_port_1_fixed_ips:
         - ip_address:
             get_input: cif_oam_ip_0
         vm_flavor_name:
           get_input: cif_flavor_name
-        port_cif_internal_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth0
-            params:
-              $PREFIX:
-                get_input: cif_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
+        port_cif_ims_core_0_port_2_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: cif_image_name
         compute_cif_user_data_format:
@@ -3615,19 +3613,31 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_cif_ims_li_0_port_fixed_ips:
-        - ip_address:
-            get_input: cif_ims_li_v6_ip_0
+        port_cif_ims_li_0_port_4_name:
+        - str_replace:
+            template: $PREFIX$DELeth4
+            params:
+              $PREFIX:
+                get_input: cif_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
         compute_cif_scheduler_hints:
         - group: cif_server_group_group
         port_cif_oam_0_port_1_security_groups:
         - - cscf_RSG
-        port_cif_ims_li_0_port_ip_requirements:
+        port_cif_internal_0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        port_cif_ims_core_0_port_2_network:
+        - get_input: ims_core_net_id
         compute_cif_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -3638,21 +3648,22 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_cif_ims_li_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth4
-            params:
-              $PREFIX:
-                get_input: cif_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_cif_ims_core_0_port_fixed_ips:
-        - ip_address:
-            get_input: cif_ims_core_v6_ip_0
+        port_cif_internal_0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         port_cif_oam_0_port_3_network_role_tag: oam
-        port_cif_ims_core_0_port_security_groups:
+        port_cif_ims_core_0_port_2_network_role_tag: ims_core
+        port_cif_oam_0_port_3_security_groups:
         - - cscf_RSG
-        port_cif_ims_core_0_port_name:
+        port_cif_oam_0_port_1_network:
+        - get_input: oam_net_id
+        port_cif_ims_li_0_port_4_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_cif_ims_core_0_port_2_name:
         - str_replace:
             template: $PREFIX$DELeth2
             params:
@@ -3660,59 +3671,54 @@ topology_template:
                 get_input: cif_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_cif_internal_0_port_network:
-        - cscf_internal_network_0
-        port_cif_oam_0_port_3_security_groups:
-        - - cscf_RSG
-        port_cif_ims_core_0_port_ip_requirements:
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_ims_li_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_oam_0_port_1_network:
-        - get_input: oam_net_id
-        port_cif_ims_li_0_port_security_groups:
-        - - cscf_RSG
         compute_cif_name:
         - get_input: cif_name_0
         compute_cif_availability_zone:
         - get_input: availability_zone_0
         port_cif_oam_0_port_1_network_role_tag: oam
+        port_cif_ims_li_0_port_4_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cif_ims_core_0_port_2_security_groups:
+        - - cscf_RSG
+        port_cif_ims_core_0_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
         port_cif_oam_0_port_3_mac_requirements:
           mac_count_required:
             is_required: false
-        port_cif_ims_core_0_port_allowed_address_pairs:
-        - ip_address:
-            get_input: cif_ims_core_v6_vip_0
         port_cif_oam_0_port_3_fixed_ips:
         - ip_address:
             get_input: cif_oam_ip_2
-        port_cif_ims_core_0_port_network_role_tag: ims_core
-        port_cif_ims_li_0_port_allowed_address_pairs:
+        port_cif_ims_core_0_port_2_allowed_address_pairs:
+        - ip_address:
+            get_input: cif_ims_core_v6_vip_0
+        port_cif_internal_0_port_0_name:
+        - str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input: cif_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_cif_ims_li_0_port_4_allowed_address_pairs:
         - ip_address:
             get_input: cif_ims_li_v6_vip_0
-        port_cif_internal_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_ims_li_0_port_network:
-        - get_input: ims_li_v6_net_id
-        port_cif_internal_0_port_security_groups:
-        - - cscf_RSG
-        port_cif_ims_li_0_port_network_role_tag: ims_li_v6
+        port_cif_ims_li_0_port_4_fixed_ips:
+        - ip_address:
+            get_input: cif_ims_li_v6_ip_0
+        port_cif_internal_0_port_0_allowed_address_pairs:
+        - ip_address:
+            get_input: cif_internal_vip_0
         port_cif_oam_0_port_3_allowed_address_pairs:
         - ip_address:
             get_input: cif_oam_vip_1
-        port_cif_internal_0_port_fixed_ips:
-        - ip_address:
-            get_input: cif_internal_ip_0
-        - ip_address:
-            get_input: cif_internal_v6_ip_0
+        port_cif_internal_0_port_0_network:
+        - cscf_internal_network_0
         compute_cif_config_drive:
         - true
+        port_cif_ims_li_0_port_4_network:
+        - get_input: ims_li_v6_net_id
         port_cif_oam_0_port_3_name:
         - str_replace:
             template: $PREFIX$DELeth3
@@ -3723,28 +3729,22 @@ topology_template:
                 get_input: vcscf_name_delimeter
         port_cif_oam_0_port_3_network:
         - get_input: oam_net_id
-        port_cif_ims_core_0_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_internal_0_port_allowed_address_pairs:
+        port_cif_ims_core_0_port_2_fixed_ips:
         - ip_address:
-            get_input: cif_internal_vip_0
+            get_input: cif_ims_core_v6_ip_0
+        port_cif_internal_0_port_0_fixed_ips:
+        - ip_address:
+            get_input: cif_internal_ip_0
+        - ip_address:
+            get_input: cif_internal_v6_ip_0
         port_cif_oam_0_port_1_mac_requirements:
           mac_count_required:
             is_required: false
+        port_cif_ims_li_0_port_4_network_role_tag: ims_li_v6
+        port_cif_ims_li_0_port_4_security_groups:
+        - - cscf_RSG
         port_cif_oam_0_port_3_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_internal_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
@@ -3758,11 +3758,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_cif_cif_internal_0_port:
+      - link_cif_cif_internal_0_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cif_cif_internal_0_port:
+      - dependency_cif_cif_internal_0_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn
@@ -3779,8 +3779,15 @@ topology_template:
                 get_input: cif_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_cif_ims_core_1_port_security_groups:
-        - - cscf_RSG
+        port_cif_ims_core_1_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cif_ims_li_1_port_4_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cif_ims_core_1_port_2_fixed_ips:
+        - ip_address:
+            get_input: cif_ims_core_v6_ip_1
         port_cif_oam_1_port_1_mac_requirements:
           mac_count_required:
             is_required: false
@@ -3795,6 +3802,9 @@ topology_template:
         port_cif_oam_1_port_3_allowed_address_pairs:
         - ip_address:
             get_input: cif_oam_vip_1
+        port_cif_internal_1_port_0_allowed_address_pairs:
+        - ip_address:
+            get_input: cif_internal_vip_0
         compute_cif_scheduler_hints:
         - group: cif_server_group_group
         port_cif_oam_1_port_3_ip_requirements:
@@ -3803,19 +3813,22 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_cif_internal_1_port_security_groups:
-        - - cscf_RSG
+        port_cif_ims_li_1_port_4_name:
+        - str_replace:
+            template: $PREFIX$DELeth4
+            params:
+              $PREFIX:
+                get_input: cif_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
         port_cif_oam_1_port_1_network:
         - get_input: oam_net_id
-        port_cif_ims_core_1_port_network_role_tag: ims_core
-        port_cif_ims_li_1_port_security_groups:
-        - - cscf_RSG
-        port_cif_ims_li_1_port_allowed_address_pairs:
+        port_cif_ims_li_1_port_4_network_role_tag: ims_li_v6
+        port_cif_internal_1_port_0_fixed_ips:
         - ip_address:
-            get_input: cif_ims_li_v6_vip_0
-        port_cif_internal_1_port_allowed_address_pairs:
+            get_input: cif_internal_ip_1
         - ip_address:
-            get_input: cif_internal_vip_0
+            get_input: cif_internal_v6_ip_1
         port_cif_oam_1_port_3_security_groups:
         - - cscf_RSG
         compute_cif_metadata:
@@ -3828,95 +3841,27 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
+        port_cif_ims_core_1_port_2_allowed_address_pairs:
+        - ip_address:
+            get_input: cif_ims_core_v6_vip_0
+        port_cif_ims_core_1_port_2_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_cif_ims_core_1_port_2_security_groups:
+        - - cscf_RSG
         port_cif_oam_1_port_1_fixed_ips:
         - ip_address:
             get_input: cif_oam_ip_1
-        port_cif_internal_1_port_network:
-        - cscf_internal_network_0
-        port_cif_ims_core_1_port_network:
-        - get_input: ims_core_net_id
         port_cif_oam_1_port_3_fixed_ips:
         - ip_address:
             get_input: cif_oam_ip_3
-        port_cif_oam_1_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_ims_core_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_cif_name:
-        - get_input: cif_name_1
-        compute_cif_availability_zone:
-        - get_input: availability_zone_1
-        port_cif_internal_1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_ims_li_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth4
-            params:
-              $PREFIX:
-                get_input: cif_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_cif_internal_1_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth0
-            params:
-              $PREFIX:
-                get_input: cif_name_1
-              $DEL:
-                get_input: vcscf_name_delimeter
-        port_cif_ims_li_1_port_fixed_ips:
+        port_cif_ims_li_1_port_4_allowed_address_pairs:
         - ip_address:
-            get_input: cif_ims_li_v6_ip_1
-        port_cif_internal_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_ims_li_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_ims_li_1_port_ip_requirements:
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_ims_core_1_port_fixed_ips:
-        - ip_address:
-            get_input: cif_ims_core_v6_ip_1
-        port_cif_ims_core_1_port_allowed_address_pairs:
-        - ip_address:
-            get_input: cif_ims_core_v6_vip_0
-        port_cif_oam_1_port_1_network_role_tag: oam
-        port_cif_oam_1_port_3_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cif_ims_core_1_port_ip_requirements:
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_cif_ims_li_1_port_network:
-        - get_input: ims_li_v6_net_id
-        port_cif_internal_1_port_fixed_ips:
-        - ip_address:
-            get_input: cif_internal_ip_1
-        - ip_address:
-            get_input: cif_internal_v6_ip_1
-        port_cif_ims_core_1_port_name:
+            get_input: cif_ims_li_v6_vip_0
+        port_cif_ims_core_1_port_2_name:
         - str_replace:
             template: $PREFIX$DELeth2
             params:
@@ -3924,8 +3869,61 @@ topology_template:
                 get_input: cif_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
+        port_cif_oam_1_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_cif_name:
+        - get_input: cif_name_1
+        compute_cif_availability_zone:
+        - get_input: availability_zone_1
+        port_cif_ims_core_1_port_2_network:
+        - get_input: ims_core_net_id
+        port_cif_internal_1_port_0_name:
+        - str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input: cif_name_1
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_cif_ims_li_1_port_4_security_groups:
+        - - cscf_RSG
+        port_cif_ims_li_1_port_4_network:
+        - get_input: ims_li_v6_net_id
+        port_cif_internal_1_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_cif_oam_1_port_1_network_role_tag: oam
+        port_cif_oam_1_port_3_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cif_ims_core_1_port_2_network_role_tag: ims_core
+        port_cif_internal_1_port_0_security_groups:
+        - - cscf_RSG
         compute_cif_config_drive:
         - true
+        port_cif_ims_li_1_port_4_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_cif_ims_li_1_port_4_fixed_ips:
+        - ip_address:
+            get_input: cif_ims_li_v6_ip_1
+        port_cif_internal_1_port_0_network:
+        - cscf_internal_network_0
         port_cif_oam_1_port_3_name:
         - str_replace:
             template: $PREFIX$DELeth3
@@ -3934,12 +3932,14 @@ topology_template:
                 get_input: cif_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_cif_ims_li_1_port_network_role_tag: ims_li_v6
         port_cif_oam_1_port_1_security_groups:
         - - cscf_RSG
         port_cif_oam_1_port_1_allowed_address_pairs:
         - ip_address:
             get_input: cif_oam_vip_0
+        port_cif_internal_1_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         port_cif_oam_1_port_3_network_role_tag: oam
         service_template_filter:
           substitute_service_template: Nested_cif_1ServiceTemplate.yaml
@@ -3950,11 +3950,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_cif_cif_internal_1_port:
+      - link_cif_cif_internal_1_port_0:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cif_cif_internal_1_port:
+      - dependency_cif_cif_internal_1_port_0:
           capability: tosca.capabilities.Node
           node: cscf_internal_network_0
           relationship: tosca.relationships.DependsOn

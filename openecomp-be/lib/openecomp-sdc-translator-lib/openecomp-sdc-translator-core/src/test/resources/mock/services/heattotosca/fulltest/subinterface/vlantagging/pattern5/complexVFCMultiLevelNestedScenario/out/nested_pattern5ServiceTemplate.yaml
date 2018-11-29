@@ -113,34 +113,34 @@ topology_template:
           - 0
         subinterface_nested_vlan_service_template_filter_count:
         - 9
-        vm_flavor_name:
-          get_input: pd_server_1b_flavor
-        subinterface_nested_vlan_net1:
-        - get_input: sub_inf_net
-        vm_image_name:
-          get_input: pd_server_1b_image
-        port_pd_server_1b_port_replacement_policy:
-        - AUTO
-        port_pd_server_1b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        subinterface_nested_vlan_parent_interface:
-        - pd_server_1b_port_0
-        port_pd_server_1b_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - pd_server_1b_ips
-            - 0
-        port_pd_server_1b_port_network:
-        - get_input: port_net
-        compute_pd_server_1b_availability_zone:
-        - get_input: availability_zone_0
-        port_pd_server_1b_port_ip_requirements:
+        port_pd_server_1b_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        vm_flavor_name:
+          get_input: pd_server_1b_flavor
+        port_pd_server_1b_port_0_network:
+        - get_input: port_net
+        subinterface_nested_vlan_net1:
+        - get_input: sub_inf_net
+        vm_image_name:
+          get_input: pd_server_1b_image
+        subinterface_nested_vlan_parent_interface:
+        - pd_server_1b_port_0
+        port_pd_server_1b_port_0_replacement_policy:
+        - AUTO
+        port_pd_server_1b_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        port_pd_server_1b_port_0_fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_1b_ips
+            - 0
         service_template_filter:
           substitute_service_template: Nested_pd_server_1bServiceTemplate.yaml
           count: 1
@@ -175,7 +175,7 @@ topology_template:
       - disk.write.bytes_server_1b_pd_1
       forwarder_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - forwarder_pd_server_1b_pd_server_1b_port
+      - forwarder_pd_server_1b_pd_server_1b_port_0
       network.outpoing.packets_pd_server_1b_port_1_test_nested_level2:
       - test_nested_level2
       - network.outpoing.packets_pd_server_1b_port_1
@@ -187,13 +187,13 @@ topology_template:
       - disk.capacity_pd_server_1b
       network.outpoing.packets_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.outpoing.packets_pd_server_1b_pd_server_1b_port
+      - network.outpoing.packets_pd_server_1b_pd_server_1b_port_0
       disk.device.read.requests.rate_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.device.read.requests.rate_server_1b_pd_1
       feature_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - feature_pd_server_1b_pd_server_1b_port
+      - feature_pd_server_1b_pd_server_1b_port_0
       cpu_util_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - cpu_util_server_1b_pd_1
@@ -319,7 +319,7 @@ topology_template:
       - disk.usage_server_1b_pd_1
       network.outgoing.bytes_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port_0
       disk.device.write.requests_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.device.write.requests_server_1b_pd_1
@@ -340,13 +340,13 @@ topology_template:
       - memory.resident_pd_server_1b
       network.outgoing.packets.rate_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port
+      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port_0
       disk.device.read.bytes_server_1b_pd_0:
       - abstract_pd_server_1b
       - disk.device.read.bytes_pd_server_1b
       attachment_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - attachment_pd_server_1b_pd_server_1b_port
+      - attachment_pd_server_1b_pd_server_1b_port_0
       disk.device.write.bytes.rate_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.device.write.bytes.rate_server_1b_pd_1
@@ -367,10 +367,10 @@ topology_template:
       - network.outgoing.packets.rate_pd_server_1b_port_1
       network.outgoing.bytes.rate_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port_0
       network.incoming.packets.rate_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port
+      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port_0
       os_server_1b_pd_0:
       - abstract_pd_server_1b
       - os_pd_server_1b
@@ -391,7 +391,7 @@ topology_template:
       - host_pd_server_1b
       network.incoming.bytes_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.incoming.bytes_pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes_pd_server_1b_pd_server_1b_port_0
       disk.root.size_server_1b_pd_0:
       - abstract_pd_server_1b
       - disk.root.size_pd_server_1b
@@ -424,7 +424,7 @@ topology_template:
       - memory.resident_server_1b_pd_1
       binding_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - binding_pd_server_1b_pd_server_1b_port
+      - binding_pd_server_1b_pd_server_1b_port_0
       disk.capacity_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.capacity_server_1b_pd_1
@@ -460,7 +460,7 @@ topology_template:
       - disk.device.read.requests_pd_server_1b
       network.incoming.packets_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.incoming.packets_pd_server_1b_pd_server_1b_port
+      - network.incoming.packets_pd_server_1b_pd_server_1b_port_0
       disk.read.bytes_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.read.bytes_server_1b_pd_1
@@ -490,20 +490,20 @@ topology_template:
       - disk.latency_pd_server_1b
       network.incoming.bytes.rate_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port_0
       disk.write.requests_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - disk.write.requests_server_1b_pd_1
     requirements:
       dependency_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - dependency_pd_server_1b_pd_server_1b_port
+      - dependency_pd_server_1b_pd_server_1b_port_0
       dependency_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - dependency_server_1b_pd_1
       link_pd_server_1b_port_0:
       - abstract_pd_server_1b
-      - link_pd_server_1b_pd_server_1b_port
+      - link_pd_server_1b_pd_server_1b_port_0
       subinterface_link_template_Vlan_vmi_1_test_resourceGroup_0:
       - test_resourceGroup_0
       - subinterface_link_template_Vlan_vmi_1

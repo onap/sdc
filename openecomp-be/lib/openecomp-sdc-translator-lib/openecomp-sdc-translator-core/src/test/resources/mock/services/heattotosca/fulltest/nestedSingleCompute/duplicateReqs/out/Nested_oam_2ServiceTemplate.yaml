@@ -11,47 +11,33 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_oam_oam_2_port_network_role_tag:
+    port_oam_internal_2_port_0_subnetpoolid:
       type: string
       required: true
-    port_oam_oam_2_port_related_networks:
+    port_oam_internal_2_port_0_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    port_oam_oam_2_port_security_groups:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_oam_oam_2_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_oam_internal_2_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_oam_oam_2_port_network_role:
-      type: string
-      required: true
     vm_flavor_name:
       type: string
       required: true
-    port_oam_internal_2_port_mac_requirements:
+    port_oam_internal_2_port_0_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_internal_2_port_0_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_oam_oam_2_port_subnetpoolid:
+    port_oam_internal_2_port_0_network_role:
       type: string
       required: true
-    port_oam_internal_2_port_subnetpoolid:
-      type: string
+    port_oam_oam_2_port_1_allowed_address_pairs:
+      type: list
       required: true
-    port_oam_oam_2_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
     vm_image_name:
       type: string
       required: true
@@ -60,42 +46,47 @@ topology_template:
       required: true
       entry_schema:
         type: boolean
-    port_oam_oam_2_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_oam_internal_2_port_allowed_address_pairs:
+    port_oam_internal_2_port_0_allowed_address_pairs:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
-    port_oam_internal_2_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_oam_internal_2_port_network_role_tag:
-      type: string
-      required: true
-    port_oam_internal_2_port_order:
+    port_oam_oam_2_port_1_order:
       type: integer
       required: true
-    port_oam_internal_2_port_fixed_ips:
+    port_oam_oam_2_port_1_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_oam_internal_2_port_network_role:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_oam_oam_2_port_1_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_oam_oam_2_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_oam_oam_2_port_1_network_role_tag:
       type: string
       required: true
-    port_oam_oam_2_port_fixed_ips:
+    port_oam_oam_2_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_oam_internal_2_port_0_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_oam_oam_2_port_1_fixed_ips:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_oam_oam_2_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_oam_internal_2_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
     index_value:
       type: integer
@@ -104,52 +95,63 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_oam_internal_2_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_oam_oam_2_port_1_subnetpoolid:
+      type: string
       required: true
-    port_oam_oam_2_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     compute_oam_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    port_oam_internal_2_port_security_groups:
+    port_oam_internal_2_port_0_fixed_ips:
       type: list
       required: true
       entry_schema:
-        type: json
-    port_oam_oam_2_port_ip_requirements:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_oam_internal_2_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_internal_2_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_oam_internal_2_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_oam_oam_2_port_order:
+    port_oam_internal_2_port_0_order:
       type: integer
       required: true
-    port_oam_internal_2_port_related_networks:
+    port_oam_oam_2_port_1_related_networks:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_oam_oam_2_port_1_network_role:
+      type: string
+      required: true
+    port_oam_oam_2_port_1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_oam_scheduler_hints:
       type: list
       required: true
       entry_schema:
         type: json
-    port_oam_internal_2_port_ip_requirements:
+    port_oam_internal_2_port_0_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_oam_oam_2_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_oam_oam_2_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_oam_availability_zone:
       type: list
       required: true
@@ -160,107 +162,15 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_oam_oam_2_port_allowed_address_pairs:
-      type: list
+    port_oam_internal_2_port_0_network_role_tag:
+      type: string
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.network.AddressPair
     compute_oam_name:
       type: list
       required: true
       entry_schema:
         type: string
   node_templates:
-    oam_oam_internal_2_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        mac_requirements:
-          get_input: port_oam_internal_2_port_mac_requirements
-        allowed_address_pairs:
-          get_input: port_oam_internal_2_port_allowed_address_pairs
-        order:
-          get_input: port_oam_internal_2_port_order
-        security_groups:
-          get_input:
-          - port_oam_internal_2_port_security_groups
-          - index_value
-        exCP_naming:
-          get_input: port_oam_internal_2_port_exCP_naming
-        vlan_requirements:
-          get_input: port_oam_internal_2_port_vlan_requirements
-        subinterface_indicator: false
-        related_networks:
-          get_input: port_oam_internal_2_port_related_networks
-        ip_requirements:
-          get_input: port_oam_internal_2_port_ip_requirements
-        network_role_tag:
-          get_input: port_oam_internal_2_port_network_role_tag
-        network_role:
-          get_input: port_oam_internal_2_port_network_role
-        subnetpoolid:
-          get_input: port_oam_internal_2_port_subnetpoolid
-        fixed_ips:
-          get_input:
-          - port_oam_internal_2_port_fixed_ips
-          - index_value
-        name:
-          get_input:
-          - port_oam_internal_2_port_name
-          - index_value
-        network:
-          get_input:
-          - port_oam_internal_2_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: oam
-          relationship: tosca.relationships.network.BindsTo
-    oam_oam_oam_2_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        mac_requirements:
-          get_input: port_oam_oam_2_port_mac_requirements
-        allowed_address_pairs:
-          get_input: port_oam_oam_2_port_allowed_address_pairs
-        order:
-          get_input: port_oam_oam_2_port_order
-        security_groups:
-          get_input:
-          - port_oam_oam_2_port_security_groups
-          - index_value
-        exCP_naming:
-          get_input: port_oam_oam_2_port_exCP_naming
-        vlan_requirements:
-          get_input: port_oam_oam_2_port_vlan_requirements
-        subinterface_indicator: false
-        related_networks:
-          get_input: port_oam_oam_2_port_related_networks
-        ip_requirements:
-          get_input: port_oam_oam_2_port_ip_requirements
-        network_role_tag:
-          get_input: port_oam_oam_2_port_network_role_tag
-        network_role:
-          get_input: port_oam_oam_2_port_network_role
-        subnetpoolid:
-          get_input: port_oam_oam_2_port_subnetpoolid
-        fixed_ips:
-          get_input:
-          - port_oam_oam_2_port_fixed_ips
-          - index_value
-        name:
-          get_input:
-          - port_oam_oam_2_port_name
-          - index_value
-        network:
-          get_input:
-          - port_oam_oam_2_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: oam
-          relationship: tosca.relationships.network.BindsTo
     oam:
       type: org.openecomp.resource.vfc.compute.nodes.heat.oam
       properties:
@@ -292,36 +202,129 @@ topology_template:
           get_input:
           - compute_oam_user_data_format
           - index_value
+    oam_oam_oam_2_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_oam_oam_2_port_1_mac_requirements
+        allowed_address_pairs:
+          get_input: port_oam_oam_2_port_1_allowed_address_pairs
+        order:
+          get_input: port_oam_oam_2_port_1_order
+        security_groups:
+          get_input:
+          - port_oam_oam_2_port_1_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_oam_oam_2_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_oam_oam_2_port_1_vlan_requirements
+        subinterface_indicator: false
+        related_networks:
+          get_input: port_oam_oam_2_port_1_related_networks
+        ip_requirements:
+          get_input: port_oam_oam_2_port_1_ip_requirements
+        network_role_tag:
+          get_input: port_oam_oam_2_port_1_network_role_tag
+        network_role:
+          get_input: port_oam_oam_2_port_1_network_role
+        subnetpoolid:
+          get_input: port_oam_oam_2_port_1_subnetpoolid
+        fixed_ips:
+          get_input:
+          - port_oam_oam_2_port_1_fixed_ips
+          - index_value
+        name:
+          get_input:
+          - port_oam_oam_2_port_1_name
+          - index_value
+        network:
+          get_input:
+          - port_oam_oam_2_port_1_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam
+          relationship: tosca.relationships.network.BindsTo
+    oam_oam_internal_2_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_oam_internal_2_port_0_mac_requirements
+        allowed_address_pairs:
+          get_input: port_oam_internal_2_port_0_allowed_address_pairs
+        order:
+          get_input: port_oam_internal_2_port_0_order
+        security_groups:
+          get_input:
+          - port_oam_internal_2_port_0_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_oam_internal_2_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_oam_internal_2_port_0_vlan_requirements
+        subinterface_indicator: false
+        related_networks:
+          get_input: port_oam_internal_2_port_0_related_networks
+        ip_requirements:
+          get_input: port_oam_internal_2_port_0_ip_requirements
+        network_role_tag:
+          get_input: port_oam_internal_2_port_0_network_role_tag
+        network_role:
+          get_input: port_oam_internal_2_port_0_network_role
+        subnetpoolid:
+          get_input: port_oam_internal_2_port_0_subnetpoolid
+        fixed_ips:
+          get_input:
+          - port_oam_internal_2_port_0_fixed_ips
+          - index_value
+        name:
+          get_input:
+          - port_oam_internal_2_port_0_name
+          - index_value
+        network:
+          get_input:
+          - port_oam_internal_2_port_0_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam
+          relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.oam_2
     capabilities:
       cpu_oam:
       - oam
       - cpu
-      network.outgoing.bytes.rate_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.outgoing.bytes.rate
-      network.outgoing.packets.rate_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.outgoing.packets.rate
       disk.usage_oam:
       - oam
       - disk.usage
+      feature_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - feature
       memory.resident_oam:
       - oam
       - memory.resident
-      feature_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - feature
-      network.incoming.bytes.rate_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.incoming.bytes.rate
       disk.device.write.bytes_oam:
       - oam
       - disk.device.write.bytes
       disk.read.bytes_oam:
       - oam
       - disk.read.bytes
+      network.incoming.bytes_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.outgoing.bytes
+      network.incoming.bytes_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.incoming.bytes
       scalable_oam:
       - oam
       - scalable
@@ -334,12 +337,6 @@ topology_template:
       disk.device.usage_oam:
       - oam
       - disk.device.usage
-      network.outpoing.packets_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.outpoing.packets
-      network.incoming.bytes.rate_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.incoming.bytes.rate
       binding_oam:
       - oam
       - binding
@@ -352,39 +349,42 @@ topology_template:
       disk.device.write.bytes.rate_oam:
       - oam
       - disk.device.write.bytes.rate
+      forwarder_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - forwarder
       disk.device.allocation_oam:
       - oam
       - disk.device.allocation
+      network.incoming.packets_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.incoming.packets
+      feature_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - feature
       disk.ephemeral.size_oam:
       - oam
       - disk.ephemeral.size
-      network.incoming.packets_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.incoming.packets
       disk.write.requests_oam:
       - oam
       - disk.write.requests
+      attachment_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - attachment
       disk.capacity_oam:
       - oam
       - disk.capacity
-      network.outgoing.bytes_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.outgoing.bytes
+      network.incoming.bytes.rate_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.incoming.bytes.rate
       instance_oam:
       - oam
       - instance
-      network.outgoing.bytes.rate_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.outgoing.bytes.rate
-      forwarder_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - forwarder
-      network.outpoing.packets_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.outpoing.packets
       disk.root.size_oam:
       - oam
       - disk.root.size
+      binding_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - binding
       memory_oam:
       - oam
       - memory
@@ -394,33 +394,30 @@ topology_template:
       disk.device.write.requests_oam:
       - oam
       - disk.device.write.requests
-      network.incoming.bytes_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.incoming.bytes
-      forwarder_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - forwarder
-      network.outgoing.packets.rate_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.outgoing.packets.rate
-      binding_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - binding
+      attachment_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - attachment
       disk.device.read.requests.rate_oam:
       - oam
       - disk.device.read.requests.rate
-      feature_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - feature
+      forwarder_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - forwarder
       disk.write.requests.rate_oam:
       - oam
       - disk.write.requests.rate
       disk.device.latency_oam:
       - oam
       - disk.device.latency
+      network.incoming.packets.rate_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.incoming.packets.rate
       disk.device.iops_oam:
       - oam
       - disk.device.iops
+      network.outpoing.packets_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.outpoing.packets
       vcpus_oam:
       - oam
       - vcpus
@@ -433,15 +430,12 @@ topology_template:
       host_oam:
       - oam
       - host
-      network.incoming.packets.rate_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.incoming.packets.rate
       endpoint_oam:
       - oam
       - endpoint
-      binding_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - binding
+      network.incoming.packets.rate_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.incoming.packets.rate
       disk.device.read.requests_oam:
       - oam
       - disk.device.read.requests
@@ -451,12 +445,9 @@ topology_template:
       disk.read.bytes.rate_oam:
       - oam
       - disk.read.bytes.rate
-      attachment_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - attachment
-      network.incoming.packets.rate_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - network.incoming.packets.rate
+      network.outgoing.bytes.rate_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.outgoing.bytes.rate
       cpu_util_oam:
       - oam
       - cpu_util
@@ -466,46 +457,55 @@ topology_template:
       memory.usage_oam:
       - oam
       - memory.usage
-      attachment_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - attachment
       disk.latency_oam:
       - oam
       - disk.latency
-      network.incoming.packets_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
+      network.incoming.packets_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
       - network.incoming.packets
-      network.outgoing.bytes_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.outgoing.bytes
+      network.outgoing.packets.rate_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.outgoing.packets.rate
       disk.write.bytes_oam:
       - oam
       - disk.write.bytes
-      network.incoming.bytes_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - network.incoming.bytes
+      network.outgoing.bytes_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.outgoing.bytes
+      network.outgoing.packets.rate_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.incoming.bytes.rate
+      binding_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - binding
       disk.read.requests_oam:
       - oam
       - disk.read.requests
       disk.device.capacity_oam:
       - oam
       - disk.device.capacity
+      network.outpoing.packets_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - network.outpoing.packets
     requirements:
-      link_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - link
-      link_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
-      - link
+      dependency_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - dependency
       local_storage_oam:
       - oam
       - local_storage
-      dependency_oam_oam_internal_2_port:
-      - oam_oam_internal_2_port
-      - dependency
-      dependency_oam_oam_oam_2_port:
-      - oam_oam_oam_2_port
+      link_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
+      - link
+      dependency_oam_oam_oam_2_port_1:
+      - oam_oam_oam_2_port_1
       - dependency
       dependency_oam:
       - oam
       - dependency
+      link_oam_oam_internal_2_port_0:
+      - oam_oam_internal_2_port_0
+      - link

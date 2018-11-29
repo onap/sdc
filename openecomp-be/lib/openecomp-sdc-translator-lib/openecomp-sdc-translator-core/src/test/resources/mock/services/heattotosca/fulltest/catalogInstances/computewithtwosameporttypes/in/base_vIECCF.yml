@@ -280,13 +280,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: plt_internal_0_port_0
+                        get_resource: plt_0_internal_port_0
                 -
                     port:
-                        get_resource: plt_oam_0_port_0
+                        get_resource: plt_0_oam_port_0
                 -
                     port:
-                        get_resource: plt_data_0_port_0
+                        get_resource: plt_0_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -340,20 +340,20 @@ resources:
             networks:
                 -
                     get_attr:
-                        - plt_internal_0_port_0
+                        - plt_0_internal_port_0
                         - network_id
                 -
                     get_attr:
-                        - plt_oam_0_port_0
+                        - plt_0_oam_port_0
                         - network_id
                 -
                     get_attr:
-                        - plt_data_0_port_0
+                        - plt_0_data_port_0
                         - network_id
             mcas_mate_id: m002
             pair_uuid: {get_param: plt_pair_uuid}
             shared_vol1: {get_param: plt_volume_shared_id_0}
-    plt_internal_0_port_0:
+    plt_0_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -372,7 +372,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
 
-    plt_internal_0_port_1:
+    plt_1_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -391,7 +391,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
             
-    plt_oam_0_port_0:
+    plt_0_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -421,7 +421,7 @@ resources:
             os_net: { get_param: oam_net_id }
             ext_net: oam
 
-    plt_oam_0_port_1:
+    plt_1_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -448,7 +448,7 @@ resources:
             os_net: { get_param: oam_net_id }
             ext_net: oam
 
-    plt_data_0_port_0:
+    plt_0_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -478,7 +478,7 @@ resources:
             os_net: { get_param: data_net_id }
             ext_net: data
 
-    plt_data_0_port_1:
+    plt_1_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -529,13 +529,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: plt_internal_0_port_1
+                        get_resource: plt_1_internal_port_0
                 -
                     port:
-                        get_resource: plt_oam_0_port_1
+                        get_resource: plt_1_oam_port_0
                 -
                     port:
-                        get_resource: plt_data_0_port_1
+                        get_resource: plt_1_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -688,13 +688,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: iox_internal_0_port_0
+                        get_resource: iox_0_internal_port_0
                 -
                     port:
-                        get_resource: iox_oam_0_port_0
+                        get_resource: iox_0_oam_port_0
                 -
                     port:
-                        get_resource: iox_data_0_port_0
+                        get_resource: iox_0_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -744,20 +744,20 @@ resources:
             networks:
                 -
                     get_attr:
-                        - iox_internal_0_port_0
+                        - iox_0_internal_port_0
                         - network_id
                 -
                     get_attr:
-                        - iox_oam_0_port_0
+                        - iox_0_oam_port_0
                         - network_id
                 -
                     get_attr:
-                        - iox_data_0_port_0
+                        - iox_0_data_port_0
                         - network_id
             mcas_mate_id: m004
             pair_uuid: {get_param: iox_pair_uuid}
 #            shared_vol1: {get_param: iox_volume_shared_0}
-    iox_internal_0_port_0:
+    iox_0_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -776,7 +776,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
 
-    iox_oam_0_port_0:
+    iox_0_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -800,7 +800,7 @@ resources:
         metadata:
             os_net: { get_param: oam_net_id }
             ext_net: io
-    iox_data_0_port_0:
+    iox_0_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -844,13 +844,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: iox_internal_0_port_1
+                        get_resource: iox_1_internal_port_0
                 -
                     port:
-                        get_resource: iox_oam_0_port_1
+                        get_resource: iox_1_oam_port_0
                 -
                     port:
-                        get_resource: iox_data_0_port_1
+                        get_resource: iox_1_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -913,7 +913,7 @@ resources:
             mcas_mate_id: m003
             pair_uuid: {get_param: iox_pair_uuid}
 #            shared_vol1: {get_param: iox_volume_shared_0}
-    iox_internal_0_port_1:
+    iox_1_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -933,7 +933,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
  
-    iox_oam_0_port_1:
+    iox_1_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -962,7 +962,7 @@ resources:
         metadata:
             os_net: { get_param: oam_net_id }
             ext_net: io
-    iox_data_0_port_1:
+    iox_1_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1059,13 +1059,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: app_internal_0_port_0
+                        get_resource: app_0_internal_port_0
                 -
                     port:
-                        get_resource: app_oam_0_port_0
+                        get_resource: app_0_oam_port_0
                 -
                     port:
-                        get_resource: app_data_0_port_0
+                        get_resource: app_0_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -1114,17 +1114,17 @@ resources:
             networks:
                 -
                     get_attr:
-                        - app_internal_0_port_0
+                        - app_0_internal_port_0
                         - network_id
                 -
                     get_attr:
-                        - app_oam_0_port_0
+                        - app_0_oam_port_0
                         - network_id
                 -
                     get_attr:
-                        - app_data_0_port_0
+                        - app_0_data_port_0
                         - network_id
-    app_internal_0_port_0:
+    app_0_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1143,7 +1143,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
 
-    app_oam_0_port_0:
+    app_0_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1162,7 +1162,7 @@ resources:
             os_net: { get_param: oam_net_id }
             ext_net: oam    
     
-    app_data_0_port_0:
+    app_0_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1204,13 +1204,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: app_internal_0_port_1
+                        get_resource: app_1_internal_port_0
                 -
                     port:
-                        get_resource: app_oam_0_port_1
+                        get_resource: app_1_oam_port_0
                 -
                     port:
-                        get_resource: app_data_0_port_1
+                        get_resource: app_1_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -1270,7 +1270,7 @@ resources:
                     get_attr:
                         - app_data_1_port_0
                         - network_id
-    app_internal_0_port_1:
+    app_1_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1289,7 +1289,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
 
-    app_oam_0_port_1:
+    app_1_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1311,7 +1311,7 @@ resources:
             os_net: { get_param: oam_net_id }
             ext_net: oam    
 
-    app_data_0_port_1:
+    app_1_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1353,13 +1353,13 @@ resources:
             networks:
                 -
                     port:
-                        get_resource: app_internal_0_port_2
+                        get_resource: app_2_internal_port_0
                 -
                     port:
-                        get_resource: app_oam_0_port_2
+                        get_resource: app_2_oam_port_0
                 -
                     port:
-                        get_resource: app_data_0_port_2
+                        get_resource: app_2_data_port_0
             user_data_format: RAW
             user_data:
                 str_replace:
@@ -1418,7 +1418,7 @@ resources:
                     get_attr:
                         - app_data_2_port_0
                         - network_id
-    app_internal_0_port_2:
+    app_2_internal_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1437,7 +1437,7 @@ resources:
         metadata:
             os_net: {get_resource: internal_net_0 }
 
-    app_oam_0_port_2:
+    app_2_oam_port_0:
         type: OS::Neutron::Port
         properties:
             name:
@@ -1459,7 +1459,7 @@ resources:
             os_net: { get_param: oam_net_id }
             ext_net: oam    
 
-    app_data_0_port_2:
+    app_2_data_port_0:
         type: OS::Neutron::Port
         properties:
             name:

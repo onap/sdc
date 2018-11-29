@@ -31,13 +31,14 @@ public class FilePortConsolidationDataTest {
     private static final String PORT_RESOURCE_ID_1 = "pcm_port_01";
     private static final String PORT_RESOURCE_ID_2 = "pcm_port_02";
     private static final String PORT_RESOURCE_TYPE = HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource();
+    private static final String PORT_TYPE = "pcm_port";
 
     private final FilePortConsolidationData consolidationData = new FilePortConsolidationData();
 
     @Test
     public void testAddPortConsolidationData() {
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_1,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         Set<String> expectedComputeNodeTypes = new HashSet<>();
         expectedComputeNodeTypes.add(PORT_NODE_TEMPLATE_ID_1);
         checkComputeConsolidationData(consolidationData, PORT_NODE_TEMPLATE_ID_1, expectedComputeNodeTypes);
@@ -46,12 +47,12 @@ public class FilePortConsolidationDataTest {
     @Test
     public void testAddSameConsolidationDataTwice_noNewCreated() {
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_1,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         PortTemplateConsolidationData firstPortTemplateConsolidationData =
                 consolidationData.getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1);
 
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_1,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         PortTemplateConsolidationData secondPortTemplateConsolidationData =
                 consolidationData.getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1);
         Assert.assertEquals(firstPortTemplateConsolidationData, secondPortTemplateConsolidationData);
@@ -60,13 +61,13 @@ public class FilePortConsolidationDataTest {
     @Test
     public void testAddDiffConsolidationData_diffNodeTemplateIds() {
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_1,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         Set<String> expectedComputeNodeTypes = new HashSet<>();
         expectedComputeNodeTypes.add(PORT_NODE_TEMPLATE_ID_1);
         checkComputeConsolidationData(consolidationData, PORT_NODE_TEMPLATE_ID_1, expectedComputeNodeTypes);
 
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_2, PORT_RESOURCE_ID_2,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         expectedComputeNodeTypes.add(PORT_NODE_TEMPLATE_ID_2);
         checkComputeConsolidationData(consolidationData, PORT_NODE_TEMPLATE_ID_2, expectedComputeNodeTypes);
     }
@@ -74,13 +75,13 @@ public class FilePortConsolidationDataTest {
     @Test
     public void testAddDiffConsolidationData_diffResourceIds() {
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_1,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         Set<String> expectedComputeNodeTypes = new HashSet<>();
         expectedComputeNodeTypes.add(PORT_NODE_TEMPLATE_ID_1);
         checkComputeConsolidationData(consolidationData, PORT_NODE_TEMPLATE_ID_1, expectedComputeNodeTypes);
 
         consolidationData.addPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_1, PORT_RESOURCE_ID_2,
-                PORT_RESOURCE_TYPE);
+                PORT_RESOURCE_TYPE, PORT_TYPE);
         checkComputeConsolidationData(consolidationData, PORT_NODE_TEMPLATE_ID_1, expectedComputeNodeTypes);
     }
 

@@ -414,12 +414,22 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_vdbe_untr_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
-        port_vdbe_untr_port_name:
+        vm_flavor_name:
+          get_input: vdbe_flavor_name
+        port_vdbe_untr_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_vdbe_untr_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: vdbe_image_name
+        port_vdbe_untr_port_2_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004
             params:
@@ -427,10 +437,6 @@ topology_template:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_1
-        vm_flavor_name:
-          get_input: vdbe_flavor_name
-        vm_image_name:
-          get_input: vdbe_image_name
         compute_vdbe_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -440,12 +446,6 @@ topology_template:
             get_input: vnf_name
         compute_vdbe_name:
         - get_input: vdbe_name_1
-        port_vdbe_untr_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         service_template_filter:
           substitute_service_template: Nested_vdbe_1ServiceTemplate.yaml
           count: 1
@@ -467,6 +467,14 @@ topology_template:
         - get_input: untrusted_vn_networks
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
+        port_vdbe_untr_port_1_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
         vm_flavor_name:
           get_input: vdbe_flavor_name
         vm_image_name:
@@ -500,17 +508,15 @@ topology_template:
         - get_input: vdbe_aap_untrusted_ip_prefix_len
         subinterface_nested1_ip_v6_address:
         - get_input: vdbe_untrusted_v6_ip_1
-        port_vdbe_untr_port_mac_requirements:
+        port_vdbe_untr_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_vdbe_untr_port_1_mac_requirements:
           mac_count_required:
             is_required: false
-        port_vdbe_untr_port_name:
-        - str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
         subinterface_nested1_mac_address:
         - get_input: vdbe_hw_untr_mac_1
         subinterface_nested1_aap_untrusted_ip_prefix:
@@ -523,12 +529,6 @@ topology_template:
         - get_input: vdbe_name_1
         subinterface_nested1_aap_sec_untrusted_ip_prefix:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
-        port_vdbe_untr_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         service_template_filter:
           substitute_service_template: Nested_vdbeServiceTemplate.yaml
           count: 1

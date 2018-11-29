@@ -62,36 +62,36 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cmaui02_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
-        port_cmaui02_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_cmaui02_port_2_network:
+        - get_input: net
+        port_cmaui02_port_2_replacement_policy:
+        - AUTO
         vm_flavor_name:
           get_input: cmaui_flavor
         compute_cmaui_name:
         - get_input:
           - cmaui_names
           - 1
-        compute_cmaui_availability_zone:
-        - get_input: availability_zone_0
-        vm_image_name:
-          get_input: cmaui_image
-        port_cmaui02_port_ip_requirements:
+        port_cmaui02_port_2_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_cmaui02_port_replacement_policy:
-        - AUTO
-        port_cmaui02_port_security_groups:
+        compute_cmaui_availability_zone:
+        - get_input: availability_zone_0
+        vm_image_name:
+          get_input: cmaui_image
+        port_cmaui02_port_2_security_groups:
         - - get_input: p2
-        port_cmaui02_port_network:
-        - get_input: net
+        port_cmaui02_port_2_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        port_cmaui02_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_cmauiServiceTemplate.yaml
           count: 1
@@ -105,32 +105,32 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cmaui01_port_replacement_policy:
-        - AUTO
-        port_cmaui01_port_security_groups:
-        - - get_input: p1
-          - get_input: p2
         vm_flavor_name:
           get_input: cmaui_flavor
         compute_cmaui_name:
         - get_input:
           - cmaui_names
           - 0
-        compute_cmaui_availability_zone:
-        - get_input: availability_zone_0
-        vm_image_name:
-          get_input: cmaui_image
-        port_cmaui01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_cmaui01_port_fixed_ips:
+        port_cmaui01_port_1_fixed_ips:
         - ip_address:
             get_input:
             - cmaui_oam_ips
             - 0
-        port_cmaui01_port_network:
+        compute_cmaui_availability_zone:
+        - get_input: availability_zone_0
+        port_cmaui01_port_1_network:
         - get_input: net
-        port_cmaui01_port_ip_requirements:
+        vm_image_name:
+          get_input: cmaui_image
+        port_cmaui01_port_1_replacement_policy:
+        - AUTO
+        port_cmaui01_port_1_security_groups:
+        - - get_input: p1
+          - get_input: p2
+        port_cmaui01_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cmaui01_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
@@ -179,16 +179,16 @@ topology_template:
       - feature_pd01_port_1_test_nested3Level
       network.outgoing.packets.rate_cmaui02_port_2:
       - abstract_cmaui
-      - network.outgoing.packets.rate_cmaui_cmaui02_port
+      - network.outgoing.packets.rate_cmaui_cmaui02_port_2
       binding_cmaui02_port_2:
       - abstract_cmaui
-      - binding_cmaui_cmaui02_port
+      - binding_cmaui_cmaui02_port_2
       disk.device.latency_server_cmaui_1:
       - abstract_cmaui_1
       - disk.device.latency_cmaui
       network.outgoing.bytes.rate_cmaui02_port_2:
       - abstract_cmaui
-      - network.outgoing.bytes.rate_cmaui_cmaui02_port
+      - network.outgoing.bytes.rate_cmaui_cmaui02_port_2
       disk.device.latency_server_cmaui_2:
       - abstract_cmaui
       - disk.device.latency_cmaui
@@ -209,13 +209,13 @@ topology_template:
       - disk.device.latency_server_ps_1_test_nested3Level
       attachment_cmaui01_port_1:
       - abstract_cmaui_1
-      - attachment_cmaui_cmaui01_port
+      - attachment_cmaui_cmaui01_port_1
       disk.write.bytes_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes_server_ps_1_test_nested3Level
       network.incoming.bytes.rate_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.incoming.bytes.rate_cmaui_cmaui01_port
+      - network.incoming.bytes.rate_cmaui_cmaui01_port_1
       disk.capacity_server_oam_1_test_nested2Level:
       - test_nested2Level
       - disk.capacity_server_oam_1
@@ -248,7 +248,7 @@ topology_template:
       - disk.device.read.bytes.rate_cmaui
       feature_cmaui02_port_2:
       - abstract_cmaui
-      - feature_cmaui_cmaui02_port
+      - feature_cmaui_cmaui02_port_2
       disk.device.read.bytes.rate_server_cmaui_1:
       - abstract_cmaui_1
       - disk.device.read.bytes.rate_cmaui
@@ -287,7 +287,7 @@ topology_template:
       - disk.iops_server_oam_2
       network.outpoing.packets_cmaui02_port_2:
       - abstract_cmaui
-      - network.outpoing.packets_cmaui_cmaui02_port
+      - network.outpoing.packets_cmaui_cmaui02_port_2
       attachment_pd01_port_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - attachment_pd01_port_1_test_nested3Level
@@ -314,7 +314,7 @@ topology_template:
       - cpu_util_server_ps_2_test_nested3Level
       network.outgoing.bytes_cmaui02_port_2:
       - abstract_cmaui
-      - network.outgoing.bytes_cmaui_cmaui02_port
+      - network.outgoing.bytes_cmaui_cmaui02_port_2
       feature_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - feature_server_ps_1_test_nested3Level
@@ -344,7 +344,7 @@ topology_template:
       - disk.device.write.bytes.rate_server_ps_2_test_nested3Level
       forwarder_cmaui01_port_1:
       - abstract_cmaui_1
-      - forwarder_cmaui_cmaui01_port
+      - forwarder_cmaui_cmaui01_port_1
       network.outgoing.bytes.rate_oam02_port_2_test_nested2Level:
       - test_nested2Level
       - network.outgoing.bytes.rate_oam02_port_2
@@ -419,7 +419,7 @@ topology_template:
       - cpu_util_cmaui
       network.incoming.packets_cmaui02_port_2:
       - abstract_cmaui
-      - network.incoming.packets_cmaui_cmaui02_port
+      - network.incoming.packets_cmaui_cmaui02_port_2
       disk.device.write.bytes.rate_server_cmaui_2:
       - abstract_cmaui
       - disk.device.write.bytes.rate_cmaui
@@ -482,7 +482,7 @@ topology_template:
       - disk.device.usage_server_ps_2_test_nested3Level
       network.incoming.bytes_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.incoming.bytes_cmaui_cmaui01_port
+      - network.incoming.bytes_cmaui_cmaui01_port_1
       instance_server_oam_2_test_nested2Level:
       - test_nested2Level
       - instance_server_oam_2
@@ -590,7 +590,7 @@ topology_template:
       - feature_oam01_port_1
       network.outgoing.bytes_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.outgoing.bytes_cmaui_cmaui01_port
+      - network.outgoing.bytes_cmaui_cmaui01_port_1
       instance_server_cmaui_2:
       - abstract_cmaui
       - instance_cmaui
@@ -602,7 +602,7 @@ topology_template:
       - memory.resident_server_ps_2_test_nested3Level
       network.incoming.packets.rate_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.incoming.packets.rate_cmaui_cmaui01_port
+      - network.incoming.packets.rate_cmaui_cmaui01_port_1
       disk.read.requests_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.read.requests_server_ps_1_test_nested3Level
@@ -677,10 +677,10 @@ topology_template:
       - disk.device.usage_cmaui
       network.outgoing.packets.rate_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.outgoing.packets.rate_cmaui_cmaui01_port
+      - network.outgoing.packets.rate_cmaui_cmaui01_port_1
       binding_cmaui01_port_1:
       - abstract_cmaui_1
-      - binding_cmaui_cmaui01_port
+      - binding_cmaui_cmaui01_port_1
       scalable_server_oam_2_test_nested2Level:
       - test_nested2Level
       - scalable_server_oam_2
@@ -695,7 +695,7 @@ topology_template:
       - disk.device.write.requests.rate_server_ps_2_test_nested3Level
       network.outgoing.bytes.rate_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.outgoing.bytes.rate_cmaui_cmaui01_port
+      - network.outgoing.bytes.rate_cmaui_cmaui01_port_1
       memory_server_ps_2_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - memory_server_ps_2_test_nested3Level
@@ -719,7 +719,7 @@ topology_template:
       - disk.device.allocation_server_oam_1
       network.incoming.bytes.rate_cmaui02_port_2:
       - abstract_cmaui
-      - network.incoming.bytes.rate_cmaui_cmaui02_port
+      - network.incoming.bytes.rate_cmaui_cmaui02_port_2
       endpoint_server_oam_2_test_nested2Level:
       - test_nested2Level
       - endpoint_server_oam_2
@@ -734,7 +734,7 @@ topology_template:
       - disk.iops_server_ps_2_test_nested3Level
       attachment_cmaui02_port_2:
       - abstract_cmaui
-      - attachment_cmaui_cmaui02_port
+      - attachment_cmaui_cmaui02_port_2
       disk.write.bytes.rate_server_oam_2_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes.rate_server_oam_2
@@ -809,7 +809,7 @@ topology_template:
       - host_server_oam_2
       forwarder_cmaui02_port_2:
       - abstract_cmaui
-      - forwarder_cmaui_cmaui02_port
+      - forwarder_cmaui_cmaui02_port_2
       feature_server_oam_2_test_nested2Level:
       - test_nested2Level
       - feature_server_oam_2
@@ -839,7 +839,7 @@ topology_template:
       - disk.device.capacity_server_ps_1_test_nested3Level
       feature_cmaui01_port_1:
       - abstract_cmaui_1
-      - feature_cmaui_cmaui01_port
+      - feature_cmaui_cmaui01_port_1
       disk.device.read.requests.rate_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.read.requests.rate_server_ps_1_test_nested3Level
@@ -911,7 +911,7 @@ topology_template:
       - memory.usage_server_ps_2_test_nested3Level
       network.incoming.bytes_cmaui02_port_2:
       - abstract_cmaui
-      - network.incoming.bytes_cmaui_cmaui02_port
+      - network.incoming.bytes_cmaui_cmaui02_port_2
       disk.write.requests_server_cmaui_2:
       - abstract_cmaui
       - disk.write.requests_cmaui
@@ -989,7 +989,7 @@ topology_template:
       - network.outgoing.packets.rate_pd02_port_2_test_nested3Level
       network.incoming.packets_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.incoming.packets_cmaui_cmaui01_port
+      - network.incoming.packets_cmaui_cmaui01_port_1
       disk.read.bytes_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.read.bytes_server_ps_1_test_nested3Level
@@ -1040,7 +1040,7 @@ topology_template:
       - network.outgoing.bytes_oam01_port_1
       network.incoming.packets.rate_cmaui02_port_2:
       - abstract_cmaui
-      - network.incoming.packets.rate_cmaui_cmaui02_port
+      - network.incoming.packets.rate_cmaui_cmaui02_port_2
       disk.device.write.requests_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.write.requests_server_ps_1_test_nested3Level
@@ -1127,17 +1127,17 @@ topology_template:
       - memory.usage_cmaui
       network.outpoing.packets_cmaui01_port_1:
       - abstract_cmaui_1
-      - network.outpoing.packets_cmaui_cmaui01_port
+      - network.outpoing.packets_cmaui_cmaui01_port_1
     requirements:
       link_cmaui01_port_1:
       - abstract_cmaui_1
-      - link_cmaui_cmaui01_port
+      - link_cmaui_cmaui01_port_1
       local_storage_server_oam_2_test_nested2Level:
       - test_nested2Level
       - local_storage_server_oam_2
       link_cmaui02_port_2:
       - abstract_cmaui
-      - link_cmaui_cmaui02_port
+      - link_cmaui_cmaui02_port_2
       dependency_test_nested2Level:
       - test_nested2Level
       - dependency
@@ -1155,10 +1155,10 @@ topology_template:
       - dependency_oam01_port_1
       dependency_cmaui01_port_1:
       - abstract_cmaui_1
-      - dependency_cmaui_cmaui01_port
+      - dependency_cmaui_cmaui01_port_1
       dependency_cmaui02_port_2:
       - abstract_cmaui
-      - dependency_cmaui_cmaui02_port
+      - dependency_cmaui_cmaui02_port_2
       dependency_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_server_ps_1_test_nested3Level

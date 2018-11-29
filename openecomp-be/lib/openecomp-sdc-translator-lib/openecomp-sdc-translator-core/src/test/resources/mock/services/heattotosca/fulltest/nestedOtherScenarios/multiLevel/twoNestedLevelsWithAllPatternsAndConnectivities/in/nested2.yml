@@ -100,14 +100,14 @@ resources:
       networks:
       - port: { get_resource: ps_server_1b_port }
 
-  BE_port_1:
+  BE_1c1_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 0]}}]
       replacement_policy: AUTO
 
-  BE_port_2:
+  BE_1c1_2_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network_2}
@@ -122,7 +122,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: BE_1c1_flavor }
       networks:
-      - port: { get_resource: BE_port_1 }
+      - port: { get_resource: BE_1c1_1_mgmt_port_0 }
 
   server_1c1_BE_2:
     type: OS::Nova::Server
@@ -132,16 +132,16 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: BE_1c1_flavor }
       networks:
-      - port: { get_resource: BE_port_2 }
+      - port: { get_resource: BE_1c1_2_mgmt_port_0 }
 
-  osm_port_1:
+  osm_server_1c2_1_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 1]}}]
       replacement_policy: AUTO
 
-  osm_port_2:
+  osm_server_1c2_2_mgmt_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_external_network_2}
@@ -156,7 +156,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: osm_server_1c2_flavor }
       networks:
-      - port: { get_resource: osm_port_1 }
+      - port: { get_resource: osm_server_1c2_1_mgmt_port_0 }
 
   server_1c2_osm_2:
     type: OS::Nova::Server
@@ -166,7 +166,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: osm_server_1c2_flavor }
       networks:
-      - port: { get_resource: osm_port_2 }
+      - port: { get_resource: osm_server_1c2_2_mgmt_port_0 }
       metadata: {
           connectivity_to_rd_server_1b: {get_attr: [server_1b_rd_1, accessIPv4]},
           connectivity_to_server_1c1_BE_1: {get_attr: [server_1c1_BE_1, accessIPv4]},

@@ -104,7 +104,7 @@ resources:
       scheduler_hints: { group: { get_resource: BE_Affinity }}
       block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_ps_boot_volume }, delete_on_termination: "false" }]
       networks:
-        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: ps_server_0_oam_port_0}
       user_data_format:  RAW
 
   server_pd_01:
@@ -120,7 +120,7 @@ resources:
       scheduler_hints: { group: { get_resource: BE_Affinity }}
       block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_pd_boot_volume }, delete_on_termination: "false" }]
       networks:
-        - port: {get_resource: pd01_port_1}
+        - port: {get_resource: pd_server_0_oam_port_0}
       user_data_format:  RAW
 
   server_oam_01:
@@ -136,22 +136,22 @@ resources:
       scheduler_hints: { group: { get_resource: BE_Affinity }}
       block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_oam_boot_volume }, delete_on_termination: "false" }]
       networks:
-        - port: {get_resource: pd01_port_2}
+        - port: {get_resource: oam_server_0_oam_port_0}
       user_data_format:  RAW
 
-  pd01_port_0:
+  ps_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_attr: [network_policy_server, name]}
       security_groups: [{get_resource: jsa_security_group}]
 
-  pd01_port_1:
+  pd_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
       security_groups: [{get_resource: jsa_security_group}]
 
-  pd01_port_2:
+  oam_server_0_oam_port_0:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
@@ -216,9 +216,9 @@ outputs:
       value: {get_attr: [server_oam_01, accessIPv4]}
   out4:
       description: output_regula
-      value: {get_attr: [pd01_port_1, device_owner]}
+      value: {get_attr: [pd_server_0_oam_port_0, device_owner]}
   out5:
       description: output_regula
       value:
-        get_attr: [pd01_port_0, device_id]
+        get_attr: [ps_server_0_oam_port_0, device_id]
 

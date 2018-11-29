@@ -77,7 +77,7 @@ resources:
       networks:
       - port: { get_resource: ps_server_1b_port_2 }
 
-  ps_server_1b_port_3:
+  ps_server_1b_1_port_2:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_int_network}
@@ -92,7 +92,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: ps_server_1b_flavor }
       networks:
-        - port: { get_resource: ps_server_1b_port_3 }
+        - port: { get_resource: ps_server_1b_1_port_2 }
 
   test_resourceGroup_2:
     type: OS::Heat::ResourceGroup
@@ -111,7 +111,7 @@ resources:
       resource_def:
         type: nested_vlan.yml
         properties:
-          parent_interface: { get_resource: ps_server_1b_port_3}
+          parent_interface: { get_resource: ps_server_1b_1_port_2}
           net1: { get_resource: packet_ext_network}
 
   pd_server_1b_port_2:
@@ -131,7 +131,7 @@ resources:
       networks:
       - port: { get_resource: pd_server_1b_port_2 }
 
-  pd_server_1b_port_3:
+  pd_server_1b_1_port_2:
     type: OS::Neutron::Port
     properties:
       network: { get_resource: packet_int_network }
@@ -146,4 +146,4 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: pd_server_1b_flavor }
       networks:
-      - port: { get_resource: pd_server_1b_port_3 }
+      - port: { get_resource: pd_server_1b_1_port_2 }

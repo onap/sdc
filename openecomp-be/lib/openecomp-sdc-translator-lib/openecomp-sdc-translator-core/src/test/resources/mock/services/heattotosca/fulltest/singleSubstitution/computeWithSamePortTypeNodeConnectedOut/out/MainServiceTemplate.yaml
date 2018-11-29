@@ -183,44 +183,44 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pd01_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pd01_port_0_network:
-        - packet_mirror_network
-        port_pd01_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
         - get_input:
           - pd_server_names
           - 0
-        port_pd01_port_0_replacement_policy:
+        port_pd_server_0_oam_port_0_replacement_policy:
         - AUTO
         vm_flavor_name:
           get_input: pd_flavor_name
+        port_pd_server_1_oam_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_1_network:
-        - packet_internal_network
         compute_pd_server_user_data_format:
         - RAW
-        port_pd01_port_1_ip_requirements:
+        port_pd_server_1_oam_port_0_replacement_policy:
+        - AUTO
+        port_pd_server_0_oam_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_1_mac_requirements:
+        port_pd_server_1_oam_port_0_network:
+        - packet_internal_network
+        port_pd_server_0_oam_port_0_network:
+        - packet_mirror_network
+        port_pd_server_1_oam_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_0_oam_port_0_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd01_port_1_replacement_policy:
-        - AUTO
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
@@ -234,11 +234,11 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn
-      - link_pd_server_pd01_port_0:
+      - link_pd_server_pd_server_0_oam_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_mirror_network
           relationship: tosca.relationships.network.LinksTo
-      - link_pd_server_pd01_port_1:
+      - link_pd_server_pd_server_1_oam_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo

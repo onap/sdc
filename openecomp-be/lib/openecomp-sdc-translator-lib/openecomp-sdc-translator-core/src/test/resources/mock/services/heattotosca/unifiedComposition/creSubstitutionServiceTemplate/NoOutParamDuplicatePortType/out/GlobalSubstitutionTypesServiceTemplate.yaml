@@ -8,120 +8,116 @@ node_types:
   org.openecomp.resource.abstract.nodes.FSB1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_FSB1_Internal_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_FSB1_Internal_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_2_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
       compute_FSB1_metadata:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_FSB2_Internal_2_order:
-        type: integer
+      port_FSB1_0_Internal_port_0_subnetpoolid:
+        type: string
         required: true
         status: SUPPORTED
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB1_Internal_related_networks:
-        type: list
+      port_FSB1_Internal_1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_FSB1_OAM_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB1_Internal_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB1_Internal_network:
+      port_FSB1_1_Internal_port_0_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal_1_order:
-        type: integer
+      port_FSB1_0_Internal_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_2_ip_requirements:
+      port_FSB1_1_Internal_port_0_mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_0_Internal_port_0_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB1_1_Internal_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_FSB1_Internal_1_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_1_Internal_port_0_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
       port_FSB1_OAM_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal_2_related_networks:
-        type: list
+      port_FSB1_1_Internal_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-      port_FSB2_Internal_1_network:
+      port_FSB1_Internal_1_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal_2_network_role:
-        type: string
+      port_FSB1_0_Internal_port_0_ip_requirements:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB1_OAM_network_role:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_network_role:
+      port_FSB1_1_Internal_port_0_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_2_network_role_tag:
-        type: string
+      port_FSB1_1_Internal_port_0_related_networks:
+        type: list
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_subnetpoolid:
-        type: string
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_FSB1_Internal_1_ip_requirements:
+        type: list
         required: true
         status: SUPPORTED
-      port_FSB1_Internal_mac_address:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_2_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB1_OAM_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_exCP_naming:
-        type: org.openecomp.datatypes.Naming
+      port_FSB1_1_Internal_port_0_order:
+        type: integer
         required: true
         status: SUPPORTED
       port_FSB1_OAM_exCP_naming:
@@ -134,44 +130,50 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_FSB2_Internal_1_mac_address:
+      port_FSB1_1_Internal_port_0_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_2_mac_address:
+      port_FSB1_0_Internal_port_0_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_ip_requirements:
+      port_FSB1_0_Internal_port_0_mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_0_Internal_port_0_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_1_Internal_port_0_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_FSB2_Internal_2_vlan_requirements:
+      port_FSB1_OAM_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_FSB1_0_Internal_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_1_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB1_Internal_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB1_Internal_exCP_naming:
+      port_FSB1_Internal_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_FSB1_Internal_network_role:
+      port_FSB1_Internal_1_network_role:
         type: string
-        required: true
-        status: SUPPORTED
-      port_FSB1_OAM_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       compute_FSB1_availability_zone:
@@ -188,36 +190,36 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_FSB1_OAM_order:
-        type: integer
+      port_FSB1_0_Internal_port_0_network_role:
+        type: string
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_vlan_requirements:
+      port_FSB1_1_Internal_port_0_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB2_Internal_2_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_FSB2_Internal_1_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB1_Internal_order:
+      port_FSB1_OAM_order:
         type: integer
         required: true
         status: SUPPORTED
-      port_FSB2_Internal_1_related_networks:
-        type: list
+      port_FSB1_Internal_1_mac_address:
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_FSB1_0_Internal_port_0_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_1_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_1_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
       port_FSB1_OAM_related_networks:
         type: list
         required: true
@@ -226,10 +228,6 @@ node_types:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_FSB1_OAM_network_role_tag:
         type: string
-        required: true
-        status: SUPPORTED
-      port_FSB1_Internal_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       compute_FSB1_name:
@@ -244,45 +242,34 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_FSB2_Internal_2_exCP_naming:
-        type: org.openecomp.datatypes.Naming
+      port_FSB1_0_Internal_port_0_related_networks:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     requirements:
-    - dependency_FSB1_FSB1_Internal:
+    - dependency_FSB1_FSB1_1_Internal_port_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_FSB1_FSB1_Internal:
+    - link_FSB1_FSB1_1_Internal_port_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - dependency_FSB1_FSB2_Internal_1:
+    - dependency_FSB1_FSB1_Internal_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_FSB1_FSB2_Internal_1:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - dependency_FSB1_FSB2_Internal_2:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_FSB1_FSB2_Internal_2:
+    - link_FSB1_FSB1_Internal_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -315,6 +302,19 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+    - dependency_FSB1_FSB1_0_Internal_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_FSB1_FSB1_0_Internal_port_0:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     capabilities:
       network.incoming.bytes.rate_FSB1_FSB1_OAM:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -322,7 +322,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.bytes_FSB1_FSB1_OAM:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_FSB1_FSB1_1_Internal_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -340,27 +358,23 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes.rate_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.latency_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      binding_FSB1_FSB2_Internal_2:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+      network.incoming.bytes_FSB1_FSB1_Internal_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
-        - 0
-        - UNBOUNDED
-      binding_FSB1_FSB2_Internal_1:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
+        - 1
         - UNBOUNDED
       disk.allocation_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -380,6 +394,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu_util_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -387,6 +406,18 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.write.requests.rate_FSB1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -404,15 +435,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_FSB1_FSB1_0_Internal_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -421,25 +445,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_FSB1_FSB2_Internal_2:
+      network.incoming.bytes.rate_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -459,11 +465,6 @@ node_types:
       network.incoming.packets.rate_FSB1_FSB1_OAM:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -496,33 +497,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_FSB1_FSB1_1_Internal_port_0:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -532,7 +508,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_FSB1_FSB2_Internal_1:
+      network.incoming.packets.rate_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_FSB1_FSB1_0_Internal_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -544,7 +526,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_FSB1_FSB1_Internal:
+      binding_FSB1_FSB1_0_Internal_port_0:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
@@ -555,11 +537,6 @@ node_types:
       disk.device.read.requests.rate_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_FSB1_FSB1_Internal:
-        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -586,13 +563,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_FSB1_FSB2_Internal_2:
+      network.incoming.bytes.rate_FSB1_FSB1_0_Internal_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -612,19 +583,25 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      attachment_FSB1_FSB1_OAM:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_FSB1_FSB1_Internal:
+      network.outpoing.packets_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_FSB1_FSB1_Internal:
+      attachment_FSB1_FSB1_OAM:
         type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_FSB1_FSB1_Internal_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_FSB1_FSB1_Internal_1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -646,9 +623,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      forwarder_FSB1_FSB1_Internal_1:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -659,6 +635,18 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.usage_FSB1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -675,9 +663,20 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes.rate_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.usage_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_FSB1_FSB1_Internal_1:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -687,13 +686,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_FSB1_FSB2_Internal_1:
+      network.outgoing.packets.rate_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_FSB1_FSB2_Internal_2:
+      attachment_FSB1_FSB1_0_Internal_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_FSB1_FSB1_Internal_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -717,6 +721,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.bytes_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       vcpus_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -729,7 +739,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_FSB1_FSB1_Internal:
+      network.outgoing.bytes_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_FSB1_FSB1_1_Internal_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -741,44 +757,27 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       endpoint_FSB1:
         type: tosca.capabilities.Endpoint.Admin
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      binding_FSB1_FSB1_1_Internal_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_FSB1_FSB1_Internal:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
+        - 0
         - UNBOUNDED
       disk.latency_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_FSB1_FSB1_1_Internal_port_0:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -788,8 +787,20 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_FSB1_FSB2_Internal_2:
-        type: tosca.capabilities.Node
+      forwarder_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_FSB1_FSB1_0_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -799,40 +810,29 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      binding_FSB1_FSB1_Internal_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
       disk.device.write.requests_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_FSB1_FSB2_Internal_1:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_FSB1_FSB2_Internal_2:
-        type: org.openecomp.capabilities.Forwarder
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_FSB1_FSB2_Internal_1:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_FSB1_FSB2_Internal_2:
-        type: tosca.capabilities.Attachment
+      network.incoming.packets.rate_FSB1_FSB1_1_Internal_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       disk.iops_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      forwarder_FSB1_FSB2_Internal_1:
-        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

@@ -132,6 +132,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd_server_port_0_network:
+        - packet_external_network
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -140,21 +142,19 @@ topology_template:
           - 2
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_pd_server_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
-        - packet_external_network
+        vm_image_name:
+          get_input: pd_image_name
         compute_pd_server_user_data_format:
         - RAW
+        port_pd_server_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
@@ -164,7 +164,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_pd_server_pd01_port:
+      - link_pd_server_pd_server_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo
@@ -178,6 +178,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd_server_port_0_network:
+        - packet_internal_network
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -186,21 +188,19 @@ topology_template:
           - 0
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_pd_server_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
-        - packet_internal_network
+        vm_image_name:
+          get_input: pd_image_name
         compute_pd_server_user_data_format:
         - RAW
+        port_pd_server_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
@@ -210,7 +210,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_pd_server_pd01_port:
+      - link_pd_server_pd_server_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
@@ -219,6 +219,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd_server_port_0_network:
+        - packet_internal_network
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -227,21 +229,19 @@ topology_template:
           - 1
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_pd_server_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
-        - packet_internal_network
+        vm_image_name:
+          get_input: pd_image_name
         compute_pd_server_user_data_format:
         - RAW
+        port_pd_server_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
@@ -251,7 +251,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_pd_server_pd01_port:
+      - link_pd_server_pd_server_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo

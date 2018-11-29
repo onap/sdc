@@ -11,29 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_cmaui_port_vlan_requirements:
+    port_cmaui_1c1_mgmt_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_cmaui_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_cmaui_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_cmaui_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_cmaui_port_related_networks:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+        type: org.openecomp.datatypes.network.IpRequirements
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -41,81 +23,99 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_cmaui_1c1_mgmt_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_1c1_mgmt_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     compute_cmaui_1c1_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cmaui_port_network_role_tag:
-      type: string
+    port_cmaui_1c1_mgmt_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
-    port_cmaui_port_order:
-      type: integer
+    port_cmaui_1c1_mgmt_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
     vm_flavor_name:
       type: string
       required: true
-    port_cmaui_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_cmaui_1c1_mgmt_port_0_fixed_ips:
+      type: list
       required: true
-    port_cmaui_port_replacement_policy:
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cmaui_1c1_mgmt_port_0_network_role:
+      type: string
+      required: true
+    port_cmaui_1c1_mgmt_port_0_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cmaui_port_network_role:
+    port_cmaui_1c1_mgmt_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_cmaui_1c1_mgmt_port_0_network_role_tag:
       type: string
       required: true
     vm_image_name:
       type: string
       required: true
-    port_cmaui_port_ip_requirements:
-      type: list
+    port_cmaui_1c1_mgmt_port_0_order:
+      type: integer
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
+    port_cmaui_1c1_mgmt_port_0_subnetpoolid:
+      type: string
+      required: true
     compute_cmaui_1c1_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_cmaui_port_subnetpoolid:
-      type: string
-      required: true
   node_templates:
-    cmaui_1c1_cmaui_port:
+    cmaui_1c1_cmaui_1c1_mgmt_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy:
           get_input:
-          - port_cmaui_port_replacement_policy
+          - port_cmaui_1c1_mgmt_port_0_replacement_policy
           - index_value
         mac_requirements:
-          get_input: port_cmaui_port_mac_requirements
+          get_input: port_cmaui_1c1_mgmt_port_0_mac_requirements
         order:
-          get_input: port_cmaui_port_order
+          get_input: port_cmaui_1c1_mgmt_port_0_order
         exCP_naming:
-          get_input: port_cmaui_port_exCP_naming
+          get_input: port_cmaui_1c1_mgmt_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_cmaui_port_vlan_requirements
+          get_input: port_cmaui_1c1_mgmt_port_0_vlan_requirements
         subinterface_indicator: false
         ip_requirements:
-          get_input: port_cmaui_port_ip_requirements
+          get_input: port_cmaui_1c1_mgmt_port_0_ip_requirements
         related_networks:
-          get_input: port_cmaui_port_related_networks
+          get_input: port_cmaui_1c1_mgmt_port_0_related_networks
         network_role_tag:
-          get_input: port_cmaui_port_network_role_tag
+          get_input: port_cmaui_1c1_mgmt_port_0_network_role_tag
         network_role:
-          get_input: port_cmaui_port_network_role
+          get_input: port_cmaui_1c1_mgmt_port_0_network_role
         fixed_ips:
           get_input:
-          - port_cmaui_port_fixed_ips
+          - port_cmaui_1c1_mgmt_port_0_fixed_ips
           - index_value
         subnetpoolid:
-          get_input: port_cmaui_port_subnetpoolid
+          get_input: port_cmaui_1c1_mgmt_port_0_subnetpoolid
         network:
           get_input:
-          - port_cmaui_port_network
+          - port_cmaui_1c1_mgmt_port_0_network
           - index_value
       requirements:
       - binding:
@@ -140,9 +140,6 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.cmaui_1c1
     capabilities:
-      binding_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - binding
       disk.iops_cmaui_1c1:
       - cmaui_1c1
       - disk.iops
@@ -155,21 +152,15 @@ topology_template:
       endpoint_cmaui_1c1:
       - cmaui_1c1
       - endpoint
-      network.incoming.bytes.rate_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.incoming.bytes.rate
-      network.incoming.packets_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.incoming.packets
-      network.outgoing.bytes_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.outgoing.bytes
-      network.outgoing.bytes.rate_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
+      binding_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - binding
+      network.outgoing.bytes.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
       - network.outgoing.bytes.rate
-      network.outpoing.packets_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.outpoing.packets
+      network.outgoing.bytes_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.outgoing.bytes
       memory_cmaui_1c1:
       - cmaui_1c1
       - memory
@@ -179,6 +170,12 @@ topology_template:
       disk.read.bytes.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.read.bytes.rate
+      attachment_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - attachment
+      network.incoming.packets_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.incoming.packets
       disk.write.requests.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.write.requests.rate
@@ -194,9 +191,6 @@ topology_template:
       cpu_util_cmaui_1c1:
       - cmaui_1c1
       - cpu_util
-      network.outgoing.packets.rate_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.outgoing.packets.rate
       disk.device.read.bytes.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.device.read.bytes.rate
@@ -206,9 +200,15 @@ topology_template:
       instance_cmaui_1c1:
       - cmaui_1c1
       - instance
+      network.incoming.packets.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.incoming.packets.rate
       disk.device.read.requests_cmaui_1c1:
       - cmaui_1c1
       - disk.device.read.requests
+      feature_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - feature
       disk.device.write.bytes.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.device.write.bytes.rate
@@ -230,9 +230,6 @@ topology_template:
       disk.device.latency_cmaui_1c1:
       - cmaui_1c1
       - disk.device.latency
-      network.incoming.bytes_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.incoming.bytes
       disk.write.bytes.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.write.bytes.rate
@@ -254,36 +251,39 @@ topology_template:
       disk.device.read.requests.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.device.read.requests.rate
+      network.incoming.bytes_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.incoming.bytes
       feature_cmaui_1c1:
       - cmaui_1c1
       - feature
-      network.incoming.packets.rate_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - network.incoming.packets.rate
       disk.allocation_cmaui_1c1:
       - cmaui_1c1
       - disk.allocation
+      forwarder_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - forwarder
       disk.device.allocation_cmaui_1c1:
       - cmaui_1c1
       - disk.device.allocation
       disk.device.write.requests.rate_cmaui_1c1:
       - cmaui_1c1
       - disk.device.write.requests.rate
-      forwarder_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - forwarder
+      network.outgoing.packets.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.outgoing.packets.rate
       disk.device.write.bytes_cmaui_1c1:
       - cmaui_1c1
       - disk.device.write.bytes
       memory.resident_cmaui_1c1:
       - cmaui_1c1
       - memory.resident
-      attachment_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - attachment
       disk.usage_cmaui_1c1:
       - cmaui_1c1
       - disk.usage
+      network.incoming.bytes.rate_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.incoming.bytes.rate
       disk.read.requests_cmaui_1c1:
       - cmaui_1c1
       - disk.read.requests
@@ -293,22 +293,22 @@ topology_template:
       vcpus_cmaui_1c1:
       - cmaui_1c1
       - vcpus
-      feature_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - feature
+      network.outpoing.packets_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - network.outpoing.packets
       cpu.delta_cmaui_1c1:
       - cmaui_1c1
       - cpu.delta
     requirements:
-      dependency_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - dependency
+      link_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - link
       dependency_cmaui_1c1:
       - cmaui_1c1
       - dependency
-      link_cmaui_1c1_cmaui_port:
-      - cmaui_1c1_cmaui_port
-      - link
+      dependency_cmaui_1c1_cmaui_1c1_mgmt_port_0:
+      - cmaui_1c1_cmaui_1c1_mgmt_port_0
+      - dependency
       local_storage_cmaui_1c1:
       - cmaui_1c1
       - local_storage

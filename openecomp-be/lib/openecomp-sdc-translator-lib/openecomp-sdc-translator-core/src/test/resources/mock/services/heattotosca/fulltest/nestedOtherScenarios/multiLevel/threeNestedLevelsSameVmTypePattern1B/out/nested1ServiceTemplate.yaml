@@ -62,28 +62,28 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd01_port_01_network_role_tag: oam
+        port_pd01_port_01_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
         - get_input:
           - pd_server_names
           - 0
+        port_pd01_port_01_network:
+        - get_input: oam_net_name
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
+        port_pd01_port_01_mac_requirements:
           mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_pd01_port_network:
-        - get_input: oam_net_name
-        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -99,7 +99,7 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_ps02_port_ip_requirements:
+        port_ps02_port_01_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
@@ -111,18 +111,18 @@ topology_template:
         - get_input:
           - pd_server_names
           - 1
-        port_ps02_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_ps02_port_network_role_tag: oam
         vm_image_name:
           get_input: pd_image_name
+        port_ps02_port_01_network_role_tag: oam
+        port_ps02_port_01_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ps02_port_01_network:
+        - get_input: oam_net_name
         compute_pd_server_user_data_format:
         - RAW
-        port_ps02_port_network:
-        - get_input: oam_net_name
         service_template_filter:
           substitute_service_template: Nested_pd_server_5ServiceTemplate.yaml
           count: 1
@@ -194,16 +194,16 @@ topology_template:
       - disk.device.write.bytes_server_pd_32_test_nested3Level
       feature_ps02_port_01:
       - abstract_pd_server_5
-      - feature_pd_server_ps02_port
+      - feature_pd_server_ps02_port_01
       disk.usage_server_pd_21_test_nested2Level:
       - test_nested2Level
       - disk.usage_server_pd_21
       network.incoming.packets.rate_ps02_port_01:
       - abstract_pd_server_5
-      - network.incoming.packets.rate_pd_server_ps02_port
+      - network.incoming.packets.rate_pd_server_ps02_port_01
       network.outgoing.bytes_pd01_port_01:
       - abstract_pd_server_4
-      - network.outgoing.bytes_pd_server_pd01_port
+      - network.outgoing.bytes_pd_server_pd01_port_01
       disk.device.read.bytes.rate_server_pd_11:
       - abstract_pd_server_4
       - disk.device.read.bytes.rate_pd_server
@@ -218,7 +218,7 @@ topology_template:
       - disk.device.write.bytes_server_pd_31_test_nested3Level
       network.incoming.bytes.rate_ps02_port_01:
       - abstract_pd_server_5
-      - network.incoming.bytes.rate_pd_server_ps02_port
+      - network.incoming.bytes.rate_pd_server_ps02_port_01
       disk.device.read.requests_server_pd_11:
       - abstract_pd_server_4
       - disk.device.read.requests_pd_server
@@ -251,7 +251,7 @@ topology_template:
       - attachment_pd01_port_02
       network.incoming.bytes_ps02_port_01:
       - abstract_pd_server_5
-      - network.incoming.bytes_pd_server_ps02_port
+      - network.incoming.bytes_pd_server_ps02_port_01
       feature_server_pd_32_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - feature_server_pd_32_test_nested3Level
@@ -263,7 +263,7 @@ topology_template:
       - disk.read.requests_server_pd_31_test_nested3Level
       attachment_pd01_port_01:
       - abstract_pd_server_4
-      - attachment_pd_server_pd01_port
+      - attachment_pd_server_pd01_port_01
       disk.write.bytes.rate_server_pd_21_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes.rate_server_pd_21
@@ -299,13 +299,13 @@ topology_template:
       - disk.usage_server_pd_32_test_nested3Level
       binding_pd01_port_01:
       - abstract_pd_server_4
-      - binding_pd_server_pd01_port
+      - binding_pd_server_pd01_port_01
       disk.latency_server_pd_22_test_nested2Level:
       - test_nested2Level
       - disk.latency_server_pd_22
       binding_ps02_port_01:
       - abstract_pd_server_5
-      - binding_pd_server_ps02_port
+      - binding_pd_server_ps02_port_01
       disk.read.requests_server_pd_21_test_nested2Level:
       - test_nested2Level
       - disk.read.requests_server_pd_21
@@ -374,7 +374,7 @@ topology_template:
       - disk.device.read.bytes_pd_server
       network.incoming.bytes.rate_pd01_port_01:
       - abstract_pd_server_4
-      - network.incoming.bytes.rate_pd_server_pd01_port
+      - network.incoming.bytes.rate_pd_server_pd01_port_01
       endpoint_server_pd_12:
       - abstract_pd_server_5
       - endpoint_pd_server
@@ -413,7 +413,7 @@ topology_template:
       - disk.latency_pd_server
       network.outgoing.bytes_ps02_port_01:
       - abstract_pd_server_5
-      - network.outgoing.bytes_pd_server_ps02_port
+      - network.outgoing.bytes_pd_server_ps02_port_01
       disk.device.write.requests.rate_server_pd_21_test_nested2Level:
       - test_nested2Level
       - disk.device.write.requests.rate_server_pd_21
@@ -446,7 +446,7 @@ topology_template:
       - endpoint_server_pd_31_test_nested3Level
       network.outgoing.bytes.rate_pd01_port_01:
       - abstract_pd_server_4
-      - network.outgoing.bytes.rate_pd_server_pd01_port
+      - network.outgoing.bytes.rate_pd_server_pd01_port_01
       disk.write.requests_server_pd_21_test_nested2Level:
       - test_nested2Level
       - disk.write.requests_server_pd_21
@@ -476,7 +476,7 @@ topology_template:
       - disk.device.allocation_pd_server
       network.outgoing.packets.rate_pd01_port_01:
       - abstract_pd_server_4
-      - network.outgoing.packets.rate_pd_server_pd01_port
+      - network.outgoing.packets.rate_pd_server_pd01_port_01
       disk.device.latency_server_pd_32_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.latency_server_pd_32_test_nested3Level
@@ -524,7 +524,7 @@ topology_template:
       - feature_pd01_port_03_test_nested3Level
       network.outgoing.packets.rate_ps02_port_01:
       - abstract_pd_server_5
-      - network.outgoing.packets.rate_pd_server_ps02_port
+      - network.outgoing.packets.rate_pd_server_ps02_port_01
       network.outgoing.bytes_pd01_port_03_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - network.outgoing.bytes_pd01_port_03_test_nested3Level
@@ -581,7 +581,7 @@ topology_template:
       - network.outgoing.bytes_pd02_port_02
       network.outpoing.packets_pd01_port_01:
       - abstract_pd_server_4
-      - network.outpoing.packets_pd_server_pd01_port
+      - network.outpoing.packets_pd_server_pd01_port_01
       disk.allocation_server_pd_31_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.allocation_server_pd_31_test_nested3Level
@@ -611,7 +611,7 @@ topology_template:
       - network.outpoing.packets_pd01_port_03_test_nested3Level
       attachment_ps02_port_01:
       - abstract_pd_server_5
-      - attachment_pd_server_ps02_port
+      - attachment_pd_server_ps02_port_01
       network.incoming.bytes.rate_pd02_port_03_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - network.incoming.bytes.rate_pd02_port_03_test_nested3Level
@@ -731,7 +731,7 @@ topology_template:
       - network.incoming.packets.rate_pd01_port_02
       network.incoming.packets_ps02_port_01:
       - abstract_pd_server_5
-      - network.incoming.packets_pd_server_ps02_port
+      - network.incoming.packets_pd_server_ps02_port_01
       disk.device.iops_server_pd_31_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.iops_server_pd_31_test_nested3Level
@@ -761,13 +761,13 @@ topology_template:
       - disk.root.size_server_pd_31_test_nested3Level
       network.outgoing.bytes.rate_ps02_port_01:
       - abstract_pd_server_5
-      - network.outgoing.bytes.rate_pd_server_ps02_port
+      - network.outgoing.bytes.rate_pd_server_ps02_port_01
       disk.iops_server_pd_22_test_nested2Level:
       - test_nested2Level
       - disk.iops_server_pd_22
       feature_pd01_port_01:
       - abstract_pd_server_4
-      - feature_pd_server_pd01_port
+      - feature_pd_server_pd01_port_01
       disk.device.write.bytes.rate_server_pd_12:
       - abstract_pd_server_5
       - disk.device.write.bytes.rate_pd_server
@@ -803,10 +803,10 @@ topology_template:
       - binding_server_pd_21
       network.incoming.packets_pd01_port_01:
       - abstract_pd_server_4
-      - network.incoming.packets_pd_server_pd01_port
+      - network.incoming.packets_pd_server_pd01_port_01
       network.incoming.packets.rate_pd01_port_01:
       - abstract_pd_server_4
-      - network.incoming.packets.rate_pd_server_pd01_port
+      - network.incoming.packets.rate_pd_server_pd01_port_01
       cpu_util_server_pd_12:
       - abstract_pd_server_5
       - cpu_util_pd_server
@@ -926,10 +926,10 @@ topology_template:
       - scalable_server_pd_31_test_nested3Level
       network.incoming.bytes_pd01_port_01:
       - abstract_pd_server_4
-      - network.incoming.bytes_pd_server_pd01_port
+      - network.incoming.bytes_pd_server_pd01_port_01
       network.outpoing.packets_ps02_port_01:
       - abstract_pd_server_5
-      - network.outpoing.packets_pd_server_ps02_port
+      - network.outpoing.packets_pd_server_ps02_port_01
       disk.device.write.bytes.rate_server_pd_32_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.write.bytes.rate_server_pd_32_test_nested3Level
@@ -1076,13 +1076,13 @@ topology_template:
       - vcpus_pd_server
       forwarder_ps02_port_01:
       - abstract_pd_server_5
-      - forwarder_pd_server_ps02_port
+      - forwarder_pd_server_ps02_port_01
       disk.device.write.bytes_server_pd_11:
       - abstract_pd_server_4
       - disk.device.write.bytes_pd_server
       forwarder_pd01_port_01:
       - abstract_pd_server_4
-      - forwarder_pd_server_pd01_port
+      - forwarder_pd_server_pd01_port_01
       disk.allocation_server_pd_11:
       - abstract_pd_server_4
       - disk.allocation_pd_server
@@ -1143,10 +1143,10 @@ topology_template:
       - dependency_server_pd_22
       dependency_ps02_port_01:
       - abstract_pd_server_5
-      - dependency_pd_server_ps02_port
+      - dependency_pd_server_ps02_port_01
       dependency_pd01_port_01:
       - abstract_pd_server_4
-      - dependency_pd_server_pd01_port
+      - dependency_pd_server_pd01_port_01
       local_storage_server_pd_11:
       - abstract_pd_server_4
       - local_storage_pd_server
@@ -1164,7 +1164,7 @@ topology_template:
       - dependency_pd02_port_03_test_nested3Level
       link_pd01_port_01:
       - abstract_pd_server_4
-      - link_pd_server_pd01_port
+      - link_pd_server_pd01_port_01
       local_storage_server_pd_12:
       - abstract_pd_server_5
       - local_storage_pd_server
@@ -1179,7 +1179,7 @@ topology_template:
       - dependency_pd01_port_02
       link_ps02_port_01:
       - abstract_pd_server_5
-      - link_pd_server_ps02_port
+      - link_pd_server_ps02_port_01
       dependency_server_pd_12:
       - abstract_pd_server_5
       - dependency_pd_server

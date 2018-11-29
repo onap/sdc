@@ -31,6 +31,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.Constants.PORT_I
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.SUB_INTERFACE_PROPERTY_VALUE_PREFIX;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.SUB_INTERFACE_ROLE;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.VFC_PARENT_PORT_ROLE;
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getPortTemplateConsolidationDataForPort;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getComputeTypeSuffix;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewComputeNodeTemplateId;
@@ -2197,7 +2198,8 @@ public class UnifiedCompositionService {
         } else {
           Optional<String> parameterId =
               updateProperty(unifiedCompositionTo.getServiceTemplate(), nodeTemplateId, unifiedCompositionTo.getNodeTemplate(), propertyEntry,
-                  unifiedCompositionEntity, computeTemplateConsolidationData, null,
+                  unifiedCompositionEntity, computeTemplateConsolidationData,
+                      getPortTemplateConsolidationDataForPort(unifiedCompositionTo.getUnifiedCompositionDataList(), nodeTemplateId),
                   unifiedCompositionTo.getUnifiedCompositionDataList(),
                   unifiedCompositionTo.getContext());
           parameterId.ifPresent(
@@ -2298,7 +2300,8 @@ public class UnifiedCompositionService {
 
       String inputParamId =
               getParameterId(nodeTemplateId, nodeTemplate, enrichPropertyName,
-                      compositionEntity, computeTemplateConsolidationData, null);
+                      compositionEntity, computeTemplateConsolidationData,
+                      (PortTemplateConsolidationData) entityConsolidationData);
       Map<String, String> propertyValMap = new HashMap<>();
 
       context
@@ -2477,7 +2480,13 @@ public class UnifiedCompositionService {
         nodeTemplate.getProperties().put(propertyId, propertyVal);
         break;
       case PORT:
-        String portType = ConsolidationDataUtil.getPortType(nodeTemplateId);
+        PortTemplateConsolidationData portTemplateConsolidationData =
+                getPortTemplateConsolidationDataForPort(unifiedCompositionDataList,
+                        nodeTemplateId);
+        String portType = null;
+        if (Objects.nonNull(portTemplateConsolidationData)) {
+          portType = portTemplateConsolidationData.getPortType();
+        }
         ComputeTemplateConsolidationData computeTemplateConsolidationData =
                 getConnectedComputeConsolidationData(unifiedCompositionDataList, nodeTemplateId);
         inputParamId = getInputParamIdForPort(nodeTemplateId, propertyId, portType, computeTemplateConsolidationData);
@@ -2690,9 +2699,10 @@ public class UnifiedCompositionService {
                 + getComputeTypeSuffix(nodeTemplate.getType()) + "_" + propertyId;
         break;
       case PORT:
-        String portType = ConsolidationDataUtil.getPortType(nodeTemplateId);
+        String portType = portTemplateConsolidationData.getPortType();
         if (Objects.isNull(computeTemplateConsolidationData)
-                || computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
+                || (computeTemplateConsolidationData.getPorts().get(portType) != null
+                && computeTemplateConsolidationData.getPorts().get(portType).size() > 1)) {
           paramterId = UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_"
                   + nodeTemplateId + "_" + propertyId;
         } else {
@@ -2882,7 +2892,7 @@ public class UnifiedCompositionService {
         String portNodeTemplateId = portTemplateConsolidationData.getNodeTemplateId();
         Object propertyValue = getPortPropertyValue(substitutionTemplateInputName,
                 computeType, portInputType, serviceTemplate,
-                portNodeTemplateId);
+                portNodeTemplateId, portTemplateConsolidationData);
         //If the value object is Optional.empty it implies that the property name was not
         // found in the input name
         if (!(propertyValue instanceof Optional)) {
@@ -2995,7 +3005,7 @@ public class UnifiedCompositionService {
                         .stream()
                         .filter(s -> substitutionTemplateInputName.
                                 contains(getPropertyInputPrefix(s.getNodeTemplateId(),
-                                ConsolidationDataUtil.getPortType(s.getNodeTemplateId()),
+                                s.getPortType(),
                                 portInputType, UnifiedCompositionEntity.PORT)))
                         .findFirst();
 
@@ -3487,9 +3497,10 @@ public class UnifiedCompositionService {
                                       String computeType,
                                       PropertyInputType portInputType,
                                       ServiceTemplate serviceTemplate,
-                                      String portNodeTemplateId) {
+                                      String portNodeTemplateId,
+                                      PortTemplateConsolidationData portTemplateConsolidationData) {
     //Get the input prefix to extract the property name from the input name
-    String portType = ConsolidationDataUtil.getPortType(portNodeTemplateId);
+    String portType = portTemplateConsolidationData.getPortType();
     String portInputPrefix = getPropertyInputPrefix(
             portNodeTemplateId, portType, portInputType, UnifiedCompositionEntity.PORT);
     //Get the property name from the input

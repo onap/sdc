@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 
 /**
  * The type Entity consolidation data.
@@ -106,7 +105,7 @@ public class EntityConsolidationData {
      * @param requirementAssignment the requirement assignment
      */
     public void addNodesConnectedIn(String nodeTemplateId, String requirementId,
-                                           RequirementAssignment requirementAssignment) {
+                                    RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedIn == null) {
             this.nodesConnectedIn = ArrayListMultimap.create();
@@ -152,7 +151,7 @@ public class EntityConsolidationData {
      * @param requirementAssignment the requirement assignment
      */
     public void addNodesConnectedOut(String nodeTemplateId, String requirementId,
-                                            RequirementAssignment requirementAssignment) {
+                                     RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedOut == null) {
             this.nodesConnectedOut = ArrayListMultimap.create();
@@ -280,7 +279,7 @@ public class EntityConsolidationData {
      *         otherwise return false
      */
     public boolean isGetAttrOutFromEntityLegal(Collection<? extends EntityConsolidationData>
-                    entityConsolidationDataList, Map<String, List<String>> portTypeToIds) {
+                                                       entityConsolidationDataList, Map<String, List<String>> portTypeToIds) {
         if (CollectionUtils.isEmpty(entityConsolidationDataList)
                 || MapUtils.isEmpty(portTypeToIds)) {
             return true;
@@ -288,11 +287,11 @@ public class EntityConsolidationData {
 
         for (String portType : portTypeToIds.keySet()) {
             Set<GetAttrFuncData> startingGetAttrFunc =
-                    getEntityGetAttrFuncAsSet(portType);
+                    getEntityGetAttrFuncAsSet(portType, portTypeToIds);
 
             for (EntityConsolidationData entity : entityConsolidationDataList) {
                 Set<GetAttrFuncData> currentGetAttrFuncData =
-                        entity.getEntityGetAttrFuncAsSet(portType);
+                        entity.getEntityGetAttrFuncAsSet(portType, portTypeToIds);
                 if (!(startingGetAttrFunc.equals(currentGetAttrFuncData))) {
                     return false;
                 }
@@ -301,15 +300,25 @@ public class EntityConsolidationData {
         return true;
     }
 
-    private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(String portType) {
+    private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(String portType, Map<String, List<String>> portTypeToIds) {
         if (MapUtils.isEmpty(nodesGetAttrOut)) {
             return new HashSet<>();
         }
 
         return nodesGetAttrOut.entrySet().stream()
-                              .filter(entry -> portType.equals(ConsolidationDataUtil.getPortType(entry.getKey())))
-                              .flatMap(entry -> entry.getValue().stream())
-                              .collect(Collectors.toSet());
+                .filter(entry -> portType.equals(getPortTypeFromNodeTemplateId(entry.getKey(),
+                        portTypeToIds)))
+                .flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toSet());
+    }
+
+    private String getPortTypeFromNodeTemplateId(String portNodeTemplateId, Map<String, List<String>> portTypeToIds) {
+        for (Map.Entry<String, List<String>> portTypeToIdEntry : portTypeToIds.entrySet()) {
+            if (portTypeToIdEntry.getValue().contains(portNodeTemplateId)) {
+                return portTypeToIdEntry.getKey();
+            }
+        }
+        return "";
     }
 
     /**

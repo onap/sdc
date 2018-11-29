@@ -388,6 +388,9 @@ topology_template:
       properties:
         compute_pd_server_scheduler_hints:
         - group: BE_Affinity_group
+        port_pd_server_oam_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -398,24 +401,21 @@ topology_template:
           get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_security_groups:
-        - - jsa_security_group
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_pd_server_oam_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
+        port_pd_server_oam_port_0_network_role_tag: oam
+        port_pd_server_oam_port_0_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
+        port_pd_server_oam_port_0_security_groups:
+        - - jsa_security_group
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
@@ -448,23 +448,23 @@ topology_template:
           get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_security_groups:
-        - - jsa_security_group
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_ps_server_oam_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
+        port_ps_server_oam_port_0_network:
         - get_attribute:
           - network_policy_server
           - name
+        port_ps_server_oam_port_0_security_groups:
+        - - jsa_security_group
+        vm_image_name:
+          get_input: pd_image_name
+        port_ps_server_oam_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_ps_serverServiceTemplate.yaml
           count: 1
@@ -483,34 +483,34 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_oam_server_oam_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam_server_oam_port_0_network_role_tag: oam
         vm_flavor_name:
           get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_security_groups:
+        port_oam_server_oam_port_0_security_groups:
         - - jsa_security_group
-        port_pd01_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_oam_server_oam_port_0_network:
+        - get_input: oam_net_name
         compute_oam_server_availability_zone:
         - get_input: availabilityzone_name
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_oam_server_oam_port_0_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
-        - get_input: oam_net_name
         compute_oam_server_user_data_format:
         - RAW
         compute_oam_server_name:
         - get_input:
           - oam_server_names
           - 0
-        port_pd01_port_network_role_tag: oam
         compute_oam_server_scheduler_hints:
         - group: BE_Affinity_group
         service_template_filter:
@@ -569,15 +569,15 @@ topology_template:
           direction: ingress
       requirements:
       - port:
-          capability: attachment_ps_server_pd01_port
+          capability: attachment_ps_server_ps_server_oam_port_0
           node: abstract_ps_server
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pd_server_pd01_port
+          capability: attachment_pd_server_pd_server_oam_port_0
           node: abstract_pd_server
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_server_pd01_port
+          capability: attachment_oam_server_oam_server_oam_port_0
           node: abstract_oam_server
           relationship: org.openecomp.relationships.AttachesTo
     network_policy_server_pd:
@@ -633,13 +633,13 @@ topology_template:
       value:
         get_attribute:
         - abstract_pd_server
-        - pd_server_pd01_port_device_owner
+        - pd_server_pd_server_oam_port_0_device_owner
     out5:
       description: output_regula
       value:
         get_attribute:
         - abstract_ps_server
-        - ps_server_pd01_port_device_id
+        - ps_server_ps_server_oam_port_0_device_id
     out1:
       description: output_regula
       value:
