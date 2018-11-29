@@ -4,6 +4,69 @@
 Release Notes
 =============
 
+Version: 1.3.5
+==============
+
+:Release Date: 2018-11-30
+
+`README <https://github.com/onap/sdc>`__
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+       :Version: 1.3.0
+    -  sdc-tosca
+           :Version: 1.4.7
+
+           `README <https://github.com/onap/sdc-sdc-tosca>`__
+
+Release Purpose
+----------------
+The Casablanca release was focused on improving platform stability and resiliency and introducing now platform capabilities.
+
+**New Features**
+
+The Casablanca release is the third release of the Service Design and Creation (SDC).
+
+The main goal of the Casablanca release was to:
+    - Improve code coverage of the SDC code.
+    - Complete E2E workflow design and distribution.
+    - Finalize DCAE-DS and integrate it with OOM
+    - Support HPA
+    - Security enchantments
+
+
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=45307823>`_.
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=45307823>`_
+
+**Known Issues**
+
+-  [`SDC-1958 <https://jira.onap.org/browse/SDC-1958>`__\ ] - SDC Parser can not be used for CCVPN Templates.
+-  [`SDC-1955 <https://jira.onap.org/browse/SDC-1955>`__\ ] - SDC distribution failed
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
+
 Version: 1.2.0
 ==============
 
@@ -16,9 +79,9 @@ SDC SDKs Versions
 
    :Version: 1.3.0
 
--  sdc-tosca
+    -  sdc-tosca
 
-   :Version: 1.3.5
+       :Version: 1.3.5
 
 Release Purpose
 ----------------
@@ -450,9 +513,9 @@ SDC code has been formally scanned during build time using NexusIQ and all Criti
 
 Quick Links:
 
-- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
-- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`__
 
 **Known Issues**
 
@@ -483,9 +546,9 @@ SDC SDKs Versions
 
    :Version: 1.1.32
 
--  sdc-tosca
+    -  sdc-tosca
 
-   :Version: 1.1.32
+       :Version: 1.1.32
 
 
 Release Purpose

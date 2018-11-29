@@ -11,6 +11,8 @@ the logs for the application are available in the docker itself at /var/lib/jett
 in Heat deployment the dockers are mapped into /data/logs on the vm where the application is running.
 In OOM you can use the logging project to access the logging collected from the applications.
 
+In the OOM deployment the log location in the docker is /var/log/onap
+
 
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | Server                        | Location                                 | Type                | Description                                                                                                                                                                               | Rolling             |
@@ -43,6 +45,34 @@ In OOM you can use the logging project to access the logging collected from the 
 |                               |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
 |                               |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+
+Changing log level
+---------------------------
+SDC uses logback for logging.
+in order to change the level you will need to acses the docker.
+in it update the logback.xml according to your need, the change does not requir a restart to the docker.
+
+to change the level for all logs, change the following value:
+
+::
+
+    <root level="INFO">
+
+
+to change the level for logs of some specific packages, change the following value:
+
+::
+
+    <logger level="INFO" name="org.openecomp.sdc" />
+
+
+to agregate all the logs level into a single log file called all.log change the foloing property to true:
+
+::
+
+    <property name="enable-all-log" scope="context" value="false" />
+
+
 
 
 Error / Warning Messages
