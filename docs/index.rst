@@ -13,8 +13,10 @@ SDC Documentation
    offeredapis.rst
    delivery.rst
    humaninterfaces.rst
+   genericdesignerintegration.rst
    installation.rst
    logging.rst
    release-notes.rst
    sdcsdks.rst
    dcaedesigner.rst
+   workflow.rst
