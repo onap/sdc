@@ -40,12 +40,24 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
     private static final String PUSH_USER = "PushUser";
     private static final String RECEIVED_NULL_FOR_ARGUMENT_USER = "Received null for argument user";
     private static final Logger log = Logger.getLogger(PortalRestAPICentralServiceImpl.class);
+    private UserBusinessLogic userBusinessLogic;
 
-    public PortalRestAPICentralServiceImpl() {
+    public PortalRestAPICentralServiceImpl() throws PortalAPIException {
+        try {
+            ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+            userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
+        } catch (Exception e) {
+            log.debug("Failed to get user UserBusinessLogic", e);
+            BeEcompErrorManager.getInstance().logInvalidInputError("constructor", "Exception thrown" + e.getMessage(), BeEcompErrorManager.ErrorSeverity.ERROR);
+            throw new PortalAPIException("SDC Internal server error");
+        }
         log.debug("PortalRestAPICentralServiceImpl Class Instantiated");
     }
 
-    //TODO put username password and appName into portal properties
+    public PortalRestAPICentralServiceImpl(UserBusinessLogic ubl) {
+        this.userBusinessLogic = ubl;
+    }
+
     @Override
     public Map<String, String> getAppCredentials() throws PortalAPIException {
         Map<String, String> credMap = new HashMap<>();
@@ -74,7 +86,6 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
             throw new PortalAPIException(RECEIVED_NULL_FOR_ARGUMENT_USER);
         }
         checkIfSingleRoleProvided(user);
-        UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
 
         final String modifierAttId = JH0003;
         User modifier = new User();
@@ -138,7 +149,6 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         }
 
         checkIfSingleRoleProvided(user);
-        UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
 
         final String modifierAttId = JH0003;
         User modifier = new User();
@@ -193,18 +203,6 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         return request.getHeader(Constants.USER_ID_HEADER);
     }
 
-    private UserBusinessLogic getUserBusinessLogic() throws PortalAPIException {
-        UserBusinessLogic ubl = null;
-        try {
-            ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-            ubl = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
-        } catch (Exception e) {
-            log.debug("Failed to get user UserBusinessLogic", e);
-            BeEcompErrorManager.getInstance().logInvalidInputError("getUserBusinessLogic", "Exception thrown" + e.getMessage(), BeEcompErrorManager.ErrorSeverity.ERROR);
-            throw new PortalAPIException("SDC Internal server error");
-        }
-        return ubl;
-    }
 
     private void checkIfSingleRoleProvided(EcompUser user) throws PortalAPIException {
         if(user.getRoles() == null) {

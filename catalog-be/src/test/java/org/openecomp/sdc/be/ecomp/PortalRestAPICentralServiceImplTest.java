@@ -7,17 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
-import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class PortalRestAPICentralServiceImplTest {
     @Mock
@@ -108,44 +103,4 @@ public class PortalRestAPICentralServiceImplTest {
     //TODO: Test goes here...
     }
 
-
-    /**
-    *
-    * Method: getUserBusinessLogic()
-    *
-    */
-    @Test
-    public void testGetUserBusinessLogic() throws Exception {
-    //TODO: Test goes here...
-
-    try {
-       Method method = testSubject.getClass().getMethod("getUserBusinessLogic");
-       method.setAccessible(true);
-       method.invoke(testSubject);
-    } catch(NoSuchMethodException e) {
-    } catch(IllegalAccessException e) {
-    } catch(InvocationTargetException e) {
-    }
-    }
-
-    /**
-    *
-    * Method: checkIfSingleRoleProvided(EcompUser user)
-    *
-    */
-    @Test
-    public void testCheckIfSingleRoleProvided() throws Exception {
-    //TODO: Test goes here...
-    /*
-    try {
-       Method method = PortalRestAPICentralServiceImpl.getClass().getMethod("checkIfSingleRoleProvided", EcompUser.class);
-       method.setAccessible(true);
-       method.invoke(<Object>, <Parameters>);
-    } catch(NoSuchMethodException e) {
-    } catch(IllegalAccessException e) {
-    } catch(InvocationTargetException e) {
-    }
-    */
-    }
-
-} 
+}
