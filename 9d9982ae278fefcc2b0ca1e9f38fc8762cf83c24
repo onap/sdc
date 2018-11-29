@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_37d51c1c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-11-29T06:47:38Z",
+      "side": 1,
+      "message": "import with * are against java code style of onap.\nPlease format your code.\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "9d9982ae278fefcc2b0ca1e9f38fc8762cf83c24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
