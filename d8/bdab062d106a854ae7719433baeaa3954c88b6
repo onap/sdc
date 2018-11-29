@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Tal  Gitelman <tal.gitelman@att.com>
+Code-Review+2: Michael Lando <michael.lando@intl.att.com>
+Submitted-by: Michael Lando <michael.lando@intl.att.com>
+Submitted-at: Thu, 29 Nov 2018 11:38:10 +0000
+Reviewed-on: https://gerrit.onap.org/r/73898
+Project: sdc
+Branch: refs/heads/master
