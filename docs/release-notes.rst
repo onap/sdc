@@ -4,6 +4,111 @@
 Release Notes
 =============
 
+Version: 1.3.5
+==============
+
+:Release Date: 2018-11-28
+
+`README <https://github.com/onap/sdc>`__
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+       :Version: 1.3.0
+    -  sdc-tosca
+           :Version: 1.4.7
+
+           `README <https://github.com/onap/sdc-sdc-tosca>`__
+
+Release Purpose
+----------------
+The Casablanca release was focused on improving platform stability and resiliency and introducing now platform capabilities.
+
+**New Features**
+
+The Casablanca release is the third release of the Service Design and Creation (SDC).
+
+The main goal of the Casablanca release was to:
+    - Improve code coverage of the SDC code.
+    - Complete E2E workflow design and distribution.
+    - Finalize DCAE-DS and integrate it with OOM
+    - Support HPA
+    - Security enchantments
+
+
+
+
+**Epics**
+
+-  [`SDC-1404 <https://jira.onap.org/browse/SDC-1404>`__\ ] - Technical debt
+-  [`SDC-1507 <https://jira.onap.org/browse/SDC-1507>`__\ ] - Create SDC - DCAE-DS documentation
+-  [`SDC-979 <https://jira.onap.org/browse/SDC-979>`__\ ] - Integrate WF Designer with SDC
+-  [`SDC-1411 <https://jira.onap.org/browse/SDC-1411>`__\ ] - Non-Functional requirements - Security
+-  [`SDC-1697 <https://jira.onap.org/browse/SDC-1697>`__\ ] - PNF enhancements
+
+
+
+**Stories**
+
+-  [`SDC-1297 <https://jira.onap.org/browse/SDC-1297>`__\ ] - Support container building and running on OSX using Docker for Mac
+-  [`SDC-1440 <https://jira.onap.org/browse/SDC-1440>`__\ ] - Workflow Operations Support for Output Parameters
+-  [`SDC-1482 <https://jira.onap.org/browse/SDC-1482>`__\ ] - Workflow Dockers
+-  [`SDC-557 <https://jira.onap.org/browse/SDC-557>`__\ ] - Import normative improvment
+-  [`SDC-1433 <https://jira.onap.org/browse/SDC-1433>`__\ ] - Enhance SDC Parser to support extended notation for "Implementation" in interface operation
+-  [`SDC-1483 <https://jira.onap.org/browse/SDC-1483>`__\ ] - Enhance List Workflow API to support filter and pagination
+-  [`SDC-1450 <https://jira.onap.org/browse/SDC-1450>`__\ ] - Export  workflow operation outputs to TOSCA template
+-  [`SDC-1343 <https://jira.onap.org/browse/SDC-1343>`__\ ] - Introduce json/yaml validation for models
+-  [`SDC-1743 <https://jira.onap.org/browse/SDC-1743>`__\ ] - Add support for work flow deployment on heat
+-  [`SDC-234 <https://jira.onap.org/browse/SDC-234>`__\ ] - Upgrade SnakeYAML version for JTosca
+-  [`SDC-1745 <https://jira.onap.org/browse/SDC-1745>`__\ ] - align the manfiset file in the CSAR
+-  [`SDC-1739 <https://jira.onap.org/browse/SDC-1739>`__\ ] - Interface Operation for Service
+-  [`SDC-1516 <https://jira.onap.org/browse/SDC-1516>`__\ ] - Add sorting capability to property assignment
+-  [`SDC-65 <https://jira.onap.org/browse/SDC-65>`__\ ] - Update readme file
+-  [`SDC-1698 <https://jira.onap.org/browse/SDC-1698>`__\ ] - add softwere version to the PNF properties
+
+
+
+**Bugs**
+
+-  [`SDC-1453 <https://jira.onap.org/browse/SDC-1453>`__\ ] - VSP update in ASDC errors out due to missing data fields.
+-  [`SDC-1478 <https://jira.onap.org/browse/SDC-1478>`__\ ] - Onboarding logs don't get generated with Docker on CentOS
+-  [`SDC-893 <https://jira.onap.org/browse/SDC-893>`__\ ] - SDC TOSCA unable to access the groups properties section
+-  [`SDC-1513 <https://jira.onap.org/browse/SDC-1513>`__\ ] - Unable to onboard Tosca model having simple nodeType
+-  [`SDC-1796 <https://jira.onap.org/browse/SDC-1796>`__\ ] - exception is thrown on import normative
+-  [`SDC-1447 <https://jira.onap.org/browse/SDC-1447>`__\ ] - [SDC] SDC create csar with many warnnings
+-  [`SDC-1918 <https://jira.onap.org/browse/SDC-1918>`__\ ] - SDC can not handle complex string in tosca yaml
+
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=45307682>`_
+
+**Known Issues**
+
+-  [`SDC-1958 <https://jira.onap.org/browse/SDC-1958>`__\ ] - SDC Parser can not be used for CCVPN Templates.
+-  [`SDC-1955 <https://jira.onap.org/browse/SDC-1955>`__\ ] - SDC distribution failed
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
+
 Version: 1.2.0
 ==============
 
@@ -16,9 +121,9 @@ SDC SDKs Versions
 
    :Version: 1.3.0
 
--  sdc-tosca
+    -  sdc-tosca
 
-   :Version: 1.3.5
+       :Version: 1.3.5
 
 Release Purpose
 ----------------
@@ -450,9 +555,9 @@ SDC code has been formally scanned during build time using NexusIQ and all Criti
 
 Quick Links:
 
-- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
-- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
-- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`__
 
 **Known Issues**
 
@@ -483,9 +588,9 @@ SDC SDKs Versions
 
    :Version: 1.1.32
 
--  sdc-tosca
+    -  sdc-tosca
 
-   :Version: 1.1.32
+       :Version: 1.1.32
 
 
 Release Purpose

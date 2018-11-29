@@ -23,14 +23,9 @@ environment.json
         
         # Environment description
         "description": "OpenSource-xxx",
-        
-        # Chef properties
-        "cookbook_versions": {
-            "Deploy-SDandC": "= 1.0.0"
-        },
         "json_class": "Chef::Environment",
         "chef_type": "environment",
-        
+
         "default_attributes": {
             "disableHttp": false,
             # IPs used for docker configuration
@@ -50,13 +45,10 @@ environment.json
             # Configuration parameters used in portal properties
             "ECompP": {
                 "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
-                "ueb_url_list": "10.0.11.1,10.0.11.1",
-                "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu",
-                "app_key": "x9UfO7JsDn8BESVX",
-                "inbox_name": "ECOMP-PORTAL-INBOX",
                 "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
-                "app_topic_name": "ECOMP-PORTAL-OUTBOX-SDC1",
-                "decryption_key": "AGLDdG4D04BKm2IxIWEr8o=="
+                "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
+                "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
+                "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI="
             },
 
             # Configuration parameters used by SDC to work with Dmaap
@@ -125,6 +117,7 @@ environment.json
                 "cassandra_password": "Aa1234%^!",
                 "concurrent_writes": "32",
                 "cluster_name": "SDC-CS-",
+                "datacenter_name": "SDC-CS-",
                 "multithreaded_compaction": "false",
                 "cache_dir": "/var/lib/cassandra/saved_caches",
                 "log_file": "/var/lib/cassandra/log/system.log",
@@ -231,6 +224,8 @@ BE-configuration.yaml
             file: groups.yml
         - policies:
             file: policies.yml
+        - annotations:
+            file: annotations.yml
 
     # Users
     # Deprecated. Will be removed in future releases
@@ -338,6 +333,7 @@ BE-configuration.yaml
         - CP
         - VL
         - VF
+        - CR
         - VFCMT
         - Abstract
         - CVFC
@@ -391,7 +387,7 @@ BE-configuration.yaml
     # Resource type to exclude
     excludeResourceType:
         - PNF
-
+        - CR
     # Informational resource artifacts placeHolder
     # For each artifact the following properties exists:
     #
@@ -528,6 +524,9 @@ BE-configuration.yaml
         MODEL_QUERY_SPEC:
             acceptedTypes:
                 - xml
+        UCPE_LAYER_2_CONFIGURATION:
+            acceptedTypes:
+                - xml
 
     #AAI Artifacts
         AAI_SERVICE_MODEL:
@@ -539,6 +538,9 @@ BE-configuration.yaml
         AAI_VF_INSTANCE_MODEL:
             acceptedTypes:
                 - xml
+        UCPE_LAYER_2_CONFIGURATION:
+            acceptedTypes:
+                - xml
         OTHER:
             acceptedTypes:
 
@@ -546,7 +548,8 @@ BE-configuration.yaml
         PLAN:
             acceptedTypes:
                 - xml
-
+    WORKFLOW:
+            acceptedTypes:
     # Resource deployment artifacts placeHolder
     # For each artifact the following properties exists:
     #
@@ -677,6 +680,8 @@ BE-configuration.yaml
             validForResourceTypes:
                 - VF
                 - VFC
+    WORKFLOW:
+        acceptedTypes:
 
     # Resource instance deployment artifacts placeHolder
     # For each artifact the following properties exists:
@@ -768,6 +773,7 @@ BE-configuration.yaml
                 - CP
                 - VL
                 - VF
+                - CR
                 - VFCMT
                 - Abstract
                 - PNF
@@ -831,7 +837,7 @@ BE-configuration.yaml
 
         # Url for onboarding health check
         healthCheckUri: "/onboarding-api/v1.0/healthcheck"
-		
+
     dcae:
         # The ip of the onboarding docker
         host: <%= @dcae_be_vip %>
@@ -976,6 +982,10 @@ BE-configuration.yaml
            - org.openecomp.groups.VfModule
            - org.openecomp.groups.heat.HeatStack
            - tosca.groups.Root
+        PNF:
+           - org.openecomp.groups.VfModule
+           - org.openecomp.groups.heat.HeatStack
+           - tosca.groups.Root
         VF:
            - org.openecomp.groups.VfModule
            - org.openecomp.groups.heat.HeatStack
@@ -987,7 +997,7 @@ BE-configuration.yaml
 
     healthStatusExclude:
        - DE
-       - DMAPP
+       - DMAAP
        - DCAE
 
 
@@ -1349,6 +1359,54 @@ FE-configuration.yaml
 
     # Kibana usage protocol
     kibanaProtocol: http
+
+FE-plugins-configuration.yaml
+*****************************
+::
+
+   # defnition of the plugins that exist in sdc
+   # we have a pre defined list of plugins that are conected to the system.
+   # the plugins define where they are shown to who and on what elements
+   pluginsList:
+        # the DCAE-DS is the SDC monitoring design studio this entry defines there use as part of the service level context
+      - pluginId: DCAED
+        # this defines from which url to chek that they are available
+        pluginDiscoveryUrl: <%= @dcae_discovery_url %>
+        # this defines from wht URL will ther you be served.
+        pluginSourceUrl: <%= @dcae_source_url %>
+        #thsi defines the plugin state name used by the UI for sending messages.
+        pluginStateUrl: "dcaed"
+        # the display options for the plugin
+        pluginDisplayOptions:
+           # the plugin will be displayed in the context of a catalog item
+           context:
+               # what will the option tag in the ui will be called
+               displayName: "Monitoring"
+               # under what catalog item to display it
+               displayContext: ["SERVICE"]
+               # what user roles will have the option to access the plugin
+               displayRoles: ["DESIGNER"]
+        # DCAE-DS as a tab
+      - pluginId: DCAE-DS
+        pluginDiscoveryUrl: <%= @dcae_dt_discovery_url %>
+        pluginSourceUrl: <%= @dcae_dt_source_url %>
+        pluginStateUrl: "dcae-ds"
+        pluginDisplayOptions:
+          tab:
+              displayName: "DCAE-DS"
+              displayRoles: ["DESIGNER"]
+        #work flow plugin
+      - pluginId: WORKFLOW
+        pluginDiscoveryUrl: <%= @workflow_discovery_url %>
+        pluginSourceUrl: <%= @workflow_source_url %>
+        pluginStateUrl: "workflowDesigner"
+        pluginDisplayOptions:
+           tab:
+               displayName: "WORKFLOW"
+               displayRoles: ["DESIGNER", "TESTER"]
+
+   # how long we will wai for the plugin to respond before cuting it.
+   connectionTimeout: 1000
 
 Onboarding configuration
 ------------------------
