@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_a26467e5",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 219
+      },
+      "writtenOn": "2018-11-30T00:35:56Z",
+      "side": 1,
+      "message": "format of this section does not appear nicely. Look outcome at https://onap.readthedocs.io/en/casablanca/submodules/sdc.git/docs/release-notes.html",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "271e69039a31e15ff4b23683283da78e7d5208bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
