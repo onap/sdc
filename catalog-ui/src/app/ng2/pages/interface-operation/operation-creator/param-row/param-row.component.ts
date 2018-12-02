@@ -50,9 +50,8 @@ export class ParamRowComponent {
                 _.toArray(dataTypes),
                 (type: any) => type.name === prop.type
             );
-            if (!type.properties) {
-                flattenedProps.push(prop);
-            } else {
+            flattenedProps.push(prop);
+            if (type.properties) {
                 _.forEach(type.properties, subType => {
                     if (this.isTypePrimitive(subType.type)) {
                         flattenedProps.push({
