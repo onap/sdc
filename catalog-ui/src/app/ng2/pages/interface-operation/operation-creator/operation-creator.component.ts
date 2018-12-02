@@ -251,11 +251,15 @@ export class OperationCreatorComponent {
         let valid = true;
         if (this.currentTab === this.TYPE_INPUT) {
             _.forEach(this.inputParameters, param => {
-                if (!param.name || !param.property) valid = false;
+                if (!param.name || !param.property) {
+                    valid = false;
+                }
             });
         } else {
             _.forEach(this.outputParameters, param => {
-                if (!param.name || !param.type) valid = false;
+                if (!param.name || !param.type) {
+                    valid = false;
+                }
             });
         }
         return valid;
