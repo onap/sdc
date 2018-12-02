@@ -72,11 +72,11 @@ public final class EcompUserConverter {
         return Either.left(convertedUser);
     }
 
-    public static Either<User, String> convertEcompUserToUser(EcompUser ecompUser) {
+    public static User convertEcompUserToUser(EcompUser ecompUser) {
         User convertedUser = new User();
 
         if (ecompUser == null) {
-            return Either.right("EcompUser is null");
+            return null;
         }
 
         convertedUser.setFirstName(ecompUser.getFirstName());
@@ -105,6 +105,6 @@ public final class EcompUserConverter {
             convertedUser.setStatus(UserStatusEnum.INACTIVE);
         }
 
-        return Either.left(convertedUser);
+        return convertedUser;
     }
 }
