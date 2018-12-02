@@ -1,35 +1,27 @@
 package org.openecomp.sdc.be.ecomp;
 
+import fj.data.Either;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.Map;
 
 public class PortalRestAPICentralServiceImplTest {
-    @Mock
-    ContextLoader conLoader;
-    @Mock
-    WebApplicationContext apContext;
-    @Mock
-    UserBusinessLogic userBusinessLogic;
-    @Mock
-    ContextLoader ctx;
-    @InjectMocks
-    PortalRestAPICentralServiceImpl testSubject;
 
+    PortalRestAPICentralServiceImpl testSubject;
+    UserBusinessLogic ubl;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        ubl = Mockito.mock(UserBusinessLogic.class);
+        testSubject = new PortalRestAPICentralServiceImpl(ubl);
     }
 
     @Test
@@ -40,8 +32,32 @@ public class PortalRestAPICentralServiceImplTest {
         Assert.assertTrue(appCredentials.get(PortalRestAPICentralServiceImpl.PortalPropertiesEnum.PORTAL_PASS.value()).equals("asdc"));
     }
 
-    /*@Test
-    public void testPushUser() throws Exception {
+    @Test
+    public void testPushUserGeneralError() throws Exception {
+        ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
+        Mockito.when(responseFormat.getMessageId()).thenReturn("mock");
+        Mockito.when(ubl.createUser(Mockito.any(), Mockito.any())).thenReturn(Either.right(responseFormat));
+        EcompUser user = new EcompUser();
+        Set<EcompRole> roleSet = new HashSet<>();
+        EcompRole role = new EcompRole();
+        role.setId(1L);
+        role.setName("Designer");
+        roleSet.add(role);
+        user.setRoles(roleSet);
+        try{
+            testSubject.pushUser(user);
+        }catch (PortalAPIException e) {
+            System.out.println(e);
+            Assert.assertTrue(e.getMessage().startsWith("Failed to create user {}"));
+        }
+
+    }
+
+    @Test
+    public void testPushUserSuccess() throws Exception {
+        ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
+        Mockito.when(responseFormat.getMessageId()).thenReturn("SVC4006");
+        Mockito.when(ubl.createUser(Mockito.any(), Mockito.any())).thenReturn(Either.left(new User()));
         EcompUser user = new EcompUser();
         Set<EcompRole> roleSet = new HashSet<>();
         EcompRole role = new EcompRole();
@@ -50,7 +66,7 @@ public class PortalRestAPICentralServiceImplTest {
         roleSet.add(role);
         user.setRoles(roleSet);
         testSubject.pushUser(user);
-    }*/
+    }
 
     @Test
     public void testPushUserNullRoles() throws Exception {

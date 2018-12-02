@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
 import fj.data.Either;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
@@ -44,24 +45,20 @@ public class EcompUserConverterTest {
 
     @Test
     public void shouldNotCrashWhenEcompUserIsNotProvided() {
-        Either<User, String> convertedUser = EcompUserConverter.convertEcompUserToUser(null);
+        User convertedUser = EcompUserConverter.convertEcompUserToUser(null);
 
-        assertThat(convertedUser.isRight()).isTrue();
+        Assert.assertTrue(convertedUser != null);
     }
 
     @Test
     public void shouldProperlyConvertUserToEcompUser() {
-        Either<User, String> convertedUser = EcompUserConverter.convertEcompUserToUser(createEcompUser());
+        User convertedUser = EcompUserConverter.convertEcompUserToUser(createEcompUser());
 
-        assertThat(convertedUser.isLeft()).isTrue();
-
-        User user = convertedUser.left().value();
-
-        assertThat(EMAIL_ADDRESS).isEqualTo(user.getEmail());
-        assertThat(FIRST_NAME).isEqualTo(user.getFirstName());
-        assertThat(LAST_NAME).isEqualTo(user.getLastName());
-        assertThat(USER_ID).isEqualTo(user.getUserId());
-        assertThat(ROLE).isEqualTo(user.getRole());
+        assertThat(EMAIL_ADDRESS).isEqualTo(convertedUser.getEmail());
+        assertThat(FIRST_NAME).isEqualTo(convertedUser.getFirstName());
+        assertThat(LAST_NAME).isEqualTo(convertedUser.getLastName());
+        assertThat(USER_ID).isEqualTo(convertedUser.getUserId());
+        assertThat(ROLE).isEqualTo(convertedUser.getRole());
     }
 
     private EcompUser createEcompUser() {

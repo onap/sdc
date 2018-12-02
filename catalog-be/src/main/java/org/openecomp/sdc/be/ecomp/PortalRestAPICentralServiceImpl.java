@@ -54,7 +54,7 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         log.debug("PortalRestAPICentralServiceImpl Class Instantiated");
     }
 
-    public PortalRestAPICentralServiceImpl(UserBusinessLogic ubl) {
+    PortalRestAPICentralServiceImpl(UserBusinessLogic ubl) {
         this.userBusinessLogic = ubl;
     }
 
@@ -92,18 +92,13 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         modifier.setUserId(modifierAttId);
         log.debug("modifier id is {}", modifierAttId);
 
-        Either<User, String> newASDCUser = EcompUserConverter.convertEcompUserToUser(user);
-        if (newASDCUser.isRight()) {
+        User convertedAsdcUser = EcompUserConverter.convertEcompUserToUser(user);
+        if (convertedAsdcUser == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CONVERT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
             log.debug(FAILED_TO_CREATE_USER, user);
-            throw new PortalAPIException("Failed to create user " + newASDCUser.right().value());
-        } else if (newASDCUser.left().value() == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, NULL_POINTER_RETURNED_FROM_USER_CONVERTER, BeEcompErrorManager.ErrorSeverity.INFO);
-            log.debug(FAILED_TO_CREATE_USER, user);
-            throw new PortalAPIException("Failed to create user " + newASDCUser.right().value());
+            throw new PortalAPIException("Failed to convert user " + user);
         }
 
-        User convertedAsdcUser = newASDCUser.left().value();
         Either<User, ResponseFormat> createUserResponse = userBusinessLogic.createUser(modifier, convertedAsdcUser);
 
         // ALREADY EXIST ResponseFormat
@@ -113,20 +108,20 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
             if (!createUserResponse.right().value().getMessageId().equals(ALREADY_EXISTS_RESPONSE_ID)) {
                 log.debug(FAILED_TO_CREATE_USER, user);
                 BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, BeEcompErrorManager.ErrorSeverity.ERROR);
-                throw new PortalAPIException(FAILED_TO_CREATE_USER + createUserResponse.right());
+                throw new PortalAPIException(FAILED_TO_CREATE_USER + createUserResponse.right().value());
             } else {
                 log.debug("User already exist and will be updated and reactivated {}", user);
                 Either<User, ResponseFormat> updateUserResp = userBusinessLogic.updateUserCredentials(convertedAsdcUser);
                 if(updateUserResp.isRight()){
                     log.debug(FAILED_TO_UPDATE_USER_CREDENTIALS, user);
                     BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_UPDATE_USER_CREDENTIALS, BeEcompErrorManager.ErrorSeverity.ERROR);
-                    throw new PortalAPIException(FAILED_TO_UPDATE_USER_CREDENTIALS + createUserResponse.right());
+                    throw new PortalAPIException(FAILED_TO_UPDATE_USER_CREDENTIALS + createUserResponse.right().value());
                 }
                 Either<User, ResponseFormat> updateUserRoleResp = userBusinessLogic.updateUserRole(modifier, convertedAsdcUser.getUserId(), convertedAsdcUser.getRole());
                 if(updateUserRoleResp.isRight()){
                     log.debug(FAILED_TO_UPDATE_USER_ROLE, user);
                     BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_UPDATE_USER_ROLE, BeEcompErrorManager.ErrorSeverity.ERROR);
-                    throw new PortalAPIException(FAILED_TO_UPDATE_USER_ROLE + createUserResponse.right());
+                    throw new PortalAPIException(FAILED_TO_UPDATE_USER_ROLE + createUserResponse.right().value());
                 }
             }
 
@@ -163,18 +158,13 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
             user.setLoginId(loginId);
         }
 
-        Either<User, String> convertorResp = EcompUserConverter.convertEcompUserToUser(user);
-        if (convertorResp.isRight()) {
-            log.debug(FAILED_TO_CONVERT_USER);
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, FAILED_TO_CONVERT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
-            throw new PortalAPIException(convertorResp.right().value());
-        } else if (convertorResp.left().value() == null) {
-            log.debug(NULL_POINTER_RETURNED_FROM_USER_CONVERTER);
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, NULL_POINTER_RETURNED_FROM_USER_CONVERTER, BeEcompErrorManager.ErrorSeverity.INFO);
-            throw new PortalAPIException(FAILED_TO_EDIT_USER);
+        User asdcUser = EcompUserConverter.convertEcompUserToUser(user);
+        if (asdcUser == null) {
+            BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CONVERT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
+            log.debug(FAILED_TO_CREATE_USER, user);
+            throw new PortalAPIException("Failed to convert user " + user);
         }
 
-        User asdcUser = convertorResp.left().value();
         Either<User, ResponseFormat> updateUserCredentialsResponse = userBusinessLogic.updateUserCredentials(asdcUser);
 
         if (updateUserCredentialsResponse.isRight()) {
