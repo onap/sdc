@@ -16,6 +16,23 @@
       "revId": "7eff735adf242ee8e047528c11cf27ef42a8372b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_752632d0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-03T14:32:33Z",
+      "side": 1,
+      "message": "I previously wrote a comment about this line and it was ignored.",
+      "revId": "7eff735adf242ee8e047528c11cf27ef42a8372b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
