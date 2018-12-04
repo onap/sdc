@@ -2236,6 +2236,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 return resultOp;
             }
 
+            dataHolder.setCurrInstanceNode(origComponent);
             Either<Component, ResponseFormat> mergeStatusEither = compInstMergeDataBL.mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId, newComponentInstance.getUniqueId());
             if (mergeStatusEither.isRight()) {
                 return Either.right(mergeStatusEither.right().value());
