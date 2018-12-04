@@ -3,10 +3,10 @@ project: 'sdc'
 project_creation_date: '2017-01-31'
 lifecycle_state: 'Incubation'
 project_lead: &onap_releng_ptl
-    name: 'Michael Lando'
-    email: 'ml636r@att.com'
-    id: 'ml636r'
+    name: 'Ofir Sonsino'
+    email: 'ofir.sonsino@intl.att.com'
     company: 'ATT'
+    id: 'os0695'
     timezone: 'Israel/Lod'
 primary_contact: *onap_releng_ptl
 issue_tracking:
@@ -63,11 +63,6 @@ committers:
         company: 'ATT'
         id: 'el489u'
         timezone: 'Israel/Lod'
-    - name: 'Ofir Sonsino'
-        email: 'ofir.sonsino@intl.att.com'
-        company: 'ATT'
-        id: 'os0695'
-        timezone: 'Israel/Lod'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
     changes:
@@ -82,3 +77,7 @@ tsc:
         - type: 'Addition'
             name: 'Ofir Sonsino'
             link: 'https://wiki.onap.org/pages/viewpage.action?pageId=45305945'
+        - type: 'Removal'
+            name: 'Michael Lando'
+            link: 'https://lists.onap.org/g/onap-tsc/message/4239'
+
