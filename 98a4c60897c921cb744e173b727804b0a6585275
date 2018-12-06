@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_f4645b4a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationTemplateCSARHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T12:50:02Z",
+      "side": 1,
+      "message": "OnboardingToscaMetadata throws a RuntimeException.\nThis function catches IOException.\nConsider letting OnboardingToscaMetadata throw an IOException",
+      "revId": "98a4c60897c921cb744e173b727804b0a6585275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d461173a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T12:50:02Z",
+      "side": 1,
+      "message": "When this function is called o",
+      "revId": "98a4c60897c921cb744e173b727804b0a6585275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_945b8f86",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T12:50:02Z",
+      "side": 1,
+      "message": "Consider throwing the IOException. The user function uses it anyway.",
+      "revId": "98a4c60897c921cb744e173b727804b0a6585275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
