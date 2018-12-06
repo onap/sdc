@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_14c9df77",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationTemplateCSARHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T07:23:49Z",
+      "side": 1,
+      "message": "Please move all the new code to a separate function.",
+      "revId": "22fc8b74849512157204ead60a4adb41e57f620c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_09bf8fd1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationTemplateCSARHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T07:23:49Z",
+      "side": 1,
+      "message": "Should handle errors like line 65, which handles IOException too.",
+      "revId": "22fc8b74849512157204ead60a4adb41e57f620c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_34c4235e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-06T07:23:49Z",
+      "side": 1,
+      "message": "consider using IOUtils.readAllLines\n\n http://commons.apache.org/proper/commons-io/javadocs/api-release/org/apache/commons/io/IOUtils.html#readLines(java.io.InputStream,%20java.nio.charset.Charset)",
+      "revId": "22fc8b74849512157204ead60a4adb41e57f620c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
