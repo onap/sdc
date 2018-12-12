@@ -71,51 +71,101 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   }
   
   @Test
-  public void testFabricConfigurationOnlyOnePortTrue() throws IOException {
+  public void testFabricConfigurationOnlyOnePortTrueAttFlag() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/input";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/att_flag/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/output";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/att_flag/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
-  
+
   @Test
-  public void testFabricConfigurationAllFalse() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/input";
-    outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/output";
-    initTranslatorAndTranslate();
-    testTranslation();
+  public void testFabricConfigurationOnlyOnePortTrueBindingProfile() throws IOException {
+      inputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/binding_profile/input";
+      outputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/binding_profile/output";
+      initTranslatorAndTranslate();
+      testTranslation();
   }
   
   @Test
-  public void testFabricConfigurationPropertyNull() throws IOException {
+  public void testFabricConfigurationAllFalseAttFlag() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/input";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/att_flag/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/output";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/att_flag/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
+
+  @Test
+   public void testFabricConfigurationAllFalseBindingProfile() throws IOException {
+       inputFilesPath =
+               "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/binding_profile/input";
+       outputFilesPath =
+               "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/binding_profile/output";
+       initTranslatorAndTranslate();
+       testTranslation();
+   }
   
   @Test
-  public void testFabricConfigurationWithoutProperty() throws IOException {
+  public void testFabricConfigurationPropertyNullAttFlag() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/input";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/att_flag/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/output";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/att_flag/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
+
+  @Test
+   public void testFabricConfigurationPropertyNullBindingProfile() throws IOException {
+     inputFilesPath =
+             "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/binding_profile/input";
+     outputFilesPath =
+             "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/binding_profile/output";
+     initTranslatorAndTranslate();
+     testTranslation();
+   }
   
   @Test
-  public void testFabricConfiguration2Ports() throws IOException {
+  public void testFabricConfigurationWithoutPropertyAttFlag() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/input";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/att_flag/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/output";
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/att_flag/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+
+  @Test
+  public void testFabricConfigurationWithoutPropertyBindingProfile() throws IOException {
+      inputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/binding_profile/input";
+      outputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/binding_profile/output";
+      initTranslatorAndTranslate();
+      testTranslation();
+  }
+
+  @Test
+  public void testFabricConfiguration2PortsAttFlag() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/att_flag/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/att_flag/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+
+  @Test
+  public void testFabricConfiguration2PortsWithBindingProfile() throws IOException {
+    inputFilesPath =
+            "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/binding_profile/input";
+    outputFilesPath =
+            "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/binding_profile/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
@@ -128,6 +178,34 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
       TestFeatureManagerProvider.setFeatureManager(null);
   }
 
-  
-  
+  @Test
+  public void testFabricConfigurationMixedBothPropertiesTrue() throws IOException {
+      inputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_both_properties_true/input";
+      outputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_both_properties_true/output";
+      initTranslatorAndTranslate();
+      testTranslation();
+  }
+
+  @Test
+  public void testFabricConfigurationMixedOnePropertyTrue() throws IOException {
+      inputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_one_property_true/input";
+      outputFilesPath =
+              "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_one_property_true/output";
+      initTranslatorAndTranslate();
+      testTranslation();
+  }
+
+    @Test
+    public void testFabricConfigurationMixedBothPropertiesFalse() throws IOException {
+        inputFilesPath =
+                "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_both_properties_false/input";
+        outputFilesPath =
+                "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/mixed_both_properties_false/output";
+        initTranslatorAndTranslate();
+        testTranslation();
+    }
+
 }

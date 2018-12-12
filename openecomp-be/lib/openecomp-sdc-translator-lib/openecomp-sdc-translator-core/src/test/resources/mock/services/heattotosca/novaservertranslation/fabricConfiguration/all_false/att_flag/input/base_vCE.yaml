@@ -225,6 +225,7 @@ resources:
            ATT_VF_UNKNOWN_UNICAST_ALLOW: { get_param: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0 }
            ATT_VF_INSERT_STAG: { get_param: ATT_VF_INSERT_STAG_vCE_SRIOV2_0 }
            ATT_VF_LINK_STATUS: { get_param: ATT_VF_LINK_STATUS_vCE_SRIOV2_0 }
+           ATT_FABRIC_CONFIGURATION_REQUIRED: false
 
   vce_0:
     type: OS::Nova::Server
