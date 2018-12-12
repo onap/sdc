@@ -374,14 +374,30 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
        
        Optional<Object> valueSpacesProperty = HeatToToscaUtil.getResourceProperty(portResource, HeatConstants.VALUE_SPECS_PROPERTY_NAME);
        
-       valueSpacesProperty.filter(props -> props instanceof Map && MapUtils.isNotEmpty((Map)props)).ifPresent(valueSpecs ->{          
-           Object value = ((Map)(valueSpecs)).get(HeatConstants.ATT_FABRIC_CONFIGURATION_REQUIRED);
-           if(value!= null && HeatBoolean.eval(value )){
+       valueSpacesProperty.filter(props -> props instanceof Map && MapUtils.isNotEmpty((Map)props)).ifPresent(valueSpecs ->{
+           if(valueSpecs instanceof Map && (isAttFabricConfigurationFlagSet((Map)valueSpecs) || isBindingProfileFabricConfigSet((Map)valueSpecs))) {
                addFabricConfigurationCapability(translateTo, resourceType);
            }
            
        });
       
+    }
+
+    private boolean isValueFoundAndTrue(Object value) {
+        return Objects.nonNull(value) && HeatBoolean.eval(value);
+    }
+
+    private boolean isAttFabricConfigurationFlagSet(Map valueSpecs) {
+        return isValueFoundAndTrue(valueSpecs.get(HeatConstants.ATT_FABRIC_CONFIGURATION_REQUIRED));
+    }
+
+    private boolean isBindingProfileFabricConfigSet(Map valueSpecs) {
+        Object binding_profile = valueSpecs.get(HeatConstants.VALUE_SPECS_BINDING_PROFILE_PROPERTY_NAME);
+        if (Objects.nonNull(binding_profile) && binding_profile instanceof Map) {
+            return !MapUtils.isEmpty((Map)binding_profile)
+                    && isValueFoundAndTrue(((Map)binding_profile).get(HeatConstants.VALUE_SPECS_FABRIC_CONFIG_PROPERTY_NAME));
+        }
+        return false;
     }
     
     private void addFabricConfigurationCapability(TranslateTo translateTo, String localType){
@@ -391,7 +407,10 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         CapabilityDefinition fabricConfigurationCap = new CapabilityDefinition();        
         fabricConfigurationCap.setType(ToscaCapabilityType.FABRIC_CONFIGURATION);
         mapCapabilities.put(FABRIC_CONFIGURATION_KEY, fabricConfigurationCap);
-        DataModelUtil.addNodeTypeCapabilitiesDef (DataModelUtil.getNodeType(serviceTemplate, localType), mapCapabilities);            
+        DataModelUtil.addNodeTypeCapabilitiesDef (DataModelUtil.getNodeType(serviceTemplate, localType), mapCapabilities);
+        if (logger.isDebugEnabled()) {
+            logger.debug("New capability of type {} will be added to resource {}", ToscaCapabilityType.FABRIC_CONFIGURATION, translateTo.getResourceId());
+        }
     }
 
     private Optional<Resource> getOrTranslatePortTemplate(TranslateTo translateTo,

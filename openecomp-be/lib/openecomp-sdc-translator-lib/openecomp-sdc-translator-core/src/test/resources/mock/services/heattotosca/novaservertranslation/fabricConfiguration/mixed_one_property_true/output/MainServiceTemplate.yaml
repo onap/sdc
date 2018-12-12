@@ -7,21 +7,14 @@ imports:
 node_types:
   org.openecomp.resource.vfc.nodes.heat.vce:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    capabilities:
+      fabric_configuration_monitoring:
+        type: org.openecomp.capabilities.FabricConfiguration
+        occurrences:
+        - 1
+        - UNBOUNDED
 topology_template:
   inputs:
-    ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify allowance of unknown unicast
     oam0_net_id:
       hidden: false
       immutable: false
@@ -48,19 +41,6 @@ topology_template:
             param_name: vce_flavor_name
       type: string
       description: VM instance sizing
-    ATT_VF_VLAN_STRIP_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_VLAN_STRIP_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify VLAN Strip option
     dcae_0:
       hidden: false
       immutable: false
@@ -74,19 +54,6 @@ topology_template:
             param_name: dcae_0
       type: string
       description: IP Address of DCAE CTS Server
-    ATT_VF_VLAN_FILTER_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_VLAN_FILTER_vCE_SRIOV2_0
-      type: json
-      description: VF VLAN Filters specified in JSON list object
     ATT_VF_INSERT_STAG_vCE_SRIOV1_0:
       hidden: false
       immutable: false
@@ -191,6 +158,21 @@ topology_template:
             param_name: oam0_subnet_0_default_gateway
       type: string
       description: Default Gateway for OAM network
+    vce_SRIOV2_0_vlan_filter:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV2_0_vlan_filter
+      type: list
+      description: VLAN filter for oam attached to vce_SRIOV2_0
+      entry_schema:
+        type: string
     vce_SRIOV1_0_net_id:
       hidden: false
       immutable: false
@@ -243,19 +225,6 @@ topology_template:
             param_name: ATT_VF_LINK_STATUS_vCE_SRIOV1_0
       type: string
       description: specify link status of SRIOV VF
-    ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify allowance of unknown multicast
     syslog_ip_2:
       hidden: false
       immutable: false
@@ -321,7 +290,7 @@ topology_template:
             param_name: syslog_ip_1
       type: string
       description: IP Address of second syslog Server
-    ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0:
+    vce_SRIOV2_0_public_vlans:
       hidden: false
       immutable: false
       annotations:
@@ -331,9 +300,11 @@ topology_template:
             vf_module_label:
             - base_vCE
             source_type: HEAT
-            param_name: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify mac anti spoof check option
+            param_name: vce_SRIOV2_0_public_vlans
+      type: list
+      description: public_vlans for oam attached to vce_SRIOV2_0
+      entry_schema:
+        type: string
     sdnc_model_version:
       hidden: false
       immutable: false
@@ -347,19 +318,6 @@ topology_template:
             param_name: sdnc_model_version
       type: string
       description: SDNC Model Version
-    ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify vlan anti spoof check option
     vf_module_id:
       hidden: false
       immutable: false
@@ -490,19 +448,6 @@ topology_template:
             param_name: ATT_VF_VLAN_FILTER_vCE_SRIOV1_0
       type: json
       description: VF VLAN Filters specified in JSON list object
-    ATT_VF_INSERT_STAG_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_INSERT_STAG_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify insertion of outer tag for traffic coming out of VM
     vnf_id:
       hidden: false
       immutable: false
@@ -542,19 +487,6 @@ topology_template:
             param_name: availability_zone_0
       type: string
       description: The Availability Zone to launch the instance.
-    ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0
-      type: boolean
-      description: boolean to specify allowance of broadcast traffic
     vce_SRIOV2_0_port_name:
       hidden: false
       immutable: false
@@ -581,19 +513,6 @@ topology_template:
             param_name: vce_SRIOV1_0_port_name
       type: string
       description: name for sriov Port 0
-    ATT_VF_LINK_STATUS_vCE_SRIOV2_0:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - base_vCE
-            source_type: HEAT
-            param_name: ATT_VF_LINK_STATUS_vCE_SRIOV2_0
-      type: string
-      description: specify link status of SRIOV VF
     snmp_ip_0:
       hidden: false
       immutable: false
@@ -646,6 +565,21 @@ topology_template:
             param_name: snmp_ip_1
       type: string
       description: IP Address of second SNMP Server
+    vce_SRIOV2_0_private_vlans:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV2_0_private_vlans
+      type: list
+      description: private_vlans for oam attached to vce_SRIOV2_0
+      entry_schema:
+        type: string
     snmp_community_0:
       hidden: false
       immutable: false
@@ -742,24 +676,14 @@ topology_template:
           get_input: vce_SRIOV2_0_port_name
         binding:vnic_type: direct
         value_specs:
-          ATT_VF_BROADCAST_ALLOW:
-            get_input: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0
-          ATT_VF_VLAN_ANTI_SPOOF_CHECK:
-            get_input: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
-          ATT_VF_UNKNOWN_MULTICAST_ALLOW:
-            get_input: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0
-          ATT_VF_MAC_ANTI_SPOOF_CHECK:
-            get_input: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
-          ATT_VF_VLAN_FILTER:
-            get_input: ATT_VF_VLAN_FILTER_vCE_SRIOV2_0
-          ATT_VF_VLAN_STRIP:
-            get_input: ATT_VF_VLAN_STRIP_vCE_SRIOV2_0
-          ATT_VF_LINK_STATUS:
-            get_input: ATT_VF_LINK_STATUS_vCE_SRIOV2_0
-          ATT_VF_UNKNOWN_UNICAST_ALLOW:
-            get_input: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0
-          ATT_VF_INSERT_STAG:
-            get_input: ATT_VF_INSERT_STAG_vCE_SRIOV2_0
+          binding:profile:
+            public_vlans:
+              get_input: vce_SRIOV2_0_public_vlans
+            fabric_config: false
+            vlan_filter:
+              get_input: vce_SRIOV2_0_vlan_filter
+            private_vlans:
+              get_input: vce_SRIOV2_0_private_vlans
         network_role_tag: vce_SRIOV2_0
         network:
           get_input: vce_SRIOV2_0_net_id
@@ -846,7 +770,7 @@ topology_template:
             get_input: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
           ATT_VF_UNKNOWN_MULTICAST_ALLOW:
             get_input: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0
-          ATT_FABRIC_CONFIGURATION_REQUIRED: false
+          ATT_FABRIC_CONFIGURATION_REQUIRED: true
           ATT_VF_MAC_ANTI_SPOOF_CHECK:
             get_input: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
           ATT_VF_VLAN_FILTER:
