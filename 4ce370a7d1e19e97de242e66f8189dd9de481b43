@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_39facf43",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNovaServerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-12-12T21:16:41Z",
+      "side": 1,
+      "message": "I know that according to the spec the valueSpace property should be Map but still, if heat is invalid, you need to make sure you will failed due to casting exception.\nplease check if instance of map before doing the casting.\nMaybe the methods will get Object and you will check if it is map in the method....",
+      "range": {
+        "startLine": 378,
+        "startChar": 46,
+        "endLine": 378,
+        "endChar": 62
+      },
+      "revId": "4ce370a7d1e19e97de242e66f8189dd9de481b43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_59f79359",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNovaServerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-12-12T21:16:41Z",
+      "side": 1,
+      "message": "this property can not be found, or can be string.\nyou need to make sure it is not null and instance of map before doing casting to map (same as before)",
+      "range": {
+        "startLine": 395,
+        "startChar": 30,
+        "endLine": 395,
+        "endChar": 106
+      },
+      "revId": "4ce370a7d1e19e97de242e66f8189dd9de481b43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b99d5f0c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNovaServerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-12-12T21:16:41Z",
+      "side": 1,
+      "message": "In all places where you have the phrase \u0027attXXX\u0027 like \u0027attFlag\u0027 please change it to attrXXX.\nattribute short name is attr, when we are using \u0027att\u0027 in the code it is problem to push it to ONAP, since it can be consider as \u0027AT\u0026T\u0027 name, we can\u0027t put \u0027amdocs\u0027 or \u0027att\u0027 names in our code",
+      "range": {
+        "startLine": 74,
+        "startChar": 14,
+        "endLine": 74,
+        "endChar": 59
+      },
+      "revId": "4ce370a7d1e19e97de242e66f8189dd9de481b43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_39916ff1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNovaServerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-12-12T21:16:41Z",
+      "side": 1,
+      "message": "add test that the property value is not map as you expecting to have, and make your you are not failed, but continue without creating the configuration capability",
+      "range": {
+        "startLine": 209,
+        "startChar": 4,
+        "endLine": 209,
+        "endChar": 5
+      },
+      "revId": "4ce370a7d1e19e97de242e66f8189dd9de481b43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
