@@ -936,3 +936,1993 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.base_att_cfed_nested_volume:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      size:
+        type: float
+        description: Size of /storage in GB.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 4
+          - null
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance.
+        required: true
+        status: SUPPORTED
+      index:
+        type: float
+        description: number of volumes to spin up
+        required: true
+        status: SUPPORTED
+      OS::stack_name:
+        type: string
+        required: false
+        status: SUPPORTED
+    attributes:
+      cfed_volume_0:
+        type: string
+        description: CFED Volume UUID
+        status: SUPPORTED
+      cfed_volume_1:
+        type: string
+        description: CFED Volume UUID
+        status: SUPPORTED
+    requirements:
+    - dependency_cfed_volume_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_cfed_volume_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      feature_cfed_volume_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_volume_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_volume_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_volume_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.cfed_1:
+    derived_from: org.openecomp.resource.abstract.nodes.VFC
+    properties:
+      cfed_flavor_name:
+        type: string
+        description: VM flavor name.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      usage_info:
+        type: json
+        description: |
+          Per-VM/vNIC data for members of this elastic group.
+        required: true
+        status: SUPPORTED
+      config_info:
+        type: json
+        description: Service configuration and network layout.
+        required: true
+        status: SUPPORTED
+      group_index:
+        type: float
+        description: Index of the VM pair within the elastic group.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - null
+      sig_subnet_id:
+        type: string
+        description: UUID of the subnet.
+        required: true
+        status: SUPPORTED
+      workload_context:
+        type: string
+        description: Workload context for this VNF.
+        required: true
+        status: SUPPORTED
+      ssh_private_key:
+        type: string
+        description: Private SSH key for VM to VM communication in this system.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_cfed_0_int_ctrl0_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_cfed_0_sig_port_2_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      int_ctrl1_Sec_Grp:
+        type: string
+        description: Internal network 0 security group UUID.
+        required: true
+        status: SUPPORTED
+      current_group_count:
+        type: string
+        description: |
+          Current VM pair count within the elastic group.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      total_pair_count:
+        type: string
+        description: |
+          This string will evaluate to the number of PairGroups in the VNF.
+        required: true
+        status: SUPPORTED
+      cfed_sig_ipmap_sideA_0_float_published:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_cfed_0_sig_port_2_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      int_ctrl1_net_id:
+        type: string
+        description: Internal network 1.
+        required: true
+        status: SUPPORTED
+      cfed_sigv6_ipmap_sideA_0_fixed_dbaas:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      cfed_image_name:
+        type: string
+        description: VM image name.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      cfed_sigv6_ipmap_sideA_0_float_published:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      cfed_sig_ipmap_sideA_0_fixed_dbaas:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_cfed_0_int_ctrl0_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      ssh_public_key:
+        type: string
+        description: Public SSH key for VM to VM communication in this system.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_cfed_0_int_ctrl1_port_1_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      sig_net_id:
+        type: string
+        description: UUID of the network.
+        required: true
+        status: SUPPORTED
+      sigv6_v6_subnet_id:
+        type: string
+        description: UUID of the subnet.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      vf_module_index:
+        type: float
+        description: Unique index for this VNF Module instance.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      backup_file1:
+        type: string
+        description: |
+          <cURL path>/<backup file>
+          This is only used for restore (aka "disaster recovery") and
+          only referenced on OAM-A.
+        required: true
+        status: SUPPORTED
+      vf_module_id:
+        type: string
+        description: Unique ID for this VNF module instance.
+        required: true
+        status: SUPPORTED
+      backup_file2:
+        type: string
+        description: |
+          <cURL path>/<backup file>
+          This is only used for restore (aka "disaster recovery") and
+          only referenced on OAM-A.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      cfed_names:
+        type: list
+        description: VM name list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      role:
+        type: string
+        description: VM role during LCM activities.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - oam
+          - other
+      port_cfed_0_int_ctrl1_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance.
+        required: true
+        status: SUPPORTED
+      vf_module_name:
+        type: string
+        description: Unique name for this VNF module instance.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      vnf_id:
+        type: string
+        description: Unique ID for this VNF instance.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      lcm_keypair:
+        type: string
+        description: Lifecycle management access key pair.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: VM availability zone.
+        required: true
+        status: SUPPORTED
+      sig_Sec_Grp:
+        type: string
+        description: UUID of the security group.
+        required: true
+        status: SUPPORTED
+      int_ctrl0_Sec_Grp:
+        type: string
+        description: Internal network 0 security group UUID.
+        required: true
+        status: SUPPORTED
+      net_info_str:
+        type: string
+        description: |
+          JSON formatted string with all network info.
+          This is redundant with int_net_info and ext_net_info except
+          in Kilo there is no way to convert json to string for
+          output as a personality file.
+        required: true
+        status: SUPPORTED
+      ssh_access_key:
+        type: string
+        description: Public SSH key for external access.
+        required: true
+        status: SUPPORTED
+      int_ctrl0_net_id:
+        type: string
+        description: Internal network 0.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      environment_context:
+        type: string
+        description: Environment context for this VNF.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl0_port_0_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      pair2idx:
+        type: json
+        description: Map group index to VMtype index.
+        required: true
+        status: SUPPORTED
+      vm_role:
+        type: string
+        description: Unique role for these VMs.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      group_id:
+        type: string
+        description: ID number of the elastic group this pair is a member of.
+        required: true
+        status: SUPPORTED
+      install_config:
+        type: string
+        description: JSON formatted string of install config values.
+        required: true
+        status: SUPPORTED
+      cfed_volume_0:
+        type: json
+        description: CFED Volume.
+        required: true
+        status: SUPPORTED
+      group_tag:
+        type: string
+        description: Key into "usage_info" for members of this elastic group.
+        required: true
+        status: SUPPORTED
+      port_cfed_0_sig_port_2_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_0_int_ctrl1_port_1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+    attributes:
+      Version:
+        type: string
+        description: |
+          Template file version number. This should be updated
+          each time a non-comment change is made to this file.
+        status: SUPPORTED
+      VMA-EXT_IPS:
+        type: string
+        description: IP addresses assigned to the first external network.
+        status: SUPPORTED
+    requirements:
+    - dependency_cfed_0_sig_port_2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_0_sig_port_2:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_cfed_0_int_ctrl0_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_0_int_ctrl0_port_0:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_cfed_server_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_cfed_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_cfed_0_int_ctrl1_port_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_0_int_ctrl1_port_1:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      memory_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.iops_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_0_int_ctrl0_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_0_int_ctrl1_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_0_sig_port_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_cfed_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_0_sig_port_2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_0_int_ctrl0_port_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.iops_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_cfed_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_0_int_ctrl0_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.device.read.requests_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_0_int_ctrl1_port_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.usage_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_0_sig_port_2:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_0_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      vcpus_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.latency_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_cfed_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_server_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.ephemeral.size_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_0_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_0_int_ctrl1_port_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_cfed_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_0_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_cfed_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.cfed:
+    derived_from: org.openecomp.resource.abstract.nodes.VFC
+    properties:
+      cfed_flavor_name:
+        type: string
+        description: VM flavor name.
+        required: true
+        status: SUPPORTED
+      cfed_sigv6_ipmap_sideB_0_fixed_dbaas:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_cfed_1_int_ctrl0_port_0_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      cfed_sig_ipmap_sideB_0_fixed_dbaas:
+        type: list
+        description: VM/subnet/usage IP address list. Keyed by group index.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_cfed_1_sig_port_2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      usage_info:
+        type: json
+        description: |
+          Per-VM/vNIC data for members of this elastic group.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      config_info:
+        type: json
+        description: Service configuration and network layout.
+        required: true
+        status: SUPPORTED
+      group_index:
+        type: float
+        description: Index of the VM pair within the elastic group.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - null
+      sig_subnet_id:
+        type: string
+        description: UUID of the subnet.
+        required: true
+        status: SUPPORTED
+      workload_context:
+        type: string
+        description: Workload context for this VNF.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      ssh_private_key:
+        type: string
+        description: Private SSH key for VM to VM communication in this system.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_cfed_1_int_ctrl0_port_0_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      int_ctrl1_Sec_Grp:
+        type: string
+        description: Internal network 0 security group UUID.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      current_group_count:
+        type: string
+        description: |
+          Current VM pair count within the elastic group.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl0_port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      total_pair_count:
+        type: string
+        description: |
+          This string will evaluate to the number of PairGroups in the VNF.
+        required: true
+        status: SUPPORTED
+      int_ctrl1_net_id:
+        type: string
+        description: Internal network 1.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      cfed_image_name:
+        type: string
+        description: VM image name.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      ssh_public_key:
+        type: string
+        description: Public SSH key for VM to VM communication in this system.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_cfed_1_int_ctrl0_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_cfed_1_sig_port_2_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      sig_net_id:
+        type: string
+        description: UUID of the network.
+        required: true
+        status: SUPPORTED
+      sigv6_v6_subnet_id:
+        type: string
+        description: UUID of the subnet.
+        required: true
+        status: SUPPORTED
+      vf_module_index:
+        type: float
+        description: Unique index for this VNF Module instance.
+        required: true
+        status: SUPPORTED
+      backup_file1:
+        type: string
+        description: |
+          <cURL path>/<backup file>
+          This is only used for restore (aka "disaster recovery") and
+          only referenced on OAM-A.
+        required: true
+        status: SUPPORTED
+      vf_module_id:
+        type: string
+        description: Unique ID for this VNF module instance.
+        required: true
+        status: SUPPORTED
+      backup_file2:
+        type: string
+        description: |
+          <cURL path>/<backup file>
+          This is only used for restore (aka "disaster recovery") and
+          only referenced on OAM-A.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      cfed_names:
+        type: list
+        description: VM name list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      role:
+        type: string
+        description: VM role during LCM activities.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - oam
+          - other
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance.
+        required: true
+        status: SUPPORTED
+      vf_module_name:
+        type: string
+        description: Unique name for this VNF module instance.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_cfed_1_int_ctrl1_port_1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      vnf_id:
+        type: string
+        description: Unique ID for this VNF instance.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      lcm_keypair:
+        type: string
+        description: Lifecycle management access key pair.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: VM availability zone.
+        required: true
+        status: SUPPORTED
+      sig_Sec_Grp:
+        type: string
+        description: UUID of the security group.
+        required: true
+        status: SUPPORTED
+      int_ctrl0_Sec_Grp:
+        type: string
+        description: Internal network 0 security group UUID.
+        required: true
+        status: SUPPORTED
+      net_info_str:
+        type: string
+        description: |
+          JSON formatted string with all network info.
+          This is redundant with int_net_info and ext_net_info except
+          in Kilo there is no way to convert json to string for
+          output as a personality file.
+        required: true
+        status: SUPPORTED
+      ssh_access_key:
+        type: string
+        description: Public SSH key for external access.
+        required: true
+        status: SUPPORTED
+      int_ctrl0_net_id:
+        type: string
+        description: Internal network 0.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_sig_port_2_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      environment_context:
+        type: string
+        description: Environment context for this VNF.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl0_port_0_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      pair2idx:
+        type: json
+        description: Map group index to VMtype index.
+        required: true
+        status: SUPPORTED
+      vm_role:
+        type: string
+        description: Unique role for these VMs.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl0_port_0_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_cfed_1_int_ctrl0_port_0_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl0_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      group_id:
+        type: string
+        description: ID number of the elastic group this pair is a member of.
+        required: true
+        status: SUPPORTED
+      install_config:
+        type: string
+        description: JSON formatted string of install config values.
+        required: true
+        status: SUPPORTED
+      cfed_volume_1:
+        type: json
+        description: CFED Volume.
+        required: true
+        status: SUPPORTED
+      group_tag:
+        type: string
+        description: Key into "usage_info" for members of this elastic group.
+        required: true
+        status: SUPPORTED
+      port_cfed_1_int_ctrl1_port_1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+    attributes:
+      VMB-EXT_IPS:
+        type: string
+        description: IP addresses assigned to the first external network.
+        status: SUPPORTED
+      Version:
+        type: string
+        description: |
+          Template file version number. This should be updated
+          each time a non-comment change is made to this file.
+        status: SUPPORTED
+    requirements:
+    - dependency_cfed_server_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_cfed_server_1:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_cfed_1_int_ctrl1_port_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_1_int_ctrl1_port_1:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_cfed_1_int_ctrl0_port_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_1_int_ctrl0_port_0:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_cfed_1_sig_port_2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cfed_1_sig_port_2:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      network.incoming.bytes_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.iops_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_cfed_server_1:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_1_sig_port_2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.latency_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_cfed_server_1:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_1_int_ctrl0_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.iops_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_1_int_ctrl1_port_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_1_sig_port_2:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.read.bytes_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.usage_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_1_int_ctrl1_port_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_cfed_1_int_ctrl0_port_0:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.device.read.requests_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      vcpus_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_1_sig_port_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_cfed_server_1:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_cfed_server_1:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_cfed_server_1:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_server_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.ephemeral.size_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cfed_1_int_ctrl1_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cfed_1_int_ctrl1_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_cfed_1_sig_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_cfed_1_int_ctrl0_port_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_cfed_server_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cfed_1_int_ctrl0_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nest_common:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      total_vm_pairs:
+        type: string
+        description: |
+          This string will evaluate to the number of PairGroups in the VNF.
+        required: true
+        status: SUPPORTED
+      ext_net_list:
+        type: list
+        description: List of applicable subnet tags.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      int_net_count:
+        type: float
+        description: Number of internal networks.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - 1
+          - 2
+      ext_net_info:
+        type: json
+        description: |
+          Maps the network strings used in this HOT file
+           to network info for the target cloud.
+        required: true
+        status: SUPPORTED
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance.
+        required: true
+        status: SUPPORTED
+      int_net1_label:
+        type: json
+        description: |
+          Map the number of internal networks to an internal net1 label
+          or the empty string.
+        required: true
+        status: SUPPORTED
+    attributes:
+      NetInfoStr:
+        type: string
+        description: Per-subnet information in string format.
+        status: SUPPORTED
+      PrivateKey:
+        type: string
+        description: Private SSH key for pre-install intra-VM communication.
+        status: SUPPORTED
+      Version:
+        type: string
+        description: |
+          Template file version number. This should be updated
+          each time a non-comment change is made to this file.
+        status: SUPPORTED
+      PublicKey:
+        type: string
+        description: Public SSH key for pre-install intra-VM communication.
+        status: SUPPORTED
+      TotalPairCount:
+        type: string
+        description: |
+          This string will evaluate to the number of PairGroups in the VNF.
+        status: SUPPORTED
+      IntNetInfo:
+        type: string
+        description: Internal network attributes.
+        status: SUPPORTED
+      OpenSec:
+        type: string
+        description: Open security group.
+        status: SUPPORTED
+    requirements:
+    - dependency_Shared_Sec_Grp:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - port_Shared_Sec_Grp:
+        capability: tosca.capabilities.Attachment
+        node: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_int_ctrl0_network:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_int_ctrl1_network:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      feature_int_ctrl0_network:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_int_ctrl0_network:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_int_ctrl0_network:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_int_ctrl1_network:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_int_ctrl1_network:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_int_ctrl1_network:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_Shared_Sec_Grp:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_int_ctrl1_network:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_int_ctrl0_network:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED

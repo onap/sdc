@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.collections.map.HashedMap;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +49,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
   @InjectMocks
   AbstractSubstituteToscaEnricher toscaEnricher;
 
-  String vspId = null;
-  Version version = new Version();
+  private String vspId = null;
+  private Version version = new Version();
 
   @Before
   public void injectDoubles() {
@@ -83,9 +83,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
     targets.add("fe"); targets.add("be");
     sourceToTargetDependencies.put("pd_server", targets);
 
@@ -110,8 +110,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
             "/mock/toscaGlobalServiceTemplates/",
             "MainServiceTemplate.yaml");
 
-    Map<String, Map<String, Object>> componentTypetoParams = new HashMap();
-    Map<String, Object> innerProps = new HashedMap();
+    Map<String, Map<String, Object>> componentTypetoParams = new HashMap<>();
+    Map<String, Object> innerProps = new HashMap<>();
     innerProps.put(MANDATORY, "NO");
     innerProps.put(HIGH_AVAIL_MODE, "");
     innerProps.put(NFC_NAMING_CODE, "pd_server_code1");
@@ -125,8 +125,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
 
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
@@ -148,23 +148,23 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
             "/mock/toscaGlobalServiceTemplates/",
             "MainServiceTemplate.yaml");
 
-    Map<String, Map<String, Object>> componentTypetoParams = new HashMap();
-    Map<String, Object> innerProps = new HashedMap();
+    Map<String, Map<String, Object>> componentTypetoParams = new HashMap<>();
+    Map<String, Object> innerProps = new HashMap<>();
 
     innerProps.put(MANDATORY, "");
     innerProps.put(MIN_INSTANCES, 1);
     innerProps.put(MAX_INSTANCES, 5);
 
-    componentTypetoParams.put("pd_server_vm", innerProps);
+    componentTypetoParams.put("pd_server", innerProps);
 
     when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
         (componentTypetoParams);
 
-    Map<String,String> map = new HashMap<String,String>();
-    Map<String, List<String>> sourceToTargetDependencies = new HashMap<String, List<String>>();
-    List<String> targets = new ArrayList<String>();
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
     targets.add("fe");
-    sourceToTargetDependencies.put("pd_server_vm", targets);
+    sourceToTargetDependencies.put("pd_server", targets);
 
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
 
@@ -228,6 +228,43 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
 
     Map<String, List<ErrorMessage>> errors =
         toscaEnricher.enrich(toscaServiceModel, vspId, version );
+
+    compareActualAndExpectedModel(toscaServiceModel);
+
+    Assert.assertEquals(errors.size(), 0);
+  }
+
+  @Test
+  public void testEnrichComponentSameVmTypeNfcNamingFunction() throws Exception {
+    outputFilesPath = "/mock/enrichNfcNamingFunction/out";
+    ToscaServiceModel toscaServiceModel =
+            loadToscaServiceModel("/mock/enrichNfcNamingFunction/in",
+                    "/mock/toscaGlobalServiceTemplates/",
+                    "MainServiceTemplate.yaml");
+
+    Map<String, Map<String, Object>> componentTypetoParams = new HashMap<>();
+    Map<String, Object> innerProps = new HashMap<>();
+    innerProps.put(MANDATORY, "NO");
+    innerProps.put(HIGH_AVAIL_MODE, "");
+    innerProps.put(NFC_NAMING_CODE, "cfed_changed_from_ui");
+    innerProps.put(VFC_CODE, "pd_server_code");
+    innerProps.put(NFC_FUNCTION, "cfed_naming_function");
+    innerProps.put(MIN_INSTANCES, null);
+    innerProps.put(MAX_INSTANCES, null);
+
+    componentTypetoParams.put("cfed", innerProps);
+
+    when(utilMock.getPropertiesfromCompQuestionnaire(vspId,version)).thenReturn
+            (componentTypetoParams);
+
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+
+    when(utilMock.getSourceToTargetComponent()).thenReturn(map);
+    when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
+
+    Map<String, List<ErrorMessage>> errors =
+            toscaEnricher.enrich(toscaServiceModel, vspId, version );
 
     compareActualAndExpectedModel(toscaServiceModel);
 

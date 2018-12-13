@@ -1,0 +1,2173 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nest_common
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    total_vm_pairs:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        This string will evaluate to the number of PairGroups in the VNF.
+    ext_net_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of applicable subnet tags.
+      entry_schema:
+        type: string
+    int_net_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: Number of internal networks.
+      constraints:
+      - valid_values:
+        - 1
+        - 2
+    ext_net_info:
+      hidden: false
+      immutable: false
+      type: json
+      description: |
+        Maps the network strings used in this HOT file
+         to network info for the target cloud.
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance.
+    int_net1_label:
+      hidden: false
+      immutable: false
+      type: json
+      description: |
+        Map the number of internal networks to an internal net1 label
+        or the empty string.
+  node_templates:
+    Shared_Sec_Grp:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $vnfname_sec_group
+            params:
+              $vnfname:
+                get_input: vnf_name
+        description: |
+          Open security settings.
+          This assumes that security is handled internal to the guest.
+        rules:
+        - ethertype: IPv4
+          remote_ip_prefix: 169.254.0.0/16
+          direction: ingress
+        - ethertype: IPv4
+          remote_ip_prefix: 169.254.0.0/16
+          direction: egress
+    int_ctrl0_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        dhcp_enabled: false
+        network_name:
+          str_replace:
+            template: $vnfnameint_ctrl0_network
+            params:
+              $vnfname:
+                get_input: vnf_name
+        subnets:
+          int_ctrl0_subnet_0:
+            enable_dhcp: false
+            cidr: 169.254.5.0/24
+    int_ctrl1_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        dhcp_enabled: false
+        network_name:
+          str_replace:
+            template: $vnfnameint_ctrl1_network
+            params:
+              $vnfname:
+                get_input: vnf_name
+        subnets:
+          int_ctrl1_subnet_0:
+            enable_dhcp: false
+            cidr: 169.254.9.0/24
+  groups:
+    nest_common_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nest_common.yaml
+        description: |
+          Common resources needed for all LCP based vNFs.
+          Note that 2 internal subnets are defined. The csar2csop tool will
+          remove the seond if it is not applicable.
+          Similarly both contrain and OpenStack network resources are defined.
+          The csar2csop tool will remove whichever is not used.
+      members:
+      - Shared_Sec_Grp
+      - int_ctrl0_network
+      - int_ctrl1_network
+  outputs:
+    NetInfoStr:
+      description: Per-subnet information in string format.
+      value:
+        str_replace:
+          params:
+            $cidr00:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 0
+              - cidr
+            $cidr01:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 1
+              - cidr
+            $cidr02:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 2
+              - cidr
+            $cidr03:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 3
+              - cidr
+            $cidr04:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 4
+              - cidr
+            $cidr05:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 5
+              - cidr
+            $cidr06:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 6
+              - cidr
+            $cidr07:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 7
+              - cidr
+            $cidr08:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 8
+              - cidr
+            $cidr09:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 9
+              - cidr
+            $cidr10:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 10
+              - cidr
+            $cidr11:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 11
+              - cidr
+            $cidr12:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 12
+              - cidr
+            $cidr13:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 13
+              - cidr
+            $cidr14:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 14
+              - cidr
+            $cidr15:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 15
+              - cidr
+            $cidr16:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 16
+              - cidr
+            $cidr17:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 17
+              - cidr
+            $cidr18:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 18
+              - cidr
+            $cidr19:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 19
+              - cidr
+            $cidr20:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 20
+              - cidr
+            $cidr21:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 21
+              - cidr
+            $cidr22:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 22
+              - cidr
+            $cidr23:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 23
+              - cidr
+            $cidr24:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 24
+              - cidr
+            $cidr25:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 25
+              - cidr
+            $cidr26:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 26
+              - cidr
+            $cidr27:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 27
+              - cidr
+            $cidr28:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 28
+              - cidr
+            $cidr29:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 29
+              - cidr
+            $cidr30:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 30
+              - cidr
+            $cidr31:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 31
+              - cidr
+            $cidr32:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 32
+              - cidr
+            $cidr33:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 33
+              - cidr
+            $cidr34:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 34
+              - cidr
+            $cidr35:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 35
+              - cidr
+            $cidr36:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 36
+              - cidr
+            $cidr37:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 37
+              - cidr
+            $cidr38:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 38
+              - cidr
+            $cidr39:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 39
+              - cidr
+            $cidr40:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 40
+              - cidr
+            $cidr41:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 41
+              - cidr
+            $cidr42:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 42
+              - cidr
+            $cidr43:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 43
+              - cidr
+            $cidr44:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 44
+              - cidr
+            $cidr45:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 45
+              - cidr
+            $cidr46:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 46
+              - cidr
+            $cidr47:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 47
+              - cidr
+            $cidr48:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 48
+              - cidr
+            $cidr49:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 49
+              - cidr
+            $cidr50:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 50
+              - cidr
+            $cidr51:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 51
+              - cidr
+            $cidr52:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 52
+              - cidr
+            $cidr53:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 53
+              - cidr
+            $cidr54:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 54
+              - cidr
+            $cidr55:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 55
+              - cidr
+            $cidr56:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 56
+              - cidr
+            $cidr57:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 57
+              - cidr
+            $cidr58:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 58
+              - cidr
+            $cidr59:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 59
+              - cidr
+            $cidr60:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 60
+              - cidr
+            $cidr61:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 61
+              - cidr
+            $cidr62:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 62
+              - cidr
+            $cidr63:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 63
+              - cidr
+            $extlist:
+              list_join:
+              - ' '
+              - get_param: ext_net_list
+            $gw00:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 0
+              - default_gateway
+            $gw01:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 1
+              - default_gateway
+            $gw02:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 2
+              - default_gateway
+            $gw03:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 3
+              - default_gateway
+            $gw04:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 4
+              - default_gateway
+            $gw05:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 5
+              - default_gateway
+            $gw06:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 6
+              - default_gateway
+            $gw07:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 7
+              - default_gateway
+            $gw08:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 8
+              - default_gateway
+            $gw09:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 9
+              - default_gateway
+            $gw10:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 10
+              - default_gateway
+            $gw11:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 11
+              - default_gateway
+            $gw12:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 12
+              - default_gateway
+            $gw13:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 13
+              - default_gateway
+            $gw14:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 14
+              - default_gateway
+            $gw15:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 15
+              - default_gateway
+            $gw16:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 16
+              - default_gateway
+            $gw17:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 17
+              - default_gateway
+            $gw18:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 18
+              - default_gateway
+            $gw19:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 19
+              - default_gateway
+            $gw20:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 20
+              - default_gateway
+            $gw21:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 21
+              - default_gateway
+            $gw22:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 22
+              - default_gateway
+            $gw23:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 23
+              - default_gateway
+            $gw24:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 24
+              - default_gateway
+            $gw25:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 25
+              - default_gateway
+            $gw26:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 26
+              - default_gateway
+            $gw27:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 27
+              - default_gateway
+            $gw28:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 28
+              - default_gateway
+            $gw29:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 29
+              - default_gateway
+            $gw30:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 30
+              - default_gateway
+            $gw31:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 31
+              - default_gateway
+            $gw32:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 32
+              - default_gateway
+            $gw33:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 33
+              - default_gateway
+            $gw34:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 34
+              - default_gateway
+            $gw35:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 35
+              - default_gateway
+            $gw36:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 36
+              - default_gateway
+            $gw37:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 37
+              - default_gateway
+            $gw38:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 38
+              - default_gateway
+            $gw39:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 39
+              - default_gateway
+            $gw40:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 40
+              - default_gateway
+            $gw41:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 41
+              - default_gateway
+            $gw42:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 42
+              - default_gateway
+            $gw43:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 43
+              - default_gateway
+            $gw44:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 44
+              - default_gateway
+            $gw45:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 45
+              - default_gateway
+            $gw46:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 46
+              - default_gateway
+            $gw47:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 47
+              - default_gateway
+            $gw48:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 48
+              - default_gateway
+            $gw49:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 49
+              - default_gateway
+            $gw50:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 50
+              - default_gateway
+            $gw51:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 51
+              - default_gateway
+            $gw52:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 52
+              - default_gateway
+            $gw53:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 53
+              - default_gateway
+            $gw54:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 54
+              - default_gateway
+            $gw55:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 55
+              - default_gateway
+            $gw56:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 56
+              - default_gateway
+            $gw57:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 57
+              - default_gateway
+            $gw58:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 58
+              - default_gateway
+            $gw59:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 59
+              - default_gateway
+            $gw60:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 60
+              - default_gateway
+            $gw61:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 61
+              - default_gateway
+            $gw62:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 62
+              - default_gateway
+            $gw63:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 63
+              - default_gateway
+            $inet1tag:
+              get_param:
+              - int_net1_label
+              - str_replace:
+                  params:
+                    $val:
+                      get_param: int_net_count
+                  template: $val
+            $intnet0:
+              get_resource: int_ctrl0_network
+            $intnet1:
+              get_resource: int_ctrl1_network
+            $intsnet0:
+              get_resource: int_ctrl0_subnet_0
+            $intsnet1:
+              get_resource: int_ctrl1_subnet_0
+            $mtu00:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 0
+              - mtu_size
+            $mtu01:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 1
+              - mtu_size
+            $mtu02:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 2
+              - mtu_size
+            $mtu03:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 3
+              - mtu_size
+            $mtu04:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 4
+              - mtu_size
+            $mtu05:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 5
+              - mtu_size
+            $mtu06:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 6
+              - mtu_size
+            $mtu07:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 7
+              - mtu_size
+            $mtu08:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 8
+              - mtu_size
+            $mtu09:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 9
+              - mtu_size
+            $mtu10:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 10
+              - mtu_size
+            $mtu11:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 11
+              - mtu_size
+            $mtu12:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 12
+              - mtu_size
+            $mtu13:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 13
+              - mtu_size
+            $mtu14:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 14
+              - mtu_size
+            $mtu15:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 15
+              - mtu_size
+            $mtu16:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 16
+              - mtu_size
+            $mtu17:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 17
+              - mtu_size
+            $mtu18:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 18
+              - mtu_size
+            $mtu19:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 19
+              - mtu_size
+            $mtu20:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 20
+              - mtu_size
+            $mtu21:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 21
+              - mtu_size
+            $mtu22:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 22
+              - mtu_size
+            $mtu23:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 23
+              - mtu_size
+            $mtu24:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 24
+              - mtu_size
+            $mtu25:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 25
+              - mtu_size
+            $mtu26:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 26
+              - mtu_size
+            $mtu27:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 27
+              - mtu_size
+            $mtu28:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 28
+              - mtu_size
+            $mtu29:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 29
+              - mtu_size
+            $mtu30:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 30
+              - mtu_size
+            $mtu31:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 31
+              - mtu_size
+            $mtu32:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 32
+              - mtu_size
+            $mtu33:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 33
+              - mtu_size
+            $mtu34:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 34
+              - mtu_size
+            $mtu35:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 35
+              - mtu_size
+            $mtu36:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 36
+              - mtu_size
+            $mtu37:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 37
+              - mtu_size
+            $mtu38:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 38
+              - mtu_size
+            $mtu39:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 39
+              - mtu_size
+            $mtu40:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 40
+              - mtu_size
+            $mtu41:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 41
+              - mtu_size
+            $mtu42:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 42
+              - mtu_size
+            $mtu43:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 43
+              - mtu_size
+            $mtu44:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 44
+              - mtu_size
+            $mtu45:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 45
+              - mtu_size
+            $mtu46:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 46
+              - mtu_size
+            $mtu47:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 47
+              - mtu_size
+            $mtu48:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 48
+              - mtu_size
+            $mtu49:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 49
+              - mtu_size
+            $mtu50:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 50
+              - mtu_size
+            $mtu51:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 51
+              - mtu_size
+            $mtu52:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 52
+              - mtu_size
+            $mtu53:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 53
+              - mtu_size
+            $mtu54:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 54
+              - mtu_size
+            $mtu55:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 55
+              - mtu_size
+            $mtu56:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 56
+              - mtu_size
+            $mtu57:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 57
+              - mtu_size
+            $mtu58:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 58
+              - mtu_size
+            $mtu59:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 59
+              - mtu_size
+            $mtu60:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 60
+              - mtu_size
+            $mtu61:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 61
+              - mtu_size
+            $mtu62:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 62
+              - mtu_size
+            $mtu63:
+              get_param:
+              - ext_net_info
+              - get_param:
+                - ext_net_list
+                - 63
+              - mtu_size
+            $tag00:
+              get_param:
+              - ext_net_list
+              - 0
+            $tag01:
+              get_param:
+              - ext_net_list
+              - 1
+            $tag02:
+              get_param:
+              - ext_net_list
+              - 2
+            $tag03:
+              get_param:
+              - ext_net_list
+              - 3
+            $tag04:
+              get_param:
+              - ext_net_list
+              - 4
+            $tag05:
+              get_param:
+              - ext_net_list
+              - 5
+            $tag06:
+              get_param:
+              - ext_net_list
+              - 6
+            $tag07:
+              get_param:
+              - ext_net_list
+              - 7
+            $tag08:
+              get_param:
+              - ext_net_list
+              - 8
+            $tag09:
+              get_param:
+              - ext_net_list
+              - 9
+            $tag10:
+              get_param:
+              - ext_net_list
+              - 10
+            $tag11:
+              get_param:
+              - ext_net_list
+              - 11
+            $tag12:
+              get_param:
+              - ext_net_list
+              - 12
+            $tag13:
+              get_param:
+              - ext_net_list
+              - 13
+            $tag14:
+              get_param:
+              - ext_net_list
+              - 14
+            $tag15:
+              get_param:
+              - ext_net_list
+              - 15
+            $tag16:
+              get_param:
+              - ext_net_list
+              - 16
+            $tag17:
+              get_param:
+              - ext_net_list
+              - 17
+            $tag18:
+              get_param:
+              - ext_net_list
+              - 18
+            $tag19:
+              get_param:
+              - ext_net_list
+              - 19
+            $tag20:
+              get_param:
+              - ext_net_list
+              - 20
+            $tag21:
+              get_param:
+              - ext_net_list
+              - 21
+            $tag22:
+              get_param:
+              - ext_net_list
+              - 22
+            $tag23:
+              get_param:
+              - ext_net_list
+              - 23
+            $tag24:
+              get_param:
+              - ext_net_list
+              - 24
+            $tag25:
+              get_param:
+              - ext_net_list
+              - 25
+            $tag26:
+              get_param:
+              - ext_net_list
+              - 26
+            $tag27:
+              get_param:
+              - ext_net_list
+              - 27
+            $tag28:
+              get_param:
+              - ext_net_list
+              - 28
+            $tag29:
+              get_param:
+              - ext_net_list
+              - 29
+            $tag30:
+              get_param:
+              - ext_net_list
+              - 30
+            $tag31:
+              get_param:
+              - ext_net_list
+              - 31
+            $tag32:
+              get_param:
+              - ext_net_list
+              - 32
+            $tag33:
+              get_param:
+              - ext_net_list
+              - 33
+            $tag34:
+              get_param:
+              - ext_net_list
+              - 34
+            $tag35:
+              get_param:
+              - ext_net_list
+              - 35
+            $tag36:
+              get_param:
+              - ext_net_list
+              - 36
+            $tag37:
+              get_param:
+              - ext_net_list
+              - 37
+            $tag38:
+              get_param:
+              - ext_net_list
+              - 38
+            $tag39:
+              get_param:
+              - ext_net_list
+              - 39
+            $tag40:
+              get_param:
+              - ext_net_list
+              - 40
+            $tag41:
+              get_param:
+              - ext_net_list
+              - 41
+            $tag42:
+              get_param:
+              - ext_net_list
+              - 42
+            $tag43:
+              get_param:
+              - ext_net_list
+              - 43
+            $tag44:
+              get_param:
+              - ext_net_list
+              - 44
+            $tag45:
+              get_param:
+              - ext_net_list
+              - 45
+            $tag46:
+              get_param:
+              - ext_net_list
+              - 46
+            $tag47:
+              get_param:
+              - ext_net_list
+              - 47
+            $tag48:
+              get_param:
+              - ext_net_list
+              - 48
+            $tag49:
+              get_param:
+              - ext_net_list
+              - 49
+            $tag50:
+              get_param:
+              - ext_net_list
+              - 50
+            $tag51:
+              get_param:
+              - ext_net_list
+              - 51
+            $tag52:
+              get_param:
+              - ext_net_list
+              - 52
+            $tag53:
+              get_param:
+              - ext_net_list
+              - 53
+            $tag54:
+              get_param:
+              - ext_net_list
+              - 54
+            $tag55:
+              get_param:
+              - ext_net_list
+              - 55
+            $tag56:
+              get_param:
+              - ext_net_list
+              - 56
+            $tag57:
+              get_param:
+              - ext_net_list
+              - 57
+            $tag58:
+              get_param:
+              - ext_net_list
+              - 58
+            $tag59:
+              get_param:
+              - ext_net_list
+              - 59
+            $tag60:
+              get_param:
+              - ext_net_list
+              - 60
+            $tag61:
+              get_param:
+              - ext_net_list
+              - 61
+            $tag62:
+              get_param:
+              - ext_net_list
+              - 62
+            $tag63:
+              get_param:
+              - ext_net_list
+              - 63
+          template: |
+            {
+              "subnet_list": "INTERNALnet0 $inet1tag $extlist",
+              "INTERNALnet0": {
+                "id": "$intnet0",
+                "subnet_id": "$intsnet0",
+                "cidr": "169.254.0.0/16",
+                "default_gateway": ""
+              },
+              "INTERNALnet1": {
+                "id": "$intnet1",
+                "subnet_id": "$intsnet1",
+                "cidr": "169.254.0.0/16",
+                "default_gateway": ""
+              },
+              "$tag00": {
+                "cidr": "$cidr00",
+                "default_gateway": "$gw00",
+                "mtu_size": "$mtu00"
+              },
+              "$tag01": {
+                "cidr": "$cidr01",
+                "default_gateway": "$gw01",
+                "mtu_size": "$mtu01"
+              },
+              "$tag02": {
+                "cidr": "$cidr02",
+                "default_gateway": "$gw02",
+                "mtu_size": "$mtu02"
+              },
+              "$tag03": {
+                "cidr": "$cidr03",
+                "default_gateway": "$gw03",
+                "mtu_size": "$mtu03"
+              },
+              "$tag04": {
+                "cidr": "$cidr04",
+                "default_gateway": "$gw04",
+                "mtu_size": "$mtu04"
+              },
+              "$tag05": {
+                "cidr": "$cidr05",
+                "default_gateway": "$gw05",
+                "mtu_size": "$mtu05"
+              },
+              "$tag06": {
+                "cidr": "$cidr06",
+                "default_gateway": "$gw06",
+                "mtu_size": "$mtu06"
+              },
+              "$tag07": {
+                "cidr": "$cidr07",
+                "default_gateway": "$gw07",
+                "mtu_size": "$mtu07"
+              },
+              "$tag08": {
+                "cidr": "$cidr08",
+                "default_gateway": "$gw08",
+                "mtu_size": "$mtu08"
+              },
+              "$tag09": {
+                "cidr": "$cidr09",
+                "default_gateway": "$gw09",
+                "mtu_size": "$mtu09"
+              },
+              "$tag10": {
+                "cidr": "$cidr10",
+                "default_gateway": "$gw10",
+                "mtu_size": "$mtu10"
+              },
+              "$tag11": {
+                "cidr": "$cidr11",
+                "default_gateway": "$gw11",
+                "mtu_size": "$mtu11"
+              },
+              "$tag12": {
+                "cidr": "$cidr12",
+                "default_gateway": "$gw12",
+                "mtu_size": "$mtu12"
+              },
+              "$tag13": {
+                "cidr": "$cidr13",
+                "default_gateway": "$gw13",
+                "mtu_size": "$mtu13"
+              },
+              "$tag14": {
+                "cidr": "$cidr14",
+                "default_gateway": "$gw14",
+                "mtu_size": "$mtu14"
+              },
+              "$tag15": {
+                "cidr": "$cidr15",
+                "default_gateway": "$gw15",
+                "mtu_size": "$mtu15"
+              },
+              "$tag16": {
+                "cidr": "$cidr16",
+                "default_gateway": "$gw16",
+                "mtu_size": "$mtu16"
+              },
+              "$tag17": {
+                "cidr": "$cidr17",
+                "default_gateway": "$gw17",
+                "mtu_size": "$mtu17"
+              },
+              "$tag18": {
+                "cidr": "$cidr18",
+                "default_gateway": "$gw18",
+                "mtu_size": "$mtu18"
+              },
+              "$tag19": {
+                "cidr": "$cidr19",
+                "default_gateway": "$gw19",
+                "mtu_size": "$mtu19"
+              },
+              "$tag20": {
+                "cidr": "$cidr20",
+                "default_gateway": "$gw20",
+                "mtu_size": "$mtu20"
+              },
+              "$tag21": {
+                "cidr": "$cidr21",
+                "default_gateway": "$gw21",
+                "mtu_size": "$mtu21"
+              },
+              "$tag22": {
+                "cidr": "$cidr22",
+                "default_gateway": "$gw22",
+                "mtu_size": "$mtu22"
+              },
+              "$tag23": {
+                "cidr": "$cidr23",
+                "default_gateway": "$gw23",
+                "mtu_size": "$mtu23"
+              },
+              "$tag24": {
+                "cidr": "$cidr24",
+                "default_gateway": "$gw24",
+                "mtu_size": "$mtu24"
+              },
+              "$tag25": {
+                "cidr": "$cidr25",
+                "default_gateway": "$gw25",
+                "mtu_size": "$mtu25"
+              },
+              "$tag26": {
+                "cidr": "$cidr26",
+                "default_gateway": "$gw26",
+                "mtu_size": "$mtu26"
+              },
+              "$tag27": {
+                "cidr": "$cidr27",
+                "default_gateway": "$gw27",
+                "mtu_size": "$mtu27"
+              },
+              "$tag28": {
+                "cidr": "$cidr28",
+                "default_gateway": "$gw28",
+                "mtu_size": "$mtu28"
+              },
+              "$tag29": {
+                "cidr": "$cidr29",
+                "default_gateway": "$gw29",
+                "mtu_size": "$mtu29"
+              },
+              "$tag30": {
+                "cidr": "$cidr30",
+                "default_gateway": "$gw30",
+                "mtu_size": "$mtu30"
+              },
+              "$tag31": {
+                "cidr": "$cidr31",
+                "default_gateway": "$gw31",
+                "mtu_size": "$mtu31"
+              },
+              "$tag32": {
+                "cidr": "$cidr32",
+                "default_gateway": "$gw32",
+                "mtu_size": "$mtu32"
+              },
+              "$tag33": {
+                "cidr": "$cidr33",
+                "default_gateway": "$gw33",
+                "mtu_size": "$mtu33"
+              },
+              "$tag34": {
+                "cidr": "$cidr34",
+                "default_gateway": "$gw34",
+                "mtu_size": "$mtu34"
+              },
+              "$tag35": {
+                "cidr": "$cidr35",
+                "default_gateway": "$gw35",
+                "mtu_size": "$mtu35"
+              },
+              "$tag36": {
+                "cidr": "$cidr36",
+                "default_gateway": "$gw36",
+                "mtu_size": "$mtu36"
+              },
+              "$tag37": {
+                "cidr": "$cidr37",
+                "default_gateway": "$gw37",
+                "mtu_size": "$mtu37"
+              },
+              "$tag38": {
+                "cidr": "$cidr38",
+                "default_gateway": "$gw38",
+                "mtu_size": "$mtu38"
+              },
+              "$tag39": {
+                "cidr": "$cidr39",
+                "default_gateway": "$gw39",
+                "mtu_size": "$mtu39"
+              },
+              "$tag40": {
+                "cidr": "$cidr40",
+                "default_gateway": "$gw40",
+                "mtu_size": "$mtu40"
+              },
+              "$tag41": {
+                "cidr": "$cidr41",
+                "default_gateway": "$gw41",
+                "mtu_size": "$mtu41"
+              },
+              "$tag42": {
+                "cidr": "$cidr42",
+                "default_gateway": "$gw42",
+                "mtu_size": "$mtu42"
+              },
+              "$tag43": {
+                "cidr": "$cidr43",
+                "default_gateway": "$gw43",
+                "mtu_size": "$mtu43"
+              },
+              "$tag44": {
+                "cidr": "$cidr44",
+                "default_gateway": "$gw44",
+                "mtu_size": "$mtu44"
+              },
+              "$tag45": {
+                "cidr": "$cidr45",
+                "default_gateway": "$gw45",
+                "mtu_size": "$mtu45"
+              },
+              "$tag46": {
+                "cidr": "$cidr46",
+                "default_gateway": "$gw46",
+                "mtu_size": "$mtu46"
+              },
+              "$tag47": {
+                "cidr": "$cidr47",
+                "default_gateway": "$gw47",
+                "mtu_size": "$mtu47"
+              },
+              "$tag48": {
+                "cidr": "$cidr48",
+                "default_gateway": "$gw48",
+                "mtu_size": "$mtu48"
+              },
+              "$tag49": {
+                "cidr": "$cidr49",
+                "default_gateway": "$gw49",
+                "mtu_size": "$mtu49"
+              },
+              "$tag50": {
+                "cidr": "$cidr50",
+                "default_gateway": "$gw50",
+                "mtu_size": "$mtu50"
+              },
+              "$tag51": {
+                "cidr": "$cidr51",
+                "default_gateway": "$gw51",
+                "mtu_size": "$mtu51"
+              },
+              "$tag52": {
+                "cidr": "$cidr52",
+                "default_gateway": "$gw52",
+                "mtu_size": "$mtu52"
+              },
+              "$tag53": {
+                "cidr": "$cidr53",
+                "default_gateway": "$gw53",
+                "mtu_size": "$mtu53"
+              },
+              "$tag54": {
+                "cidr": "$cidr54",
+                "default_gateway": "$gw54",
+                "mtu_size": "$mtu54"
+              },
+              "$tag55": {
+                "cidr": "$cidr55",
+                "default_gateway": "$gw55",
+                "mtu_size": "$mtu55"
+              },
+              "$tag56": {
+                "cidr": "$cidr56",
+                "default_gateway": "$gw56",
+                "mtu_size": "$mtu56"
+              },
+              "$tag57": {
+                "cidr": "$cidr57",
+                "default_gateway": "$gw57",
+                "mtu_size": "$mtu57"
+              },
+              "$tag58": {
+                "cidr": "$cidr58",
+                "default_gateway": "$gw58",
+                "mtu_size": "$mtu58"
+              },
+              "$tag59": {
+                "cidr": "$cidr59",
+                "default_gateway": "$gw59",
+                "mtu_size": "$mtu59"
+              },
+              "$tag60": {
+                "cidr": "$cidr60",
+                "default_gateway": "$gw60",
+                "mtu_size": "$mtu60"
+              },
+              "$tag61": {
+                "cidr": "$cidr61",
+                "default_gateway": "$gw61",
+                "mtu_size": "$mtu61"
+              },
+              "$tag62": {
+                "cidr": "$cidr62",
+                "default_gateway": "$gw62",
+                "mtu_size": "$mtu62"
+              },
+              "$tag63": {
+                "cidr": "$cidr63",
+                "default_gateway": "$gw63",
+                "mtu_size": "$mtu63"
+              }
+            }
+    PrivateKey:
+      description: Private SSH key for pre-install intra-VM communication.
+      value:
+      - UNSUPPORTED_RESOURCE_shared_keypair
+    Version:
+      description: |
+        Template file version number. This should be updated
+        each time a non-comment change is made to this file.
+      value: K1
+    PublicKey:
+      description: Public SSH key for pre-install intra-VM communication.
+      value:
+      - UNSUPPORTED_RESOURCE_shared_keypair
+    TotalPairCount:
+      description: |
+        This string will evaluate to the number of PairGroups in the VNF.
+      value:
+        get_input: total_vm_pairs
+    IntNetInfo:
+      description: Internal network attributes.
+      value:
+        INTERNALnet0:
+          cidr: 169.254.0.0/16
+          default_gateway: ''
+          id:
+            str_replace:
+              params:
+                $val:
+                  get_resource: int_ctrl0_network
+              template: $val
+          subnet_id:
+            str_replace:
+              params:
+                $val:
+                  get_resource: int_ctrl0_subnet_0
+              template: $val
+        INTERNALnet1:
+          cidr: 169.254.0.0/16
+          default_gateway: ''
+          id:
+            str_replace:
+              params:
+                $val:
+                  get_resource: int_ctrl1_network
+              template: $val
+          subnet_id:
+            str_replace:
+              params:
+                $val:
+                  get_resource: int_ctrl1_subnet_0
+              template: $val
+    OpenSec:
+      description: Open security group.
+      value: Shared_Sec_Grp
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nest_common
+    capabilities:
+      feature_int_ctrl0_network:
+      - int_ctrl0_network
+      - feature
+      attachment_int_ctrl0_network:
+      - int_ctrl0_network
+      - attachment
+      end_point_int_ctrl0_network:
+      - int_ctrl0_network
+      - end_point
+      attachment_int_ctrl1_network:
+      - int_ctrl1_network
+      - attachment
+      end_point_int_ctrl1_network:
+      - int_ctrl1_network
+      - end_point
+      link_int_ctrl1_network:
+      - int_ctrl1_network
+      - link
+      feature_Shared_Sec_Grp:
+      - Shared_Sec_Grp
+      - feature
+      feature_int_ctrl1_network:
+      - int_ctrl1_network
+      - feature
+      link_int_ctrl0_network:
+      - int_ctrl0_network
+      - link
+    requirements:
+      dependency_int_ctrl0_network:
+      - int_ctrl0_network
+      - dependency
+      dependency_Shared_Sec_Grp:
+      - Shared_Sec_Grp
+      - dependency
+      dependency_int_ctrl1_network:
+      - int_ctrl1_network
+      - dependency
+      port_Shared_Sec_Grp:
+      - Shared_Sec_Grp
+      - port

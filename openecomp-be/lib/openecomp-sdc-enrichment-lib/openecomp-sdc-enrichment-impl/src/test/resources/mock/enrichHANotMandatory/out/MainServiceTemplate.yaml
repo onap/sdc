@@ -422,7 +422,7 @@ topology_template:
       description: csb internal network name
       default: int_mog_csb_net
   node_templates:
-    abstract_pd_server_vm:
+    abstract_pd_server:
       type: org.openecomp.resource.abstract.nodes.pd_server
       directives:
       - substitutable
@@ -467,8 +467,8 @@ topology_template:
           - SELF
           - service_template_filter
           - index_value
-        nfc_naming_code: pd_server_vm
-        vm_type_tag: pd_server_vm
+        nfc_naming_code: pd_server
+        vm_type_tag: pd_server
         min_instances: 1
         max_instances: 5
   groups:

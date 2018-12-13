@@ -1,0 +1,2210 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
+topology_template:
+  inputs:
+    cfed_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_flavor_name
+      type: string
+      description: CDL of cfed flavor values.
+      default: nd.c8r32d15s1e15
+    cfed_sigv6_ipmap_sideB_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sigv6_ipmap_sideB_0_fixed_dbaas
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:3
+      - 2001:1890:1001:218c::24:4
+      entry_schema:
+        type: string
+    license_reference:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: license_reference
+      type: string
+      description: Reference string used in algorithmic license key generation.
+      default: tas02DLTASapril2015
+    cfed_sig_ipmap_sideB_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sig_ipmap_sideB_0_fixed_dbaas
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 12.121.107.52
+      - 12.121.107.53
+      entry_schema:
+        type: string
+    gls_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_image_name
+      type: string
+      description: Image for this VMtype.
+      default: USP_CTS_R35.15.01.0200.x86_64.qcow2
+    sig_subnet_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sig_subnet_id
+      type: string
+      description: ID of the subnet associated with tag "sig".
+      default: 485d41b9-85f1-4c10-ac6c-2e88b05fd420
+    oam_sigv6_ipmap_sideA_sns0_fixed_dns:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_sigv6_ipmap_sideA_sns0_fixed_dns
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218C::24:a
+      entry_schema:
+        type: string
+    gls_dmz_ipmap_sideB_connectivity_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_dmz_ipmap_sideB_connectivity_ip
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.13
+      entry_schema:
+        type: string
+    v6_ntp_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v6_ntp_server
+      type: string
+      description: |
+        (optional) IPV6 NTP server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    oam_dmz_ipmap_sideA_mi0_fixed_default:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_dmz_ipmap_sideA_mi0_fixed_default
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.5
+      entry_schema:
+        type: string
+    system_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: system_prefix
+      type: string
+      description: System prefix used inside the VNF.
+      default: tas02
+    oam_sig_ipmap_sideA_sns0_fixed_dns:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_sig_ipmap_sideA_sns0_fixed_dns
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 12.121.107.42
+      entry_schema:
+        type: string
+    oam_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_image_name
+      type: string
+      description: Image for this VMtype.
+      default: USP_CTS_R35.15.01.0200.x86_64.qcow2
+    net_types:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: net_types
+      type: list
+      description: CDL of subnet tags.
+      default:
+      - sigv6
+      - sig
+      - dmz
+      entry_schema:
+        type: string
+    cfed_sig_ipmap_sideA_0_float_published:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sig_ipmap_sideA_0_float_published
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 12.121.107.54
+      - 12.121.107.55
+      entry_schema:
+        type: string
+    cfed_sigv6_ipmap_sideA_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sigv6_ipmap_sideA_0_fixed_dbaas
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:1
+      - 2001:1890:1001:218c::24:2
+      entry_schema:
+        type: string
+    v4_enum_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v4_enum_server
+      type: string
+      description: |
+        (optional) IPV4 ENUM server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    cfed_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_image_name
+      type: string
+      description: Image for this VMtype.
+      default: USP_CTS_R35.15.01.0200.x86_64.qcow2
+    cfed_sigv6_ipmap_sideA_0_float_published:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sigv6_ipmap_sideA_0_float_published
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:5
+      - 2001:1890:1001:218c::24:6
+      entry_schema:
+        type: string
+    oam_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_flavor_name
+      type: string
+      description: CDL of oam flavor values.
+      default: nd.c4r8d21s8e21
+    cfed_sig_ipmap_sideA_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_sig_ipmap_sideA_0_fixed_dbaas
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 12.121.107.50
+      - 12.121.107.51
+      entry_schema:
+        type: string
+    v6_enum_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v6_enum_server
+      type: string
+      description: |
+        (optional) IPV6 ENUM server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    default_action:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: default_action
+      type: string
+      description: |
+        Default action for all VMs. This may be overridden for
+        specific VM groups, pairs or VMs via the ENV file.
+      default: install
+      constraints:
+      - valid_values:
+        - install
+        - recreate
+        - scale-in
+        - scale-out
+        - heal
+        - update
+    oam_dmz_ipmap_sideA_mi0_float_default:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_dmz_ipmap_sideA_mi0_float_default
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.6
+      entry_schema:
+        type: string
+    sigv6_cidr:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sigv6_cidr
+      type: string
+      description: CIDR associated with tag "sigv6".
+      default: 2001:1890:1001:218c::/64
+    oam_volume_count:
+      label: volume count
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_volume_count
+      type: float
+      description: number of OAM volumes needed
+      default: 2
+    storage_size:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: storage_size
+      type: float
+      description: Size of /storage in GB.
+      default: 4
+      constraints:
+      - in_range:
+        - 4
+        - null
+    oam_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_names
+      type: list
+      description: CDL of oam VM names.
+      default:
+      - dpa2bctsf5001vm001
+      - dpa2bctsf5001vm002
+      entry_schema:
+        type: string
+    sig_default_gateway:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sig_default_gateway
+      type: string
+      description: Default gateway IP address  associated with tag "sig".
+      default: 12.121.107.33
+    sig_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sig_net_id
+      type: string
+      description: ID of the network associated with tag "sig".
+      default: 7aa61674-a934-49ab-a5f9-879a5864ec18
+    sigv6_v6_subnet_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sigv6_v6_subnet_id
+      type: string
+      description: ID of the subnet associated with tag "sigv6".
+      default: 5effa3c8-5b6a-489f-90ca-4b7989d1edc5
+    sigv6_Sec_Grp:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sigv6_Sec_Grp
+      type: string
+      description: UUID of the security group.
+      default: 1dd29b75-2240-49c4-8fd7-d0bf453c8e94
+    gls_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_names
+      type: list
+      description: CDL of gls VM names.
+      default:
+      - dpa2bctsf5001vm013
+      - dpa2bctsf5001vm014
+      entry_schema:
+        type: string
+    local_enum_domain:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: local_enum_domain
+      type: string
+      description: Local ENUM domain value.
+      default: ''
+    vf_module_index:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vf_module_index
+      type: float
+      description: Unique index for this VNF Module instance.
+      default: 0
+      constraints:
+      - in_range:
+        - 4
+        - null
+    backup_file1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: backup_file1
+      type: string
+      description: |
+        <cURL path>/<backup file>
+        This is only used for restore (aka "disaster recovery").
+        The value only needs to go to the OAM pair.
+        Note that there is a 255 character limit on this value.
+      default: ''
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VNF Module instance.
+      default: ''
+    backup_file2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: backup_file2
+      type: string
+      description: |
+        <cURL path>/<backup file>
+        This is only used for restore (aka "disaster recovery").
+        The value only needs to go to the OAM pair.
+        Note that there is a 255 character limit on this value.
+      default: ''
+    cfed_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_names
+      type: list
+      description: CDL of cfed VM names.
+      default:
+      - dpa2bctsf5001vm101
+      - dpa2bctsf5001vm102
+      - dpa2bctsf5001vm103
+      - dpa2bctsf5001vm104
+      entry_schema:
+        type: string
+    oam_dmz_ipmap_sideA_cnfg0_float_default:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_dmz_ipmap_sideA_cnfg0_float_default
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.4
+      entry_schema:
+        type: string
+    oam_sig_ipmap_sideB_sns0_fixed_dns:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_sig_ipmap_sideB_sns0_fixed_dns
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 12.121.107.43
+      entry_schema:
+        type: string
+    gls_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_flavor_name
+      type: string
+      description: CDL of gls flavor values.
+      default: nd.c8r16d31s8e31
+    int_vlan_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: int_vlan_id
+      type: string
+      description: Optional VLAN associated with the (0th) internal network.
+      default: ''
+      constraints:
+      - pattern: '[0-9]*'
+    gls_dmz_ipmap_sideA_connectivity_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_dmz_ipmap_sideA_connectivity_ip
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.11
+      entry_schema:
+        type: string
+    v4_ntp_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v4_ntp_server
+      type: string
+      description: |
+        (optional) IPV4 NTP server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: 135.2.77.29
+    certificate:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: certificate
+      type: string
+      description: |
+        Flag (any non-null string) to indicate that a certificate should be acquired.
+      default: ''
+    gls_sigv6_ipmap_sideA_0_float_diam_gls:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_sigv6_ipmap_sideA_0_float_diam_gls
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:7
+      entry_schema:
+        type: string
+    vnf_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: Unique name for this VNF instance.
+      default: foo
+    oam_sigv6_ipmap_sideB_sns0_fixed_dns:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_sigv6_ipmap_sideB_sns0_fixed_dns
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218C::24:b
+      entry_schema:
+        type: string
+    vf_module_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vf_module_name
+      type: string
+      description: Unique name for this VNF module instance.
+      default: ctsf5000v_base_module
+    dmz_default_gateway:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: dmz_default_gateway
+      type: string
+      description: Default gateway IP address  associated with tag "dmz".
+      default: 192.20.195.1
+    vm_counts:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vm_counts
+      type: json
+      description: |
+        Maps VM type tags to the number of pairs of that type.
+      default:
+        cfed: '2'
+        oam: '1'
+        gls: '1'
+    gls_volume_count:
+      label: volume count
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_volume_count
+      type: float
+      description: number of GLS volumes needed
+    v6_dns_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v6_dns_server
+      type: string
+      description: |
+        (optional) IPV6 DNS server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: 2000:5420:0:510::50:69/.,2000:5420:0:510::50:70/.
+    vnf_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: vnf_id
+      type: string
+      description: Unique ID for this VNF instance.
+      default: ''
+    lcm_keypair:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: lcm_keypair
+      type: string
+      description: Keypair used for lifecycle management access.
+      default: ''
+    cfed_volume_ids_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_volume_ids_0
+      type: json
+      description: CFED Volume.
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: Availability zone name.
+      default: dpa2b-kvm-az01
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: availability_zone_1
+      type: string
+      description: Availability zone name.
+      default: dpa2b-kvm-az02
+    gls_sigv6_ipmap_sideA_connectivity_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_sigv6_ipmap_sideA_connectivity_ip
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:8
+      entry_schema:
+        type: string
+    cfed_volume_ids_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_volume_ids_1
+      type: json
+      description: CFED Volume.
+    dmz_subnet_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: dmz_subnet_id
+      type: string
+      description: ID of the subnet associated with tag "dmz".
+      default: ef4874e2-2e6b-4165-84bd-cf75bcd1c474
+    sig_Sec_Grp:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sig_Sec_Grp
+      type: string
+      description: UUID of the security group.
+      default: 1dd29b75-2240-49c4-8fd7-d0bf453c8e94
+    ssh_access_key:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: ssh_access_key
+      type: string
+      description: |
+        Optional SSH public key value for lifecycle management
+        administrative access.
+      default: ''
+    sig_cidr:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sig_cidr
+      type: string
+      description: CIDR associated with tag "sig".
+      default: 12.121.107.32/27
+    local_dns_domain:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: local_dns_domain
+      type: string
+      description: Local DNS domain value.
+      default: tas02.ims.fs5000lab.com
+    dmz_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: dmz_net_id
+      type: string
+      description: ID of the network associated with tag "dmz".
+      default: 432868af-e8d0-42bf-953a-15b4e1d3a9b0
+    gls_sigv6_ipmap_sideB_connectivity_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_sigv6_ipmap_sideB_connectivity_ip
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 2001:1890:1001:218c::24:9
+      entry_schema:
+        type: string
+    system_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: system_name
+      type: string
+      description: System name used inside the VNF.
+      default: tas02
+    dmz_Sec_Grp:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: dmz_Sec_Grp
+      type: string
+      description: UUID of the security group.
+      default: 1dd29b75-2240-49c4-8fd7-d0bf453c8e94
+    time_zone:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: time_zone
+      type: string
+      description: Time zone used inside the VNF.
+      default: America/Chicago
+    gls_volume_ids_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_volume_ids_0
+      type: json
+      description: GLS Volume.
+    gls_volume_ids_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_volume_ids_1
+      type: json
+      description: GLS Volume.
+    oam_volume_ids_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_volume_ids_1
+      type: json
+      description: OAM Volume.
+    cfed_volume_count:
+      label: volume count
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cfed_volume_count
+      type: float
+      description: number of CFED volumes needed
+      default: 2
+    oam_volume_ids_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_volume_ids_0
+      type: json
+      description: OAM Volume.
+    oam_management_v6_source:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_management_v6_source
+      type: string
+      description: Name of the OAM IP parameter to use.
+      default: ''
+    v4_dns_server:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: v4_dns_server
+      type: string
+      description: |
+        (optional) IPV4 DNS server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: 135.1.250.169/.,135.1.250.170/.
+    oam_management_v4_source:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_management_v4_source
+      type: string
+      description: Name of the OAM IP parameter to use.
+      default: oam_dmz_ipmap_sideA_mi0_float_default
+    install_config:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: install_config
+      type: string
+      description: JSON formatted string of install config values.
+      default: ' "application_name": "5420_cts", "default_remote_dns_domain": "./default",
+        "default_remote_enum_domain": "e164.arpa/default", "naming_delimiter": "-",
+        "naming_parsing": "flexible", "naming_type": "flexible3", "other_remote_dns_domain":
+        "", "other_remote_enum_domain": "", "remote_query_only": "no", "snmp_community":
+        "public", "subnet_info": { "INTERNALnet0": { "interface_label": "int0", "redundancy_mode":
+        "iipm", "vlan_tag": ""}, "INTERNALnet1": { "interface_label": "int1", "redundancy_mode":
+        "iipm", "vlan_tag": ""}, "dmz": { "interface_label": "oam", "redundancy_mode":
+        "eipm_arpndp", "vlan_tag": "", "connectivity_address": "", "detect_multiplier":
+        "3", "desired_minimum_tx_interval": "300", "required_minimum_rx_interval":
+        "300"}, "sig": { "interface_label": "sig", "redundancy_mode": "eipm_arpndp",
+        "vlan_tag": "", "connectivity_address": "", "detect_multiplier": "3", "desired_minimum_tx_interval":
+        "300", "required_minimum_rx_interval": "300"}, ,"sigv6": { "interface_label":
+        "sig", "redundancy_mode": "eipm_arpndp", "vlan_tag": "", "connectivity_address":
+        "", "detect_multiplier": "3", "desired_minimum_tx_interval": "300", "required_minimum_rx_interval":
+        "300"}, }, "svc_counts": { "sns": "1", "cfed": "1", "cnfg": "1", "gls": "1",
+        "mi": "1", "gos": "1"}, "use_sbpr": "yes"'
+    gls_dmz_ipmap_sideA_0_float_default:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: gls_dmz_ipmap_sideA_0_float_default
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.12
+      entry_schema:
+        type: string
+    oam_dmz_ipmap_sideB_mi0_fixed_default:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: oam_dmz_ipmap_sideB_mi0_fixed_default
+      type: list
+      description: IP list for this IP usage type.
+      default:
+      - 192.20.195.7
+      entry_schema:
+        type: string
+    dmz_cidr:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: dmz_cidr
+      type: string
+      description: CIDR associated with tag "dmz".
+      default: 192.20.195.0/24
+    sigv6_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sigv6_net_id
+      type: string
+      description: ID of the network associated with tag "sigv6".
+      default: 7aa61674-a934-49ab-a5f9-879a5864ec18
+    sigv6_default_gateway:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: sigv6_default_gateway
+      type: string
+      description: Default gateway IP address  associated with tag "sigv6".
+      default: 2001:1890:1001:218c::1
+    cloud_name_delimiter:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_att
+            source_type: HEAT
+            param_name: cloud_name_delimiter
+      type: string
+      description: Separator for cloud resource naming.
+      default: '-'
+  node_templates:
+    Reserve_Port_gls_sigv6_floating_v6_ip_0:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - subnet:
+            get_input: sigv6_v6_subnet_id
+          ip_address:
+            get_input:
+            - gls_sigv6_ipmap_sideA_0_float_diam_gls
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name: Reserve_Port_gls_sigv6_floating_v6_ip_0
+        network_role_tag: sigv6
+        network:
+          get_input: sigv6_net_id
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
+              network_role: ''
+              pps_capacity: ''
+    Reserve_Port_cfed_sigv6_floating_v6_ip_0:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - subnet:
+            get_input: sigv6_v6_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sigv6_ipmap_sideA_0_float_published
+            - 1
+        - subnet:
+            get_input: sigv6_v6_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sigv6_ipmap_sideA_0_float_published
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name: Reserve_Port_cfed_sigv6_floating_v6_ip_0
+        network_role_tag: sigv6
+        network:
+          get_input: sigv6_net_id
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
+              network_role: ''
+              pps_capacity: ''
+    cfed_RRG_1:
+      type: org.openecomp.resource.abstract.nodes.heat.cfed
+      directives:
+      - substitutable
+      properties:
+        backup_file1:
+          get_attribute:
+          - FORMATXLATE
+          - backup_file1
+        vf_module_id:
+          get_input: vf_module_id
+        backup_file2:
+          get_attribute:
+          - FORMATXLATE
+          - backup_file2
+        cfed_flavor_name:
+          get_input:
+          - cfed_flavor_name
+        cfed_names:
+          get_input:
+          - cfed_names
+        cfed_sigv6_ipmap_sideB_0_fixed_dbaas:
+          get_input:
+          - cfed_sigv6_ipmap_sideB_0_fixed_dbaas
+        role: other
+        cfed_sig_ipmap_sideB_0_fixed_dbaas:
+          get_input:
+          - cfed_sig_ipmap_sideB_0_fixed_dbaas
+        vnf_name:
+          get_input: vnf_name
+        usage_info:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+        config_info:
+          '0':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '4'
+                subnet_count: '2'
+                allowed_subnets:
+                - sig
+                - sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;float;nitype=published;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;float;nitype=published;subnet=sigv6
+          '1':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '2'
+                subnet_count: '2'
+                allowed_subnets:
+                - sig
+                - sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sigv6
+          v6_static_routes: '{}'
+          v6_default_gateway: sigv6
+          vnic_count: 3
+          v4_static_routes: '{}'
+          v4_default_gateway: sig
+          poolinfo: '["cfed-0", "gos-1"]'
+        group_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        sig_subnet_id:
+          get_input:
+          - sig_subnet_id
+        port_cfed_1_sig_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        ssh_private_key:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - PrivateKey
+        vf_module_name:
+          get_input: vf_module_name
+        service_template_filter:
+          substitute_service_template: nest_cfed_bServiceTemplate.yaml
+          count:
+            get_attribute:
+            - FORMATXLATE
+            - vm_counts
+            - cfed
+          mandatory: false
+        port_cfed_1_int_ctrl0_port_0_network_role_tag: int_ctrl0
+        port_cfed_1_int_ctrl1_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vnf_id:
+          get_input: vnf_id
+        int_ctrl1_Sec_Grp:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - OpenSec
+        lcm_keypair:
+          get_attribute:
+          - FORMATXLATE
+          - lcm_keypair
+        port_cfed_1_sig_port_2_network_role_tag: sig
+        current_group_count:
+          get_attribute:
+          - FORMATXLATE
+          - vm_counts
+          - cfed
+        availability_zone_1:
+          get_input: availability_zone_1
+        sig_Sec_Grp:
+          get_input:
+          - sig_Sec_Grp
+        int_ctrl0_Sec_Grp:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - OpenSec
+        net_info_str:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - NetInfoStr
+        total_pair_count:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - TotalPairCount
+        ssh_access_key:
+          get_attribute:
+          - FORMATXLATE
+          - ssh_access_key
+        int_ctrl0_net_id:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - IntNetInfo
+          - INTERNALnet0
+          - id
+        int_ctrl1_net_id:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - IntNetInfo
+          - INTERNALnet1
+          - id
+        port_cfed_1_sig_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        cfed_image_name:
+          get_input:
+          - cfed_image_name
+        pair2idx:
+          '22':
+            '0': 44
+            '1': 45
+          '23':
+            '0': 46
+            '1': 47
+          '24':
+            '0': 48
+            '1': 49
+          '25':
+            '0': 50
+            '1': 51
+          '26':
+            '0': 52
+            '1': 53
+          '27':
+            '0': 54
+            '1': 55
+          '28':
+            '0': 56
+            '1': 57
+          '29':
+            '0': 58
+            '1': 59
+          '10':
+            '0': 20
+            '1': 21
+          '11':
+            '0': 22
+            '1': 23
+          '12':
+            '0': 24
+            '1': 25
+          '13':
+            '0': 26
+            '1': 27
+          '14':
+            '0': 28
+            '1': 29
+          '15':
+            '0': 30
+            '1': 31
+          '16':
+            '0': 32
+            '1': 33
+          '17':
+            '0': 34
+            '1': 35
+          '18':
+            '0': 36
+            '1': 37
+          '19':
+            '0': 38
+            '1': 39
+          '0':
+            '0': 0
+            '1': 1
+          '1':
+            '0': 2
+            '1': 3
+          '2':
+            '0': 4
+            '1': 5
+          '3':
+            '0': 6
+            '1': 7
+          '4':
+            '0': 8
+            '1': 9
+          '5':
+            '0': 10
+            '1': 11
+          '6':
+            '0': 12
+            '1': 13
+          '7':
+            '0': 14
+            '1': 15
+          '8':
+            '0': 16
+            '1': 17
+          '9':
+            '0': 18
+            '1': 19
+          '20':
+            '0': 40
+            '1': 41
+          '21':
+            '0': 42
+            '1': 43
+        ssh_public_key:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - PublicKey
+        vm_role: cfed
+        port_cfed_1_int_ctrl0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_cfed_1_int_ctrl1_port_1_network_role_tag: int_ctrl1
+        port_cfed_1_int_ctrl0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        group_id: '4'
+        install_config:
+          get_attribute:
+          - FORMATXLATE
+          - install_config
+        cfed_volume_1:
+          get_input:
+          - cfed_volume_ids_1
+        sig_net_id:
+          get_input:
+          - sig_net_id
+        sigv6_v6_subnet_id:
+          get_input:
+          - sigv6_v6_subnet_id
+        group_tag: cfed
+        port_cfed_1_int_ctrl1_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vf_module_index:
+          get_input: vf_module_index
+        vm_type_tag: cfed
+        nfc_naming_code: cfed_changed_from_ui
+        nfc_code: pd_server_code
+        nfc_function: cfed_naming_function
+    cfed_RRG_0:
+      type: org.openecomp.resource.abstract.nodes.heat.cfed_1
+      directives:
+      - substitutable
+      properties:
+        cfed_flavor_name:
+          get_input:
+          - cfed_flavor_name
+        port_cfed_0_int_ctrl1_port_1_network_role_tag: int_ctrl1
+        usage_info:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+        config_info:
+          '0':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '4'
+                subnet_count: '2'
+                allowed_subnets:
+                - sig
+                - sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;float;nitype=published;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;float;nitype=published;subnet=sigv6
+          '1':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '2'
+                subnet_count: '2'
+                allowed_subnets:
+                - sig
+                - sigv6
+              - subnet: sig
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sig
+              - subnet: sigv6
+                label: servicetype=cfed-0;fixed;nitype=dbaas;subnet=sigv6
+          v6_static_routes: '{}'
+          v6_default_gateway: sigv6
+          vnic_count: 3
+          v4_static_routes: '{}'
+          v4_default_gateway: sig
+          poolinfo: '["cfed-0", "gos-1"]'
+        group_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        sig_subnet_id:
+          get_input:
+          - sig_subnet_id
+        ssh_private_key:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - PrivateKey
+        service_template_filter:
+          substitute_service_template: nest_cfed_aServiceTemplate.yaml
+          count:
+            get_attribute:
+            - FORMATXLATE
+            - vm_counts
+            - cfed
+          mandatory: false
+        port_cfed_0_sig_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        int_ctrl1_Sec_Grp:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - OpenSec
+        current_group_count:
+          get_attribute:
+          - FORMATXLATE
+          - vm_counts
+          - cfed
+        port_cfed_0_int_ctrl0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        total_pair_count:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - TotalPairCount
+        cfed_sig_ipmap_sideA_0_float_published:
+          get_input:
+          - cfed_sig_ipmap_sideA_0_float_published
+        int_ctrl1_net_id:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - IntNetInfo
+          - INTERNALnet1
+          - id
+        cfed_sigv6_ipmap_sideA_0_fixed_dbaas:
+          get_input:
+          - cfed_sigv6_ipmap_sideA_0_fixed_dbaas
+        cfed_image_name:
+          get_input:
+          - cfed_image_name
+        port_cfed_0_int_ctrl0_port_0_network_role_tag: int_ctrl0
+        cfed_sigv6_ipmap_sideA_0_float_published:
+          get_input:
+          - cfed_sigv6_ipmap_sideA_0_float_published
+        cfed_sig_ipmap_sideA_0_fixed_dbaas:
+          get_input:
+          - cfed_sig_ipmap_sideA_0_fixed_dbaas
+        ssh_public_key:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - PublicKey
+        port_cfed_0_int_ctrl0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        sig_net_id:
+          get_input:
+          - sig_net_id
+        sigv6_v6_subnet_id:
+          get_input:
+          - sigv6_v6_subnet_id
+        port_cfed_0_int_ctrl1_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vf_module_index:
+          get_input: vf_module_index
+        port_cfed_0_int_ctrl1_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        backup_file1:
+          get_attribute:
+          - FORMATXLATE
+          - backup_file1
+        vf_module_id:
+          get_input: vf_module_id
+        backup_file2:
+          get_attribute:
+          - FORMATXLATE
+          - backup_file2
+        port_cfed_0_sig_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        cfed_names:
+          get_input:
+          - cfed_names
+        role: other
+        vnf_name:
+          get_input: vnf_name
+        vf_module_name:
+          get_input: vf_module_name
+        vnf_id:
+          get_input: vnf_id
+        lcm_keypair:
+          get_attribute:
+          - FORMATXLATE
+          - lcm_keypair
+        availability_zone_0:
+          get_input: availability_zone_0
+        sig_Sec_Grp:
+          get_input:
+          - sig_Sec_Grp
+        int_ctrl0_Sec_Grp:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - OpenSec
+        net_info_str:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - NetInfoStr
+        ssh_access_key:
+          get_attribute:
+          - FORMATXLATE
+          - ssh_access_key
+        int_ctrl0_net_id:
+          get_attribute:
+          - NOKIA_LCP_Base
+          - IntNetInfo
+          - INTERNALnet0
+          - id
+        port_cfed_0_sig_port_2_network_role_tag: sig
+        pair2idx:
+          '22':
+            '0': 44
+            '1': 45
+          '23':
+            '0': 46
+            '1': 47
+          '24':
+            '0': 48
+            '1': 49
+          '25':
+            '0': 50
+            '1': 51
+          '26':
+            '0': 52
+            '1': 53
+          '27':
+            '0': 54
+            '1': 55
+          '28':
+            '0': 56
+            '1': 57
+          '29':
+            '0': 58
+            '1': 59
+          '10':
+            '0': 20
+            '1': 21
+          '11':
+            '0': 22
+            '1': 23
+          '12':
+            '0': 24
+            '1': 25
+          '13':
+            '0': 26
+            '1': 27
+          '14':
+            '0': 28
+            '1': 29
+          '15':
+            '0': 30
+            '1': 31
+          '16':
+            '0': 32
+            '1': 33
+          '17':
+            '0': 34
+            '1': 35
+          '18':
+            '0': 36
+            '1': 37
+          '19':
+            '0': 38
+            '1': 39
+          '0':
+            '0': 0
+            '1': 1
+          '1':
+            '0': 2
+            '1': 3
+          '2':
+            '0': 4
+            '1': 5
+          '3':
+            '0': 6
+            '1': 7
+          '4':
+            '0': 8
+            '1': 9
+          '5':
+            '0': 10
+            '1': 11
+          '6':
+            '0': 12
+            '1': 13
+          '7':
+            '0': 14
+            '1': 15
+          '8':
+            '0': 16
+            '1': 17
+          '9':
+            '0': 18
+            '1': 19
+          '20':
+            '0': 40
+            '1': 41
+          '21':
+            '0': 42
+            '1': 43
+        vm_role: cfed
+        group_id: '4'
+        install_config:
+          get_attribute:
+          - FORMATXLATE
+          - install_config
+        cfed_volume_0:
+          get_input:
+          - cfed_volume_ids_0
+        group_tag: cfed
+        vm_type_tag: cfed
+        nfc_naming_code: cfed_changed_from_ui
+        nfc_code: pd_server_code
+        nfc_function: cfed_naming_function
+    cfed_volume_RRG:
+      type: org.openecomp.resource.abstract.nodes.heat.base_att_cfed_nested_volume
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: base_att_cfed_nested_volumeServiceTemplate.yaml
+          count:
+            get_input: cfed_volume_count
+          mandatory: false
+        size:
+          get_input: storage_size
+        index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    Reserve_Port_cfed_sig_floating_ip_0:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - subnet:
+            get_input: sig_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sig_ipmap_sideA_0_float_published
+            - 1
+        - subnet:
+            get_input: sig_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sig_ipmap_sideA_0_float_published
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name: Reserve_Port_cfed_sig_floating_ip_0
+        network_role_tag: sig
+        network:
+          get_input: sig_net_id
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
+              network_role: ''
+              pps_capacity: ''
+    NOKIA_LCP_Base:
+      type: org.openecomp.resource.abstract.nodes.heat.nest_common
+      directives:
+      - substitutable
+      properties:
+        total_vm_pairs:
+          get_attribute:
+          - FORMATXLATE
+          - total_vm_pairs
+        service_template_filter:
+          substitute_service_template: nest_commonServiceTemplate.yaml
+        ext_net_list:
+        - sigv6
+        - sig
+        - dmz
+        int_net_count: 2
+        ext_net_info:
+          get_attribute:
+          - FORMATXLATE
+          - ext_net_info
+        vnf_name:
+          get_input: vnf_name
+        int_net1_label:
+          '1': ''
+          '2': INTERNALnet1
+  groups:
+    base_att_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_att_volume.yaml
+        description: |
+          AT&T compliant HOT file.
+      members:
+      - cfed_volume_RRG
+      - gls_volume_RRG
+      - oam_volume_RRG
+    base_att_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_att.yaml
+        description: |
+          AT&T compliant HOT file.
+      members:
+      - Reserve_Port_cfed_sigv6_floating_v6_ip_0
+      - Reserve_Port_cfed_sig_floating_ip_0
+      - cfed_RRG_1
+      - NOKIA_LCP_Base
+      - cfed_RRG_0
+  outputs:
+    cfed_volume_ids_0:
+      description: CFED Volume UUID
+      value:
+        get_attribute:
+        - cfed_volume_RRG
+        - cfed_volume_0
+    cfed_volume_ids_1:
+      description: CFED Volume UUID
+      value:
+        get_attribute:
+        - cfed_volume_RRG
+        - cfed_volume_1

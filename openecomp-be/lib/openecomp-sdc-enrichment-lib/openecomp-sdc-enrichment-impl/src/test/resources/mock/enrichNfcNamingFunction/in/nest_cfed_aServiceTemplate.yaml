@@ -1,0 +1,1188 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nest_cfed_a
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.cfed:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cfed_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM flavor name.
+    port_cfed_0_sig_port_2_subnetpoolid:
+      type: string
+      required: true
+    port_cfed_0_int_ctrl1_port_1_network_role:
+      type: string
+      required: true
+    port_cfed_0_int_ctrl1_port_1_network_role_tag:
+      type: string
+      required: true
+    usage_info:
+      hidden: false
+      immutable: false
+      type: json
+      description: |
+        Per-VM/vNIC data for members of this elastic group.
+    config_info:
+      hidden: false
+      immutable: false
+      type: json
+      description: Service configuration and network layout.
+    group_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of the VM pair within the elastic group.
+      constraints:
+      - in_range:
+        - 0
+        - null
+    sig_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of the subnet.
+    workload_context:
+      label: Workload Context
+      hidden: false
+      immutable: false
+      type: string
+      description: Workload context for this VNF.
+    ssh_private_key:
+      hidden: true
+      immutable: false
+      type: string
+      description: Private SSH key for VM to VM communication in this system.
+    port_cfed_0_sig_port_2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cfed_0_int_ctrl0_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cfed_0_sig_port_2_order:
+      type: integer
+      required: true
+    port_cfed_0_sig_port_2_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    int_ctrl1_Sec_Grp:
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal network 0 security group UUID.
+    current_group_count:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Current VM pair count within the elastic group.
+    port_cfed_0_int_ctrl0_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    total_pair_count:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        This string will evaluate to the number of PairGroups in the VNF.
+    cfed_sig_ipmap_sideA_0_float_published:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM/subnet/usage IP address list. Keyed by group index.
+      entry_schema:
+        type: string
+    port_cfed_0_sig_port_2_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    int_ctrl1_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal network 1.
+    cfed_sigv6_ipmap_sideA_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM/subnet/usage IP address list. Keyed by group index.
+      entry_schema:
+        type: string
+    cfed_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM image name.
+    port_cfed_0_int_ctrl0_port_0_network_role_tag:
+      type: string
+      required: true
+    port_cfed_0_int_ctrl0_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    cfed_sigv6_ipmap_sideA_0_float_published:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM/subnet/usage IP address list. Keyed by group index.
+      entry_schema:
+        type: string
+    cfed_sig_ipmap_sideA_0_fixed_dbaas:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM/subnet/usage IP address list. Keyed by group index.
+      entry_schema:
+        type: string
+    port_cfed_0_int_ctrl0_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    ssh_public_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: Public SSH key for VM to VM communication in this system.
+    port_cfed_0_int_ctrl0_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cfed_0_int_ctrl1_port_1_order:
+      type: integer
+      required: true
+    sig_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of the network.
+    sigv6_v6_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of the subnet.
+    port_cfed_0_int_ctrl1_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    vf_module_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Unique index for this VNF Module instance.
+    port_cfed_0_int_ctrl1_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    backup_file1:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        <cURL path>/<backup file>
+        This is only used for restore (aka "disaster recovery") and
+        only referenced on OAM-A.
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF module instance.
+    backup_file2:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        <cURL path>/<backup file>
+        This is only used for restore (aka "disaster recovery") and
+        only referenced on OAM-A.
+    port_cfed_0_sig_port_2_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    cfed_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM name list.
+      entry_schema:
+        type: string
+    role:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM role during LCM activities.
+      constraints:
+      - valid_values:
+        - oam
+        - other
+    port_cfed_0_int_ctrl1_port_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance.
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF module instance.
+    port_cfed_0_int_ctrl0_port_0_order:
+      type: integer
+      required: true
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance.
+    port_cfed_0_int_ctrl0_port_0_network_role:
+      type: string
+      required: true
+    lcm_keypair:
+      hidden: false
+      immutable: false
+      type: string
+      description: Lifecycle management access key pair.
+      constraints: [
+        ]
+    port_cfed_0_int_ctrl1_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM availability zone.
+    sig_Sec_Grp:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of the security group.
+    int_ctrl0_Sec_Grp:
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal network 0 security group UUID.
+    net_info_str:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        JSON formatted string with all network info.
+        This is redundant with int_net_info and ext_net_info except
+        in Kilo there is no way to convert json to string for
+        output as a personality file.
+    ssh_access_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: Public SSH key for external access.
+    int_ctrl0_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal network 0.
+    port_cfed_0_sig_port_2_network_role_tag:
+      type: string
+      required: true
+    port_cfed_0_sig_port_2_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    environment_context:
+      label: Environment Context
+      hidden: false
+      immutable: false
+      type: string
+      description: Environment context for this VNF.
+    port_cfed_0_int_ctrl0_port_0_subnetpoolid:
+      type: string
+      required: true
+    pair2idx:
+      hidden: false
+      immutable: false
+      type: json
+      description: Map group index to VMtype index.
+    vm_role:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique role for these VMs.
+    port_cfed_0_int_ctrl1_port_1_subnetpoolid:
+      type: string
+      required: true
+    group_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID number of the elastic group this pair is a member of.
+    install_config:
+      hidden: false
+      immutable: false
+      type: string
+      description: JSON formatted string of install config values.
+    cfed_volume_0:
+      hidden: false
+      immutable: false
+      type: json
+      description: CFED Volume.
+    group_tag:
+      hidden: false
+      immutable: false
+      type: string
+      description: Key into "usage_info" for members of this elastic group.
+    port_cfed_0_sig_port_2_network_role:
+      type: string
+      required: true
+    port_cfed_0_int_ctrl1_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+  node_templates:
+    cfed_0_sig_port_2:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        subnetpoolid:
+          get_input: port_cfed_0_sig_port_2_subnetpoolid
+        allowed_address_pairs:
+        - ip_address:
+            str_replace:
+              template: $ip$prefixsz
+              params:
+                $ip:
+                  get_input:
+                  - cfed_sig_ipmap_sideA_0_float_published
+                  - get_input: group_index
+                $prefixsz: /32
+        - ip_address:
+            str_replace:
+              template: $ip$prefixsz
+              params:
+                $ip:
+                  get_input:
+                  - cfed_sigv6_ipmap_sideA_0_float_published
+                  - get_input: group_index
+                $prefixsz: /128
+        binding:vnic_type: normal
+        related_networks:
+          get_input: port_cfed_0_sig_port_2_related_networks
+        network:
+          get_input: sig_net_id
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_cfed_0_sig_port_2_ip_requirements
+        security_groups:
+        - get_input: sig_Sec_Grp
+        network_role:
+          get_input: port_cfed_0_sig_port_2_network_role
+        fixed_ips:
+        - subnet:
+            get_input: sig_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sig_ipmap_sideA_0_fixed_dbaas
+            - get_input: group_index
+        - subnet:
+            get_input: sigv6_v6_subnet_id
+          ip_address:
+            get_input:
+            - cfed_sigv6_ipmap_sideA_0_fixed_dbaas
+            - get_input: group_index
+        mac_requirements:
+          get_input: port_cfed_0_sig_port_2_mac_requirements
+        subinterface_indicator: false
+        name:
+          str_replace:
+            template: $vnf_name_cfed_0_sig_port_2
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        exCP_naming:
+          get_input: port_cfed_0_sig_port_2_exCP_naming
+        vlan_requirements:
+          get_input: port_cfed_0_sig_port_2_vlan_requirements
+        network_role_tag:
+          get_input: port_cfed_0_sig_port_2_network_role_tag
+        order:
+          get_input: port_cfed_0_sig_port_2_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cfed_server_0
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: cfed_server_0
+              network_role:
+                get_input: port_cfed_0_sig_port_2_network_role
+              pps_capacity: ''
+    cfed_0_int_ctrl0_port_0:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        subnetpoolid:
+          get_input: port_cfed_0_int_ctrl0_port_0_subnetpoolid
+        allowed_address_pairs: [
+          ]
+        binding:vnic_type: normal
+        related_networks:
+          get_input: port_cfed_0_int_ctrl0_port_0_related_networks
+        network:
+          get_input: int_ctrl0_net_id
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_cfed_0_int_ctrl0_port_0_ip_requirements
+        security_groups:
+        - get_input: int_ctrl0_Sec_Grp
+        network_role:
+          get_input: port_cfed_0_int_ctrl0_port_0_network_role
+        fixed_ips: [
+          ]
+        mac_requirements:
+          get_input: port_cfed_0_int_ctrl0_port_0_mac_requirements
+        subinterface_indicator: false
+        name:
+          str_replace:
+            template: $vnf_name_cfed_0_int_ctrl0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        exCP_naming:
+          get_input: port_cfed_0_int_ctrl0_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_cfed_0_int_ctrl0_port_0_vlan_requirements
+        network_role_tag:
+          get_input: port_cfed_0_int_ctrl0_port_0_network_role_tag
+        order:
+          get_input: port_cfed_0_int_ctrl0_port_0_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cfed_server_0
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: cfed_server_0
+              network_role:
+                get_input: port_cfed_0_int_ctrl0_port_0_network_role
+              pps_capacity: ''
+    cfed_server_0:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.cfed
+      properties:
+        flavor:
+          get_input: cfed_flavor_name
+        key_name:
+          get_input: lcm_keypair
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cfed_image_name
+        image_update_policy: REBUILD
+        metadata:
+          backup_file1:
+            get_input: backup_file1
+          total_pair_count:
+            get_input: total_pair_count
+          vf_module_id:
+            get_input: vf_module_id
+          backup_file2:
+            get_input: backup_file2
+          image:
+            get_input: cfed_image_name
+          member_index: '0'
+          certificate: ''
+          vnf_name:
+            get_input: vnf_name
+          created_at: now
+          environment_context:
+            get_input: environment_context
+          group_type: pair
+          group_index:
+            get_input: group_index
+          workload_context:
+            get_input: workload_context
+          vf_module_name:
+            get_input: vf_module_name
+          default_action: install
+          flavor:
+            get_input: cfed_flavor_name
+          vm_role:
+            get_input: vm_role
+          side_action:
+            get_input:
+            - usage_info
+            - defaults
+            - action
+            - '0'
+          group_id:
+            get_input: group_id
+          vnf_id:
+            get_input: vnf_id
+          current_group_count:
+            get_input: current_group_count
+          action: install
+          vf_module_index:
+            get_input: vf_module_index
+        config_drive: true
+        personality:
+          /storage/cloud/discover/GlobalConfig.json:
+            str_replace:
+              template: ' { "v4_dns_server": "$v4dns", "v6_dns_server": "$v6dns",
+                "v4_enum_server": "$v4enum", "v6_enum_server": "$v6enum", "v4_ntp_server":
+                "$v4ntp", "v6_ntp_server": "$v6ntp", "time_zone": "$time_zone", "system_name":
+                "$sysname", "system_prefix": "$sysprefix", "license_reference": "$license_ref",
+                "local_dns_domain": "$local_dns", "local_enum_domain": "$local_enum",
+                $cfg } '
+              params:
+                $v4dns:
+                  get_input:
+                  - usage_info
+                  - v4_dns_server
+                $v6enum:
+                  get_input:
+                  - usage_info
+                  - v6_enum_serve
+                $v6ntp:
+                  get_input:
+                  - usage_info
+                  - v6_ntp_server
+                $v6dns:
+                  get_input:
+                  - usage_info
+                  - v6_dns_server
+                $v4enum:
+                  get_input:
+                  - usage_info
+                  - v4_enum_server
+                $sysname:
+                  get_input:
+                  - usage_info
+                  - system_name
+                $local_enum:
+                  get_input:
+                  - usage_info
+                  - local_enum_domain
+                $v4ntp:
+                  get_input:
+                  - usage_info
+                  - v4_ntp_server
+                $cfg:
+                  get_input: install_config
+                $local_dns:
+                  get_input:
+                  - usage_info
+                  - local_dns_domain
+                $sysprefix:
+                  get_input:
+                  - usage_info
+                  - system_prefix
+                $license_ref:
+                  get_input:
+                  - usage_info
+                  - license_reference
+                $time_zone:
+                  get_input:
+                  - usage_info
+                  - time_zone
+          /storage/cloud/.ssh/SSHpubkey:
+            get_input: ssh_public_key
+          /storage/cloud/CLDsetup_data.json:
+            str_replace:
+              template: ' { "drbd_uuid": "", "int_vlan_id": "$int_vlan_id", "random":
+                "$random", "SSHpubkeyFile": "/storage/cloud/.ssh/SSHpubkey", "SSHprivkeyFile":
+                "/storage/cloud/.ssh/SSHprivkey", "SSHaccessKey": "$acckey", "stk":
+                "$stk", "uuid_storage": "$uuid_storage" }'
+              params:
+                $random: UNSUPPORTED_RESOURCE_cfed_RandomA
+                $stk:
+                  get_input:
+                  - usage_info
+                  - stack
+                $uuid_storage:
+                  get_input:
+                  - cfed_volume_0
+                  - get_attribute:
+                    - cfed_mapidx_0
+                    - idx0
+                $acckey:
+                  get_input: ssh_access_key
+                $int_vlan_id:
+                  get_input:
+                  - usage_info
+                  - int_vlan_id
+          /storage/cloud/discover/VMinfo.json:
+            str_replace:
+              template: ' { "vm_suffix": "$vmname", "service_config": $servcfg, "v4_default_gateway":
+                "$v4gateway", "v6_default_gateway": "$v6gateway", "v4_static_routes":
+                $v4static_routes, "v6_static_routes": $v6static_routes, "IPinfo":
+                [$ipinfo], "Netinfo": $netinfo } '
+              params:
+                $ipinfo:
+                  str_replace:
+                    template: '{"count": "$ip_count00", "binding_type": "$btype00",
+                      "mac_address": "$mac00", "assigned_ips": [$assgip00], "label2info":
+                      [$l2info00]} ,{"count": "$ip_count01", "binding_type": "$btype01",
+                      "mac_address": "$mac01", "assigned_ips": [$assgip01], "label2info":
+                      [$l2info01]} ,{"count": "$ip_count02", "binding_type": "$btype02",
+                      "mac_address": "$mac02", "assigned_ips": [$assgip02], "label2info":
+                      [$l2info02]} '
+                    params:
+                      $btype00: normal
+                      $btype01: normal
+                      $btype02: normal
+                      $assgip00:
+                        list_join:
+                        - ','
+                        - - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_int_ctrl0_port_0
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                              - '"'
+                      $assgip01:
+                        list_join:
+                        - ','
+                        - - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_int_ctrl1_port_1
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                              - '"'
+                      $assgip02:
+                        list_join:
+                        - ','
+                        - - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_sig_port_2
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                              - '"'
+                          - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_sig_port_2
+                                - fixed_ips
+                                - 1
+                                - ip_address
+                              - '"'
+                          - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_sig_port_2
+                                - fixed_ips
+                                - 2
+                                - ip_address
+                              - '"'
+                          - list_join:
+                            - ''
+                            - - '"'
+                              - get_attribute:
+                                - cfed_0_sig_port_2
+                                - fixed_ips
+                                - 3
+                                - ip_address
+                              - '"'
+                      $mac01:
+                        get_attribute:
+                        - cfed_0_int_ctrl1_port_1
+                        - mac_address
+                      $mac02:
+                        get_attribute:
+                        - cfed_0_sig_port_2
+                        - mac_address
+                      $mac00:
+                        get_attribute:
+                        - cfed_0_int_ctrl0_port_0
+                        - mac_address
+                      $l2info01:
+                        str_replace:
+                          template: '{"label": "connectivity_ip", "subnet": "INTERNALnet1",
+                            "ip": "$ip00"}'
+                          params:
+                            $ip00: ''
+                      $l2info00:
+                        str_replace:
+                          template: '{"label": "connectivity_ip", "subnet": "INTERNALnet0",
+                            "ip": "$ip00"}'
+                          params:
+                            $ip00: ''
+                      $ip_count00: 0
+                      $l2info02:
+                        str_replace:
+                          template: '{"label": "servicetype=cfed-0;fixed;nitype=dbaas;subnet=sig",
+                            "subnet": "sig", "ip": "$ip00"},{"label": "servicetype=cfed-0;fixed;nitype=dbaas;subnet=sigv6",
+                            "subnet": "sigv6", "ip": "$ip01"},{"label": "servicetype=cfed-0;float;nitype=published;subnet=sig",
+                            "subnet": "sig", "ip": "$ip02"},{"label": "servicetype=cfed-0;float;nitype=published;subnet=sigv6",
+                            "subnet": "sigv6", "ip": "$ip03"}'
+                          params:
+                            $ip01:
+                              get_input:
+                              - cfed_sigv6_ipmap_sideA_0_fixed_dbaas
+                              - get_input: group_index
+                            $ip02:
+                              get_input:
+                              - cfed_sig_ipmap_sideA_0_float_published
+                              - get_input: group_index
+                            $ip03:
+                              get_input:
+                              - cfed_sigv6_ipmap_sideA_0_float_published
+                              - get_input: group_index
+                            $ip00:
+                              get_input:
+                              - cfed_sig_ipmap_sideA_0_fixed_dbaas
+                              - get_input: group_index
+                      $ip_count01: 0
+                      $ip_count02: 4
+                $netinfo:
+                  get_input: net_info_str
+                $v4gateway:
+                  get_input:
+                  - config_info
+                  - v4_default_gateway
+                $servcfg:
+                  get_input:
+                  - config_info
+                  - poolinfo
+                $v4static_routes:
+                  get_input:
+                  - config_info
+                  - v4_static_routes
+                $v6gateway:
+                  get_input:
+                  - config_info
+                  - v6_default_gateway
+                $vmname:
+                  get_input:
+                  - cfed_names
+                  - get_attribute:
+                    - cfed_mapidx_0
+                    - idx0
+                $v6static_routes:
+                  get_input:
+                  - config_info
+                  - v6_static_routes
+          /storage/cloud/.ssh/SSHprivkey:
+            get_input: ssh_private_key
+        name:
+          get_input:
+          - cfed_names
+          - get_attribute:
+            - cfed_mapidx_0
+            - idx0
+    cfed_0_int_ctrl1_port_1:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        subnetpoolid:
+          get_input: port_cfed_0_int_ctrl1_port_1_subnetpoolid
+        allowed_address_pairs: [
+          ]
+        binding:vnic_type: normal
+        related_networks:
+          get_input: port_cfed_0_int_ctrl1_port_1_related_networks
+        network:
+          get_input: int_ctrl1_net_id
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_cfed_0_int_ctrl1_port_1_ip_requirements
+        security_groups:
+        - get_input: int_ctrl1_Sec_Grp
+        network_role:
+          get_input: port_cfed_0_int_ctrl1_port_1_network_role
+        fixed_ips: [
+          ]
+        mac_requirements:
+          get_input: port_cfed_0_int_ctrl1_port_1_mac_requirements
+        subinterface_indicator: false
+        name:
+          str_replace:
+            template: $vnf_name_cfed_0_int_ctrl1_port_1
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        exCP_naming:
+          get_input: port_cfed_0_int_ctrl1_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_cfed_0_int_ctrl1_port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_cfed_0_int_ctrl1_port_1_network_role_tag
+        order:
+          get_input: port_cfed_0_int_ctrl1_port_1_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cfed_server_0
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: cfed_server_0
+              network_role:
+                get_input: port_cfed_0_int_ctrl1_port_1_network_role
+              pps_capacity: ''
+  groups:
+    nest_cfed_a_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nest_cfed_a.yaml
+        description: Generate resources for a pair of 'cfed' VMs. ...
+      members:
+      - cfed_0_sig_port_2
+      - cfed_0_int_ctrl0_port_0
+      - cfed_server_0
+      - cfed_0_int_ctrl1_port_1
+  outputs:
+    Version:
+      description: |
+        Template file version number. This should be updated
+        each time a non-comment change is made to this file.
+      value: K1
+    VMA-EXT_IPS:
+      description: IP addresses assigned to the first external network.
+      value:
+      - list_join:
+        - ''
+        - - '"'
+          - get_attr:
+            - cfed_0_sig_port_2
+            - fixed_ips
+            - 0
+            - ip_address
+          - '"'
+      - list_join:
+        - ''
+        - - '"'
+          - get_attr:
+            - cfed_0_sig_port_2
+            - fixed_ips
+            - 1
+            - ip_address
+          - '"'
+      - list_join:
+        - ''
+        - - '"'
+          - get_attr:
+            - cfed_0_sig_port_2
+            - fixed_ips
+            - 2
+            - ip_address
+          - '"'
+      - list_join:
+        - ''
+        - - '"'
+          - get_attr:
+            - cfed_0_sig_port_2
+            - fixed_ips
+            - 3
+            - ip_address
+          - '"'
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.cfed_1
+    capabilities:
+      memory_cfed_server_0:
+      - cfed_server_0
+      - memory
+      network.incoming.bytes.rate_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.incoming.bytes.rate
+      disk.device.iops_cfed_server_0:
+      - cfed_server_0
+      - disk.device.iops
+      attachment_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - attachment
+      network.incoming.bytes.rate_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.incoming.bytes.rate
+      attachment_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - attachment
+      feature_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - feature
+      disk.write.bytes_cfed_server_0:
+      - cfed_server_0
+      - disk.write.bytes
+      network.incoming.bytes_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.incoming.bytes
+      network.outgoing.packets.rate_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.outgoing.packets.rate
+      disk.write.requests_cfed_server_0:
+      - cfed_server_0
+      - disk.write.requests
+      network.outgoing.packets.rate_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.outgoing.packets.rate
+      disk.device.read.requests.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.device.read.requests.rate
+      network.incoming.bytes_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.incoming.bytes
+      network.incoming.bytes.rate_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.incoming.bytes.rate
+      disk.write.bytes.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.write.bytes.rate
+      network.outgoing.bytes_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.outgoing.bytes
+      host_cfed_server_0:
+      - cfed_server_0
+      - host
+      network.outgoing.bytes_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.outgoing.bytes
+      network.outgoing.bytes.rate_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.outgoing.bytes.rate
+      instance_cfed_server_0:
+      - cfed_server_0
+      - instance
+      network.incoming.bytes_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.outgoing.bytes.rate
+      disk.device.write.bytes_cfed_server_0:
+      - cfed_server_0
+      - disk.device.write.bytes
+      network.outgoing.packets.rate_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.outgoing.packets.rate
+      network.outpoing.packets_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.outpoing.packets
+      network.incoming.packets_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.incoming.packets
+      cpu_util_cfed_server_0:
+      - cfed_server_0
+      - cpu_util
+      attachment_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - attachment
+      disk.device.capacity_cfed_server_0:
+      - cfed_server_0
+      - disk.device.capacity
+      feature_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - feature
+      network.incoming.packets_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.incoming.packets
+      forwarder_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - forwarder
+      cpu_cfed_server_0:
+      - cfed_server_0
+      - cpu
+      disk.device.allocation_cfed_server_0:
+      - cfed_server_0
+      - disk.device.allocation
+      disk.iops_cfed_server_0:
+      - cfed_server_0
+      - disk.iops
+      disk.device.write.requests.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.device.write.requests.rate
+      disk.read.bytes_cfed_server_0:
+      - cfed_server_0
+      - disk.read.bytes
+      scalable_cfed_server_0:
+      - cfed_server_0
+      - scalable
+      binding_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - binding
+      disk.device.read.requests_cfed_server_0:
+      - cfed_server_0
+      - disk.device.read.requests
+      binding_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - binding
+      network.incoming.packets.rate_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - network.incoming.packets.rate
+      disk.device.usage_cfed_server_0:
+      - cfed_server_0
+      - disk.device.usage
+      binding_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - binding
+      network.incoming.packets.rate_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.incoming.packets.rate
+      disk.device.read.bytes_cfed_server_0:
+      - cfed_server_0
+      - disk.device.read.bytes
+      binding_cfed_server_0:
+      - cfed_server_0
+      - binding
+      memory.resident_cfed_server_0:
+      - cfed_server_0
+      - memory.resident
+      forwarder_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - forwarder
+      vcpus_cfed_server_0:
+      - cfed_server_0
+      - vcpus
+      disk.latency_cfed_server_0:
+      - cfed_server_0
+      - disk.latency
+      network.outgoing.bytes.rate_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.outgoing.bytes.rate
+      disk.read.bytes.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.read.bytes.rate
+      forwarder_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - forwarder
+      disk.read.requests_cfed_server_0:
+      - cfed_server_0
+      - disk.read.requests
+      disk.device.latency_cfed_server_0:
+      - cfed_server_0
+      - disk.device.latency
+      os_cfed_server_0:
+      - cfed_server_0
+      - os
+      network.outpoing.packets_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.outpoing.packets
+      feature_cfed_server_0:
+      - cfed_server_0
+      - feature
+      disk.ephemeral.size_cfed_server_0:
+      - cfed_server_0
+      - disk.ephemeral.size
+      disk.root.size_cfed_server_0:
+      - cfed_server_0
+      - disk.root.size
+      network.incoming.packets_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - network.incoming.packets
+      feature_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - feature
+      endpoint_cfed_server_0:
+      - cfed_server_0
+      - endpoint
+      network.outgoing.bytes_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.outgoing.bytes
+      network.outpoing.packets_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - network.outpoing.packets
+      disk.device.read.bytes.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.device.read.bytes.rate
+      disk.usage_cfed_server_0:
+      - cfed_server_0
+      - disk.usage
+      disk.allocation_cfed_server_0:
+      - cfed_server_0
+      - disk.allocation
+      cpu.delta_cfed_server_0:
+      - cfed_server_0
+      - cpu.delta
+      disk.write.requests.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.write.requests.rate
+      disk.device.write.bytes.rate_cfed_server_0:
+      - cfed_server_0
+      - disk.device.write.bytes.rate
+      disk.capacity_cfed_server_0:
+      - cfed_server_0
+      - disk.capacity
+      disk.device.write.requests_cfed_server_0:
+      - cfed_server_0
+      - disk.device.write.requests
+      memory.usage_cfed_server_0:
+      - cfed_server_0
+      - memory.usage
+      port_mirroring_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - port_mirroring
+      port_mirroring_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - port_mirroring
+      port_mirroring_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - port_mirroring
+    requirements:
+      dependency_cfed_server_0:
+      - cfed_server_0
+      - dependency
+      dependency_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - dependency
+      dependency_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - dependency
+      link_cfed_0_int_ctrl1_port_1:
+      - cfed_0_int_ctrl1_port_1
+      - link
+      link_cfed_0_int_ctrl0_port_0:
+      - cfed_0_int_ctrl0_port_0
+      - link
+      link_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - link
+      dependency_cfed_0_sig_port_2:
+      - cfed_0_sig_port_2
+      - dependency
+      local_storage_cfed_server_0:
+      - cfed_server_0
+      - local_storage
