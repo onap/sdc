@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_779a9b6f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-17T15:26:48Z",
+      "side": 1,
+      "message": "Sonar Violation\nUseless imports should be removed",
+      "revId": "84339829dd98397e85fb5885083a7c359b8f5d86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_178b0f20",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-12-17T15:26:48Z",
+      "side": 1,
+      "message": "Sonar Violation\nUseless imports should be removed",
+      "revId": "84339829dd98397e85fb5885083a7c359b8f5d86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
