@@ -2153,4 +2153,9 @@ errors:
         message: "Error: Interface operation output parameter name should not be empty.",
         messageId: "SVC4706"
     }
-
+#---------SVC4712-----------------------------
+    INTERFACE_LIFECYCLE_TYPES_NOT_FOUND: {
+        code: 404,
+        message: "Error: Interface Lifecycle types not found.",
+        messageId: "SVC4712"
+    }

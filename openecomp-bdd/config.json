@@ -13,6 +13,12 @@
     "server" : "vf.server",
     "user" : "user"
   },
+  "catalog" : {
+    "port" : 8080,
+    "prefix" : "sdc2/rest/v1",
+    "server" : "CatalogBE.server",
+    "user" : "user"
+  },
   "activity_spec" : {
     "port" : 8080,
     "prefix" : "activity-spec-api/v1.0",

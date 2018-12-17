@@ -47,8 +47,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component("interface-operation")
 public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation {
@@ -891,4 +891,40 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         return createInterfaceType(interf, false);
     }
 
+    @Override
+    public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes() {
+
+        Either<List<InterfaceData>, TitanOperationStatus> allInterfaceLifecycleTypes =
+            titanGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class);
+        if (allInterfaceLifecycleTypes.isRight()) {
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus
+                (allInterfaceLifecycleTypes.right().value()));
+        }
+
+        Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
+        List<InterfaceData> interfaceDataList = allInterfaceLifecycleTypes.left().value();
+        List<InterfaceDefinition> interfaceDefinitions = interfaceDataList.stream()
+            .map(this::convertInterfaceDataToInterfaceDefinition)
+            .filter(interfaceDefinition -> interfaceDefinition.getUniqueId().equalsIgnoreCase((interfaceDefinition.getType())))
+            .collect(Collectors.toList());
+
+        for (InterfaceDefinition interfaceDefinition : interfaceDefinitions) {
+
+                Either<List<ImmutablePair<OperationData, GraphEdge>>, TitanOperationStatus>
+                    childrenNodes = titanGenericDao.getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),
+                    interfaceDefinition.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class);
+                if(childrenNodes.isRight()) {
+                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenNodes.right().value()));
+                }
+
+                Map<String, OperationDataDefinition> operationsDataDefinitionMap = new HashMap<>();
+                for(ImmutablePair<OperationData, GraphEdge> operation : childrenNodes.left().value()) {
+                    OperationData operationData = operation.getLeft();
+                    operationsDataDefinitionMap.put(operationData.getUniqueId(), operationData.getOperationDataDefinition());
+                }
+                interfaceDefinition.setOperations(operationsDataDefinitionMap);
+                interfaceTypes.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
+        }
+        return Either.left(interfaceTypes);
+    }
 }
