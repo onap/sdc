@@ -22,44 +22,59 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
+import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.resources.data.InterfaceData;
+import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import org.junit.Assert;
+
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class InterfaceOperationTest {
-    private static final Logger log = LoggerFactory.getLogger(InterfaceOperationTest.class);
+public class InterfaceLifecycleOperationTest {
+    private static final Logger log = LoggerFactory.getLogger(InterfaceLifecycleOperationTest.class);
     private Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
-    // InterfaceLifecycleOperation interfaceOperation = new
-    // InterfaceLifecycleOperation();
 
-    // TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
-    @javax.annotation.Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
-
-    @javax.annotation.Resource(name = "interface-operation")
-    private InterfaceLifecycleOperation interfaceOperation;
+    TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    @InjectMocks
+    private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation();
 
     @javax.annotation.Resource(name = "property-operation")
     private PropertyOperation propertyOperation;
@@ -69,6 +84,11 @@ public class InterfaceOperationTest {
 
     @Before
     public void createUserAndCategory() {
+        MockitoAnnotations.initMocks(this);
+
+        final String UNIQUE_ID = "UNIQUE_ID";
+        CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceCategory);
+        when(titanGenericDao.createNode(any(),any())).thenReturn(Either.left(categoryData));
         deleteAndCreateCategory(CATEGORY_NAME);
         deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
     }
@@ -88,7 +108,7 @@ public class InterfaceOperationTest {
     @Test
     public void testDummy() {
 
-        assertNotNull(interfaceOperation);
+        assertNotNull(interfaceLifecycleOperation);
 
     }
 
@@ -228,7 +248,7 @@ public class InterfaceOperationTest {
 
     private void deleteAndCreateCategory(String category) {
         String[] names = category.split("/");
-        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
+        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanGenericDao);
 
         /*
          * CategoryData categoryData = new CategoryData(); categoryData.setName(category);
@@ -244,11 +264,40 @@ public class InterfaceOperationTest {
         userData.setFirstName(firstName);
         userData.setLastName(lastName);
 
-        titanDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
-        titanDao.createNode(userData, UserData.class);
-        titanDao.commit();
+        titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId,
+            UserData.class);
+        titanGenericDao.createNode(userData, UserData.class);
+        titanGenericDao.commit();
 
         return userData;
+    }
+
+    @Test
+    public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
+        when(titanGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(),
+            InterfaceData.class)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        Assert.assertEquals(types.isRight(), Boolean.TRUE);
+    }
+
+    @Test
+    public void testGetAllInterfaceLifecycleTypes_Success() {
+        final String UNIQUE_ID = "UNIQUE_ID";
+        final String TYPE = "UNIQUE_ID";
+        InterfaceData interfaceData = new InterfaceData();
+        interfaceData.getInterfaceDataDefinition().setUniqueId(UNIQUE_ID);
+        interfaceData.getInterfaceDataDefinition().setType(TYPE);
+        List<InterfaceData> interfaceDataList = new ArrayList<>();
+        interfaceDataList.add(interfaceData);
+        Either<List<InterfaceData>, TitanOperationStatus> allInterfaceTypes = Either.left(interfaceDataList);
+        when(titanGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(allInterfaceTypes);
+
+        List<ImmutablePair<OperationData, GraphEdge>> list = new ArrayList<>();
+        Either<List<ImmutablePair<OperationData, GraphEdge>>, TitanOperationStatus> childrenNodes = Either.left(list);
+        when(titanGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
+
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        Assert.assertEquals(types.left().value().size(),1);
     }
 
 }

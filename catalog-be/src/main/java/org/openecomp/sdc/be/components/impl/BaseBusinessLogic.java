@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
@@ -129,6 +130,9 @@ public abstract class BaseBusinessLogic {
     @Autowired
     protected InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
+    @Autowired
+    protected InterfaceLifecycleOperation interfaceLifecycleOperation;
+
     @javax.annotation.Resource
     private UserValidations userValidations;
 
@@ -170,6 +174,10 @@ public abstract class BaseBusinessLogic {
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
     }
 
+
+    public void setInterfaceLifecycleOperation(InterfaceLifecycleOperation interfaceLifecycleOperation) {
+        this.interfaceLifecycleOperation = interfaceLifecycleOperation;
+    }
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {
         return userValidations.validateUserNotEmpty(user, ecompErrorContext);

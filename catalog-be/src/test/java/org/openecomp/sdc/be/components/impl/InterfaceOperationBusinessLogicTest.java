@@ -70,6 +70,7 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -106,6 +107,7 @@ public class InterfaceOperationBusinessLogicTest {
     private final ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
     private final InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
     private final InterfaceOperationValidation operationValidator = Mockito.mock(InterfaceOperationValidation.class);
+    private InterfaceLifecycleOperation interfaceLifecycleOperation = Mockito.mock(InterfaceLifecycleOperation.class);
 
     private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     private User user = null;
@@ -192,6 +194,7 @@ public class InterfaceOperationBusinessLogicTest {
         bl.setUserValidations(userValidations);
         bl.setInterfaceOperation(interfaceOperation);
         bl.setInterfaceOperationValidation(operationValidator);
+        bl.setInterfaceLifecycleOperation(interfaceLifecycleOperation);
         Resource resourceCsar = createResourceObjectCsar(true);
         setCanWorkOnResource(resourceCsar);
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
@@ -423,6 +426,24 @@ public class InterfaceOperationBusinessLogicTest {
         return resource;
     }
 
+    @Test
+    public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes()).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        Either<Map<String, InterfaceDefinition>, ResponseFormat> response = bl.getAllInterfaceLifecycleTypes();
+        Assert.assertEquals(response.isRight(),Boolean.TRUE);
+    }
 
-
+    @Test
+    public void testGetAllInterfaceLifecycleTypes_Success() {
+        final String UNIQUE_ID = "UNIQUE_ID";
+        final String TYPE = "UNIQUE_ID";
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UNIQUE_ID);
+        interfaceDefinition.setType(TYPE);
+        Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
+        interfaceDefinitionMap.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceDefinitionMap));
+        Either<Map<String, InterfaceDefinition>, ResponseFormat>  response = bl.getAllInterfaceLifecycleTypes();
+        Assert.assertEquals(response.left().value().size(),1);
+    }
 }

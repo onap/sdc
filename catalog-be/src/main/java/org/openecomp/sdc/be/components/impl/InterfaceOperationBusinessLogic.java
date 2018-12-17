@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
@@ -323,5 +324,17 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         return Either.left( interfaceDefinition);
+    }
+
+    public Either<Map<String, InterfaceDefinition>, ResponseFormat> getAllInterfaceLifecycleTypes() {
+
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus>  interfaceLifecycleTypes = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        if(interfaceLifecycleTypes.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_LIFECYCLE_TYPES_NOT_FOUND));
+        }
+        interfaceLifecycleTypes.left().value().values().stream().forEach(
+            id -> id.setOperations( id.getOperations().keySet().stream().collect(Collectors.toMap(key -> key.replaceFirst(id.getUniqueId()+".",""), i -> id.getOperations().get(i)) )));
+
+        return Either.left(interfaceLifecycleTypes.left().value());
     }
 }
