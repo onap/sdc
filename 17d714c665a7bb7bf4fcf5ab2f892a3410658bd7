@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_09878f62",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4841
+      },
+      "writtenOn": "2018-12-18T08:38:09Z",
+      "side": 1,
+      "message": "This method is being called in OrchestrationTemplateCSARHandler.java",
+      "parentUuid": "9adffdf1_e94ecb6e",
+      "revId": "17d714c665a7bb7bf4fcf5ab2f892a3410658bd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a958c332",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
         "patchSetId": 9
@@ -47,6 +65,24 @@
       "writtenOn": "2018-12-04T08:55:05Z",
       "side": 1,
       "message": "Why do not we use java readAllLines?\nhttps://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#readAllLines(java.nio.file.Path,%20java.nio.charset.Charset)",
+      "revId": "17d714c665a7bb7bf4fcf5ab2f892a3410658bd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c980a748",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4841
+      },
+      "writtenOn": "2018-12-18T08:38:09Z",
+      "side": 1,
+      "message": "The Same Method is being used in OnboardingManifest.As I did not want to change the flow, using the same one",
+      "parentUuid": "9adffdf1_a958c332",
       "revId": "17d714c665a7bb7bf4fcf5ab2f892a3410658bd7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
