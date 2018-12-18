@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_cd10985b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-12-18T06:01:03Z",
+      "side": 1,
+      "message": "why not use assertTrue here?",
+      "range": {
+        "startLine": 433,
+        "startChar": 8,
+        "endLine": 433,
+        "endChar": 61
+      },
+      "revId": "0a77ce4373c6fb6e31464851f3b6380829117ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8d0e103a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-12-18T06:01:03Z",
+      "side": 1,
+      "message": "is it really needed here?",
+      "range": {
+        "startLine": 908,
+        "startChar": 43,
+        "endLine": 908,
+        "endChar": 44
+      },
+      "revId": "0a77ce4373c6fb6e31464851f3b6380829117ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ed155c49",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-12-18T06:01:03Z",
+      "side": 1,
+      "message": "try to avoid these unnecessary spaces. Similar unnecessary space was there in interface API declaration as well.",
+      "range": {
+        "startLine": 908,
+        "startChar": 115,
+        "endLine": 908,
+        "endChar": 117
+      },
+      "revId": "0a77ce4373c6fb6e31464851f3b6380829117ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
