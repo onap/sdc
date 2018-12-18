@@ -50,6 +50,24 @@
       "revId": "7eff735adf242ee8e047528c11cf27ef42a8372b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_be5b1786",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/OnboardingToscaMetadata.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 4841
+      },
+      "writtenOn": "2018-12-18T08:38:09Z",
+      "side": 1,
+      "message": "The same private method has been used in OnboardingManifest too, so i did not want to change the flow",
+      "parentUuid": "9adffdf1_98366be6",
+      "revId": "7eff735adf242ee8e047528c11cf27ef42a8372b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
