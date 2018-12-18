@@ -1,13 +1,12 @@
 package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
 
-import org.junit.Test;
-import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
+
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import static org.junit.Assert.assertEquals;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
+import org.testng.annotations.Test;
 
 public class MetadataParsingTest {
 
