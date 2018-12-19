@@ -493,7 +493,7 @@ public class ConsolidationService {
         if (CommonUtil.isMultimapEmpty(firstEntityMap) && CommonUtil.isMultimapEmpty(secondEntityMap)) {
             return true;
         }
-        return !firstEntityMap.isEmpty() && !secondEntityMap.isEmpty()
+        return !CommonUtil.isMultimapEmpty(firstEntityMap) && !CommonUtil.isMultimapEmpty(secondEntityMap)
                 && firstEntityMap.keySet().equals(secondEntityMap.keySet());
     }
 
