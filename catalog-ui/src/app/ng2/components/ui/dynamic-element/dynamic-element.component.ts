@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +53,7 @@ export class DynamicElementComponent {
 
     @ViewChild('target', { read: ViewContainerRef }) target: any;
     @Input() type: any;
+    @Input() childType: any;
     @Input() name: string;
     @Input() testId: string;
     @Input() readonly:boolean;
@@ -96,6 +98,9 @@ export class DynamicElementComponent {
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
+          case this.type === 'map':
+                this.createElementCreatorIdentifierForChild();
+                break;
             default:
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.DEFAULT;
         }
@@ -116,6 +121,25 @@ export class DynamicElementComponent {
             this.cmpRef.instance.value = this.value;
             this.cmpRef.instance.readonly = this.readonly;
         }
+    }
+
+    createElementCreatorIdentifierForChild():void{
+      switch(true) {
+        case this.childType === 'integer':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
+          break;
+        case this.childType === 'float':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.FLOAT;
+          break;
+        case this.childType === 'string':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
+          break;
+        case this.childType === 'boolean':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
+          break;
+        default:
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.DEFAULT;
+      }
     }
 
     createComponentByIdentifier() {
