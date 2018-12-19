@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2018 Nokia
+ * ================================================================================
  */
 
 import * as _ from "lodash";
@@ -52,6 +54,7 @@ export class DynamicElementComponent {
 
     @ViewChild('target', { read: ViewContainerRef }) target: any;
     @Input() type: any;
+    @Input() childType: any;
     @Input() name: string;
     @Input() testId: string;
     @Input() readonly:boolean;
@@ -96,6 +99,9 @@ export class DynamicElementComponent {
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
+          case this.type === 'map':
+                this.createElementCreatorIdentifierForChild();
+                break;
             default:
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.DEFAULT;
         }
@@ -116,6 +122,25 @@ export class DynamicElementComponent {
             this.cmpRef.instance.value = this.value;
             this.cmpRef.instance.readonly = this.readonly;
         }
+    }
+
+    createElementCreatorIdentifierForChild():void{
+      switch(this.childType) {
+        case 'integer':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
+          break;
+        case 'float':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.FLOAT;
+          break;
+        case 'string':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
+          break;
+        case 'boolean':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
+          break;
+        default:
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.DEFAULT;
+      }
     }
 
     createComponentByIdentifier() {

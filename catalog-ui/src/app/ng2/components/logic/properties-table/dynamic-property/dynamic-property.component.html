@@ -46,6 +46,7 @@
                 pattern="validationUtils.getValidationPattern(property.type)"
                 [value]="property.isDeclared ? property.value : property.valueObj"
                 [type]="property.isDeclared ? 'string' : property.type"
+                [childType]="property.schema.property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
                 (elementChanged)="onElementChanged($event)"
