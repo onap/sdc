@@ -16,6 +16,24 @@
       "revId": "4eaf521521b7e4a1c011dfba76147800d32600ec",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_45523c3c",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2018-12-19T15:02:01Z",
+      "side": 1,
+      "message": "I agree with You, but wanted to be consistent with legacy code. Changed",
+      "parentUuid": "9adffdf1_c5886cc7",
+      "revId": "4eaf521521b7e4a1c011dfba76147800d32600ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
