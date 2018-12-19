@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_daa28798",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/upload/csar/MetadataParsingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-12-19T06:30:51Z",
+      "side": 1,
+      "message": "Please use assertEquals of package Assert instead of AssertJUnit unless needed for any specific reason.",
+      "revId": "2ba627212344bde5cc41987eb69af21c3be9b033",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7aab5b75",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/upload/csar/MetadataParsingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-12-19T06:30:51Z",
+      "side": 1,
+      "message": "Can be replaced with assertNull",
+      "revId": "2ba627212344bde5cc41987eb69af21c3be9b033",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
