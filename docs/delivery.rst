@@ -14,7 +14,7 @@ Below is a diagram of the SDC project docker containers and the connections betw
    
 
     blockdiag delivery {
-        node_width = 170;
+        node_width = 100;
         orientation = portrait;
         sdc-elasticsearch[shape = flowchart.database , color = grey]
         sdc-cassandra[shape = flowchart.database , color = grey]
