@@ -3,7 +3,6 @@ package org.openecomp.sdc.be.model;
 import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 

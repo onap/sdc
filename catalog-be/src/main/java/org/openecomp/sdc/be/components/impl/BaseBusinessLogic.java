@@ -128,10 +128,7 @@ public abstract class BaseBusinessLogic {
     protected InterfaceOperation interfaceOperation;
 
     @Autowired
-    protected InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
-
-    @Autowired
-    protected InterfaceLifecycleOperation interfaceLifecycleOperation;
+    protected InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
 
     @javax.annotation.Resource
     private UserValidations userValidations;
@@ -165,18 +162,6 @@ public abstract class BaseBusinessLogic {
 
     public void setPropertyOperation(PropertyOperation propertyOperation) {
         this.propertyOperation = propertyOperation;
-    }
-
-    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
-        this.interfaceOperation = interfaceOperation;
-    }
-    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
-        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
-    }
-
-
-    public void setInterfaceLifecycleOperation(InterfaceLifecycleOperation interfaceLifecycleOperation) {
-        this.interfaceLifecycleOperation = interfaceLifecycleOperation;
     }
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {

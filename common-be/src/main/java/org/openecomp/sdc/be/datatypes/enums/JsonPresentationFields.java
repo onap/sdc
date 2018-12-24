@@ -211,25 +211,14 @@ public enum JsonPresentationFields {
     CI_IS_ORIGIN_ARCHIVED("isOriginArchived", null),
 
 	//Interface Operation
-	IO_OPERATION_TYPE("operationType",null),
-	IO_INPUT_PARAMETERS("inputParams",null),
-	IO_OUTPUT_PARAMETERS("outputParams",null),
-	IO_NAME("name", null),
-	IO_MANDATORY("mandatory", null),
-	IO_TYPE("type", null),
-	IO_PROPERTY("property", null),
 	IO_WORKFLOW_ID("workflowId", null),
 	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
     IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),
-
-    //Interface
-    INTERFACE ("interface", null),
-    INTERFACE_OPERATION ("operation", null),
-    OPERATION_IMPLEMENTATION("operationImplementation",null),
-	OPERATION_INPUT("operationInput",null),
-	OPERATION_OUTPUT("operationOutput", null)
-            ;
-
+    INTERFACES ("interfaces", null),
+    OPERATIONS ("operations", null),
+    OPERATION_IMPLEMENTATION("implementation",null),
+	OPERATION_INPUTS("inputs",null),
+	OPERATION_OUTPUTS("outputs", null);
 
     private String presentation;
     private GraphPropertyEnum storedAs;

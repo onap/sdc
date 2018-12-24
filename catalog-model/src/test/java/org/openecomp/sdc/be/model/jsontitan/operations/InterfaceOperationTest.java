@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class InterfacesOperationTest extends ModelTestBase {
+public class InterfaceOperationTest extends ModelTestBase {
     @Resource
     protected TitanDao titanDao;
 
@@ -102,10 +103,10 @@ public class InterfacesOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testAddInterface_Service(){testAddInterface(service);}
+    public void testAddInterface_Service(){testAddSingleInterface(service);}
 
     @Test
-    public void testAddInterface_Resource(){testAddInterface(resource);}
+    public void testAddInterface_Resource(){testAddMultipleInterface(resource);}
 
     @Test
     public void testUpdateInterface_Service(){testUpdateInterface(service);}
@@ -114,95 +115,71 @@ public class InterfacesOperationTest extends ModelTestBase {
     public void testUpdateInterface_Resource(){testUpdateInterface(resource);}
 
     @Test
-    public void testAddInterfaceOperation_Service(){testAddInterfaceOperation(service);}
+    public void testDeleteInterface_Service(){testDeleteInterface(service);}
 
     @Test
-    public void testAddInterfaceOperation_Resource(){testAddInterfaceOperation(resource);}
-
-    @Test
-    public void testUpdateInterfaceOperation_Service(){testUpdateInterfaceOperation(service);}
-
-    @Test
-    public void testUpdateInterfaceOperation_Resource(){testUpdateInterfaceOperation(resource);}
-
-    @Test
-    public void testDeleteInterfaceOperation_Service(){testDeleteInterfaceOperation(service);}
-
-    @Test
-    public void testDeleteInterfaceOperation_Resource(){testDeleteInterfaceOperation(resource);}
+    public void testDeleteInterface_Resource(){testDeleteInterface(resource);}
 
     @Test
     public void testUpdateInterfaceShouldFailWhenNOtCreatedFirst() {
         Component component = createResource();
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
+        InterfaceDefinition interfaceDefinition = buildInterfaceDefinitionWithoutOperation();
         interfaceDefinition.setOperationsMap(createMockOperationMap());
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.updateInterface(component.getUniqueId(),
-            interfaceDefinition);
+        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.updateInterfaces(component.getUniqueId(), Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isRight());
     }
 
-    private void testAddInterface(Component component) {
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.addInterface(component.getUniqueId(),
-            interfaceDefinition);
+    private void testAddSingleInterface(Component component) {
+        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
+        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.addInterfaces(component.getUniqueId(), Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
+        Assert.assertEquals("1", res.left().value().get(0).getUniqueId());
+    }
+
+    private void testAddMultipleInterface(Component component) {
+        InterfaceDefinition interfaceDefinition1 = buildInterfaceDefinition("1");
+        InterfaceDefinition interfaceDefinition2 = buildInterfaceDefinition("2");
+        List<InterfaceDefinition> interfaceDefinitions = new ArrayList<>();
+        interfaceDefinitions.add(interfaceDefinition1);
+        interfaceDefinitions.add(interfaceDefinition2);
+        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.addInterfaces(component.getUniqueId(), interfaceDefinitions);
+        Assert.assertTrue(res.isLeft());
+        Assert.assertEquals(2, res.left().value().size());
     }
 
     private void testUpdateInterface(Component component) {
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
-        interfaceDefinition.setOperationsMap(createMockOperationMap());
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.addInterface(component.getUniqueId(), interfaceDefinition);
+        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
+        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.addInterfaces(component.getUniqueId(), Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
-        InterfaceDefinition value = res.left().value();
+        List<InterfaceDefinition> value = res.left().value();
+        InterfaceDefinition createdInterfaceDef = value.get(0);
         String new_description = "New Description";
-        value.setDescription(new_description);
-        res = interfaceOperation.updateInterface(component.getUniqueId(), interfaceDefinition);
+        createdInterfaceDef.setDescription(new_description);
+        res = interfaceOperation.updateInterfaces(component.getUniqueId(), Collections.singletonList(createdInterfaceDef));
         assertTrue(res.isLeft());
-        assertEquals(new_description,res.left().value().getDescription());
+        assertEquals(new_description,res.left().value().get(0).getDescription());
     }
 
-    private void testAddInterfaceOperation(Component component) {
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.addInterface(component.getUniqueId(), interfaceDefinition);
+    private void testDeleteInterface(Component component) {
+        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
+        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.addInterfaces(component.getUniqueId(), Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
-        InterfaceDefinition value = res.left().value();
-        Operation op = createMockOperation();
-        Either<Operation, StorageOperationStatus> addInterfaceOperationRes = interfaceOperation.addInterfaceOperation(component.getUniqueId(), value, op);
-        assertTrue(addInterfaceOperationRes.isLeft());
-    }
-
-    private void testUpdateInterfaceOperation(Component component) {
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.addInterface(component.getUniqueId(), interfaceDefinition);
-        Assert.assertTrue(res.isLeft());
-        InterfaceDefinition value = res.left().value();
-        Operation op = createMockOperation();
-        Either<Operation, StorageOperationStatus> addInterfaceOperationRes = interfaceOperation.addInterfaceOperation(component.getUniqueId(), value, op);
-        Assert.assertTrue(addInterfaceOperationRes.isLeft());
-        Operation resultOp = addInterfaceOperationRes.left().value();
-        resultOp.setName("New_Create");
-        Either<Operation, StorageOperationStatus> updateInterfaceOperationRes = interfaceOperation.updateInterfaceOperation(component.getUniqueId(), value, resultOp);
-        assertTrue(updateInterfaceOperationRes.isLeft());
-        assertEquals("New_Create", updateInterfaceOperationRes.left().value().getName());
-    }
-
-    private void testDeleteInterfaceOperation(Component component) {
-        InterfaceDefinition interfaceDefinition = buildInterfaceDefinition();
-        Either<InterfaceDefinition, StorageOperationStatus> res = interfaceOperation.addInterface(component.getUniqueId(), interfaceDefinition);
-        Assert.assertTrue(res.isLeft());
-        InterfaceDefinition value = res.left().value();
-        Operation op = createMockOperation();
-        Either<Operation, StorageOperationStatus> addInterfaceOperationRes = interfaceOperation.addInterfaceOperation(component.getUniqueId(), value, op);
-        Assert.assertTrue(addInterfaceOperationRes.isLeft());
-        Operation resultOp = addInterfaceOperationRes.left().value();
-        Either<Operation, StorageOperationStatus> deleteInterfaceOperationRes = interfaceOperation.deleteInterfaceOperation(component.getUniqueId(), value, resultOp.getUniqueId());
+        List<InterfaceDefinition> value = res.left().value();
+        Either<String, StorageOperationStatus> deleteInterfaceOperationRes = interfaceOperation.deleteInterface(component.getUniqueId(), value.get(0).getUniqueId());
         assertTrue(deleteInterfaceOperationRes.isLeft());
     }
 
-    private InterfaceDefinition buildInterfaceDefinition() {
+    private InterfaceDefinition buildInterfaceDefinition(String uniqueId) {
         InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
         interfaceDefinition.setType("tosca.interfaces.standard");
-        interfaceDefinition.setCreationDate(101232L);
+        interfaceDefinition.setUniqueId(uniqueId);
+        interfaceDefinition.setOperationsMap(createMockOperationMap());
+        return interfaceDefinition;
+    }
+
+    private InterfaceDefinition buildInterfaceDefinitionWithoutOperation() {
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.standard");
         return interfaceDefinition;
     }
 
@@ -366,21 +343,21 @@ public class InterfacesOperationTest extends ModelTestBase {
         addProperties.add(prop22);
 
         StorageOperationStatus status = nodeTypeOperation.addToscaDataToToscaElement(vfVertex, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, addProperties, JsonPresentationFields.NAME);
-        assertSame(status, StorageOperationStatus.OK);
+        assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition prop33 = new PropertyDataDefinition();
         prop33.setName("prop33");
         prop33.setDefaultValue("def33");
 
         status = nodeTypeOperation.addToscaDataToToscaElement(vfVertex, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, prop33, JsonPresentationFields.NAME);
-        assertSame(status, StorageOperationStatus.OK);
+        assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition prop44 = new PropertyDataDefinition();
         prop44.setName("prop44");
         prop44.setDefaultValue("def44");
 
         status = nodeTypeOperation.addToscaDataToToscaElement(vfVertex.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, prop44, JsonPresentationFields.NAME);
-        assertSame(status, StorageOperationStatus.OK);
+        assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition capProp = new PropertyDataDefinition();
         capProp.setName("capProp");

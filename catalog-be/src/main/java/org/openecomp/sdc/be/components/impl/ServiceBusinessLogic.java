@@ -518,11 +518,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.info("Restricted operation for user: {}, on service: {}", user.getUserId(), currentService.getCreatorUserId());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
-        Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither = interfaceOperationBusinessLogic.validateComponentNameAndUpdateInterfaces(currentService, serviceUpdate);
-        if (validateAndUpdateInterfacesEither.isRight()) {
-            log.info("failed to validate and update Interfaces on service {}", currentService.getCreatorUserId());
-            return Either.right(validateAndUpdateInterfacesEither.right().value());
-        }
+
         Either<Service, ResponseFormat> validationRsponse = validateAndUpdateServiceMetadata(user, currentService, serviceUpdate);
         if (validationRsponse.isRight()) {
             log.info("service update metadata: validations field.");

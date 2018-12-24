@@ -95,11 +95,11 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
 
 	public  Map<String, OperationDataDefinition>  getOperations() {
 		return (Map<String, OperationDataDefinition>)
-				getToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION);
+				getToscaPresentationValue(JsonPresentationFields.OPERATIONS);
 	}
 
 	public void setOperations(Map<String, OperationDataDefinition> operations) {
-		setToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION, operations);
+		setToscaPresentationValue(JsonPresentationFields.OPERATIONS, operations);
 	}
 
 	public String getToscaResourceName() {

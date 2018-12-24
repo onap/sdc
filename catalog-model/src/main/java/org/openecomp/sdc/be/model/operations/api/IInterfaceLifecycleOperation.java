@@ -51,5 +51,5 @@ public interface IInterfaceLifecycleOperation {
 
     public String getShortInterfaceName(InterfaceDataDefinition interfaceDefinition);
 
-    Either<Map<String, InterfaceDefinition>,StorageOperationStatus> getAllInterfaceLifecycleTypes();
+    public Either<Map<String, InterfaceDefinition>,StorageOperationStatus> getAllInterfaceLifecycleTypes();
 }

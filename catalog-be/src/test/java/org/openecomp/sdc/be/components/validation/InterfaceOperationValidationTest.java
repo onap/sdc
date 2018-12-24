@@ -19,264 +19,246 @@ package org.openecomp.sdc.be.components.validation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Sets;
-import fj.data.Either;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 
 public class InterfaceOperationValidationTest {
 
-    private final Component component = setUpComponentMock();
-    private ResponseFormatManager responseFormatManagerMock;
-
     private final InterfaceOperationValidationUtilTest interfaceOperationValidationUtilTest = new InterfaceOperationValidationUtilTest();
     private final ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
     private final ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
+    private static final String resourceId = "resourceId";
+    private static final String interfaceId = "interfaceId";
+    private static final String operationId = "operationId";
+    private static final String interfaceType = "interfaceType";
+    private static final String operationType = "operationType";
+    private static final String operationId2 = "operationId2";
+    private static final String inputId = "inputId";
+    private static final String outputId = "outputId";
+
+    private Component component;
+    private ResponseFormatManager responseFormatManagerMock;
 
     @Before
-    public void init() {
+    public void setup() {
         MockitoAnnotations.initMocks(this);
         responseFormatManagerMock = Mockito.mock(ResponseFormatManager.class);
         when(responseFormatManagerMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
         when(responseFormatManagerMock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());
         when(responseFormatManagerMock.getResponseFormat(any(), any(), any())).thenReturn(new ResponseFormat());
+
+        component = new ResourceBuilder()
+            .setComponentType(ComponentTypeEnum.RESOURCE)
+            .setUniqueId(resourceId)
+            .setName(resourceId)
+            .build();
+        component.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId));
+        component.setInputs(createInputsForComponent());
     }
 
     @Test
     public void shouldPassOperationValidationForHappyScenario() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                        operationOutputDefinitionList,"upgrade");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isLeft());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2, new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"upgrade");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(), false).isLeft());
     }
-
-    @Test
-    public void shouldFailWhenOperationOperationDescriptionLengthInvalid() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2 -  The Spring Initializer provides a project generator to make you " +
-                        "productive with the certain technology stack from the beginning. You can create a skeleton project" +
-                        "with web, data access (relational and NoSQL data stores), cloud, or messaging support",
-                new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
-    }
-
-
 
     @Test
     public void shouldFailWhenOperationNameIsEmpty() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList, "");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList, "");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
 
     @Test
-    public void shouldFailWhenOperationNamesAreNotUnique() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"CREATE");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+    public void shouldFailWhenOperationNamesAreNotUniqueForCreate() {
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList, operationId);
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
+    }
+
+    @Test
+    public void shouldNotFailWhenOperationNamesAreNotUniqueForUpdate() {
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList, operationId);
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),true).isLeft());
     }
 
     @Test
     public void shouldFailWhenOperationNameLengthIsInvalid() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,
-                "interface operation2 -  The Spring Initializer provides a project generator to make you " +
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"interface operation2 -  The Spring Initializer provides a project generator to make you " +
                         "productive with the certain technology stack from the beginning. You can create a skeleton project" +
                         "with web, data access (relational and NoSQL data stores), cloud, or messaging support");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
-
 
     @Test
     public void shouldFailWhenOperationInputParamNamesAreNotUnique() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"create");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(outputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"create");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
 
     @Test
     public void shouldPassWhenOperationInputParamNamesAreUnique() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isLeft());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(outputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2, new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isLeft());
     }
 
     @Test
     public void shouldPassWhenOperationInputParamNamesHasSubProperty() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-        operationInputDefinitionList.getListToscaDataDefinition().get(0).setInputId(operationInputDefinitionList
-                .getListToscaDataDefinition().get(0).getInputId().concat(".subproperty"));
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isLeft());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        operationInputDefinitionList.getListToscaDataDefinition().get(0).setInputId(operationInputDefinitionList.getListToscaDataDefinition().get(0).getInputId().concat(".subproperty"));
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isLeft());
     }
 
     @Test
     public void shouldFailWhenOperationInputParamNameEmpty() {
         operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("  "));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
 
     @Test
     public void shouldFailWhenOperationOutputParamNameEmpty() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("inputParam"));
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
         operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(" "));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
 
     @Test
     public void shouldPassWhenInterfaceOperationOutputParamNamesUnique() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label2"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isLeft());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isLeft());
     }
 
     @Test
     public void shouldFailWhenOperationOutputParamNamesAreNotUnique() {
-        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("inputParam1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("outParam1"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("outParam2"));
-        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("outParam2"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
-                operationOutputDefinitionList,"update");
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, component, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
     }
 
-    private Set<Operation> createInterfaceOperationData( String uniqueID, String description, ArtifactDefinition artifactDefinition,
-                                                         ListDataDefinition<OperationInputDefinition> inputs,
-                                                         ListDataDefinition<OperationOutputDefinition> outputs, String name) {
-        return Sets.newHashSet(InterfaceOperationTestUtils.createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, outputs, name));
+    @Test
+    public void shouldPassWhenOperationInputParamExistInComponentProperty() {
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2, new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isLeft());
     }
 
-    private Component setUpComponentMock(){
-        Component component = new Resource();
+    @Test
+    public void shouldFailWhenOperationInputParamDoesntExistInComponentProperty() {
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(inputId));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition(operationId));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition(outputId));
+        InterfaceDefinition interfaceDefinition = createInterfaceOperationData(operationId2, operationId2,new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(interfaceDefinition, component, component.getInterfaces().get(interfaceId), Collections.emptyMap(),false).isRight());
+    }
 
-        List<InputDefinition> inputs = new ArrayList<>();
-        InputDefinition inputDefinition = new InputDefinition();
+    @Test
+    public void shouldFailValidateAllowedOperationCountOnLocalInterfaceType() {
+        InterfaceDefinition inputInterfaceDefinition = InterfaceOperationTestUtils.createMockInterface(interfaceId, operationType);
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(inputInterfaceDefinition, component, component.getInterfaces().get(interfaceId), InterfaceOperationTestUtils.createMockInterfaceTypeMap(interfaceType, operationType),false).isRight());
+    }
+
+    @Test
+    public void shouldFailValidateAllowedOperationsOnGlobalInterfaceType() {
+        InterfaceDefinition inputInterfaceDefinition = InterfaceOperationTestUtils.createMockInterface(interfaceType, operationId);
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(inputInterfaceDefinition, component, component.getInterfaces().get(interfaceId), InterfaceOperationTestUtils.createMockInterfaceTypeMap(interfaceType, operationType),false).isRight());
+    }
+
+    @Test
+    public void shouldPassValidateAllowedOperationsOnGlobalInterfaceType() {
+        InterfaceDefinition inputInterfaceDefinition = InterfaceOperationTestUtils.createMockInterface(interfaceType, operationType);
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(inputInterfaceDefinition, component, component.getInterfaces().get(interfaceId), InterfaceOperationTestUtils.createMockInterfaceTypeMap(interfaceType, operationType),false).isLeft());
+    }
+
+    @Test
+    public void shouldFailValidateOperationNameUniquenessInCollection() {
+        InterfaceDefinition inputInterfaceDefinition = InterfaceOperationTestUtils.createMockInterface(interfaceType, operationType);
+        inputInterfaceDefinition.getOperations().put(operationId, InterfaceOperationTestUtils.createMockOperation(operationType));
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateInterfaceOperations(inputInterfaceDefinition, component, component.getInterfaces().get(interfaceId), InterfaceOperationTestUtils.createMockInterfaceTypeMap(interfaceType, operationType),false).isRight());
+    }
+
+    private InterfaceDefinition createInterfaceOperationData(String uniqueID, String description, ArtifactDefinition artifactDefinition,
+                                                             ListDataDefinition<OperationInputDefinition> inputs,
+                                                             ListDataDefinition<OperationOutputDefinition> outputs, String name) {
+        Operation operation = new Operation();
+        operation.setUniqueId(uniqueID);
+        operation.setDescription(description);
+        operation.setImplementation(artifactDefinition);
+        operation.setInputs(inputs);
+        operation.setOutputs(outputs);
+        operation.setName(name);
+        Map<String, Operation> operationMap = new HashMap<>();
+        operationMap.put(operation.getUniqueId(), operation);
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setOperationsMap(operationMap);
+        return interfaceDefinition;
+    }
+
+    private List<InputDefinition> createInputsForComponent(){
         InputDefinition inputDefinition1 = new InputDefinition();
+        inputDefinition1.setName(inputId);
+        inputDefinition1.setInputId(inputId);
+        inputDefinition1.setUniqueId(inputId);
+        inputDefinition1.setValue(inputId);
+        inputDefinition1.setDefaultValue(inputId);
 
-        List<ComponentInstanceInput> componentInstanceInputs = new ArrayList<>();
-        ComponentInstanceInput componentInstanceInput1 = new ComponentInstanceInput();
-        componentInstanceInput1.setComponentInstanceName("componentInstance1");
-        componentInstanceInput1.setUniqueId("inputId1");
-        ComponentInstanceInput componentInstanceInput2 = new ComponentInstanceInput();
-        componentInstanceInput2.setComponentInstanceName("componentInstance2");
-        componentInstanceInput2.setUniqueId("inputId2");
+        InputDefinition inputDefinition2 = new InputDefinition();
+        inputDefinition2.setName(outputId);
+        inputDefinition2.setInputId(outputId);
+        inputDefinition2.setUniqueId(outputId);
+        inputDefinition2.setValue(outputId);
+        inputDefinition2.setDefaultValue(outputId);
 
-        componentInstanceInputs.add(componentInstanceInput1);
-        componentInstanceInputs.add(componentInstanceInput2);
-
-        inputDefinition.setUniqueId("inputId1");
-        inputDefinition.setInputs(componentInstanceInputs);
-        inputDefinition1.setUniqueId("uniqueId3");
-
-        inputs.add(inputDefinition);
-        inputs.add(inputDefinition1);
-        component.setInputs(inputs);
-        component.setInterfaces(createMockInterfaceDefinition());
-        return  component;
-    }
-
-    private  Map<String, InterfaceDefinition> createMockInterfaceDefinition() {
-        Map<String, Operation> operationMap = InterfaceOperationTestUtils.createMockOperationMap();
-        Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
-        interfaceDefinitionMap.put("int1", InterfaceOperationTestUtils.createInterface("int1", "Interface 1",
-                "lifecycle", "tosca", operationMap));
-
-        return interfaceDefinitionMap;
+        return Arrays.asList(inputDefinition1, inputDefinition2);
     }
 
     private class InterfaceOperationValidationUtilTest extends InterfaceOperationValidation {
