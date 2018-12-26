@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_f36771e7",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-12-26T08:52:56Z",
+      "side": 1,
+      "message": "Hi please change this line to a modifications line like this:\n\n* Modifications Copyright 2018 Nokia",
+      "revId": "fb4500047efdfa057d6a3caef5480288b0ac33ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
