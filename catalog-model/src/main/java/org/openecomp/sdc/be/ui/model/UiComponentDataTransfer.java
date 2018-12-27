@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-
+import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -78,7 +78,16 @@ public class UiComponentDataTransfer {
 
     protected List<AdditionalInformationDefinition> additionalInformation;
 
+    private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
     private Map<String, InterfaceDefinition> interfaces;
+
+    public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
+        return interfaceOperations;
+    }
+
+    public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
+        this.interfaceOperations = interfaceOperations;
+    }
 
     public Map<String, InterfaceDefinition> getInterfaces() {
         return interfaces;

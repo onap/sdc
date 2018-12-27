@@ -3984,6 +3984,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 newResource.setDerivedFrom(null);
             }
 
+            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither =
+                    interfaceOperationBusinessLogic.validateComponentNameAndUpdateInterfaces(currentResource, newResource);
+            if (validateAndUpdateInterfacesEither.isRight()) {
+                log.error("failed to validate and update Interfaces");
+                rollbackNeeded = true;
+                throw new ComponentException(validateAndUpdateInterfacesEither.right().value());
+            }
+
             Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource,
                     user, currentResource, false, true);
             if (dataModelResponse.isRight()) {

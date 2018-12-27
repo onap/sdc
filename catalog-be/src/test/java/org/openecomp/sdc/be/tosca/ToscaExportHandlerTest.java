@@ -1,7 +1,6 @@
 package org.openecomp.sdc.be.tosca;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaMetadata;
@@ -83,9 +81,6 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 	@Mock
 	GroupExportParserImpl groupExportParserImpl;
-
-	@Mock
-	InterfaceLifecycleOperation interfaceLifecycleOperation;
 
 	@Before
 	public void setUpMock() throws Exception {
@@ -165,7 +160,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		((Resource) component).setInterfaces(new HashMap<>());
 
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
-		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(Collections.emptyMap()));
+
 		// default test when convertInterfaceNodeType is right
 		result = testSubject.exportComponentInterface(component, false);
 
@@ -397,7 +392,6 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		component.setInputs(inputs);
 
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
-		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(Collections.emptyMap()));
 
 		Mockito.when(capabiltyRequirementConvertor.convertRequirements(Mockito.any(Map.class), Mockito.any(Resource.class),
 				Mockito.any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));

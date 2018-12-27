@@ -32,21 +32,19 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.IOException;
+import java.util.*;
 
 public class RepresentationUtils {
 
@@ -190,8 +188,11 @@ public class RepresentationUtils {
                     .put(ArrayList.class,IsEmptyFilterMixIn.class)
                     .put(HashSet.class,IsEmptyFilterMixIn.class)
                     .put(InterfaceDefinition.class,IsEmptyFilterMixIn.class)
+                    .put(Operation.class,IsEmptyFilterMixIn.class)
                     .put(Resource.class,IsEmptyFilterMixIn.class)
                     .put(ToscaDataDefinition.class,IsEmptyFilterMixIn.class)
-                    .build();
+                    .put(InterfaceOperationDataDefinition.class,IsEmptyFilterMixIn.class).build();
+
+
 
 }

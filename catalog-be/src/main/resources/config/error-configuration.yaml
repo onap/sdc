@@ -2033,7 +2033,7 @@ errors:
 #---------SVC4695-----------------------------
 # %1 - Interface Operation Name
     INTERFACE_OPERATION_NAME_ALREADY_IN_USE: {
-      code: 409,
+      code: 400,
       message: "Error: Interface Operation name '%1' already in use, Your current changes will not be saved.",
       messageId: "SVC4695"
     }
@@ -2046,15 +2046,15 @@ errors:
     }
 #---------SVC4697-----------------------------
     INTERFACE_OPERATION_NAME_MANDATORY: {
-      code: 400,
+      code: 404,
       message: "Error: Interface Operation name is mandatory, Operation name can't be empty.",
       messageId: "SVC4697"
     }
 #---------SVC4698-----------------------------
-# %1 - Interface type
-    INTERFACE_OPERATION_INVALID_FOR_LOCAL_TYPE: {
+# %1 - Interface Operation description
+    INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH: {
       code: 400,
-      message: "Error: Invalid input, only one operation is allowed in local interface type '%1'.",
+      message: "Error: Interface Operation description '%1' is invalid, maximum 200 characters allowed.",
       messageId: "SVC4698"
     }
 #---------SVC4699-----------------------------
@@ -2066,20 +2066,20 @@ errors:
     }
 #---------SVC4700-----------------------------
     INTERFACE_OPERATION_INPUT_NAME_MANDATORY: {
-        code: 400,
+        code: 404,
         message: "Error: Interface operation input parameter name should not be empty.",
         messageId: "SVC4700"
     }
 #---------SVC4701-----------------------------
-# %1 - component Id
+# %1 - resource Id
     INTERFACE_OPERATION_NOT_FOUND: {
       code: 404,
-      message: "Error: Interface operation not found in the component '%1'.",
+      message: "Error: Interface operation not found in the resource '%1'.",
       messageId: "SVC4701"
     }
 #---------SVC4702-----------------------------
     INTERFACE_OPERATION_NOT_DELETED: {
-      code: 400,
+      code: 404,
       message: "Error: Failed to delete interface operation.",
       messageId: "SVC4702"
     }
@@ -2133,43 +2133,29 @@ errors:
       message: "Error: CSAR packaging failed for %1 %2.",
       messageId: "SVC4706"
     }
-#---------SVC4708-----------------------------
-# %1 - Interface Operation input property name, component type
+#---------SVC4704-----------------------------
+# %1 - Interface Operation input property name
     INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT: {
         code: 404,
-        message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties.",
-        messageId: "SVC4708"
+        message: "Error: Interface operation input parameter property '%1' not found in component input properties.",
+        messageId: "SVC4704"
     }
-#---------SVC4709-----------------------------
+#---------SVC4705-----------------------------
 # %1 - Interface Operation output parameter name
     INTERFACE_OPERATION_OUTPUT_NAME_ALREADY_IN_USE: {
         code: 400,
         message: "Error: Interface Operation output parameter name '%1' already in use, Your current changes will not be saved.",
-        messageId: "SVC4708"
+        messageId: "SVC4705"
     }
-#---------SVC4710-----------------------------
+#---------SVC4706-----------------------------
     INTERFACE_OPERATION_OUTPUT_NAME_MANDATORY: {
-        code: 400,
+        code: 404,
         message: "Error: Interface operation output parameter name should not be empty.",
-        messageId: "SVC4710"
-    }
-#---------SVC4711-----------------------------
-# %1 - interface Id
-    INTERFACE_NOT_FOUND_IN_COMPONENT: {
-      code: 404,
-      message: "Error: Interface not found in the component '%1'.",
-      messageId: "SVC4711"
+        messageId: "SVC4706"
     }
 #---------SVC4712-----------------------------
     INTERFACE_LIFECYCLE_TYPES_NOT_FOUND: {
         code: 404,
         message: "Error: Interface Lifecycle types not found.",
         messageId: "SVC4712"
-    }
-#---------SVC4713-----------------------------
-# %1 - Interface Operation Name
-    INTERFACE_OPERATION_INVALID_FOR_GLOBAL_TYPE: {
-        code: 400,
-        message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
-        messageId: "SVC4713"
     }

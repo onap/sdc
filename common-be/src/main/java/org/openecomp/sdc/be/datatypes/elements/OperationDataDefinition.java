@@ -99,20 +99,20 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 
 	public ListDataDefinition<OperationInputDefinition> getInputs() {
 		return (ListDataDefinition<OperationInputDefinition>)
-				getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUTS);
+				getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT);
 	}
 
 	public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
-		setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUTS, inputs);
+		setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT,inputs);
 	}
 
 	public ListDataDefinition<OperationOutputDefinition> getOutputs() {
 		return (ListDataDefinition<OperationOutputDefinition>)
-				getToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUTS);
+				getToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT);
 	}
 
 	public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {
-		setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUTS, outputs);
+		setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT, outputs);
 	}
 	public String getName() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
