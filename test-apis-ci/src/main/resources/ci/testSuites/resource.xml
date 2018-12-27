@@ -354,6 +354,14 @@
 				<include name="undoCheckOutProductByPm"/>	
 			  </methods>
 		</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.interfaceOperation.InterfaceOperationsTest">
+				<methods>
+					<include name="addInterfaceOperationsOnResource"/>
+					<include name="getInterfaceOperationsFromResource"/>
+					<include name="updateInterfaceOperationsOnResource"/>
+					<include name="deleteInterfaceOperationsFromResource"/>
+				</methods>
+			</class>
 		<!-- Product tests end-->
 	 </classes>
   </test> <!-- Test -->

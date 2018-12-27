@@ -680,4 +680,17 @@ public class ResponseParser {
 		return  vfModulesMap;
 	}
 
+	public static InterfaceDefinition convertInterfaceDefinitionResponseToJavaObject(String response) {
+		ObjectMapper mapper = new ObjectMapper();
+		InterfaceDefinition interfaceDefinition = null;
+		try {
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			interfaceDefinition = mapper.readValue(response, InterfaceDefinition.class);
+			logger.debug(interfaceDefinition.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return interfaceDefinition;
+	}
+
 }

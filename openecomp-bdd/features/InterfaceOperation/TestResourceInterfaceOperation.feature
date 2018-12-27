@@ -4,25 +4,19 @@ Feature: Interface Operation Feature
   Given I want to create a VF
 
  Scenario: Test InterfaceOperation CRUD
-    #Create Operations
+    #Create Multiple operations Operations
   When I want to create an Operation
-  Then I want to check property "uniqueId" exists
-  And  I want to create an Operation with workflow
-  Then I want to check property "uniqueId" exists
-  And  I want to create an Operation
-  Then I want to check property "uniqueId" exists
-  When I want to create an Operation with input output
-  Then I want to check property "uniqueId" exists
+  When I want to create an Operation
+  When I want to create an Operation
 
    #List All Operations
   When I want to list Operations
 
     #Get Operation By OperationId
   When I want to get an Operation by Id
-  Then I want to check property "uniqueId" exists
+
    #Update Operation
   When I want to update an Operation
-  Then I want to check property "uniqueId" exists
 
    #Delete Operation
   When I want to delete an Operation
@@ -38,11 +32,8 @@ Feature: Interface Operation Feature
  Scenario: Test InterfaceOperation CREATE
   #Create Operations
   When I want to create an Operation
-  Then I want to check property "uniqueId" exists
   And  I want to create an Operation
-  Then I want to check property "uniqueId" exists
   And  I want to create an Operation
-  Then I want to check property "uniqueId" exists
 
  #List All Operations
   When I want to list Operations
@@ -59,14 +50,11 @@ Feature: Interface Operation Feature
  Scenario: Test InterfaceOperation UPDATE
     #Create Operation
   When I want to create an Operation
-  Then I want to check property "uniqueId" exists
 
     #Get Operation By OperationId
   When I want to get an Operation by Id
-  Then I want to check property "uniqueId" exists
    #Update Operation
   When I want to update an Operation
-  Then I want to check property "uniqueId" exists
 
   #Checkin
   When I want to checkin this component
@@ -80,11 +68,9 @@ Feature: Interface Operation Feature
  Scenario: Test InterfaceOperation DELETE
     #Create Operation
   When I want to create an Operation
-  Then I want to check property "uniqueId" exists
 
     #Get Operation By OperationId
   When I want to get an Operation by Id
-  Then I want to check property "uniqueId" exists
 
    #Delete Operation
   When I want to delete an Operation

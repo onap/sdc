@@ -392,4 +392,11 @@ public interface Urls {
 	final String GET_VSP_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
 	final String GET_VLM_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/%s";
 	final String ACTION_ARCHIVE_RESTORE_COMPONENT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/%s/%s/actions";
+
+	// Interface Operation
+	final String ADD_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
+	final String UPDATE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
+	final String GET_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
+	final String DELETE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
+
 }
