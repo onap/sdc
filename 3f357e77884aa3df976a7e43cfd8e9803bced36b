@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_091f665c",
+        "filename": "test-apis-ci/src/main/resources/ci/testSuites/onapApiSanity.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-12-28T12:26:53Z",
+      "side": 1,
+      "message": "There are no changes so please remove this file from commit.",
+      "revId": "3f357e77884aa3df976a7e43cfd8e9803bced36b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
