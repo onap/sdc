@@ -392,4 +392,7 @@ public interface Urls {
 	final String GET_VSP_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
 	final String GET_VLM_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/%s";
 	final String ACTION_ARCHIVE_RESTORE_COMPONENT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/%s/%s/actions";
+
+	//Interface Lifecycle Types
+  final String GET_All_INTERFACE_LIFECYCLE_TYPES = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/interfaceLifecycleTypes";
 }
