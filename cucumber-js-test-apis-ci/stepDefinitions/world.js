@@ -22,7 +22,7 @@ try {
 	localConfig = require('../devConfig.json');
 } catch (e) {
 	try {
-		localConfig = require('../jenkinsConfig.json');
+		localConfig = require('../environments/dockerConfig.json');
 	} catch (e) {
 		console.error("no env configuration was found!");
 	}

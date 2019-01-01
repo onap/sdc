@@ -2,27 +2,27 @@
   "protocol" : "http",
 
   "onboarding" : {
-    "port" : 8285,
+    "port" : "onboarding.port",
     "prefix" : "sdc1/feProxy/onboarding-api/v1.0",
     "server" : "onboarding.server",
-    "user" : "user"
+    "user" : "onboarding.user"
   },
   "vf" : {
-    "port" : 8285,
+    "port" : "vf.port",
     "prefix" : "sdc1/feProxy/rest/v1",
     "server" : "vf.server",
-    "user" : "user"
+    "user" : "vf.user"
   },
   "catalog" : {
-    "port" : 8080,
+    "port" : "CatalogBE.port",
     "prefix" : "sdc2/rest/v1",
     "server" : "CatalogBE.server",
-    "user" : "user"
+    "user" : "CatalogBE.user"
   },
   "activity_spec" : {
-    "port" : 8080,
+    "port" : "activity-spec.port",
     "prefix" : "activity-spec-api/v1.0",
     "server" : "activity_spec.server",
-    "user" : "user"
+    "user" : "activity-spec.user"
   }
 }
