@@ -1,0 +1,590 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_44e0f5cc",
+        "filename": "catalog-ui/configurations/dev.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please align the combination type to all the other types and write it with uppercase everywhere it\u0027s necessary",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_64a97990",
+        "filename": "catalog-ui/configurations/menu.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please align the combination type to all the other types and write it with uppercase everywhere it\u0027s necessary",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_04aaed84",
+        "filename": "catalog-ui/configurations/prod.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please align the combination type to all the other types and write it with uppercase everywhere it\u0027s necessary",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_24aff195",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c4970547",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please use the combination categories that is defined in the Categories object",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e4948944",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_849d7d68",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 896,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6490994a",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a471a145",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/utils/composition-graph-palette-utils.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please make sure to fix all the type checking after updating the type to be in uppercase",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c47e2519",
+        "filename": "catalog-ui/src/app/models/combination-metadata.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Why this code is commented out?",
+      "range": {
+        "startLine": 4,
+        "startChar": 3,
+        "endLine": 31,
+        "endChar": 36
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e47b2926",
+        "filename": "catalog-ui/src/app/models/components/combination.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Remove created by statement",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 3
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84749d36",
+        "filename": "catalog-ui/src/app/models/components/combination.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Why not use the setComponentDisplayData function instead of writing this code block twice?",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 33
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4492354d",
+        "filename": "catalog-ui/src/app/models/components/component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please make sure to fix all the type checking after updating the type to be in uppercase",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6497393c",
+        "filename": "catalog-ui/src/app/models/componentsInstances/combinationInstance.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove created by section",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 3
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_64be59b6",
+        "filename": "catalog-ui/src/app/modules/service-module.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove this line after converting the combination service to angular 2",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_04af4d7e",
+        "filename": "catalog-ui/src/app/modules/service-module.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove this line after converting the combination service to angular 2",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0498ad68",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Why does combination needs to have a special case in the API request?",
+      "range": {
+        "startLine": 66,
+        "startChar": 8,
+        "endLine": 71,
+        "endChar": 9
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_249db159",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please add empty line after this line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c4a5c5a2",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Why does this function is called createServiceInput?\n\nIs this request actually creating a service input?",
+      "range": {
+        "startLine": 204,
+        "startChar": 4,
+        "endLine": 209,
+        "endChar": 5
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84ab3d74",
+        "filename": "catalog-ui/src/app/services.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "After rewriting the combination service in angular 2 please remove this line from the file",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e4a24998",
+        "filename": "catalog-ui/src/app/services/components/combination-service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please rewrite this file in angular 2 and move it to be with all the other angular 2 services\n\nUse the component service file for reference",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_44b9d5ca",
+        "filename": "catalog-ui/src/app/services/components/component-service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please move this function to the component service file found under the ng2 folder in the source code",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c4cce56c",
+        "filename": "catalog-ui/src/app/services/components/utils/composition-left-palette-service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_24b4d1cf",
+        "filename": "catalog-ui/src/app/services/entity-service.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84c25d32",
+        "filename": "catalog-ui/src/app/utils/component-factory.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "After rewriting the combination service in angular 2 please update this file accordingly",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a4bf61a9",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please align the combination type to all the other types and write it with uppercase everywhere it\u0027s necessary",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_64e5f9db",
+        "filename": "catalog-ui/src/app/view-models/catalog/catalog-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_04e66de8",
+        "filename": "catalog-ui/src/app/view-models/forms/save-resource-form/resource-save-form-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "range": {
+        "startLine": 188,
+        "startChar": 9,
+        "endLine": 190,
+        "endChar": 13
+      },
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_24eb71b1",
+        "filename": "catalog-ui/src/app/view-models/forms/save-resource-form/resource-save-form-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove all commented out code sections",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c4d38502",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/composition/composition-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please add an empty line after between the functions",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e4d009f8",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84d9fd23",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T11:03:10Z",
+      "side": 1,
+      "message": "Please remove empty line",
+      "revId": "9a7cd354a9e84d4d803e0bae96758e6997e6172a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
