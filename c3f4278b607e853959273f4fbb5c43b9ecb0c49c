@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_e4e6c914",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 576,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T07:49:50Z",
+      "side": 1,
+      "message": "Why are you performing this check like this?\n\nInstead of doing this and why not checking it like this:\nif (nodesToDelete.length + edgesSelected.length \u003e 0) {\n    // rest of the code here\n}\n\nI think it looks better instead of doing an empty return.\nAlso because this is a void function it\u0027s not right to put a return statement in it",
+      "range": {
+        "startLine": 574,
+        "startChar": 16,
+        "endLine": 576,
+        "endChar": 17
+      },
+      "revId": "c3f4278b607e853959273f4fbb5c43b9ecb0c49c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84efbde8",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2019-01-01T07:49:50Z",
+      "side": 1,
+      "message": "Please look at the comment on this file from line 574\n\nI think it could also be applied here to look better",
+      "range": {
+        "startLine": 614,
+        "startChar": 12,
+        "endLine": 616,
+        "endChar": 13
+      },
+      "revId": "c3f4278b607e853959273f4fbb5c43b9ecb0c49c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
