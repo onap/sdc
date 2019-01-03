@@ -99,7 +99,10 @@ export class DynamicElementComponent {
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
-          case this.type === 'map':
+            case this.type === 'map':
+                this.createElementCreatorIdentifierForChild();
+                break;
+            case this.type === 'list':
                 this.createElementCreatorIdentifierForChild();
                 break;
             default:

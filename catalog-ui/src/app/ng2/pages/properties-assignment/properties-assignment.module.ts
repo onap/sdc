@@ -26,7 +26,7 @@ import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {GlobalPipesModule} from "../../pipes/global-pipes.module";
 import {BrowserModule} from "@angular/platform-browser";
 import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
-import {InputsTableComponent} from "../../components/logic/inputs-table/inputs-table.component";
+import {InputsTableModule} from "../../components/logic/inputs-table/inputs-table.module";
 import {PropertiesService} from "../../services/properties.service";
 import {DataTypeService} from "../../services/data-type.service";
 import {PropertiesAssignmentComponent} from "./properties-assignment.page.component";
@@ -38,7 +38,6 @@ import {ComponentModeService} from "../../services/component-services/component-
 @NgModule({
     declarations: [
         PropertiesAssignmentComponent,
-        InputsTableComponent,
         HierarchyNavigationComponent,
         FilterPropertiesAssignmentComponent
     ],
@@ -48,6 +47,7 @@ import {ComponentModeService} from "../../services/component-services/component-
         HttpModule,
         GlobalPipesModule,
         PropertyTableModule,
+        InputsTableModule,
         UiElementsModule],
     
     entryComponents: [PropertiesAssignmentComponent],

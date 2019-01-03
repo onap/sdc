@@ -77,11 +77,9 @@ export class InputsTableComponent {
     constructor(private modalService: ModalService) {
     }
 
-
-    onInputChanged = (input, event) => {
-        input.updateDefaultValueObj(event.value, event.isValid);
+    onInputChanged = (input) => {
         this.inputChanged.emit(input);
-    };
+      };
 
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);
