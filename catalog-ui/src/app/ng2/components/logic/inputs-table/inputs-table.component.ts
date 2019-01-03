@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Modifications Copyright (C) 2018 Huawei Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,11 +78,9 @@ export class InputsTableComponent {
     constructor(private modalService: ModalService) {
     }
 
-
-    onInputChanged = (input, event) => {
-        input.updateDefaultValueObj(event.value, event.isValid);
+    onInputChanged = (input) => {
         this.inputChanged.emit(input);
-    };
+      };
 
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);

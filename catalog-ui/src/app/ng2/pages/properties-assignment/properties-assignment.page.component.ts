@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -397,6 +398,7 @@ export class PropertiesAssignmentComponent {
                 this.checkedPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
                     let newInput: InputFEModel = new InputFEModel(input);
+
                     this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
@@ -525,9 +527,9 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <InputFEModel>changedItem;
                 this.inputsUtils.resetInputDefaultValue(changedItem, changedItem.defaultValue);
+                this.propertiesUtils.initChildrenMapForInputObject(changedItem);
             };
         }
-
         this.changedData.forEach(handleReverseItem);
         this.changedData = [];
         this.updateHasChangedData();
