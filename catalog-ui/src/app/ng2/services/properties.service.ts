@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
 import { PropertyFEModel, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from "app/models";
+import {PROPERTY_TYPES} from "../../utils/constants";
 
 @Injectable()
 export class PropertiesService {
@@ -68,7 +70,16 @@ export class PropertiesService {
         let selectedProps: Array<PropertyDeclareAPIModel> = [];
         properties.forEach(prop => {
             if (prop.isSelected && !prop.isDeclared && !prop.isDisabled) {
-                selectedProps.push(new PropertyDeclareAPIModel(prop));
+                if (prop.isSimpleType || prop.type === PROPERTY_TYPES.MAP || prop.type === PROPERTY_TYPES.LIST){
+                  selectedProps.push(new PropertyDeclareAPIModel(prop));
+                } else if (prop.flattenedChildren) {
+                  prop.flattenedChildren.forEach((child) => {
+                  if(!child.hidden) {
+                    let childProp = new PropertyDeclareAPIModel(prop, child); //create it from the parent
+                    selectedProps.push(childProp);
+                  }
+                });
+              }
             } else if (prop.flattenedChildren) {
                 prop.flattenedChildren.forEach((child) => {
                     if (child.isSelected && !child.isDeclared && !child.isDisabled) {
@@ -80,6 +91,5 @@ export class PropertiesService {
         });
         return selectedProps;
     }
-
 
 }

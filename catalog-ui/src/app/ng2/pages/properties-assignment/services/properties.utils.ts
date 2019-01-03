@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,9 +76,9 @@ export class PropertiesUtils {
         return instanceFePropertiesMap;
     }
 
-    public createListOrMapChildren = (property:PropertyFEModel | DerivedFEProperty, key: string, valueObj: any): Array<DerivedFEProperty> => {
+    public createListOrMapChildren = (property:PropertyFEModel | InputFEModel | DerivedFEProperty, key: string, valueObj: any): Array<DerivedFEProperty> => {
         let newProps: Array<DerivedFEProperty> = [];
-        let parentProp = new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);
+      let parentProp = property instanceof InputFEModel ? new DerivedFEProperty(property, property.name, true, key, valueObj) : new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);
         newProps.push(parentProp);
 
         if (!property.schema.property.isSimpleType) {
@@ -126,6 +127,21 @@ export class PropertiesUtils {
         }
         property.updateValueObjOrig();
     };
+
+  public initChildrenMapForInputObject = (input: InputFEModel): void => {
+      if (input.derivedDataType == DerivedPropertyType.LIST || input.derivedDataType == DerivedPropertyType.MAP) {
+        input.flattenedChildren = [];
+        Object.keys(input.defaultValueObj).forEach((key) => {
+          input.flattenedChildren.push(...this.createListOrMapChildren(input, key, input.defaultValueObj[key]))
+        });
+      } else if (input.derivedDataType === DerivedPropertyType.COMPLEX) {
+        input.flattenedChildren = this.createFlattenedChildren(input.type, input.name);
+        this.assignFlattenedChildrenValues(input.defaultValueObj, input.flattenedChildren, input.name);
+        input.flattenedChildren.forEach((childProp) => {
+          input.childPropUpdated(childProp);
+        });
+    }
+  };
 
     /*
     * Loops through flattened properties array and to assign values
