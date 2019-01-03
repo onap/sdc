@@ -397,6 +397,7 @@ export class PropertiesAssignmentComponent {
                 this.checkedPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
                     let newInput: InputFEModel = new InputFEModel(input);
+
                     this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
@@ -525,9 +526,9 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <InputFEModel>changedItem;
                 this.inputsUtils.resetInputDefaultValue(changedItem, changedItem.defaultValue);
+                this.propertiesUtils.initChildrenMapForInputObject(changedItem);
             };
         }
-
         this.changedData.forEach(handleReverseItem);
         this.changedData = [];
         this.updateHasChangedData();

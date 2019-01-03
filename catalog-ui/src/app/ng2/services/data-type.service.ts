@@ -20,7 +20,15 @@
 
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
-import { DataTypeModel, DataTypesMap, PropertyBEModel, PropertyFEModel, DerivedFEProperty, DerivedFEPropertyMap } from "app/models";
+import {
+  DataTypeModel,
+  DataTypesMap,
+  PropertyBEModel,
+  PropertyFEModel,
+  DerivedFEProperty,
+  DerivedFEPropertyMap,
+  InputFEModel
+} from "app/models";
 import { DataTypesService } from "app/services/data-types-service";
 import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils";
 
@@ -70,7 +78,7 @@ export class DataTypeService {
      * Checks for custom behavior for a given data type by checking if a function exists within data-type.service with that name
      * Additional custom behavior can be added by adding a function with the given dataType name
      */
-    public checkForCustomBehavior = (property:PropertyFEModel) => {
+    public checkForCustomBehavior = (property:PropertyFEModel | InputFEModel) => {
         let shortTypeName:string = property.type.split('.').pop();
         if (this[shortTypeName]) {
             this[shortTypeName](property); //execute function for given type, pass property as param
