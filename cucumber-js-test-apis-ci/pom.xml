@@ -106,7 +106,7 @@
               <images>
                 <!-- Build sanity image -->
                 <image>
-                  <name>nfv/cucumber-sdc-api-tests</name>
+                  <name>onap/cucumber-sdc-api-tests</name>
                   <alias>cucumber-sdc-api-tests</alias>
                   <build>
                     <cleanup>try</cleanup>
@@ -128,7 +128,7 @@
                 </goals>
                 <configuration>
                   <removeAll>true</removeAll>
-                  <image>nfv/cucumber-sdc-api-tests</image>
+                  <image>onap/cucumber-sdc-api-tests</image>
                 </configuration>
               </execution>
               <execution>
@@ -145,7 +145,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <image>nfv/cucumber-sdc-api-tests</image>
+                  <image>onap/cucumber-sdc-api-tests</image>
                 </configuration>
               </execution>
             </executions>
