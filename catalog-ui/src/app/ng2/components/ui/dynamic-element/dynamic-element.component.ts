@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +100,10 @@ export class DynamicElementComponent {
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
-          case this.type === 'map':
+            case this.type === 'map':
+                this.createElementCreatorIdentifierForChild();
+                break;
+            case this.type === 'list':
                 this.createElementCreatorIdentifierForChild();
                 break;
             default:

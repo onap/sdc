@@ -1,0 +1,78 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+-->
+
+<div *ngIf="!input.hidden" class="dynamic-input-row nested-level-{{nestedLevel}}" [@fadeIn]
+    [class.with-top-border]="true">
+    <ng-container *ngIf="!isInputFEModel">
+        <div class="table-cell" *ngIf="!input.isChildOfListOrMap">{{input.name}}</div>
+        <div class="table-cell map-entry" *ngIf="input.isChildOfListOrMap && propType == derivedPropertyTypes.MAP">
+            <dynamic-element #mapKeyInput
+                class="value-input"
+                pattern="validationUtils.getValidationPattern(string)"
+                [value]="input.mapKey"
+                type="string"
+                [name]="input.name"
+                (elementChanged)="mapKeyChanged.emit($event.value)"
+                [testId]="'input-key-' + inputTestId"
+            ></dynamic-element>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || (input.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && input.schema.property.isSimpleType)">
+        <div class="table-cell">
+            <dynamic-element class="value-input"
+                pattern="validationUtils.getValidationPattern(input.type)"
+                [value]="isInputFEModel ? input.defaultValueObj : input.valueObj"
+                [type]="input.type"
+                [childType]="input.schema.property.type"
+                [name]="input.name"
+                (elementChanged)="onElementChanged($event)"
+                [testId]="'input-' + inputTestId"
+            ></dynamic-element>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isInputFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP)">
+        <div class="table-cell empty"></div>
+    </ng-container>
+    <!-- ICONS: add, delete, and expand -->
+    <ng-container>
+            <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !input.isChildOfListOrMap" class="input-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(input)}" [attr.data-tests-id]="'add-to-list-' + inputTestId">Add value to list</a>
+            <span *ngIf="input.isChildOfListOrMap" (click)="deleteItem.emit(input);" class="input-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + inputTestId"></span>
+            <span *ngIf="!isInputFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="input-icon sprite-new round-expand-icon" [class.open]="isExpanded()" [attr.data-tests-id]="'expand-' + inputTestId"></span>
+    </ng-container>
+</div>
+
+<!-- FLAT CHILDREN -->
+<div class="flat-children-container" >
+    <ng-container *ngFor="let prop of input.flattenedChildren | filterChildInputs: expandedChildId; trackBy:prop?.propertiesName">
+        <dynamic-input
+            [input]="prop"
+            [expandedChildId]="expandedChildId"
+            [readonly]="readonly"
+            [hasChildren]="getHasChildren(prop)"
+            (addChildPropsToParent)="addChildProps($event, prop.propertiesName)"
+            (mapKeyChanged)="updateChildKeyInParent(prop, $event)"
+            (inputChanged)="childValueChanged(prop)"
+            (expandChild)="expandChildById($event)"
+            (deleteItem)="deleteListOrMapItem($event)"
+            [rootInput]="rootInput || input"
+            >
+        </dynamic-input>
+    </ng-container>
+</div>
