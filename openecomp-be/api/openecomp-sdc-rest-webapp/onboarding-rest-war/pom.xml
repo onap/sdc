@@ -192,6 +192,12 @@
             <artifactId>togglz-servlet</artifactId>
             <version>${togglz.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-security-util</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 
