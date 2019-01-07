@@ -30,4 +30,16 @@ cassandraConfig:
     truststorePath: /var/lib/jetty/etc/truststore
     truststorePassword: <%= @cassandra_truststore_password %>
 
-
+# access restriction
+authCookie:
+  securityKey: MlB1WHFpSHNVTWdJZU1PcQ==
+  maxSessionTimeOut: 86400000
+  sessionIdleTimeOut: 3600000
+  cookieName: "AuthenticationCookie"
+  path: /
+  domain: ""
+  isHttpOnly: true
+  # redirect variable name from portal.properties file
+  redirectURL: "ecomp_redirect_url"
+  excludedUrls: ['/.*']
+  onboardingExcludedUrls: ['/.*']
