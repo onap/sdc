@@ -38,7 +38,7 @@ public class NotifierFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotifierFactory.class);
 
-    private static final String CONFIG_FILE_PROPERTY = "configuration.yaml";
+    private static final String CONFIG_FILE_PROPERTY = "onboardingConfiguration.yaml";
     private static final String CONFIG_SECTION = "catalogNotificationsConfig";
 
     private static final Notifier INSTANCE;

@@ -41,7 +41,7 @@ import java.util.function.Function;
  */
 public class ConfigurationManager {
 
-  static final String CONFIGURATION_YAML_FILE = "configuration.yaml";
+  static final String CONFIGURATION_YAML_FILE = "onboardingConfiguration.yaml";
   private static final String CASSANDRA = "cassandra";
   private static final String CASSANDRA_KEY = CASSANDRA + "Config";
   private static final String DEFAULT_KEYSPACE_NAME = "dox";

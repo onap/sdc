@@ -33,6 +33,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>common-app-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
             <version>${togglz.version}</version>

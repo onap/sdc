@@ -46,6 +46,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 	private void loadConfigurationFiles() {
 
 		loadConfigurationClass(Configuration.class);
+		loadConfigurationClass(OnboardingConfiguration.class);
 		loadConfigurationClass(ErrorConfiguration.class);
 		loadConfigurationClass(Neo4jErrorsConfiguration.class);
 		loadConfigurationClass(EcompErrorConfiguration.class);
@@ -93,6 +94,8 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 	public Neo4jErrorsConfiguration getNeo4jErrorsConfiguration() {
 		return (Neo4jErrorsConfiguration) configurations.get(getKey(Neo4jErrorsConfiguration.class));
 	}
+
+
 
 	@Override
 	public EcompErrorConfiguration getEcompErrorConfiguration() {
@@ -148,6 +151,12 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 	public DistributionEngineConfiguration getDistributionEngineConfiguration() {
 
 		return (DistributionEngineConfiguration) configurations.get(getKey(DistributionEngineConfiguration.class));
+
+	}
+
+	public OnboardingConfiguration getOnboardingConfiguration() {
+
+		return (OnboardingConfiguration) configurations.get(getKey(OnboardingConfiguration.class));
 
 	}
 }

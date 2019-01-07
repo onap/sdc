@@ -37,7 +37,7 @@ import org.openecomp.sdcrests.item.types.ItemAction;
  */
 public class NotifierFactoryTest {
 
-    private static final String CONFIG_LOCATION_PROPERTY = "configuration.yaml";
+    private static final String CONFIG_LOCATION_PROPERTY = "onboardingConfiguration.yaml";
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
