@@ -1,0 +1,164 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_55f178ff",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/ConfigurationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "Please create a separate class for describing/loading the configuration, in the module that needs it. It will help you to avoid the dependency on common-app-api in the onboarding code.",
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_15df706a",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/CookieConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "This is code doesn\u0027t belong in the onboarding. In the past, we removed all the references to common-app-api from the onboarding. Please don\u0027t introduce it again.",
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d5e4883d",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/OnboardingConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "See my other comment about configuration.",
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3595d486",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/NotifierFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "This breaks backward compatibility",
+      "range": {
+        "startLine": 41,
+        "startChar": 56,
+        "endLine": 41,
+        "endChar": 84
+      },
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f5e18c2a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/test/java/org/openecomp/sdcrests/item/rest/services/catalog/notification/NotifierFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "This breaks backward compatibility. There is no conflict with the catalog runtime - there is no need to change this.",
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f58aec62",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "You are using it exactly once. It does not make sense to extract this value to external property in this case.",
+      "range": {
+        "startLine": 198,
+        "startChar": 21,
+        "endLine": 198,
+        "endChar": 46
+      },
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_553f3887",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/templates/default/configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "Why ECOMP? It is a violation of ONAP naming. There is an ongoing effort to change everything that contains \"ecomp\" to \"onap\"",
+      "range": {
+        "startLine": 40,
+        "startChar": 16,
+        "endLine": 40,
+        "endChar": 34
+      },
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_95eb6012",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2019-01-07T15:39:58Z",
+      "side": 1,
+      "message": "There have been plans to move onboarding to a separate repo. We do not want dependencies on Catalog artifacts here.",
+      "range": {
+        "startLine": 35,
+        "startChar": 1,
+        "endLine": 41,
+        "endChar": 20
+      },
+      "revId": "5fa9ad0d59cf316b60ca6066bda65f518fd800f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
