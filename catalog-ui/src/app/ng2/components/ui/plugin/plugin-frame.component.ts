@@ -1,4 +1,4 @@
-import {Component, Inject, Input, Output, OnInit, EventEmitter} from "@angular/core";
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from "@angular/core";
 import {URLSearchParams} from '@angular/http';
 import {Plugin} from "app/models";
 import {EventBusService} from "../../../services/event-bus.service";
@@ -35,6 +35,8 @@ export class PluginFrameComponent implements OnInit {
 
             if (this.plugin.isOnline) {
                 this.initPlugin();
+            } else {
+                this.onLoadingDone.emit();
             }
         })
 
@@ -68,7 +70,7 @@ export class PluginFrameComponent implements OnInit {
         // before moving to a new state
         this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
             if ((fromState.name !== toState.name) || (fromState.name === toState.name) && (toParams.path !== fromParams.path)) {
-                if(this.eventBusService.NoWindowOutEvents.indexOf(this.eventBusService.lastEventNotified) == -1) {
+                if (this.eventBusService.NoWindowOutEvents.indexOf(this.eventBusService.lastEventNotified) == -1) {
                     if (!this.isClosed) {
                         event.preventDefault();
 
@@ -79,8 +81,7 @@ export class PluginFrameComponent implements OnInit {
                             this.$state.go(toState.name, toParams);
                         });
                     }
-                }
-                else {
+                } else {
                     this.eventBusService.unregister(this.plugin.pluginId);
                 }
             }

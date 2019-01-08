@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {BasePubSub, IPubSubEvent} from "../../models/base-pubsub";
+import {Injectable} from '@angular/core';
+import {BasePubSub, IPubSubEvent} from 'sdc-pubsub';
 
 @Injectable()
 export class EventBusService extends BasePubSub {
@@ -11,26 +11,6 @@ export class EventBusService extends BasePubSub {
         this.NoWindowOutEvents = ["CHECK_IN", "SUBMIT_FOR_TESTING", "UNDO_CHECK_OUT"];
     }
 
-    protected handlePluginRegistration(eventData: IPubSubEvent, event: any) {
-        if (eventData.type === 'PLUGIN_REGISTER') {
-            this.register(eventData.data.pluginId, event.source, event.origin);
-
-            let newEventsList = [];
-
-            if (this.eventsToWait.has(eventData.data.pluginId)) {
-                newEventsList = _.union(this.eventsToWait.get(eventData.data.pluginId), eventData.data.eventsToWait);
-            }
-            else {
-                newEventsList = eventData.data.eventsToWait;
-            }
-
-            this.eventsToWait.set(eventData.data.pluginId, newEventsList);
-
-        } else if (eventData.type === 'PLUGIN_UNREGISTER') {
-            this.unregister(eventData.data.pluginId);
-        }
-    }
-
     public unregister(pluginId: string) {
         const unregisterData = {
             pluginId: pluginId
@@ -39,18 +19,6 @@ export class EventBusService extends BasePubSub {
         this.notify('PLUGIN_CLOSE', unregisterData).subscribe(() => {
             super.unregister(pluginId);
         });
-    }
-
-    protected onMessage(event: any) {
-        if (event.data.type === 'PLUGIN_REGISTER') {
-            this.handlePluginRegistration(event.data, event);
-        }
-
-        super.onMessage(event);
-
-        if (event.data.type === 'PLUGIN_UNREGISTER') {
-            this.handlePluginRegistration(event.data, event);
-        }
     }
 
     public disableNavigation(isDisable: boolean) {
@@ -70,8 +38,7 @@ export class EventBusService extends BasePubSub {
                 "left: 0;";
             disableDiv.setAttribute("class", "disable-navigation-div");
             document.body.appendChild(disableDiv);
-        }
-        else {
+        } else {
             document.getElementsByClassName("disable-navigation-div")[0].remove();
 
             _.forEach(iframes, (iframeElement: HTMLElement) => {
@@ -80,7 +47,7 @@ export class EventBusService extends BasePubSub {
         }
     }
 
-    public notify(eventType:string, eventData?:any, disableOnWaiting:boolean=true) {
+    public notify(eventType: string, eventData?: any, disableOnWaiting: boolean = true) {
         let doDisable = false;
 
         if (disableOnWaiting) {
@@ -104,5 +71,36 @@ export class EventBusService extends BasePubSub {
                 });
             }.bind(this)
         };
+    }
+
+    protected handlePluginRegistration(eventData: IPubSubEvent, event: any) {
+        if (eventData.type === 'PLUGIN_REGISTER') {
+            this.register(eventData.data.pluginId, event.source, event.origin);
+
+            let newEventsList = [];
+
+            if (this.eventsToWait.has(eventData.data.pluginId)) {
+                newEventsList = _.union(this.eventsToWait.get(eventData.data.pluginId), eventData.data.eventsToWait);
+            } else {
+                newEventsList = eventData.data.eventsToWait;
+            }
+
+            this.eventsToWait.set(eventData.data.pluginId, newEventsList);
+
+        } else if (eventData.type === 'PLUGIN_UNREGISTER') {
+            this.unregister(eventData.data.pluginId);
+        }
+    }
+
+    protected onMessage(event: any) {
+        if (event.data.type === 'PLUGIN_REGISTER') {
+            this.handlePluginRegistration(event.data, event);
+        }
+
+        super.onMessage(event);
+
+        if (event.data.type === 'PLUGIN_UNREGISTER') {
+            this.handlePluginRegistration(event.data, event);
+        }
     }
 }
