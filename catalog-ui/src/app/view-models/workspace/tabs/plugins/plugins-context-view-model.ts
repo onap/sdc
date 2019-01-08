@@ -28,7 +28,7 @@
 
 */
 
-import {Plugin, IUserProperties} from "app/models";
+import {IUserProperties, Plugin} from "app/models";
 import {CacheService} from "app/services";
 import {PluginsService} from "../../../../ng2/services/plugins.service";
 import {IWorkspaceViewModelScope} from "../../workspace-view-model";
@@ -36,7 +36,7 @@ import {IWorkspaceViewModelScope} from "../../workspace-view-model";
 
 interface IPluginsContextViewModelScope extends IWorkspaceViewModelScope {
     plugin: Plugin;
-    user:IUserProperties;
+    user: IUserProperties;
     queryParams: Object;
     isLoading: boolean;
     show: boolean;
@@ -52,23 +52,20 @@ export class PluginsContextViewModel {
         'PluginsService'
     ];
 
-    constructor(private $scope:IPluginsContextViewModelScope,
-                private $stateParams:any,
-                private cacheService:CacheService,
-                private pluginsService:PluginsService) {
+    constructor(private $scope: IPluginsContextViewModelScope,
+                private $stateParams: any,
+                private cacheService: CacheService,
+                private pluginsService: PluginsService) {
 
         this.initScope();
     }
 
-    private initScope = ():void => {
+    private initScope = (): void => {
         this.$scope.show = false;
         this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
         this.$scope.user = this.cacheService.get('user');
 
-        // Don't show loader if the plugin isn't online
-        if (this.$scope.plugin.isOnline) {
-            this.$scope.isLoading = true;
-        }
+        this.$scope.isLoading = true;
 
         this.$scope.queryParams = {
             userId: this.$scope.user.userId,
