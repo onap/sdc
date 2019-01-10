@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_290a5879",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-01-10T07:09:18Z",
+      "side": 1,
+      "message": "Sonar issue \nUseless imports should be removed",
+      "revId": "555607212dba49c9b3b372918648d1183c36ac81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e9277010",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-01-10T07:09:18Z",
+      "side": 1,
+      "message": "Sonar issue \nThe members of an interface or class declaration should appear in a pre-defined order",
+      "revId": "555607212dba49c9b3b372918648d1183c36ac81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a94648be",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-01-10T07:09:18Z",
+      "side": 1,
+      "message": "Sonar issue \nStrings literals should be placed on the left side when checking for equality",
+      "revId": "555607212dba49c9b3b372918648d1183c36ac81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6914e09f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-01-10T07:09:18Z",
+      "side": 1,
+      "message": "Sonar issue (critical)\nMethods should not be too complex\nThe cyclomatic complexity of methods should not exceed a defined threshold.",
+      "revId": "555607212dba49c9b3b372918648d1183c36ac81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
