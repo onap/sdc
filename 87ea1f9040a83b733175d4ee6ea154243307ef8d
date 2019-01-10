@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_6d714b75",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/configuration/CookieConfig.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-01-10T09:37:13Z",
+      "side": 1,
+      "message": "Violation of ONAP.\nPlease take into consideration that though you are developing for ATT/ECOMP, your code is opensource oriented and you should not use ATT wordings.",
+      "range": {
+        "startLine": 11,
+        "startChar": 47,
+        "endLine": 11,
+        "endChar": 50
+      },
+      "revId": "87ea1f9040a83b733175d4ee6ea154243307ef8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ad12d306",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/RestrictionAccessFilter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-01-10T09:37:13Z",
+      "side": 1,
+      "message": "Is this a new file or you are relaying on the onboarding configuration file? onbaording file name is onboarding_configuration.yaml - how did you test code?",
+      "range": {
+        "startLine": 23,
+        "startChar": 56,
+        "endLine": 23,
+        "endChar": 69
+      },
+      "revId": "87ea1f9040a83b733175d4ee6ea154243307ef8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ad5bb3f4",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/templates/default/configuration.yaml.erb",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-01-10T09:37:13Z",
+      "side": 1,
+      "message": "Violation of opensource, this case ONAP.\nECOMP should be changed.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 35
+      },
+      "revId": "87ea1f9040a83b733175d4ee6ea154243307ef8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
