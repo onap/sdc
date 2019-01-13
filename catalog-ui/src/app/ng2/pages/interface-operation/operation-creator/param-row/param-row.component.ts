@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {OperationParameter, InputBEModel} from 'app/models';
+import {DropDownOption} from "../operation-creator.component";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 
 @Component({
@@ -16,8 +17,10 @@ export class ParamRowComponent {
     @Input() isAssociateWorkflow: boolean;
     @Input() readonly: boolean;
     @Input() isInputParam: boolean;
+    @Input() validityChanged: Function;
 
-    propTypeEnum: Array<String> = [];
+    paramId: string;
+    propTypeEnum: Array<DropDownOption> = [];
     filteredInputProps: Array<DropdownValue> = [];
 
     constructor(private dataTypeService: DataTypeService) {}
@@ -26,20 +29,48 @@ export class ParamRowComponent {
         this.propTypeEnum = _.uniq(
             _.map(
                 this.getPrimitiveSubtypes(),
-                prop => prop.type
+                prop => new DropDownOption(prop.type)
             )
         );
         this.onChangeType();
+        this.validityChanged();
     }
 
-    onChangeType() {
+    onChangeName() {
+        this.validityChanged();
+    }
+
+    onChangeType(paramId?: string) {
         this.filteredInputProps = _.map(
             _.filter(
                 this.getPrimitiveSubtypes(),
-                prop => prop.type === this.param.type
+                prop => !this.param.type || prop.type === this.param.type
             ),
             prop => new DropdownValue(prop.uniqueId, prop.name)
         );
+        if (paramId) {
+            this.paramId = paramId;
+        }
+    }
+
+    onChangeProperty(paramId: string) {
+        this.param.inputId = paramId;
+        const newProp = _.find(
+            this.getPrimitiveSubtypes(),
+            prop => this.param.inputId === prop.uniqueId
+        );
+
+        if (!this.param.type) {
+            this.param.type = newProp.type;
+            this.onChangeType(paramId);
+        } else {
+            this.paramId = paramId;
+        }
+
+        if (!this.param.name) {
+            this.param.name = newProp.name;
+        }
+        this.validityChanged();
     }
 
     getPrimitiveSubtypes(): Array<InputBEModel> {

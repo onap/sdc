@@ -1,56 +1,142 @@
 <!--
-  ~ Copyright � 2016-2018 European Support Limited
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-  
+    ~ Copyright © 2016-2018 European Support Limited
+    ~
+    ~ Licensed under the Apache License, Version 2.0 (the "License");
+    ~ you may not use this file except in compliance with the License.
+    ~ You may obtain a copy of the License at
+    ~
+    ~      http://www.apache.org/licenses/LICENSE-2.0
+    ~
+    ~ Unless required by applicable law or agreed to in writing, software
+    ~ distributed under the License is distributed on an "AS IS" BASIS,
+    ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    ~ See the License for the specific language governing permissions and
+    ~ limitations under the License.
+    -->
+    
 <div class="interface-operation">
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
     <div
-        class="add-btn"
+        class="top-add-btn add-btn"
+        *ngIf="!isListEmpty()"
         [ngClass]="{'disabled': readonly}"
         data-tests-id="addInterfaceOperation"
         (click)="onEditOperation()">
-        Add Operation
+        {{ 'INTERFACE_ADD_OPERATION' | translate }}
     </div>
 
     <div class="operation-list">
 
         <div
-            class="operation-row"
-            *ngFor="let operation of operationList"
-            (click)="onEditOperation(operation)">
-
-            <span class="operation-info-container">
-                <span class="operation-title">
-                    <p class="operation-text" data-tests-id="interfaceOperationType">{{operation.operationType}}</p>
-                </span>
-
-                <span class="operation-description">
-                    <p class="operation-text" data-tests-id="interfaceOperationDescription">{{operation.description}}</p>
-                </span>
-            </span>
-
-            <span class="operation-dumbo" *ngIf="!readonly">
-                <span
-                    class="sprite-new delete-item-icon"
-                    data-tests-id="deleteInterfaceOperation"
-                    (click)="onRemoveOperation($event, operation)">
-                </span>
-            </span>
-
+            class="empty-list-container"
+            *ngIf="isListEmpty() && !isLoading">
+            <div
+                class="empty-list-add-btn"
+                [ngClass]="{'disabled': readonly}"
+                (click)="onEditOperation()">
+                <svg-icon
+                    name="plus-circle"
+                    mode="primary"
+                    size="x_large"
+                    [disabled]="readonly">
+                </svg-icon>
+                <div class="button-text">{{ 'INTERFACE_ADD_OPERATION' | translate }}</div>
+            </div>
         </div>
+
+        <div *ngIf="!isListEmpty()">
+
+            <div class="expand-collapse">
+                <a
+                    class="link"
+                    [ngClass]="{'disabled': isAllExpanded()}"
+                    (click)="collapseAll(false)">
+                    {{ 'INTERFACE_EXPAND_ALL' | translate }}
+                </a> |
+                <a
+                    class="link"
+                    [ngClass]="{'disabled': isAllCollapsed()}"
+                    (click)="collapseAll()">
+                    {{ 'INTERFACE_COLLAPSE_ALL' | translate }}
+                </a>
+            </div>
+
+            <div
+                class="interface-row"
+                *ngFor="let interface of interfaces">
+
+                <div
+                    class="interface-accordion"
+                    (click)="interface.toggleCollapse()">
+                    <span
+                        class="chevron-container"
+                        [ngClass]="{'isCollapsed': interface.isCollapsed}">
+                        <svg-icon
+                            name="caret1-down-o"
+                            mode="primary"
+                            size="small">
+                        </svg-icon>
+                    </span>
+                    <span class="interface-name">{{interface.displayType()}}</span>
+                </div>
+
+                <div
+                    class="generic-table"
+                    *ngIf="!interface.isCollapsed">
+                    <div class="header-row table-row">
+                        <span
+                            class="cell header-cell field-name header-name">
+                            {{ 'INTERFACE_HEADER_NAME' | translate }}
+                        </span>
+                        <span
+                            class="cell header-cell field-description header-description">
+                            {{ 'INTERFACE_HEADER_DESCRIPTION' | translate }}
+                        </span>
+                        <span
+                            class="cell header-cell field-actions header-actions">
+                            ●●●
+                        </span>
+                    </div>
+
+                    <div
+                        class="data-row"
+                        *ngFor="let operation of interface.operations"
+                        (click)="onEditOperation(operation)">
+                        <span
+                            class="cell field-name">
+                            {{operation.name}}
+                        </span>
+                        <span
+                            class="cell field-description"
+                            [ngClass]="{'collapsed': operation.isCollapsed}">
+                            {{operation.getDescriptionEllipsis()}}
+                            <span
+                                class="more-or-less link"
+                                (click)="operation.toggleCollapsed($event)">
+                                {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
+                            </span>
+                        </span>
+                        <span class="cell field-actions">
+                            <span
+                                class="delete-action"
+                                data-tests-id="deleteOperation"
+                                (click)="onRemoveOperation($event, operation)">
+                                <svg-icon
+                                    *ngIf="!readonly"
+                                    name="trash-o"
+                                    mode="info"
+                                    size="small"
+                                    [clickable]="true">
+                                </svg-icon>
+                            </span>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </div>

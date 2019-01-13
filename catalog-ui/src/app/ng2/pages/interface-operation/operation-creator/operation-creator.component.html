@@ -20,66 +20,92 @@
     <form class="w-sdc-form">
 
         <div class="side-by-side">
-            <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">{{ 'OPERATION_NAME' | translate }}</label>
-                <input
-                    type="text"
-                    name="type"
-                    data-tests-id="operationType"
-                    [(ngModel)]="operation.operationType"
-                    [attr.maxLength]="200"
-                    [ngClass]="{'disabled':isEditMode}" />
+            <div class="form-item">
+                <sdc-dropdown
+                    label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
+                    [required]="true"
+                    testId="interface-name"
+                    selectedOption="{{operation.interfaceType}}"
+                    placeHolder="Select..."
+                    [disabled]="readonly"
+                    (changed)="onSelectInterface($event)"
+                    [options]="interfaceNames">
+                </sdc-dropdown>
             </div>
 
-            <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label">{{ 'OPERATION_DESCRIPTION' | translate }}</label>
-                <input
-                    type="text"
-                    data-tests-id="operationDescription"
-                    name="description"
-                    [ngClass]="{'disabled': readonly}"
-                    [(ngModel)]="operation.description"
-                    [attr.maxLength]="200" />
+            <div class="form-item" *ngIf="!isInterfaceOther()">
+                <sdc-dropdown
+                    label="{{ 'OPERATION_NAME' | translate }}"
+                    [required]="true"
+                    testId="operation-name"
+                    selectedOption="{{operation.name}}"
+                    placeHolder="Select..."
+                    [disabled]="readonly"
+                    (changed)="onSelectOperationName($event)"
+                    [options]="operationNames">
+                </sdc-dropdown>
             </div>
+            <div class="form-item" *ngIf="isInterfaceOther()">
+                <sdc-input
+                    label="{{ 'OPERATION_NAME' | translate }}"
+                    [(value)]="operation.name"
+                    testId="operationName">
+                </sdc-input>
+            </div>
+
         </div>
 
-        <div class="side-by-side association-options">
-            <div class="i-sdc-form-item" *ngIf="enableWorkflowAssociation">
-                <label class="i-sdc-form-label">{{ 'OPERATION_WORKFLOW_ASSIGNMENT' | translate }}</label>
-                <ui-element-dropdown
-                    data-tests-id="association-type"
-                    [(value)]="operation.workflowAssociationType"
-                    [values]="associationOptions"
-                    (valueChange)="toggleAssociateWorkflow()"
-                    [readonly]="readonly">
-                </ui-element-dropdown>
-            </div>
-            <div></div>
+        <div class="i-sdc-form-item sdc-input">
+            <span class="sdc-input__label">{{ 'OPERATION_DESCRIPTION' | translate }}</span>
+            <textarea
+                data-tests-id="operationDescription"
+                rows="2"
+                name="description"
+                [(ngModel)]="descriptionValue"
+                [ngClass]="{'disabled': readonly}">
+            </textarea>
         </div>
 
-        <div class="side-by-side" *ngIf="isUsingExistingWF()">
-            <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">{{ 'OPERATION_WORKFLOW' | translate }}
+        <div class="side-by-side" *ngIf="enableWorkflowAssociation">
+            <div class="form-item">
+                <sdc-dropdown
+                    label="{{ 'OPERATION_WORKFLOW_ASSIGNMENT' | translate }}"
+                    placeHolder="Select..."
+                    testId="association-type"
+                    selectedOption="{{workflowAssociationType}}"
+                    [options]="associationOptions"
+                    (changed)="toggleAssociateWorkflow($event)"
+                    [disabled]="readonly">
+                </sdc-dropdown>
+            </div>
+
+            <div class="form-item" *ngIf="!isUsingExistingWF()"></div>
+
+            <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
+                <label class="sdc-input__label required">{{ 'OPERATION_WORKFLOW' | translate }}
                     <span class="archive-warning" *ngIf="archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
+                    <span class="no-workflow-warning" *ngIf="!workflows.length">{{ 'OPERATION_NO_WORKFLOW_ERROR' | translate }}</span>
                 </label>
-                <ui-element-dropdown
-                    data-tests-id="associated-workflow"
-                    [readonly]="readonly"
-                    [values]="workflows"
-                    [(value)]="operation.workflowId"
-                    (valueChange)="onSelectWorkflow()">
-                </ui-element-dropdown>
+                <sdc-dropdown
+                    placeHolder="Select..."
+                    testId="associated-workflow"
+                    selectedOption="{{operation.workflowId}}"
+                    [options]="workflows"
+                    (changed)="onSelectWorkflow($event)"
+                    [disabled]="readonly || !workflows.length">
+                </sdc-dropdown>
             </div>
 
-            <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">{{ 'OPERATION_WORKFLOW_VERSION' | translate }}</label>
-                <ui-element-dropdown
-                    data-tests-id="associated-workflow-version"
-                    [readonly]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly"
-                    [values]="workflowVersions"
-                    [(value)]="operation.workflowVersionId"
-                    (valueChange)="changeWorkflowVersion()">
-                </ui-element-dropdown>
+            <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
+                <sdc-dropdown
+                    *ngIf="workflows.length"
+                    label="{{ 'OPERATION_WORKFLOW_VERSION' | translate }}"
+                    testId="associated-workflow-version"
+                    selectedOption="{{operation.workflowVersionId}}"
+                    [options]="workflowVersions"
+                    (changed)="changeWorkflowVersion($event)"
+                    [disabled]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly">
+                </sdc-dropdown>
             </div>
         </div>
 
@@ -93,7 +119,7 @@
                 *ngIf="!isUsingExistingWF() && !readonly"
                 data-tests-id="addInputParameter"
                 [ngClass]="{'disabled':!canAdd()}"
-                (click)="addParam()">{{ 'OPERATION_ADD_PARAMS' | translate }}</a>
+                (click)="addParam()">{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</a>
         </div>
 
         <div class="generic-table">
@@ -120,7 +146,6 @@
                         <span class="bold-message">{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1' | translate }}</span>
                         <span>{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2' | translate }}</span>
                     </div>
-                    <div *ngIf="!workflows.length" [innerHTML]="'EMPTY_PARAM_TABLE_NO_WORKFLOWS' | translate"></div>
                 </div>
             </div>
 
@@ -132,7 +157,8 @@
                 [param]="param"
                 [inputProps]="inputProperties"
                 [onRemoveParam]="onRemoveParam"
-                [readonly]="readonly">
+                [readonly]="readonly"
+                [validityChanged]="validityChanged">
             </param-row>
         </div>
 

@@ -19,9 +19,9 @@
  */
 
 import * as _ from "lodash";
-import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, OperationModel} from "../models";
-import {ComponentInstanceFactory} from "./component-instance-factory";
-import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
+import { ComponentInstanceFactory } from "./component-instance-factory";
+import { Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, InterfaceModel, OperationModel } from "../models";
+import { InputBEModel, PropertyBEModel, RelationshipModel } from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../models/graph/zones/group-instance";
 
@@ -139,44 +139,55 @@ export class CommonUtils {
         return groups;
     }
 
-    static initInterfaceOperations(interfaces: any): Array<OperationModel> {
+    static initInterfaces(interfaces: Array<InterfaceModel>): Array<InterfaceModel> {
 
-        return _.reduce(interfaces, (acc, interf: any) => {
+        return _.map(interfaces, (interf: InterfaceModel) => {
+
+            return new InterfaceModel({
+                type: interf.type,
+                uniqueId: interf.uniqueId,
+                operations: _.map(interf.operations,
+                    (operation: OperationModel) => {
+                        const newOperation = new OperationModel(operation);
+                        newOperation.interfaceType = interf.type;
+                        newOperation.interfaceId = interf.uniqueId;
+
+                        const {inputs, outputs} = operation;
+                        if (inputs) {
+                            newOperation.createInputsList(inputs.listToscaDataDefinition);
+                        }
+                        if (outputs) {
+                            newOperation.createOutputsList(outputs.listToscaDataDefinition);
+                        }
+
+                        return newOperation;
+                    }
+                )
+            });
+
+        });
+    }
+
+    static initInterfaceOperations(interfaces: Array<InterfaceModel>): Array<OperationModel> {
+
+        return _.reduce(interfaces, (acc, interf: InterfaceModel) => {
 
             return acc.concat(
                 _.map(interf.operations,
-                    ({description, name, uniqueId, inputs, outputs, workflowId, workflowVersionId, workflowAssociationType}) => {
-                        const operation = new OperationModel({
-                            description,
-                            operationType: name,
-                            uniqueId,
-                            workflowAssociationType,
-                            workflowId,
-                            workflowVersionId
-                        });
+                    (operation: OperationModel) => {
+                        const newOperation = new OperationModel(operation);
+                        newOperation.interfaceType = interf.type;
+                        newOperation.interfaceId = interf.uniqueId;
+
+                        const {inputs, outputs} = operation;
                         if (inputs) {
-                            const inputParams = _.map(inputs.listToscaDataDefinition, (input:any) => {
-                                return {
-                                    name: input.name,
-                                    property: input.inputId,
-                                    type: input.type,
-                                    mandatory: input.mandatory
-                                };
-                            });
-                            operation.createInputParamsList(inputParams);
+                            newOperation.createInputsList(inputs.listToscaDataDefinition);
                         }
                         if (outputs) {
-                            const outputParams = _.map(outputs.listToscaDataDefinition, (output:any) => {
-                                return {
-                                    name: output.name,
-                                    property: output.inputId,
-                                    type: output.type,
-                                    mandatory: output.mandatory
-                                };
-                            });
-                            operation.createOutputParamsList(outputParams);
+                            newOperation.createOutputsList(outputs.listToscaDataDefinition);
                         }
-                        return operation;
+
+                        return newOperation;
                     }
                 )
             );

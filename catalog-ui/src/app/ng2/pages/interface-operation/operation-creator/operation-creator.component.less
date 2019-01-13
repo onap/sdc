@@ -1,4 +1,5 @@
 @import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/override.less';
 
 .operation-creator {
     font-family: @font-opensans-regular;
@@ -10,30 +11,64 @@
         font-size: 12px;
     }
 
-    .w-sdc-form .i-sdc-form-item {
+    .w-sdc-form .form-item {
         margin-bottom: 15px;
+    }
+
+    textarea {
+        min-height: 74px;
+        margin-bottom: 18px;
+    }
+
+    /deep/ .sdc-dropdown__component-container {
+        .sdc-dropdown__header {
+            height: 38px;
+            line-height: 35px;
+
+            svg-icon {
+                margin: 13px 6px;
+            }
+        }
+    }
+
+    /deep/ .sdc-input {
+        margin-bottom: 0;
+
+        .sdc-input__input {
+            height: 38px;
+        }
     }
 
     .side-by-side {
         display: flex;
 
-        &.association-options {
-            margin-top: 5px;
-        }
-
-        .i-sdc-form-item {
-            flex-basis: 100%;
+        .form-item {
+            flex: 1;
 
             &:first-child {
-                flex-basis: 40%;
-                margin-right: 10px;
+                margin-right: 14px;
+                flex-basis: 37%;
+                flex-grow: 0;
+                flex-shrink: 0;
             }
 
-            .archive-warning {
-                font-family: @font-opensans-bold;
-                color: @main_color_i;
+            &:nth-child(3) {
+                margin-left: 14px;
+                flex: 0.4;
             }
+
         }
+    }
+
+    .archive-warning {
+        font-family: @font-opensans-bold;
+        color: @main_color_i;
+    }
+
+    .no-workflow-warning {
+        font-family: @font-opensans-bold;
+        color: @sdcui_color_red;
+        float: right;
     }
 
     .input-param-title {
@@ -51,23 +86,32 @@
                 cursor: pointer;
             }
         }
+
+        .tab {
+            width: 84px;
+            text-align: center;
+        }
     }
 
     .generic-table {
-        max-height: 233px;
+        max-height: 244px;
         min-height: 91px;
         background: @main_color_p;
 
         .header-row .header-cell {
-            &.remove {
-                padding: 8px;
-            }
             .info-icon {
                 float: right;
+                position: relative;
+                top: 2px;
             }
             /deep/ .tooltip-inner {
-                max-width: 280px;
+                padding: 2px;
+                max-width: 270px;
                 font-size: 11px;
+            }
+            &.remove {
+                padding: 10px;
+                font-size: 10px;
             }
         }
 

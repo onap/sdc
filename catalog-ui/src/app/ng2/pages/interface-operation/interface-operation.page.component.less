@@ -1,88 +1,196 @@
 @import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/override.less';
 
 .interface-operation {
-    .add-btn {
+    font-size: 14px;
+
+    .top-add-btn {
         position: relative;
         top: -31px;
         text-transform: uppercase;
         font-size: 14px;
+        font-family: @font-opensans-medium;
     }
 
-    a:not(.disabled) {
-        &:hover {
-            cursor: pointer;
+    .link {
+        color: @sdcui_color_blue;
+        text-decoration: underline;
+        font-family: @font-opensans-regular;
+
+        &:not(.disabled) {
+            &:not(.empty-list-add-btn) {
+                &:hover {
+                    color: @sdcui_color_dark-blue;
+                    cursor: pointer;
+                }
+            }
         }
     }
 
     .operation-list {
         border-top: 1px solid @main_color_o;
-        padding-top: 25px;
+        padding-top: 5px;
 
-        .operation-row {
+        .empty-list-container {
             width: 100%;
-            border: 1px solid @main_color_o;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100px;
+            justify-content: center;
 
-            &:hover {
-                border-color: @main_color_c;
-                cursor: pointer;
-            }
-
-            &:not(:first-child) {
-                margin-top: 20px;
-            }
-
-            .operation-info-container {
-                height: 100%;
-                display: flex;
-                align-items: center;
-                margin-right: 60px;
-
-                .operation-title, .operation-description {
-                    display: flex;
-                    align-items: center;
-
-                    .operation-text {
-                        overflow: hidden;
-                        margin-bottom: 0;
-                        max-height: 5rem;
-                    }
-                }
-
-                .operation-title {
-                    flex-shrink: 0;
-                    width: 200px;
-                    height: calc(100% - 13px);
-                    border-right: 1px solid @main_color_o;
-                    margin: 4px 0;
-                    padding: 0 30px;
-
-                    .operation-text {
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                    }
-                }
-
-                .operation-description {
-                    padding-left: 30px;
-                    text-align: left;
-                    font-family: @font-opensans-regular;
-
-                    .operation-text {
-                        word-break: break-word;
-                    }
-                }
-            }
-
-            .operation-dumbo {
-                padding-right: 20px;
+            .empty-list-add-btn {
                 display: flex;
                 flex-direction: column;
-                align-items: left;
+                justify-content: center;
+                align-items: center;
+
+                border: 1px solid @main_color_o;
+                margin-top: 50px;
+
+                height: 229px;
+                width: 480px;
+
+                &.disabled {
+                    pointer-events: none;
+                }
+
+                &:hover {
+                    &:not(.disabled) {
+                        border: 1px solid @sdcui_color_blue;
+                        cursor: pointer;
+                    }
+                }
+
+                .button-text {
+                    margin-top: 9px;
+                    font-family: @font-opensans-medium;
+                    font-size: 16px;
+                    text-transform: uppercase;
+                    color: @sdcui_color_blue;
+                }
             }
+        }
+
+        .expand-collapse {
+            margin-top: 4px;
+            margin-bottom: 18px;
+            color: @sdcui_color_light-gray;
+        }
+
+        .interface-row {
+            width: 100%;
+            margin-top: 13px;
+            border-bottom: 1px solid @main_color_o;
+            padding-left: 4px;
+            min-height: 37px;
+
+
+            .interface-accordion {
+                cursor: pointer;
+
+                .chevron-container {
+                    position: relative;
+                    margin-right: 5px;
+
+                    &.isCollapsed {
+                        right: -6px;
+                        top: 0;
+                        * {
+                            transform: rotate(270deg);
+                        }
+                    }
+                    &:not(.isCollapsed) {
+                        top: 6px;
+                    }
+                    * {
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                }
+                .interface-name {
+                    font-size: 18px;
+                    font-family: @font-opensans-bold;
+                    margin-bottom: 15px;
+                }
+            }
+
+            .generic-table {
+                margin-bottom: 24px;
+                margin-top: 10px;
+                margin-left: 22px;
+                font-size: 14px;
+
+                .header-row, .data-row {
+                    .cell {
+                        &.field-description {
+                            flex: 2.5;
+                        }
+
+                        &.field-actions {
+                            flex-basis: 72px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                    }
+                }
+
+                .header-row {
+                    .cell {
+                        background: @sdcui_color_silver;
+
+                        &.field-actions {
+                            font-size: 10px;
+                        }
+                    }
+                }
+
+                .data-row {
+                    cursor: pointer;
+
+                    &:hover {
+                        background: @sdcui_color_light-silver;
+
+                        .cell {
+                            &.field-name {
+                                color: @sdcui_color_dark-blue;
+                            }
+                        }
+                    }
+
+                    &:not(:hover) {
+                       .field-actions {
+                            visibility: hidden;
+                        }
+                    }
+
+                    .cell {
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+
+                        &.field-description {
+                            &:not(.collapsed) {
+                                white-space: normal;
+                            }
+                            &.collapsed {
+                                text-overflow: clip;
+                            }
+                            .more-or-less {
+                                margin-left: 5px;
+                            }
+                        }
+
+                        &.field-actions {
+                            .delete-action {
+                                position: relative;
+                                top: 2px;
+                            }
+                        }
+                    }
+
+                }
+            }
+
         }
     }
 }

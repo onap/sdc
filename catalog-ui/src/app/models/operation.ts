@@ -3,15 +3,15 @@
 export class OperationParameter {
     name: string;
     type: String;
-    property: string;
-    mandatory: boolean;
+    inputId: string;
+    required: boolean;
 
     constructor(param?: OperationParameter) {
         if (param) {
             this.name = param.name;
             this.type = param.type;
-            this.property = param.property;
-            this.mandatory = param.mandatory;
+            this.inputId = param.inputId;
+            this.required = param.required;
         }
     }
 }
@@ -26,13 +26,13 @@ export class WORKFLOW_ASSOCIATION_OPTIONS {
     static EXISTING = 'EXISTING';
 }
 
-export class OperationModel {
-    operationType: string;
+export class BEOperationModel {
+    name: string;
     description: string;
     uniqueId: string;
 
-    inputParams: IOperationParamsList;
-    outputParams: IOperationParamsList;
+    inputs: IOperationParamsList;
+    outputs: IOperationParamsList;
 
     workflowAssociationType: string;
     workflowId: string;
@@ -40,12 +40,12 @@ export class OperationModel {
 
     constructor(operation?: any) {
         if (operation) {
-            this.operationType = operation.operationType;
+            this.name = operation.name;
             this.description = operation.description;
             this.uniqueId = operation.uniqueId;
 
-            this.inputParams = operation.inputParams;
-            this.outputParams = operation.outputParams;
+            this.inputs = operation.inputs;
+            this.outputs = operation.outputs;
 
             this.workflowAssociationType = operation.workflowAssociationType;
             this.workflowId = operation.workflowId;
@@ -53,23 +53,66 @@ export class OperationModel {
         }
     }
 
-    public createInputParamsList(inputParams: Array<OperationParameter>): void {
-        this.inputParams = {
-            listToscaDataDefinition: inputParams
+    public createInputsList(inputs: Array<OperationParameter>): void {
+        this.inputs = {
+            listToscaDataDefinition: inputs
         };
     }
 
-    public createOutputParamsList(outputParams: Array<OperationParameter>): void {
-        this.outputParams = {
-            listToscaDataDefinition: _.map(outputParams, output => {
-                const newOutput = {...output};
-                delete newOutput.property;
-                return newOutput;
+    public createOutputsList(outputs: Array<OperationParameter>): void {
+        this.outputs = {
+            listToscaDataDefinition: _.map(outputs, output => {
+                delete output.inputId;
+                return output;
             })
         };
     }
 }
 
-export interface CreateOperationResponse extends OperationModel {
+export class OperationModel extends BEOperationModel {
+    interfaceType: string;
+    interfaceId: string;
+
+    constructor(operation?: any) {
+        super(operation);
+        if (operation) {
+            this.interfaceId = operation.interfaceId;
+            this.interfaceType = operation.interfaceType;
+        }
+    }
+
+    public displayName(): string {
+        const lastDot = this.name ? this.name.lastIndexOf('.') : -1;
+        return lastDot === -1 ? this.name : this.name.substr(lastDot + 1);
+    }
+}
+
+export class CreateOperationResponse extends OperationModel {
     artifactUUID: string;
+
+    constructor(operation?: any) {
+        super(operation);
+        if (operation) {
+            this.artifactUUID = operation.artifactUUID;
+        }
+    }
+}
+
+export class InterfaceModel {
+    type: string;
+    uniqueId: string;
+    operations: Array<OperationModel>;
+
+    constructor(interf?: any) {
+        if (interf) {
+            this.type = interf.type;
+            this.uniqueId = interf.uniqueId;
+            this.operations = interf.operations;
+        }
+    }
+
+    public displayType(): string {
+        const lastDot = this.type ? this.type.lastIndexOf('.') : -1;
+        return lastDot === -1 ? this.type : this.type.substr(lastDot + 1);
+    }
 }
