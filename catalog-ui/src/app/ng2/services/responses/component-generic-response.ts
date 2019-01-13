@@ -92,6 +92,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
             this.toscaArtifacts = new ArtifactGroupModel(response.toscaArtifacts);
         }
         if(response.interfaces) {
+            this.interfaces = CommonUtils.initInterfaces(response.interfaces);
             this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
         }
         if(response.metadata) {

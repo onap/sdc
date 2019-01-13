@@ -24,9 +24,9 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse} from "app/models";
+import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, BEOperationModel, CreateOperationResponse} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
-import {COMPONENT_FIELDS} from "app/utils";
+import {COMPONENT_FIELDS, CommonUtils} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
@@ -122,38 +122,79 @@ export class ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
-    getInterfaceOperations(component:Component):Observable<ComponentGenericResponse> {
+    getInterfaces(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS]);
     }
 
     getInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
-        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => res.json());
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId)
+            .map((res:Response) => {
+                return res.json();
+            });
     }
 
     createInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
         const operationList = {
-            'interfaceOperations': {
-                [operation.operationType]: operation
+            'interfaces': {
+                [operation.interfaceType]: {
+                    'type': operation.interfaceType,
+                    'operations': {
+                        [operation.name]: new BEOperationModel(operation)
+                    }
+                }
             }
         };
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => res.json());
+            .map((res:Response) => {
+                const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
+                const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
+                return new CreateOperationResponse({
+                    ...newOperation,
+                    interfaceType: interf.type,
+                    interfaceId: interf.uniqueId
+                });
+            });
     }
 
     updateInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
         const operationList = {
-            'interfaceOperations': {
-                [operation.operationType]: operation
+            'interfaces': {
+                [operation.interfaceType]: {
+                    'type': operation.interfaceType,
+                    'operations': {
+                        [operation.name]: new BEOperationModel(operation)
+                    }
+                }
             }
         };
         return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => res.json());
+            .map((res:Response) => {
+                const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
+                const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
+                return new CreateOperationResponse({
+                    ...newOperation,
+                    interfaceType: interf.type,
+                    interfaceId: interf.uniqueId
+                });
+            });
     }
 
     deleteInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
-        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => res.json());
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    getInterfaceTypes(component:Component):Observable<{[id:string]: Array<string>}> {
+        return this.http.get(this.baseUrl + 'interfaceLifecycleTypes')
+            .map((res:Response) => {
+                const interfaceMap = {};
+                _.forEach(res.json(), (interf:any) => {
+                    interfaceMap[interf.toscaPresentation.type] = _.keys(interf.toscaPresentation.operation);
+                });
+                return interfaceMap;
+            });
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId:string):Observable<ComponentGenericResponse> {

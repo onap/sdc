@@ -451,6 +451,23 @@
     "SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE" : "⚊ Hide all ⚊",
     "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊",
 
+    "=========== INTERFACE OPERATION ==========": "",
+    "INTERFACE_ADD_OPERATION": "Add Operation",
+    "INTERFACE_EXPAND_ALL": "Expand All",
+    "INTERFACE_COLLAPSE_ALL": "Collapse All",
+    "INTERFACE_HEADER_NAME": "Name",
+    "INTERFACE_HEADER_DESCRIPTION": "Description",
+
+    "=========== INTERFACE OPERATION MODAL ATTRIBUTES =========": "",
+    "INTERFACE_CREATE_TITLE": "Create New Operation",
+    "INTERFACE_EDIT_TITLE": "Edit Operation",
+    "INTERFACE_DELETE_TITLE": "Delete Operation",
+    "INTERFACE_CANCEL_BUTTON": "Cancel",
+    "INTERFACE_SAVE_BUTTON": "Save",
+    "INTERFACE_CREATE_BUTTON": "Create",
+    "INTERFACE_DELETE_BUTTON": "Delete",
+    "INTERFACE_DELETE_TEXT": "Are you sure you want to delete {{operationName}}?",
+
     "=========== OPERATION CREATOR ============": "",
     "OPERATION_PROPERTY_TOOLTIP_TEXT": "VNF properties are defined by the input parameter type. In case you can't find a certain parameter, it might be due to a wrong type selection.",
     "SERVICE_OPERATION_PROPERTY_TOOLTIP_TEXT": "Service properties are defined by the input parameter type. In case you can't find a certain parameter, it might be due to a wrong type selection.",
@@ -458,10 +475,12 @@
     "NEW_WORKFLOW_ASSOCIATION": "New Workflow",
     "EXISTING_WORKFLOW_ASSOCIATION": "Existing Workflow",
 
+    "OPERATION_INTERFACE_TYPE": "Interface Name",
     "OPERATION_NAME": "Operation Name",
     "OPERATION_DESCRIPTION": "Description",
     "OPERATION_WORKFLOW_ASSIGNMENT": "Workflow Assignment",
     "OPERATION_WORKFLOW": "Workflow",
+    "OPERATION_NO_WORKFLOW_ERROR": "No Certified Versions Available",
     "OPERATION_WORKFLOW_ARCHIVED": "Archived",
     "OPERATION_WORKFLOW_VERSION": "Workflow Version",
     "OPERATION_ADD_PARAMS": "Add Paramaters",
@@ -469,10 +488,13 @@
     "OPERATION_PARAM_TYPE": "Type",
     "OPERATION_PARAM_PROPERTY": "Property",
     "OPERATION_PARAM_MANDATORY": "Mandatory",
+
     "EMPTY_PARAM_TABLE_HEADER": "NO PARAMETERS TO SHOW",
     "EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1": "Select Workflow and Workflow Version above",
     "EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2": "in order to see the parameters",
     "EMPTY_PARAM_TABLE_NO_WORKFLOWS": "Only <b>certified</b> workflow versions can be assigned to an operation",
+
+    "PARAM_NONE_OF_TYPE": "No available properties of this type.",
 
 
     "=========== PLUGIN NOT CONNECTED ===========": "",

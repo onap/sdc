@@ -3,7 +3,17 @@ import { Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { HttpService } from "./http.service";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import { Component } from "app/models";
+import { Component, OperationModel } from "app/models";
+
+interface WorkflowOutputParameter {
+    name: string,
+    type: string,
+    mandatory: boolean
+}
+
+interface WorkflowInputParameter extends WorkflowOutputParameter {
+    property: string;
+}
 
 @Injectable()
 export class WorkflowServiceNg2 {
@@ -40,7 +50,7 @@ export class WorkflowServiceNg2 {
     public getWorkflowVersions(workflowId: string, filterCertified: boolean = true): Observable<any> {
         return this.http.get(this.baseUrl + '/workflows/' + workflowId + '/versions' + (filterCertified ? '?state=' + this.VERSION_STATE_CERTIFIED : ''))
             .map((res:Response) => {
-                return res.json().items;
+                return _.map(res.json().items, version => version);
             });
     }
 
