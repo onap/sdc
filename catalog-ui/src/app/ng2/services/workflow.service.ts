@@ -3,7 +3,17 @@ import { Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { HttpService } from "./http.service";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import { Component } from "app/models";
+import { Component, CreateOperationResponse } from "app/models";
+
+interface WorkflowOutputParameter {
+    name: string,
+    type: string,
+    mandatory: boolean
+}
+
+interface WorkflowInputParameter extends WorkflowOutputParameter {
+    property: string;
+}
 
 @Injectable()
 export class WorkflowServiceNg2 {
@@ -20,9 +30,9 @@ export class WorkflowServiceNg2 {
         this.catalogBaseUrl = sdcConfig.api.POST_workflow_artifact;
     }
 
-    public associateWorkflowArtifact(component: Component, operationId: string, workflowId: string, workflowVersionId: string, artifactUuid: string): Observable<any> {
-        return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries', {
-                endpoint: this.catalogBaseUrl + '/' + component.getTypeUrl() + component.uuid + '/interfaces/' + operationId + '/artifacts/' + artifactUuid,
+    public associateWorkflowArtifact(component: Component, operation: CreateOperationResponse): Observable<any> {
+        return this.http.post(this.baseUrl + '/workflows/' + operation.workflowId + '/versions/' + operation.workflowVersionId + '/artifact-deliveries', {
+                endpoint: this.catalogBaseUrl + '/' + component.getTypeUrl() + component.uuid + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId + '/artifacts/' + operation.artifactUUID,
                 method: 'POST'
             })
             .map((res:Response) => {
@@ -40,7 +50,7 @@ export class WorkflowServiceNg2 {
     public getWorkflowVersions(workflowId: string, filterCertified: boolean = true): Observable<any> {
         return this.http.get(this.baseUrl + '/workflows/' + workflowId + '/versions' + (filterCertified ? '?state=' + this.VERSION_STATE_CERTIFIED : ''))
             .map((res:Response) => {
-                return res.json().items;
+                return _.map(res.json().items, version => version);
             });
     }
 

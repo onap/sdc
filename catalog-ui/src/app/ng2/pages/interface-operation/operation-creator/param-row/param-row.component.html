@@ -19,6 +19,7 @@
         *ngIf="!isAssociateWorkflow"
         data-tests-id="paramName"
         [(value)]="param.name"
+        (valueChange)="onChangeName()"
         [readonly]="readonly">
     </ui-element-input>
     <span *ngIf="isAssociateWorkflow">{{param.name}}</span>
@@ -41,13 +42,14 @@
         *ngIf="filteredInputProps.length || !isAssociateWorkflow"
         data-tests-id="paramProperty"
         [values]="filteredInputProps"
-        [(value)]="param.property"
+        value="paramId"
+        (valueChange)="onChangeProperty($event)"
         [readonly]="readonly">
     </ui-element-dropdown>
     <span
         *ngIf="!filteredInputProps.length && isAssociateWorkflow"
         class="no-properties-error">
-        No available properties of this type.
+        {{ 'PARAM_NONE_OF_TYPE' | translate }}
     </span>
 </div>
 
@@ -55,15 +57,18 @@
     <checkbox
         *ngIf="!isAssociateWorkflow"
         data-tests-id="paramMandatory"
-        [(checked)]="param.mandatory"
+        [(checked)]="param.required"
         [ngClass]="{'disabled':readonly}">
     </checkbox>
 </div>
 
 <div class="cell remove" *ngIf="!isAssociateWorkflow && !readonly">
-    <span
-        class="sprite-new delete-item-icon"
-        data-tests-id="removeInputParam"
-        (click)="onRemoveParam(param)">
-    </span>
+    <svg-icon
+      name="trash-o"
+      mode="info"
+      size="small"
+      testId="removeInputParam"
+      (click)="onRemoveParam(param)"
+      [clickable]="true">
+  </svg-icon>
 </div>
