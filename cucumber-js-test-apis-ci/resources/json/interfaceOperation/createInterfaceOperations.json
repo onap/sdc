@@ -1,0 +1,31 @@
+{
+  "interfaces": {
+    "interface1": {
+      "type": "interface1",
+      "operations": {
+        "delete": {
+          "name": "delete",
+          "description": "description",
+          "inputs": {
+            "listToscaDataDefinition": [{
+              "name": "inp1",
+              "type": "string",
+              "inputId": "c4c6e35f-37d1-4fd5-943c-51257386a86c.nf_naming.instance_name",
+              "required": true
+            }]
+          },
+          "outputs": {
+            "listToscaDataDefinition": [{
+              "type": "string",
+              "required": true,
+              "name": "op1"
+            }]
+          },
+          "workflowAssociationType": "NONE",
+          "workflowId": null,
+          "workflowVersionId": null
+        }
+      }
+    }
+  }
+}

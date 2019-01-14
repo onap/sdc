@@ -67,9 +67,6 @@ public class InputsBusinessLogicTest {
     @Mock
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    @Mock
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
     @InjectMocks
     private InputsBusinessLogic testInstance;
 

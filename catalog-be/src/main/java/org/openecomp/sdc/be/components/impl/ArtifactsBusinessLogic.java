@@ -56,7 +56,7 @@ import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
+import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -178,9 +178,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     private ArtifactsResolver artifactsResolver;
-
-    @Autowired
-    private InterfaceOperation interfaceOperation;
 
     public enum ArtifactOperationEnum {
         CREATE, UPDATE, DELETE, DOWNLOAD, LINK;
@@ -3058,7 +3055,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
         } else {
             return updateArtifactsFlowForInterfaceOperations(parent, parentId, artifactId, artifactInfo, user,
-                    decodedPayload, componentType, auditingAction, operationUuid, artifactData, prevArtifactId,
+                    decodedPayload, componentType, auditingAction, interfaceType, operationUuid, artifactData, prevArtifactId,
                     currArtifactId, artifactDefinition);
         }
 
@@ -3067,7 +3064,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> updateArtifactsFlowForInterfaceOperations(
             Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, User user,
-            byte[] decodedPayload, ComponentTypeEnum componentType, AuditingActionEnum auditingAction,
+            byte[] decodedPayload, ComponentTypeEnum componentType, AuditingActionEnum auditingAction, String interfaceType,
             String operationUuid, ESArtifactData artifactData, String prevArtifactId, String currArtifactId,
             ArtifactDefinition artifactDefinition) {
         StorageOperationStatus error;
@@ -3110,24 +3107,15 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         Component storedComponent = componentStorageOperationStatusEither.left().value();
 
-        String interfaceToscaName = InterfaceUtils.createInterfaceToscaResourceName(
-                storedComponent.getName());
-        //fetch the interface from storage
-        Optional<InterfaceDefinition> interfaceDefinition =
-                storedComponent.getInterfaces().values().stream()
-                        .filter(interfaceDef -> interfaceDef.getToscaResourceName()
-                        .equals(interfaceToscaName)).findFirst();
-        if (!interfaceDefinition.isPresent()) {
+        Optional<InterfaceDefinition> optionalInterface = InterfaceOperationUtils
+            .getInterfaceDefinitionFromComponentByInterfaceType(storedComponent, interfaceType);
+        if(!optionalInterface.isPresent()) {
             log.debug("Failed to get resource interface for resource Id {}", parentId);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                    ActionStatus.INTERFACE_OPERATION_NOT_FOUND, parentId);
-            handleAuditing(auditingAction, parent, parentId, user, artifactInfo, prevArtifactId,
-                    currArtifactId, responseFormat, componentType, null);
-            return Either.right(responseFormat);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceType));
         }
 
         //fetch the operation from storage
-        InterfaceDefinition gotInterface = interfaceDefinition.get();
+        InterfaceDefinition gotInterface = optionalInterface.get();
         Map<String, Operation> operationsMap = gotInterface.getOperationsMap();
         Optional<Operation> optionalOperation = operationsMap.values()
                 .stream()
@@ -3152,8 +3140,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         implementationArtifact.setEsId(artifactInfo.getEsId());
         operation.setImplementation(implementationArtifact);
         gotInterface.setOperationsMap(operationsMap);
-        Either<InterfaceDefinition, StorageOperationStatus> interfaceDefinitionStorageOperationStatusEither =
-                interfaceOperation.updateInterface(storedComponent.getUniqueId(), gotInterface);
+        Either<List<InterfaceDefinition>, StorageOperationStatus> interfaceDefinitionStorageOperationStatusEither =
+                interfaceOperation.updateInterfaces(storedComponent.getUniqueId(), Collections.singletonList(gotInterface));
         if (interfaceDefinitionStorageOperationStatusEither.isRight()){
             StorageOperationStatus storageOperationStatus = interfaceDefinitionStorageOperationStatusEither.right().value();
             ActionStatus actionStatus =
@@ -5027,13 +5015,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param artifactUUID
-     * @param operation        TODO
+     * @param operation
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> updateArtifactOnInterfaceOperationByResourceUUID(
             String data, HttpServletRequest request, ComponentTypeEnum componentType,
-            String componentUuid, String artifactUUID, String operationUUID,
-            ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
+            String componentUuid, String interfaceUUID, String operationUUID, String artifactUUID,
+        ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> updateArtifactResult;
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
@@ -5067,7 +5055,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
-            Either<String, ResponseFormat> interfaceName = fetchInterfaceName(componentId);
+            Either<String, ResponseFormat> interfaceName = fetchInterfaceName(componentId, interfaceUUID);
             if (interfaceName.isRight()) {
                 errorWrapper.setInnerElement(interfaceName.right().value());
             }
@@ -5094,19 +5082,21 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updateArtifactResult;
     }
 
-    private Either<String, ResponseFormat> fetchInterfaceName(String componentId) {
-        Either<Component, StorageOperationStatus> componentStorageOperationStatusEither =
-                toscaOperationFacade.getToscaElement(componentId);
+    private Either<String, ResponseFormat> fetchInterfaceName(String componentId, String interfaceUUID) {
+        Either<Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade.getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
             StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
             log.debug("Failed to fetch component information by component id, error {}", errorStatus);
-            return Either.right(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         Component storedComponent = componentStorageOperationStatusEither.left().value();
 
-        return Either.left(InterfaceUtils.createInterfaceToscaResourceName(
-                storedComponent.getName()));
+        Optional<InterfaceDefinition> optionalInterface = InterfaceOperationUtils
+            .getInterfaceDefinitionFromComponentByInterfaceId(storedComponent, interfaceUUID);
+        if(!optionalInterface.isPresent()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceUUID));
+        }
+        return Either.left(optionalInterface.get().getType());
     }
 
 

@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -55,7 +56,9 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaGroupTemplate;
@@ -70,6 +73,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
@@ -112,11 +116,12 @@ public class ToscaExportHandler {
     private GroupExportParser groupExportParser;
     private PropertyConvertor propertyConvertor;
     private InputConverter inputConverter;
+    private InterfaceLifecycleOperation interfaceLifecycleOperation;
 
     @Autowired 
     public ToscaExportHandler(ApplicationDataTypeCache dataTypeCache, ToscaOperationFacade toscaOperationFacade,
                               CapabilityRequirementConverter capabilityRequirementConverter, PolicyExportParser policyExportParser,
-                              GroupExportParser groupExportParser, InputConverter inputConverter) {
+                              GroupExportParser groupExportParser, InputConverter inputConverter, InterfaceLifecycleOperation interfaceLifecycleOperation) {
             this.dataTypeCache = dataTypeCache;
             this.toscaOperationFacade = toscaOperationFacade;
             this.capabilityRequirementConverter = capabilityRequirementConverter;
@@ -124,6 +129,7 @@ public class ToscaExportHandler {
             this.groupExportParser = groupExportParser;
             this.propertyConvertor = PropertyConvertor.getInstance();
             this.inputConverter =  inputConverter;
+            this.interfaceLifecycleOperation = interfaceLifecycleOperation;
       }
 
 
@@ -553,7 +559,20 @@ public class ToscaExportHandler {
                                                                        boolean isAssociatedResourceComponent) {
         log.debug("start convert node type for {}", component.getUniqueId());
         ToscaNodeType toscaNodeType = createNodeType(component);
-        toscaNode.setInterface_types(addInterfaceTypeElement(component));
+
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> lifecycleTypeEither =
+                interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        if(lifecycleTypeEither.isRight()){
+            log.debug("Failed to fetch all interface types :", lifecycleTypeEither.right().value());
+            return Either.right(ToscaError.GENERAL_ERROR);
+        }
+        List<String> allGlobalInterfaceTypes = lifecycleTypeEither.left().value()
+                                                       .values()
+                                                       .stream()
+                                                       .map(interfaceDef -> interfaceDef.getType())
+                                                       .collect(Collectors.toList());
+        toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
+
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             log.debug("Failed to fetch all data types :", dataTypesEither.right().value());

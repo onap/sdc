@@ -10,6 +10,14 @@
       <class name="org.openecomp.sdc.ci.tests.execute.service.ServiceComponentInstanceCRUDTest"/>
       <class name="org.openecomp.sdc.ci.tests.execute.service.UpdateServiceMetadataTest"/>
       <class name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
+        <methods>
+          <include name="addInterfaceOperationsOnService"/>
+          <include name="getInterfaceOperationsFromService"/>
+          <include name="updateInterfaceOperationsOnService"/>
+          <include name="deleteInterfaceOperationsFromService"/>
+        </methods>
+      </class>
         </classes> 
     </test>
 </suite> <!-- Service -->

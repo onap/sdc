@@ -60,7 +60,7 @@ public class InterfacesOperationsToscaUtil {
      * @param component to work on
      * @return the added element
      */
-    public static Map<String, Object> addInterfaceTypeElement(Component component) {
+    public static Map<String, Object> addInterfaceTypeElement(Component component, List<String> allInterfaceTypes) {
         if (component instanceof Product) {
             return null;
         }
@@ -68,24 +68,28 @@ public class InterfacesOperationsToscaUtil {
         if (MapUtils.isEmpty(interfaces)) {
             return null;
         }
+
         Map<String, Object> toscaInterfaceTypes = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
-            ToscaInterfaceNodeType toscaInterfaceType = new ToscaInterfaceNodeType();
-            toscaInterfaceType.setDerived_from(DERIVED_FROM_STANDARD_INTERFACE);
+            boolean isInterfaceTypeExistInGlobalType =
+                    allInterfaceTypes.stream().anyMatch(type -> type.equalsIgnoreCase(interfaceDefinition.getType()));
+            if (!isInterfaceTypeExistInGlobalType) {
+                ToscaInterfaceNodeType toscaInterfaceType = new ToscaInterfaceNodeType();
+                toscaInterfaceType.setDerived_from(DERIVED_FROM_STANDARD_INTERFACE);
 
-            final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
-            Map<String, Object> toscaOperations = new HashMap<>();
+                final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
+                Map<String, Object> toscaOperations = new HashMap<>();
 
-            for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
-                toscaOperations.put(operationEntry.getValue().getName(),
-                        null); //currently not initializing any of the operations' fields as it is not needed
+                for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
+                    toscaOperations.put(operationEntry.getValue().getName(), null);
+                }
+                toscaInterfaceType.setOperations(toscaOperations);
+                Map<String, Object> interfacesAsMap = getObjectAsMap(toscaInterfaceType);
+                Map<String, Object> operationsMap = (Map<String, Object>) interfacesAsMap.remove(OPERATIONS_KEY);
+                interfacesAsMap.putAll(operationsMap);
+
+                toscaInterfaceTypes.put(interfaceDefinition.getType(), interfacesAsMap);
             }
-            toscaInterfaceType.setOperations(toscaOperations);
-            Map<String, Object> interfacesAsMap = getObjectAsMap(toscaInterfaceType);
-            Map<String, Object> operationsMap = (Map<String, Object>) interfacesAsMap.remove(OPERATIONS_KEY);
-            interfacesAsMap.putAll(operationsMap);
-
-            toscaInterfaceTypes.put(interfaceDefinition.getToscaResourceName(), interfacesAsMap);
         }
         return MapUtils.isNotEmpty(toscaInterfaceTypes) ? toscaInterfaceTypes : null;
     }
@@ -108,8 +112,8 @@ public class InterfacesOperationsToscaUtil {
         Map<String, Object> toscaInterfaceDefinitions = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceDefinition toscaInterfaceDefinition = new ToscaInterfaceDefinition();
-            final String toscaResourceName = interfaceDefinition.getToscaResourceName();
-            toscaInterfaceDefinition.setType(toscaResourceName);
+            final String interfaceType = interfaceDefinition.getType();
+            toscaInterfaceDefinition.setType(interfaceType);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
 
@@ -133,7 +137,7 @@ public class InterfacesOperationsToscaUtil {
             Map<String, Object> operationsMap = (Map<String, Object>) interfaceDefAsMap.remove(OPERATIONS_KEY);
             handleDefaults(operationsMap);
             interfaceDefAsMap.putAll(operationsMap);
-            toscaInterfaceDefinitions.put(getLastPartOfName(toscaResourceName), interfaceDefAsMap);
+            toscaInterfaceDefinitions.put(getLastPartOfName(interfaceType), interfaceDefAsMap);
         }
         if (MapUtils.isNotEmpty(toscaInterfaceDefinitions)) {
             nodeType.setInterfaces(toscaInterfaceDefinitions);
@@ -141,8 +145,8 @@ public class InterfacesOperationsToscaUtil {
     }
 
     /***
-     * workaround for : currently "defaultp" is not being converted to "default" by the relevant code in ToscaExportHandler
-     * so, any string Map key named "defaultp" will have its named changed to "default"
+     * workaround for : currently "defaultp" is not being converted to "default" by the relevant code in
+     * ToscaExportHandler so, any string Map key named "defaultp" will have its named changed to "default"
      * @param operationsMap the map to update
      */
     private static void handleDefaults(Map<String, Object> operationsMap) {

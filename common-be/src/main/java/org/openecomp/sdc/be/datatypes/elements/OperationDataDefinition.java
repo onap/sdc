@@ -20,127 +20,127 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.io.Serializable;
-
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ASSOCIATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.io.Serializable;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
 
-	@JsonCreator
-	public OperationDataDefinition() {
-		super();
-	}
+    @JsonCreator
+    public OperationDataDefinition() {
+        super();
+    }
 
-	public OperationDataDefinition(String description) {
-		super();
-		setDescription(description);
-	}
+    public OperationDataDefinition(String description) {
+        super();
+        setDescription(description);
+    }
 
-	public OperationDataDefinition(OperationDataDefinition p) {
-		setDescription(p.getDescription());
-		setImplementation(p.getImplementation());
-		setInputs(p.getInputs());
-		setOutputs(p.getOutputs());
-		setName(p.getName());
-		setUniqueId(p.getUniqueId());
-		setWorkflowId(p.getWorkflowId());
-		setWorkflowVersionId(p.getWorkflowVersionId());
-		setWorkflowAssociationType(p.getWorkflowAssociationType());
-	}
+    public OperationDataDefinition(OperationDataDefinition p) {
+        setDescription(p.getDescription());
+        setImplementation(p.getImplementation());
+        setInputs(p.getInputs());
+        setOutputs(p.getOutputs());
+        setName(p.getName());
+        setUniqueId(p.getUniqueId());
+        setWorkflowId(p.getWorkflowId());
+        setWorkflowVersionId(p.getWorkflowVersionId());
+        setWorkflowAssociationType(p.getWorkflowAssociationType());
+    }
 
+    public String getDescription() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
+    }
 
-	public String getUniqueId() {
-		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
-	}
+    public void setDescription(String description) {
+        setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
+    }
 
-	public void setUniqueId(String uniqueId) {
-		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
-	}
+    public ArtifactDataDefinition getImplementation() {
+        return (ArtifactDataDefinition) getToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION);
+    }
 
+    public void setImplementation(ArtifactDataDefinition implementation) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION, implementation);
+    }
 
-	public Long getCreationDate() {
-		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_DATE);
-	}
+    public ListDataDefinition<OperationInputDefinition> getInputs() {
+        return (ListDataDefinition<OperationInputDefinition>) getToscaPresentationValue(
+                JsonPresentationFields.OPERATION_INPUTS);
+    }
 
-	public void setCreationDate(Long creationDate) {
-		setToscaPresentationValue(JsonPresentationFields.CREATION_DATE, creationDate);
-	}
+    public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUTS, inputs);
+    }
 
-	public Long getLastUpdateDate() {
-		return (Long) getToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE);
-	}
+    public ListDataDefinition<OperationOutputDefinition> getOutputs() {
+        return (ListDataDefinition<OperationOutputDefinition>) getToscaPresentationValue(
+                JsonPresentationFields.OPERATION_OUTPUTS);
+    }
 
-	public void setLastUpdateDate(Long lastUpdateDate) {
-		setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
-	}
+    public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUTS, outputs);
+    }
 
-	public String getDescription() {
-		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
-	}
+    public String getName() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+    }
 
-	public void setDescription(String description) {
-		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
-	}
+    public String getUniqueId() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
+    }
 
-	public ArtifactDataDefinition getImplementation() {
-		return (ArtifactDataDefinition) getToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION);
-	}
+    public void setUniqueId(String uniqueId) {
+        setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
+    }
 
-	public void setImplementation(ArtifactDataDefinition implementation) {
-		setToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION, implementation);
-	}
+    public String getWorkflowId() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_ID);
+    }
 
-	public ListDataDefinition<OperationInputDefinition> getInputs() {
-		return (ListDataDefinition<OperationInputDefinition>)
-				getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT);
-	}
+    public void setWorkflowId(String workflowId) {
+        setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
+    }
 
-	public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
-		setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT,inputs);
-	}
+    public String getWorkflowVersionId() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION_ID);
+    }
 
-	public ListDataDefinition<OperationOutputDefinition> getOutputs() {
-		return (ListDataDefinition<OperationOutputDefinition>)
-				getToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT);
-	}
+    public void setWorkflowVersionId(String workflowVersionId) {
+        setToscaPresentationValue(IO_WORKFLOW_VERSION_ID, workflowVersionId);
+    }
 
-	public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {
-		setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT, outputs);
-	}
-	public String getName() {
-		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-	}
+    public String getWorkflowAssociationType() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_ASSOCIATION_TYPE);
+    }
 
-	public void setName(String name) {
-		setToscaPresentationValue(JsonPresentationFields.NAME, name);
-	}
+    public void setWorkflowAssociationType(String workflowAssociationType) {
+        setToscaPresentationValue(IO_WORKFLOW_ASSOCIATION_TYPE, workflowAssociationType);
+    }
 
-	public String getWorkflowId(){
-		return (String) getToscaPresentationValue(IO_WORKFLOW_ID);
-	}
-	public void setWorkflowId(String workflowId) {
-		setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
-	}
+    public void setName(String name) {
+        setToscaPresentationValue(JsonPresentationFields.NAME, name);
+    }
 
-	public String getWorkflowVersionId() {
-		return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION_ID);
-	}
-	public void setWorkflowVersionId(String workflowVersionId) {
-		setToscaPresentationValue(IO_WORKFLOW_VERSION_ID, workflowVersionId);
-	}
+    public Long getCreationDate() {
+        return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_DATE);
+    }
 
-	public String getWorkflowAssociationType() {
-		return (String) getToscaPresentationValue(IO_WORKFLOW_ASSOCIATION_TYPE);
-	}
+    public void setCreationDate(Long creationDate) {
+        setToscaPresentationValue(JsonPresentationFields.CREATION_DATE, creationDate);
+    }
 
-	public void setWorkflowAssociationType(String workflowAssociationType) {
-		setToscaPresentationValue(IO_WORKFLOW_ASSOCIATION_TYPE, workflowAssociationType);
-	}
+    public Long getLastUpdateDate() {
+        return (Long) getToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE);
+    }
+
+    public void setLastUpdateDate(Long lastUpdateDate) {
+        setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
+    }
 }

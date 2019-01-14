@@ -395,4 +395,10 @@ public interface Urls {
 
 	// Interface Lifecycle Types
 	final String GET_All_INTERFACE_LIFECYCLE_TYPES = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/interfaceLifecycleTypes";
+
+	// Interface Operation
+	final String ADD_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
+	final String UPDATE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
+	final String GET_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
+	final String DELETE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
 }

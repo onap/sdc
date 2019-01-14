@@ -25,7 +25,6 @@ import com.jcabi.aspects.Loggable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,12 +69,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+
 /**
  * This Servlet serves external users operations on artifacts.
  *
@@ -98,7 +92,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     private static String startLog = "Start handle request of ";
 
     @POST
-    @Path("/{assetType}/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}")
+    @Path("/{assetType}/{uuid}/interfaces/{interfaceUUID}/operations/{operationUUID}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "uploads of artifact to VF operation workflow", httpMethod = "POST", notes = "uploads of artifact to VF operation workflow")
     @ApiResponses(value = {
@@ -127,6 +121,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam(value = "Asset type") @PathParam("assetType") String assetType,
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+            @ApiParam(value = "The uuid of the interface", required = true)@PathParam("interfaceUUID") final String interfaceUUID,
             @ApiParam(value = "The uuid of the operation", required = true)@PathParam("operationUUID") final String operationUUID,
             @ApiParam(value = "The uuid of the artifact", required = true)@PathParam("artifactUUID") final String artifactUUID,
             @ApiParam( hidden = true) String data) {
@@ -154,7 +149,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic
                         .updateArtifactOnInterfaceOperationByResourceUUID(data, request, ComponentTypeEnum
-                                        .findByParamName(assetType), uuid,  artifactUUID, operationUUID,
+                                        .findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);

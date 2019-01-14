@@ -19,6 +19,7 @@ package org.openecomp.sdc.be.tosca.utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,15 +64,15 @@ public class InterfacesOperationsToscaUtilTest {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setToscaResourceName("interface.types.test_resource_name");
+        addedInterface.setType("interface.types.test_resource_name");
         addOperationsToInterface(addedInterface, 5, 3, true);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         final Map<String, Object> interfaceTypeElement =
-                InterfacesOperationsToscaUtil.addInterfaceTypeElement(component);
+                InterfacesOperationsToscaUtil.addInterfaceTypeElement(component, new ArrayList<>());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
         template.setInterface_types(interfaceTypeElement);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
@@ -85,15 +86,15 @@ public class InterfacesOperationsToscaUtilTest {
         Component component = new Service();
         component.setNormalizedName("normalizedServiceComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setToscaResourceName("interface.types.test_service_name");
+        addedInterface.setType("interface.types.test_service_name");
         addOperationsToInterface(addedInterface, 5, 3, true);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         final Map<String, Object> interfaceTypeElement =
-                InterfacesOperationsToscaUtil.addInterfaceTypeElement(component);
+                InterfacesOperationsToscaUtil.addInterfaceTypeElement(component, new ArrayList<>());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("testService");
         template.setInterface_types(interfaceTypeElement);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
@@ -107,7 +108,7 @@ public class InterfacesOperationsToscaUtilTest {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
+        addedInterface.setType("com.some.resource.or.other.resourceName");
 
         addOperationsToInterface(addedInterface, 3, 2, true);
         final String interfaceType = "normalizedComponentName-interface";
@@ -116,7 +117,7 @@ public class InterfacesOperationsToscaUtilTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType, false);
 
-        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put(NODE_TYPE_NAME, nodeType);
@@ -139,8 +140,7 @@ public class InterfacesOperationsToscaUtilTest {
         Component component = new Service();
         component.setNormalizedName("normalizedServiceComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setToscaResourceName("com.some.service.or.other.serviceName");
-
+        addedInterface.setType("com.some.service.or.other.serviceName");
         addOperationsToInterface(addedInterface, 3, 2, true);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
@@ -148,7 +148,7 @@ public class InterfacesOperationsToscaUtilTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType, false);
 
-        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("testService");
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put(NODE_TYPE_NAME, nodeType);
@@ -170,8 +170,7 @@ public class InterfacesOperationsToscaUtilTest {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceNameNoInputs");
-
+        addedInterface.setType("com.some.resource.or.other.resourceNameNoInputs");
         addOperationsToInterface(addedInterface, 3, 3, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
@@ -179,7 +178,7 @@ public class InterfacesOperationsToscaUtilTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType, false);
 
-        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put("test", nodeType);

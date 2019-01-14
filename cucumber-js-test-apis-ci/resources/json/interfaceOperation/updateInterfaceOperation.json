@@ -1,0 +1,34 @@
+{
+  "interfaces": {
+    "interface1": {
+      "type": "interface1",
+      "operations": {
+        "delete" : {
+          "name": "sshGV",
+          "description": "sshGV updated description" ,
+          "inputs": {
+            "listToscaDataDefinition": [
+              {
+                "name": "inputId_up",
+                "type": "string",
+                "inputId": "c4c6e35f-37d1-4fd5-943c-51257386a86c.nf_naming.instance_name",
+                "required": true
+              }
+            ]
+          },
+          "outputs": {
+            "listToscaDataDefinition": [{
+              "name": "outUp_up",
+              "type": "string",
+              "required": true
+            }]
+          },
+          "uniqueId": "3f6b7144-2dec-48e2-80cb-c67e8bc1d7d2",
+          "workflowAssociationType": "NONE",
+          "workflowId": null,
+          "workflowVersionId": null
+        }
+      }
+    }
+  }
+}
