@@ -16,6 +16,24 @@
       "revId": "c945433b5171c2355f6a4e65276307da37630717",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_62715275",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/dynamic-input/dynamic-input.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-01-14T09:59:02Z",
+      "side": 1,
+      "message": "Wanted to keep convention form dynamic-property.component.ts. It will give us ability to do some refactor of both components in the future.",
+      "parentUuid": "9adffdf1_c2391ea5",
+      "revId": "c945433b5171c2355f6a4e65276307da37630717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
