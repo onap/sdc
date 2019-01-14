@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c28a7e1a",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2019-01-14T11:34:13Z",
+      "side": 1,
+      "message": "please i18n \"More\" and \"Less\"",
+      "revId": "86a37526357337a9143c1f5e27c0976e68b15d1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e28f8228",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2019-01-14T11:34:13Z",
+      "side": 1,
+      "message": "Please i18n placeholder",
+      "revId": "86a37526357337a9143c1f5e27c0976e68b15d1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
