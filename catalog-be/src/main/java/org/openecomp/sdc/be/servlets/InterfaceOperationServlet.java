@@ -26,10 +26,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -168,12 +167,12 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     public Response deleteInterfaceOperationsFromResource(
             @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
             @ApiParam(value = "Interface Id") @PathParam("interfaceId") String interfaceId,
-            @ApiParam(value = "Operation Id") @PathParam("operationIds") String operationId,
+            @ApiParam(value = "Operation Id") @PathParam("operationId") String operationId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
         return delete(interfaceId, operationId, resourceId, request, userId);
     }
 
-    private Response delete(String interfaceId, String operationIds, String componentId, HttpServletRequest request,
+    private Response delete(String interfaceId, String operationId, String componentId, HttpServletRequest request,
             String userId) {
 
         ServletContext context = request.getSession().getServletContext();
@@ -186,11 +185,8 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         try {
             String componentIdLower = componentId.toLowerCase();
             InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
-
-            List<String> operationsToDelete =
-                    Stream.of(operationIds.split(",")).map(String::trim).collect(Collectors.toList());
             Either<List<InterfaceDefinition>, ResponseFormat> actionResponse = businessLogic.deleteInterfaceOperation(
-                    componentIdLower, interfaceId, operationsToDelete, modifier, true);
+                    componentIdLower, interfaceId, Collections.singletonList(operationId), modifier, true);
             if (actionResponse.isRight()) {
                 log.error("failed to delete interface operation");
                 return buildErrorResponse(actionResponse.right().value());
@@ -223,7 +219,7 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         return get(interfaceId, operationId, resourceId, request, userId);
     }
 
-    private Response get(String interfaceId, String operationIds, String componentId, HttpServletRequest request,
+    private Response get(String interfaceId, String operationId, String componentId, HttpServletRequest request,
             String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -235,11 +231,8 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         try {
             String componentIdLower = componentId.toLowerCase();
             InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
-
-            List<String> operationsToGet =
-                    Stream.of(operationIds.split(",")).map(String::trim).collect(Collectors.toList());
-            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse =
-                    businessLogic.getInterfaceOperation(componentIdLower, interfaceId, operationsToGet, modifier, true);
+            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse = businessLogic.getInterfaceOperation(
+                    componentIdLower, interfaceId, Collections.singletonList(operationId), modifier, true);
             if (actionResponse.isRight()) {
                 log.error("failed to get interface operation");
                 return buildErrorResponse(actionResponse.right().value());
