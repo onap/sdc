@@ -43,21 +43,7 @@
             ],
 	    "KB":            "yyy"
         },
-        "Plugins": {
-            "DCAE": {
-                "dcae_discovery_url": "http://yyy:8183/dcaed/#/demo",
-                "dcae_source_url": "http://yyy:8183/dcaed/#/demo"
-            },
-            "DCAE-TAB": {
-                "dcae_dt_discovery_url": "yyy",
-                "dcae_dt_source_url": "yyy"
-            },
-            "WORKFLOW": {
-                "workflow_discovery_url": "yyy",
-                "workflow_source_url": "yyy"
-            }
-        },
-           "VnfRepo": {
+        "VnfRepo": {
              "vnfRepoPort": "8702",
              "vnfRepoHost": "10.0.14.1"
            }
