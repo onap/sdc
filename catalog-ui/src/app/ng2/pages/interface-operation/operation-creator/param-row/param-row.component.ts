@@ -19,8 +19,7 @@ export class ParamRowComponent {
     @Input() isInputParam: boolean;
     @Input() validityChanged: Function;
 
-    paramId: string;
-    propTypeEnum: Array<DropDownOption> = [];
+    propTypeEnum: Array<string> = [];
     filteredInputProps: Array<DropdownValue> = [];
 
     constructor(private dataTypeService: DataTypeService) {}
@@ -29,7 +28,7 @@ export class ParamRowComponent {
         this.propTypeEnum = _.uniq(
             _.map(
                 this.getPrimitiveSubtypes(),
-                prop => new DropDownOption(prop.type)
+                prop => prop.type
             )
         );
         this.onChangeType();
@@ -40,7 +39,7 @@ export class ParamRowComponent {
         this.validityChanged();
     }
 
-    onChangeType(paramId?: string) {
+    onChangeType() {
         this.filteredInputProps = _.map(
             _.filter(
                 this.getPrimitiveSubtypes(),
@@ -48,13 +47,24 @@ export class ParamRowComponent {
             ),
             prop => new DropdownValue(prop.uniqueId, prop.name)
         );
-        if (paramId) {
-            this.paramId = paramId;
+
+        if (this.param.inputId) {
+            const selProp = _.find(
+                this.getPrimitiveSubtypes(),
+                prop => prop.uniqueId === this.param.inputId
+            );
+            if (selProp && selProp.type === this.param.type) {
+                this.param.inputId = '-1';
+                setTimeout(() => this.param.inputId = selProp.uniqueId, 100);
+            } else {
+                this.param.inputId = null;
+            }
         }
+
+        this.validityChanged();
     }
 
-    onChangeProperty(paramId: string) {
-        this.param.inputId = paramId;
+    onChangeProperty() {
         const newProp = _.find(
             this.getPrimitiveSubtypes(),
             prop => this.param.inputId === prop.uniqueId
@@ -62,20 +72,20 @@ export class ParamRowComponent {
 
         if (!this.param.type) {
             this.param.type = newProp.type;
-            this.onChangeType(paramId);
-        } else {
-            this.paramId = paramId;
+            this.onChangeType();
         }
 
         if (!this.param.name) {
             this.param.name = newProp.name;
         }
+
         this.validityChanged();
     }
 
     getPrimitiveSubtypes(): Array<InputBEModel> {
         const flattenedProps: Array<any> = [];
         const dataTypes = this.dataTypeService.getAllDataTypes();
+
         _.forEach(this.inputProps, prop => {
             const type = _.find(
                 _.toArray(dataTypes),

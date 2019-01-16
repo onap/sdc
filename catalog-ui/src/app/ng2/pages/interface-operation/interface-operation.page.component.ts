@@ -240,6 +240,7 @@ export class InterfaceOperationComponent {
 
         const input: OperationCreatorInput = {
             inputOperation: operation,
+            interfaces: this.interfaces,
             inputProperties: this.inputs,
             enableWorkflowAssociation: this.enableWorkflowAssociation,
             readonly: this.readonly,

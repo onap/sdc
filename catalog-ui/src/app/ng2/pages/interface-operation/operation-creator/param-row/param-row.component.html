@@ -38,14 +38,14 @@
 </div>
 
 <div class="cell field-property" *ngIf="isInputParam">
-    <ui-element-dropdown
-        *ngIf="filteredInputProps.length || !isAssociateWorkflow"
-        data-tests-id="paramProperty"
-        [values]="filteredInputProps"
-        value="paramId"
-        (valueChange)="onChangeProperty($event)"
-        [readonly]="readonly">
-    </ui-element-dropdown>
+  <ui-element-dropdown
+      *ngIf="filteredInputProps.length || !isAssociateWorkflow"
+      data-tests-id="paramProperty"
+      [values]="filteredInputProps"
+      [(value)]="param.inputId"
+      (valueChange)="onChangeProperty($event)"
+      [readonly]="readonly">
+  </ui-element-dropdown>
     <span
         *ngIf="!filteredInputProps.length && isAssociateWorkflow"
         class="no-properties-error">
