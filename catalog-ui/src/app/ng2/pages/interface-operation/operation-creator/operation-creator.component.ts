@@ -5,7 +5,7 @@ import {Subscription} from "rxjs/Subscription";
 
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {OperationModel, OperationParameter, InputBEModel, RadioButtonModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
+import {InterfaceModel, OperationModel, OperationParameter, InputBEModel, RadioButtonModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
 
 import {IDropDownOption} from "sdc-ui/lib/angular/form-elements/dropdown/dropdown-models";
 import {Tabs, Tab} from "app/ng2/components/ui/tabs/tabs.component";
@@ -32,6 +32,7 @@ class TypedDropDownOption extends DropDownOption {
 
 export interface OperationCreatorInput {
     inputOperation: OperationModel,
+    interfaces: Array<InterfaceModel>,
     inputProperties: Array<InputBEModel>,
     enableWorkflowAssociation: boolean,
     readonly: boolean,
@@ -51,10 +52,11 @@ export class OperationCreatorComponent {
 
     input: OperationCreatorInput;
     inputOperation: OperationModel;
+    interfaces: Array<InterfaceModel>;
     operation: OperationModel;
     interfaceNames: Array<TypedDropDownOption> = [];
     interfaceTypes: { [interfaceType: string]: Array<string> };
-    operationNames: Array<DropDownOption> = [];
+    operationNames: Array<TypedDropDownOption> = [];
     validityChangedCallback: Function;
 
     workflows: Array<DropdownValue> = [];
@@ -215,13 +217,23 @@ export class OperationCreatorComponent {
 
     onSelectInterface(interf: IDropDownOption) {
         if (interf && this.operation.interfaceType !== interf.value) {
-            this.operation.name = undefined;
+            this.operation.name = null;
         }
         this.operation.interfaceType = interf && interf.value;
         this.operationNames = !this.operation.interfaceType ? [] : (
             _.map(
                 this.interfaceTypes[this.operation.interfaceType],
-                name => new DropDownOption(name)
+                name => {
+                    const existingOp = _.find(
+                        _.find(
+                            this.interfaces,
+                            interf => interf.type === this.operation.interfaceType
+                        ).operations,
+                        op => op.name === name
+                    );
+                    const ddType = (existingOp && existingOp.uniqueId !== this.operation.uniqueId) ? 2 : 0;
+                    return new TypedDropDownOption(name, name, ddType);
+                }
             )
         );
         this.validityChanged();
@@ -230,8 +242,12 @@ export class OperationCreatorComponent {
     onSelectOperationName(name: IDropDownOption) {
         if (name) {
             this.operation.name = name.value;
-            this.validityChanged();
         }
+        this.validityChanged();
+    }
+
+    onChangeName() {
+        this.validityChanged();
     }
 
     get descriptionValue() {
@@ -401,6 +417,7 @@ export class OperationCreatorComponent {
     onRemoveParam = (param: OperationParameter): void => {
         let index = _.indexOf(this.tableParameters, param);
         this.tableParameters.splice(index, 1);
+        this.validityChanged();
     }
 
     createParamLists = () => {
@@ -415,7 +432,7 @@ export class OperationCreatorComponent {
 
     shouldCreateWF = (operation?: OperationModel): boolean => {
         operation = operation || this.operation;
-        return this.operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW;
+        return operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW;
     }
 
     checkFormValidForSubmit = (): boolean => {
