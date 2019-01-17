@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7b47b477",
+        "filename": "sdc-os-chef/environments/plugins-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-17T05:39:17Z",
+      "side": 1,
+      "message": "This is not correct. Please use placeholder URLs here without specifying protocol, ports or endpoints.",
+      "range": {
+        "startLine": 3,
+        "startChar": 25,
+        "endLine": 4,
+        "endChar": 52
+      },
+      "revId": "1f44c40dbfbdba4acb09886af8bbd17bdd38d265",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_1b60e8ff",
+        "filename": "sdc-os-chef/environments/plugins-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-17T05:39:17Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "1f44c40dbfbdba4acb09886af8bbd17bdd38d265",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3b5dac47",
+        "filename": "sdc-os-chef/environments/plugins-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-17T05:39:17Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 39
+      },
+      "revId": "1f44c40dbfbdba4acb09886af8bbd17bdd38d265",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
