@@ -83,13 +83,21 @@ export class LeftPaletteLoaderService {
                     this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
                 }); 
                 this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
-            });
+            }); 
+
+	        /* add Combinations */
+            this.restangular.one('/combinations').get({ 'internalComponentType': componentInternalType }).then((leftPaletteCombinations: Array<ComponentMetadata>) => {                                                                                              
+                _.forEach(leftPaletteCombinations, (componentMetadata: ComponentMetadata) => {
+                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Combination, componentMetadata));
+                });
+                this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);                
+            }); 
         });
 
 
     }
 
-    public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {
+    public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {        
         return this.leftPanelComponents;
     };
 
@@ -104,6 +112,9 @@ export class LeftPaletteLoaderService {
             case ComponentType.RESOURCE:
                 this.updateLeftPalette((<Resource>component).resourceType);
                 break;
+            case ComponentType.COMBINATION:
+                this.updateLeftPalette(ComponentType.COMBINATION);
+                break;                
             default:
                 console.log('ERROR: Component type '+ component.componentType + ' is not exists');
         }

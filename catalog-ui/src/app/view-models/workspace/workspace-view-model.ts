@@ -307,7 +307,7 @@ export class WorkspaceViewModel {
 
         });
 
-        this.$scope.$on('$stateChangeSuccess', (event, toState) => {
+        this.$scope.$on('$stateChangeSuccess', (event, toState) => {            
             this.$scope.updateSelectedMenuItem(this.$state.current.name);
         });
 
@@ -740,6 +740,15 @@ export class WorkspaceViewModel {
             this.$state.go(this.$state.current.name, {id: component.uniqueId}, {reload: true});
         };
 
+        this.$scope.openSaveResourceModel = () :void => {          
+            let newComponent = this.ComponentFactory.createEmptyComponent("COMBINATION");
+            let serviceId = this.$scope.component.uniqueId;
+            let parentComponent = this.$scope.component;
+            newComponent.componentType = "COMBINATION";
+            newComponent.selectedCategory = "";           
+            this.ModalsHandler.openAddResourceFormModal(newComponent,serviceId,parentComponent).then(()=>{});
+
+        };        
         this.$scope.$on('$destroy', () => {
             this.EventListenerService.unRegisterObserver(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES);
         });

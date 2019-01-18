@@ -29,6 +29,7 @@ export * from './services/category-resource-service';
 export * from './services/components/component-service';
 export * from './services/components/resource-service';
 export * from './services/components/service-service';
+export * from './services/components/combination-service';
 export * from './services/components/resource-service';
 export * from './services/components/utils/composition-left-palette-service';
 export * from './services/components/resource-service';

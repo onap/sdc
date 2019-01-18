@@ -436,4 +436,31 @@ export class ModalsHandler implements IModalsHandler {
         return deferred.promise;
     };
 
+    public openAddResourceFormModal = (currentComponent: Component, serviceId: string, parentComponent: Component): ng.IPromise<any> => {
+        let deferred = this.$q.defer();
+
+        let modalOptions: ng.ui.bootstrap.IModalSettings = {
+            templateUrl: '../view-models/forms/save-resource-form/resource-save-form-view.html',
+            controller: 'Sdc.ViewModels.ResourceSaveViewFormModel',
+            size: 'sdc-l',
+            backdrop: 'static',
+            resolve: {
+                component: ():  Component=> {
+                    return currentComponent;
+                },
+                serviceId: (): string => {
+                    return serviceId;
+                },
+                parentComponent: (): Component=> {
+                    return parentComponent;
+                },
+            }
+        };
+
+        let modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
+
+        deferred.resolve(modalInstance.result);
+        return deferred.promise;
+    };
+
 }

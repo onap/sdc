@@ -20,7 +20,7 @@
 
 'use strict';
 import * as _ from "lodash";
-import { Service, IApi, IAppConfigurtaion, Resource, Component} from "../models";
+import { Service, IApi, IAppConfigurtaion, Resource, Combination, Component} from "../models";
 import {SharingService} from "./sharing-service";
 import {ComponentFactory} from "../utils/component-factory";
 import {CacheService} from "./cache-service";
@@ -67,7 +67,16 @@ export class EntityService implements IEntityService {
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
+                
+                this.$http.get(this.api.root + "/v1/catalog/combinations").then((combinationData:any) =>
+                {
+                    combinationData.data.forEach((combinationResponse:Combination) => {                       
+                        let component:Combination = this.ComponentFactory.createCombination(combinationResponse);                        
+                        componentsList.push(component);
+                        this.sharingService.addUuidValue(component.uniqueId, component.uuid);
+                    });
 
+                });
                 defer.resolve(componentsList);
             },(responce) => {
                 defer.reject(responce);

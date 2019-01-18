@@ -269,7 +269,6 @@ export class CompositionViewModel {
                 this.ModalServiceSdcUI.closeModal();
                 this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED, this.$scope.currentComponent.selectedInstance);
             };
-
             this.$scope.currentComponent.updateComponentInstance(componentInstanceModel).then(onSuccess, onFailed);
         }  else {
             this.ModalServiceSdcUI.closeModal();
@@ -307,13 +306,15 @@ export class CompositionViewModel {
         this.$scope.graphApi = {};
         this.$scope.version = this.cacheService.get('version');
         this.initComponent();
-
         this.cacheComponentsInstancesFullData = new Array<Component>();
 
         this.$scope.isComponentInstanceSelected = ():boolean => {
             return this.$scope.currentComponent && this.$scope.currentComponent.selectedInstance != undefined && this.$scope.currentComponent.selectedInstance != null;
         };
 
+        this.$scope.isNotCombination = (): boolean => {
+            return !(this.$scope.currentComponent.isCombination());
+        };
         this.$scope.$on('$destroy', () => {
             this.unRegisterGraphEvents(this.$scope);
         })

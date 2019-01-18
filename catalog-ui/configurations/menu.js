@@ -496,7 +496,10 @@ const SDC_MENU_CONFIG = {
             {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER"]},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
-        ]
+        ],
+        "COMBINATION": [ 
+            { "text": "General", "action": "onMenuItemPressed", "state": "workspace.general" }            
+        ] 
     }
 
 }

@@ -1,0 +1,59 @@
+<ng1-modal modal="modalInstanceName" type="classic" class="w-sdc-modal-resource-save modal-type-confirmation" buttons="footerButtons"
+    header="Save Combination" show-close-button="true">
+
+    <form novalidate class="w-sdc-form" name="forms.editForm" validation-on-load form-to-validate="forms.editForm">
+
+        <div class="w-sdc-form-section-container">
+
+            <div class="w-sdc-form-columns-wrapper">
+
+                <div class="w-sdc-form-column">
+                    <div class="upper-general-fields">
+                        <div class="name-and-category-fields">
+                            <!--------------------- NAME -------------------->
+                            <div class="i-sdc-form-item" data-ng-class="{'error': validateField(forms.editForm.componentName)}">
+                                <label class="i-sdc-form-label required">Name</label>
+                                <input class="i-sdc-form-input"  name="componentName" data-ng-init="validateName(true)"
+                                    data-ng-maxlength="50" data-ng-model="component.name" type="text" data-required data-ng-model-options="{ debounce: 500 }"
+                                    data-ng-pattern="validation.componentNameValidationPattern" data-ng-disabled="component.isAlreadyCertified()"
+                                    data-tests-id="name" autofocus />
+
+                                <div class="input-error" data-ng-show="validateField(forms.editForm.componentName)">
+                                    <span ng-show="forms.editForm.componentName.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_RESOURCE_NAME_REQUIRED"></span>
+                                    <span ng-show="forms.editForm.componentName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                                    <span ng-show="forms.editForm.componentName.$error.minlength" translate="VALIDATION_ERROR_MIN_LENGTH" translate-values="{'min': '4' }"></span>
+                                    <span ng-show="forms.editForm.componentName.$error.nameExist" translate="NEW_SERVICE_RESOURCE_ERROR_NAME_EXISTS"></span>
+                                    <span ng-show="forms.editForm.componentName.$error.pattern" translate="VALIDATION_ERROR_INVALID_NAME"></span>
+                                </div>
+                            </div>
+                            <!--------------------- NAME -------------------->                          
+                        </div>
+                    </div>
+
+                    <!--------------------- DESCRIPTION -------------------->
+                    <div class="i-sdc-form-item description-field" data-ng-class="{'error': validateField(forms.editForm.description)}">
+                        <label class="i-sdc-form-label">Description</label>
+                        <textarea class="description" name="description"  data-ng-maxlength="1024" 
+                            data-ng-model="component.description" data-ng-model-options="{ debounce: 500 }" data-ng-pattern="validation.commentValidationPattern"
+                            data-tests-id="description"></textarea>
+                        <!-- placeholder="Description here..." -->
+
+                        <div class="input-error" data-ng-show="validateField(forms.editForm.description)">
+                            <span ng-show="forms.editForm.description.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_RESOURCE_DESCRIPTION_REQUIRED"></span>
+                            <span ng-show="forms.editForm.description.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '1024' }"></span>
+                            <span ng-show="forms.editForm.description.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        </div>
+                    </div>
+                    <!--------------------- DESCRIPTION -------------------->                  
+
+                </div>
+                <!-- Close w-sdc-form-column -->
+
+            </div>
+
+        </div>
+        <!-- Close w-sdc-form-section-container -->
+
+    </form>
+
+</ng1-modal>

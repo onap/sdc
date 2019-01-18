@@ -18,13 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-import {IMainCategory} from "./category";
-/**
- * Created by ob0695 on 5/8/2017.
- */
-export class Categories {
+'use strict';
+import {ComponentInstance} from "./componentInstance";
 
-    resourceCategories:Array<IMainCategory>;
-    serviceCategories:Array<IMainCategory>;
-    combinationCategories:Array<IMainCategory>;
+export class CombinationInstance extends ComponentInstance {
+
+    constructor(componentInstance?:CombinationInstance) {
+        super(componentInstance);
+
+        this.iconSprite = "sprite-resource-icons";
+    }
 }
+
