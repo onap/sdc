@@ -22,6 +22,30 @@
       "revId": "a30293b47e3e97eded6030b5ea10dbe4a305e183",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b14218ac",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2019-01-20T07:52:33Z",
+      "side": 1,
+      "message": "Not sure but I don\u0027t see a better solution. To check if another operation is already using and a name, and that it is in a different interface, and that it isn\u0027t the current operation (after changing name and changing back), I need all interface names with lists of all operations of each and operation names and unique id\u0027s. So just sending the interfaces list sends all of that",
+      "parentUuid": "9adffdf1_05ec0bf2",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 14
+      },
+      "revId": "a30293b47e3e97eded6030b5ea10dbe4a305e183",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
