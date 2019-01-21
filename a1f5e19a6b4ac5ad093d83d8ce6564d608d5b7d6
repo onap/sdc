@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_2cd7af25",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-21T08:23:19Z",
+      "side": 1,
+      "message": "why?",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 31
+      },
+      "revId": "a1f5e19a6b4ac5ad093d83d8ce6564d608d5b7d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
