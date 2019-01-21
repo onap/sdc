@@ -224,11 +224,12 @@ export class OperationCreatorComponent {
             _.map(
                 this.interfaceTypes[this.operation.interfaceType],
                 name => {
+                    const curInterf = _.find(
+                        this.interfaces,
+                        interf => interf.type === this.operation.interfaceType
+                    );
                     const existingOp = _.find(
-                        _.find(
-                            this.interfaces,
-                            interf => interf.type === this.operation.interfaceType
-                        ).operations,
+                        curInterf && curInterf.operations || [],
                         op => op.name === name
                     );
                     const ddType = (existingOp && existingOp.uniqueId !== this.operation.uniqueId) ? 2 : 0;
