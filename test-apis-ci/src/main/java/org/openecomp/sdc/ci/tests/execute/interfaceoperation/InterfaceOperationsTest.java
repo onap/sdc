@@ -4,9 +4,11 @@ import static org.testng.AssertJUnit.fail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fj.data.Either;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -42,8 +44,11 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
     private static Service service;
     private static Resource resource;
+    private static Resource pnfResource;
     private String resourceInterfaceUniqueId;
     private String resourceOperationUniqueId;
+    private String pnfResourceInterfaceUniqueId;
+    private String pnfResourceOperationUniqueId;
     private String serviceInterfaceUniqueId;
     private String serviceOperationUniqueId;
 
@@ -68,9 +73,18 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
             fail("Error creating default resource");
         }
         resource = createDefaultResourceEither.left().value();
+
+        // Create default PNF resource
+        Either<Resource, RestResponse> createDefaultPNFResourceEither =
+                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+        if (createDefaultPNFResourceEither.isRight()) {
+            fail("Error creating default pnf resource");
+        }
+        pnfResource = createDefaultPNFResourceEither.left().value();
     }
 
-    private Map<String, Object> buildInterfaceDefinitionForResource() {
+    private Map<String, Object> buildInterfaceDefinitionForResource(String resourceInterfaceUniqueId,
+                                                                    String resourceOperationUniqueId) {
         Operation operation = new Operation();
         operation.setName("TestOperationOnResource");
         operation.setWorkflowId("WorkflowId");
@@ -85,10 +99,11 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
         operationOutputDefinitionList.add(createOperationOutputDefinition("TestOutput1"));
         operation.setOutputs(operationOutputDefinitionList);
-        return buildInterfaceDefinitionMap(operation, "TestInterface", resourceInterfaceUniqueId, resourceOperationUniqueId);
+        return buildInterfaceDefinitionMap(operation, "TestInterface", resourceInterfaceUniqueId,
+                resourceOperationUniqueId);
     }
 
-    private Map<String, Object> buildInterfaceDefinitionOfGlobalTypeForResource() {
+    private Map<String, Object> buildInterfaceDefinitionOfGlobalTypeForResource(Resource resource) {
         Operation operation = new Operation();
         operation.setName("create");
         operation.setWorkflowId("WorkflowId");
@@ -103,7 +118,8 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
         operationOutputDefinitionList.add(createOperationOutputDefinition("TestOutput1"));
         operation.setOutputs(operationOutputDefinitionList);
-        return buildInterfaceDefinitionMap(operation,"tosca.interfaces.node.lifecycle.Standard", resourceInterfaceUniqueId, resourceOperationUniqueId);
+        return buildInterfaceDefinitionMap(operation, "tosca.interfaces.node.lifecycle.Standard",
+                resourceInterfaceUniqueId, resourceOperationUniqueId);
     }
 
     private OperationInputDefinition createOperationInputDefinition(String name, String inputId) {
@@ -123,8 +139,9 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         return operationOutputDefinition;
     }
 
-    private Map<String, Object> buildInterfaceDefinitionMap(Operation operation, String interfaceType, String interfaceId,
-            String operationId) {
+    private Map<String, Object> buildInterfaceDefinitionMap(Operation operation, String interfaceType,
+                                                            String interfaceId,
+                                                            String operationId) {
         if (operationId != null) {
             operation.setUniqueId(operationId);
         }
@@ -164,14 +181,16 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         operation.setWorkflowId("WorkflowId");
         operation.setWorkflowVersionId("workflowVersionId");
         operation.setWorkflowAssociationType("NONE");
-        return buildInterfaceDefinitionMap(operation,"TestInterface", serviceInterfaceUniqueId, serviceOperationUniqueId);
+        return buildInterfaceDefinitionMap(operation, "TestInterface", serviceInterfaceUniqueId,
+                serviceOperationUniqueId);
     }
 
     @Test
     public void addInterfaceOperationsOnResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .addInterfaceOperations(resource, buildInterfaceDefinitionForResource(),
-                                                    user);
+                .addInterfaceOperations(resource,
+                        buildInterfaceDefinitionForResource(resourceInterfaceUniqueId, resourceOperationUniqueId),
+                        user);
         logger.info("addInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
         String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
@@ -184,8 +203,8 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test(dependsOnMethods = "addInterfaceOperationsOnResource")
     public void getInterfaceOperationsFromResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .getInterfaceOperations(resource, resourceInterfaceUniqueId,
-                                                    resourceOperationUniqueId, user);
+                .getInterfaceOperations(resource, resourceInterfaceUniqueId,
+                        resourceOperationUniqueId, user);
         logger.info("getInterfaceOperationsFromResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
     }
@@ -193,26 +212,70 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test(dependsOnMethods = "getInterfaceOperationsFromResource")
     public void updateInterfaceOperationsOnResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .updateInterfaceOperations(resource, buildInterfaceDefinitionForResource(),
-                                                    user);
+                .updateInterfaceOperations(resource,
+                        buildInterfaceDefinitionForResource(resourceInterfaceUniqueId, resourceOperationUniqueId),
+                        user);
         logger.info("updateInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
     }
 
-    /*@Test(dependsOnMethods = "updateInterfaceOperationsOnResource")
+    @Test(dependsOnMethods = "updateInterfaceOperationsOnResource")
     public void deleteInterfaceOperationsFromResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .deleteInterfaceOperations(resource, resourceInterfaceUniqueId,
-                                                    resourceOperationUniqueId, user);
+                .deleteInterfaceOperations(resource, resourceInterfaceUniqueId,
+                        resourceOperationUniqueId, user);
         logger.info("deleteInterfaceOperationsFromResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
-    }*/
+    }
+
+    @Test
+    public void addInterfaceOperationsOnPNFResource() throws Exception {
+        RestResponse restResponse = InterfaceOperationsRestUtils
+                .addInterfaceOperations(pnfResource, buildInterfaceDefinitionForResource(pnfResourceInterfaceUniqueId,
+                        pnfResourceOperationUniqueId), user);
+        logger.info("addInterfaceOperationsOnPNFResource Response Code:" + restResponse.getErrorCode());
+        Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+        String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
+        InterfaceDefinition interfaceDefinition =
+                ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefinitionStr);
+        pnfResourceInterfaceUniqueId = interfaceDefinition.getUniqueId();
+        pnfResourceOperationUniqueId =
+                interfaceDefinition.getOperationsMap().keySet().stream().findFirst().orElse(null);
+    }
+
+    @Test(dependsOnMethods = "addInterfaceOperationsOnPNFResource")
+    public void getInterfaceOperationsFromPNFResource() throws Exception {
+        RestResponse restResponse = InterfaceOperationsRestUtils
+                .getInterfaceOperations(pnfResource, pnfResourceInterfaceUniqueId,
+                        pnfResourceOperationUniqueId, user);
+        logger.info("getInterfaceOperationsFromPNFResource Response Code:" + restResponse.getErrorCode());
+        Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+    }
+
+    @Test(dependsOnMethods = "getInterfaceOperationsFromPNFResource")
+    public void updateInterfaceOperationsOnPNFResource() throws Exception {
+        RestResponse restResponse = InterfaceOperationsRestUtils
+                .updateInterfaceOperations(pnfResource,
+                        buildInterfaceDefinitionForResource(pnfResourceInterfaceUniqueId,
+                                pnfResourceOperationUniqueId), user);
+        logger.info("updateInterfaceOperationsOnPNFResource Response Code:" + restResponse.getErrorCode());
+        Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+    }
+
+    @Test(dependsOnMethods = "updateInterfaceOperationsOnPNFResource")
+    public void deleteInterfaceOperationsFromPNFResource() throws Exception {
+        RestResponse restResponse = InterfaceOperationsRestUtils
+                .deleteInterfaceOperations(pnfResource, pnfResourceInterfaceUniqueId,
+                        pnfResourceOperationUniqueId, user);
+        logger.info("deleteInterfaceOperationsFromPNFResource Response Code:" + restResponse.getErrorCode());
+        Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+    }
 
     @Test
     public void addInterfaceOperationsOnService() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .addInterfaceOperations(service, buildInterfaceDefinitionForService(),
-                                                    user);
+                .addInterfaceOperations(service, buildInterfaceDefinitionForService(),
+                        user);
         logger.info("addInterfaceOperationsOnService Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
         String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
@@ -225,8 +288,8 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test(dependsOnMethods = "addInterfaceOperationsOnService")
     public void getInterfaceOperationsFromService() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .getInterfaceOperations(service, serviceInterfaceUniqueId,
-                                                    serviceOperationUniqueId, user);
+                .getInterfaceOperations(service, serviceInterfaceUniqueId,
+                        serviceOperationUniqueId, user);
         logger.info("getInterfaceOperationsFromService Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
     }
@@ -234,8 +297,8 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test(dependsOnMethods = "getInterfaceOperationsFromService")
     public void updateInterfaceOperationsOnService() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .updateInterfaceOperations(service, buildInterfaceDefinitionForService(),
-                                                    user);
+                .updateInterfaceOperations(service, buildInterfaceDefinitionForService(),
+                        user);
         logger.info("updateInterfaceOperations Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
     }
@@ -243,18 +306,32 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test(dependsOnMethods = "updateInterfaceOperationsOnService")
     public void deleteInterfaceOperationsFromService() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .deleteInterfaceOperations(service, serviceInterfaceUniqueId,
-                                                    serviceOperationUniqueId, user);
+                .deleteInterfaceOperations(service, serviceInterfaceUniqueId,
+                        serviceOperationUniqueId, user);
         logger.info("deleteInterfaceOperations Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
     }
 
     @Test
     public void addInterfaceOperationsOfGlobalTypeOnResource() throws Exception {
-        RestResponse restResponse = InterfaceOperationsRestUtils
-                                            .addInterfaceOperations(resource, buildInterfaceDefinitionOfGlobalTypeForResource(),
-                                                    user);
+        RestResponse restResponse =
+                InterfaceOperationsRestUtils.addInterfaceOperations(resource,
+                        buildInterfaceDefinitionOfGlobalTypeForResource(resource), user);
+
         logger.info("addInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
+        Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+        String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
+        InterfaceDefinition interfaceDefinition =
+                ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefinitionStr);
+    }
+
+    @Test
+    public void addInterfaceOperationsOfGlobalTypeOnPNFResource() throws Exception {
+        RestResponse restResponse =
+                InterfaceOperationsRestUtils.addInterfaceOperations(pnfResource,
+                        buildInterfaceDefinitionOfGlobalTypeForResource(pnfResource), user);
+
+        logger.info("addInterfaceOperationsOnPNFResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
         String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
         InterfaceDefinition interfaceDefinition =
