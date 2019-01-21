@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright � 2016-2018 European Support Limited
+  ~ Copyright © 2016-2018 European Support Limited
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
- 
+
 <div class="cell field-name">
     <ui-element-input
         *ngIf="!isAssociateWorkflow"
-        data-tests-id="paramName"
+        [testId]="'param-name-' + (param.name || 'unnamed')"
         [(value)]="param.name"
         (valueChange)="onChangeName()"
         [readonly]="readonly">
@@ -28,7 +28,7 @@
 <div class="cell field-type">
     <ui-element-dropdown
         *ngIf="!isAssociateWorkflow"
-        data-tests-id="paramType"
+        [testId]="'param-type-' + (param.name || 'unnamed')"
         [values]="propTypeEnum"
         [(value)]="param.type"
         (valueChange)="onChangeType()"
@@ -38,14 +38,14 @@
 </div>
 
 <div class="cell field-property" *ngIf="isInputParam">
-  <ui-element-dropdown
-      *ngIf="filteredInputProps.length || !isAssociateWorkflow"
-      data-tests-id="paramProperty"
-      [values]="filteredInputProps"
-      [(value)]="param.inputId"
-      (valueChange)="onChangeProperty($event)"
-      [readonly]="readonly">
-  </ui-element-dropdown>
+    <ui-element-dropdown
+        *ngIf="filteredInputProps.length || !isAssociateWorkflow"
+        [testId]="'param-property-' + (param.name || 'unnamed')"
+        [values]="filteredInputProps"
+        [(value)]="param.inputId"
+        (valueChange)="onChangeProperty($event)"
+        [readonly]="readonly">
+    </ui-element-dropdown>
     <span
         *ngIf="!filteredInputProps.length && isAssociateWorkflow"
         class="no-properties-error">
@@ -56,7 +56,7 @@
 <div class="cell field-mandatory" *ngIf="!isAssociateWorkflow">
     <checkbox
         *ngIf="!isAssociateWorkflow"
-        data-tests-id="paramMandatory"
+        [attr.data-tests-id]="'param-mandatory-' + (param.name || 'unnamed')"
         [(checked)]="param.required"
         [ngClass]="{'disabled':readonly}">
     </checkbox>
@@ -64,11 +64,11 @@
 
 <div class="cell remove" *ngIf="!isAssociateWorkflow && !readonly">
     <svg-icon
-      name="trash-o"
-      mode="info"
-      size="small"
-      testId="removeInputParam"
-      (click)="onRemoveParam(param)"
-      [clickable]="true">
+        name="trash-o"
+        mode="info"
+        size="small"
+        [attr.data-tests-id]="'param-remove-' + (param.name || 'unnamed')"
+        (click)="onRemoveParam(param)"
+        [clickable]="true">
   </svg-icon>
 </div>
