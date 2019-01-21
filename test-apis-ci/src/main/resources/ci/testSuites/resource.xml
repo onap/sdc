@@ -354,15 +354,20 @@
 				<include name="undoCheckOutProductByPm"/>	
 			  </methods>
 		</class>
-			<class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
-				<methods>
-					<include name="addInterfaceOperationsOfGlobalTypeOnResource"/>
-					<include name="addInterfaceOperationsOnResource"/>
-					<include name="getInterfaceOperationsFromResource"/>
-					<include name="updateInterfaceOperationsOnResource"/>
-					<include name="deleteInterfaceOperationsFromResource"/>
-				</methods>
-			</class>
+        <class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
+            <methods>
+                <include name="addInterfaceOperationsOfGlobalTypeOnResource"/>
+                <include name="addInterfaceOperationsOnResource"/>
+                <include name="getInterfaceOperationsFromResource"/>
+                <include name="updateInterfaceOperationsOnResource"/>
+                <include name="deleteInterfaceOperationsFromResource"/>
+                <include name="addInterfaceOperationsOfGlobalTypeOnPNFResource"/>
+                <include name="addInterfaceOperationsOnPNFResource"/>
+                <include name="getInterfaceOperationsFromPNFResource"/>
+                <include name="updateInterfaceOperationsOnPNFResource"/>
+                <include name="deleteInterfaceOperationsFromPNFResource"/>
+            </methods>
+        </class>
 		<!-- Product tests end-->
 	 </classes>
   </test> <!-- Test -->

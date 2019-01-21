@@ -35,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.Component;
@@ -42,6 +43,7 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +85,16 @@ public class ModelConverterTest {
         topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
         Component component = test.convertFromToscaElement(topologyTemplate);
         assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+    }
+
+    @Test
+    public void testConvertFromToscaElementResourceType()
+    {
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
+        topologyTemplate.setResourceType(ResourceTypeEnum.PNF);
+        Resource resource = test.convertFromToscaElement(topologyTemplate);
+        assertSame(ResourceTypeEnum.PNF, resource.getResourceType());
     }
 
     @Test
