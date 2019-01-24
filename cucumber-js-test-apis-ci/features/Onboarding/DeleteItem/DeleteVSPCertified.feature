@@ -1,7 +1,8 @@
 Feature: Delete VSP Draft
 
     Background: Init
-        Given I want to create a VLM
+      Given I want to create a VLM
+      Then I want to submit this VLM
 
     Scenario: Delete VSP with only draft
         When I want to create a VSP with onboarding type "NetworkPackage"

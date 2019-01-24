@@ -2,6 +2,8 @@ Feature: Collaboration Example File
 
   Background: Init
     Given I want to create a VLM
+    Then I want to submit this VLM
+
     Scenario: Testing permissions for contributors and Owners
       Then I want to check user "mb033001" has no permissions on this Item
 
@@ -12,8 +14,8 @@ Feature: Collaboration Example File
       Then I want to check user "mb0001" has role "contributor" on this Item
 
       When I want to set the user to "aaaa"
-      Then I want the following to fail
       When I want to get the permissions for this Item
+      Then I want to check property "listCount" for value 2
 
       When I want to set the user to "mb0001"
       Then I want the following to fail

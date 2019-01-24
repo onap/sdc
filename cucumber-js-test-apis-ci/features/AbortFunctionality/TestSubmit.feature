@@ -16,6 +16,7 @@ Feature: Abort Flow - Test Submit
 
   Background: Init
     Given I want to create a VLM
+    Then I want to submit this VLM
 
   Scenario: Test submit if file is just uploaded
     When I want to create a VSP with onboarding type "NetworkPackage"

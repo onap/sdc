@@ -1,7 +1,8 @@
 Feature: Archive and Restore VSP
 
     Background: Init
-        Given I want to create a VLM
+      Given I want to create a VLM
+      Then I want to submit this VLM
 
     Scenario: Archive VSP with Draft
             When I want to create a VSP with onboarding type "NetworkPackage"

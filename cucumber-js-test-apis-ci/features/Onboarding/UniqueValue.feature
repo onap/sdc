@@ -3,8 +3,8 @@ Feature: Unique value
   Scenario: List unique types
     When I want to get path "/unique-types"
     Then I want to check property "listCount" for value 2
-    And I want to check property "results[0]" for value "VspName"
-    And I want to check property "results[1]" for value "VlmName"
+    And I want to check property "results[1]" for value "VspName"
+    And I want to check property "results[0]" for value "VlmName"
 
   Scenario: Get unique value - non existing type (negative)
     Given I want the following to fail with error code "UNIQUE_TYPE_NOT_FOUND"

@@ -2,6 +2,7 @@ Feature: Vlan Tagging - Full Flow tests
 
   Background: Init
     Given I want to create a VLM
+    Then I want to submit this VLM
     Given I want to set all Togglz to be "true"
 
   Scenario: Pattern 1A Full - Create and submit VSP Network Package containing one compute, one

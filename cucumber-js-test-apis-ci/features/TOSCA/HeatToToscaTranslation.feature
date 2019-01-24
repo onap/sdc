@@ -2,6 +2,7 @@ Feature: Tosca Validation Flow
 
   Background: Init
     Given I want to create a VLM
+    Then I want to submit this VLM
     Given I want to set all Togglz to be "true"
 
   Scenario: Full - Create and submit VSP Network Package and Create VF
