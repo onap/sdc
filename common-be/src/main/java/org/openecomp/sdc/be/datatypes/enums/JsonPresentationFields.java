@@ -136,6 +136,15 @@ public enum JsonPresentationFields {
     REQUIREMENT_ID("requirementId", null),
     PARENT_NAME("parentName", null),
     PREVIOUS_NAME("previousName", null),
+    NODE_FILTER_CAPABILITIES    	("capabilities",				null),
+    PROPERTY_FILTER_NAME        	("propertyName",				null),
+    PROPERTY_FILTER_CONSTRAINT    	("propertyFilterConstraint",	null),
+    EQUAL_CONSTRAINT			    ("equal",				null),
+    CONSTRAINT_VALUE			    ("constraintValue",				null),
+    CONSTRAINT_FUNCTION			    ("constraintFunction",			null),
+    NODE_FILTER				    	("nodeFilter",					null),
+    TOSCA_ID("tosca_id", null),
+
     //Relation
     CAPABILTY_OWNER_ID("capabilityOwnerId", null),
     REQUIREMENT_OWNER_ID("requirementOwnerId", null),
