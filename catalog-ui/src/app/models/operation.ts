@@ -81,9 +81,9 @@ export class OperationModel extends BEOperationModel {
         }
     }
 
-    public displayName(): string {
-        const lastDot = this.name ? this.name.lastIndexOf('.') : -1;
-        return lastDot === -1 ? this.name : this.name.substr(lastDot + 1);
+    public displayType(): string {
+        const lastDot = this.interfaceType ? this.interfaceType.lastIndexOf('.') : -1;
+        return lastDot === -1 ? this.interfaceType : this.interfaceType.substr(lastDot + 1);
     }
 }
 

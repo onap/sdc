@@ -73,6 +73,7 @@ export class OperationCreatorComponent {
     assignOutputParameters: { [key: string]: { [key: string]: Array<OperationParameter>; }; } = {};
 
     tableParameters: Array<OperationParameter> = [];
+    operationOutputs: Array<OperationModel> = [];
 
     associationOptions: Array<DropdownValue> = [];
     workflowAssociationType: string;
@@ -133,6 +134,17 @@ export class OperationCreatorComponent {
         this.operation = new OperationModel(inputOperation || {});
         this.onSelectInterface(new DropDownOption(this.operation.interfaceType));
         this.validityChanged();
+
+        this.operationOutputs = _.reduce(
+            this.interfaces,
+            (acc: Array<OperationModel>, interf) => [
+                ...acc,
+                ..._.filter(
+                    interf.operations,
+                    op => op.uniqueId !== this.operation.uniqueId
+                ),
+            ],
+        []);
 
         if (this.enableWorkflowAssociation) {
             this.isLoading = true;

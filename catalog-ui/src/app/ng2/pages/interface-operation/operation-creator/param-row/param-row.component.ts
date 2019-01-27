@@ -1,8 +1,19 @@
 import {Component, Input} from '@angular/core';
 import {DataTypeService} from "app/ng2/services/data-type.service";
-import {OperationParameter, InputBEModel} from 'app/models';
+import {OperationModel, OperationParameter, InputBEModel} from 'app/models';
 import {DropDownOption} from "../operation-creator.component";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
+
+class DropdownValueType extends DropdownValue {
+    type: String;
+
+    constructor(value: string, label: string, type?: String) {
+        super(value, label);
+        if (type) {
+            this.type = type;
+        }
+    }
+}
 
 @Component({
     selector: 'param-row',
@@ -13,6 +24,7 @@ import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-e
 export class ParamRowComponent {
     @Input() param: OperationParameter;
     @Input() inputProps: Array<InputBEModel>;
+    @Input() operationOutputs: Array<OperationModel>;
     @Input() onRemoveParam: Function;
     @Input() isAssociateWorkflow: boolean;
     @Input() readonly: boolean;
@@ -20,6 +32,7 @@ export class ParamRowComponent {
     @Input() validityChanged: Function;
 
     propTypeEnum: Array<string> = [];
+    operationOutputCats: Array<{ operationName: string, outputs: Array<DropdownValueType> }> = [];
     filteredInputProps: Array<DropdownValue> = [];
 
     constructor(private dataTypeService: DataTypeService) {}
@@ -31,6 +44,7 @@ export class ParamRowComponent {
                 prop => prop.type
             )
         );
+
         this.onChangeType();
         this.validityChanged();
     }
@@ -48,14 +62,31 @@ export class ParamRowComponent {
             prop => new DropdownValue(prop.uniqueId, prop.name)
         );
 
+        this.operationOutputCats = _.filter(
+            _.map(
+                this.operationOutputs,
+                op => {
+                    return {
+                        operationName: `${op.displayType()}.${op.name}`,
+                        outputs: _.map(
+                            _.filter(op.outputs.listToscaDataDefinition, output => !this.param.type || output.type === this.param.type),
+                            output => new DropdownValueType(
+                                `${op.interfaceType}.${op.name}.${output.name}`,
+                                output.name,
+                                output.type
+                            )
+                        )
+                    };
+                }
+            ),
+            category => category.outputs.length > 0
+        );
+
         if (this.param.inputId) {
-            const selProp = _.find(
-                this.getPrimitiveSubtypes(),
-                prop => prop.uniqueId === this.param.inputId
-            );
+            const selProp = this.getSelectedProp();
             if (selProp && selProp.type === this.param.type) {
                 this.param.inputId = '-1';
-                setTimeout(() => this.param.inputId = selProp.uniqueId, 100);
+                setTimeout(() => this.param.inputId = selProp.uniqueId || selProp.value, 0);
             } else {
                 this.param.inputId = null;
             }
@@ -65,10 +96,7 @@ export class ParamRowComponent {
     }
 
     onChangeProperty() {
-        const newProp = _.find(
-            this.getPrimitiveSubtypes(),
-            prop => this.param.inputId === prop.uniqueId
-        );
+        const newProp = this.getSelectedProp();
 
         if (!this.param.type) {
             this.param.type = newProp.type;
@@ -76,7 +104,7 @@ export class ParamRowComponent {
         }
 
         if (!this.param.name) {
-            this.param.name = newProp.name;
+            this.param.name = newProp.name || newProp.label;
         }
 
         this.validityChanged();
@@ -106,6 +134,20 @@ export class ParamRowComponent {
         });
 
         return flattenedProps;
+    }
+
+    getSelectedProp() {
+        const selProp = _.find(
+            this.getPrimitiveSubtypes(),
+            prop => this.param.inputId === prop.uniqueId
+        ) || _.find(
+            _.reduce(
+                this.operationOutputCats,
+                (acc, cat) => [...acc, ...cat.outputs],
+            []),
+            (out: DropdownValueType) => this.param.inputId === out.value
+        );
+        return selProp;
     }
 
     isTypePrimitive(type): boolean {
