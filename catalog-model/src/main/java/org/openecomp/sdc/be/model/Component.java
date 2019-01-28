@@ -66,6 +66,7 @@ public abstract class Component {
     private String derivedFromGenericVersion;
     private String toscaType;
     protected List<AdditionalInformationDefinition> additionalInformation;
+    protected List<PropertyDefinition> properties;
     private Map<String, InterfaceDefinition> interfaces;
 
     public Map<String, InterfaceDefinition> getInterfaces() {
@@ -533,6 +534,14 @@ public abstract class Component {
         this.policies = policies;
     }
 
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -555,6 +564,7 @@ public abstract class Component {
         result = prime * result + ((derivedFromGenericType == null) ? 0 : derivedFromGenericType.hashCode());
         result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
         result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
+        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
         return result;
     }
 
@@ -689,6 +699,9 @@ public abstract class Component {
             }
         }
         else if (!interfaces.equals(other.interfaces)) {
+            return false;
+        }
+        else if (!properties.equals(other.properties)) {
             return false;
         }
         return true;

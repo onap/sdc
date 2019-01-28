@@ -2173,3 +2173,65 @@ errors:
         message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
         messageId: "SVC4713"
     }
+
+    #---------SVC4714-----------------------------
+    NODE_FILTER_NOT_FOUND: {
+        code: 400,
+        message: "Error: Input is used by an interface operation",
+        messageId: "SVC4714"
+    }
+    #---------SVC4715----------------------------
+    UNSUPPORTED_VALUE_PROVIDED: {
+        code: 400,
+        message: "Error: Supported value type is %1 for %2 property. Provided Value: %3",
+        messageId: "SVC4715"
+    }
+    #---------SVC4716----------------------------
+    # %1 - Property Name
+    SELECTED_PROPERTY_NOT_PRESENT: {
+        code: 400,
+        message: "Error: %1 property does not exists in Service anymore.",
+        messageId: "SVC4716"
+    }
+
+    #---------SVC4717----------------------------
+    # %1 - Property Name
+    MAPPED_PROPERTY_NOT_FOUND: {
+        code: 400,
+        message: "Error: %1 property does not exist.",
+        messageId: "SVC4717"
+    }
+
+    #---------SVC4718----------------------------
+    # %1 - Property Name
+    # %2 - Operator Name
+    UNSUPPORTED_OPERATOR_PROVIDED: {
+        code: 400,
+        message: "Error: %1 property does not support %2 operator.",
+        messageId: "SVC4718"
+    }
+
+    #---------SVC4719----------------------------
+    CONSTRAINT_FORMAT_INCORRECT: {
+        code: 400,
+        message: "Error: Constraint provided does not contains expected values.",
+        messageId: "SVC4719"
+    }
+
+    #---------SVC4720----------------------------
+    # %1 - Property Name
+    # %2 - Operator Type
+    SOURCE_TARGET_PROPERTY_TYPE_MISMATCH: {
+        code: 400,
+        message: "Error: %1 property and %2 property type is not same.",
+        messageId: "SVC4720"
+    }
+
+    #---------SVC4721----------------------------
+    # %1 - Property Type
+    # %2 - Operator Type
+    UNSUPPORTED_PROPERTY_TYPE: {
+        code: 400,
+        message: "Error: Property type %1 provided against %2 is not supported for static value.",
+        messageId: "SVC4721"
+    }
