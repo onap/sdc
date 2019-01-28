@@ -24,12 +24,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fj.data.Either;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +71,8 @@ public class InterfaceOperationBusinessLogicTest {
     private static final String RESOURCE_NAME = "Resource1";
     private static final String operationId1 = "operationId1";
     private static final String interfaceId1 = "interfaceId1";
+    private static final String operationName = "createOperation";
+
     @InjectMocks
     private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
     @Mock
@@ -97,7 +100,8 @@ public class InterfaceOperationBusinessLogicTest {
     public void setup() {
         resource = new ResourceBuilder().setComponentType(ComponentTypeEnum.RESOURCE).setUniqueId(resourceId)
                            .setName(RESOURCE_NAME).build();
-        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId));
+        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId,
+                operationName));
         resource.setInputs(createInputsForResource());
 
         user = new User();
@@ -126,11 +130,11 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId))));
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
-                        Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                    Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
+                            operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isLeft());
     }
@@ -141,13 +145,13 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.addInterfaces(any(), any())).thenReturn(Either.left(
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId))));
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId))));
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isLeft());
     }
@@ -162,7 +166,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isRight());
     }
@@ -174,7 +178,7 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceOperation.updateInterfaces(any(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Assert.assertTrue(interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId)),
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName)),
                 user, true).isRight());
     }
 
@@ -185,11 +189,11 @@ public class InterfaceOperationBusinessLogicTest {
         when(artifactCassandraDao.getCountOfArtifactById(any(String.class))).thenReturn(Either.left(new Long(1)));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId))));
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
     }
@@ -203,7 +207,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperation.isRight());
     }
@@ -215,11 +219,11 @@ public class InterfaceOperationBusinessLogicTest {
         when(artifactCassandraDao.getCountOfArtifactById(any(String.class)))
                 .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId))));
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
     }
@@ -231,7 +235,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperation.isRight());
     }
@@ -244,7 +248,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isRight());
     }
@@ -256,7 +260,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isRight());
     }
@@ -271,7 +275,7 @@ public class InterfaceOperationBusinessLogicTest {
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
-                                operationId)),
+                                operationId, operationName)),
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isRight());
     }
@@ -291,7 +295,7 @@ public class InterfaceOperationBusinessLogicTest {
     @Test
     public void deleteInterfaceOperationTestSuccess() {
         resource.getInterfaces().get(interfaceId).getOperations()
-                .putAll(InterfaceOperationTestUtils.createMockOperationMap(operationId1));
+                .putAll(InterfaceOperationTestUtils.createMockOperationMap(operationId1, operationName));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(Collections.emptyList()));
         Assert.assertTrue(interfaceOperationBusinessLogic.deleteInterfaceOperation(resourceId, interfaceId,
@@ -374,7 +378,7 @@ public class InterfaceOperationBusinessLogicTest {
         Assert.assertTrue(interfaceOperationBusinessLogic.getInterfaceOperation(resourceId, interfaceId,
                 Collections.singletonList(operationId), user, true).isRight());
         Assert.assertTrue(interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId)),
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName)),
                 user, true).isRight());
     }
 
@@ -387,8 +391,8 @@ public class InterfaceOperationBusinessLogicTest {
         Assert.assertTrue(interfaceOperationBusinessLogic.getInterfaceOperation(resourceId, interfaceId,
                 Collections.singletonList(operationId), user, true).isRight());
         Assert.assertTrue(interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
-                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId)),
-                user, true).isRight());
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId,
+                        operationName)), user, true).isRight());
     }
 
     @Test

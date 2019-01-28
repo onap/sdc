@@ -16,10 +16,15 @@
 
 package org.openecomp.sdc.be.components.utils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 
@@ -60,5 +65,17 @@ public class InterfaceOperationUtils {
         return interfaceDefinition.getOperationsMap().entrySet().stream()
                        .filter(entry -> entry.getValue().getUniqueId().equals(operationId)).findAny();
     }
+
+    public static boolean isOperationInputMappedToComponentProperty(OperationInputDefinition input,
+                                                                 List<InputDefinition> inputs) {
+        if (CollectionUtils.isEmpty(inputs)) {
+            return false;
+        }
+        return inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()))
+                || (input.getInputId().contains(".")
+                && inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(
+                input.getInputId().substring(0, input.getInputId().lastIndexOf('.'))))) ;
+    }
+
 
 }
