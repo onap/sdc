@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private Map<String, ArtifactDefinition> deploymentArtifacts;
     private Map<String, ArtifactDefinition> artifacts;
     private List<GroupInstance> groupInstances;
+    private CINodeFilterDataDefinition nodeFilter;
 
     public ComponentInstance() {
         super();
@@ -106,4 +108,13 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         }
         return safeGetInformationalArtifacts().get(artifactLabel) != null;
     }
+
+    public CINodeFilterDataDefinition getNodeFilter() {
+        return nodeFilter;
+    }
+
+    public void setNodeFilter(CINodeFilterDataDefinition nodeFilter) {
+        this.nodeFilter = nodeFilter;
+    }
+
 }
