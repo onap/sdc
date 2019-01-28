@@ -15,6 +15,7 @@ public class InterfaceOperationUtilsTest {
 
     private static final String TEST_RESOURCE_NAME = "TestResource";
     private static final String operationId = "operationId";
+    private static final String operationName = "createOperation";
     private static final String interfaceId = "interfaceId";
     private static Resource resource;
 
@@ -22,7 +23,8 @@ public class InterfaceOperationUtilsTest {
     public void setup() {
         resource =
                 new ResourceBuilder().setComponentType(ComponentTypeEnum.RESOURCE).setName(TEST_RESOURCE_NAME).build();
-        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId));
+        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId,
+                operationName));
     }
 
     @Test
@@ -72,20 +74,20 @@ public class InterfaceOperationUtilsTest {
     @Test
     public void testGetOperationFromInterfaceDefinitionSuccess() {
         Assert.assertTrue(InterfaceOperationUtils.getOperationFromInterfaceDefinition(
-                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId), operationId).isPresent());
+                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName), operationId).isPresent());
     }
 
     @Test
     public void testGetOperationFromInterfaceDefinitionFailure() {
         Assert.assertFalse(InterfaceOperationUtils.getOperationFromInterfaceDefinition(
-                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId), TEST_RESOURCE_NAME)
+                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName), TEST_RESOURCE_NAME)
                                    .isPresent());
     }
 
     @Test
     public void testGetOperationFromInterfaceDefinitionNoOperationMap() {
         InterfaceDefinition interfaceDefinition =
-                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId);
+                InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName);
         interfaceDefinition.getOperations().clear();
         Optional<Map.Entry<String, Operation>> operationEntry =
                 InterfaceOperationUtils.getOperationFromInterfaceDefinition(interfaceDefinition, TEST_RESOURCE_NAME);

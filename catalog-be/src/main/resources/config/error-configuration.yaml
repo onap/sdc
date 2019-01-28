@@ -2137,7 +2137,7 @@ errors:
 # %1 - Interface Operation input property name, component type
     INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT: {
         code: 404,
-        message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties.",
+        message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties or outputs of other operations.",
         messageId: "SVC4708"
     }
 #---------SVC4709-----------------------------
@@ -2172,4 +2172,11 @@ errors:
         code: 400,
         message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
         messageId: "SVC4713"
+    }
+#---------SVC4714-----------------------------
+# %1 - Interface Operation output name
+    INTERFACE_OPERATION_MAPPED_OUTPUT_DELETED: {
+        code: 400,
+        message: "Error: Cannot update name or delete interface operation output(s) '%1' mapped to an operation input",
+        messageId: "SVC4714"
     }
