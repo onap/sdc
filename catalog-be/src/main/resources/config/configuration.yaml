@@ -342,6 +342,9 @@ serviceDeploymentArtifacts:
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
             - xml 
+    CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
+        acceptedTypes:
+            - zip
     OTHER:
         acceptedTypes:
 
@@ -368,6 +371,10 @@ resourceDeploymentArtifacts:
         validForResourceTypes: *allResourceTypes
     HEAT_ARTIFACT:
         acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
+        acceptedTypes:
+            - zip
         validForResourceTypes: *allResourceTypes
     YANG_XML:
         acceptedTypes:
