@@ -20,14 +20,12 @@ import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOp
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -59,7 +57,7 @@ public class InterfacesOperationsToscaUtil {
     }
 
     /**
-     * Creates the interface_types element
+     * Creates the interface_types element.
      *
      * @param component to work on
      * @return the added element
@@ -99,7 +97,7 @@ public class InterfacesOperationsToscaUtil {
     }
 
     /**
-     * Adds the 'interfaces' element to the node type provided
+     * Adds the 'interfaces' element to the node type provided.
      *
      * @param component to work on
      * @param nodeType  to which the interfaces element will be added
@@ -131,7 +129,7 @@ public class InterfacesOperationsToscaUtil {
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());
-                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation, interfaceType, component);
+                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation, component);
 
                 toscaOperations.put(operationEntry.getValue().getName(), toscaOperation);
             }
@@ -148,7 +146,7 @@ public class InterfacesOperationsToscaUtil {
         }
     }
 
-    /***
+    /*
      * workaround for : currently "defaultp" is not being converted to "default" by the relevant code in
      * ToscaExportHandler so, any string Map key named "defaultp" will have its named changed to "default"
      * @param operationsMap the map to update
@@ -181,7 +179,6 @@ public class InterfacesOperationsToscaUtil {
 
     private static void fillToscaOperationInputs(OperationDataDefinition operation,
                                                  ToscaLifecycleOperationDefinition toscaOperation,
-                                                 String interfaceType,
                                                  Component component) {
         if (Objects.isNull(operation.getInputs()) || operation.getInputs().isEmpty()) {
             toscaOperation.setInputs(null);
@@ -199,7 +196,7 @@ public class InterfacesOperationsToscaUtil {
                     toscaInput.setDefaultp(createMappedInputPropertyDefaultValue(mappedPropertyName));
                 } else {
                     mappedPropertyName = input.getInputId();
-                    toscaInput.setDefaultp(createMappedOutputDefaultValue(mappedPropertyName, interfaceType));
+                    toscaInput.setDefaultp(createMappedOutputDefaultValue(mappedPropertyName));
                 }
             }
             toscaInput.setType(input.getType());
@@ -224,23 +221,28 @@ public class InterfacesOperationsToscaUtil {
     }
 
     /**
-     * Create the value for operation input mapped to an operation output
+     * Create the value for operation input mapped to an operation output.
      * @param propertyName the mapped other operation output full name
-     * @param interfaceType full interface name
      * @return input map for tosca
      */
-    private static Map<String, List<String>> createMappedOutputDefaultValue(String propertyName, String interfaceType) {
+    private static Map<String, List<String>> createMappedOutputDefaultValue(String propertyName) {
         Map<String, List<String>> getOperationOutputMap = new HashMap<>();
         //For operation input mapped to other operation output parameter, the mapped property value
         // should be of the format <interface name>.<operation name>.<output parameter name>
+        // Operation name and output param name should not contain "."
         List<String> defaultMappedOperationOutputValue = new ArrayList<>();
-        defaultMappedOperationOutputValue.add(SELF);
-        String fullOutputPropertyName =
-                propertyName.substring(propertyName.indexOf(interfaceType) + interfaceType.length() + 1);
-        defaultMappedOperationOutputValue.add(interfaceType);
-        //Output name should not contain dot
-        defaultMappedOperationOutputValue.addAll(Arrays.asList(fullOutputPropertyName.split("\\.")));
-        getOperationOutputMap.put(GET_OPERATION_OUTPUT, defaultMappedOperationOutputValue);
+        String[] tokens = propertyName.split("\\.");
+        if (tokens.length > 2) {
+            defaultMappedOperationOutputValue.add(SELF);
+            String outputPropertyName = tokens[tokens.length - 1];
+            String operationName = tokens[tokens.length - 2];
+            String mappedPropertyInterfaceType =
+                    propertyName.substring(0, propertyName.indexOf(operationName + '.' + outputPropertyName) - 1);
+            String interfaceName =
+                    mappedPropertyInterfaceType.substring(mappedPropertyInterfaceType.lastIndexOf('.') + 1);
+            defaultMappedOperationOutputValue.addAll(Arrays.asList(interfaceName, operationName, outputPropertyName));
+            getOperationOutputMap.put(GET_OPERATION_OUTPUT, defaultMappedOperationOutputValue);
+        }
         return getOperationOutputMap;
     }
 

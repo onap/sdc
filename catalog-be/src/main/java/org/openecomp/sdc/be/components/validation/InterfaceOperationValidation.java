@@ -179,11 +179,11 @@ public class InterfaceOperationValidation {
         }
 
         if (MapUtils.isNotEmpty(component.getInterfaces()) && isUpdate) {
-            Either<Boolean, ResponseFormat> mappedOutputDeletedResponse =
-                    validateMappedOutputNotDeleted(interfaceOperation, component, inputInterfaceDefinition,
+            Either<Boolean, ResponseFormat> mappedOutputModifiedResponse =
+                    validateMappedOutputNotModified(interfaceOperation, component, inputInterfaceDefinition,
                             responseFormatManager);
-            if (mappedOutputDeletedResponse.isRight()) {
-                return Either.right(mappedOutputDeletedResponse.right().value());
+            if (mappedOutputModifiedResponse.isRight()) {
+                return Either.right(mappedOutputModifiedResponse.right().value());
             }
         }
 
@@ -191,7 +191,7 @@ public class InterfaceOperationValidation {
     }
 
 
-    private Either<Boolean, ResponseFormat> validateMappedOutputNotDeleted(Operation interfaceOperation,
+    private Either<Boolean, ResponseFormat> validateMappedOutputNotModified(Operation interfaceOperation,
             org.openecomp.sdc.be.model.Component component, InterfaceDefinition interfaceDefinition,
             ResponseFormatManager responseFormatManager) {
 
@@ -222,6 +222,18 @@ public class InterfaceOperationValidation {
         if (CollectionUtils.isNotEmpty(deletedMappedOutputs)) {
             return getMappedOutputErrorResponse(responseFormatManager, deletedMappedOutputs);
         }
+
+        if (currentOutputs != null && !currentOutputs.isEmpty()) {
+            Set<String> unchangedOutputNames = Sets.intersection(existingOperationOutputNames,
+                    currentOperationOutputNames);
+            Set<String> modifiedMappedOutputNames =
+                    getModifiedMappedOutputNames(currentOutputs.getListToscaDataDefinition(),
+                            existingOperationOutputs, unchangedOutputNames);
+            if (CollectionUtils.isNotEmpty(modifiedMappedOutputNames)) {
+                return getMappedOutputErrorResponse(responseFormatManager, modifiedMappedOutputNames);
+            }
+        }
+
         return Either.left(Boolean.TRUE);
     }
 
@@ -234,13 +246,36 @@ public class InterfaceOperationValidation {
                         .equals(mappedOutputPrefix + "." + outputName));
     }
 
+    private static Set<String> getModifiedMappedOutputNames(List<OperationOutputDefinition> currentOperationOutputs,
+            List<OperationOutputDefinition> existingOperationOutputs,
+            Set<String> unchangedOutputNames) {
+        Set<String> modifiedOutputDefinitionNames = new HashSet<>();
+        Map<String, OperationOutputDefinition> newOutputMap =
+                currentOperationOutputs.stream().collect(Collectors.toMap(OperationOutputDefinition::getName,
+                        (OperationOutputDefinition operationOutputDefinition) -> operationOutputDefinition));
+
+        Map<String, OperationOutputDefinition> existingOutputMap =
+                existingOperationOutputs.stream().collect(Collectors.toMap(OperationOutputDefinition::getName,
+                        (OperationOutputDefinition operationOutputDefinition) -> operationOutputDefinition));
+
+        for (String outputName : unchangedOutputNames) {
+            OperationOutputDefinition existingOutputDefinition = existingOutputMap.get(outputName);
+            OperationOutputDefinition newOutputDefinition = newOutputMap.get(outputName);
+            if (!existingOutputDefinition.getType().equals(newOutputDefinition.getType())
+                        || !existingOutputDefinition.isRequired().equals(newOutputDefinition.isRequired())) {
+                modifiedOutputDefinitionNames.add(outputName);
+            }
+        }
+        return modifiedOutputDefinitionNames;
+    }
+
     private Either<Boolean, ResponseFormat> getMappedOutputErrorResponse(ResponseFormatManager responseFormatManager,
-                                                                         Set<String> deletedMappedOutputs) {
-        String deletedOutputNameList = String.join(",", deletedMappedOutputs);
-        LOGGER.error("Cannot update name or delete interface operation output(s) '{}' mapped to an operation input",
-                deletedOutputNameList);
+                                                                         Set<String> modifiedMappedOutputs) {
+        String modifiedOutputNameList = String.join(",", modifiedMappedOutputs);
+        LOGGER.error("Cannot update or delete interface operation output(s) '{}' mapped to an operation input",
+                modifiedOutputNameList);
         ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_MAPPED_OUTPUT_DELETED, deletedOutputNameList);
+                .INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED, modifiedOutputNameList);
         return Either.right(errorResponse);
     }
 

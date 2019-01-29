@@ -24,13 +24,11 @@ import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.add
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -236,6 +234,54 @@ public class InterfacesOperationsToscaUtilTest {
         validateOperationInputs(mainYaml, 2, "name_for_op_1");
     }
 
+    @Test
+    public void addInterfaceDefinitionElementInputMappedToOtherOperationOutputFromOtherInterface() {
+        String addedInterfaceType = "com.some.resource.or.other.resourceNameInputMappedToOutput";
+        Component component = new Resource();
+        component.setNormalizedName("normalizedComponentName");
+        InterfaceDefinition addedInterface = new InterfaceDefinition();
+        addedInterface.setType(addedInterfaceType);
+        addOperationsToInterface(component, addedInterface, 2, 2, true, true);
+        addedInterface.getOperationsMap().values().stream()
+                      .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
+                              "name_for_op_0"))
+                      .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
+                                                     .filter(opInputDef -> opInputDef.getName().contains("integer"))
+                                                     .forEach(opInputDef -> opInputDef.setInputId(
+                                                             addedInterfaceType +".name_for_op_1.output_integer_1")));
+        //Mapping to operation from another interface
+        String secondInterfaceType = "org.test.lifecycle.standard.interfaceType.second";
+        InterfaceDefinition secondInterface = new InterfaceDefinition();
+        secondInterface.setType(secondInterfaceType);
+        addOperationsToInterface(component, secondInterface, 2, 2, true, true);
+        secondInterface.getOperationsMap().values().stream()
+                      .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
+                              "name_for_op_0"))
+                      .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
+                                                     .filter(opInputDef -> opInputDef.getName().contains("integer"))
+                                                     .forEach(opInputDef -> opInputDef.setInputId(
+                                                             addedInterfaceType +".name_for_op_1.output_integer_1")));
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(addedInterfaceType, addedInterface);
+        component.getInterfaces().put(secondInterfaceType, secondInterface);
+
+        ToscaNodeType nodeType = new ToscaNodeType();
+        addInterfaceDefinitionElement(component, nodeType, false);
+
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
+        ToscaTemplate template = new ToscaTemplate("test");
+        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+        nodeTypes.put("test", nodeType);
+        template.setNode_types(nodeTypes);
+        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
+
+        String mainYaml = toscaRepresentation.getMainYaml();
+        Assert.assertFalse(mainYaml.contains("operations"));
+        Assert.assertTrue(mainYaml.contains("resourceNameInputMappedToOutput:"));
+        Assert.assertTrue(mainYaml.contains("inputs:"));
+        validateOperationInputs(mainYaml, 2, "name_for_op_1");
+    }
+
     private void addOperationsToInterface(Component component, InterfaceDefinition addedInterface, int numOfOps,
                                           int numOfInputsPerOp, boolean hasInputs, boolean hasOutputs) {
 
@@ -319,7 +365,8 @@ public class InterfacesOperationsToscaUtilTest {
             for (Map.Entry<String, Object> operationEntry : interfaceDefinition.entrySet()) {
                 Object operationVal = operationEntry.getValue();
                 if (operationVal instanceof Map) {
-                    validateOperationInputDefinition((String) interfaceDefinition.get("type"), mappedOperationName,
+                    //Since the inputs are mapped to output operations from only first interface so using that name
+                    validateOperationInputDefinition(interfaces.keySet().iterator().next(), mappedOperationName,
                             operationVal);
                 }
             }
