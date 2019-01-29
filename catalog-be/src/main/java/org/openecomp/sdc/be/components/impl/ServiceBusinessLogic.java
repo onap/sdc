@@ -33,8 +33,10 @@ import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
+import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -43,7 +45,9 @@ import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -54,6 +58,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
@@ -120,6 +125,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ForwardingPathValidator forwardingPathValidator;
     @Autowired
     private UiComponentDataConverter uiComponentDataConverter;
+    @Autowired
+    private NodeFilterOperation serviceFilterOperation;
+    @Autowired
+    private NodeFilterValidator serviceFilterValidator;
 
     public Either<Service, ResponseFormat> changeServiceDistributionState(String serviceId, String state, LifecycleChangeInfoWithAction commentObj, User user) {
 
@@ -2106,5 +2115,304 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Service service = serviceResultEither.left().value();
         UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
+    }
+
+    public Either<String, ResponseFormat> deleteIfNotAlreadyDeletedServiceFilter(String serviceId, String resourceId, String userId, boolean lock) {
+        Service serviceToDelete = initServiceToDeleteServiceFilter(serviceId);
+        User user = validateUserExists(userId, "Create service Filter", false);
+
+        user =
+                validateUser(user, "deleteIfNotAlreadyDeletedServiceFilter", serviceToDelete, null, false);
+
+         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
+        if (storageStatus.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
+        }
+        Service service = storageStatus.left().value();
+
+        Either<Boolean, ResponseFormat> response = serviceFilterValidator.validateComponentInstanceExist(service, resourceId);
+        if (storageStatus.isRight()) {
+            return Either.right(response.right().value());
+        }
+        final Optional<ComponentInstance> optionalComponentInstance = service.getComponentInstanceById(resourceId);
+        if (!optionalComponentInstance.isPresent() ){
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        CINodeFilterDataDefinition nodeFilter = optionalComponentInstance.get().getNodeFilter();
+        if (nodeFilter == null){
+            return Either.left(resourceId);
+        }
+
+        Either<String, StorageOperationStatus> result;
+        if (lock) {
+            Either<Boolean, ResponseFormat> lockResult = lockComponent(service.getUniqueId(), service, "Delete Service Filter from service");
+            if (lockResult.isRight()) {
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils
+                                                                              .convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
+            }
+        }
+        try{
+            result = serviceFilterOperation.deleteNodeFilter(service , resourceId);
+            if (result.isRight()) {
+                log.debug("Failed to delete node filter in service {}. Response is {}. ", service.getName(), result.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE)));
+            }
+            titanDao.commit();
+            log.debug("Node filter successfully changed in service {} . ", service.getSystemName());
+
+        } catch (Exception e){
+            log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        } finally {
+            graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+        }
+        return Either.left(result.left().value());
+    }
+
+
+    private Service initServiceToDeleteServiceFilter(String serviceId) {
+        Service serviceToDelete = new Service();
+        serviceToDelete.setUniqueId(serviceId);
+        return serviceToDelete;
+    }
+
+
+    public Either<CINodeFilterDataDefinition, ResponseFormat> createIfNotAlreadyExistServiceFilter(String serviceId, String componentInstanceId, String userId, boolean lock) {
+        String errorContext =  "createIfNotAlreadyExistServiceFilter";
+        User user = validateUserExists(userId, "Create service Filter", false);
+
+        Either<Service, StorageOperationStatus> serviceEither = toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceEither.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceEither.right().value(), ComponentTypeEnum.SERVICE), ""));
+        }
+        final Service service = serviceEither.left().value();
+        validateUserAndRole(service, user, errorContext);
+
+        Optional<ComponentInstance> optionalComponentInstance = service.getComponentInstanceById(componentInstanceId);
+        if (!optionalComponentInstance.isPresent()){
+            return Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+        }
+        ComponentInstance componentInstance = optionalComponentInstance.get();
+        CINodeFilterDataDefinition serviceFilter = componentInstance.getNodeFilter();
+        if (serviceFilter != null){
+            return Either.left(serviceFilter);
+        }
+
+        Either<CINodeFilterDataDefinition, StorageOperationStatus> result;
+
+        Either<Boolean, ResponseFormat> lockResult = null;
+        if (lock) {
+            lockResult =
+                    lockComponent(service.getUniqueId(), service, "Create Service Filter");
+            if (lockResult.isRight()) {
+                log.debug("Failed to lock service {}. Response is {}. ", service.getName(),
+                        lockResult.right().value().getFormattedMessage());
+                return Either.right(lockResult.right().value());
+            } else {
+                log.debug("The service with system name {} locked. ", service.getSystemName());
+            }
+        }
+        CINodeFilterDataDefinition serviceFilterResult;
+        try {
+            result =  serviceFilterOperation.createNodeFilter(serviceId, componentInstanceId);
+            if (result.isRight()) {
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
+                        ""));
+            } else {
+                serviceFilterResult = result.left().value();
+            }
+            titanDao.commit();
+
+        } catch (Exception e) {
+            titanDao.rollback();
+            log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
+                    e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+
+        } finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+            }
+        }
+        return Either.left(serviceFilterResult);
+    }
+
+
+    public Either<CINodeFilterDataDefinition, ResponseFormat> updateServiceFilter(String serviceId, String componentInstanceId,
+            List<String> constraints,  User inUser, boolean lock) {
+        String errorContext =  "createIfNotAlreadyExistServiceFilter";
+        Either<?, ResponseFormat> eitherCreator1 = null;
+        User user = validateUserExists(inUser, errorContext, true);
+        validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
+        if (eitherCreator1 != null && eitherCreator1.isRight()) {
+            return Either.right(eitherCreator1.right().value());
+        }
+
+        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
+
+        if(serviceStorageOperationStatusEither.isRight()){
+            StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
+            log.debug("Failed to fetch service information by service id, error {}", errorStatus);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
+        Service storedService = serviceStorageOperationStatusEither.left().value();
+
+        Either<Boolean, ResponseFormat> booleanResponseFormatEither =
+                serviceFilterValidator.validateNodeFilter(storedService, componentInstanceId, constraints,
+                        NodeFilterConstraintAction.UPDATE);
+        if(booleanResponseFormatEither.isRight()){
+            return Either.right(booleanResponseFormatEither.right().value());
+        }
+
+
+        Either<Boolean, ResponseFormat> lockResult = null;
+        if (lock) {
+            lockResult =
+                    lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
+            if (lockResult.isRight()) {
+                log.debug("Failed to lock service {}. Response is {}. ", storedService.getName(),
+                        lockResult.right().value().getFormattedMessage());
+                return Either.right(lockResult.right().value());
+            } else {
+                log.debug("The service with system name {} locked. ", storedService.getSystemName());
+            }
+        }
+        Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
+        if (!componentInstanceOptional.isPresent()){
+            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+        }
+        CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
+        if(serviceFilter == null){
+            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+        }
+        CINodeFilterDataDefinition serviceFilterResult;
+        try {
+            List<RequirementNodeFilterPropertyDataDefinition> properties = (List<RequirementNodeFilterPropertyDataDefinition>) constraints.
+                                                                                                                                                  stream().map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
+            Either<CINodeFilterDataDefinition, StorageOperationStatus>  result =  serviceFilterOperation.updateProperties(serviceId, componentInstanceId, serviceFilter ,properties);
+
+            if (result.isRight()) {
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
+                        ""));
+            } else {
+                serviceFilterResult = result.left().value();
+            }
+            titanDao.commit();
+
+        } catch (Exception e) {
+            titanDao.rollback();
+            log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
+                    e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+
+        } finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
+            }
+        }
+        return Either.left(serviceFilterResult);
+    }
+
+    private RequirementNodeFilterPropertyDataDefinition getRequirementNodeFilterPropertyDataDefinition(String constraint){
+        RequirementNodeFilterPropertyDataDefinition pdd = new RequirementNodeFilterPropertyDataDefinition();
+        pdd.setConstraints(Arrays.asList(constraint));
+        return pdd;
+    }
+
+    public Either<CINodeFilterDataDefinition, ResponseFormat> addOrDeleteServiceFilter(String serviceId, String componentInstanceId,
+            NodeFilterConstraintAction action, String constraint, int position, User inUser, boolean lock) {
+        String errorContext =  "createIfNotAlreadyExistServiceFilter";
+        Either<?, ResponseFormat> eitherCreator1 = null;
+        User user = validateUserExists(inUser, errorContext, true);
+        validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
+        if (eitherCreator1 != null && eitherCreator1.isRight()) {
+            return Either.right(eitherCreator1.right().value());
+        }
+
+        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
+
+        if(serviceStorageOperationStatusEither.isRight()){
+            StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
+            log.debug("Failed to fetch service information by service id, error {}", errorStatus);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
+        Service storedService = serviceStorageOperationStatusEither.left().value();
+
+        Either<Boolean, ResponseFormat> booleanResponseFormatEither =
+                serviceFilterValidator.validateNodeFilter(storedService, componentInstanceId,
+                        Collections.singletonList(constraint), action);
+        if(booleanResponseFormatEither.isRight()){
+            return Either.right(booleanResponseFormatEither.right().value());
+        }
+
+        Either<CINodeFilterDataDefinition, StorageOperationStatus> result;
+
+        Either<Boolean, ResponseFormat> lockResult = null;
+        if (lock) {
+            lockResult =
+                    lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
+            if (lockResult.isRight()) {
+                log.debug("Failed to lock service {}. Response is {}. ", storedService.getName(),
+                        lockResult.right().value().getFormattedMessage());
+                return Either.right(lockResult.right().value());
+            } else {
+                log.debug("The service with system name {} locked. ", storedService.getSystemName());
+            }
+        }
+
+        Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
+        if (!componentInstanceOptional.isPresent()){
+            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+        }
+        CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
+        if(serviceFilter == null){
+            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+        }
+        CINodeFilterDataDefinition serviceFilterResult;
+        try {
+            switch (action) {
+                case ADD:
+                    RequirementNodeFilterPropertyDataDefinition newProperty = new RequirementNodeFilterPropertyDataDefinition();
+                    newProperty.setConstraints(Collections.singletonList(constraint));
+                    result = serviceFilterOperation.addNewProperty(serviceId, componentInstanceId,serviceFilter,newProperty);
+                    break;
+                case DELETE:
+                    result = serviceFilterOperation.deleteConstraint(serviceId, componentInstanceId, serviceFilter, position);
+                    break;
+                default:
+                    log.error("Unsupported operation "+action);
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+
+            }
+
+            if (result.isRight()) {
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
+                        ""));
+            } else {
+                serviceFilterResult = result.left().value();
+            }
+            titanDao.commit();
+
+        } catch (Exception e) {
+            titanDao.rollback();
+            log.error("Exception occurred during add or update node filter property values: {}", e.getMessage(),
+                    e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+
+        } finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
+            }
+        }
+        return Either.left(serviceFilterResult);
     }
 }
