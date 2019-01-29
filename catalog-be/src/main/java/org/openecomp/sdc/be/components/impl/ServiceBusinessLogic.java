@@ -1522,7 +1522,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         List<ArtifactGenerator<ArtifactDefinition>> asList = new ArrayList<>();
 
         if (ri.getOriginType() == OriginTypeEnum.VF) {
-            asList = Arrays.asList(new VfModuleArtifacGenerator(modifier, ri, service, shouldLock, inTransaction));
+            asList = Arrays.asList(new VfModuleArtifactGenerator(modifier, ri, service, shouldLock, inTransaction));
         }
         return asList;
     }
@@ -1723,7 +1723,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    class VfModuleArtifacGenerator extends ArtifactGenerator<ArtifactDefinition> {
+    class VfModuleArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
         private User user;
         private ComponentInstance componentInstance;
         private Service service;
@@ -1735,7 +1735,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return generateVfModuleInstanceArtifact(user, componentInstance, service, shouldLock, inTransaction);
         }
 
-        private VfModuleArtifacGenerator(User user, ComponentInstance componentInstance, Service service, boolean shouldLock, boolean inTransaction) {
+        private VfModuleArtifactGenerator(User user, ComponentInstance componentInstance, Service service, boolean shouldLock, boolean inTransaction) {
             super();
             this.user = user;
             this.componentInstance = componentInstance;
