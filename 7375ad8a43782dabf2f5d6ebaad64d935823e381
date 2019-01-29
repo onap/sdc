@@ -1,0 +1,481 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_77b2494d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Please update debug and error messages, a lot of them are having incorrect information such as Forwarding path.",
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d7a77509",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2128,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "This call is redundant. just the call for validateUserExists is sufficient.",
+      "range": {
+        "startLine": 2124,
+        "startChar": 8,
+        "endLine": 2128,
+        "endChar": 79
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d770d5a5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2161,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "This debugger message doesn\u0027t seem right here.",
+      "range": {
+        "startLine": 2161,
+        "startChar": 27,
+        "endLine": 2161,
+        "endChar": 69
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_776b29b7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2166,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 2166,
+        "startChar": 23,
+        "endLine": 2166,
+        "endChar": 62
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9766cdeb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2169,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Forwarding Path?",
+      "range": {
+        "startLine": 2169,
+        "startChar": 56,
+        "endLine": 2169,
+        "endChar": 72
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_57b3854c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/CINodeFilterUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "seems extra",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 13
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_17897d74",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "why the same validation is being done twice?",
+      "range": {
+        "startLine": 211,
+        "startChar": 8,
+        "endLine": 212,
+        "endChar": 82
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7799e9c2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/ConstraintConvertor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "These are very tightly coupled. I think we should enhance ConstraintType on the lines of ToscaPropertyType to handle it in generic way",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 23,
+        "endChar": 95
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_97c24d83",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceFilterServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Forwarding paths :)",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 61
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3754c1c8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Why not use CollectionUtils?",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 61
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9749ed32",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Why not use CollectionUtils?",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 57
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_574f0534",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Please run static analysis. Static analysis will suggest to use Collections.singletonList here for single element.",
+      "range": {
+        "startLine": 84,
+        "startChar": 8,
+        "endLine": 84,
+        "endChar": 69
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_173e5d8c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Why not use CollectionUtils?",
+      "range": {
+        "startLine": 118,
+        "startChar": 12,
+        "endLine": 118,
+        "endChar": 79
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b740b107",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Why not use CollectionUtils?",
+      "range": {
+        "startLine": 129,
+        "startChar": 8,
+        "endLine": 129,
+        "endChar": 93
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d743f510",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Is there a possibility where nested ListToscaDataDefinition is empty?",
+      "range": {
+        "startLine": 132,
+        "startChar": 41,
+        "endLine": 132,
+        "endChar": 98
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_177bbd8c",
+        "filename": "catalog-be/src/main/resources/config/error-configuration.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 2182,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Doesn\u0027t seem right?",
+      "range": {
+        "startLine": 2177,
+        "startChar": 4,
+        "endLine": 2182,
+        "endChar": 5
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f76159a9",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/types/VertexTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "just a question, why not call the vertex as NodeFilter?",
+      "range": {
+        "startLine": 64,
+        "startChar": 25,
+        "endLine": 64,
+        "endChar": 43
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_1765fdb3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/NodeFilterOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "question; are Node Filter and Service Filter separate? Trying to understand why it is mapped to the name \"Service Filter Operations\"",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 56
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d75a15f1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/NodeFilterOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Try using Collections.singleton.",
+      "range": {
+        "startLine": 80,
+        "startChar": 43,
+        "endLine": 80,
+        "endChar": 79
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_77756962",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/NodeFilterOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "Please use Collections.singletonList here",
+      "range": {
+        "startLine": 149,
+        "startChar": 76,
+        "endLine": 149,
+        "endChar": 89
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_97700d73",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/JsonPresentationFields.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-01-29T07:26:25Z",
+      "side": 1,
+      "message": "please remove tabs",
+      "range": {
+        "startLine": 138,
+        "startChar": 4,
+        "endLine": 145,
+        "endChar": 49
+      },
+      "revId": "7375ad8a43782dabf2f5d6ebaad64d935823e381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
