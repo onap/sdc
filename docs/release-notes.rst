@@ -4,6 +4,40 @@
 Release Notes
 =============
 
+Version: 1.3.7
+==============
+
+:Release Date: 2019-01-31
+
+`README <https://github.com/onap/sdc>`__
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+       :Version: 1.3.0
+	   
+-  sdc-tosca
+	   :Version: 1.4.63
+
+	   `README <https://github.com/onap/sdc-sdc-tosca>`__
+
+Release Purpose
+----------------
+The Casablanca Maintenance release was focused on fixing high priority defects discovered in Casablanca release.
+
+**Bugs**
+
+-  [`SDC-1447 <https://jira.onap.org/browse/SDC-1447>`__\ ] - [SDC] SDC create csar with many warnnings
+-  [`SDC-1955 <https://jira.onap.org/browse/SDC-1955>`__\ ] - SDC distribution failed
+-  [`SDC-1958 <https://jira.onap.org/browse/SDC-1958>`__\ ] - SDC Parser can not be used for CCVPN Templates
+-  [`SDC-1971 <https://jira.onap.org/browse/SDC-1971>`__\ ] - Change version failure
+-  [`SDC-2014 <https://jira.onap.org/browse/SDC-2014>`__\ ] - Documentation figure not readable
+-  [`SDC-2053 <https://jira.onap.org/browse/SDC-2053>`__\ ] - SDC fails healthcheck
+-  [`SDC-2077 <https://jira.onap.org/browse/SDC-2077>`__\ ] - SDC-BE and SDC-FE missing log files
+
+
+
 Version: 1.3.5
 ==============
 
@@ -16,10 +50,11 @@ SDC SDKs Versions
 
 -  sdc-distribution-client
        :Version: 1.3.0
-    -  sdc-tosca
-           :Version: 1.4.7
+	   
+-  sdc-tosca
+	   :Version: 1.4.7
 
-           `README <https://github.com/onap/sdc-sdc-tosca>`__
+	   `README <https://github.com/onap/sdc-sdc-tosca>`__
 
 Release Purpose
 ----------------
@@ -79,9 +114,9 @@ SDC SDKs Versions
 
    :Version: 1.3.0
 
-    -  sdc-tosca
+-  sdc-tosca
 
-       :Version: 1.3.5
+   :Version: 1.3.5
 
 Release Purpose
 ----------------
