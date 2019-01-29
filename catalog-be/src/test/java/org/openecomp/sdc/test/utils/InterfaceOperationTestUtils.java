@@ -18,7 +18,6 @@ package org.openecomp.sdc.test.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
@@ -87,6 +86,8 @@ public class InterfaceOperationTestUtils {
         operationInputDefinition.setInputId("ComponentInput" + num + "_uniqueId");
         operationInputDefinition.setValue(inputName + "_value");
         operationInputDefinition.setDefaultValue(inputName + "_defaultValue");
+        operationInputDefinition.setType("string");
+        operationInputDefinition.setRequired(true);
         return operationInputDefinition;
     }
 
@@ -96,6 +97,8 @@ public class InterfaceOperationTestUtils {
         operationOutputDefinition.setUniqueId(outputName + "_uniqueId");
         operationOutputDefinition.setValue(outputName + "_value");
         operationOutputDefinition.setDefaultValue(outputName + "_defaultValue");
+        operationOutputDefinition.setType("string");
+        operationOutputDefinition.setRequired(true);
         return operationOutputDefinition;
     }
 
