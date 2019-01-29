@@ -60,7 +60,8 @@ public enum VertexTypeEnum {
 	CATALOG_ROOT                ("catalogRoot",                 null),
 	ARCHIVE_ROOT                ("archiveRoot",                 null),
 	INTERFACE		("interface",			InterfaceDataDefinition.class),
-	INTERFACE_OPERATION			("interfaceOperation",			OperationDataDefinition.class);
+	INTERFACE_OPERATION			("interfaceOperation",			OperationDataDefinition.class),
+	NODE_FILTER_TEMPLATE		("NodeTemplateFilter", CINodeFilterDataDefinition.class),;
 
 	private String name;
 	private Class classOfJson;

@@ -44,6 +44,7 @@ public enum ComponentFieldsEnum {
     FORWARDING_PATHS("forwardingPaths"),
     POLICIES("policies"),
     NON_EXCLUDED_POLICIES("nonExcludedPolicies"),
+    NODE_FILTER("nodeFilter")
     ;
 
 

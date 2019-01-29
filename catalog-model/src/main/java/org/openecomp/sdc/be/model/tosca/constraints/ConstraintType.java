@@ -25,6 +25,8 @@ import java.util.List;
 
 public enum ConstraintType {
 
+    EQUAL("equal", "equal"),
+
     IN_RANGE("inRange"),
 
     GREATER_THAN("greaterThan", "greater_than"),

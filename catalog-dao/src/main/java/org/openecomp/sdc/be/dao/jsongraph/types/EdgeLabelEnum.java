@@ -63,7 +63,8 @@ public enum EdgeLabelEnum {
 	PROXY_OF,
 	ALLOTTED_OF,
 	INTERFACE,
-	INTERFACE_OPERATION;
+	INTERFACE_OPERATION,
+	NODE_FILTER_TEMPLATE;
     
     /**
 	 * Returns EdgeLabelEnum according received name
