@@ -29,7 +29,7 @@ Then('I want to create a VF for this Item', function () {
 	return util.request(this.context, 'GET', '/vendor-software-products/' + this.context.item.id + '/versions/' + this.context.item.versionId).then(result => {
 		this.context.inputData = util.getJSONFromFile('resources/json/createVF.json');
 		// start replacing stuff
-		this.context.inputData.contactId = this.context.headers['vf']["USER_ID"];
+		this.context.inputData.contactId = this.context.headers['catalog']["USER_ID"];
 		this.context.inputData.categories[0].uniqueId = result.data.category;
 		this.context.inputData.categories[0].subcategories[0].uniqueId = result.data.subCategory;
 		this.context.inputData.description = result.data.description;
@@ -37,7 +37,7 @@ Then('I want to create a VF for this Item', function () {
 		this.context.inputData.tags[0] = result.data.name;
 		this.context.inputData.vendorName = result.data.vendorName;
 		this.context.inputData.csarUUID = this.context.item.id;
-		return util.request(this.context, 'POST', '/catalog/resources', this.context.inputData, false, 'vf');
+		return util.request(this.context, 'POST', '/catalog/resources', this.context.inputData, false, 'catalog');
 	});
 });
 

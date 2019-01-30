@@ -3,15 +3,9 @@
 
   "onboarding" : {
     "port" : "onboarding.port",
-    "prefix" : "sdc1/feProxy/onboarding-api/v1.0",
+    "prefix" : "onboarding-api/v1.0",
     "server" : "onboarding.server",
     "user" : "onboarding.user"
-  },
-  "vf" : {
-    "port" : "vf.port",
-    "prefix" : "sdc1/feProxy/rest/v1",
-    "server" : "vf.server",
-    "user" : "vf.user"
   },
   "catalog" : {
     "port" : "CatalogBE.port",
