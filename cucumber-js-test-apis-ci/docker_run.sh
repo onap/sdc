@@ -22,9 +22,9 @@ echo "Workspace under: $WORKSPACE"
 if [ -z "$TEST_CI_BE_HOST" ]
 then
     TEST_CI_BE_HOST="$(ifconfig  'eth0' | sed -n '2p' | awk '{print $2}' | sed 's/addr://g')"
-    TEST_CI_BE_PORT=8285
+    TEST_CI_BE_PORT=8081
     TEST_CI_CATALOG_HOST=$TEST_CI_BE_HOST
-    TEST_CI_CATALOG_PORT=$TEST_CI_BE_PORT
+    TEST_CI_CATALOG_PORT=8080
     TEST_CI_AP_HOST=$TEST_CI_BE_HOST
     TEST_CI_AP_PORT=8080
 fi
@@ -62,9 +62,6 @@ echo "setting configuration"
 sed -i "s/onboarding.port/$TEST_CI_BE_PORT/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/onboarding.server/$TEST_CI_BE_HOST/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/onboarding.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/vf.port/$TEST_CI_BE_PORT/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/vf.server/$TEST_CI_BE_HOST/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/vf.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/CatalogBE.port/$TEST_CI_CATALOG_PORT/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/CatalogBE.server/$TEST_CI_CATALOG_HOST/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/CatalogBE.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.json

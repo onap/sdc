@@ -58,7 +58,7 @@ function makeType() {
 
 When('I want to create an Operation', function()  {
     let path = '/catalog/' + this.context.component.type + '/' + this.context.component.uniqueId + '/interfaceOperations';
-    let inputData = util.getJSONFromFile('resources/json/interfaceoperation/createInterfaceOperations.json');
+    let inputData = util.getJSONFromFile('resources/json/interfaceOperation/createInterfaceOperations.json');
     var operationName = makeType();
     var interfaceType = makeType();
     inputData.interfaces.interface1.type = interfaceType;
@@ -78,7 +78,7 @@ When('I want to create an Operation', function()  {
 });
 
 When('I want to update an Operation', function () {
-    let inputData = util.getJSONFromFile('resources/json/interfaceoperation/updateInterfaceOperation.json');
+    let inputData = util.getJSONFromFile('resources/json/interfaceOperation/updateInterfaceOperation.json');
     let path = '/catalog/'+ this.context.component.type + '/'+ this.context.component.uniqueId +'/interfaceOperations';
     inputData.interfaces.interface1.operations.delete.uniqueId = this.context.interface.operationUniqueId;
     inputData.interfaces.interface1.type=this.context.interface.interfaceType;
