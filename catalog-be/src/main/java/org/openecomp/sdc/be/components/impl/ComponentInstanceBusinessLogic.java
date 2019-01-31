@@ -27,6 +27,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
@@ -47,6 +49,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
+import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -69,6 +72,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
@@ -135,6 +139,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     private ForwardingPathOperation forwardingPathOperation;
+
+    @Autowired
+    private NodeFilterOperation serviceFilterOperation;
 
     public ComponentInstanceBusinessLogic() {
     }
@@ -718,7 +725,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, containerComponentType.getValue(), origInst.getName()));
                             return resultOp;
                         }
-
                         listForUpdate.add(updatedCi);
                     } else
                         listForUpdate.add(origInst);
@@ -789,8 +795,22 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ", oldComponentInstance.getName(), newInstanceName);
                 resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, containerComponentType.getValue(), componentInstance.getName()));
             }
+            if(!DirectivesUtils.isValid(componentInstance.getDirectives())) {
+                final String directivesStr =
+                        componentInstance.getDirectives().stream().collect(Collectors.joining(" , ", " [ ", " ] "));
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                        "Failed to update the directives of the component instance {} to {}. Directives data {} is invalid. ",
+                        oldComponentInstance.getName(), newInstanceName ,
+                        directivesStr);
+                resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.DIRECTIVES_INVALID_VALUE,
+                        directivesStr));
+            }
         }
+        String newInstanceName = componentInstance.getName();
+        String oldInstanceName = null;
         if (resultOp == null) {
+            oldComponentInstance = componentInstanceOptional.get();
+            newInstanceName = componentInstance.getName();
             updateRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent, origComponent, updateComponentInstanceMetadata(oldComponentInstance, componentInstance));
             if (updateRes.isRight()) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata of component instance {} belonging to container component {}. Status is {}. ", componentInstance.getName(), containerComponent.getName(),
@@ -802,6 +822,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     Either result = toscaOperationFacade.cleanAndAddGroupInstancesToComponentInstance(containerComponent, oldComponentInstance, componentInstanceId);
                     if (result.isRight())
                         CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to rename group instances for container {}. error {} ", componentInstanceId, result.right().value());
+                    if (containerComponent instanceof Service) {
+                        Either<ComponentInstance, ResponseFormat> renameEither =
+                                renameServiceFilter((Service) containerComponent, newInstanceName,
+                                        oldInstanceName);
+                        if (renameEither.isRight()) {
+                            return renameEither;
+                        }
+                    }
                 }
                 // endregion
             }
@@ -822,6 +850,27 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = Either.left(componentInstanceOptional.get());
         }
         return resultOp;
+    }
+
+
+    public Either<ComponentInstance, ResponseFormat> renameServiceFilter(Service containerComponent,
+            String newInstanceName, String oldInstanceName) {
+
+        Map<String, CINodeFilterDataDefinition> renamedNodesFilter =
+                ServiceFilterUtils.getRenamedNodesFilter((Service) containerComponent,
+                        oldInstanceName, newInstanceName);
+        for( Entry<String, CINodeFilterDataDefinition> entry :  renamedNodesFilter.entrySet()){
+            Either<CINodeFilterDataDefinition, StorageOperationStatus>
+                    renameEither = serviceFilterOperation.updateNodeFilter(
+                    containerComponent.getUniqueId(),entry.getKey(),entry.getValue());
+            if (renameEither.isRight()){
+                return  Either.right(componentsUtils.getResponseFormatForResourceInstance(
+                        componentsUtils.convertFromStorageResponse(renameEither.right().value(), ComponentTypeEnum.SERVICE),
+                        containerComponent.getName(), null));
+            }
+
+        }
+        return Either.left(null);
     }
 
     /**
@@ -879,6 +928,23 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<ComponentInstance, ResponseFormat> resultOp = null;
         try {
+            if (containerComponent instanceof Service) {
+                ComponentInstance componentInstance = containerComponent.getComponentInstanceById(componentInstanceId).get();
+                Either<String, StorageOperationStatus> deleteServiceFilterEither =
+                        serviceFilterOperation.deleteNodeFilter((Service) containerComponent, componentInstanceId);
+                if (deleteServiceFilterEither.isRight()) {
+                    ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFilterEither.right().value(),
+                            containerComponentType);
+                    titanDao.rollback();
+                    return Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
+                }
+                resultOp = deleteServiceFiltersRelatedTobeDeletedComponentInstance((Service) containerComponent,
+                        componentInstance, ComponentTypeEnum.SERVICE, userId);
+                if (resultOp.isRight()) {
+                    titanDao.rollback();
+                    return resultOp;
+                }
+            }
             resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
             if (resultOp.isRight()){
                 return resultOp;
@@ -894,6 +960,60 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             unlockComponent(resultOp, containerComponent);
         }
     }
+
+    public Either<ComponentInstance, ResponseFormat> deleteServiceFiltersRelatedTobeDeletedComponentInstance(
+            Service service, ComponentInstance componentInstance, ComponentTypeEnum containerComponentType, String userId) {
+        if (containerComponentType.equals(ComponentTypeEnum.SERVICE)) {
+            Set<String> serviceFiltersIDsToBeDeleted =
+                    getServiceFiltersRelatedToComponentInstance(service.getUniqueId(), componentInstance);
+            if (!serviceFiltersIDsToBeDeleted.isEmpty()) {
+                Set<String> ids = service.getComponentInstances().stream()
+                                         .filter(ci -> serviceFiltersIDsToBeDeleted
+                                                               .contains(ci.getName()))
+                                         .map(ComponentInstance::getUniqueId)
+                                         .collect(Collectors.toSet());
+                Either<Set<String>, StorageOperationStatus> deleteServiceFiltersEither =
+                        serviceFilterOperation.deleteNodeFilters(service, ids);
+                if (deleteServiceFiltersEither.isRight()) {
+                    ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFiltersEither.right().value(),
+                            containerComponentType);
+                    return Either.right(componentsUtils.getResponseFormat(status, componentInstance.getName()));
+                }
+                for (String id : ids) {
+                    final Optional<ComponentInstance> componentInstanceById = service.getComponentInstanceById(id);
+                    if (!componentInstanceById.isPresent()){
+                        return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                    }
+                    ComponentInstance ci = componentInstanceById.get();
+                    List<String> directives = ci.getDirectives();
+                    directives.remove(DirectivesUtils.SELECTABLE);
+                    ci.setDirectives(directives);
+                    final Either<ComponentInstance, ResponseFormat> componentInstanceResponseFormatEither =
+                            updateComponentInstanceMetadata(ComponentTypeEnum.SERVICE_PARAM_NAME, service.getUniqueId(),
+                                    ci.getUniqueId(), userId, ci, true, false, false);
+                    if (componentInstanceResponseFormatEither.isRight()) {
+                        return componentInstanceResponseFormatEither;
+                    }
+                }
+            }
+        }
+        return Either.left(componentInstance);
+    }
+
+
+
+    private Set<String> getServiceFiltersRelatedToComponentInstance(String containerComponentId,
+            ComponentInstance componentInstance) {
+        ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreComponentInstances(false);
+        Either<Service, StorageOperationStatus> serviceFilterOrigin =
+                toscaOperationFacade.getToscaElement(containerComponentId, filter);
+        final Service service = serviceFilterOrigin.left().value();
+        final Set<String> nodesFiltersToBeDeleted = ServiceFilterUtils.getNodesFiltersToBeDeleted(service,
+                componentInstance);
+        return nodesFiltersToBeDeleted;
+    }
+
 
     public Either<ComponentInstance, ResponseFormat> deleteForwardingPathsRelatedTobeDeletedComponentInstance(String containerComponentId, ComponentTypeEnum containerComponentType,
                                                                                                               Either<ComponentInstance, ResponseFormat> resultOp) {

@@ -31,9 +31,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ForwardingPaths;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
@@ -171,6 +174,34 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
+            ComponentInstance resultValue = actionResponse.left().value();
+            if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
+                boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null && resourceInstance.getDirectives().contains(
+                        DirectivesUtils.SELECTABLE);
+                ServiceBusinessLogic
+                        serviceBusinessLogic = (ServiceBusinessLogic) getComponentBL(componentTypeEnum, context);
+
+                if(shouldCreateServiceFilter) {
+                    Either<CINodeFilterDataDefinition, ResponseFormat> either =
+                            serviceBusinessLogic.createIfNotAlreadyExistServiceFilter(componentId, componentInstanceId, userId,
+                                    true);
+                    if (either.isRight()){
+                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to create service filter.");
+                        log.debug("Failed to create service filter.");
+                        return buildErrorResponse(convertResponse.right().value());
+                    }
+                    resultValue.setNodeFilter(either.left().value());
+                } else {
+                    Either<String, ResponseFormat> either = serviceBusinessLogic.deleteIfNotAlreadyDeletedServiceFilter(componentId, componentInstanceId,  userId,true);
+                    if (either.isRight()){
+                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to delete service filter.");
+                        log.debug("Failed to delete service filter.");
+                        return buildErrorResponse(convertResponse.right().value());
+                    }
+                    resultValue.setNodeFilter(null);
+                }
+            }
+
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
         } catch (Exception e) {
