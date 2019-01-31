@@ -25,17 +25,19 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import static java.util.Collections.emptyList;
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -45,37 +47,38 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.MapUtils.isEmpty;
 
-public abstract class Component {
+public abstract class Component implements PropertiesOwner {
 
-    private ComponentMetadataDefinition componentMetadataDefinition;
-    private Map<String, ArtifactDefinition> artifacts;
-    private Map<String, ArtifactDefinition> deploymentArtifacts;
-    private Map<String, ArtifactDefinition> toscaArtifacts;
-    private List<CategoryDefinition> categories;
-    private List<ComponentInstance> componentInstances;
-    private List<RequirementCapabilityRelDef> componentInstancesRelations;
-    private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
-    private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
-    private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
-    private Map<String, List<CapabilityDefinition>> capabilities;
-    private Map<String, List<RequirementDefinition>> requirements;
-    private List<InputDefinition> inputs;
-    private List<GroupDefinition> groups;
-    private Map<String, PolicyDefinition> policies;
-    private String derivedFromGenericType;
-    private String derivedFromGenericVersion;
-    private String toscaType;
-    protected List<AdditionalInformationDefinition> additionalInformation;
-    protected List<PropertyDefinition> properties;
-    private Map<String, InterfaceDefinition> interfaces;
+	private ComponentMetadataDefinition componentMetadataDefinition;
+	private Map<String, ArtifactDefinition> artifacts;
+	private Map<String, ArtifactDefinition> deploymentArtifacts;
+	private Map<String, ArtifactDefinition> toscaArtifacts;
+	private List<CategoryDefinition> categories;
+	private List<ComponentInstance> componentInstances;
+	private List<RequirementCapabilityRelDef> componentInstancesRelations;
+	private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
+	private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
+	private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
+	private Map<String, List<CapabilityDefinition>> capabilities;
+	private Map<String, List<RequirementDefinition>> requirements;
+	private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
+	private List<InputDefinition> inputs;
+	private List<GroupDefinition> groups;
+	private Map<String, PolicyDefinition> policies;
+	private String derivedFromGenericType;
+	private String derivedFromGenericVersion;
+	private String toscaType;
+	protected List<AdditionalInformationDefinition> additionalInformation;
+	protected List<PropertyDefinition> properties;
+	private Map<String, InterfaceDefinition> interfaces;
 
-    public Map<String, InterfaceDefinition> getInterfaces() {
-        return interfaces;
-    }
+	public Map<String, InterfaceDefinition> getInterfaces() {
+		return interfaces;
+	}
 
-    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-        this.interfaces = interfaces;
-    }
+	public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+		this.interfaces = interfaces;
+	}
 
     public Component(ComponentMetadataDefinition componentMetadataDefinition) {
         this.componentMetadataDefinition = componentMetadataDefinition;
@@ -119,9 +122,10 @@ public abstract class Component {
         this.toscaArtifacts = toscaArtifacts;
     }
 
-    public String getUniqueId() {
-        return componentMetadataDefinition.getMetadataDataDefinition().getUniqueId();
-    }
+	@Override
+	public String getUniqueId() {
+		return componentMetadataDefinition.getMetadataDataDefinition().getUniqueId();
+	}
 
     public void setUniqueId(String uniqueId) {
         componentMetadataDefinition.getMetadataDataDefinition().setUniqueId(uniqueId);
@@ -203,9 +207,10 @@ public abstract class Component {
         this.componentMetadataDefinition.getMetadataDataDefinition().setLastUpdaterFullName(lastUpdaterFullName);
     }
 
-    public String getName() {
-        return componentMetadataDefinition.getMetadataDataDefinition().getName();
-    }
+	@Override
+	public String getName() {
+		return componentMetadataDefinition.getMetadataDataDefinition().getName();
+	}
 
     public String getVersion() {
         return componentMetadataDefinition.getMetadataDataDefinition().getVersion();
@@ -317,9 +322,10 @@ public abstract class Component {
         this.categories = categories;
     }
 
-    public String getNormalizedName() {
-        return componentMetadataDefinition.getMetadataDataDefinition().getNormalizedName();
-    }
+	@Override
+	public String getNormalizedName() {
+		return componentMetadataDefinition.getMetadataDataDefinition().getNormalizedName();
+	}
 
     public void setNormalizedName(String normalizedName) {
         componentMetadataDefinition.getMetadataDataDefinition().setNormalizedName(normalizedName);
@@ -355,7 +361,7 @@ public abstract class Component {
     public List<ComponentInstance> getComponentInstances() {
         return componentInstances;
     }
-    
+
     public List<ComponentInstance> safeGetComponentInstances() {
     	if(componentInstances != null) {
     		return componentInstances;
@@ -418,10 +424,14 @@ public abstract class Component {
         return this.safeGetComponentInstanceEntity(comptInstanceId, this.componentInstancesInputs);
     }
 
-    public void setComponentInstancesProperties(
-            Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties) {
-        this.componentInstancesProperties = resourceInstancesProperties;
-    }
+	public List<ComponentInstanceInterface> safeGetComponentInstanceInterfaces(String cmptInstacneId) {
+		return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesInterfaces);
+	}
+
+	public void setComponentInstancesProperties(
+			Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties) {
+		this.componentInstancesProperties = resourceInstancesProperties;
+	}
 
     public Boolean getIsDeleted() {
         return componentMetadataDefinition.getMetadataDataDefinition().isDeleted();
@@ -515,20 +525,28 @@ public abstract class Component {
                      .findAny();
     }
 
-    public void setGroups(List<GroupDefinition> groups) {
-        this.groups = groups;
-    }
+	public Map<String, List<ComponentInstanceInterface>> getComponentInstancesInterfaces() {
+		return componentInstancesInterfaces;
+	}
 
-    public void addGroups(List<GroupDefinition> groupsToAdd) {
-        if (groups == null) {
-            groups = new ArrayList<>();
-        }
-        groups.addAll(groupsToAdd);
-    }
+	public void setComponentInstancesInterfaces(Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces) {
+		this.componentInstancesInterfaces = componentInstancesInterfaces;
+	}
 
-    public Map<String, PolicyDefinition> getPolicies() {
-        return policies;
+	public void setGroups(List<GroupDefinition> groups) {
+		this.groups = groups;
+	}
+
+  public void addGroups(List<GroupDefinition> groupsToAdd) {
+    if (groups == null) {
+      groups = new ArrayList<>();
     }
+    groups.addAll(groupsToAdd);
+  }
+
+	public Map<String, PolicyDefinition> getPolicies() {
+		return policies;
+	}
 
     public void setPolicies(Map<String, PolicyDefinition> policies) {
         this.policies = policies;

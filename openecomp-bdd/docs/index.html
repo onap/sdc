@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  </head>
+
+  <body>
+    <a name="top" id="top">&nbsp;</a>
+<div id="main"><h3> </h3>
+<section>
+        <article><p><br></p>
+<p><h1>Welcome!</h1>
+This is the documentation for using the BDD testing framework for SDC.<br>
+The Modules on the left contains all steps for particalar aress and/or explanations of what they do.<br>
+<br><br></p>
+<p><h3>How to set the server</h3></p>
+<p><li> Create a &quot;devConfig.json&quot; file under the openecomp-bdd directory with the following content and replace the placeholders:
+{
+  &quot;server&quot;: &quot;[YOUR_SERVER]&quot;,
+  &quot;user&quot;: &quot;[USER_ID_FOR_APPLICATION]&quot;
+}</p>
+<p><li> Or set the SERVER and USER environment variables and it will override the configuration file</p>
+<p><h3>How to run with Maven</h3></p>
+<p><li>&quot;mvn install&quot; will install npm if needed, download all modules and create the documentation under the &quot;docs&quot; folder</p>
+<p><li>&quot;mvn test-and-report&quot; will run all  tests in the features folder and create an HTML report under the &quot;reports&quot; folder</p>
+<p><h3>How to develop tests</h3>
+You can open the project in IntelliJ and Webstorm to run and develop scenarios.<br></p>
+<p><li><b>You will need to install the Cucumber.Js plugin</b> In order to install, go to &quot;Settings/Plugins&quot;. If cucumber.js in not on the list, go to &quot;Browse repositories..&quot; and install .</p>
+<p><li>First time only: Right click on feature file and try to run. Now go to &quot;Run/edit configurations&quot; and set the &quot;executable path&quot; to the &quot;node_modules.bin\cucumber-js.cmd&quot; under your current project.</p>
+<p><li>Now you can run the feature files by right clicking on the file and selecting &quot;Run&quot; from IDEA.<br></p>
+<p><li>Add to existing scenarios or create new files under the &quot;features&quot; directory for additional tests
+<br></p>
+<p><li>You can also run a specific test from the command line by running &quot;npm run test -- [features/path to file]</p>
+<p><h3>More Information</h3></p>
+<p><li> More on <a href="https://cucumber.io/docs/reference">Cucumber</a></p>
+<p><li> More on <a herf="https://github.com/cucumber/cucumber/wiki/Gherkin">Gherkin</a></p>
+<p><li> More on <a href="https://github.com/cucumber/cucumber-js">Cucumber-js</a></p></article>
+    </section>
+<section id="module-undefined-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want to add user {string} as a contributor to this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Adds the user with the given user ID as a contributor on the item</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want check user {string} has role {string} on this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Checks the role for a user on the item by User id and Role can be either: Contributor/Owner</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want check user {string} has rno permissions on this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Checks the user wth this Id has no permissions on this item</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want to get the permissions for this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Gets the permissions for the Item</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want to set the user to {string}</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Changes the user for the Rest calls</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want to remove user {string} as a contributor to this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Adds the user with the given user ID as a contributor on the item</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Collaboration">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Collaboration-Collaboration">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Collaboration</h2>
+<div class="description"><b>I want to change the owner to user {string} on this Item</b><br><i> Example Features File: Example_Collaboration.feature</i><br>Changes the owner to the given User ID</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:Context">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Context">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Context</h2>
+<div class="description">Context that is used per feature file and can be accessed as 'this.context' in all steps.<Br><Br>Contains the following items:<br><li>this.context.server <ul>REST server and onboarding prefix including version. set either in configuration file or from the command line or SERVER environment variable</ul><li>this.context.vlm <ul>When a VLM has been created, this has the an id and versionId set to the correct IDs.</ul><li>this.context.vsp <ul>When a VSP has been created, this has the an id and versionId and componentId set to the correct IDs.</ul><li>this.context.item <ul>When a VLM or VSP has been created, this has the an id and versionId set to the correct IDs.</ul><li>this.context <ul>Object with properties that were saved in the steps.</ul><li>this.context.inputdata <ul><b>Automatically updated with the last responseData from the Rest call</b><br>Object with properties that were prepares in the steps.</ul><li>this.context.responseData <ul>Response from the last REST call.</ul></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want the following to fail with error code {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Set this in order to check that the following Rest call will have the error code on the return data</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want to save on the context for {string} property {string} with value {string}</b><br>Copy a property from the response data to context Item/VLM/VSP data, example: vsp.componentId</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want to set property {string} to value {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>This will set the value of a saved property on the context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>Use with "Given". Use ONLY for local testing, creates a response data object</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Response Data::<br>
+    """<br>
+        {jsonObject}<br>
+            """<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>Item {string} and version Id {string}</b><br>Use with "Given". Use ONLY for local testing when you know the value of the Item you want to use
+instead of creating a new one.</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want to print context data</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Use during development to see what is on the context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want the following to fail</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>Set this in order to check that the following Rest call will not have response code 200</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want to save to property {string} from response data path {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>Copy a property from the response data to saved data on the context. Example: save newly generated IDs. Response data value can be from a path, xample: results[0].id</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ContextData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ContextData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ContextData</h2>
+<div class="description"><b>I want the following to fail with error message {string}</b><br><i> Example Features File: DeleteVLMCertified.feature</i><br>Set this in order to check that the following Rest call will have the error message on the return data</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-InputData-InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>I want to update the input property {string} with a random value</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>sets the input data property to a random value</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-InputData-InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>I want to remove {string} from the input data</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>removes a property from the input data object</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-InputData-InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>I want to update the input property {string} with value {string}</b><br><i> Example Features File: Example_Rest_Calls.feature, Example_VLM.feature</i><br>sets the property on the input data to the given value</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-InputData-InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>I want to set the input data to file {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>creates an input data object from the json in the given file</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-InputData-InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>creates an input data element with the given json object</b><br><i> Example Features File: Example_Heat.feature</i><br>I want to set the input data to:<br>    """<br>        {jsonObject}<br>            """<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:InputData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="InputData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>InputData</h2>
+<div class="description"><b>I want to create input data</b><br><i> Example Features File: Example_Rest_Calls.feature, Example_VLM.feature</i><br>creates an ampty input data object</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Item-Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to commit this Item</b><br><i> Example Features File: Example_VSP.feature, Example_VLM.feature</i><br>uses item id and version id from context</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to make sure this Item has status {string}</b><br><i> Example Features File: Example_VSP.feature, Example_VLM.feature</i><br>uses item id and version id from context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Item-Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to restore this item</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Item-Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to archive this item</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Item-Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to commit this Item</b><br><i> Example Features File: Example_VLM.feature</i><br>reverts to a revision with a given saved property. Should be set from the revision list first</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Item">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Item-Item">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Item</h2>
+<div class="description"><b>I want to create a new version for this Item</b><br><i> Example Features File: Example_VLM.feature</i><br>creates a new major version. item id and version id from context</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:NetworkPackage">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="NetworkPackage">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>NetworkPackage</h2>
+<div class="description"><b>I want to upload a NetworkPackage for this VSP from path {string}</b><br><i> Example Features File: Example_HEAT.feature</i><br>Uploads the NetworkPackage file to the VSP on the context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:NetworkPackage">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-NetworkPackage-NetworkPackage">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>NetworkPackage</h2>
+<div class="description"><b>I want to download the NetworkPackage for this VSP to path {string}</b><br><i> Example Features File: Example_HEAT.feature</i><br>Downloads the network package to disk</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:NetworkPackage">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-NetworkPackage-NetworkPackage">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>NetworkPackage</h2>
+<div class="description"><b>I want to process the NetworkPackage file for this VSP</b><br><i> Example Features File: Example_HEAT.feature</i><br>Processes the NetworkPackage file on the server</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Questionnaire">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Questionnaire-Questionnaire">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Questionnaire</h2>
+<div class="description"><b>I want to update this questionnaire</b><br><i> Example Features File: Example_VSP.feature</i><br>Updates the the questionnaire data from the context to the same url that loaded it</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:Questionnaire">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Questionnaire">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Questionnaire</h2>
+<div class="description"><b>I want to get the questionnaire for this item</b><br><i> Example Features File: Example_VSP.feature</i><br>Gets the questionnaire for the current item and saves it on the context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Questionnaire">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Questionnaire-Questionnaire">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Questionnaire</h2>
+<div class="description"><b>I want to get the questionnaire for this component</b><br><i> Example Features File: Example_VSP.feature</i><br>Gets the questionnaire for the current item and component and saves it on the context</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Questionnaire">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Questionnaire-Questionnaire">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Questionnaire</h2>
+<div class="description"><b>I want to update this questionnaire with value {string} for path {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Updates the property for the saved questionnaire</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Questionnaire">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Questionnaire-Questionnaire">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Questionnaire</h2>
+<div class="description"><b>I want to check this questionnaire has value {string} for property {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Checks the questionnaire data on the context for the given value and property</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} for value {string}</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and a value. property can be a path (example: results[0].id)</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description">Check that the itemId from context does NOT exits in result of responseData
+exampleFile ArchiveItem.feature
+step I want to check that item does not exits in response</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ZipData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description">Check that the itemId from context exits in result of responseData
+exampleFile ArchiveItem.feature
+step I want to check that item exits in response</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} does not exist</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and make sure it does not exist</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} exists</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and make sure it exists</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} to have length {int}</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and a boolean. property can be a path (example: results[0].id)</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} to be "True/False"</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and a boolean. property can be a path (example: results[0].id)</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} for value {int}</b><br><i> Example Features File: Example_ResponseData_CheckAndManipulation.feature</i><br>Will check the output data for a property and a integer. property can be a path (example: results[0].id)</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ResponseData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ResponseData-ResponseData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ResponseData</h2>
+<div class="description"><b>I want to check property {string} for value {string}</b><br><i> Example Features File: VirtualMachineInterfaceValidationHeatResourceMissingProperties.feature</i><br>Will check the output data for a property and a value. property can be a path
+(example: results[0].id). Supports comparison to a long String by allowing a line break</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Rest_Calls">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Rest-Calls-Rest-Calls">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Rest_Calls</h2>
+<div class="description"><b>I want to create for path {string} with the input data from the context</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>makes a POST request to the given path and sends the input data from the context (path is appended after the "onboarding-api/v1.0" prefix)<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Rest_Calls">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Rest-Calls-Rest-Calls">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Rest_Calls</h2>
+<div class="description"><b>I want to update for path {string} with the input data from the context</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>makes a PUT request to the given path and sends the input data from the context (path is appended after the "onboarding-api/v1.0" prefix)<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:Rest_Calls">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Rest-Calls">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Rest_Calls</h2>
+<div class="description"><b>I want to get path {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>makes a GET request to the given path (path is appended after the "onboarding-api/v1.0" prefix)<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Rest_Calls">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Rest-Calls-Rest-Calls">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Rest_Calls</h2>
+<div class="description"><b>I want to delete for path {string} with the value from saved property {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>makes a DELETE request to the given path and appends the saved property (path is appended after the "onboarding-api/v1.0" prefix)<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Rest_Calls">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Rest-Calls-Rest-Calls">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Rest_Calls</h2>
+<div class="description"><b>I want to delete for path {string} with the value from saved property {string}</b><br><i> Example Features File: Example_Rest_Calls.feature</i><br>makes a DELETE request to the given path and appends the saved property (path is appended after the "onboarding-api/v1.0" prefix)<br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:Toggle">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-Toggle-Toggle">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Toggle</h2>
+<div class="description"><b>I want to set all Togglz  to be "true/false"</b><br><i> Example Features File: Example_Toggle.feature</i><br>this step will set the status for all toggled features</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:Toggle">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="Toggle">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>Toggle</h2>
+<div class="description"><b>I want to list Togglz</b><br><i> Example Features File: Example_Toggle.feature</i><br>this step will retrun and print to console the list of toggled features with their status</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:VF">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="VF">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VF</h2>
+<div class="description"><b>I want to create a VF for this Item</b><br><i> Example Features File: Example_VSP.feature</i><br>Creates a VF for this Item (does NOT work on localhost). will get the data for the item and then update the inputdata for the VF call.</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:VLM">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="VLM">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VLM</h2>
+<div class="description"><b>I want to create a VLM</b><br><i> Example Features File: Example_VLM.feature</i><br>Creates a new VLM with a random name and saves the id and versionId on the context item object and the context vlm object<br>
+    Input data  will be taken from the 'resources/json/createVLM.json' file.</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VLM">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VLM-VLM">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VLM</h2>
+<div class="description"><b>I want to submit this VLM</b><br><i> Example Features File: Example_VLM.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VLM">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VLM-VLM">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VLM</h2>
+<div class="description"><b>I want to delete this VLM</b><br><i> Example Features File: DeleteVLMDraft.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VLM">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VLM-VLM">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VLM</h2>
+<div class="description"><b>I want to list Archived VLMs</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VLM">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VLM-VLM">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VLM</h2>
+<div class="description"><b>I want to list Active VLMs</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to create a VSP with onboarding type {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Creates a new VSP with the 'NetowrkPackage' onboarding type and with a random name and saves the id and versionId on the context item object and the context vsp object<br>
+    Input data will be taken from the 'resources/json/createVSP.json' file.
+    Vendor id and name are taken from the vlm on the context (requires a VLM to be created first).</div>
+</div>
+</article>
+
+</section>
+<section id="module-undefined-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to create a VSP with onboarding type {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Creates a new VSP with a random name and saves the id and versionId on the context item object and the context vsp object<br>
+    Input data will be taken from the 'resources/json/createVSP.json' file.
+    Vendor id and name are taken from the vlm on the context (requires a VLM to be created first).</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to submit this VSP</b><br><i> Example Features File: Example_VSP.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to package this VSP</b><br><i> Example Features File: Example_VSP.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to add a component</b><br><i> Example Features File: Example_VSP.feature</i><br>Adds a component to the current item</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to get the package for this Item to path {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Downloads the packaged file for this component to the given path</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to delete this VSP</b><br><i> Example Features File: DeleteVSPDraft.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to list Archived VSPs</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to list Active VSPs</b><br><i> Example Features File: ArchiveItem.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to list Archived VSPs packages</b><br><i> Example Features File: FilterArchivedVSPpackage.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to list Active VSPs packages</b><br><i> Example Features File: FilterArchivedVSPpackage.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:VSP">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-VSP-VSP">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>VSP</h2>
+<div class="description"><b>I want to check that VSP package exits in response</b><br><i> Example Features File: FilterArchivedVSPpackage.feature</i><br></div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ZipData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ZipData-ZipData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ZipData</h2>
+<div class="description"><b>I want to load the yaml content of the entry {string} in the zip {string} to context</b><br><i> Example Features File: Example_VSP.feature</i><br>Loads the yaml from zip file onto the context responseData as JSON for running checks on the output</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ZipData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ContextData-ZipData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ZipData</h2>
+<div class="description"><b>I want to compare the content of the entry {string} in the zip {string} with file {string}</b><br><i> Example Features File: Example_VSP.feature</i><br>Use this in order to extract a file from a zip file and to compare it to a local file (string comparison).</div>
+</div>
+</article>
+
+</section>
+<section id="module-inner-module:ZipData">
+  <a href="#top" class="back-to-top">back to top &#8679;</a>
+
+<header id="module-ZipData-ZipData">
+</header>
+
+<article>
+    <div class="container-overview">
+<h2>ZipData</h2>
+<div class="description"><b>I want to load the json content of the entry {string} in the zip {string} to context</b><br><i> Example Features File: Example_VSP.feature</i><br>Loads the json from zip file onto the context responseData for running check son the output</div>
+</div>
+</article>
+
+</section></div>
+<nav><h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="#module-Collaboration-Collaboration">Collaboration</a></li><li><a href="#Context">Context</a></li><li><a href="#module-ContextData-ContextData">ContextData</a></li><li><a href="#InputData">InputData</a></li><li><a href="#module-Item-Item">Item</a></li><li><a href="#module-NetworkPackage-NetworkPackage">NetworkPackage</a></li><li><a href="#module-Questionnaire-Questionnaire">Questionnaire</a></li><li><a href="#module-ResponseData-ResponseData">ResponseData</a></li><li><a href="#module-Rest-Calls-Rest-Calls">Rest_Calls</a></li><li><a href="#Toggle">Toggle</a></li><li><a href="#VF">VF</a></li><li><a href="#module-VLM-VLM">VLM</a></li><li><a href="#module-VSP-VSP">VSP</a></li><li><a href="#module-ZipData-ZipData">ZipData</a></li></ul></nav>
+<br class="clear">
+
+<footer>
+  Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Tue Oct 20 2015 11:57:24 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
