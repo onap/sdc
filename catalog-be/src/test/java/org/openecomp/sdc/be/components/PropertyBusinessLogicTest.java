@@ -23,19 +23,15 @@ package org.openecomp.sdc.be.components;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
@@ -50,27 +46,18 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
+
 import javax.servlet.ServletContext;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.runner.Request.method;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 public class PropertyBusinessLogicTest {
 
@@ -89,20 +76,22 @@ public class PropertyBusinessLogicTest {
     private ComponentsUtils componentsUtils;
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
-
     @Mock
     private UserValidations userValidations;
-
     @Mock
     IGraphLockOperation graphLockOperation;
+    @Mock
+    TitanDao titanDao;
 
     @InjectMocks
     private PropertyBusinessLogic bl = new PropertyBusinessLogic();
     private User user = null;
     private String resourceId = "resourceforproperty.0.1";
-
-    @Mock
-    TitanDao titanDao;
+    private String serviceId = "serviceForProperty.0.1";
+    private static final String interfaceType = "interfaceType";
+    private static final String operationType = "operationType";
+    private static final String operationId = "operationId";
+    private static final String operationId2 = "operationId2";
 
     @Before
     public void setup() {
@@ -144,7 +133,7 @@ public class PropertyBusinessLogicTest {
         resource.setUniqueId(resourceId);
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> nonExistingProperty = bl.getProperty(resourceId, "NonExistingProperty", user.getUserId());
+        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> nonExistingProperty = bl.getComponentProperty(resourceId, "NonExistingProperty", user.getUserId());
         assertTrue(nonExistingProperty.isRight());
         Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, "");
     }
@@ -158,7 +147,7 @@ public class PropertyBusinessLogicTest {
         resource.setUniqueId(resourceId);
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> notFoundProperty = bl.getProperty(resourceId, "invalidId", user.getUserId());
+        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> notFoundProperty = bl.getComponentProperty(resourceId, "invalidId", user.getUserId());
         assertTrue(notFoundProperty.isRight());
         Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, "");
     }
@@ -171,10 +160,104 @@ public class PropertyBusinessLogicTest {
         resource.setProperties(Arrays.asList(property1));
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> foundProperty = bl.getProperty(resourceId, property1.getUniqueId(), user.getUserId());
+        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> foundProperty = bl.getComponentProperty(resourceId, property1.getUniqueId(), user.getUserId());
         assertTrue(foundProperty.isLeft());
         assertEquals(foundProperty.left().value().getValue().getUniqueId(), property1.getUniqueId());
     }
+
+    @Test
+    public void testGetPropertyFromService() {
+        Service service = new Service();
+        service.setUniqueId(serviceId);
+
+        PropertyDefinition property1 = createPropertyObject("someProperty", null);
+        service.setProperties(Arrays.asList(property1));
+
+        Mockito.when(toscaOperationFacade.getToscaElement(serviceId)).thenReturn(Either.left(service));
+        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> serviceProperty =
+            bl.getComponentProperty(serviceId, property1.getUniqueId(), user.getUserId());
+
+        assertTrue(serviceProperty.isLeft());
+        assertEquals(serviceProperty.left().value().getValue().getUniqueId(), property1.getUniqueId());
+    }
+
+    @Test
+    public void testPropertyNotFoundOnService() {
+        Service service = new Service();
+        service.setUniqueId(serviceId);
+
+        PropertyDefinition property1 = createPropertyObject("someProperty", null);
+        service.setProperties(Arrays.asList(property1));
+
+        Mockito.when(toscaOperationFacade.getToscaElement(serviceId)).thenReturn(Either.left(service));
+        Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> serviceProperty =
+            bl.getComponentProperty(serviceId, "notExistingPropId", user.getUserId());
+
+        assertTrue(serviceProperty.isRight());
+    }
+
+    @Test
+    public void isPropertyUsedByComponentInterface(){
+        Service service = new Service();
+        service.setUniqueId(serviceId);
+        service.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType));
+
+        PropertyDefinition propDef1 = new PropertyDefinition();
+        propDef1.setUniqueId("ComponentInput1_uniqueId");
+        assertTrue(bl.isPropertyUsedByOperation(service, propDef1));
+
+        PropertyDefinition propDef2 = new PropertyDefinition();
+        propDef1.setUniqueId("inputId2");
+        Mockito.when(toscaOperationFacade.getParentComponents(serviceId)).thenReturn(Either.left(new ArrayList<>()));
+        assertFalse(bl.isPropertyUsedByOperation(service, propDef2));
+    }
+
+    @Test
+    public void isPropertyUsedByComponentInstanceInterface(){
+        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType);
+        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType, newInterfaceDefinition.get(interfaceType));
+
+        Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces = new HashMap<>();
+        componentInstanceInterfaces.put("Test", Arrays.asList(componentInstanceInterface));
+
+        Service service = new Service();
+        service.setUniqueId(serviceId);
+        service.setComponentInstancesInterfaces(componentInstanceInterfaces);
+
+        PropertyDefinition propDef1 = new PropertyDefinition();
+        propDef1.setUniqueId("ComponentInput1_uniqueId");
+        assertTrue(bl.isPropertyUsedByOperation(service, propDef1));
+
+        PropertyDefinition propDef2 = new PropertyDefinition();
+        propDef1.setUniqueId("inputId2");
+        Mockito.when(toscaOperationFacade.getParentComponents(serviceId)).thenReturn(Either.left(new ArrayList<>()));
+        assertFalse(bl.isPropertyUsedByOperation(service, propDef2));
+    }
+
+    @Test
+    public void isPropertyUsedByComponentParentComponentInstanceInterface(){
+        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType);
+        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType, newInterfaceDefinition.get(interfaceType));
+
+        Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces = new HashMap<>();
+        componentInstanceInterfaces.put("Test", Arrays.asList(componentInstanceInterface));
+
+        Service parentService = new Service();
+        parentService.setComponentInstancesInterfaces(componentInstanceInterfaces);
+        Service childService = new Service();
+        childService.setUniqueId(serviceId);
+
+        PropertyDefinition propDef1 = new PropertyDefinition();
+        propDef1.setUniqueId("ComponentInput1_uniqueId");
+        Mockito.when(toscaOperationFacade.getParentComponents(serviceId)).thenReturn(Either.left(Arrays.asList(parentService)));
+        assertTrue(bl.isPropertyUsedByOperation(childService, propDef1));
+
+        PropertyDefinition propDef2 = new PropertyDefinition();
+        propDef1.setUniqueId("inputId2");
+        Mockito.when(toscaOperationFacade.getParentComponents(serviceId)).thenReturn(Either.left(new ArrayList<>()));
+        assertFalse(bl.isPropertyUsedByOperation(childService, propDef2));
+    }
+
 
     private PropertyDefinition createPropertyObject(String propertyName, String resourceId) {
         PropertyDefinition pd = new PropertyDefinition();
@@ -193,7 +276,8 @@ public class PropertyBusinessLogicTest {
     public void deleteProperty_CONNECTION_FAILURE() {
         StorageOperationStatus lockResult = StorageOperationStatus.CONNECTION_FAILURE;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        assertTrue(bl.deleteProperty("resourceforproperty.0.1", "someProperty","i726").isRight());
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(new Resource()));
+        assertTrue(bl.deletePropertyFromComponent("resourceforproperty.0.1", "someProperty","i726").isRight());
     }
 
     @Test
@@ -229,7 +313,7 @@ public class PropertyBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 
-        assertTrue(bl.deleteProperty("RES01", "someProperty","i726").isRight());
+        assertTrue(bl.deletePropertyFromComponent("RES01", "someProperty","i726").isRight());
     }
 
     @Test
@@ -265,7 +349,7 @@ public class PropertyBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 
-        assertTrue(bl.deleteProperty("RES01", "someProperty","i726").isRight());
+        assertTrue(bl.deletePropertyFromComponent("RES01", "someProperty","i726").isRight());
     }
 
     @Test
@@ -299,8 +383,9 @@ public class PropertyBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-        when(toscaOperationFacade.deletePropertyOfResource(anyObject(),anyString())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.deletePropertyOfComponent(anyObject(),anyString())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getParentComponents(anyString())).thenReturn(Either.left(new ArrayList<>()));
 
-        assertTrue(bl.deleteProperty("RES01", "PROP","USR01").isRight());
+        assertTrue(bl.deletePropertyFromComponent("RES01", "PROP","USR01").isRight());
     }
 }

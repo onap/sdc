@@ -1139,7 +1139,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         return Either.left(requirementCapabilityRelDef);
     }
 
-    private <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
+    public  <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
         try {
             log.trace("convert json to object. json=\n {}", data);
             T t;

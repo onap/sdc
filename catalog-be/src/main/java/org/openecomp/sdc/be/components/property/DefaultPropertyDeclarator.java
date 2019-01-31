@@ -87,20 +87,44 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     }
 
     private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
-        String generatedInputName = generateInputName(propertiesOwner.getNormalizedName(), propInput);
+        String generatedInputName = generateInputName(propertiesOwner instanceof
+                Service ? null : propertiesOwner.getNormalizedName(),
+            propInput);
         return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
     }
 
     private String generateInputName(String inputName, ComponentInstancePropInput propInput) {
+        String declaredInputName = inputName;
         String[] parsedPropNames = propInput.getParsedPropNames();
+
         if(parsedPropNames != null){
-            for(String str: parsedPropNames){
-                inputName += "_"  + str;
-            }
+            declaredInputName = handleInputName(inputName, parsedPropNames);
         } else {
-            inputName += "_"  + propInput.getName();
+            String[] propName = {propInput.getName()};
+            declaredInputName = handleInputName(inputName, propName);
         }
-        return inputName;
+
+        return declaredInputName;
+    }
+
+    private String handleInputName(String inputName, String[] parsedPropNames) {
+        String prefix;
+        int startingIndex;
+
+        if(Objects.isNull(inputName)) {
+            prefix = parsedPropNames[0];
+            startingIndex = 1;
+        } else {
+            prefix = inputName;
+            startingIndex = 0;
+        }
+
+        while(startingIndex < parsedPropNames.length){
+            prefix += "_"  + parsedPropNames[startingIndex];
+            startingIndex ++;
+        }
+
+        return prefix;
     }
 
     private PropertyDataDefinition resolveProperty(List<PROPERTYTYPE> propertiesToCreate, ComponentInstancePropInput propInput) {
@@ -131,14 +155,20 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         input.setPropertyId(propInput.getUniqueId());
         input.setValue(null);
         changePropertyValueToGetInputValue(inputName, parsedPropNames, input, prop, complexProperty);
-        ((IComponentInstanceConnectedElement)prop).setComponentInstanceId(propertiesOwner.getUniqueId());
-        ((IComponentInstanceConnectedElement)prop).setComponentInstanceName(propertiesOwner.getName());
+
+        if(prop instanceof IComponentInstanceConnectedElement) {
+            ((IComponentInstanceConnectedElement) prop)
+                .setComponentInstanceId(propertiesOwner.getUniqueId());
+            ((IComponentInstanceConnectedElement) prop)
+                .setComponentInstanceName(propertiesOwner.getName());
+        }
         return input;
     }
 
     private void changePropertyValueToGetInputValue(String inputName, String[] parsedPropNames, InputDefinition input, PropertyDataDefinition prop, boolean complexProperty) {
         JSONObject jobject = new JSONObject();
-        if(prop.getValue() == null || prop.getValue().isEmpty()){
+        String value = (String) prop.getValue();
+        if(value == null || value.isEmpty()){
             if(complexProperty){
 
                 jobject = createJSONValueForProperty(parsedPropNames.length -1, parsedPropNames, jobject, inputName);
@@ -153,7 +183,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
         }else{
 
-            String value = prop.getValue();
+            //String value = value;
             Object objValue =  new Yaml().load(value);
             if( objValue instanceof Map || objValue  instanceof List){
                 if(!complexProperty){

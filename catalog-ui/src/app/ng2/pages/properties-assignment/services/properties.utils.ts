@@ -75,6 +75,14 @@ export class PropertiesUtils {
         return instanceFePropertiesMap;
     }
 
+    public convertAddPropertyBAToPropertyFE = (property: PropertyBEModel):PropertyFEModel => {
+        let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
+        this.initValueObjectRef(newFEProp);
+        newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
+        this.dataTypeService.checkForCustomBehavior(newFEProp);
+        return newFEProp;
+    }
+
     public createListOrMapChildren = (property:PropertyFEModel | DerivedFEProperty, key: string, valueObj: any): Array<DerivedFEProperty> => {
         let newProps: Array<DerivedFEProperty> = [];
         let parentProp = new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);

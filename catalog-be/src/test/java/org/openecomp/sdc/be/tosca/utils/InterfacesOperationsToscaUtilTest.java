@@ -122,7 +122,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, false);
+        addInterfaceDefinitionElement(component, nodeType, null, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
@@ -153,7 +153,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, false);
+        addInterfaceDefinitionElement(component, nodeType, null, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("testService");
@@ -183,7 +183,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, false);
+        addInterfaceDefinitionElement(component, nodeType, null, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
@@ -218,7 +218,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(addedInterfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, false);
+        addInterfaceDefinitionElement(component, nodeType, null, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
@@ -266,7 +266,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.getInterfaces().put(secondInterfaceType, secondInterface);
 
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, false);
+        addInterfaceDefinitionElement(component, nodeType, null,false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
