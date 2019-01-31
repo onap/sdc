@@ -42,12 +42,15 @@ public class Resource extends Component {
 
     private List<PropertyDefinition> attributes;
 
-    private List<String> defaultCapabilities;
-    
-    public Resource() {
-        super(new ResourceMetadataDefinition());
-        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
-    }
+  private Map<String, InterfaceInstanceDefinition> instInterfaces;
+
+  private List<String> defaultCapabilities;
+
+  public Resource() {
+    super(new ResourceMetadataDefinition());
+    this.getComponentMetadataDefinition().getMetadataDataDefinition()
+        .setComponentType(ComponentTypeEnum.RESOURCE);
+  }
 
     public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
         super(componentMetadataDefinition);
@@ -101,10 +104,20 @@ public class Resource extends Component {
         this.attributes = attributes;
     }
 
-    public Boolean isAbstract() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .isAbstract();
-    }
+  public Map<String, InterfaceInstanceDefinition> getInstInterfaces() {
+    return instInterfaces;
+  }
+
+  public void setInstInterfaces(
+      Map<String, InterfaceInstanceDefinition> instInterfaces) {
+    this.instInterfaces = instInterfaces;
+  }
+
+  public Boolean isAbstract() {
+    return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition()
+        .getMetadataDataDefinition())
+        .isAbstract();
+  }
 
     public void setAbstract(Boolean isAbstract) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())

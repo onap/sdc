@@ -23,8 +23,27 @@ package org.openecomp.sdc.be.servlets;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import org.openecomp.sdc.be.components.impl.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
@@ -35,8 +54,11 @@ import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -51,8 +73,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class BeGenericServlet extends BasicServlet {
@@ -79,8 +105,8 @@ public class BeGenericServlet extends BasicServlet {
 
     private static Response buildOkResponseStatic(Object entity) {
         return Response.status(Response.Status.OK)
-                .entity(entity)
-                .build();
+            .entity(entity)
+            .build();
     }
 
     protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
@@ -215,8 +241,8 @@ public class BeGenericServlet extends BasicServlet {
     protected String getContentDispositionValue(String artifactFileName) {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
     }
-    
-    
+
+
 
     protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
         ComponentBusinessLogic businessLogic;
@@ -243,8 +269,8 @@ public class BeGenericServlet extends BasicServlet {
     <T> void convertJsonToObjectOfClass(String json, Wrapper<T> policyWrapper, Class<T> clazz, Wrapper<Response> errorWrapper) {
         T object = null;
         ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
             log.trace("Starting to convert json to object. Json=\n{}", json);
 
@@ -265,5 +291,144 @@ public class BeGenericServlet extends BasicServlet {
             log.debug("The exception {} occured upon json to object convertation. Json=\n{}", e, json);
             errorWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
         }
+    }
+
+    protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String componentId,
+                                                                                     String data) {
+        JSONParser parser = new JSONParser();
+        JSONObject root;
+        try {
+            Map<String, PropertyDefinition> properties = new HashMap<String, PropertyDefinition>();
+            root = (JSONObject) parser.parse(data);
+
+            Set entrySet = root.entrySet();
+            Iterator iterator = entrySet.iterator();
+            while (iterator.hasNext()) {
+                Entry next = (Entry) iterator.next();
+                String propertyName = (String) next.getKey();
+                JSONObject value = (JSONObject) next.getValue();
+                String jsonString = value.toJSONString();
+                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
+                if (convertJsonToObject.isRight()) {
+                    return Either.right(convertJsonToObject.right().value());
+                }
+                PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
+                String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, (String) propertyName);
+                propertyDefinition.setUniqueId(uniqueId);
+                properties.put(propertyName, propertyDefinition);
+            }
+
+            return Either.left(properties);
+        } catch (ParseException e) {
+            log.info("Property conetnt is invalid - {}", data);
+            return Either.right(ActionStatus.INVALID_CONTENT);
+        }
+    }
+
+    protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertiesListForUpdate(String data) {
+
+        Map<String, PropertyDefinition> properties = new HashMap<>();
+        JSONParser parser = new JSONParser();
+        JSONArray jsonArray;
+
+        try {
+            jsonArray = (JSONArray) parser.parse(data);
+            for (Object jsonElement : jsonArray) {
+                String propertyAsString = jsonElement.toString();
+                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(propertyAsString, PropertyDefinition.class);
+
+                if (convertJsonToObject.isRight()) {
+                    return Either.right(convertJsonToObject.right().value());
+                }
+
+                PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
+                properties.put(propertyDefinition.getName(), propertyDefinition);
+            }
+
+            return Either.left(properties);
+        } catch (Exception e) {
+            log.info("Property content is invalid - {}", data);
+            return Either.right(ActionStatus.INVALID_CONTENT);
+        }
+
+    }
+
+
+    protected String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
+        JSONObject root = new JSONObject();
+        String propertyName = property.getKey();
+        PropertyDefinition propertyDefinition = property.getValue();
+        JSONObject propertyDefinitionO = getPropertyDefinitionJSONObject(propertyDefinition);
+        root.put(propertyName, propertyDefinitionO);
+        propertyDefinition.getType();
+        return root.toString();
+    }
+
+    private JSONObject getPropertyDefinitionJSONObject(PropertyDefinition propertyDefinition) {
+
+        Either<String, ActionStatus> either = convertObjectToJson(propertyDefinition);
+        if (either.isRight()) {
+            return new JSONObject();
+        }
+        String value = either.left().value();
+        try {
+            JSONObject root = (JSONObject) new JSONParser().parse(value);
+            return root;
+        } catch (ParseException e) {
+            log.info("failed to convert input to json");
+            log.debug("failed to convert to json", e);
+            return new JSONObject();
+        }
+
+    }
+
+    protected  <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
+        T t = null;
+        Type constraintType = new TypeToken<PropertyConstraint>() {
+        }.getType();
+        Gson
+            gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
+        try {
+            log.trace("convert json to object. json=\n {}", data);
+            t = gson.fromJson(data, clazz);
+            if (t == null) {
+                log.info("object is null after converting from json");
+                return Either.right(ActionStatus.INVALID_CONTENT);
+            }
+        } catch (Exception e) {
+            // INVALID JSON
+            log.info("failed to convert from json");
+            log.debug("failed to convert from json", e);
+            return Either.right(ActionStatus.INVALID_CONTENT);
+        }
+        return Either.left(t);
+    }
+
+    private <T> Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
+        Type constraintType = new TypeToken<PropertyConstraint>() {
+        }.getType();
+        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();
+        try {
+            log.trace("convert object to json. propertyDefinition= {}", propertyDefinition);
+            String json = gson.toJson(propertyDefinition);
+            if (json == null) {
+                log.info("object is null after converting to json");
+                return Either.right(ActionStatus.INVALID_CONTENT);
+            }
+            return Either.left(json);
+        } catch (Exception e) {
+            // INVALID JSON
+            log.info("failed to convert to json");
+            log.debug("failed to convert fto json", e);
+            return Either.right(ActionStatus.INVALID_CONTENT);
+        }
+
+    }
+
+    protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
+        return propertytBl;
     }
 }

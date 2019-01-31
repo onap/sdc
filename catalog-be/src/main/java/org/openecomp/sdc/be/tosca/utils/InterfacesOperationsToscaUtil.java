@@ -30,6 +30,7 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
@@ -103,6 +104,7 @@ public class InterfacesOperationsToscaUtil {
      * @param nodeType  to which the interfaces element will be added
      */
     public static void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType,
+                                                     Map<String, DataTypeDefinition> dataTypes,
                                                      boolean isAssociatedResourceComponent) {
         if (component instanceof Product) {
             return;
@@ -111,6 +113,28 @@ public class InterfacesOperationsToscaUtil {
         if (MapUtils.isEmpty(interfaces)) {
             return;
         }
+        Map<String, Object> toscaInterfaceDefinitions = getInterfacesMap(component, dataTypes,
+                isAssociatedResourceComponent);
+        if (MapUtils.isNotEmpty(toscaInterfaceDefinitions)) {
+            nodeType.setInterfaces(toscaInterfaceDefinitions);
+        }
+    }
+
+    private static Map<String, Object> getInterfacesMap(Component component,
+                                                        Map<String, DataTypeDefinition> dataTypes,
+                                                        boolean isAssociatedResourceComponent) {
+        return getInterfacesMap(component, component.getInterfaces(), dataTypes, isAssociatedResourceComponent, false);
+    }
+
+    public static Map<String, Object> getInterfacesMap(Component component,
+                                                       Map<String, InterfaceDefinition> interfaces,
+                                                       Map<String, DataTypeDefinition> dataTypes,
+                                                       boolean isAssociatedResourceComponent,
+                                                       boolean isServiceProxyInterface) {
+        if(MapUtils.isEmpty(interfaces)) {
+            return null;
+        }
+
         Map<String, Object> toscaInterfaceDefinitions = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceDefinition toscaInterfaceDefinition = new ToscaInterfaceDefinition();
@@ -137,13 +161,46 @@ public class InterfacesOperationsToscaUtil {
             toscaInterfaceDefinition.setOperations(toscaOperations);
             Map<String, Object> interfaceDefAsMap = getObjectAsMap(toscaInterfaceDefinition);
             Map<String, Object> operationsMap = (Map<String, Object>) interfaceDefAsMap.remove(OPERATIONS_KEY);
-            handleDefaults(operationsMap);
+            if (isServiceProxyInterface) {
+                handleServiceProxyOperationInputValue(operationsMap, interfaceType);
+            } else {
+                handleDefaults(operationsMap);
+            }
             interfaceDefAsMap.putAll(operationsMap);
             toscaInterfaceDefinitions.put(getLastPartOfName(interfaceType), interfaceDefAsMap);
         }
-        if (MapUtils.isNotEmpty(toscaInterfaceDefinitions)) {
-            nodeType.setInterfaces(toscaInterfaceDefinitions);
+
+        return toscaInterfaceDefinitions;
+    }
+
+    private static void handleServiceProxyOperationInputValue(Map<String, Object> operationsMap, String parentKey) {
+        for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
+            final Object value = operationEntry.getValue();
+            final String key = operationEntry.getKey();
+            if (value instanceof Map) {
+                if ("inputs".equals(parentKey)) {
+                    Object defaultValue = getDefaultValue((Map<String, Object>) value);
+                    operationsMap.put(key, defaultValue);
+                } else {
+                    handleServiceProxyOperationInputValue((Map<String, Object>) value, key);
+                }
+            }
         }
+    }
+
+    private static Object getDefaultValue(Map<String, Object> inputValueMap) {
+        Object defaultValue = null;
+        for (Map.Entry<String, Object> operationEntry : inputValueMap.entrySet()) {
+            final Object value = operationEntry.getValue();
+            if (value instanceof Map) {
+                getDefaultValue((Map<String, Object>) value);
+            }
+            final String key = operationEntry.getKey();
+            if (key.equals(DEFAULTP)) {
+                defaultValue = inputValueMap.remove(key);
+            }
+        }
+        return defaultValue;
     }
 
     /*

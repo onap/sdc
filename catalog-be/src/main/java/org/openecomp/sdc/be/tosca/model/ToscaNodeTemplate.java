@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import org.apache.commons.collections.MapUtils;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,7 @@ public class ToscaNodeTemplate {
     private Map<String, Object> properties;
     private List<Map<String, ToscaTemplateRequirement>> requirements;
     private Map<String, ToscaTemplateCapability> capabilities;
+    private Map<String, Object> interfaces;
 
     public String getType() {
         return type;
@@ -78,4 +82,17 @@ public class ToscaNodeTemplate {
   public void setDescription(String description) {
     this.description = description;
   }
+
+    public void setInterfaces(
+            Map<String, Object> interfaces) {
+        this.interfaces = interfaces;
+    }
+
+    public void addInterface(String interfaceName, Object interfaceDataDefinition) {
+        if (MapUtils.isEmpty(this.interfaces)) {
+            this.interfaces = new HashMap<>();
+        }
+
+        this.interfaces.put(interfaceName, interfaceDataDefinition);
+    }
 }
