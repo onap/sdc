@@ -34,6 +34,23 @@
       "revId": "c945433b5171c2355f6a4e65276307da37630717",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2c601c00",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/dynamic-input/dynamic-input.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 3843
+      },
+      "writtenOn": "2019-01-31T14:01:01Z",
+      "side": 1,
+      "message": "Can be extracted to separate method",
+      "revId": "c945433b5171c2355f6a4e65276307da37630717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
