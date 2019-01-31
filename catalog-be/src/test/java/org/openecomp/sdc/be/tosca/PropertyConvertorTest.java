@@ -37,12 +37,12 @@ public class PropertyConvertorTest {
     	
     	property.setSchema(schema);
     	
-    	PropertyConvertor.getInstance().convertProperty(dataTypes, property, true);
+    	PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
     }
 
     @Test
     public void convertPropertyWhenValueAndDefaultNull() {
-        ToscaProperty prop = PropertyConvertor.getInstance().convertProperty(dataTypes, property, false);
+        ToscaProperty prop = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
         assertNotNull(prop);
         assertNull(prop.getDefaultp());
     }
@@ -51,7 +51,7 @@ public class PropertyConvertorTest {
     public void convertPropertyWhenValueNullAndDefaultNotEmpty() {
         final String def = "1";
         property.setDefaultValue(def);
-        ToscaProperty result = PropertyConvertor.getInstance().convertProperty(dataTypes, property, false);
+        ToscaProperty result = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
         assertNotNull(result);
         assertEquals(Integer.valueOf(def), result.getDefaultp());
     }
@@ -129,7 +129,7 @@ public class PropertyConvertorTest {
                 .setDefaultValue("::")
                 .setType(ToscaPropertyType.STRING.getType())
                 .build();
-        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, false);
+        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("::");
     }
 
@@ -139,7 +139,7 @@ public class PropertyConvertorTest {
                 .setDefaultValue("/")
                 .setType(ToscaPropertyType.STRING.getType())
                 .build();
-        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, false);
+        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
     }
     

@@ -103,7 +103,7 @@ public class InterfaceOperationTestUtils {
     }
 
     public static Map<String, InterfaceDefinition> createMockInterfaceTypeMap(String interfaceType,
-            String operationType) {
+                                                                              String operationType) {
         Map<String, Operation> operationMap = createMockOperationTypeMap(operationType);
         Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
         interfaceDefinitionMap.put(interfaceType,
@@ -118,5 +118,4 @@ public class InterfaceOperationTestUtils {
         operationMap.put(operationType, operation);
         return operationMap;
     }
-
 }

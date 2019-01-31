@@ -25,6 +25,8 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.MapInterfaceDataDefinition;
+import org.openecomp.sdc.be.model.MapInterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 
 import java.util.HashMap;
@@ -54,6 +56,8 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, MapArtifactDataDefinition> instDeploymentArtifacts;
     private Map<String, MapArtifactDataDefinition> instanceArtifacts;
     private Map<String, InterfaceDataDefinition> interfaces;
+    private Map<String, MapInterfaceInstanceDataDefinition> instInterfaces;
+    private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
     
     //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
@@ -75,6 +79,43 @@ public class TopologyTemplate extends ToscaElement{
     public void setInterfaces(Map<String, InterfaceDataDefinition> interfaces) {
       this.interfaces = interfaces;
     }
+
+    public Map<String, MapInterfaceInstanceDataDefinition> getInstInterfaces() {
+        return instInterfaces;
+    }
+
+    public void setInstInterfaces(
+            Map<String, MapInterfaceInstanceDataDefinition> instInterfaces) {
+        this.instInterfaces = instInterfaces;
+    }
+
+    public void addInstInterface(String compId, MapInterfaceInstanceDataDefinition
+            mapInterfaceInstanceDataDefinition) {
+        if(MapUtils.isEmpty(this.instInterfaces)) {
+            this.instInterfaces = new HashMap<>();
+        }
+
+        this.instInterfaces.put(compId, mapInterfaceInstanceDataDefinition);
+    }
+
+    public Map<String, MapInterfaceDataDefinition> getComponentInstInterfaces() {
+        return componentInstInterfaces;
+    }
+
+    public void setComponentInstInterfaces(
+            Map<String, MapInterfaceDataDefinition> componentInstInterfaces) {
+        this.componentInstInterfaces = componentInstInterfaces;
+    }
+
+    public void addComponentInstanceInterfaceMap(String componentInstanceId, MapInterfaceDataDefinition
+            mapInterfaceDataDefinition) {
+        if(MapUtils.isEmpty(this.componentInstInterfaces)) {
+            this.componentInstInterfaces = new HashMap<>();
+        }
+
+        this.componentInstInterfaces.put(componentInstanceId, mapInterfaceDataDefinition);
+    }
+
 
     public Map<String, PropertyDataDefinition> getInputs() {
         return inputs;

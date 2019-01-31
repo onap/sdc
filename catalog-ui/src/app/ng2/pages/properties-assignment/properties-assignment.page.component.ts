@@ -38,12 +38,14 @@ import {ComponentModeService} from "../../services/component-services/component-
 import {ModalService} from "../../services/modal.service";
 import {Tabs, Tab} from "../../components/ui/tabs/tabs.component";
 import {InputsUtils} from "./services/inputs.utils";
+import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import { InstanceFeDetails } from "../../../models/instance-fe-details";
 import { SdcUiComponents } from "sdc-ui/lib/angular";
 //import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
 import { IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
 import { UnsavedChangesComponent } from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
 
+const SERVICE_SELF_TITLE = "SELF";
 @Component({
     templateUrl: './properties-assignment.page.component.html',
     styleUrls: ['./properties-assignment.page.component.less']
@@ -84,6 +86,7 @@ export class PropertiesAssignmentComponent {
     isValidChangedData:boolean;
     savingChangedData:boolean;
     stateChangeStartUnregister:Function;
+    serviceBePropertiesMap: InstanceBePropertiesMap;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -132,7 +135,7 @@ export class PropertiesAssignmentComponent {
                 });
                 this.loadingInputs = false;
 
-            }, error => {}); //ignore error
+            });
         this.componentServiceNg2
             .getComponentResourcePropertiesData(this.component)
             .subscribe(response => {
@@ -140,6 +143,12 @@ export class PropertiesAssignmentComponent {
                 this.instances.push(...response.componentInstances);
                 this.instances.push(...response.groupInstances);
                 this.instances.push(...response.policies);
+
+                // add the service self instance to the top of the list.
+                const serviceInstance = new ComponentInstance();
+                serviceInstance.name = SERVICE_SELF_TITLE;
+                serviceInstance.uniqueId = this.component.uniqueId;
+                this.instances.unshift(serviceInstance);
 
                 _.forEach(this.instances, (instance) => {
                     this.instancesNavigationData.push(instance);
@@ -150,7 +159,7 @@ export class PropertiesAssignmentComponent {
                     this.loadingProperties = false;
                 }
                 this.selectFirstInstanceByDefault();
-            }, error => {}); //ignore error
+            });
 
         this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
             // stop if has changed properties
@@ -183,6 +192,23 @@ export class PropertiesAssignmentComponent {
         this.updateViewMode();
     }
 
+    isSelf = ():boolean => {
+        return this.selectedInstanceData && this.selectedInstanceData.uniqueId == this.component.uniqueId;
+    }
+
+    getServiceProperties(){
+        this.loadingProperties = false;
+        this.componentServiceNg2
+            .getServiceProperties(this.component)
+            .subscribe(response => {
+                this.serviceBePropertiesMap = new InstanceBePropertiesMap();
+                this.serviceBePropertiesMap[this.component.uniqueId] = response;
+                this.processInstancePropertiesResponse(this.serviceBePropertiesMap, false);
+                this.loadingProperties = false;
+            }, error => {
+                this.loadingProperties = false;
+            });
+    }
 
     onInstanceSelectedUpdate = (instance: ComponentInstance|GroupInstance|PolicyInstance) => {
         // stop if has changed properties
@@ -210,6 +236,8 @@ export class PropertiesAssignmentComponent {
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
+            } else if (this.isSelf()) {
+                this.getServiceProperties();
             } else {
                 this.componentInstanceServiceNg2
                     .getComponentInstanceProperties(this.component, instance.uniqueId)
@@ -391,7 +419,7 @@ export class PropertiesAssignmentComponent {
         let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
         this.componentServiceNg2
-            .createInput(this.component, inputsToCreate)
+            .createInput(this.component, inputsToCreate, this.isSelf())
             .subscribe(response => {
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
@@ -439,8 +467,12 @@ export class PropertiesAssignmentComponent {
                             console.log('updated instance inputs:', response);
                         };
                     } else {
-                        request = this.componentInstanceServiceNg2
-                            .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties)
+                        if (this.isSelf()) {
+                            request = this.componentServiceNg2.updateServiceProperties(this.component, changedProperties);
+                        } else {
+                            request = this.componentInstanceServiceNg2
+                                .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                        }
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resProp) => {
@@ -650,7 +682,57 @@ export class PropertiesAssignmentComponent {
             }, error => {}); //ignore error
     };
 
+    deleteProperty = (property: PropertyFEModel) => {
+        let propertyToDelete = new PropertyFEModel(property);
+        this.loadingProperties = true;
+        let feMap = this.instanceFePropertiesMap;
+        this.componentServiceNg2
+            .deleteServiceProperty(this.component, propertyToDelete)
+            .subscribe(response => {
+                const props = feMap[this.component.uniqueId];
+                props.splice(props.findIndex(p => p.uniqueId === response),1);
+                this.loadingProperties = false;
+            }, error => {
+                this.loadingProperties = false;
+                console.error(error);
+            });
+    };
 
+    /*** addProperty ***/
+    addProperty = () => {
+        let modalTitle = 'Add Property';
+        const modal = this.ModalService.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            [
+                new ButtonModel('Save', 'blue', () => {
+                    modal.instance.dynamicContent.instance.isLoading = true;
+                    const newProperty: PropertyBEModel = modal.instance.dynamicContent.instance.propertyModel;
+                    this.componentServiceNg2.createServiceProperty(this.component, newProperty)
+                        .subscribe(response => {
+                            modal.instance.dynamicContent.instance.isLoading = false;
+                            let newProp: PropertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(response);
+                            this.instanceFePropertiesMap[this.component.uniqueId].push(newProp);
+                            modal.instance.close();
+                        }, (error) => {
+                            modal.instance.dynamicContent.instance.isLoading = false;
+                            this.Notification.error({
+                                message: 'Failed to add property:' + error,
+                                title: 'Failure'
+                            });
+                        });
+
+                }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
+                new ButtonModel('Cancel', 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null
+        ));
+        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
+        modal.instance.open();
+    };
 
     /*** SEARCH RELATED FUNCTIONS ***/
     searchPropertiesInstances = (filterData:FilterPropertiesAssignmentData) => {

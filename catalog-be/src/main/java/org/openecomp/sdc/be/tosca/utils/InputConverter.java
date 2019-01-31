@@ -42,7 +42,8 @@ public class InputConverter {
         if (inputDef != null) {
             inputDef.forEach(i -> {
                 //Extract input the same as property
-                ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, i, false);
+                ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, i,
+                    PropertyConvertor.PropertyType.INPUT);
                 //now that we have Tosca property we create new object called tosca input which drives from it
                 ToscaInput toscaInput = new ToscaInput(toscaProperty);
                 List<Annotation> annotations = i.getAnnotations();
