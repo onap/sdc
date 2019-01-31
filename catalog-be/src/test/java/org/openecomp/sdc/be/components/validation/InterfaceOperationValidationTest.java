@@ -337,7 +337,7 @@ public class InterfaceOperationValidationTest {
                 .validateInterfaceOperations(inputInterfaceDefinition, component,
                         component.getInterfaces().get(interfaceType1),
                         InterfaceOperationTestUtils.createMockInterfaceTypeMap(
-                                interfaceType1, operationType1), false).isRight());
+                                interfaceType1, operationType1 ), false).isRight());
     }
 
     @Test

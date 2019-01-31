@@ -22,68 +22,17 @@ package org.openecomp.sdc.be.model.jsontitan.utils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -94,6 +43,11 @@ import org.openecomp.sdc.be.resources.data.ProductMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ModelConverter {
     public static final String CAP_PROP_DELIM = "#";
@@ -171,7 +125,11 @@ public class ModelConverter {
 
         convertComponentInstances(topologyTemplate, service);
 
-        convertInputs(topologyTemplate, service);
+		convertInputs(topologyTemplate, service);
+
+		convertProperties(topologyTemplate, service);
+
+		convertPolicies(topologyTemplate, service);
 
         convertGroups(topologyTemplate, service);
 
@@ -591,8 +549,14 @@ public class ModelConverter {
         component.setDerivedFromGenericType(toscaElement.getDerivedFromGenericType());
         component.setDerivedFromGenericVersion(toscaElement.getDerivedFromGenericVersion());
 
-        //archive
-        component.setArchived(toscaElement.isArchived() == null ? false : toscaElement.isArchived());
+		Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
+		if(MapUtils.isNotEmpty(properties)) {
+			List<PropertyDefinition> propertiesMap = properties.values().stream().map(x -> new PropertyDefinition(x)).collect(Collectors.toList());
+			component.setProperties(propertiesMap);
+		}
+
+		//archive
+    component.setArchived(toscaElement.isArchived() == null ? false : toscaElement.isArchived());
 
 
         //component.setArchiveTime(toscaElement.getArchiveTime() == null ? 0L : toscaElement.getArchiveTime());
@@ -632,14 +596,6 @@ public class ModelConverter {
         component.setContactId((String) toscaElement.getMetadataValue(JsonPresentationFields.CONTACT_ID));
         component.setUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.UUID));
         component.setIsDeleted((Boolean) toscaElement.getMetadataValue(JsonPresentationFields.IS_DELETED));
-
-
-        Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
-        if (properties != null && !properties.isEmpty()) {
-			List<PropertyDefinition> propertiesMap = properties.values().stream().map(PropertyDefinition::new).collect(Collectors.toList());
-            ((Resource) component).setProperties(propertiesMap);
-        }
-
         component.setToscaType(toscaElement.getToscaType().getValue());
     }
 
@@ -944,34 +900,35 @@ public class ModelConverter {
         ComponentTypeEnum componentType = component.getComponentType();
         topologyTemplate = new TopologyTemplate();
 
-        if (componentType == ComponentTypeEnum.RESOURCE) {
-            Resource resource = (Resource) component;
-            topologyTemplate.setResourceType(resource.getResourceType());
-            topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_UUID, resource.getCsarUUID());
-            topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_VERSION, resource.getCsarVersion());
-            topologyTemplate.setMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM, resource.getImportedToscaChecksum());
-			convertInterfaces(resource, topologyTemplate);
-        }
-        if (componentType == ComponentTypeEnum.SERVICE) {
-            convertServiceSpecificEntities((Service) component, topologyTemplate);
-        }
-        convertCommonToscaData(component, topologyTemplate);
-        convertArtifacts(component, topologyTemplate);
+		if (componentType == ComponentTypeEnum.RESOURCE) {
+			Resource resource = (Resource) component;
+			topologyTemplate.setResourceType(resource.getResourceType());
+			topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_UUID, resource.getCsarUUID());
+			topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_VERSION, resource.getCsarVersion());
+			topologyTemplate.setMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM, resource.getImportedToscaChecksum());
+			convertTopologyTemplateInterfaces(resource, topologyTemplate);
+		}
+		if (componentType == ComponentTypeEnum.SERVICE) {
+			convertServiceSpecificEntities((Service) component, topologyTemplate);
+		}
+		convertCommonToscaData(component, topologyTemplate);
+		convertArtifacts(component, topologyTemplate);
 
         convertAdditionalInformation(component, topologyTemplate);
         convertComponentInstances(component, topologyTemplate);
 
-        convertInputs(component, topologyTemplate);
-        convertCapabilities(component, topologyTemplate);
-        convertGroups(component, topologyTemplate);
-        convertPolicies(component, topologyTemplate);
-        convertRequirements(component, topologyTemplate);
-        convertRelationsToComposition(component, topologyTemplate);
+		convertInputs(component, topologyTemplate);
+		convertProperties(component, topologyTemplate);
+		convertCapabilities(component, topologyTemplate);
+		convertGroups(component, topologyTemplate);
+		convertPolicies(component, topologyTemplate);
+		convertRequirements(component, topologyTemplate);
+		convertRelationsToComposition(component, topologyTemplate);
 
         return topologyTemplate;
     }
 
-	private static void convertInterfaces(Resource resource, TopologyTemplate topologyTemplate) {
+	private static void convertTopologyTemplateInterfaces(Resource resource, TopologyTemplate topologyTemplate) {
 		Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
 		if (interfaces != null && !interfaces.isEmpty()) {
 			Map<String, InterfaceDataDefinition> copy = interfaces.entrySet().stream()
@@ -1047,17 +1004,36 @@ public class ModelConverter {
 
     }
 
-    private static void convertInputs(TopologyTemplate topologyTemplate, Component component) {
-        Map<String, PropertyDataDefinition> inputsMap = topologyTemplate.getInputs();
-        if (inputsMap != null && !inputsMap.isEmpty()) {
-			List<InputDefinition> inputsList = inputsMap.values()
-                    .stream()
-                    .map(InputDefinition::new)
-                    .collect(Collectors.toList());
-            component.setInputs(inputsList);
-        }
+	private static void convertInputs(TopologyTemplate topologyTemplate, Component component) {
+		Map<String, PropertyDataDefinition> inputsMap = topologyTemplate.getInputs();
+		if (inputsMap != null && !inputsMap.isEmpty()) {
+      List<InputDefinition> inputsList = inputsMap.values()
+          .stream()
+          .map(InputDefinition::new)
+          .collect(Collectors.toList());
+			component.setInputs(inputsList);
+		}
+	}
 
-    }
+	private static void convertProperties(Component component, TopologyTemplate topologyTemplate) {
+		List<PropertyDefinition> propertiesList = component.getProperties();
+		if (propertiesList != null && !propertiesList.isEmpty()) {
+			Map<String, PropertyDataDefinition> propertiesMap = propertiesList.stream().map(i -> new PropertyDataDefinition(i)).collect(Collectors.toMap(i -> i.getName(), i -> i));
+			topologyTemplate.setProperties(propertiesMap);
+		}
+
+	}
+
+	private static void convertProperties(TopologyTemplate topologyTemplate, Component component) {
+		Map<String, PropertyDataDefinition> proeprtiesMap = topologyTemplate.getProperties();
+		if (proeprtiesMap != null && !proeprtiesMap.isEmpty()) {
+			Map<String, PropertyDefinition> copy = proeprtiesMap.entrySet().stream()
+					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> new PropertyDefinition
+							(entry.getValue())));
+			component.setProperties(new ArrayList<>(copy.values()));
+		}
+	}
+
 
     private static void convertCommonToscaData(Component component, ToscaElement toscaElement) {
         toscaElement.setUUID(component.getUUID());
@@ -1131,6 +1107,14 @@ public class ModelConverter {
                 List<GroupInstance> groupInstances = topologyTemplate.getInstGroups().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new GroupInstance(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setGroupInstances(groupInstances);
             }
+            if(topologyTemplate.getInstProperties() != null && topologyTemplate.getInstProperties().containsKey(key) && topologyTemplate.getInstProperties().get(key) != null ){
+                List<PropertyDefinition> instanceProps = topologyTemplate.getInstProperties().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new PropertyDefinition(e.getValue())).collect(Collectors.toList());
+                currComponentInstance.setProperties(instanceProps);
+            }
+            if(topologyTemplate.getComponentInstInterfaces() != null && topologyTemplate.getComponentInstInterfaces().containsKey(key) && topologyTemplate.getComponentInstInterfaces().get(key) != null ){
+                Map<String, Object> interfacesMap = topologyTemplate.getComponentInstInterfaces().get(key).getMapToscaDataDefinition().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                currComponentInstance.setInterfaces(interfacesMap);
+            }
             componentInstances.add(currComponentInstance);
         }
         component.setComponentInstances(componentInstances);
@@ -1165,20 +1149,52 @@ public class ModelConverter {
         }
     }
 
-    private static void setComponentInstancesAttributesToComponent(TopologyTemplate topologyTemplate, Component component) {
-        if (topologyTemplate.getInstAttributes() != null) {
-            Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
-            for (Map.Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
-                if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
-                    String key = entry.getKey();
-                    List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
-                            .collect(Collectors.toList());
-                    attributes.put(key, componentInstanceAttributes);
-                }
-            }
-            component.setComponentInstancesAttributes(attributes);
-        }
-    }
+	private static void setComponentInstancesInterfacesToComponent(TopologyTemplate topologyTemplate, Component component) {
+		if (topologyTemplate.getInstInterfaces() != null) {
+			Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
+			for (Entry<String, MapInterfaceInstanceDataDefinition> entry : topologyTemplate.getInstInterfaces().entrySet()) {
+				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+					String key = entry.getKey();
+					List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
+							.getMapToscaDataDefinition().entrySet().stream().map(e -> new
+									ComponentInstanceInterface(e.getKey(), e.getValue()))
+							.collect(Collectors.toList());
+					interfaces.put(key, componentInstanceInterfaces);
+				}
+			}
+			component.setComponentInstancesInterfaces(interfaces);
+		}
+		else if (topologyTemplate.getComponentInstInterfaces() != null) {
+			Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
+			for (Entry<String, MapInterfaceDataDefinition> entry : topologyTemplate.getComponentInstInterfaces().entrySet()) {
+				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+					String key = entry.getKey();
+					List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
+							.getMapToscaDataDefinition().entrySet().stream().map(e -> new
+									ComponentInstanceInterface(e.getKey(), e.getValue()))
+							.collect(Collectors.toList());
+					interfaces.put(key, componentInstanceInterfaces);
+				}
+			}
+			component.setComponentInstancesInterfaces(interfaces);
+		}
+
+	}
+
+	private static void setComponentInstancesAttributesToComponent(TopologyTemplate topologyTemplate, Component component) {
+		if (topologyTemplate.getInstAttributes() != null) {
+			Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
+			for (Map.Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
+				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+					String key = entry.getKey();
+					List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
+							.collect(Collectors.toList());
+					attributes.put(key, componentInstanceAttributes);
+				}
+			}
+			component.setComponentInstancesAttributes(attributes);
+		}
+	}
 
     private static void setComponentInstancesRequirementsToComponent(TopologyTemplate topologyTemplate, Component component) {
 

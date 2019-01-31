@@ -488,7 +488,7 @@ public class CapabilityRequirementConverter {
         if (isNotEmpty(properties)) {
             Map<String, ToscaProperty> toscaProperties = new HashMap<>();
             for (PropertyDefinition property : properties) {
-                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, true);
+                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.CAPABILITY);
                 toscaProperties.put(property.getName(), toscaProperty);
             }
             toscaCapability.setProperties(toscaProperties);
@@ -520,7 +520,7 @@ public class CapabilityRequirementConverter {
         if (isNotEmpty(properties)) {
             Map<String, ToscaProperty> toscaProperties = new HashMap<>();
             for (PropertyDefinition property : properties) {
-                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, true);
+                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.CAPABILITY);
                 toscaProperties.put(property.getName(), toscaProperty);
             }
             toscaCapability.setProperties(toscaProperties);

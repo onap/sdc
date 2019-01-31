@@ -498,6 +498,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Component component = getNewService();
 		List<ComponentInstance> componentInstances = new ArrayList<>();
 		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> componentInstancesInterfaces = new HashMap<>();
 		Map<String, Component> componentCache = new HashMap<>();
 		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
 		ToscaTopolgyTemplate topologyTemplate = new ToscaTopolgyTemplate();
@@ -542,6 +543,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		componentCache.put("uid", component);
 
 		componentInstancesProperties.put("id", new ArrayList<>());
+		componentInstancesInterfaces.put("id", new ArrayList<>());
 		componentInstancesInputs.put("id", new ArrayList<>());
 
 		Mockito.when(capabiltyRequirementConvertor.getOriginComponent(Mockito.any(Map.class),
@@ -553,7 +555,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertNodeTemplates", component, componentInstances,
-				componentInstancesProperties, componentCache, dataTypes, topologyTemplate);
+				componentInstancesProperties, componentInstancesInterfaces, componentCache, dataTypes, topologyTemplate);
 	}
 
 	@Test
@@ -561,6 +563,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Component component = getNewResource();
 		List<ComponentInstance> componentInstances = new ArrayList<>();
 		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> componentInstancesInterfaces = new HashMap<>();
 		Map<String, Component> componentCache = new HashMap<>();
 		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
 		ToscaTopolgyTemplate topologyTemplate = new ToscaTopolgyTemplate();
@@ -597,7 +600,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertNodeTemplates", component, componentInstances,
-				componentInstancesProperties, componentCache, dataTypes, topologyTemplate);
+				componentInstancesProperties, componentInstancesInterfaces, componentCache, dataTypes, topologyTemplate);
 	}
 
 	@Test
@@ -605,6 +608,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Component component = getNewResource();
 		List<ComponentInstance> componentInstances = new ArrayList<>();
 		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> componentInstancesInterfaces = new HashMap<>();
 		Map<String, Component> componentCache = new HashMap<>();
 		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
 		ToscaTopolgyTemplate topologyTemplate = new ToscaTopolgyTemplate();
@@ -637,7 +641,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertNodeTemplates", component, componentInstances,
-				componentInstancesProperties, componentCache, dataTypes, topologyTemplate);
+				componentInstancesProperties, componentInstancesInterfaces, componentCache, dataTypes, topologyTemplate);
 	}
 
 	@Test
@@ -645,6 +649,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Component component = new Resource();
 		List<ComponentInstance> componentInstances = new ArrayList<>();
 		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> componentInstancesInterfaces = new HashMap<>();
 		Map<String, Component> componentCache = new HashMap<>();
 		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
 		ToscaTopolgyTemplate topologyTemplate = new ToscaTopolgyTemplate();
@@ -677,7 +682,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertNodeTemplates", component, componentInstances,
-				componentInstancesProperties, componentCache, dataTypes, topologyTemplate);
+				componentInstancesProperties, componentInstancesInterfaces, componentCache, dataTypes, topologyTemplate);
 	}
 
 	@Test
