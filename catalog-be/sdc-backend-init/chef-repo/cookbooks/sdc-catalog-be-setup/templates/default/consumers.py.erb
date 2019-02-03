@@ -41,7 +41,7 @@ def checkConsumer(consumerName):
 
 def createConsumer( consumerName, consumerSalt, consumerPass ):
     print '[INFO] ' + consumerName
-    command="curl -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" http://"  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/ -d '{\"consumerName\": '" + consumerName + "', \"consumerSalt\": '" + consumerSalt + "',\"consumerPassword\": '" + consumerPass + "'}'"
+    command="curl -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" http://"  + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/ -d '{\"consumerName\": '" + consumerName + "', \"consumerSalt\": '" + consumerSalt + "',\"consumerPassword\": '" + consumerPass + "'}'"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE)
 
