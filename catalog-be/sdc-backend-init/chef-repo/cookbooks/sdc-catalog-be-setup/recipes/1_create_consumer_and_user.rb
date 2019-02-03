@@ -4,7 +4,6 @@ template "/tmp/user.py" do
     mode 0755
     variables({
       :be_ip => node['Nodes']['BE']
-      :be_port => node['BE']['http_port']
     })
 end
 
@@ -22,7 +21,6 @@ template "/tmp/consumers.py" do
     mode 0755
     variables({
       :be_ip => node['Nodes']['BE']
-      :be_port => node['BE']['http_port']
     })
 end
 
