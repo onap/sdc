@@ -1,0 +1,265 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "361ad5c3_fb1a021f",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "This sohlud be a consatant",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c5c33a6_2ee3df3e",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "It appears in line 71 too",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "debf683a_ec25fdab",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "This block is duplicated",
+      "range": {
+        "startLine": 606,
+        "startChar": 2,
+        "endLine": 620,
+        "endChar": 21
+      },
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6cb14ae_b27f07b4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "Please use onap code style.\nThere should be no import xxx.*",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90b246e8_f9e30cf8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "Stream API with flapMap will make this code clearer.",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "424b50d5_2352eb05",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "Consider using stringBuilder",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b356634_eb7de482",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/BeGenericServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "should it be logged as error?",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e38cda0_eb1b5357",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/BeGenericServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "should it be logged as error?",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b735c1e1_0a1e26d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentPropertyServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "There are two sonar violation related to this class.\nPlease use sonar .",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41cb1863_e2daf71b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "Sonar violation\n\"switch\" statements should have at least 3 \"case\" clauses",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "062367bc_b6536416",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "This function is not being used.",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa87b76_b89670b6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/externalupload/utils/ServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "There are 5 sonar remarks on this class.",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88347cb8_e8a25641",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/externalupload/utils/ServiceUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "Sonar remark\nCreate an ImmutableSet of all this classes and then check if it contains the type.",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a877c7f0_2f675aac",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/InterfaceInstanceDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "This class",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97cbee4d_1dff195c",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/InterfaceInstanceDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-03T07:20:46Z",
+      "side": 1,
+      "message": "All DataDefintition files should use JSONPresentaion Fields. link CapabilityTypeDataDefinition.",
+      "revId": "f8f3004d3b3b63b3e0191f1bbb51c6d640d48284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
