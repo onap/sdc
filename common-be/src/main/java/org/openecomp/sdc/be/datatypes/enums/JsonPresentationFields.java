@@ -190,7 +190,7 @@ public enum JsonPresentationFields {
     CI_SOURCE_MODEL_INVARIANT("sourceModelInvariant", null),
     CI_SOURCE_MODEL_NAME("sourceModelName", null),
     CI_IS_PROXY("isProxy", null),
-
+    CI_DIRECTIVES("directives", null),
 
     //path
     FORWARDING_PATH("forwardingPath", null),

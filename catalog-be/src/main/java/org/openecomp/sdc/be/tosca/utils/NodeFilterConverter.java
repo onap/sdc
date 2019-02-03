@@ -123,6 +123,10 @@ public class NodeFilterConverter {
         }
     }
 
+    public Map<String, UINodeFilter> convertToUI(Map<String, CINodeFilterDataDefinition> inMap) {
+        return inMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, o -> convertToUi(o.getValue())));
+    }
+
     public UINodeFilter convertToUi(CINodeFilterDataDefinition inNodeFilter) {
         UINodeFilter retVal = new UINodeFilter();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();

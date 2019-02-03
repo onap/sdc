@@ -27,11 +27,12 @@ public class TypeUtils {
         CAPABILITIES("capabilities"), VALID_SOURCE_TYPES("valid_source_types"),
         // Requirements
         REQUIREMENTS("requirements"), NODE("node"), RELATIONSHIP("relationship"), CAPABILITY("capability"), INTERFACES("interfaces"),
+        NODE_FILTER("node_filter"), TOSCA_ID("tosca_id"),
         // Heat env Validation
         PARAMETERS("parameters"),
         // Import Validations
         TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), NODE_TYPES("node_types"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
-        SUBSTITUTION_MAPPINGS("substitution_mappings"),  NODE_TYPE("node_type"),
+        SUBSTITUTION_MAPPINGS("substitution_mappings"),  NODE_TYPE("node_type"), DIRECTIVES("directives"),
         // Attributes
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), GET_INPUT("get_input"), ANNOTATIONS("annotations");
 

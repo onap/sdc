@@ -2227,12 +2227,11 @@ errors:
         messageId: "SVC4720"
     }
 
-    #---------SVC4721----------------------------
-    # %1 - Property Type
-    # %2 - Operator Type
-    UNSUPPORTED_PROPERTY_TYPE: {
-        code: 400,
-        message: "Error: Property type %1 provided against %2 is not supported for static value.",
+    #---------SVC4721------------------------------
+    # %1 Directive value set
+    DIRECTIVES_INVALID_VALUE: {
+        code: 404,
+        message: "Error: Invalid directive value : '%1' .",
         messageId: "SVC4721"
     }
 #---------SVC4723-----------------------------

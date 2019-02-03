@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -68,6 +69,7 @@ public abstract class Component {
     protected List<AdditionalInformationDefinition> additionalInformation;
     protected List<PropertyDefinition> properties;
     private Map<String, InterfaceDefinition> interfaces;
+    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
 
     public Map<String, InterfaceDefinition> getInterfaces() {
         return interfaces;
@@ -542,6 +544,14 @@ public abstract class Component {
         this.properties = properties;
     }
 
+    public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
+        return nodeFilterComponents;
+    }
+
+    public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilterComponents) {
+        this.nodeFilterComponents = nodeFilterComponents;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -565,6 +575,7 @@ public abstract class Component {
         result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
         result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
         result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+        result = prime * result + ((nodeFilterComponents == null) ? 0 : nodeFilterComponents.hashCode());
         return result;
     }
 
@@ -702,6 +713,9 @@ public abstract class Component {
             return false;
         }
         else if (!properties.equals(other.properties)) {
+            return false;
+        }
+        else if (!nodeFilterComponents.equals(other.nodeFilterComponents)) {
             return false;
         }
         return true;

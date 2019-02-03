@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOpera
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.utils.CINodeFilterUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -3026,6 +3027,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setComponentUid(refResource.getUniqueId());
+
+        Collection<String> directives = uploadComponentInstanceInfo.getDirectives();
+        if(directives != null && !directives.isEmpty()) {
+            componentInstance.setDirectives(new ArrayList<>(directives));
+        }
+        UploadNodeFilterInfo uploadNodeFilterInfo = uploadComponentInstanceInfo.getUploadNodeFilterInfo();
+        if (uploadNodeFilterInfo != null){
+            componentInstance.setNodeFilter(new CINodeFilterUtils().getNodeFilterDataDefinition(uploadNodeFilterInfo,
+                    componentInstance.getUniqueId()));
+        }
+
         ComponentTypeEnum containerComponentType = resource.getComponentType();
         NodeTypeEnum containerNodeType = containerComponentType.getNodeType();
         if (containerNodeType.equals(NodeTypeEnum.Resource)

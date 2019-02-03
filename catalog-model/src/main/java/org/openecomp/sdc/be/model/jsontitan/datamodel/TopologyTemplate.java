@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 
 import java.util.HashMap;
@@ -54,7 +55,8 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, MapArtifactDataDefinition> instDeploymentArtifacts;
     private Map<String, MapArtifactDataDefinition> instanceArtifacts;
     private Map<String, InterfaceDataDefinition> interfaces;
-    
+    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+
     //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
     private Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs;
@@ -188,6 +190,14 @@ public class TopologyTemplate extends ToscaElement{
 
     public void setForwardingPaths(Map<String, ForwardingPathDataDefinition> forwardingPaths) {
         this.forwardingPaths = forwardingPaths;
+    }
+
+    public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
+        return nodeFilterComponents;
+    }
+
+    public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilters) {
+        this.nodeFilterComponents = nodeFilters;
     }
 
     /**

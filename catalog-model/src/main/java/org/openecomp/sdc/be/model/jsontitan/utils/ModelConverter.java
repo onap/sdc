@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
@@ -189,6 +190,7 @@ public class ModelConverter {
 
         convertServiceInterfaces(topologyTemplate, service);
 
+        convertNodeFiltersComponents(topologyTemplate, service);
         return service;
     }
 
@@ -235,6 +237,7 @@ public class ModelConverter {
             convertGroups(topologyTemplate, resource);
 			setCapabilitiesToComponentAndGroups(topologyTemplate, resource);
             convertPolicies(topologyTemplate, resource);
+            convertNodeFiltersComponents(topologyTemplate, resource);
         }
         convertArtifacts(toscaElement, resource);
         convertAdditionalInformation(toscaElement, resource);
@@ -722,6 +725,17 @@ public class ModelConverter {
         component.setDeploymentArtifacts(copy);
     }
 
+    private static void convertNodeFiltersComponents(TopologyTemplate topologyTemplate, Component component) {
+        Map<String, CINodeFilterDataDefinition> filters = topologyTemplate.getNodeFilterComponents();
+        Map<String, CINodeFilterDataDefinition> copy;
+        if (filters != null) {
+            copy = filters.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new CINodeFilterDataDefinition(e.getValue())));
+        } else {
+            copy = new HashMap<>();
+        }
+        component.setNodeFilterComponents(copy);
+    }
+
     private static void convertServiceApiArtifacts(TopologyTemplate topologyTemplate, Service service) {
         Map<String, ArtifactDataDefinition> serviceApiArtifacts = topologyTemplate.getServiceApiArtifacts();
         Map<String, ArtifactDefinition> copy;
@@ -1124,6 +1138,8 @@ public class ModelConverter {
 
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance currComponentInstance;
+        Map<String, CINodeFilterDataDefinition> nodeFilterComponents = topologyTemplate.getNodeFilterComponents();
+
         for (Map.Entry<String, ComponentInstanceDataDefinition> entry : topologyTemplate.getComponentInstances().entrySet()) {
             String key = entry.getKey();
             currComponentInstance = new ComponentInstance(topologyTemplate.getComponentInstances().get(key));
@@ -1131,7 +1147,12 @@ public class ModelConverter {
                 List<GroupInstance> groupInstances = topologyTemplate.getInstGroups().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new GroupInstance(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setGroupInstances(groupInstances);
             }
+
+            if(nodeFilterComponents != null && nodeFilterComponents.containsKey(key)){
+                currComponentInstance.setNodeFilter(nodeFilterComponents.get(key));
+            }
             componentInstances.add(currComponentInstance);
+
         }
         component.setComponentInstances(componentInstances);
     }

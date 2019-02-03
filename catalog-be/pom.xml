@@ -36,6 +36,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Swagger Dependencies Start -->
         <dependency>

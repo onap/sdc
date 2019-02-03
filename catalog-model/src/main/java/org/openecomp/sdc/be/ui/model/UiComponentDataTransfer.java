@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.ui.model;
 
 
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -79,6 +80,10 @@ public class UiComponentDataTransfer {
     protected List<AdditionalInformationDefinition> additionalInformation;
 
     private Map<String, InterfaceDefinition> interfaces;
+
+    private Map<String, CINodeFilterDataDefinition> nodeFilter;
+
+    private Map<String, UINodeFilter> nodeFilterforNode;
 
     public Map<String, InterfaceDefinition> getInterfaces() {
         return interfaces;
@@ -289,4 +294,19 @@ public class UiComponentDataTransfer {
         this.policies = policies;
     }
 
+    public Map<String, CINodeFilterDataDefinition> getNodeFilter() {
+        return nodeFilter;
+    }
+
+    public void setNodeFilter(Map<String, CINodeFilterDataDefinition> nodeFilter) {
+        this.nodeFilter = nodeFilter;
+    }
+
+    public Map<String, UINodeFilter> getNodeFilterData() {
+        return nodeFilterforNode;
+    }
+
+    public void setNodeFilterData(Map<String, UINodeFilter> nodeFilterforNode) {
+        this.nodeFilterforNode = nodeFilterforNode;
+    }
 }
