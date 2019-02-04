@@ -3,8 +3,7 @@ template "/tmp/check_Backend_Health.py" do
     sensitive true
     mode 0755
     variables({
-      :be_ip => node['Nodes']['BE'],
-      :be_port => node['BE']['http_port']
+      :be_ip => node['Nodes']['BE']
     })
 end
 
