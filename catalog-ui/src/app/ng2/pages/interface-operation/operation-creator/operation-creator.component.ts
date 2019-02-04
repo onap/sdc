@@ -31,6 +31,7 @@ class TypedDropDownOption extends DropDownOption {
 }
 
 export interface OperationCreatorInput {
+    allWorkflows: Array<any>,
     inputOperation: OperationModel,
     interfaces: Array<InterfaceModel>,
     inputProperties: Array<InputBEModel>,
@@ -38,7 +39,7 @@ export interface OperationCreatorInput {
     readonly: boolean,
     isService: boolean,
     interfaceTypes: { [interfaceType: string]: Array<string> },
-    validityChangedCallback: Function
+    validityChangedCallback: Function,
 }
 
 @Component({
@@ -59,6 +60,7 @@ export class OperationCreatorComponent {
     operationNames: Array<TypedDropDownOption> = [];
     validityChangedCallback: Function;
 
+    allWorkflows: Array<any>;
     workflows: Array<DropdownValue> = [];
     workflowVersions: Array<DropdownValue> = [];
     inputProperties: Array<InputBEModel> = [];
@@ -132,8 +134,6 @@ export class OperationCreatorComponent {
 
         const inputOperation = this.inputOperation;
         this.operation = new OperationModel(inputOperation || {});
-        this.onSelectInterface(new DropDownOption(this.operation.interfaceType));
-        this.validityChanged();
 
         this.operationOutputs = _.reduce(
             this.interfaces,
@@ -147,42 +147,45 @@ export class OperationCreatorComponent {
         []);
 
         if (this.enableWorkflowAssociation) {
-            this.isLoading = true;
-            this.workflowServiceNg2.getWorkflows().subscribe(workflows => {
-                this.isLoading = false;
-                this.workflows = _.map(
-                    _.filter(
-                        workflows,
-                        (workflow: any) => {
-                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ACTIVE) {
-                                return true;
-                            }
-                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ARCHIVED &&
-                                workflow.id === this.operation.workflowId) {
-                                this.archivedWorkflowId = workflow.id;
-                                return true;
-                            }
-                            return false;
+            this.workflows = _.map(
+                _.filter(
+                    this.allWorkflows,
+                    (workflow: any) => {
+                        if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ACTIVE) {
+                            return true;
                         }
-                    ),
-                    (workflow: any) => new DropdownValue(workflow.id, workflow.name)
-                );
-                this.reconstructOperation();
-            });
-        } else {
-            this.reconstructOperation();
+                        if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ARCHIVED &&
+                            workflow.id === this.operation.workflowId) {
+                            this.archivedWorkflowId = workflow.id;
+                            return true;
+                        }
+                        return false;
+                    }
+                ),
+                (workflow: any) => new DropdownValue(workflow.id, workflow.name)
+            );
         }
+        this.reconstructOperation();
+        this.validityChanged();
+        this.updateTable();
     }
 
     reconstructOperation = () => {
         const inputOperation = this.inputOperation;
         if (inputOperation) {
+            this.onSelectInterface(new DropDownOption(this.operation.interfaceType));
             if (this.enableWorkflowAssociation && inputOperation.workflowVersionId && this.isUsingExistingWF(inputOperation)) {
+                this.assignInputParameters[this.operation.workflowId] = {[inputOperation.workflowVersionId]: []};
+                this.assignOutputParameters[this.operation.workflowId] = {[inputOperation.workflowVersionId]: []};
+                this.inputParameters = this.assignInputParameters[this.operation.workflowId][this.operation.workflowVersionId];
+                this.outputParameters = this.assignOutputParameters[this.operation.workflowId][this.operation.workflowVersionId];
                 const sub = this.onSelectWorkflow(new DropDownOption(inputOperation.workflowId), inputOperation.workflowVersionId);
                 if (sub) {
                     sub.add(() => {
                         this.buildParams();
                         this.updateTable();
+                        this.operation.workflowVersionId = '-1';
+                        setTimeout(() => this.operation.workflowVersionId = this.inputOperation.workflowVersionId, 0);
                     });
                 }
             } else {
@@ -196,8 +199,6 @@ export class OperationCreatorComponent {
                 this.isEditMode = true;
             }
         }
-        this.updateTable();
-        this.validityChanged();
     }
 
     buildParams = () => {
@@ -274,7 +275,7 @@ export class OperationCreatorComponent {
 
     onSelectWorkflow(workflowId: DropDownOption, selectedVersionId?: string): Subscription {
 
-        if (_.isUndefined(workflowId) || workflowId.value === this.operation.workflowId) {
+        if (_.isUndefined(workflowId)) {
             return;
         }
         this.operation.workflowId = workflowId.value;
@@ -307,11 +308,6 @@ export class OperationCreatorComponent {
                     return new DropdownValue(version.id, `V ${version.name}`);
                 }
             );
-
-            if (selectedVersionId) {
-                this.assignInputParameters[this.operation.workflowId][selectedVersionId] = [];
-                this.assignOutputParameters[this.operation.workflowId][selectedVersionId] = [];
-            }
             if (!selectedVersionId && this.workflowVersions.length) {
                 this.operation.workflowVersionId = _.last(this.workflowVersions).value;
             }

@@ -111,6 +111,7 @@ export class InterfaceOperationComponent {
     isLoading: boolean;
     interfaceTypes:{ [interfaceType: string]: Array<string> };
     modalTranslation: ModalTranslation;
+    workflows: Array<any>;
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -132,16 +133,19 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
+        const workflowSubscription = this.enableWorkflowAssociation ? this.WorkflowServiceNg2.getWorkflows() : Promise.resolve();
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaces(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
-            this.ComponentServiceNg2.getInterfaceTypes(this.component)
+            this.ComponentServiceNg2.getInterfaceTypes(this.component),
+            workflowSubscription
         ).subscribe((response: Array<any>) => {
             this.isLoading = false;
             this.initInterfaces(response[0].interfaces);
             this.sortInterfaces();
             this.inputs = response[1].inputs;
             this.interfaceTypes = response[2];
+            this.workflows = response[3];
         });
     }
 
@@ -239,6 +243,7 @@ export class InterfaceOperationComponent {
         };
 
         const input: OperationCreatorInput = {
+            allWorkflows: this.workflows,
             inputOperation: operation,
             interfaces: this.interfaces,
             inputProperties: this.inputs,
@@ -246,7 +251,7 @@ export class InterfaceOperationComponent {
             readonly: this.readonly,
             isService: this.component.isService(),
             interfaceTypes: this.interfaceTypes,
-            validityChangedCallback: this.enableOrDisableSaveButton
+            validityChangedCallback: this.enableOrDisableSaveButton,
         };
 
         const modalConfig: IModalConfig = {
