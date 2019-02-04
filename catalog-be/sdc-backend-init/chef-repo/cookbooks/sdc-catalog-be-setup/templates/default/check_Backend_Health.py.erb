@@ -6,6 +6,7 @@ from datetime import datetime
 
 beStat=0
 BE_IP="<%= @be_ip %>"
+BE_PORT="<%= @be_port %>"
 
 class bcolors:
     HEADER    = '\033[95m'
@@ -22,7 +23,7 @@ class bcolors:
 #    Functions
 ##############################
 def checkBackend():
-    command="curl -s -o /dev/null -I -w \"%{http_code}\" -i http://" + BE_IP + ":8080/sdc2/rest/v1/user/jh0003"
+    command="curl -s -o /dev/null -I -w \"%{http_code}\" -i http://" + BE_IP + ":" + BE_PORT + "/sdc2/rest/v1/user/jh0003"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE )
     (out, err) = proc.communicate()

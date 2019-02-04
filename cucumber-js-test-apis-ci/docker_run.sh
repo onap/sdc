@@ -17,18 +17,19 @@ then
     fi
 fi
 echo "Workspace under: $WORKSPACE"
-
 # add dynamic ports from kubernetes master
 if [ -z "$TEST_CI_BE_HOST" ]
 then
     TEST_CI_BE_HOST="$(ifconfig  'eth0' | sed -n '2p' | awk '{print $2}' | sed 's/addr://g')"
     TEST_CI_BE_PORT=8081
     TEST_CI_CATALOG_HOST=$TEST_CI_BE_HOST
-    TEST_CI_CATALOG_PORT=8080
     TEST_CI_AP_HOST=$TEST_CI_BE_HOST
     TEST_CI_AP_PORT=8080
 fi
-
+if [ -z "$TEST_CI_CATALOG_PORT" ]
+then
+    TEST_CI_CATALOG_PORT=8080
+fi
 
 echo "host $TEST_CI_BE_HOST"
 
@@ -51,11 +52,14 @@ chmod 777 $WORKSPACE/data/scripts/docker_run.sh
 
 sed -i "s/xxx/TEST_CI/g" $WORKSPACE/TEST_CI.json
 sed -i "s/yyy/$TEST_CI_BE_HOST/g" $WORKSPACE/TEST_CI.json
-sed -i "s/8080/$TEST_CI_BE_PORT/g" $WORKSPACE/TEST_CI.json
 mv $WORKSPACE/TEST_CI.json $WORKSPACE/data/environments
 
+sed -i "s/8080:8080/$TEST_CI_CATALOG_PORT:8080/g" $WORKSPACE/data/scripts/docker_run.sh
+sed -i "s/:8080\/sdc/:$TEST_CI_CATALOG_PORT\/sdc/g" $WORKSPACE/data/scripts/docker_run.sh
+
+
 echo "getting images for $IMAGES_TAG"
-$WORKSPACE/data/scripts/docker_run.sh -e TEST_CI -r $IMAGES_TAG -sim -p 10001
+$WORKSPACE/data/scripts/docker_run.sh -e TEST_CI -r $IMAGES_TAG -p 10001
 
 echo "setting configuration"
 
