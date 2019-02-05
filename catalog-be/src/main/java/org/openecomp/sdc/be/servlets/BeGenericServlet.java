@@ -31,19 +31,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
-import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
-import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
@@ -376,7 +364,7 @@ public class BeGenericServlet extends BasicServlet {
             return root;
         } catch (ParseException e) {
             log.info("failed to convert input to json");
-            log.debug("failed to convert to json", e);
+            log.error("failed to convert to json", e);
             return new JSONObject();
         }
 
@@ -398,13 +386,13 @@ public class BeGenericServlet extends BasicServlet {
         } catch (Exception e) {
             // INVALID JSON
             log.info("failed to convert from json");
-            log.debug("failed to convert from json", e);
+            log.error("failed to convert from json", e);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
         return Either.left(t);
     }
 
-    private <T> Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
+    private Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
         Type constraintType = new TypeToken<PropertyConstraint>() {
         }.getType();
         Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();

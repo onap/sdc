@@ -22,27 +22,16 @@ package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
 import fj.data.Either;
-import java.util.Map.Entry;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceInterface;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.IComplexDefaultValue;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
@@ -166,7 +155,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                         String convertedValue = null;
                         if (newPropertyDefinition.getDefaultValue() != null) {
                             convertedValue = converter.convert(
-                                (String) newPropertyDefinition.getDefaultValue(), innerType, allDataTypes.left().value());
+                                newPropertyDefinition.getDefaultValue(), innerType, allDataTypes.left().value());
                             newPropertyDefinition.setDefaultValue(convertedValue);
                         }
                     }
@@ -351,16 +340,14 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
     }
 
     private boolean isPropertyUsedInCIInterfaces(Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces, PropertyDefinition propertyDefinitionEntry){
+        Optional<ComponentInstanceInterface> isPropertyExistInOperationInterface = Optional.empty();
         if(MapUtils.isNotEmpty(componentInstanceInterfaces)){
-            for (Entry<String, List<ComponentInstanceInterface>> interfaceEntry : componentInstanceInterfaces.entrySet()) {
-                for (ComponentInstanceInterface instanceInterface : interfaceEntry.getValue()) {
-                    if (isPropertyExistInOperationInterface(propertyDefinitionEntry, instanceInterface)) {
-                        return true;
-                    }
-                }
-            }
+            isPropertyExistInOperationInterface = componentInstanceInterfaces.entrySet().stream()
+                    .flatMap(interfaceEntry -> interfaceEntry.getValue().stream())
+                    .filter(instanceInterface -> isPropertyExistInOperationInterface(propertyDefinitionEntry, instanceInterface))
+                    .findAny();
         }
-        return false;
+        return isPropertyExistInOperationInterface.isPresent();
     }
 
     private boolean isPropertyExistInOperationInterface(PropertyDefinition propertyDefinition,

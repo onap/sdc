@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
@@ -25,14 +25,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class InterfaceInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
-  protected Map<String, Object> inputs;
-  protected Map<String, OperationInstance> operations;
 
   public InterfaceInstanceDataDefinition(
       InterfaceInstanceDataDefinition inter) {
     this.toscaPresentation = null;
-    this.inputs = inter.inputs == null? new HashMap():new HashMap<>(inter.inputs);
-    this.operations = new HashMap<>(inter.operations);
+    setInputs(inter.getInputs() == null? new HashMap():new HashMap<>(inter.getInputs()));
+    setOperations(new HashMap<>(inter.getOperations()));
   }
 
   public InterfaceInstanceDataDefinition(){
@@ -40,24 +38,19 @@ public class InterfaceInstanceDataDefinition extends ToscaDataDefinition impleme
   }
 
   public Map<String, Object> getInputs() {
-    return this.inputs;
+    return (Map<String, Object>)getToscaPresentationValue(JsonPresentationFields.INPUTS);
   }
 
-  public void setInputs(
-      Map<String, Object> inputs) {
-    this.inputs = inputs;
+  public void setInputs(Map<String, Object> inputs) {
+    setToscaPresentationValue(JsonPresentationFields.INPUTS, inputs);
   }
 
   public Map<String, OperationInstance> getOperations() {
-    return operations;
+    return (Map<String, OperationInstance>)getToscaPresentationValue(JsonPresentationFields.OPERATIONS);
   }
 
-  public void addInstanceOperation(String operationName, OperationInstance operation) {
-    if(MapUtils.isEmpty(this.operations)) {
-      this.operations = new HashMap<>();
-    }
-
-    this.operations.put(operationName, operation);
+  public void setOperations(Map<String, OperationInstance> operations) {
+    setToscaPresentationValue(JsonPresentationFields.OPERATIONS, operations);
   }
 
   @Override
@@ -69,13 +62,13 @@ public class InterfaceInstanceDataDefinition extends ToscaDataDefinition impleme
       return false;
     }
     InterfaceInstanceDataDefinition that = (InterfaceInstanceDataDefinition) o;
-    return Objects.equals(inputs, that.inputs);
+    return Objects.equals(this.getInputs(), that.getInputs());
   }
 
   @Override
   public int hashCode() {
 
-    return Objects.hash(inputs);
+    return Objects.hash(this.getInputs());
   }
 
 }

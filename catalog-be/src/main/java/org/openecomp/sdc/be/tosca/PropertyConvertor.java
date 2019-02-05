@@ -20,13 +20,11 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -37,7 +35,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
-import org.openecomp.sdc.be.model.tosca.converters.ToscaStringConvertor;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueConverter;
 import org.openecomp.sdc.be.tosca.model.EntrySchema;
@@ -45,12 +42,12 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-
-import fj.data.Either;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public class PropertyConvertor {
     private static PropertyConvertor instance;
@@ -127,12 +124,8 @@ public class PropertyConvertor {
         prop.setType(property.getType());
         prop.setDescription(property.getDescription());
         prop.setRequired(property.isRequired());
-        switch (propertyType) {
-            case CAPABILITY:
-                prop.setStatus(property.getStatus());
-                break;
-            default:
-                break;
+        if(propertyType.equals(PropertyType.CAPABILITY)) {
+            prop.setStatus(property.getStatus());
         }
         return prop;
     }

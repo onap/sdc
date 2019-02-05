@@ -227,7 +227,8 @@ public enum JsonPresentationFields {
     OPERATIONS("operations", null),
     OPERATION_IMPLEMENTATION("implementation",null),
     OPERATION_INPUTS("inputs",null),
-    OPERATION_OUTPUTS("outputs", null);
+    OPERATION_OUTPUTS("outputs", null),
+    INPUTS("inputs", null);
 
     private String presentation;
     private GraphPropertyEnum storedAs;
