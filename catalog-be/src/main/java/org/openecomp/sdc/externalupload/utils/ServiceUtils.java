@@ -17,18 +17,18 @@
 package org.openecomp.sdc.externalupload.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 public class ServiceUtils {
-  private static final char[] CHARS = new char[]{
-      '0', '1', '2', '3', '4', '5', '6', '7',
-      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-  };
-  private static final String TYPE = "type";
-  private static final String NODE = "node";
+
+  private static ImmutableSet<Class> collectionClasses = ImmutableSet.of(Map.class, List.class, Set.class);
+  private static ImmutableSet<Class> primitiveTypesClasses = ImmutableSet.of(String.class, Integer.class, Double.class, Float.class);
+
+  private ServiceUtils() {}
 
   public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
                                                          Class<T> classToCreate)
@@ -66,15 +66,19 @@ public class ServiceUtils {
   }
 
   private static boolean isComplexClass(Field field) {
-    return !field.getType().equals(Map.class)
-        && !field.getType().equals(String.class)
-        && !field.getType().equals(Integer.class)
-        && !field.getType().equals(Float.class)
-        && !field.getType().equals(Double.class)
-        && !field.getType().equals(Set.class)
-        && !field.getType().equals(Object.class)
-        && !field.getType().equals(List.class);
+    return !isCollectionClass(field)
+        && !isPrimitiveClass(field)
+        && !field.getType().equals(Object.class);
   }
+
+  private static boolean isCollectionClass(Field field) {
+    return collectionClasses.contains(field.getType());
+  }
+
+  private static boolean isPrimitiveClass(Field field) {
+    return primitiveTypesClasses.contains(field.getType());
+  }
+
   public static Map<String, Object> getObjectAsMap(Object obj) {
     return new ObjectMapper().convertValue(obj, Map.class);
   }

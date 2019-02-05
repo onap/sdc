@@ -88,7 +88,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
         String generatedInputName = generateInputName(propertiesOwner instanceof
-                Service ? null : propertiesOwner.getNormalizedName(),
+                        Service ? null : propertiesOwner.getNormalizedName(),
             propInput);
         return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
     }
@@ -108,23 +108,24 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     }
 
     private String handleInputName(String inputName, String[] parsedPropNames) {
-        String prefix;
+        StringBuilder prefix = new StringBuilder();
         int startingIndex;
 
         if(Objects.isNull(inputName)) {
-            prefix = parsedPropNames[0];
+            prefix.append(parsedPropNames[0]);
             startingIndex = 1;
         } else {
-            prefix = inputName;
+            prefix.append(inputName);
             startingIndex = 0;
         }
 
         while(startingIndex < parsedPropNames.length){
-            prefix += "_"  + parsedPropNames[startingIndex];
+            prefix.append("_");
+            prefix.append(parsedPropNames[startingIndex]);
             startingIndex ++;
         }
 
-        return prefix;
+        return prefix.toString();
     }
 
     private PropertyDataDefinition resolveProperty(List<PROPERTYTYPE> propertiesToCreate, ComponentInstancePropInput propInput) {

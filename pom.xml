@@ -47,6 +47,8 @@ Modifications copyright (c) 2018 Nokia
         <ecomp.version>2.4.0</ecomp.version>
         <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
 
+        <commons.collections.version>4.1</commons.collections.version>
+
         <!-- Elastic Search mapper (reference the elastic search version actually). -->
         <elastic-search.version>2.4.0</elastic-search.version>
         <catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
