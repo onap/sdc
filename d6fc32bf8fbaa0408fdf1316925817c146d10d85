@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb219206_3bf3c775",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-02-05T08:59:11Z",
+      "side": 1,
+      "message": "Please create another Addition record at the bottom of the list",
+      "range": {
+        "startLine": 82,
+        "startChar": 4,
+        "endLine": 82,
+        "endChar": 22
+      },
+      "revId": "d6fc32bf8fbaa0408fdf1316925817c146d10d85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
