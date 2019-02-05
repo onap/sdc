@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
@@ -32,33 +33,31 @@ import java.util.Optional;
 
 public class Resource extends Component {
 
-		
-			
+
     private List<String> derivedFrom;
 
     private List<String> derivedList;
 
-    private List<PropertyDefinition> properties;
-
     private List<PropertyDefinition> attributes;
 
-  private Map<String, InterfaceInstanceDefinition> instInterfaces;
+    private Map<String, InterfaceInstanceDataDefinition> instInterfaces;
 
-  private List<String> defaultCapabilities;
+    private List<String> defaultCapabilities;
 
-  public Resource() {
-    super(new ResourceMetadataDefinition());
-    this.getComponentMetadataDefinition().getMetadataDataDefinition()
-        .setComponentType(ComponentTypeEnum.RESOURCE);
-  }
+    public Resource() {
+        super(new ResourceMetadataDefinition());
+        this.getComponentMetadataDefinition().getMetadataDataDefinition()
+                .setComponentType(ComponentTypeEnum.RESOURCE);
+    }
 
     public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
         super(componentMetadataDefinition);
-        if(this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
+        if (this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
             this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
         }
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
     }
+
     /**
      * Please note that more than one "derivedFrom" resource is not currently
      * supported by the app. The first list element is always addressed.
@@ -104,20 +103,20 @@ public class Resource extends Component {
         this.attributes = attributes;
     }
 
-  public Map<String, InterfaceInstanceDefinition> getInstInterfaces() {
-    return instInterfaces;
-  }
+    public Map<String, InterfaceInstanceDataDefinition> getInstInterfaces() {
+        return instInterfaces;
+    }
 
-  public void setInstInterfaces(
-      Map<String, InterfaceInstanceDefinition> instInterfaces) {
-    this.instInterfaces = instInterfaces;
-  }
+    public void setInstInterfaces(
+            Map<String, InterfaceInstanceDataDefinition> instInterfaces) {
+        this.instInterfaces = instInterfaces;
+    }
 
-  public Boolean isAbstract() {
-    return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition()
-        .getMetadataDataDefinition())
-        .isAbstract();
-  }
+    public Boolean isAbstract() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition()
+                .getMetadataDataDefinition())
+                .isAbstract();
+    }
 
     public void setAbstract(Boolean isAbstract) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
@@ -240,9 +239,9 @@ public class Resource extends Component {
                 .setVendorRelease(vendorRelease);
     }
 
-    public void setResourceVendorModelNumber(String resourceVendorModelNumber){
+    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-        setResourceVendorModelNumber(resourceVendorModelNumber);
+                setResourceVendorModelNumber(resourceVendorModelNumber);
     }
 
     public String getVendorName() {
@@ -255,32 +254,32 @@ public class Resource extends Component {
                 .getVendorRelease();
     }
 
-    public String getResourceVendorModelNumber(){
+    public String getResourceVendorModelNumber() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
                 .getResourceVendorModelNumber();
     }
 
     @Override
-    public String fetchGenericTypeToscaNameFromConfig(){
+    public String fetchGenericTypeToscaNameFromConfig() {
         String result = super.fetchGenericTypeToscaNameFromConfig();
-        if(null == result)
+        if (null == result)
             result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(ResourceTypeEnum.VFC.getValue());
         return result;
     }
 
     @Override
-    public String assetType(){
+    public String assetType() {
         return this.getResourceType().name();
     }
 
     @Override
-    public boolean shouldGenerateInputs(){
+    public boolean shouldGenerateInputs() {
         //TODO add complex VFC condition when supported
         return !(this.getResourceType().isAtomicType());
     }
 
     @Override
-    public boolean deriveFromGeneric(){
+    public boolean deriveFromGeneric() {
         return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
     }
 
@@ -290,7 +289,7 @@ public class Resource extends Component {
     }
 
     private String getInstanceNameFromInstanceId(Resource resource, String instId) {
-		Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
-		return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
+        Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
+        return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
     }
 }

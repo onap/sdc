@@ -107,7 +107,7 @@ public class ToscaExportHandler {
 
     private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
 
-    public static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
+    private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String SERVICE_NODE_TYPE_PREFIX = "org.openecomp.service.";
     private static final String IMPORTS_FILE_KEY = "file";
     private static final String TOSCA_INTERFACE_NAME = "-interface.yml";
@@ -273,7 +273,7 @@ public class ToscaExportHandler {
             addPoliciesToTopologyTemplate(component, topologyTemplate);
         } catch (SdcResourceNotFoundException e) {
             log.debug("Fail to add policies to topology template:",e);
-            Either.right(ToscaError.GENERAL_ERROR);
+            return Either.right(ToscaError.GENERAL_ERROR);
         }
 
 
@@ -311,26 +311,6 @@ public class ToscaExportHandler {
 
         toscaNode.setTopology_template(topologyTemplate);
         return Either.left(toscaNode);
-    }
-
-    private Either<ToscaTopolgyTemplate, ToscaError> fillInputs(Component component,
-            ToscaTopolgyTemplate topologyTemplate, Map<String, DataTypeDefinition> dataTypes) {
-        if (log.isDebugEnabled()) {
-            log.debug("fillInputs for component {}", component.getUniqueId());
-        }
-        List<InputDefinition> inputDef = component.getInputs();
-        Map<String, ToscaProperty> inputs = new HashMap<>();
-
-        if (inputDef != null) {
-            inputDef.forEach(i -> {
-                ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, PropertyConvertor.PropertyType.INPUT);
-                inputs.put(i.getName(), property);
-            });
-            if (!inputs.isEmpty()) {
-                topologyTemplate.setInputs(inputs);
-            }
-        }
-        return Either.left(topologyTemplate);
     }
 
   private void addGroupsToTopologyTemplate(Component component, ToscaTopolgyTemplate topologyTemplate) {
