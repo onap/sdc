@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "784efc9b_8c2594d0",
+        "filename": "INFO.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-02-05T17:25:26Z",
+      "side": 1,
+      "message": "This is not a timezone\nThe correct timezone for this region is Asia/Jerusalem",
+      "range": {
+        "startLine": 70,
+        "startChar": 6,
+        "endLine": 70,
+        "endChar": 29
+      },
+      "revId": "16154c33f9bb86affa9ad235fd7139ba79da731f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
