@@ -18,8 +18,9 @@ import {ModalButtonComponent} from "sdc-ui/lib/angular/components";
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
+import {PluginsService} from "app/ng2/services/plugins.service";
 
-import {OperationCreatorComponent, OperationCreatorInput} from './operation-creator/operation-creator.component';
+import {OperationCreatorComponent, OperationCreatorInput} from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -111,6 +112,7 @@ export class InterfaceOperationComponent {
     isLoading: boolean;
     interfaceTypes:{ [interfaceType: string]: Array<string> };
     modalTranslation: ModalTranslation;
+    workflowIsOnline: boolean;
     workflows: Array<any>;
 
     @Input() component: IComponent;
@@ -122,6 +124,7 @@ export class InterfaceOperationComponent {
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
         @Inject("$state") private $state: ng.ui.IStateService,
         private TranslateService: TranslateService,
+        private PluginsService: PluginsService,
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
@@ -133,7 +136,8 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
-        const workflowSubscription = this.enableWorkflowAssociation ? this.WorkflowServiceNg2.getWorkflows() : Promise.resolve();
+        this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
+        const workflowSubscription = this.enableWorkflowAssociation && this.workflowIsOnline ? this.WorkflowServiceNg2.getWorkflows() : Promise.resolve();
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaces(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
@@ -249,9 +253,9 @@ export class InterfaceOperationComponent {
             inputProperties: this.inputs,
             enableWorkflowAssociation: this.enableWorkflowAssociation,
             readonly: this.readonly,
-            isService: this.component.isService(),
             interfaceTypes: this.interfaceTypes,
             validityChangedCallback: this.enableOrDisableSaveButton,
+            workflowIsOnline: this.workflowIsOnline
         };
 
         const modalConfig: IModalConfig = {

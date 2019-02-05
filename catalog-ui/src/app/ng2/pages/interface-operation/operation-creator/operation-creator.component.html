@@ -84,8 +84,9 @@
 
             <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
                 <label class="sdc-input__label required">{{ 'OPERATION_WORKFLOW' | translate }}
-                    <span class="archive-warning" *ngIf="archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
-                    <span class="no-workflow-warning" *ngIf="!workflows.length">{{ 'OPERATION_NO_WORKFLOW_ERROR' | translate }}</span>
+                    <span class="archive-warning" *ngIf="workflowIsOnline && archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
+                    <span class="no-workflow-warning" *ngIf="!workflowIsOnline">Failed to load workflows</span>
+                    <span class="no-workflow-warning" *ngIf="workflowIsOnline && !workflows.length">{{ 'OPERATION_NO_WORKFLOW_ERROR' | translate }}</span>
                 </label>
                 <sdc-dropdown
                     placeHolder="Select..."
@@ -93,13 +94,13 @@
                     selectedOption="{{operation.workflowId}}"
                     [options]="workflows"
                     (changed)="onSelectWorkflow($event)"
-                    [disabled]="readonly || !workflows.length">
+                    [disabled]="readonly || !workflows.length || !workflowIsOnline">
                 </sdc-dropdown>
             </div>
 
             <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
                 <sdc-dropdown
-                    *ngIf="workflows.length"
+                    *ngIf="workflowIsOnline && workflows.length"
                     label="{{ 'OPERATION_WORKFLOW_VERSION' | translate }}"
                     testId="associated-workflow-version"
                     selectedOption="{{operation.workflowVersionId}}"

@@ -86,7 +86,7 @@ export class ParamRowComponent {
             const selProp = this.getSelectedProp();
             if (selProp && selProp.type === this.param.type) {
                 this.param.inputId = '-1';
-                setTimeout(() => this.param.inputId = selProp.uniqueId || selProp.value, 0);
+                setTimeout(() => this.param.inputId = selProp.uniqueId || selProp.value);
             } else {
                 this.param.inputId = null;
             }
