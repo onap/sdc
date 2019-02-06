@@ -361,11 +361,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
            
             Optional<Resource> portResourceOp = getOrTranslatePortTemplate(translateTo, heatNetwork.get(
                     Constants.PORT_PROPERTY_NAME), translatedId, novaNodeTemplate);   
-            
-            if (ToggleableFeature.FABRIC_CONFIGURATION.isActive()) {
-                portResourceOp.ifPresent(portResource -> handleFabricConfiguration(translateTo, novaNodeTemplate.getType(), portResource));  
-            }
-            
+            portResourceOp.ifPresent(portResource -> handleFabricConfiguration(translateTo, novaNodeTemplate.getType(), portResource));
         }
         
     }  

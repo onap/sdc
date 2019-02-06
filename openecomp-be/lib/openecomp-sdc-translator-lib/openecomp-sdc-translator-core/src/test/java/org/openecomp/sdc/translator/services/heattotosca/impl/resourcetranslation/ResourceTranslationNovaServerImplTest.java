@@ -42,8 +42,8 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   }
   
   @BeforeClass
-  public static void enableFabricConfigurationTagging() {
-      manager.enable(ToggleableFeature.FABRIC_CONFIGURATION);
+  public static void setUpClass() {
+      manager.enable(ToggleableFeature.DEFAULT_FEATURE);
       TestFeatureManagerProvider.setFeatureManager(manager);
   }
 
@@ -172,8 +172,8 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   
   
   @AfterClass
-  public static void disableFabricConfiguration() {
-      manager.disable(ToggleableFeature.FABRIC_CONFIGURATION);
+  public static void tearDownClass() {
+      manager.disable(ToggleableFeature.DEFAULT_FEATURE);
       manager = null;
       TestFeatureManagerProvider.setFeatureManager(null);
   }

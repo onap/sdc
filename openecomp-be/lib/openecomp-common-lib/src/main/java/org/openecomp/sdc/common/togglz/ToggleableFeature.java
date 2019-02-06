@@ -6,8 +6,8 @@ import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
 
-    @Label("Fabric Configuration")
-    FABRIC_CONFIGURATION;
+    @Label("Default Feature")
+    DEFAULT_FEATURE;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
