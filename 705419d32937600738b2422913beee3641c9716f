@@ -22,6 +22,30 @@
       "revId": "705419d32937600738b2422913beee3641c9716f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4dc91c0_0a0036b1",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/togglz/ToggleableFeature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4445
+      },
+      "writtenOn": "2019-02-06T13:32:03Z",
+      "side": 1,
+      "message": "DEFAULT_FEATURE is added so that the ToggleableFeature enum will contain at least one entry even if it is not in use.\nThe class can\u0027t be removed as it is a part of Togglz lib utilized by the onboarding project for toggling.\nRemoving FabricConfiguration toggle means that the FC feature will not be activated/disactivated via toggle anymore. It will be activated always",
+      "parentUuid": "baee7c37_445e6d40",
+      "range": {
+        "startLine": 9,
+        "startChar": 19,
+        "endLine": 9,
+        "endChar": 20
+      },
+      "revId": "705419d32937600738b2422913beee3641c9716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
