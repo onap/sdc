@@ -23,14 +23,11 @@ then
     TEST_CI_BE_HOST="$(ifconfig  'eth0' | sed -n '2p' | awk '{print $2}' | sed 's/addr://g')"
     TEST_CI_BE_PORT=8081
     TEST_CI_CATALOG_HOST=$TEST_CI_BE_HOST
-    TEST_CI_AP_HOST=$TEST_CI_BE_HOST
-    TEST_CI_AP_PORT=8080
 fi
 if [ -z "$TEST_CI_CATALOG_PORT" ]
 then
     TEST_CI_CATALOG_PORT=8080
 fi
-
 echo "host $TEST_CI_BE_HOST"
 
 if [ -e "$WORKSPACE/data" ]
@@ -69,9 +66,6 @@ sed -i "s/onboarding.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.js
 sed -i "s/CatalogBE.port/$TEST_CI_CATALOG_PORT/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/CatalogBE.server/$TEST_CI_CATALOG_HOST/g" $WORKSPACE/data/environments/dockerConfig.json
 sed -i "s/CatalogBE.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/activity_spec.port/$TEST_CI_AP_PORT/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/activity_spec.server/$TEST_CI_AP_HOST/g" $WORKSPACE/data/environments/dockerConfig.json
-sed -i "s/activity_spec.user/cs0008/g" $WORKSPACE/data/environments/dockerConfig.json
 
 cat $WORKSPACE/data/environments/dockerConfig.json
 

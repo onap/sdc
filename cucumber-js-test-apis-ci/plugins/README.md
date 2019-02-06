@@ -7,7 +7,7 @@ The Modules on the left contains all steps for particalar aress and/or explanati
 <li> Copy the config.json to devConfig.json
 <li> Replace the server and user values with the correct values
 <h3>How to run with Maven</h3>
-<li>"mvn install" will install npm if needed, download all modules and create the documentation under the "docs" folder
+<li>"mvn clean install -f dev_pom.xml" will install npm if needed, download all modules and create the documentation under the "docs" folder
 <li>"mvn test-and-report" will run all  tests in the features folder and create an HTML report under the "reports" folder
 <h3>How to develop tests</h3>
 You can open the project in IntelliJ and Webstorm to run and develop scenarios.<br>
@@ -21,3 +21,9 @@ You can open the project in IntelliJ and Webstorm to run and develop scenarios.<
 <li> More on <a href="https://cucumber.io/docs/reference">Cucumber</a>
 <li> More on <a herf="https://github.com/cucumber/cucumber/wiki/Gherkin">Gherkin</a>
 <li> More on <a href="https://github.com/cucumber/cucumber-js">Cucumber-js</a>
+<br>
+<h3>How to run the docker</h3>
+<li>"mvn clean install -P docker" will create the docker images
+<li>the "docker_run.sh" script will start all ONAP images and run the cucumber docker against them
+<li> environment variables that can be set to change the server/version: IMAGES_TAG (default 1.4-STAGING-latest), TEST_CI_BE_HOST (deafult - machine IP), TEST_CI_CATALOG_PORT (default 8080)
+
