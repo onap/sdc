@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee7c37_445e6d40",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/togglz/ToggleableFeature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-02-06T11:17:57Z",
+      "side": 1,
+      "message": "what is this default feature? was it meant to remove the fabric configuration one? why not delete this class?",
+      "range": {
+        "startLine": 9,
+        "startChar": 19,
+        "endLine": 9,
+        "endChar": 20
+      },
+      "revId": "705419d32937600738b2422913beee3641c9716f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
