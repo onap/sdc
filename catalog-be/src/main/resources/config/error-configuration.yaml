@@ -2235,6 +2235,21 @@ errors:
         message: "Error: Property type %1 provided against %2 is not supported for static value.",
         messageId: "SVC4721"
     }
+
+  #---------SVC4722------------------------------
+  # %1 Directive value set
+    DIRECTIVES_INVALID_VALUE: {
+      code: 404,
+      message: "Error: Invalid directive value : '%1' .",
+      messageId: "SVC4722"
+    }
+#---------SVC4723-----------------------------
+# %1 - Interface Operation output name
+    INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED: {
+        code: 400,
+        message: "Error: Cannot update or delete interface operation output(s) '%1' mapped to an operation input",
+        messageId: "SVC4723"
+    }
 #---------SVC4723-----------------------------
 # %1 - Interface Operation output name
     INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED: {

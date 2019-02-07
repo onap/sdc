@@ -36,6 +36,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Swagger Dependencies Start -->
         <dependency>
@@ -587,6 +593,36 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-model</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.onap.sdc.common</groupId>

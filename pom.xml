@@ -473,7 +473,6 @@ Modifications copyright (c) 2018 Nokia
             </modules>
 
             <properties>
-                <ecomp.version>1.2.7</ecomp.version>
                 <sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
             </properties>
         </profile>

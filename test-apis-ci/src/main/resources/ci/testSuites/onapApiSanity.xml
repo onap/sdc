@@ -4,8 +4,8 @@
 	<parameter name="makeDistribution"  value="false"/>
 	<parameter name="makeToscaValidation"  value="true"/>
 	<test name="ExternalApis"> 
-		<classes>	
-			
+		<classes>
+            <class name="org.openecomp.sdc.ci.tests.servicefilter.ServiceFilterTests"/>
 			<class name="org.openecomp.sdc.ci.tests.sanity.Onboard"/>
 		</classes>
 	</test>

@@ -106,7 +106,7 @@ TARGET_LOG_DIR="${TARGET_DIR}/"
 
 ######ADD USERS################
 
-BE_IP=`cat conf/attsdc.yaml | grep catalogBeHost| awk '{print $2}'`
+BE_IP=`cat conf/sdc.yaml | grep catalogBeHost| awk '{print $2}'`
 
 
 

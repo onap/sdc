@@ -48,6 +48,7 @@ public class ComponentParametersView {
     private boolean ignoreCapabiltyProperties = true;
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
+    private boolean ignoreNodeFilter = false;
 
     public ComponentParametersView() {
     }
@@ -90,6 +91,7 @@ public class ComponentParametersView {
                     this.setIgnoreComponentInstances(false);
                     this.setIgnoreCapabilities(false);
                     this.setIgnoreRequirements(false);
+                    this.setIgnoreNodeFilter(false);
                     break;
                 case COMPONENT_INSTANCES_PROPERTIES:
                     this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements
@@ -141,6 +143,9 @@ public class ComponentParametersView {
                 case POLICIES:
                 case NON_EXCLUDED_POLICIES:
                     this.setIgnorePolicies(false);
+                    break;
+                case NODE_FILTER:
+                    this.setIgnoreNodeFilter(false);
                     break;
                 default:
                     break;
@@ -216,6 +221,9 @@ public class ComponentParametersView {
         if (ignoreServicePath && componentType == ComponentTypeEnum.SERVICE) {
             ((Service) component).setForwardingPaths(null);
         }
+        if (ignoreNodeFilter){
+            component.setNodeFilterComponents(null);
+        }
         return component;
     }
 
@@ -240,6 +248,7 @@ public class ComponentParametersView {
         ignoreComponentInstancesInputs = true;
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
+        ignoreNodeFilter = true;
     }
 
     public boolean isIgnoreGroups() {
@@ -404,6 +413,14 @@ public class ComponentParametersView {
 
     public void setIgnorePolicies(boolean ignorePolicies) {
         this.ignorePolicies = ignorePolicies;
+    }
+
+    public boolean isIgnoreNodeFilter() {
+        return ignoreNodeFilter;
+    }
+
+    public void setIgnoreNodeFilter(boolean ignoreNodeFilter) {
+        this.ignoreNodeFilter = ignoreNodeFilter;
     }
 
     public JsonParseFlagEnum detectParseFlag() {
