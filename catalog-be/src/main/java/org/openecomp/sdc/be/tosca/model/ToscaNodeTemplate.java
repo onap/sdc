@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,14 +25,18 @@ import org.apache.commons.collections.MapUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
 
 public class ToscaNodeTemplate {
+
     private String type;
+    private List<String> directives;
     private ToscaMetadata metadata;
     private String description;
     private Map<String, Object> properties;
     private List<Map<String, ToscaTemplateRequirement>> requirements;
     private Map<String, ToscaTemplateCapability> capabilities;
+    private NodeFilter node_filter;
     private Map<String, Object> interfaces;
 
     public String getType() {
@@ -75,13 +79,33 @@ public class ToscaNodeTemplate {
         this.metadata = metadata;
     }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getDirectives() {
+        return directives;
+    }
+
+    public void setDirectives(List<String> directives) {
+        if (CollectionUtils.isEmpty(directives)) {
+            this.directives = null;
+            return;
+        }
+        this.directives = directives;
+    }
+
+    public NodeFilter getNode_filter() {
+        return node_filter;
+    }
+
+    public void setNode_filter(NodeFilter node_filter) {
+        this.node_filter = node_filter;
+    }
 
     public void setInterfaces(
             Map<String, Object> interfaces) {

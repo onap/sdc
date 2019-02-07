@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,8 @@ public class UploadComponentInstanceInfo {
     private Map<String, List<UploadPropInfo>> properties;
     private Map<String, String> capabilitiesNamesToUpdate;
     private Map<String, String> requirementsNamesToUpdate;
+    private Collection<String> directives;
+    private UploadNodeFilterInfo uploadNodeFilterInfo;
 
     public Map<String, List<UploadPropInfo>> getProperties() {
         return properties;
@@ -88,4 +91,19 @@ public class UploadComponentInstanceInfo {
         this.requirementsNamesToUpdate = requirementsNamesToUpdate;
     }
 
+    public Collection<String> getDirectives() {
+        return directives;
+    }
+
+    public void setDirectives(Collection<String> directives) {
+        this.directives = directives;
+    }
+
+    public UploadNodeFilterInfo getUploadNodeFilterInfo() {
+        return uploadNodeFilterInfo;
+    }
+
+    public void setUploadNodeFilterInfo(UploadNodeFilterInfo uploadNodeFilterInfo) {
+        this.uploadNodeFilterInfo = uploadNodeFilterInfo;
+    }
 }

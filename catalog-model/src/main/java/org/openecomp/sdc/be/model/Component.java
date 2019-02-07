@@ -20,8 +20,22 @@
 
 package org.openecomp.sdc.be.model;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
@@ -71,6 +85,7 @@ public abstract class Component implements PropertiesOwner {
 	protected List<AdditionalInformationDefinition> additionalInformation;
 	protected List<PropertyDefinition> properties;
 	private Map<String, InterfaceDefinition> interfaces;
+    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
 
 	public Map<String, InterfaceDefinition> getInterfaces() {
 		return interfaces;
@@ -589,6 +604,14 @@ public abstract class Component implements PropertiesOwner {
 		return result;
 	}
 
+    public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
+        return nodeFilterComponents;
+    }
+
+    public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilterComponents) {
+        this.nodeFilterComponents = nodeFilterComponents;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -723,6 +746,9 @@ public abstract class Component implements PropertiesOwner {
             return false;
         }
         else if (!properties.equals(other.properties)) {
+            return false;
+        }
+        else if (!nodeFilterComponents.equals(other.nodeFilterComponents)) {
             return false;
         }
         return true;

@@ -131,6 +131,10 @@ public class ModelConverter {
 
 		convertPolicies(topologyTemplate, service);
 
+		convertProperties(topologyTemplate, service);
+
+		convertPolicies(topologyTemplate, service);
+
         convertGroups(topologyTemplate, service);
 
 		setCapabilitiesToComponentAndGroups(topologyTemplate, service);
@@ -147,6 +151,7 @@ public class ModelConverter {
 
         convertServiceInterfaces(topologyTemplate, service);
 
+        convertNodeFiltersComponents(topologyTemplate, service);
         return service;
     }
 
@@ -193,6 +198,8 @@ public class ModelConverter {
             convertGroups(topologyTemplate, resource);
 			setCapabilitiesToComponentAndGroups(topologyTemplate, resource);
             convertPolicies(topologyTemplate, resource);
+            convertNodeFiltersComponents(topologyTemplate, resource);
+            convertProperties(topologyTemplate, resource);
         }
         convertArtifacts(toscaElement, resource);
         convertAdditionalInformation(toscaElement, resource);
@@ -678,6 +685,17 @@ public class ModelConverter {
         component.setDeploymentArtifacts(copy);
     }
 
+    private static void convertNodeFiltersComponents(TopologyTemplate topologyTemplate, Component component) {
+        Map<String, CINodeFilterDataDefinition> filters = topologyTemplate.getNodeFilterComponents();
+        Map<String, CINodeFilterDataDefinition> copy;
+        if (filters != null) {
+            copy = filters.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new CINodeFilterDataDefinition(e.getValue())));
+        } else {
+            copy = new HashMap<>();
+        }
+        component.setNodeFilterComponents(copy);
+    }
+
     private static void convertServiceApiArtifacts(TopologyTemplate topologyTemplate, Service service) {
         Map<String, ArtifactDataDefinition> serviceApiArtifacts = topologyTemplate.getServiceApiArtifacts();
         Map<String, ArtifactDefinition> copy;
@@ -1100,6 +1118,8 @@ public class ModelConverter {
 
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance currComponentInstance;
+        Map<String, CINodeFilterDataDefinition> nodeFilterComponents = topologyTemplate.getNodeFilterComponents();
+
         for (Map.Entry<String, ComponentInstanceDataDefinition> entry : topologyTemplate.getComponentInstances().entrySet()) {
             String key = entry.getKey();
             currComponentInstance = new ComponentInstance(topologyTemplate.getComponentInstances().get(key));
@@ -1116,6 +1136,7 @@ public class ModelConverter {
                 currComponentInstance.setInterfaces(interfacesMap);
             }
             componentInstances.add(currComponentInstance);
+
         }
         component.setComponentInstances(componentInstances);
     }

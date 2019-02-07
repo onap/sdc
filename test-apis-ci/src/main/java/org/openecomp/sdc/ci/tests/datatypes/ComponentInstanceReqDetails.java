@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
+import java.util.List;
+
 import org.openecomp.sdc.be.model.ComponentInstance;
 
 public class ComponentInstanceReqDetails {
@@ -31,6 +33,7 @@ public class ComponentInstanceReqDetails {
 	String name;
 	String uniqueId;
 	String originType;
+    List<String> directives;
 
 	public ComponentInstanceReqDetails() {
 		super();
@@ -122,10 +125,25 @@ public class ComponentInstanceReqDetails {
 		this.originType = originType;
 	}
 
-	@Override
-	public String toString() {
-		return "ResourceInstanceReqDetails [resourceUid=" + componentUid + ", description=" + description + ", posX="
-				+ posX + ", posY=" + posY + ", name=" + name + ", uniqueId=" + uniqueId + "]";
-	}
+    public List<String> getDirectives() {
+        return directives;
+    }
 
+    public void setDirectives(List<String> directives) {
+        this.directives = directives;
+    }
+
+    @Override
+    public String toString() {
+        return "ComponentInstanceReqDetails{" +
+                "componentUid='" + componentUid + '\'' +
+                ", description='" + description + '\'' +
+                ", posX='" + posX + '\'' +
+                ", posY='" + posY + '\'' +
+                ", name='" + name + '\'' +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", originType='" + originType + '\'' +
+                ", directives=" + directives +
+                '}';
+    }
 }
