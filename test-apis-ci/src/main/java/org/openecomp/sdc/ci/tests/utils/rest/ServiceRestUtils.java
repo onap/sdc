@@ -99,6 +99,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		RestResponse res = sendPost(url, serviceBodyJson, user.getUserId(), acceptHeaderData);
 		if (res.getErrorCode() == STATUS_CODE_CREATED) {
 			service.setUniqueId(ResponseParser.getUniqueIdFromResponse(res));
+            service.setName(ResponseParser.getNameFromResponse(res));
 			service.setVersion(ResponseParser.getVersionFromResponse(res));
 			service.setUUID(ResponseParser.getUuidFromResponse(res));
 			// Creator details never change after component is created - Ella,

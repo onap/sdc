@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -19,6 +20,7 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.parser.ParserException;
@@ -449,6 +451,8 @@ public class YamlTemplateParsingHandler {
                 setRequirements(nodeTemplateInfo, nodeTemplateJsonMap);
                 setCapabilities(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateProperties(nodeTemplateInfo, nodeTemplateJsonMap);
+                setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
+                setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
                 setSubstitutions(substitutionMappings, nodeTemplateInfo);
             } else {
                 rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
@@ -511,6 +515,22 @@ public class YamlTemplateParsingHandler {
                 toscaResourceType = createdNodesToscaResourceNames.get(toscaResourceType);
             }
             nodeTemplateInfo.setType(toscaResourceType);
+        }
+    }
+
+    private void setDirectives(UploadComponentInstanceInfo nodeTemplateInfo,
+            Map<String, Object> nodeTemplateJsonMap) {
+        List<String> directives =
+                (List<String>) nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.DIRECTIVES.getElementName());
+        nodeTemplateInfo.setDirectives(directives);
+    }
+
+    private void setNodeFilter(UploadComponentInstanceInfo nodeTemplateInfo,
+            Map<String, Object> nodeTemplateJsonMap) {
+        if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())) {
+            nodeTemplateInfo.setUploadNodeFilterInfo(
+                    new NodeFilterUploadCreator().createNodeFilterData(nodeTemplateJsonMap.get(
+                            TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())));
         }
     }
 

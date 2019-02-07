@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -136,6 +136,14 @@ public class NodeTemplateOperation extends BaseOperation {
             if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
                 TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
                 result = addServerCapAndReqToProxyServerInstance(updatedContainer, componentInstance, componentInstanceData);
+                if(result.isRight()) {
+                    return result;
+                }
+
+                result = addServiceInstancePropertiesToProxyServiceInstance(updatedContainer, componentInstance);
+                if(result.isRight()) {
+                  return result;
+                }
 
             }
         }
@@ -270,6 +278,34 @@ public class NodeTemplateOperation extends BaseOperation {
             result = Either.left(instanceName);
         }
         return result;
+    }
+
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstancePropertiesToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
+
+        List<PropertyDefinition> propertiesList = componentInstance.getProperties();
+
+        if (propertiesList != null && !propertiesList.isEmpty()) {
+            Map<String, PropertyDataDefinition> propertiesMap = propertiesList.stream().map(i -> new PropertyDataDefinition(i))
+                                                                              .collect(Collectors.toMap(i -> i.getName(), i -> i));
+            MapPropertiesDataDefinition instProperties = new MapPropertiesDataDefinition(propertiesMap);
+            Map<String, MapPropertiesDataDefinition> instPropertiesMap = new HashMap<>();
+            instPropertiesMap.put(componentInstance.getUniqueId(), instProperties);
+            updatedContainer.setInstProperties(instPropertiesMap);
+            Either<GraphVertex, TitanOperationStatus> getToscaElementRes = titanDao.getVertexById(updatedContainer.getUniqueId(), JsonParseFlagEnum.NoParse);
+           if(getToscaElementRes.isLeft()){
+               deleteToscaDataDeepElementsBlockToToscaElement(getToscaElementRes.left().value(),  EdgeLabelEnum.INST_PROPERTIES,
+                       VertexTypeEnum.INST_PROPERTIES,  componentInstance.getUniqueId());
+           }
+            StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
+                    EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, instProperties,
+                    componentInstance.getUniqueId());
+            if (status != StorageOperationStatus.OK) {
+                return Either.right(status);
+            }
+
+
+        }
+        return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
     }
 
     public Either<TopologyTemplate, StorageOperationStatus> addComponentInstanceToTopologyTemplate(TopologyTemplate container, ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex metadataVertex,
@@ -620,7 +656,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
         return status;
     }
-    
+
     private MapPropertiesDataDefinition turnInputsIntoProperties(MapPropertiesDataDefinition instInput){
         if (instInput.getMapToscaDataDefinition() != null) {
             for (PropertyDataDefinition currProp : instInput.getMapToscaDataDefinition().values()){
@@ -873,7 +909,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     /**
      * Prepares a map of capabilities lists Produces a deep copy of the received map of capabilities Sets values to the specific fields according to received component instance
-     * 
+     *
      * @param capabilities
      * @param componentInstance
      * @return
@@ -900,7 +936,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     /**
      * Prepares a map of requirements lists Produces a deep copy of the received map of requirements Sets values to the specific fields according to received component instance
-     * 
+     *
      * @param requirements
      * @param componentInstance
      * @return
@@ -1284,7 +1320,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     /**
      * Retrieves fulfilled requirement according to relation and received predicate
-     * 
+     *
      * @param componentId
      * @param instanceId
      * @param foundRelation
@@ -1332,7 +1368,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     /**
      * Retrieves fulfilled capability according to relation and received predicate
-     * 
+     *
      * @param componentId
      * @param instanceId
      * @param foundRelation
@@ -2018,12 +2054,12 @@ public class NodeTemplateOperation extends BaseOperation {
             log.debug("Failed to fetch component metadata vertex for id {} error {}", componentId, vertexById.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexById.right().value());
         }
-        GraphVertex metadataVertex = vertexById.left().value(); 
+        GraphVertex metadataVertex = vertexById.left().value();
 
         EnumMap<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.UUID, serviceUUID);
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-  
+
         EnumMap<GraphPropertyEnum, Object> hasNot = new EnumMap<>(GraphPropertyEnum.class);
         hasNot.put(GraphPropertyEnum.IS_DELETED, true);
 
@@ -2037,7 +2073,7 @@ public class NodeTemplateOperation extends BaseOperation {
         if ( vertecies != null ){
             GraphVertex serviceVertex = vertecies.get(0);
             //remove previous edges
-            
+
             log.debug("Try to create or update edge between resource {} and service {} ", metadataVertex, serviceVertex.getUniqueId());
             // create edge between container and service reference
             result = createOrUpdateInstanceEdge(metadataVertex, EdgeLabelEnum.ALLOTTED_OF, serviceVertex.getUniqueId(), instanceId).either(v -> StorageOperationStatus.OK,
@@ -2045,8 +2081,8 @@ public class NodeTemplateOperation extends BaseOperation {
         }
         return result;
     }
-    
-    
+
+
     public StorageOperationStatus removeInstanceEdge(GraphVertex metadataVertex, ComponentInstanceDataDefinition componentInstance) {
         String instUniqueId = componentInstance.getUniqueId();
 
@@ -2095,7 +2131,7 @@ public class NodeTemplateOperation extends BaseOperation {
         try {
             String jsonArr = JsonParserUtils.toJson(property);
             log.debug("Update INSTANCES edge property with value {} ", jsonArr );
-            
+
             edge.property(EdgePropertyEnum.INSTANCES.getProperty(), jsonArr);
         } catch (IOException e) {
            log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );

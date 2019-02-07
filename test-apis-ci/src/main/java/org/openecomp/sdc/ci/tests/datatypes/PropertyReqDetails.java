@@ -135,7 +135,8 @@ public class PropertyReqDetails {
 
 	public String propertyToJsonString() {
 		String jsonString;
-		jsonString = "{\"" + this.getName() + "\":{" + "\"type\":\"" + this.getPropertyType() + "\"," + "\"required\":"
+		jsonString =
+                "{\"" + this.getName() + "\":{" + "\"name\":\"" + this.getName() + "\"," + "\"type\":\"" + this.getPropertyType() + "\"," + "\"required\":"
 				+ this.getPropertyRequired() + "," + "\"defaultValue\":\"" + this.getPropertyDefaultValue() + "\","
 				+ "\"description\":\"" + this.getPropertyDescription() + "\"," + "\"constraints\":[{\"inRange\":[\""
 				+ this.getPropertyRangeMin() + "\",\"" + this.getPropertyRangeMax() + "\"]}]," + "\"isPassword\":"

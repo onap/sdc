@@ -212,6 +212,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associateForwardingPathToComponent(topologyTemplateVertex,forwardingPaths);
     }
 
+    private StorageOperationStatus associateNodeFilterToResource(GraphVertex topologyTemplateVertex,
+            TopologyTemplate topologyTemplate) {
+        Map<String, CINodeFilterDataDefinition> nodeFilters =
+                topologyTemplate.getNodeFilterComponents();
+        return associateNodeFiltersToComponent(topologyTemplateVertex, nodeFilters);
+    }
+
     private StorageOperationStatus associateCapPropertiesToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
         Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate.getCalculatedCapabilitiesProperties();
         if (calculatedCapProperties != null && !calculatedCapProperties.isEmpty()) {
@@ -697,7 +704,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
             }
         }
-        
+
+        if (!componentParametersView.isIgnoreNodeFilter()) {
+            status = setNodeFilterComponentFromGraph(componentV, toscaElement);
+            if (status != TitanOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+
+            }
+        }
+
         if (!componentParametersView.isIgnoreInterfaces()) {
             TitanOperationStatus storageStatus = setInterfcesFromGraph(componentV, toscaElement);
             if (storageStatus != TitanOperationStatus.OK) {
@@ -742,6 +757,19 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
         return TitanOperationStatus.OK;
+    }
+
+    public StorageOperationStatus associateNodeFiltersToComponent(GraphVertex nodeTypeVertex,
+            Map<String, CINodeFilterDataDefinition> filterMaps) {
+        if (filterMaps != null && !filterMaps.isEmpty()) {
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData
+                                                                                         (nodeTypeVertex, VertexTypeEnum.NODE_FILTER_TEMPLATE,
+                                                                                                 EdgeLabelEnum.NODE_FILTER_TEMPLATE, filterMaps);
+            if (assosiateElementToData.isRight()) {
+                return assosiateElementToData.right().value();
+            }
+        }
+        return StorageOperationStatus.OK;
     }
 
     private TitanOperationStatus setForwardingGraphPropertiesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
@@ -809,6 +837,21 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Either<Map<String, MapPropertiesDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INST_INPUTS);
         if (result.isLeft()) {
             topologyTemplate.setInstInputs(result.left().value());
+        } else {
+            if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return TitanOperationStatus.OK;
+    }
+
+    private TitanOperationStatus setNodeFilterComponentFromGraph(GraphVertex componentV,
+            TopologyTemplate topologyTemplate) {
+        Either<Map<String, CINodeFilterDataDefinition>, TitanOperationStatus> result =
+                getDataFromGraph(componentV,
+                        EdgeLabelEnum.NODE_FILTER_TEMPLATE);
+        if (result.isLeft()) {
+            topologyTemplate.setNodeFilterComponents(result.left().value());
         } else {
             if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
                 return result.right().value();

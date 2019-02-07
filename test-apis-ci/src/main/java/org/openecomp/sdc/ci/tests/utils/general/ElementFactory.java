@@ -391,6 +391,16 @@ public class ElementFactory {
 
 	}
 
+    public static ComponentInstanceReqDetails getDefaultComponentInstance(String serviceUniqueId, String originType) {
+        ComponentInstanceReqDetails componentInstanceReqDetails = new ComponentInstanceReqDetails(serviceUniqueId,
+                RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, null, originType);
+
+        componentInstanceReqDetails.setUniqueId(serviceUniqueId + Math.random());
+
+        return componentInstanceReqDetails;
+
+    }
+
 	public static ComponentInstanceReqDetails getComponentResourceInstance(ComponentReqDetails compInstOriginDetails) {
 		String compInstName = (compInstOriginDetails.getName() != null ? compInstOriginDetails.getName() : "resourceInstanceName");
 		String resourceUid = compInstOriginDetails.getUniqueId();
@@ -406,6 +416,16 @@ public class ElementFactory {
 		return componentInstanceDetails;
 
 	}
+
+	//********ServiceFilter**********
+    public static ServiceFilterDetails getDefaultEqualOperatorFilter(String propertyName, String valueString) {
+        return new ServiceFilterDetails(propertyName, "equal", "static", "static", valueString);
+    }
+
+    public static ServiceFilterDetails getDefaultFilter(String propertyName, String valueString,
+                                                                    String operator) {
+        return new ServiceFilterDetails(propertyName, operator, "static", "static", valueString);
+    }
 
 	// ******* USER **********************
 	public static User getDefaultUser(UserRoleEnum userRole) {

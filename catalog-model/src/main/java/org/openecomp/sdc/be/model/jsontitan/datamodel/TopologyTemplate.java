@@ -58,7 +58,8 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, InterfaceDataDefinition> interfaces;
     private Map<String, MapInterfaceInstanceDataDefinition> instInterfaces;
     private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
-    
+
+    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
     //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
     private Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs;
@@ -231,7 +232,15 @@ public class TopologyTemplate extends ToscaElement{
         this.forwardingPaths = forwardingPaths;
     }
 
-    /**
+    public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
+        return nodeFilterComponents;
+    }
+
+    public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilters) {
+        this.nodeFilterComponents = nodeFilters;
+    }
+
+      /**
      * Adds component instance to composition of topology template
      * Note that component instance will be overrided in case if the topology template already contains a component instance with the same name
      * @param componentInstance

@@ -29,11 +29,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -116,6 +117,7 @@ public class ToscaExportHandler {
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager
                                                                                           .getConfigurationManager().getConfiguration().getDefaultImports();
+    private static YamlUtil yamlUtil = new YamlUtil();
 
     public ToscaExportHandler(){}
 
@@ -587,7 +589,6 @@ public class ToscaExportHandler {
     }
   }
 
-
     private Either<ToscaTemplate, ToscaError> convertReqCapAndTypeName(Map<String, Component> componentsCache, Component component, ToscaTemplate toscaNode,
             Map<String, ToscaNodeType> nodeTypes, ToscaNodeType toscaNodeType,
             Map<String, DataTypeDefinition> dataTypes) {
@@ -645,6 +646,8 @@ public class ToscaExportHandler {
         for (ComponentInstance componentInstance : componentInstances) {
             ToscaNodeTemplate nodeTemplate = new ToscaNodeTemplate();
             nodeTemplate.setType(componentInstance.getToscaComponentName());
+            nodeTemplate.setDirectives(componentInstance.getDirectives());
+            nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
 
             Either<Component, Boolean> originComponentRes = capabilityRequirementConverter
                                                                     .getOriginComponent(componentCache, componentInstance);
@@ -809,7 +812,6 @@ public class ToscaExportHandler {
 
         return interfaces;
     }
-    //M3[00001] - NODE TEMPLATE INTERFACES  - END
 
     private void addComponentInstanceInputs(Map<String, DataTypeDefinition> dataTypes,
             Map<String, List<ComponentInstanceInput>> componentInstancesInputs,
@@ -1162,6 +1164,102 @@ public class ToscaExportHandler {
         log.debug("Finish convert Capabilities for node type");
 
         return Either.left(nodeType);
+    }
+
+
+    protected NodeFilter convertToNodeTemplateNodeFilterComponent(CINodeFilterDataDefinition inNodeFilter) {
+        if (inNodeFilter == null){
+            return null;
+        }
+        NodeFilter nodeFilter = new NodeFilter();
+
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> origCapabilities =
+                inNodeFilter.getCapabilities();
+
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> origProperties = inNodeFilter.getProperties();
+
+        List<Map<String, CapabilityFilter>> capabilitiesCopy = new ArrayList<>();
+        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+
+        copyNodeFilterCapabilitiesTemplate(origCapabilities, capabilitiesCopy);
+        copyNodeFilterProperties(origProperties, propertiesCopy);
+
+        if(CollectionUtils.isNotEmpty(capabilitiesCopy)) {
+            nodeFilter.setCapabilities(capabilitiesCopy);
+        }
+
+        if(CollectionUtils.isNotEmpty(propertiesCopy)) {
+            nodeFilter.setProperties(propertiesCopy);
+        }
+
+        nodeFilter.setTosca_id(cloneToscaId(inNodeFilter.getTosca_id()));
+
+
+        nodeFilter = (NodeFilter) cloneObjectFromYml(nodeFilter, NodeFilter.class);
+
+        return nodeFilter;
+    }
+
+    private Object cloneToscaId(Object toscaId) {
+        return Objects.isNull(toscaId) ? null
+                       : cloneObjectFromYml(toscaId, toscaId.getClass());
+    }
+
+
+    private Object cloneObjectFromYml(Object objToClone, Class classOfObj) {
+        String objectAsYml = yamlUtil.objectToYaml(objToClone);
+        return yamlUtil.yamlToObject(objectAsYml, classOfObj);
+    }
+    private void copyNodeFilterCapabilitiesTemplate(
+            ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> origCapabilities,
+            List<Map<String, CapabilityFilter>> capabilitiesCopy) {
+        if(origCapabilities == null || origCapabilities.getListToscaDataDefinition() == null ||
+                   origCapabilities.getListToscaDataDefinition().isEmpty() ) {
+            return;
+        }
+        for(RequirementNodeFilterCapabilityDataDefinition capability : origCapabilities.getListToscaDataDefinition()) {
+            Map<String, CapabilityFilter> capabilityFilterCopyMap = new HashMap<>();
+            CapabilityFilter capabilityFilter = new CapabilityFilter();
+            List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+            copyNodeFilterProperties(capability.getProperties(), propertiesCopy);
+            capabilityFilter.setProperties(propertiesCopy);
+            capabilityFilterCopyMap.put(capability.getName(), capabilityFilter);
+            capabilitiesCopy.add(capabilityFilterCopyMap);
+        }
+    }
+
+    private List<Object> copyNodeFilterProperty(List<Object> propertyList) {
+        String listAsString = yamlUtil.objectToYaml(propertyList);
+        return yamlUtil.yamlToObject(listAsString, List.class);
+    }
+
+
+    private void copyNodeFilterProperties(
+            ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> origProperties,
+            List<Map<String, List<Object>>> propertiesCopy) {
+        if(origProperties == null || origProperties.getListToscaDataDefinition() == null ||
+                   origProperties.isEmpty()) {
+            return;
+        }
+        for(RequirementNodeFilterPropertyDataDefinition propertyDataDefinition : origProperties.getListToscaDataDefinition()) {
+            Map<String, List<Object>> propertyMapCopy = new HashMap<>();
+            for(String propertyInfoEntry : propertyDataDefinition.getConstraints()) {
+                Map propertyValObj =  new YamlUtil().yamlToObject(propertyInfoEntry, Map.class);
+                if (propertyMapCopy.containsKey(propertyDataDefinition.getName())){
+                    propertyMapCopy.get(propertyDataDefinition.getName()).add(propertyValObj);
+                } else {
+                    if (propertyDataDefinition.getName() != null) {
+                        List propsList =new ArrayList();
+                        propsList.add(propertyValObj);
+                        propertyMapCopy.put(propertyDataDefinition.getName(), propsList);
+                    } else {
+                        propertyMapCopy.putAll(propertyValObj);
+                    }
+                }
+            }
+            propertiesCopy.add(propertyMapCopy);
+        }
+
     }
 
     private static class CustomRepresenter extends Representer {
