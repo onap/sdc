@@ -50,6 +50,14 @@ public class PropertyRestUtils extends BaseRestUtils {
         return sendPost(url, body, user.getUserId(), acceptHeaderData);
     }
 
+    public static RestResponse createServiceProperty(String resourceId, String body, User user) throws Exception {
+        Config config = Config.instance();
+        String url = String.format(Urls.CREATE_SERVICE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
+                resourceId);
+
+        return sendPost(url, body, user.getUserId(), acceptHeaderData);
+    }
+
     public static RestResponse updateProperty(String resourceId, String propertyId, String body, User user)
             throws Exception {
         Config config = Config.instance();

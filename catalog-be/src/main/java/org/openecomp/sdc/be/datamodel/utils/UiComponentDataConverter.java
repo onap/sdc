@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
 import org.openecomp.sdc.be.ui.model.*;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
@@ -101,6 +102,13 @@ public class UiComponentDataConverter {
             case COMPONENT_INSTANCE_INPUTS:
                 setComponentInstanceInputs(dataTransfer, component);
                 break;
+            case NODE_FILTER:
+                if(component.getNodeFilterComponents() == null) {
+                    dataTransfer.setNodeFilterData(null);
+                } else {
+                    NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
+                    dataTransfer.setNodeFilterData(nodeFilterConverter.convertDataMapToUI(component.getNodeFilterComponents()));
+                }
             default:
                 break;
         }
