@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -57,6 +61,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 		setSourceModelUuid(dataDefinition.getSourceModelUuid());
 		setSourceModelUid(dataDefinition.getSourceModelUid());
 		setIsProxy(dataDefinition.getIsProxy());
+		setDirectives(dataDefinition.getDirectives());
 		setOriginArchived(dataDefinition.isOriginArchived());
 	}
 
@@ -273,9 +278,27 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 		}
 	}
 
+	public List<String> getDirectives() {
+		return ( List<String>) getToscaPresentationValue(JsonPresentationFields.CI_DIRECTIVES);
+	}
+
+	public void setDirectives(List<String> directives) {
+		if (directives == null){
+			directives = new ArrayList<>();
+		}
+		setToscaPresentationValue(JsonPresentationFields.CI_DIRECTIVES, directives);
+	}
+
 	public Boolean isOriginArchived() {
 		Boolean originArchived = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_ORIGIN_ARCHIVED);
 		return ( originArchived != null ) ? originArchived : false;
+	}
+
+	private String getDirectivesString(){
+		if (CollectionUtils.isEmpty(getDirectives())){
+			return "";
+		}
+		return getDirectives().stream().collect(Collectors.joining(","));
 	}
 
 	@Override
@@ -288,7 +311,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 				+ getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter() + ", originType="
 				+ getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName="
 				+ getComponentName() + ", componentVersion=" + getComponentVersion() + ", toscaComponentName="
-				+ getToscaComponentName() + "]";
+				+ getToscaComponentName() + ", directives =" + getDirectivesString()  +"]";
 	}
 
 }

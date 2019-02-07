@@ -180,6 +180,7 @@ public interface Urls {
 	final String CHANGE_COMPONENT_LIFECYCLE_STATE = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/lifecycleState/%s";
 
 	final String CREATE_PROPERTY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/resources/%s/properties";
+    String CREATE_SERVICE_PROPERTY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/%s/properties";
 	final String DECLARE_PROPERTIES  = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/create/inputs";
 	final String UPDATE_INPUT  = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/resources/%s/update/inputs";
 
@@ -392,6 +393,12 @@ public interface Urls {
 	final String GET_VSP_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
 	final String GET_VLM_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/%s";
 	final String ACTION_ARCHIVE_RESTORE_COMPONENT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/%s/%s/actions";
+	String CREATE_SERVICE_FILTER = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/%s/resourceInstances/%s/nodeFilter";
+    String UPDATE_SERVICE_FILTER = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/%s"
+            + "/resourceInstances/%s/nodeFilter/";
+	String DELETE_SERVICE_FILTER = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/%s"
+												  + "/resourceInstances/%s/nodeFilter/%s";
+	String MARK_AS_DEPENDENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s";
 
 	// Interface Lifecycle Types
 	final String GET_All_INTERFACE_LIFECYCLE_TYPES = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/interfaceLifecycleTypes";

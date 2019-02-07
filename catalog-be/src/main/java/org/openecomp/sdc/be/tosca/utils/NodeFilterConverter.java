@@ -123,6 +123,10 @@ public class NodeFilterConverter {
         }
     }
 
+    public Map<String, UINodeFilter> convertDataMapToUI(Map<String, CINodeFilterDataDefinition> inMap) {
+        return inMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, o -> convertToUi(o.getValue())));
+    }
+
     public UINodeFilter convertToUi(CINodeFilterDataDefinition inNodeFilter) {
         UINodeFilter retVal = new UINodeFilter();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
@@ -131,7 +135,7 @@ public class NodeFilterConverter {
         }
         List<UIConstraint> constraints = inNodeFilter.getProperties().getListToscaDataDefinition().stream()
                                                      .map(property -> property.getConstraints().iterator().next())
-                                                     .map(str -> constraintConvertor.convert(str))
+                                                     .map(constraintConvertor::convert)
                                                      .collect(Collectors.toList());
         retVal.setProperties(constraints);
         return retVal;
