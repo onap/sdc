@@ -93,22 +93,22 @@ public class CompositionBusinessLogic {
         double offsetedCanvasPosition;
         switch (componentInstance.getOriginType()) {
         case CP:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.CP_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.CP_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         case VL:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.CP_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.CP_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         case VF:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         case VFC:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         case VFCMT:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         default:
-            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
+            offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2.0;
             break;
         }
         return String.valueOf(offsetedCanvasPosition);
