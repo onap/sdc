@@ -66,6 +66,7 @@ public class DeclaredInputsResolver {
 
     private List<InputDefinition> prepareInputsForRedeclaration(Map<String, InputDefinition> oldInputsById, RedeclareInputData redeclareInputData) {
         List<InputDefinition> inputsForRedeclaration = redeclareInputData.declaredInputIds.stream()
+                                            .filter(oldInputsById::containsKey)
                                             .map(oldInputsById::get)
                                             .map(InputDefinition::new)
                                             .collect(Collectors.toList());

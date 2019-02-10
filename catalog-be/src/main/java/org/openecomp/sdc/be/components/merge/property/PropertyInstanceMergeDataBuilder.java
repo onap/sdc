@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.components.merge.property;
 
+import java.util.Objects;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -66,7 +67,7 @@ class PropertyInstanceMergeDataBuilder {
     private static List<String> getOldDeclaredInputsByUser(List<GetInputValueDataDefinition> getInputValues, Map<String, InputDefinition> oldInputsByName) {
         return getInputValues.stream().map(GetInputValueDataDefinition::getInputName)
                                       .map(oldInputsByName::get)
-                                      .filter(oldInput -> oldInput.getInstanceUniqueId() != null)
+                                      .filter(oldInput ->  Objects.nonNull(oldInput) && oldInput.getInstanceUniqueId() != null)
                                       .map(PropertyDataDefinition::getName)
                                       .collect(Collectors.toList());
     }
