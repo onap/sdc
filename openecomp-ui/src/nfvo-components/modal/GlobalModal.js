@@ -34,7 +34,9 @@ const GlobalModalFooter = ({
     onDeclined,
     onClose,
     confirmationButtonText,
-    cancelButtonText
+    cancelButtonText,
+    confirmDataTestId,
+    cancelDataTestId
 }) => {
     let actionButtonClick;
     if (onConfirmed) {
@@ -57,18 +59,24 @@ const GlobalModalFooter = ({
                     : () => onClose()
             }
             withButtons
+            confirmDataTestId={confirmDataTestId}
+            cancelDataTestId={cancelDataTestId}
         />
     );
 };
 
 GlobalModalFooter.defaultProps = {
     confirmationButtonText: i18n('OK'),
-    cancelButtonText: i18n('Cancel')
+    cancelButtonText: i18n('Cancel'),
+    cancelDataTestId: 'sdc-modal-cancel-button',
+    confirmDataTestId: 'sdc-modal-confirm-button'
 };
 
 GlobalModalFooter.propTypes = {
     confirmationButtonText: PropTypes.string,
-    cancelButtonText: PropTypes.string
+    cancelButtonText: PropTypes.string,
+    confirmDataTestId: PropTypes.string,
+    cancelDataTestId: PropTypes.string
 };
 
 export const mapStateToProps = ({ modal }) => {
@@ -96,7 +104,9 @@ export class GlobalModalView extends React.Component {
         onDeclined: PropTypes.func,
         confirmationButtonText: PropTypes.string,
         cancelButtonText: PropTypes.string,
-        bodyClassName: PropTypes.string
+        bodyClassName: PropTypes.string,
+        cancelDataTestId: PropTypes.string,
+        confirmDataTestId: PropTypes.string
     };
 
     static defaultProps = {
@@ -118,7 +128,9 @@ export class GlobalModalView extends React.Component {
             confirmationButtonText,
             cancelButtonText,
             onClose,
-            bodyClassName
+            bodyClassName,
+            confirmDataTestId,
+            cancelDataTestId
         } = this.props;
         const ComponentToRender = modalContentComponents[modalComponentName];
         return (
@@ -153,6 +165,8 @@ export class GlobalModalView extends React.Component {
                         onClose={onClose}
                         confirmationButtonText={confirmationButtonText}
                         cancelButtonText={cancelButtonText}
+                        confirmDataTestId={confirmDataTestId}
+                        cancelDataTestId={cancelDataTestId}
                     />
                 )}
             </Modal>
