@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "362f7592_655c49f6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-11T12:44:05Z",
+      "side": 1,
+      "message": "There is the same parameter in CapabilityRequirementNameResolver too. Make one of them public. Or move them to a common util/interface class.",
+      "revId": "0d761468a92b0b68f3244370352731b7efe39973",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a9ed5a21_49642e5a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1020,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-11T12:44:05Z",
+      "side": 1,
+      "message": "if there is a failure shouldn\u0027t we should exit the function?\nreturn Either.right ?\nWhy is the error being swallowed.\nAnd if we decide to ignore the error and continue why do we need to create an Either object?",
+      "revId": "0d761468a92b0b68f3244370352731b7efe39973",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa8d508c_56c76dae",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1368,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-11T12:44:05Z",
+      "side": 1,
+      "message": "Critical Sonar issue\nExpressions should not be too complex\nThe complexity of an expression is defined by the number of \u0026\u0026, || and condition ? ifTrue : ifFalse operators it contains.\nA single expression\u0027s complexity should not become too high to keep the code readable.\n\nIn order to reduce complexity I suggest that you should create a set of OrihinTypeEnum and check if the set contains the originType variable.",
+      "revId": "0d761468a92b0b68f3244370352731b7efe39973",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "818c5d3a_ab376451",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/utils/CapabilityRequirementNameResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-11T12:44:05Z",
+      "side": 1,
+      "message": "major sonar remark \n\nUtility classes should not have public constructors\nUtility classes, which are collections of static members, are not meant to be instantiated. Even abstract utility classes, which can be extended, should not have public constructors.\nJava adds an implicit public constructor to every class which does not define at least one explicitly. Hence, at least one non-public constructor should be defined.",
+      "revId": "0d761468a92b0b68f3244370352731b7efe39973",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
