@@ -5,7 +5,8 @@ package org.openecomp.sdc.be.model.tosca;
  */
 public enum ToscaFunctions {
 
-    GET_INPUT("get_input");
+    GET_INPUT("get_input"),
+    GET_PROPERTY("get_property");
 
     private String functionName;
 
