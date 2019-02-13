@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "769859e5_3da0598e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1356,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-13T06:48:27Z",
+      "side": 1,
+      "message": "This set should be static.",
+      "revId": "d0d4e91cca3851e9323a8b06d00ea43829627c33",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
