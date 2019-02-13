@@ -61,6 +61,11 @@ export class ComponentInstance {
     public groupInstances:Array<Module>;
     public invariantName:string;
     public originArchived:boolean;
+    public directives: Array<string>;
+
+    DIRECTIVES_TYPES = {
+        SELECTABLE: 'selectable'
+    };
 
     constructor(componentInstance?:ComponentInstance) {
 
@@ -92,6 +97,7 @@ export class ComponentInstance {
             this.sourceModelUid = componentInstance.sourceModelUid;
             this.sourceModelUuid = componentInstance.sourceModelUuid;
             this.originArchived = componentInstance.originArchived;
+            this.directives = componentInstance.directives;
         }
     }
 
@@ -176,5 +182,20 @@ export class ComponentInstance {
 
     public get iconClass() {
         return this.iconSprite + ' ' + this.icon;
+    }
+
+    public isDependent = () : boolean => {
+        return this.directives && this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE) !== -1;
+    }
+
+    public markAsDependent = () : void => {
+        this.directives.push(this.DIRECTIVES_TYPES.SELECTABLE);
+    }
+
+    public unmarkAsDependent = () : void => {
+        let index = this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE);
+        if(index >= 0) {
+            this.directives.splice(index, 1);
+        }
     }
 }

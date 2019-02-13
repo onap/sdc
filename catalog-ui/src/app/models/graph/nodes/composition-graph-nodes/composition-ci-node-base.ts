@@ -48,33 +48,31 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
         this.isUcpePart = false;
         this.isInsideGroup = false;
     }
-    
-    
-    public setUncertifiedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {
 
-        let uncertifiedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
+
+    protected enhanceImage(node:Cy.Collection, nodeMinSize:number, imgUrl: string):string {
+        let infoIconWidth:number = GraphUIObjects.HANDLE_SIZE;
         let nodeWidth:number = node.data('imgWidth') || node.width();
-        let uncertifiedCanvasWidth: number = nodeWidth;
+        let infoCanvasWidth: number = nodeWidth;
 
-        if (nodeWidth < nodeMinSize) { //uncertified icon will overlap too much of the node, need to expand canvas.
-            uncertifiedCanvasWidth = nodeWidth + uncertifiedIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
+        if (nodeWidth < nodeMinSize) { //info icon will overlap too much of the node, need to expand canvas.
+            infoCanvasWidth = nodeWidth + infoIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
         }
 
-        const x = uncertifiedCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
+        const x = infoCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
 
         const canvasImages:ICanvasImage[] = [
             { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
-            { src: this.imagesPath + 'uncertified.png', x: 0, y: 0, width: uncertifiedIconWidth, height: uncertifiedIconWidth}
+            { src: imgUrl, x: 0, y: 0, width: infoIconWidth, height: infoIconWidth}
         ];
 
-
        //Create the image and update the node background styles
-        this.imageCreator.getMultiLayerBase64Image(canvasImages, uncertifiedCanvasWidth, uncertifiedCanvasWidth).then(img => this.updateNodeStyles(node,uncertifiedCanvasWidth,img));
+        this.imageCreator.getMultiLayerBase64Image(canvasImages, infoCanvasWidth, infoCanvasWidth).then(img => this.updateNodeStyles(node,infoCanvasWidth,img));
         return this.img; // Return the referance to the image (in Base64 format)
     }
 
-    
-    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {        
+
+    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {
         let archivedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
         let nodeWidth:number = node.data('imgWidth') || node.width();
         let archivedCanvasWidth: number = nodeWidth;
@@ -92,6 +90,10 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
         return this.img; // Return the default img
     }
 
+    public initUncertifiedImage(node:Cy.Collection, nodeMinSize:number):string {
+        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified.png');
+    }
+
     protected getDisplayName():string {
         let graphResourceName = AngularJSBridge.getFilter('graphResourceName');
         let resourceName = AngularJSBridge.getFilter('resourceName');
@@ -99,7 +101,7 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
     }
 
     //TODO:: move to Base class ???
-    private updateNodeStyles(node,canvasWidth,imageBase64){     
+    private updateNodeStyles(node,canvasWidth,imageBase64){
         this.img = imageBase64;
         node.style({
             'background-image': this.img,
@@ -107,7 +109,7 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
             'background-height': canvasWidth,
             'background-position-x':0,
             'background-position-y':0
-        });        
+        });
     }
 
 }

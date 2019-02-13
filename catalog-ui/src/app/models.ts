@@ -114,4 +114,5 @@ export * from './models/wizard-step';
 export * from './models/radio-button';
 export * from './models/filter-properties-assignment-data'
 export * from './models/properties-inputs/input-be-model'
+export * from './models/service-instance-properties'
 

@@ -60,6 +60,8 @@ import { ServicePathCreatorModule } from './pages/service-path-creator/service-p
 import { ServicePathsListModule } from './pages/service-paths-list/service-paths-list.module';
 import { ServicePathModule } from 'app/ng2/components/logic/service-path/service-path.module';
 import { ServicePathSelectorModule } from 'app/ng2/components/logic/service-path-selector/service-path-selector.module';
+import {ServiceDependenciesModule} from 'app/ng2/components/logic/service-dependencies/service-dependencies.module';
+import {ServiceDependenciesEditorModule} from './pages/service-dependencies-editor/service-dependencies-editor.module';
 import { CompositionPanelModule } from 'app/ng2/pages/composition/panel/panel.module';
 import { WindowRef } from "./services/window.service";
 import {ArchiveService} from "./services/archive.service";
@@ -110,7 +112,9 @@ export function configServiceFactory(config: ConfigService) {
         ServicePathCreatorModule,
         ServicePathsListModule,
         ServicePathModule,
-        ServicePathSelectorModule
+        ServicePathSelectorModule,
+        ServiceDependenciesModule,
+        ServiceDependenciesEditorModule
     ],
     exports: [],
     entryComponents: [

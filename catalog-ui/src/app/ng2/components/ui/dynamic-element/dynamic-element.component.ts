@@ -175,8 +175,12 @@ export class DynamicElementComponent {
                 tmp.push(new DropdownValue(true,'TRUE'));
                 tmp.push(new DropdownValue(false,'FALSE'));
                 this.cmpRef.instance.values = tmp;
-                if(!_.isUndefined(this.value)){//contains the real value (and not a string)
-                    this.value = JSON.parse(this.value);
+                try {
+                    if (typeof this.value === 'string') {
+                        this.value = JSON.parse(this.value);
+                    }
+                } catch(err) {
+                    this.value = null;
                 }
                 break;
 

@@ -42,7 +42,6 @@
     "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
     "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
     "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
-    
 
     "=========== GENERAL_TAB ===========": "",
     "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",
@@ -390,7 +389,7 @@
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_VOLUME_HEAT": "Add Volume HEAT Artifact",
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER": "Add Other Artifact"
 
-    ,"=========== IMPORT VF ===========": "",
+,"=========== IMPORT VF ===========": "",
     "IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE": "Create VF",
     "IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION": "Your VF is being created.<br/>It can take up to 10 minutes.<br/>When done, you can view it in SDC Catalog.",
     "IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE": "Create/Update",
@@ -501,6 +500,33 @@
     "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
     "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later.",
 
+    "============SERVICE CONSUMPTION=============" : "",
+    "CONSUMPTION_TYPE": "Type",
+    "CONSUMPTION_SOURCE": "Source",
+    "CONSUMPTION_STATIC_VALUES": "Static Values",
+    "CONSUMPTION_EXPAND_ALL": "Expand All",
+    "CONSUMPTION_COLLAPSE_ALL": "Collapse All",
+    "CONSUMPTION_NO_INPUTS_TO_SHOW": "NO INPUTS TO SHOW",
+    "CONSUMPTION_NO_OPERATIONS_TO_SHOW": "NO OPERATIONS TO SHOW",
+
+    "============= SERVICE DEPENDENCY ============" : "",
+    "SERVICE_DEPENDENCY_ADD_RULE": "Add Rule",
+    "SERVICE_DEPENDENCY_UPDATE_RULE": "Update Rule",
+    "SERVICE_DEPENDENCY_DELETE_RULE": "Delete Rule",
+    "SERVICE_DEPENDENCY_DELETE_RULE_MSG": "Are you sure you want to delete this rule?",
+    "SERVICE_DEPENDENCY_UNCHECK_TITLE": "Remove Dependency",
+    "SERVICE_DEPENDENCY_UNCHECK_TEXT": "Unchecking \"Mark as Dependent\" will remove dependency and erase all the dependency rules. Are you sure you want to remove dependency?",
+
+    "============= COMPOSITION DETAILS TAB ======" : "",
+    "DETAILS_TAB_CHANGE_VERSION_MODAL_TITLE": "Change Version",
+    "DETAILS_TAB_CHANGE_VERSION_MODAL_MSG": "Are you sure you want to change the version?\nIt will affect Service-Consumption and Service-Dependencies data",
+
+    "============= Generic Modal Btn ============" : "",
+    "MODAL_APPROVE" : "Yes",
+    "MODAL_SAVE" : "Save",
+    "MODAL_CREATE" : "Create",
+    "MODAL_CANCEL" : "Cancel",
+    "MODAL_DELETE" : "Delete",
     "=========== POLICY AND GROUPS ===========": "",
     "ADD_TARGETS" : "Add Targets",
     "ADD_MEMBERS" : "Add Members",

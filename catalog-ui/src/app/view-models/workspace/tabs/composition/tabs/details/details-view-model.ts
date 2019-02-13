@@ -20,7 +20,7 @@
 
 'use strict';
 import * as _ from "lodash";
-import {Component} from "app/models";
+import {Component, ModalModel, ButtonModel} from "app/models";
 import {GRAPH_EVENTS} from "app/utils";
 import {LeftPaletteLoaderService, EventListenerService} from "app/services";
 import {ICompositionViewModelScope} from "../../composition-view-model";
@@ -28,6 +28,7 @@ import {LeftPaletteComponent} from "../../../../../../models/components/displayC
 import {ComponentServiceFactoryNg2} from "app/ng2/services/component-services/component.service.factory";
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import {Service} from "app/models/components/service";
+import {ModalService} from 'app/ng2/services/modal.service';
 
 export interface IEditResourceVersion {
     allVersions:any;
@@ -41,24 +42,31 @@ interface IDetailsViewModelScope extends ICompositionViewModelScope {
     editForm:ng.IFormController;
     editResourceVersion:IEditResourceVersion;
 
-    changeResourceVersion():void;
+    onChangeResourceVersion():void;
+    alertBeforeChangeResourceVersion():void;
+    changeVersion():void;
+    cancelChangeResourceVersion():void;
 }
 
 export class DetailsViewModel {
 
     static '$inject' = [
         '$scope',
+        '$filter',
         'LeftPaletteLoaderService',
         'EventListenerService',
         'ComponentServiceFactoryNg2',
-        'ServiceServiceNg2'
+        'ServiceServiceNg2',
+        'ModalServiceNg2'
     ];
 
     constructor(private $scope:IDetailsViewModelScope,
+                private $filter:ng.IFilterService,
                 private LeftPaletteLoaderService:LeftPaletteLoaderService,
                 private eventListenerService:EventListenerService,
                 private ComponentServiceFactoryNg2: ComponentServiceFactoryNg2,
-                private serviceService: ServiceServiceNg2) {
+                private serviceService: ServiceServiceNg2,
+                private ModalServiceNg2: ModalService) {
         this.initScope();
     }
 
@@ -115,7 +123,35 @@ export class DetailsViewModel {
             }
         });
 
-        this.$scope.changeResourceVersion = ():void => {
+        this.$scope.onChangeResourceVersion = ():void => {
+            if(this.$scope.isComponentInstanceSelected() && this.$scope.currentComponent.selectedInstance.isServiceProxy()) {
+                this.$scope.alertBeforeChangeResourceVersion();
+            }
+            else {
+                this.$scope.changeVersion();
+            }
+        };
+
+        this.$scope.alertBeforeChangeResourceVersion = ():void => {
+            let modalApproveTxt:string = this.$filter('translate')("MODAL_APPROVE");
+            let modalCancelTxt:string = this.$filter('translate')("MODAL_CANCEL");
+            let changeVersionModalTitle:string = this.$filter('translate')("DETAILS_TAB_CHANGE_VERSION_MODAL_TITLE");
+            let changeVersionModalMsg:string = this.$filter('translate')("DETAILS_TAB_CHANGE_VERSION_MODAL_MSG");
+
+            let actionButton: ButtonModel = new ButtonModel(modalApproveTxt, 'blue', this.$scope.changeVersion);
+            let cancelButton: ButtonModel = new ButtonModel(modalCancelTxt, 'grey', this.$scope.cancelChangeResourceVersion);
+            let modalModel: ModalModel = new ModalModel('sm', changeVersionModalTitle, changeVersionModalMsg, [actionButton, cancelButton]);
+            let customModal = this.ModalServiceNg2.createCustomModal(modalModel);
+            customModal.instance.open();
+        };
+
+        this.$scope.cancelChangeResourceVersion = () => {
+            this.ModalServiceNg2.closeCurrentModal();
+            this.$scope.editResourceVersion.changeVersion = this.$scope.currentComponent.selectedInstance.componentVersion;
+        };
+
+        this.$scope.changeVersion = ():void => {
+            this.ModalServiceNg2.closeCurrentModal();
             this.$scope.isLoading = true;
             this.$scope.$parent.isLoading = true;
 

@@ -220,6 +220,32 @@
     user-select: text;
 }
 
+.multiline-ellipsis(@lineHeight: 1.3em, @lineCount: 2, @bgColor: @main_color_p){
+    overflow: hidden;
+    position: relative;
+    line-height: @lineHeight;
+    max-height: @lineHeight * @lineCount;
+    text-align: left;
+    word-break: normal;
+    white-space: normal;
+    padding-right: 1em;
+    &:before {
+        content: '...';
+        position: absolute;
+        right: 3px;
+        bottom: 0;
+    }
+    &:after {
+        content: '';
+        position: absolute;
+        right: 0;
+        width: 1em;
+        height: 1em;
+        margin-top: 0.2em;
+        background: @bgColor;
+    }
+}
+
 
 .square-icon() {
     display: inline-block;

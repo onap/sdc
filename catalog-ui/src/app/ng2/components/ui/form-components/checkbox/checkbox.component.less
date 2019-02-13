@@ -38,11 +38,16 @@
         width:0;
         height:0;
         display:none;
-        &:checked ~ .checkbox-icon::before{
-            .sprite-new;
-            .filled-checkbox-icon
+        &:checked {
+            ~ .checkbox-icon::before{
+                .sprite-new;
+                .filled-checkbox-icon
+            }
+            &[disabled] ~ .checkbox-icon::before {
+                opacity: 0.5;
+            }
         }
-        &[disabled] ~ .checkbox-icon::before {
+        &[disabled]:not(:checked) ~ .checkbox-icon::before {
             /* TODO: add disabled styles here */
             background-image: none;
             background-color: #EFEFEF;

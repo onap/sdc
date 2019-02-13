@@ -24,15 +24,17 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, PropertyBEModel, OperationModel, BEOperationModel, CreateOperationResponse} from "app/models";
+import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
+    PropertyBEModel, OperationModel, BEOperationModel, CreateOperationResponse} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
-import {COMPONENT_FIELDS, CommonUtils} from "app/utils";
+import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
 import { ComponentType, ServerTypeUrl } from "../../../utils/constants";
 import { HttpService } from '../http.service';
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
+import {ConstraintObject} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
 import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
 import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
@@ -80,6 +82,10 @@ export class ComponentServiceNg2 {
 
     getComponentInstanceAttributesAndProperties(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES]);
+    }
+
+    getComponentInstanceProperties(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
     }
 
     getComponentAttributes(component:Component):Observable<ComponentGenericResponse> {
@@ -226,7 +232,7 @@ export class ComponentServiceNg2 {
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
             .map((res:Response) => {
                 return new InputBEModel(res.json());
-            })
+            });
     }
 
     updateComponentInputs(component:Component, inputs:InputBEModel[]):Observable<InputBEModel[]> {
@@ -293,6 +299,38 @@ export class ComponentServiceNg2 {
 
     automatedUpgrade(componentType:string, componentId: string, componentsIdsToUpgrade:Array<IAutomatedUpgradeRequestObj>):Observable<AutomatedUpgradeGenericResponse> {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/automatedupgrade', componentsIdsToUpgrade)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    updateComponentInstance(component:Component, componentInstance:ComponentInstance):Observable<ComponentInstance> {
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    getServiceFilterConstraints(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [SERVICE_FIELDS.NODE_FILTER]);
+    }
+
+    createServiceFilterConstraints(component:Component, componentInstance:ComponentInstance, constraint:ConstraintObject):Observable<any> {
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter', constraint)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    updateServiceFilterConstraints(component:Component, componentInstance:ComponentInstance, constraints:Array<ConstraintObject>):Observable<any> {
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter/', constraints)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    deleteServiceFilterConstraints(component:Component, componentInstance:ComponentInstance, constraintIndex:number) {
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter/' + constraintIndex)
             .map((res:Response) => {
                 return res.json();
             });

@@ -103,7 +103,7 @@
                 </button>
                 <button data-ng-if="!selectedComponent.isService() || (isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())" class="i-sdc-designer-sidebar-tab"
                         data-ui-sref-active="active" ui-sref="workspace.composition.relations"
-                        tooltips tooltip-class="tooltip-custom tab-tooltip  tooltip-rightside"
+                        tooltips tooltip-class="tooltip-custom tab-tooltip {{currentComponent.selectedInstance.isServiceProxy() ? '' : 'tooltip-rightside'}}"
                         data-tests-id="requirements-and-capabilities"
                         tooltip-content="Requirements and Capabilities"
                         data-ng-class="{'disabled': disabledTabs}">
@@ -114,6 +114,14 @@
                         tooltips tooltip-class="tooltip-custom tab-tooltip tooltip-rightside" tooltip-content="API"
                         data-ng-class="{'disabled': disabledTabs}">
                     <div class="i-sdc-designer-sidebar-tab-icon sprite-new api"></div>
+                </button>
+                <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
+                        data-ui-sref="workspace.composition.dependencies"
+                        tooltips tooltip-class="tooltip-custom tab-tooltip " tooltip-content="Service Dependencies"
+                        data-tests-id="service-dependency-tab"
+                        data-ng-if="(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
+                        data-ng-class="{'disabled': disabledTabs}">
+                    <div class="i-sdc-designer-sidebar-tab-icon sprite-new dependencies-icon"></div>
                 </button>
 
             </div>

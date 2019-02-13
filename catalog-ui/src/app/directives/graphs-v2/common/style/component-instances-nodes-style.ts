@@ -237,7 +237,27 @@ export class ComponentInstanceNodesStyle {
                 css: {
                     'shape': 'rectangle',
                     'background-image': (ele:Cy.Collection) => {
-                        return ele.data().setUncertifiedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);//Change name to setUncertifiedImageBgStyle??
+                        return ele.data().initUncertifiedImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);
+                    },
+                    "border-width": 0
+                }
+            },
+            {
+                selector: '.dependent',
+                css: {
+                    'shape': 'rectangle',
+                    'background-image': (ele:Cy.Collection) => {
+                        return ele.data().initDependentImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE)
+                    },
+                    "border-width": 0
+                }
+            },
+            {
+                selector: '.dependent.not-certified',
+                css: {
+                    'shape': 'rectangle',
+                    'background-image': (ele:Cy.Collection) => {
+                        return ele.data().initUncertifiedDependentImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE)
                     },
                     "border-width": 0
                 }

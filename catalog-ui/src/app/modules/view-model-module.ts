@@ -24,6 +24,7 @@ import {WorkspaceViewModel} from "../view-models/workspace/workspace-view-model"
 import {CompositionViewModel} from "../view-models/workspace/tabs/composition/composition-view-model";
 import {DetailsViewModel} from "../view-models/workspace/tabs/composition/tabs/details/details-view-model";
 import {ResourceArtifactsViewModel} from "../view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view-model";
+import {ServiceDependenciesViewModel} from "../view-models/workspace/tabs/composition/tabs/service-dependencies/service-dependencies-view-model";
 import {PropertyFormBaseView} from "../view-models/forms/property-forms/base-property-form/property-form-base-model";
 import {PropertyFormViewModel} from "../view-models/forms/property-forms/component-property-form/property-form-view-model";
 import {ModulePropertyView} from "../view-models/forms/property-forms/module-property-modal/module-property-model";
@@ -82,6 +83,7 @@ viewModelModule
 
   .controller(moduleName + '.DetailsViewModel', DetailsViewModel)
   .controller(moduleName + '.ResourceArtifactsViewModel', ResourceArtifactsViewModel)
+  .controller(moduleName + '.ServiceDependenciesViewModel', ServiceDependenciesViewModel)
   .controller(moduleName + '.PropertyFormBaseView', PropertyFormBaseView)
   .controller(moduleName + '.PropertyFormViewModel', PropertyFormViewModel)
   .controller(moduleName + '.ModulePropertyView', ModulePropertyView)

@@ -1,0 +1,25 @@
+
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content service-dependencies">
+    <div class="w-sdc-designer-sidebar-section">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content"
+                         class="w-sdc-designer-sidebar-section-title">
+            <span class="w-sdc-designer-sidebar-section-title-text" tooltips tooltip-content="Service Dependencies">Service Dependencies</span>
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+        <div class="w-sdc-designer-sidebar-section-content" data-ng-if="isComponentInstanceSelected()">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <ng2-service-dependencies
+                    [composite-service]="service"
+                    [current-service-instance]="currentComponent.selectedInstance"
+                    [selected-instance-properties]="selectedInstanceProperties"
+                    [selected-instance-siblings]="selectedInstanceSiblings"
+                    [selected-instance-constraints]="selectedInstanceConstraints"
+                    [readonly]="isViewMode() || !isDesigner()"
+                    (dependency-status)="notifyDependencyEventsObserver($event)"
+                    (update-rules-list-event)="updateSelectedInstanceConstraints($event)"
+                    (load-rules-list-event)="loadConstraints()">
+                </ng2-service-dependencies>
+            </div>
+        </div>
+    </div>
+</perfect-scrollbar>

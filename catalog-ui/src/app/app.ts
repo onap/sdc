@@ -517,6 +517,14 @@ ng1appModule.config([
                 controller: viewModelsModuleName + '.ResourceArtifactsViewModel'
             }
         );
+        $stateProvider.state(
+            'workspace.composition.dependencies', {
+                url: 'dependencies',
+                parent: 'workspace.composition',
+                templateUrl: './view-models/workspace/tabs/composition/tabs/service-dependencies/service-dependencies-view.html',
+                controller: viewModelsModuleName + '.ServiceDependenciesViewModel'
+            }
+        );
 
         $stateProvider.state(
             States.WORKSPACE_INTERFACE_OPERATION, {

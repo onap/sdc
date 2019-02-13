@@ -35,7 +35,7 @@ import {
     NodesFactory,
     Point
 } from "app/models";
-import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors } from "app/utils";
+import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS } from "app/utils";
 import { EventListenerService, LoaderService } from "app/services";
 import { CompositionGraphLinkUtils } from "./utils/composition-graph-links-utils";
 import { CompositionGraphGeneralUtils } from "./utils/composition-graph-general-utils";
@@ -185,6 +185,7 @@ export class CompositionGraph implements ng.IDirective {
             });
             this.eventListenerService.unRegisterObserver(EVENTS.SHOW_LOADER_EVENT + 'composition-graph');
             this.eventListenerService.unRegisterObserver(EVENTS.HIDE_LOADER_EVENT + 'composition-graph');
+            this.eventListenerService.unRegisterObserver(DEPENDENCY_EVENTS.ON_DEPENDENCY_CHANGE);
         });
 
     };
@@ -383,6 +384,15 @@ export class CompositionGraph implements ng.IDirective {
             this.loadGraphData(scope);
         });
 
+        this.eventListenerService.registerObserverCallback(DEPENDENCY_EVENTS.ON_DEPENDENCY_CHANGE, (ischecked: boolean) => {
+            if (ischecked) {
+                this._cy.$('node:selected').addClass('dependent');
+            } else {
+                // due to defect in cytoscape, just changing the class does not replace the icon, and i need to revert to original icon with no markings.
+                this._cy.$('node:selected').removeClass('dependent');
+                this._cy.$('node:selected').style({'background-image': this._cy.$('node:selected').data('originalImg')});
+            }
+        });
 
         scope.zoom = (zoomIn: boolean): void => {
             let currentZoom: number = this._cy.zoom();

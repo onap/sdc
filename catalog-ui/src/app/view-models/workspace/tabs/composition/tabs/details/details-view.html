@@ -46,7 +46,7 @@
                             data-ng-disabled="$parent.isViewOnly || selectedComponent.uniqueId != editResourceVersion.allVersions[editResourceVersion.changeVersion] || selectedComponent.archived"
                             class="i-sdc-designer-sidebar-section-content-item-value i-sdc-form-select"
                             data-ng-class="{'minor': (editResourceVersion.changeVersion)%1, 'disabled':selectedComponent.archived}"
-                            data-ng-change="changeResourceVersion()">
+                            data-ng-change="onChangeResourceVersion()">
                         <option class="select-instance-version" data-ng-class="{'minor': key%1}"
                                 ng-repeat="(key, value) in editResourceVersion.allVersions">{{key}}</option>
                     </select></ng-form>

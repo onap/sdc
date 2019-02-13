@@ -1,0 +1,35 @@
+<div class="service-dependencies">
+    <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
+    <div class="checkbox-label-mark-as-dependent">
+            <checkbox
+                    class="checkbox-label"
+                    data-tests-id="checkbox-mark-as-dependent"
+                    [label]="'Mark as Dependent'"
+                    (checkedChange)="onMarkAsDependent()"
+                    [(checked)]="isDependent"
+                    [disabled]="readonly">
+            </checkbox>
+    </div>
+    <div class="i-sdc-designer-sidebar-section-content-item-rules-section" *ngIf="isDependent">
+
+        <div class="i-sdc-designer-sidebar-section-content-item-rule" [ngClass]="{'hand': !readonly}"
+             *ngFor="let rule of rulesList; let i = index">
+            <div class="rule-details" [ngClass]="{'readonly': readonly}">
+                <div class="rule-desc" (click)="!readonly && onSelectRule(i)" tooltips tooltip="{{rule.servicePropertyName + ' ' + getSymbol(rule.constraintOperator) + ' ' + (rule.sourceName ? rule.sourceName + ':' : '') + rule.value}}">
+                    {{rule.servicePropertyName + ' ' + getSymbol(rule.constraintOperator) + ' ' + (rule.sourceName ? rule.sourceName + ':' : '') + rule.value}}
+                </div>
+                <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon" (click)="openDeleteModal(i)" data-tests-id="delete-input-button"></span>
+            </div>
+        </div>
+
+        <div class="w-sdc-designer-sidebar-section-footer" >
+            <button
+                    class="w-sdc-designer-sidebar-section-footer-action add-rule-btn tlv-btn blue"
+                    data-tests-id="add-rule-button"
+                    (click)="onAddRule()"
+                    [disabled]="readonly">
+                {{'SERVICE_DEPENDENCY_ADD_RULE' | translate}}
+            </button>
+        </div>
+    </div>
+</div>

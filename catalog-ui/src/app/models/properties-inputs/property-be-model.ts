@@ -39,6 +39,7 @@ export class PropertyBEModel {
     password: boolean;
     required: boolean;
     schema: SchemaPropertyGroupModel;
+    schemaType: string;
     type: string;
     uniqueId: string;
     value: string;
@@ -53,6 +54,7 @@ export class PropertyBEModel {
             this.password = property.password;
             this.required = property.required;
             this.schema = property.schema;
+            this.schemaType = property.schemaType;
             this.type = property.type;
             this.uniqueId = property.uniqueId;
             this.value = property.value;

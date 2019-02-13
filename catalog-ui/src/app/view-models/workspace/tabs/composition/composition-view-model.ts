@@ -71,6 +71,11 @@ export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
     isPNF():boolean;
     isConfiguration():boolean;
     preventMoveTab(state: boolean):void;
+    registerCreateInstanceEvent(callback: Function):void;
+    unregisterCreateInstanceEvent():void;
+    registerChangeComponentInstanceNameEvent(callback: Function):void;
+    unregisterChangeComponentInstanceNameEvent():void;
+
     ComponentServiceNg2:ComponentServiceNg2,
     cacheComponentsInstancesFullData:Component;
 }
@@ -116,7 +121,7 @@ export class CompositionViewModel {
                 private ComponentServiceFactoryNg2: ComponentServiceFactoryNg2,
                 private ComponentServiceNg2:ComponentServiceNg2,
                 private Notification:any
-            ) {
+    ) {
 
         this.$scope.setValidState(true);
         this.initScope();
@@ -165,12 +170,12 @@ export class CompositionViewModel {
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_NODE_SELECTED, scope.setSelectedInstance);
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ZONE_INSTANCE_SELECTED, scope.setSelectedZoneInstance);
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, scope.onBackgroundClick);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_START, () => { 
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_START, () => {
             scope.isCanvasTagging = true;
             this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, true, this.showUnsavedChangesAlert);
         });
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_END, () => { 
-            scope.isCanvasTagging = false; 
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_END, () => {
+            scope.isCanvasTagging = false;
             this.resetUnsavedChanges();
         });
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ZONE_INSTANCE_NAME_CHANGED, scope.changeZoneInstanceName);
@@ -184,13 +189,13 @@ export class CompositionViewModel {
                     title: "Unsaved Changes",
                     size: 'sm',
                     type: 'custom',
-                    
+
                     buttons: [
                         {id: 'cancelButton', text: 'Cancel', type: 'secondary', size: 'xsm', closeModal: true, callback: () => reject()},
                         {id: 'discardButton', text: 'Discard', type: 'secondary', size: 'xsm', closeModal: true, callback: () => { this.resetUnsavedChanges(); resolve()}},
                         {id: 'saveButton', text: 'Save', type: 'primary', size: 'xsm', closeModal: true, callback: () => {  reject(); this.saveUnsavedChanges(afterSave);  }}
-                ] as IModalButtonComponent[]
-            }, UnsavedChangesComponent, { isValidChangedData: true});
+                    ] as IModalButtonComponent[]
+                }, UnsavedChangesComponent, { isValidChangedData: true});
         });
 
         return deferred;
@@ -225,7 +230,7 @@ export class CompositionViewModel {
             testId: "renameInstanceModal",
             buttons: [
                 {id: 'saveButton', text: 'OK', size: 'xsm', callback: this.saveInstanceName, closeModal: false},
-                {id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true} 
+                {id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true}
             ]
         };
 
@@ -274,7 +279,7 @@ export class CompositionViewModel {
         }  else {
             this.ModalServiceSdcUI.closeModal();
         }
-        
+
     };
 
     private removeSelectedComponentInstance = ():void => {
@@ -372,10 +377,10 @@ export class CompositionViewModel {
             this.$scope.selectedZoneInstance = null;
             this.$scope.updateSelectedComponent();
 
-
-
-
             if (this.$state.current.name === 'workspace.composition.api') {
+                this.$state.go('workspace.composition.details');
+            }
+            if(!selectedComponent.isServiceProxy() && (this.$state.current.name === 'workspace.composition.consumption' || this.$state.current.name === 'workspace.composition.dependencies')) {
                 this.$state.go('workspace.composition.details');
             }
         };
@@ -390,7 +395,7 @@ export class CompositionViewModel {
             this.$scope.selectedZoneInstance = null;
             this.$scope.selectedComponent = this.$scope.currentComponent;
 
-            if (this.$state.current.name === 'workspace.composition.api') {
+            if (this.$state.current.name === 'workspace.composition.api' || this.$state.current.name === 'workspace.composition.consumption' || this.$state.current.name === 'workspace.composition.dependencies') {
                 this.$state.go('workspace.composition.details');
             }
 
@@ -406,7 +411,7 @@ export class CompositionViewModel {
         this.$scope.changeZoneInstanceName = (newName:string):void => {
             this.$scope.selectedZoneInstance.instanceData.name = newName;
         };
-    
+
         this.$scope.deleteSelectedComponentInstance = ():void => {
             const {currentComponent} = this.$scope;
             const {title, message} = this.$scope.sdcMenu.alertMessages['deleteInstance'];
@@ -477,5 +482,20 @@ export class CompositionViewModel {
 
         this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
+        this.$scope.registerCreateInstanceEvent = (callback: Function): void => {
+            this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE, callback);
+        };
+
+        this.$scope.unregisterCreateInstanceEvent = (): void => {
+            this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE);
+        };
+
+        this.$scope.registerChangeComponentInstanceNameEvent = (callback: Function): void => {
+            this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED, callback);
+        };
+
+        this.$scope.unregisterChangeComponentInstanceNameEvent = (): void => {
+            this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED);
+        };
     }
 }

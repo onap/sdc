@@ -1,0 +1,43 @@
+@import './../../../../assets/styles/variables.less';
+
+.sdc-modal-top-bar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.i-sdc-form-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding-bottom: 20px;
+
+  .i-sdc-form-item {
+    width: 250px;
+    &.operation {
+      width: 60px;
+    }
+  }
+
+  .rule-builder-content {
+    display: flex;
+    align-items: flex-end;
+    .rule-input-field {
+      flex: 1;
+      &:not(:last-of-type) {
+        margin-right: 20px;
+      }
+      &.operator{
+        width: 55px;
+        flex: 0 1 auto;
+      }
+      &.assigned-value-field {
+        margin-bottom: 10px;
+      }
+      /deep/ ui-element-dropdown select,
+      /deep/ ui-element-input input {
+        height: 30px;
+      }
+    }
+
+  }
+}

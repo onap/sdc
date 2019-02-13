@@ -1,0 +1,56 @@
+<div class="service-dependencies-editor">
+    <form class="w-sdc-form">
+
+        <div class="sdc-modal-top-bar">
+            <div class="sdc-modal-top-bar-buttons" *ngIf="currentIndex >= 0">
+                <span (click)="onChangePage(currentIndex - 1)" [ngClass]="{'disabled' : currentIndex === 0}" class="sprite-new left-arrow" data-tests-id="get-prev-rule" tooltip="Previous"></span>
+                <span (click)="onChangePage(currentIndex + 1)" [ngClass]="{'disabled' : currentIndex === input.serviceRules.length - 1}" class="sprite-new right-arrow" data-tests-id="get-next-rule" tooltip="Next"></span>
+            </div>
+        </div>
+
+        <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+
+        <div class="i-sdc-form-content">
+            <div class="rule-builder-content">
+                <div class="i-sdc-form-item rule-input-field">
+                    <label class="i-sdc-form-label required">Service {{currentServiceName}} Property</label>
+                    <ui-element-dropdown
+                            class="i-sdc-form-select"
+                            data-tests-id="servicePropertyName"
+                            [values]="ddValueSelectedServicePropertiesNames"
+                            [(value)]="currentRule.servicePropertyName"
+                            (change)="onServicePropertyChanged()">
+                    </ui-element-dropdown>
+                </div>
+
+                <div class="i-sdc-form-item rule-input-field operator">
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator" [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
+                </div>
+
+                <div class="i-sdc-form-item rule-input-field">
+                    <label class="i-sdc-form-label required" >Source</label>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (change)="onSelectSourceType($event)"></ui-element-dropdown>
+                </div>
+
+                <div class="rule-input-field assigned-value-field">
+                    <label class="i-sdc-form-label required" >{{assignedValueLabel}}</label>
+                    <dynamic-element
+                            *ngIf="currentRule.sourceType === SOURCE_TYPES.STATIC.value"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="selectedPropertyObj ? selectedPropertyObj.type : 'string'">
+                    </dynamic-element>
+                    <ui-element-dropdown *ngIf="currentRule.sourceType !== SOURCE_TYPES.STATIC.value"
+                                         class="rule-assigned-value"
+                                         data-tests-id="ruleAssignedValue"
+                                         [(value)]="currentRule.value"
+                                         [values]="listOfValuesToAssign">
+                    </ui-element-dropdown>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
