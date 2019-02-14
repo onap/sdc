@@ -112,7 +112,7 @@ public class FeProxyServletTest {
 		List<PluginsConfiguration.Plugin> pluginList = new ArrayList<PluginsConfiguration.Plugin>();
 		when(plugin.getPluginId()).thenReturn("WORKFLOW");
 		when(plugin.getPluginSourceUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT);
-		when(plugin.getPluginDiscoveryUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT);
+		when(plugin.getPluginDiscoveryUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT + "/workflows");
 		pluginList.add(plugin);
 		when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
 		when(pluginsConfiguration.getPluginsList()).thenReturn(pluginList);
@@ -184,7 +184,7 @@ public class FeProxyServletTest {
 	public void testRewriteURIWithWFAPIRequest() {
 		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/wf/workflows");
 		String requestResourceUrl = "http://localhost:8080/sdc1/feProxy/wf/workflows";
-		String expectedChangedUrl = WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT + "/wf/workflows";
+		String expectedChangedUrl = WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT + "/workflows/wf/workflows";
 		when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(requestResourceUrl));
 
 		when(servletRequest.getContextPath()).thenReturn("/sdc1");

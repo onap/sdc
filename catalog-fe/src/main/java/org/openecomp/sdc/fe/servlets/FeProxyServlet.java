@@ -181,7 +181,6 @@ public class FeProxyServlet extends SSLProxyServlet {
 			}
 		}
 		else if (uri.contains(WORKFLOW_CONTEXT)){
-			uri = uri.replace(SDC1_FE_PROXY +WORKFLOW_CONTEXT,WORKFLOW_CONTEXT);
 			String workflowPluginURL = getPluginConfiguration(request).getPluginsList()
 					.stream()
 					.filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW))
@@ -192,6 +191,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			protocol = workflowURL.getProtocol();
 			host = workflowURL.getHost();
 			port = String.valueOf(workflowURL.getPort());
+			uri = uri.replace(SDC1_FE_PROXY + WORKFLOW_CONTEXT, workflowURL.getPath() + WORKFLOW_CONTEXT);
 		}
 		else{
 			uri = uri.replace(SDC1_FE_PROXY,"/sdc2");
