@@ -22,10 +22,8 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import fj.data.Either;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -41,14 +39,12 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
-import org.openecomp.sdc.common.log.elements.LoggerFactory;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @org.springframework.stereotype.Component("service-filter-operations")
 public class NodeFilterOperation extends BaseOperation {
 
-    private static Logger logger = LoggerFactory.getLogger(NodeFilterOperation.class,
-            org.slf4j.LoggerFactory.getLogger(NodeFilterOperation.class));
+    private static Logger logger = Logger.getLogger(NodeFilterOperation.class);
 
     public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(Service service,
             Set<String> componentInstanceIds) {

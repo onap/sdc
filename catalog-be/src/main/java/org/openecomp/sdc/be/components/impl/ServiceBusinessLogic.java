@@ -2355,28 +2355,30 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<CINodeFilterDataDefinition, StorageOperationStatus> result;
 
         Either<Boolean, ResponseFormat> lockResult = null;
-        if (lock) {
-            lockResult =
-                    lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
-            if (lockResult.isRight()) {
-                log.debug("Failed to lock service {}. Response is {}. ", storedService.getName(),
-                        lockResult.right().value().getFormattedMessage());
-                return Either.right(lockResult.right().value());
-            } else {
-                log.debug("The service with system name {} locked. ", storedService.getSystemName());
-            }
-        }
-
-        Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
-        if (!componentInstanceOptional.isPresent()){
-            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-        }
-        CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
-        if(serviceFilter == null){
-            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-        }
-        CINodeFilterDataDefinition serviceFilterResult;
+        CINodeFilterDataDefinition serviceFilterResult = null;
         try {
+            if (lock) {
+                lockResult =
+                        lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
+                if (lockResult.isRight()) {
+                    log.debug("Failed to lock service {}. Response is {}. ", storedService.getName(),
+                            lockResult.right().value().getFormattedMessage());
+                    return Either.right(lockResult.right().value());
+                } else {
+                    log.debug("The service with system name {} locked. ", storedService.getSystemName());
+                }
+            }
+
+            Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
+            if (!componentInstanceOptional.isPresent()){
+                return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+            }
+            CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
+            if(serviceFilter == null){
+                return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
+            }
+
+
             switch (action) {
                 case ADD:
                     RequirementNodeFilterPropertyDataDefinition newProperty = new RequirementNodeFilterPropertyDataDefinition();
