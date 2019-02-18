@@ -22,6 +22,18 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -30,13 +42,35 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -53,11 +87,6 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("topology-template-operation")
 public class TopologyTemplateOperation extends ToscaElementOperation {
@@ -169,6 +198,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             result = Either.right(associateCapProperties);
             return result;
         }
+
+        StorageOperationStatus associateInterfaces = associateInterfacesToComponent(topologyTemplateVertex, topologyTemplate);
+        if (associateInterfaces != StorageOperationStatus.OK) {
+            result = Either.right(associateInterfaces);
+            return result;
+        }
+
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
             result = Either.right(associatePathProperties);
@@ -704,6 +740,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
 
+        if (!componentParametersView.isIgnoreInterfaces()) {
+            TitanOperationStatus storageStatus = setInterfacesFromGraph(componentV, toscaElement);
+            if (storageStatus != TitanOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(storageStatus));
+
+            }
+        }
+
         return Either.left(toscaElement);
     }
 
@@ -717,6 +761,29 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
         return TitanOperationStatus.OK;
+    }
+
+    private TitanOperationStatus setInterfacesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
+        Either<Map<String, InterfaceDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE);
+        if (result.isLeft()) {
+            topologyTemplate.setInterfaces(result.left().value());
+        } else {
+            if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return TitanOperationStatus.OK;
+    }
+
+    private StorageOperationStatus associateInterfacesToComponent(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
+        Map<String, InterfaceDataDefinition> interfaceMap = topologyTemplate.getInterfaces();
+        if (interfaceMap != null && !interfaceMap.isEmpty()) {
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
+            if (assosiateElementToData.isRight()) {
+                return assosiateElementToData.right().value();
+            }
+        }
+        return StorageOperationStatus.OK;
     }
 
     public StorageOperationStatus associateNodeFiltersToComponent(GraphVertex nodeTypeVertex,
@@ -1061,8 +1128,17 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             log.debug("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate interfaces for {} error {}", toscaElementVertex.getUniqueId(), status);
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INSTANCE_ARTIFACTS);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate instance artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
 
-        titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INSTANCE_ARTIFACTS);
         toscaElementVertex.getVertex().remove();
         log.trace("Tosca element vertex for {} was removed", toscaElementVertex.getUniqueId());
 
