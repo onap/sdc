@@ -1,5 +1,6 @@
 package org.openecomp.sdc.asdctool.impl;
 
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 public class ProductLogicTest {
@@ -8,7 +9,7 @@ public class ProductLogicTest {
 		return new ProductLogic();
 	}
 
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testDeleteAllProducts() throws Exception {
 		ProductLogic testSubject;
 		String titanFile = "";
@@ -20,5 +21,6 @@ public class ProductLogicTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.deleteAllProducts(titanFile, beHost, bePort, adminUser);
+		assertFalse(result);
 	}
 }
