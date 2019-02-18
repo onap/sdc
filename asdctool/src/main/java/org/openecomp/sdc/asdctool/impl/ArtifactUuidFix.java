@@ -381,7 +381,7 @@ public class ArtifactUuidFix {
 			return true;
 		}
 
-		if (artifacts.size() < artifactsUuid.size()) {
+		if ((artifactsUuid != null) && (artifacts.size() < artifactsUuid.size())) {
 			log.info(" artifacts.size() < artifactsUuid.size() group {} in resource {} ", gr.getName(), resourceName);
 			return true;
 		}
@@ -391,7 +391,7 @@ public class ArtifactUuidFix {
 					gr.getName(), resourceName);
 			return true;
 		}
-		if (artifactsUuid.contains(null)) {
+		if (artifactsUuid != null && artifactsUuid.contains(null)) {
 			log.info(" artifactsUuid.contains(null) group {} in resource {} ", gr.getName(), resourceName);
 			return true;
 		}
@@ -412,7 +412,7 @@ public class ArtifactUuidFix {
 							artifactlabel, artifactId, gr.getName(), resourceName);
 					return true;
 				}
-				if (!artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
+				if (artifactsUuid != null && !artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
 					log.info(
 							" artifactsUuid.contains(artifactDefinition.getArtifactUUID() label {} group {} in resource {} ",
 							artifactlabel, gr.getName(), resourceName);
@@ -454,7 +454,7 @@ public class ArtifactUuidFix {
 			instArtifatIdSet.addAll(instArtifactsId);
 		}
 
-		if (artifacts.size() < artifactsUuid.size()) {
+		if ((artifactsUuid != null) && (artifacts.size() < artifactsUuid.size())) {
 			log.info(" artifacts.size() < artifactsUuid.size() inst {} in service {} ", instName, servicename);
 			return true;
 		}
@@ -464,7 +464,7 @@ public class ArtifactUuidFix {
 					instName, servicename);
 			return true;
 		}
-		if (artifactsUuid.contains(null)) {
+		if (artifactsUuid != null && artifactsUuid.contains(null)) {
 			log.info(" artifactsUuid.contains(null) inst {} in service {} ", instName, servicename);
 			return true;
 		}
@@ -496,7 +496,7 @@ public class ArtifactUuidFix {
 							artifactlabel, artifactId, instName, servicename);
 					return true;
 				}
-				if (!artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
+				if (artifactsUuid != null && !artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
 					log.info(
 							" artifactsUuid.contains(artifactDefinition.getArtifactUUID() label {} inst {} in service {} ",
 							artifactlabel, instName, servicename);
@@ -522,7 +522,7 @@ public class ArtifactUuidFix {
 				return true;
 			}
 		}
-		if(vfModule != null ){
+		if(vfModule != null && artifactsUuid != null){
 			return isProblematicVFModule(vfModule, artifactsUuid, instArtifactsUuid);
 		}
 		
@@ -658,7 +658,7 @@ public class ArtifactUuidFix {
 				writer.flush();
 			}
 		} catch (IOException e) {
-			log.error(e.getMessage());
+		    log.error(e.getMessage());
 		} finally {
 			titanDao.commit();
 		}
@@ -1043,7 +1043,7 @@ public class ArtifactUuidFix {
 			}
 		} catch (IOException e) {
 
-			log.error(e.getMessage());
+		    log.error(e.getMessage());
 		}
 	}
 
