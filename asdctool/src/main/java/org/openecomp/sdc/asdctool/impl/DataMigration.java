@@ -159,7 +159,7 @@ public class DataMigration {
 		try {
 			elasticSearchClient.initialize();
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		    log.error("URISyntaxException occured {}",e);
 			return false;
 		}
 		return true;

@@ -76,7 +76,10 @@ public class ProductLogic {
 			return productsToDelete;
 		} catch (Exception e) {
 			log.info("get All Products failed - {}" , e);
-			graph.tx().rollback();
+			if(graph != null) {
+			    graph.tx().rollback();
+			}
+			
 			return null;
 
 		} finally {
