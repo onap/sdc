@@ -576,23 +576,27 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
             Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Resource oldResource) {
 
+        log.error("lding7 enter findNodeTypesArtifactsToHandle");
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes
                 = Either.left(nodeTypesArtifactsToHandle);
 
         try {
             Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
+            log.error("lding7 enter findNodeTypesArtifactsToHandle after extractVfcsArtifactsFromCsar");
             Map<String, ImmutablePair<String, String>> extractedVfcToscaNames =
                     extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
-            log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ",
+            log.error("lding7 Going to fetch node types for resource with name {} during import csar with UUID {}. ",
                     oldResource.getName(), csarInfo.getCsarUUID());
             extractedVfcToscaNames.forEach((namespace, vfcToscaNames) -> findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, oldResource,
                     extractedVfcsArtifacts,
                     namespace, vfcToscaNames));
+            log.error("lding7 after Going to fetch node types for resource");
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
             log.debug("Exception occured when findNodeTypesUpdatedArtifacts, error is:{}", e.getMessage(), e);
+            log.error("lding7 Exception occured when findNodeTypesUpdatedArtifacts, error is:{}", e.getMessage(), e);
         }
         return nodeTypesArtifactsToHandleRes;
     }
@@ -602,6 +606,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
         log.debug("Going to fetch node type with tosca name {}. ", vfcToscaNames.getLeft());
+        log.error("lding7 Going to fetch node type with tosca name {}. ", vfcToscaNames.getLeft());
         Resource curNodeType = findVfcResource(csarInfo, resource, vfcToscaNames.getLeft(), vfcToscaNames.getRight(), null);
         if (!isEmpty(extractedVfcsArtifacts)) {
             List<ArtifactDefinition> currArtifacts = new ArrayList<>();
@@ -656,6 +661,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             nodeTypeArtifactsToHandle = putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete);
         } catch (Exception e) {
             log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
+            log.error("lding7 Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
         return nodeTypeArtifactsToHandle;
@@ -699,6 +705,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 artifactsToUpload.remove(currNewArtifact);
             } else {
                 log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
+                log.error("lding7 Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
                 throw new ComponentException(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
                         currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
                         foundArtifact.get().getArtifactType());
@@ -836,6 +843,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private Map<String, ImmutablePair<String, String>> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo,
                                                                             String vfResourceName, CsarInfo csarInfo) {
         Map<String, ImmutablePair<String, String>> vfcToscaNames = new HashMap<>();
+        log.error("lding7 enter extractVfcToscaNames");
 
         Map<String, Object> nodes = extractAllNodes(nodeTypesInfo, csarInfo);
         if (!nodes.isEmpty()) {
@@ -851,6 +859,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             vfcToscaNames.put(cvfc.getType(),
                     buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), vfResourceName, cvfc.getType()));
         }
+        log.error("lding7 exit extractVfcToscaNames");
         return vfcToscaNames;
     }
 
@@ -881,7 +890,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
                 nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
-            log.debug("failed to find node types for update with artifacts during import csar {}. ",
+            log.error("lding7 failed to find node types for update with artifacts during import csar {}. ",
                     csarInfo.getCsarUUID());
             throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
@@ -5106,11 +5115,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             actualVfName = vfResourceName;
             actualType = nodeResourceType;
         }
-
+        String nameWithouNamespacePrefix;
         try {
             StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            String nameWithouNamespacePrefix = nodeTypeFullName
+            if (!nodeTypeFullName.contains(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)){
+               nameWithouNamespacePrefix = nodeTypeFullName;
+            } else {
+                nameWithouNamespacePrefix = nodeTypeFullName
                     .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+            }
             String[] findTypes = nameWithouNamespacePrefix.split("\\.");
             String resourceType = findTypes[0];
             String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
@@ -5129,7 +5142,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                             .toString());
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
-            log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
         }
     }
