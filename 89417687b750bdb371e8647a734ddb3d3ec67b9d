@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ee7c57e_b7ee44f7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-02-19T09:48:53Z",
+      "side": 1,
+      "message": "Need to change this too in the same way",
+      "range": {
+        "startLine": 1029,
+        "startChar": 13,
+        "endLine": 1029,
+        "endChar": 40
+      },
+      "revId": "89417687b750bdb371e8647a734ddb3d3ec67b9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
