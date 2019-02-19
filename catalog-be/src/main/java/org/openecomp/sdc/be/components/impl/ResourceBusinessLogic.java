@@ -5106,11 +5106,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             actualVfName = vfResourceName;
             actualType = nodeResourceType;
         }
-
+        String nameWithouNamespacePrefix;
         try {
             StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            String nameWithouNamespacePrefix = nodeTypeFullName
+            if (!nodeTypeFullName.contains(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)){
+               nameWithouNamespacePrefix = nodeTypeFullName;
+            } else {
+                nameWithouNamespacePrefix = nodeTypeFullName
                     .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+            }
             String[] findTypes = nameWithouNamespacePrefix.split("\\.");
             String resourceType = findTypes[0];
             String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
