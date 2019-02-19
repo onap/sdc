@@ -8,9 +8,4 @@
 			<class name="org.openecomp.sdc.ci.tests.sanity.Onboard"/>
 		</classes>
 	</test>
-	<test name="nodeFilter">
-		<classes>
-			<class name="org.openecomp.sdc.ci.tests.servicefilter.ServiceFilterTests"/>
-		</classes>
-	</test>
 </suite>
