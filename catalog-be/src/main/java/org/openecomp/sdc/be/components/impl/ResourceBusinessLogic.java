@@ -584,15 +584,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
             Map<String, ImmutablePair<String, String>> extractedVfcToscaNames =
                     extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
-            log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ",
-                    oldResource.getName(), csarInfo.getCsarUUID());
             extractedVfcToscaNames.forEach((namespace, vfcToscaNames) -> findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, oldResource,
                     extractedVfcsArtifacts,
                     namespace, vfcToscaNames));
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
-            log.debug("Exception occured when findNodeTypesUpdatedArtifacts, error is:{}", e.getMessage(), e);
         }
         return nodeTypesArtifactsToHandleRes;
     }
@@ -881,8 +878,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
                 nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
-            log.debug("failed to find node types for update with artifacts during import csar {}. ",
-                    csarInfo.getCsarUUID());
             throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
         Resource vfResource = createResourceFromYaml(resource, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(),
@@ -5106,11 +5101,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             actualVfName = vfResourceName;
             actualType = nodeResourceType;
         }
-
+        String nameWithouNamespacePrefix;
         try {
             StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            String nameWithouNamespacePrefix = nodeTypeFullName
+            if (!nodeTypeFullName.contains(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)){
+               nameWithouNamespacePrefix = nodeTypeFullName;
+            } else {
+                nameWithouNamespacePrefix = nodeTypeFullName
                     .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+            }
             String[] findTypes = nameWithouNamespacePrefix.split("\\.");
             String resourceType = findTypes[0];
             String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
@@ -5129,7 +5128,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                             .toString());
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
-            log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
         }
     }
