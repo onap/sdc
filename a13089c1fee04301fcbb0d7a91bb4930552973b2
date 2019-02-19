@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08397972_6755d5ed",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-19T06:39:49Z",
+      "side": 1,
+      "message": "Did you debug and saw the error message? I think it might be unreadable.",
+      "revId": "a13089c1fee04301fcbb0d7a91bb4930552973b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6dfbd98_d210d712",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1046,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-19T06:39:49Z",
+      "side": 1,
+      "message": "Did you debug and saw the error message? I think it might be unreadable.",
+      "revId": "a13089c1fee04301fcbb0d7a91bb4930552973b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c799648_57c73bcc",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1257,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-19T06:39:49Z",
+      "side": 1,
+      "message": "Did you debug and saw the error message? I think it might be unreadable.",
+      "revId": "a13089c1fee04301fcbb0d7a91bb4930552973b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
