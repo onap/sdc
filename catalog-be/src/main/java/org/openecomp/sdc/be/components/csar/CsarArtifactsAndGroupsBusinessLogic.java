@@ -684,7 +684,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
                         ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
+                        ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                         artifactTemplateInfo.getType(), res.getArtifactType()));
             }
         }
@@ -1311,7 +1311,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                                 ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
                                 ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
-                                ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
+                                ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                                 artifactTemplateInfo.getType(), artifactFromResource.getArtifactType()));
                     }
                     alreadyExist = true;
@@ -1335,7 +1335,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                                 ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
                                 ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
-                                ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
+                                ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                                 artifactTemplateInfo.getType(), createdArtifact.getArtifactType()));
                     }
                     alreadyExist = true;
@@ -1584,7 +1584,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                             ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
                             ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                     resStatus = Either.right(componentsUtils.getResponseFormat(
-                            ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
+                            ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                             artifactTemplateInfo.getType(), updatedArtifact.getArtifactType()));
                     return resStatus;
                 }

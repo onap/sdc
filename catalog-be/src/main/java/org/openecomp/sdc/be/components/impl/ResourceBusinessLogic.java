@@ -699,7 +699,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 artifactsToUpload.remove(currNewArtifact);
             } else {
                 log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
-                throw new ComponentException(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
+                throw new ComponentException(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
                         currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
                         foundArtifact.get().getArtifactType());
             }
@@ -5047,7 +5047,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                             log.debug("Can't upload two artifact with the same name {}.",
                                     currNewArtifact.getArtifactName());
                             ResponseFormat responseFormat = ResponseFormatManager.getInstance().getResponseFormat(
-                                    ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
+                                    ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
                                     currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType().name(),
                                     foundArtifact.getArtifactType());
                             AuditingActionEnum auditingAction = artifactsBusinessLogic

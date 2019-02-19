@@ -2641,7 +2641,7 @@ Response Types
 
 ::
 
-    ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR: {
+    ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR: {
         code: 400,
         message: "Error: artifact %1 in type %2 already exists in type %3.",
         messageId: "SVC4619"
