@@ -1,0 +1,78 @@
+{
+  "id": "all",
+  "title": "All",
+  "sets": [
+    {
+      "id": "certification",
+      "title": "Available Certification Queries",
+      "tests": [
+        {
+          "id": "certquery",
+          "title": "VSP Certifications"
+        }
+      ]
+    },
+    {
+      "id": "compliance",
+      "title": "Available Compliance Tests",
+      "sets": [
+        {
+          "id": "compliancetests",
+          "title": "Compliance Tests",
+          "sets": [
+            {
+              "id": "heattests",
+              "title": "Heat Tests",
+              "tests": [
+                {
+                  "id": "fht1",
+                  "title": "Future Tests here"
+                }
+              ]
+            },
+            {
+              "id": "toscatests",
+              "title": "TOSCA Tests",
+              "tests": [
+                {
+                  "id": "ftt1",
+                  "title": "Future Tests here"
+                }
+              ]
+            }
+          ],
+          "tests": [
+            {
+              "id": "computeflavor",
+              "title": "Compute Flavours Test"
+            },
+            {
+              "id": "sriov",
+              "title": "SR-IOV Test"
+            }
+          ]
+        },
+        {
+          "id": "validationtests",
+          "title": "Validation Tests",
+          "tests": [
+            {
+              "id": "fvt1",
+              "title": "Future Tests here"
+            }
+          ]
+        },
+        {
+          "id": "performancetests",
+          "title": "Performance Tests",
+          "tests": [
+            {
+              "id": "fvt1",
+              "title": "Future Tests here"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

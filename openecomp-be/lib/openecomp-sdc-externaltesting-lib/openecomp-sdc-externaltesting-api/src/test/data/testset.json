@@ -1,0 +1,151 @@
+{
+  "id": "ALL",
+  "title": "ALL",
+  "sets": [
+    {
+      "id": "certification",
+      "title": "Certification Query",
+      "tests": [
+        {
+          "id": "certquery",
+          "title": "VSP Certifications",
+          "parameters": [
+            {
+              "id": "vspId",
+              "label": "VSP ID",
+              "inputType": "text",
+              "maxLength": 36,
+              "minLength": 1,
+              "placeholder": "VSP ID",
+              "disabled": false,
+              "required": true
+            },
+            {
+              "id": "vspVersion",
+              "label": "Previous VSP Version",
+              "inputType": "text",
+              "maxLength": 36,
+              "minLength": 1,
+              "placeholder": "VSP Version",
+              "disabled": false,
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compliance",
+      "title": "Compliance Tests",
+      "sets": [
+        {
+          "id": "compliancetests",
+          "title": "Compliance Tests",
+          "tests": [
+            {
+              "id": "computeflavor",
+              "title": "Compute Flavours Test",
+              "parameters": [
+                {
+                  "id": "something",
+                  "label": "Something",
+                  "inputType": "select",
+                  "placeholder": "B/N/H",
+                  "disabled": false,
+                  "choices": [
+                    {
+                      "key": "B",
+                      "label": "Basic"
+                    },
+                    {
+                      "key": "N",
+                      "label": "Network Intensive"
+                    },
+                    {
+                      "key": "C",
+                      "label": "Compute Intensive"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "vnfId",
+                  "label": "Id of VNF",
+                  "inputType": "text",
+                  "placeholder": "VNF ID",
+                  "disabled": false,
+                  "required": true
+                }
+              ]
+            },
+            {
+              "id": "sriov",
+              "title": "SR-IOV Test",
+              "parameters": [
+                {
+                  "id": "allowSrIov",
+                  "label": "SR-IOV Test",
+                  "inputType": "select",
+                  "placeholder": "No",
+                  "defaultValue": "No",
+                  "disabled": true,
+                  "choices": [
+                    {
+                      "key": "true",
+                      "label": "Yes"
+                    },
+                    {
+                      "key": "false",
+                      "label": "No"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "id": "vnfId",
+                  "label": "Id of VNF",
+                  "inputType": "text",
+                  "placeholder": "VNF ID",
+                  "disabled": false,
+                  "required": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "validationtests",
+          "title": "Validation Tests",
+          "tests": [
+            {
+              "id": "heat",
+              "title": "Future HEAT Test",
+              "parameters": []
+            },
+            {
+              "id": "tosca",
+              "title": "Future TOSCA Test",
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "id": "performancetests",
+          "title": "Performance Tests",
+          "tests": [
+            {
+              "id": "maxthroughput",
+              "title": "Future Max Throughput Test",
+              "parameters": []
+            },
+            {
+              "id": "latency",
+              "title": "Future Latency Test",
+              "parameters": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
