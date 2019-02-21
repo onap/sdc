@@ -43,6 +43,9 @@
     <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/>
     <bean id = "uniqueTypes" class="org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl"/>
 
+    <!-- External Testing Interface Beans -->
+    <bean id = "externalTestingManager" class="org.openecomp.core.externaltesting.impl.ExternalTestingManagerImpl"/>
+
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
 
@@ -64,6 +67,7 @@
             <ref bean="processes"/>
             <ref bean="componentProcesses"/>
             <ref bean="validation"/>
+            <ref bean="externaltesting"/>
             <ref bean="actions"/>
             <ref bean="applicationConfiguration"/>
             <ref bean="componentMonitoringUploads"/>

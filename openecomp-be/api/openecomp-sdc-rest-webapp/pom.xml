@@ -29,6 +29,7 @@
 		<module>notifications-rest</module>
 		<module>togglz-rest</module>
 		<module>unique-type-rest</module>
+		<module>externaltesting-rest</module>
 	</modules>
 
 </project>

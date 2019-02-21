@@ -1,0 +1,14 @@
+externalTestingConfig:
+  client:
+    enabled: true
+  endpoints:
+    - id: vtp
+      postStyle: application/json
+      enabled: true
+      url: http://bogus.ec2-34-237-35-152.compute-1.amazonaws.com
+      apiKey: FOOBAR
+    - id: repository
+      postStyle: application/json
+      url: http://bogus.ec2-34-237-35-152.compute-1.amazonaws.com
+      enabled: true
+      apiKey: FOOBAR

@@ -1,0 +1,6 @@
+{
+  "title": "Test not found.",
+  "error": "Test not found.",
+  "detail": "This is the detail error text.",
+  "message": "This is the message field."
+}

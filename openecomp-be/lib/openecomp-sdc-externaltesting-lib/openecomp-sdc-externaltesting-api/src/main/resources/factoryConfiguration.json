@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.externaltesting.factory.ExternalTestingManagerFactory":"org.openecomp.sdc.externaltesting.impl.ExternalTestingManagerFactoryImpl"
+}
