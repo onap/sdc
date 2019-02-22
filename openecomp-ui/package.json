@@ -47,7 +47,8 @@
         "redux": "^3.7.2",
         "sdc-ui": "1.6.62",
         "uuid-js": "^0.7.5",
-        "validator": "^4.3.0"
+        "validator": "^4.3.0",
+        "nanoid": "^1.0.1"
     },
     "devDependencies": {
         "babel-core": "^6.24.0",

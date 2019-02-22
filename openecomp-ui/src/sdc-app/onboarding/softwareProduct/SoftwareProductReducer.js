@@ -25,6 +25,7 @@ import { actionTypes as heatSetupActionTypes } from './attachments/setup/HeatSet
 import SoftwareProductCreationReducer from './creation/SoftwareProductCreationReducer.js';
 import SoftwareProductDetailsReducer from './details/SoftwareProductDetailsReducer.js';
 import SoftwareProductProcessesListReducer from './processes/SoftwareProductProcessesListReducer.js';
+import SoftwareProductValidationReducer from './validation/SoftwareProductValidationReducer.js';
 import SoftwareProductProcessesEditorReducer from './processes/SoftwareProductProcessesEditorReducer.js';
 import SoftwareProductDeploymentListReducer from './deployment/SoftwareProductDeploymentListReducer.js';
 import SoftwareProductDeploymentEditorReducer from './deployment/editor/SoftwareProductDeploymentEditorReducer.js';
@@ -73,6 +74,9 @@ export default combineReducers({
     ),
     softwareProductEditor: createPlainDataReducer(
         SoftwareProductDetailsReducer
+    ),
+    softwareProductValidation: createPlainDataReducer(
+        SoftwareProductValidationReducer
     ),
     softwareProductProcesses: combineReducers({
         processesList: SoftwareProductProcessesListReducer,
