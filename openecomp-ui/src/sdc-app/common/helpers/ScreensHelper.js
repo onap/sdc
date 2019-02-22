@@ -197,6 +197,18 @@ const ScreensHelper = {
                             vspProps
                         );
                         break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION:
+                        OnboardingActionHelper.navigateToSoftwareProductValidation(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_MONITOR:
+                        OnboardingActionHelper.navigateToSoftwareProductValidationMonitor(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
                         OnboardingActionHelper.navigateToSoftwareProductDependencies(
                             dispatch,

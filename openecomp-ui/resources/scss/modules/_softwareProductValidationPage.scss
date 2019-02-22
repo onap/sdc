@@ -1,0 +1,76 @@
+
+.vsp-validation-view {
+  position: relative;
+  .validation-tabs {
+    .sdc-tabs-list {
+      padding-left: 28px;
+      background-color: $tlv-gray;
+      box-shadow: none;
+      border-bottom: 1px solid $light-gray;
+      .sdc-tab {
+          @extend .heading-2;
+        padding-top: 10px;
+        margin-top: 0;
+        &.sdc-tab-active {
+          color: $blue;
+          font-weight: bold;
+        }
+      }
+    }
+    .sdc-tab-content {
+      margin-top: 0;
+    }
+  }
+
+  .validation-view-title {
+    padding-bottom: 5px;
+    font-size: 16px;
+  }
+
+  .validation-view-tab {
+    padding: 30px 60px 70px 60px;
+  }
+
+  .validation-setup-checkbox-tree-section {
+    height: 260px;
+  }
+
+  .validation-setup-selected-tests {
+    height: 160px;
+    width: 100%;
+    border: solid;
+  }
+
+  .validation-setup-available-tests-section {
+    height: 160px;
+    width: 100%;
+    overflow: auto;
+    clear: both;
+    border: solid;
+  }
+
+  .validation-setup-available-tests-section::-webkit-scrollbar {
+    height: 8px;
+    width: 14px;
+  }
+
+  .div-clear-both {
+    clear: both;
+  }
+
+  .validation-view-controllers {
+    position: absolute;
+    right: 40px;
+    top: 10px;
+    display: flex;
+
+    .proceed-to-validation-monitor-btn {
+      margin-right: 30px;
+    }
+    .change-tabs-btn {
+      width: 191px;
+      margin-right: 36px;
+      height: 36px;
+    }
+  }
+}
