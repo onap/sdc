@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import CheckboxTree from 'nfvo-components/CheckboxTree/CheckboxTree.js';
+import CheckboxTree from 'nfvo-components/checkboxTree/CheckboxTree.js';
 
 const icons = {
     check: <span className="glyphicon glyphicon-check" />,
