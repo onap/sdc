@@ -631,6 +631,15 @@
   "VNF Header Vendor" : "Vendor",
   "VNF Header Desc" : "Description",
   "VNF Header Action" : "Action",
-  
-  "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance."
+
+  "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance.",
+
+  "VSP ID" : "VSP ID",
+  "VSP Version" : "VSP Version",
+  "Available Certification Query" : "Available Certification Query",
+  "Selected Certification Query" : "Selected Certification Query",
+  "BACK" : "BACK",
+  "NEXT" : "NEXT",
+  "Validation Monitor" : "Validation Monitor",
+  "Validation" : "Validation"
 }

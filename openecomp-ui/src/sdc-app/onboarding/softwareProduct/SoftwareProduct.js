@@ -36,11 +36,25 @@ import { CommitModalType } from 'nfvo-components/panel/versionController/compone
 import { onboardingMethod as onboardingMethodType } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import { SyncStates } from 'sdc-app/common/merge/MergeEditorConstants.js';
 import { catalogItemStatuses } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
+import ConfigHelper from 'sdc-app/common/helpers/ConfigHelper.js';
 
 function getActiveNavigationId(screen, componentId) {
     let activeItemId = componentId ? screen + '|' + componentId : screen;
     return activeItemId;
 }
+
+let isVSPValidationDisabled = true;
+
+ConfigHelper.fetchVspConfig()
+    .then(response => {
+        isVSPValidationDisabled =
+            response.enabled === undefined || response.enabled === ''
+                ? true
+                : !response.enabled;
+    })
+    .catch(error => {
+        console.log(error);
+    });
 
 const buildComponentNavigationBarGroups = ({ componentId, meta }) => {
     const groups = [
@@ -174,6 +188,20 @@ const buildNavigationBarProps = ({
                     id: enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS,
                     name: i18n('Networks'),
                     disabled: false,
+                    meta
+                },
+                {
+                    id: enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION,
+                    name: i18n('Validation'),
+                    disabled: false,
+                    hidden: isVSPValidationDisabled,
+                    meta
+                },
+                {
+                    id: enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_MONITOR,
+                    name: i18n('Validation Monitor'),
+                    disabled: false,
+                    hidden: isVSPValidationDisabled,
                     meta
                 },
                 {
@@ -586,6 +614,8 @@ const mapActionsToProps = (
         case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS:
         case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
         case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION:
+        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_MONITOR:
         case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
         case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
         case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:

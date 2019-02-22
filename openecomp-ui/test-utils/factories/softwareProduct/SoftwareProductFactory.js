@@ -20,6 +20,7 @@ export const SoftwareProductFactory = new Factory()
 		softwareProductAttachments: {},
 		softwareProductCreation: {},
 		softwareProductEditor: {},
+    softwareProductValidation: {},
 		softwareProductProcesses: {
 			processesList: [],
 			processesEditor: {},

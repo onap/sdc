@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,6 +53,8 @@ const breadcrumbsEnum = {
     SOFTWARE_PRODUCT_PROCESSES: 'SOFTWARE_PRODUCT_PROCESSES',
     SOFTWARE_PRODUCT_DEPLOYMENT: 'SOFTWARE_PRODUCT_DEPLOYMENT',
     SOFTWARE_PRODUCT_NETWORKS: 'SOFTWARE_PRODUCT_NETWORKS',
+    SOFTWARE_PRODUCT_VALIDATION: 'SOFTWARE_PRODUCT_VALIDATION',
+    SOFTWARE_PRODUCT_VALIDATION_MONITOR: 'SOFTWARE_PRODUCT_VALIDATION_MONITOR',
     SOFTWARE_PRODUCT_DEPENDENCIES: 'SOFTWARE_PRODUCT_DEPENDENCIES',
     SOFTWARE_PRODUCT_ACTIVITY_LOG: 'SOFTWARE_PRODUCT_ACTIVITY_LOG',
     SOFTWARE_PRODUCT_COMPONENTS: 'SOFTWARE_PRODUCT_COMPONENTS',
@@ -97,6 +99,10 @@ export const enums = keyMirror({
         SOFTWARE_PRODUCT_DEPLOYMENT:
             breadcrumbsEnum.SOFTWARE_PRODUCT_DEPLOYMENT,
         SOFTWARE_PRODUCT_NETWORKS: breadcrumbsEnum.SOFTWARE_PRODUCT_NETWORKS,
+        SOFTWARE_PRODUCT_VALIDATION:
+            breadcrumbsEnum.SOFTWARE_PRODUCT_VALIDATION,
+        SOFTWARE_PRODUCT_VALIDATION_MONITOR:
+            breadcrumbsEnum.SOFTWARE_PRODUCT_VALIDATION_MONITOR,
         SOFTWARE_PRODUCT_DEPENDENCIES:
             breadcrumbsEnum.SOFTWARE_PRODUCT_DEPENDENCIES,
         SOFTWARE_PRODUCT_ACTIVITY_LOG:

@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ import Application from 'sdc-app/Application.jsx';
 import store from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
-
+import ConfigHelper from 'sdc-app/common/helpers/ConfigHelper.js';
 import {
     onboardingMethod as onboardingMethodTypes,
     onboardingOriginTypes
@@ -38,8 +38,29 @@ import { AppContainer } from 'react-hot-loader';
 import HeatSetupActionHelper from './softwareProduct/attachments/setup/HeatSetupActionHelper.js';
 
 import { actionTypes, enums, screenTypes } from './OnboardingConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import OnboardingActionHelper from './OnboardingActionHelper.js';
 import Onboarding from './Onboarding.js';
+
+let isVSPValidationDisabled = true;
+ConfigHelper.fetchVspConfig()
+    .then(response => {
+        isVSPValidationDisabled =
+            response.enabled === undefined || response.enabled === ''
+                ? true
+                : !response.enabled;
+    })
+    .catch(error => {
+        let dispatch = action => store.dispatch(action);
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_ERROR,
+            data: {
+                title: i18n('ERROR'),
+                msg: error.message,
+                cancelButtonText: i18n('OK')
+            }
+        });
+    });
 
 export default class OnboardingPunchOut {
     render({ options: { data, apiRoot, apiHeaders }, onEvent }, element) {
@@ -553,6 +574,8 @@ export default class OnboardingPunchOut {
             case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
             case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
             case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+            case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION:
+            case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_MONITOR:
             case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
             case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
             case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
@@ -578,6 +601,10 @@ export default class OnboardingPunchOut {
                         enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPLOYMENT,
                     [enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS]:
                         enums.BREADCRUMS.SOFTWARE_PRODUCT_NETWORKS,
+                    [enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION]:
+                        enums.BREADCRUMS.SOFTWARE_PRODUCT_VALIDATION,
+                    [enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_MONITOR]:
+                        enums.BREADCRUMS.SOFTWARE_PRODUCT_VALIDATION_MONITOR,
                     [enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES]:
                         enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPENDENCIES,
                     [enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]:
@@ -676,6 +703,18 @@ export default class OnboardingPunchOut {
                                 {
                                     key:
                                         enums.BREADCRUMS
+                                            .SOFTWARE_PRODUCT_VALIDATION,
+                                    displayText: i18n('Validation')
+                                },
+                                {
+                                    key:
+                                        enums.BREADCRUMS
+                                            .SOFTWARE_PRODUCT_VALIDATION_MONITOR,
+                                    displayText: i18n('Validation Monitor')
+                                },
+                                {
+                                    key:
+                                        enums.BREADCRUMS
                                             .SOFTWARE_PRODUCT_DEPENDENCIES,
                                     displayText: i18n('Components Dependencies')
                                 },
@@ -719,6 +758,11 @@ export default class OnboardingPunchOut {
                                     case enums.BREADCRUMS
                                         .SOFTWARE_PRODUCT_DEPENDENCIES:
                                         return componentsList.length > 1;
+                                    case enums.BREADCRUMS
+                                        .SOFTWARE_PRODUCT_VALIDATION:
+                                    case enums.BREADCRUMS
+                                        .SOFTWARE_PRODUCT_VALIDATION_MONITOR:
+                                        return !isVSPValidationDisabled;
                                     default:
                                         return true;
                                 }
