@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "135e482d_d05f5442",
+        "filename": "openecomp-ui/resources/scss/components/_checkboxTree.scss",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-25T11:34:53Z",
+      "side": 1,
+      "message": "ONAP SDC is with  Apache License, Version 2.0 . I will check if SDC can use MIT license.",
+      "revId": "3d433fbc192f68d1b1c072a49f31e4d654c63717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
