@@ -175,7 +175,7 @@ public class AuditValidationUtils {
 	}
 
 	public enum ArtifactDataFieldEnum {
-		attGroup, artLable, artType, artName, artTimeout, artPayloadUUID, artVersion, artUUID
+		attGroup, artLabel, artType, artName, artTimeout, artPayloadUUID, artVersion, artUUID
 	}
 
 	private static void validateAtifactDataField(Map<String, Object> map, String auditJsonKeyName,

@@ -31,22 +31,22 @@ public class ArtifactReqDetails {
 	}
 
 	public ArtifactReqDetails(String artifactName, String artifactType, String artifactDescription, String payloadData,
-			String artifactLable) {
+			String artifactLabel) {
 		super();
 		this.artifactName = artifactName;
 		this.artifactType = artifactType;
 		this.description = artifactDescription;
 		this.payloadData = payloadData;
-		this.artifactLabel = artifactLable;
+		this.artifactLabel = artifactLabel;
 	}
 
-	public ArtifactReqDetails(String artifactLable, ArtifactReqDetails a) {
+	public ArtifactReqDetails(String artifactLabel, ArtifactReqDetails a) {
 		super();
 		this.artifactName = a.getArtifactName();
 		this.artifactType = a.getArtifactType();
 		this.description = a.getArtifactType();
 		this.payloadData = a.getPayload();
-		this.artifactLabel = artifactLable;
+		this.artifactLabel = artifactLabel;
 	}
 
 	private String uniqueId;
