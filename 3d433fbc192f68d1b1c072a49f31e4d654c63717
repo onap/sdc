@@ -16,6 +16,40 @@
       "revId": "3d433fbc192f68d1b1c072a49f31e4d654c63717",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f456f53a_5e2b5219",
+        "filename": "openecomp-ui/src/nfvo-components/checkboxTree/Button.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2019-02-25T14:28:44Z",
+      "side": 1,
+      "message": "There is a style guide documented at https://onap-sdc.github.io/sdc-ui/. When available, all components, including buttons, should be consumed from SDC-UI library and follow the SG.",
+      "revId": "3d433fbc192f68d1b1c072a49f31e4d654c63717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56acf6ce_7383e23f",
+        "filename": "openecomp-ui/src/nfvo-components/input/validation/Input.jsx",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 3411
+      },
+      "writtenOn": "2019-02-25T14:28:44Z",
+      "side": 1,
+      "message": "this logic is too complex, move it out or simplify it to:\n\nthis.props.placeholder || \u0027\u0027",
+      "revId": "3d433fbc192f68d1b1c072a49f31e4d654c63717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
