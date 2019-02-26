@@ -45,6 +45,23 @@
       "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3864f96_a98a255f",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/test/java/org/openecomp/core/externaltesting/api/TestSetTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T13:51:49Z",
+      "side": 1,
+      "message": "Can we put this jsaon in file in resources? It will be more readable.",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
