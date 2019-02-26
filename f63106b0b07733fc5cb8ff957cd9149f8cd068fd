@@ -48,6 +48,74 @@
     },
     {
       "key": {
+        "uuid": "12af6853_4a22def3",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/TestParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "PLease use lombok for getter and setter.",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aabe242a_217b6fa4",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/TestParameterValue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "Use lombok",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb5f7a3a_a56d0640",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/TestSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "lombok",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf8a3ea0_56c44ba5",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/errors/ExternalTestingException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "Lease use lombok",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3864f96_a98a255f",
         "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/test/java/org/openecomp/core/externaltesting/api/TestSetTests.java",
         "patchSetId": 1
@@ -59,6 +127,91 @@
       "writtenOn": "2019-02-26T13:51:49Z",
       "side": 1,
       "message": "Can we put this jsaon in file in resources? It will be more readable.",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51d36e0d_2e3f30fb",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ClientConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "use lombok for Beans",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95cb7879_6dd01ef3",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/CsarMetadataVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "should be try with resource block for input stream?",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e87b42a_41dd0db7",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/RemoteTestingEndpointDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "use lombok",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "089ef820_bb8992e8",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/test/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImplTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "Should be List\u003corg.openecomp.core.externaltesting.api.TestExecutionRequestItem\u003e, no use to describe the conrete class.",
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68991852_1b4f5f73",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/test/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImplTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-02-26T14:10:29Z",
+      "side": 1,
+      "message": "Should we fail the test with Assert.Fail?",
       "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
