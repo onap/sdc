@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "869262e8_ea930b14",
+        "filename": "docs/externaltesting.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-02-26T10:02:17Z",
+      "side": 1,
+      "message": "All files should be Apache 2.0\nAny reason your added this particular license header?",
+      "range": {
+        "startLine": 1,
+        "startChar": 3,
+        "endLine": 1,
+        "endChar": 87
+      },
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8811b587_1805d980",
+        "filename": "docs/externaltesting.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-02-26T10:02:17Z",
+      "side": 1,
+      "message": "I sent to you and James the explanation for readthedocs:\nIt should be documentation for the user and environment owner point of view: user guides with screenshots, how to config their environment, what are the APIs exposed and offered by SDC (swagger).\nYou should integrate with the current readthedocs pages in SDC, as it should describe SDC as a whole, not by feature.\n \nFor the rest of the content, including from developers point of view (code changes, classes/methods documentation, software architecture of the feature), should go to the Wiki under feature page: https://wiki.onap.org/pages/viewpage.action?pageId\u003d45305743\nThat way other developers can under the code changes.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 21
+      },
+      "revId": "f63106b0b07733fc5cb8ff957cd9149f8cd068fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
