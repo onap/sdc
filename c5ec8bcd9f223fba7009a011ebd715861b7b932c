@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa8fa824_7adc7560",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/NodeFilterUploadCreatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-02-26T09:53:43Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it say Amdocs ?",
+      "range": {
+        "startLine": 2,
+        "startChar": 25,
+        "endLine": 2,
+        "endChar": 49
+      },
+      "revId": "c5ec8bcd9f223fba7009a011ebd715861b7b932c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
