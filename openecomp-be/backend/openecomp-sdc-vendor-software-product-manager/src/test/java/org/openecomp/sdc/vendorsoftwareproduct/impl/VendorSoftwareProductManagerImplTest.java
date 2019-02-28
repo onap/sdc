@@ -409,7 +409,7 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
   @Test
-  public void testCreatePackage() {
+  public void testCreatePackage() throws IOException {
     /*VspDetails vspDetailsMock = new VspDetails("vspId", new Version(1, 0));
     doReturn(vspDetailsMock).when(vspInfoDaoMock).get(anyObject());*/
     VersionInfo versionInfo = new VersionInfo();
