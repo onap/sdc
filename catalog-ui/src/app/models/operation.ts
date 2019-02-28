@@ -38,6 +38,8 @@ export class BEOperationModel {
     workflowId: string;
     workflowVersionId: string;
 
+    implementation?: { artifactUUID: string; };
+
     constructor(operation?: any) {
         if (operation) {
             this.name = operation.name;
@@ -50,6 +52,7 @@ export class BEOperationModel {
             this.workflowAssociationType = operation.workflowAssociationType;
             this.workflowId = operation.workflowId;
             this.workflowVersionId = operation.workflowVersionId;
+            this.implementation = operation.implementation;
         }
     }
 
@@ -84,17 +87,6 @@ export class OperationModel extends BEOperationModel {
     public displayType(): string {
         const lastDot = this.interfaceType ? this.interfaceType.lastIndexOf('.') : -1;
         return lastDot === -1 ? this.interfaceType : this.interfaceType.substr(lastDot + 1);
-    }
-}
-
-export class CreateOperationResponse extends OperationModel {
-    artifactUUID: string;
-
-    constructor(operation?: any) {
-        super(operation);
-        if (operation) {
-            this.artifactUUID = operation.artifactUUID;
-        }
     }
 }
 

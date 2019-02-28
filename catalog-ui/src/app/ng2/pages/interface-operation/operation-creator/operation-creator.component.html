@@ -85,7 +85,7 @@
             <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
                 <label class="sdc-input__label required">{{ 'OPERATION_WORKFLOW' | translate }}
                     <span class="archive-warning" *ngIf="workflowIsOnline && archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
-                    <span class="no-workflow-warning" *ngIf="!workflowIsOnline">Failed to load workflows</span>
+                    <span class="no-workflow-warning" *ngIf="!workflowIsOnline">{{ 'OPERATION_NO_WORKFLOW_CONNECTION' | translate }}</span>
                     <span class="no-workflow-warning" *ngIf="workflowIsOnline && !workflows.length">{{ 'OPERATION_NO_WORKFLOW_ERROR' | translate }}</span>
                 </label>
                 <sdc-dropdown

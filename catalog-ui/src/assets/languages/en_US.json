@@ -480,6 +480,7 @@
     "OPERATION_WORKFLOW_ASSIGNMENT": "Workflow Assignment",
     "OPERATION_WORKFLOW": "Workflow",
     "OPERATION_NO_WORKFLOW_ERROR": "No Certified Versions Available",
+    "OPERATION_NO_WORKFLOW_CONNECTION": "Failed to Load Workflows",
     "OPERATION_WORKFLOW_ARCHIVED": "Archived",
     "OPERATION_WORKFLOW_VERSION": "Workflow Version",
     "OPERATION_ADD_PARAMS": "Add Paramaters",

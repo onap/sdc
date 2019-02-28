@@ -25,7 +25,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, CreateOperationResponse} from "app/models";
+    PropertyBEModel, OperationModel, BEOperationModel} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -139,7 +139,7 @@ export class ComponentServiceNg2 {
             });
     }
 
-    createInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+    createInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
         const operationList = {
             'interfaces': {
                 [operation.interfaceType]: {
@@ -154,7 +154,7 @@ export class ComponentServiceNg2 {
             .map((res:Response) => {
                 const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
                 const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
-                return new CreateOperationResponse({
+                return new OperationModel({
                     ...newOperation,
                     interfaceType: interf.type,
                     interfaceId: interf.uniqueId
@@ -162,7 +162,7 @@ export class ComponentServiceNg2 {
             });
     }
 
-    updateInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+    updateInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
         const operationList = {
             'interfaces': {
                 [operation.interfaceType]: {
@@ -177,7 +177,7 @@ export class ComponentServiceNg2 {
             .map((res:Response) => {
                 const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
                 const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
-                return new CreateOperationResponse({
+                return new OperationModel({
                     ...newOperation,
                     interfaceType: interf.type,
                     interfaceId: interf.uniqueId

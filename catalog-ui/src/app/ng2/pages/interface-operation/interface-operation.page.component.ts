@@ -9,7 +9,7 @@ import {Observable} from "rxjs/Observable";
 
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {ModalModel, ButtonModel, InputBEModel, OperationModel, InterfaceModel, CreateOperationResponse, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
+import {ModalModel, ButtonModel, InputBEModel, OperationModel, InterfaceModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
 
 import {IModalConfig, IModalButtonComponent} from "sdc-ui/lib/angular/modals/models/modal-config";
 import {SdcUiComponents} from "sdc-ui/lib/angular";
@@ -301,7 +301,7 @@ export class InterfaceOperationComponent {
     }
 
     private createOperation = (operation: OperationModel): void => {
-        this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: CreateOperationResponse) => {
+        this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
             this.openOperation = null;
             let curInterf = _.find(
                 this.interfaces,

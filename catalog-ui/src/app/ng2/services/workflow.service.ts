@@ -3,7 +3,7 @@ import { Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { HttpService } from "./http.service";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import { Component, CreateOperationResponse } from "app/models";
+import { Component, OperationModel } from "app/models";
 
 interface WorkflowOutputParameter {
     name: string,
@@ -30,9 +30,9 @@ export class WorkflowServiceNg2 {
         this.catalogBaseUrl = sdcConfig.api.POST_workflow_artifact;
     }
 
-    public associateWorkflowArtifact(component: Component, operation: CreateOperationResponse): Observable<any> {
+    public associateWorkflowArtifact(component: Component, operation: OperationModel): Observable<any> {
         return this.http.post(this.baseUrl + '/workflows/' + operation.workflowId + '/versions/' + operation.workflowVersionId + '/artifact-deliveries', {
-                endpoint: this.catalogBaseUrl + '/' + component.getTypeUrl() + component.uuid + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId + '/artifacts/' + operation.artifactUUID,
+                endpoint: this.catalogBaseUrl + '/' + component.getTypeUrl() + component.uuid + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId + '/artifacts/' + operation.implementation.artifactUUID,
                 method: 'POST'
             })
             .map((res:Response) => {
