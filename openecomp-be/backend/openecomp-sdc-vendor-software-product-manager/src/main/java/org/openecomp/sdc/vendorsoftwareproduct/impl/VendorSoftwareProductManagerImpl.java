@@ -19,6 +19,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -106,8 +107,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingManifest;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
@@ -655,7 +660,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-  public PackageInfo createPackage(String vspId, Version version) {
+  public PackageInfo createPackage(String vspId, Version version) throws IOException {
     ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     Version vlmVersion = vspDetails.getVlmVersion();
@@ -669,7 +674,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     FileContentHandler licenseArtifacts = licenseArtifactsService
         .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
             vspDetails.getFeatureGroups());
-    //todo add tosca validation here
+    ETSIService etsiService = new ETSIServiceImpl();
+    if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
+        FileContentHandler handler = toscaServiceModel.getArtifactFiles();
+        Manifest onboardingManifest = OnboardingManifest.parse(handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME));
+      etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
+
+    }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
 
