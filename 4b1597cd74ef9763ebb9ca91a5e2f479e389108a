@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a172d5d_9debe1fa",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-01T19:06:33Z",
+      "side": 1,
+      "message": "Rename/move: \nI suggest renaming this to something like \"nonManoSources\" or call directly within the method-call to reduce local variables same with above \u0027e\u0027 to \"nonManoKey\".",
+      "range": {
+        "startLine": 67,
+        "startChar": 25,
+        "endLine": 67,
+        "endChar": 26
+      },
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db9de6f3_3f3f413d",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-01T19:06:33Z",
+      "side": 1,
+      "message": "Rename: This is dealing with only Non-Mano sources I believe - so could rename this to something like \"nonManoSources\"?",
+      "range": {
+        "startLine": 72,
+        "startChar": 99,
+        "endLine": 72,
+        "endChar": 106
+      },
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d37eb8b1_3e9709df",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-01T19:06:33Z",
+      "side": 1,
+      "message": "Rename: filePath or sourceFilePath?",
+      "range": {
+        "startLine": 74,
+        "startChar": 20,
+        "endLine": 74,
+        "endChar": 23
+      },
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a65ecf22_13403713",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-01T19:06:33Z",
+      "side": 1,
+      "message": "Just to highlight an edge-case mentioned earlier that you can have any mandatory-entry in value part of the key/value pair and it will pass through since its just strings in metafile",
+      "range": {
+        "startLine": 108,
+        "startChar": 27,
+        "endLine": 108,
+        "endChar": 35
+      },
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64ba7da9_30b34277",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/NonManoType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-01T19:06:33Z",
+      "side": 1,
+      "message": "suggestion: lombok annotation @Data it will handle the boilerplate code for you",
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
