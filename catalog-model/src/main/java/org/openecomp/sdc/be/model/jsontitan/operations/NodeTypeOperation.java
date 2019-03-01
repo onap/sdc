@@ -289,7 +289,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
     private TitanOperationStatus setComponentCapPropertiesFromGraph(GraphVertex componentV, NodeType toscaElement) {
         Either<Map<String, MapPropertiesDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (result.isLeft()) {
-            toscaElement.setCapabiltiesProperties(result.left().value());
+            toscaElement.setCapabilitiesProperties(result.left().value());
         } else {
             if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
                 return result.right().value();
@@ -317,7 +317,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
     private TitanOperationStatus setResourceCapabilitiesFromGraph(GraphVertex componentV, NodeType toscaElement) {
         Either<Map<String, ListCapabilityDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
         if (result.isLeft()) {
-            toscaElement.setCapabilties(result.left().value());
+            toscaElement.setCapabilities(result.left().value());
         } else {
             if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
                 return result.right().value();
@@ -448,7 +448,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         }
         Map<String, ListCapabilityDataDefinition> capabiltiesAll = dataFromDerived.left().value();
 
-        Map<String, ListCapabilityDataDefinition> capabilties = nodeType.getCapabilties();
+        Map<String, ListCapabilityDataDefinition> capabilties = nodeType.getCapabilities();
         if (capabilties != null) {
             if (capabiltiesAll == null) {
                 capabiltiesAll = new HashMap<>();
@@ -483,7 +483,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
             });
         });
         if (!capabiltiesAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILTIES, EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES, EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -556,7 +556,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
             return dataFromDerived.right().value();
         }
         Map<String, MapPropertiesDataDefinition> propertiesAll = dataFromDerived.left().value();
-        Map<String, MapPropertiesDataDefinition> capabiltiesProps = nodeType.getCapabiltiesProperties();
+        Map<String, MapPropertiesDataDefinition> capabiltiesProps = nodeType.getCapabilitiesProperties();
         if (capabiltiesProps != null) {
             capabiltiesProps.values().forEach(l -> {
                 if (l.getMapToscaDataDefinition() != null && l.getMapToscaDataDefinition().values() != null) {

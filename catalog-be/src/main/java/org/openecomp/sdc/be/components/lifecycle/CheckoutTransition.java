@@ -123,6 +123,7 @@ public class CheckoutTransition extends LifeCycleTransition {
                     }
                 }
                 handleCalculatedCapabilitiesRequirements(clonedComponent);
+               updateCapReqOwnerId(clonedComponent);
             }
 
         } finally {
@@ -148,6 +149,11 @@ public class CheckoutTransition extends LifeCycleTransition {
         }
     }
 
+    private void updateCapReqOwnerId(Component component) {
+        if(component.isTopologyTemplate() && ToscaUtils.isNotComplexVfc(component)) {
+            toscaOperationFacade.updateCapReqOwnerId(component.getUniqueId());
+        }
+    }
     private StorageOperationStatus upgradeToLatestGenericData(Component clonedComponent) {
 
         StorageOperationStatus updateStatus = StorageOperationStatus.OK;

@@ -148,6 +148,16 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
     }
 
+    protected CapabilitiesBusinessLogic getCapabilitiesBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> CapabilitiesBusinessLogic.class);
+    }
+
+    protected RelationshipTypeBusinessLogic getRelationshipTypeBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> RelationshipTypeBusinessLogic.class);
+    }
+    protected RequirementBusinessLogic getRequirementBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> RequirementBusinessLogic.class);
+    }
     ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
     }

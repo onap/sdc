@@ -173,7 +173,7 @@ public class CommonImportManager {
     }
 
     public enum ElementTypeEnum {
-        POLICY_TYPE, GROUP_TYPE, DATA_TYPE, CAPABILITY_TYPE, INTERFACE_LIFECYCLE_TYPE
+        POLICY_TYPE, GROUP_TYPE, DATA_TYPE, CAPABILITY_TYPE, INTERFACE_LIFECYCLE_TYPE, RELATIONSHIP_TYPE
     }
 
     private ActionStatus convertFromStorageResponseForElementType(StorageOperationStatus status, ElementTypeEnum elementTypeEnum) {
@@ -190,6 +190,9 @@ public class CommonImportManager {
             break;
         case INTERFACE_LIFECYCLE_TYPE:
             ret = componentsUtils.convertFromStorageResponseForLifecycleType(status);
+            break;
+        case RELATIONSHIP_TYPE:
+            ret = componentsUtils.convertFromStorageResponseForRelationshipType(status);
             break;
         default:
             ret = componentsUtils.convertFromStorageResponse(status);

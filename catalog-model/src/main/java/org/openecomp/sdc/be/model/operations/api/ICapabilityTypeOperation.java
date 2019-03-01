@@ -21,7 +21,10 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+
+import java.util.Map;
 
 public interface ICapabilityTypeOperation {
 
@@ -43,4 +46,5 @@ public interface ICapabilityTypeOperation {
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId);
 
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
+    Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> getAllCapabilityTypes();
 }

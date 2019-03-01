@@ -1689,4 +1689,117 @@ errors:
         message: "Error: The server was acting as a gateway or proxy and received an invalid response from the upstream server",
         messageId: "SVC4674"
     }
+#---------SVC4675------------------------------
+# %1 - resource Id
+    CAPABILITY_NOT_FOUND: {
+        code: 400,
+        message: "Error: Capability not found in the resource '%1'.",
+        messageId: "SVC4675"
+    }
 
+#---------SVC4676------------------------------
+# %1 - resource Id
+    REQUIREMENT_NOT_FOUND: {
+        code: 400,
+        message: "Error: Requirement not found in the resource '%1'.",
+        messageId: "SVC4676"
+    }
+#---------SVC4677-----------------------------
+    CAPABILITY_NAME_MANDATORY: {
+      code: 404,
+      message: "Error: Capability name is mandatory, Capability name can't be empty.",
+      messageId: "SVC4677"
+    }
+#---------SVC4678-----------------------------
+    CAPABILITY_TYPE_MANDATORY: {
+      code: 404,
+      message: "Error: Capability type is mandatory, Capability type can't be empty.",
+      messageId: "SVC4678"
+    }
+#---------SVC4679-----------------------------
+# %1 - Capability Name
+    CAPABILITY_NAME_ALREADY_IN_USE: {
+      code: 400,
+      message: "Error: Capability name '%1' already in use, Your current changes will not be saved.",
+      messageId: "SVC4679"
+    }
+
+#---------SVC4680-----------------------------
+    REQUIREMENT_NAME_MANDATORY: {
+      code: 404,
+      message: "Error: Requirement name is mandatory, Requirement name can't be empty.",
+      messageId: "SVC4680"
+    }
+#---------SVC4681-----------------------------
+    REQUIREMENT_CAPABILITY_MANDATORY: {
+      code: 404,
+      message: "Error: Requirement capability is mandatory, Requirement capability can't be empty.",
+      messageId: "SVC4681"
+    }
+#---------SVC4682-----------------------------
+# %1 - Requirement Name
+    REQUIREMENT_NAME_ALREADY_IN_USE: {
+      code: 400,
+      message: "Error: Requirement name '%1' already in use, Your current changes will not be saved.",
+      messageId: "SVC4682"
+    }
+#---------SVC4683-----------------------------
+    MAX_OCCURRENCES_SHOULD_BE_GREATER_THAN_MIN_OCCURRENCES: {
+      code: 400,
+      message: "Error: maxOccurrences should be greater than minOccurrences",
+      messageId: "SVC4683"
+    }
+#---------SVC4684-----------------------------
+# %1 - Capability name
+    CAPABILITY_DELETION_NOT_ALLOWED_USED_IN_COMPOSITION: {
+        code: 409,
+        message: "Error: Capability '%1' can't be deleted,  since it is used in service composition",
+        messageId: "SVC4684"
+    }
+#---------SVC4685-----------------------------
+# %1 - Requirement name
+    REQUIREMENT_DELETION_NOT_ALLOWED_USED_IN_COMPOSITION: {
+        code: 409,
+        message: "Error: Requirement '%1' can't be deleted,  since it is used in service composition",
+        messageId: "SVC4685"
+    }
+#---------SVC4686-----------------------------
+    CAPABILITY_UPDATE_NOT_ALLOWED_USED_IN_COMPOSITION: {
+        code: 409,
+        message: "Error: Capability can't be updated,  since it is used in service composition",
+        messageId: "SVC4686"
+    }
+
+#---------SVC4687-----------------------------
+    REQUIREMENT_UPDATE_NOT_ALLOWED_USED_IN_COMPOSITION: {
+        code: 409,
+        message: "Error: Requirement can't be updated,  since it is used in service composition",
+        messageId: "SVC4687"
+    }
+#---------SVC4688-----------------------------
+    CAPABILITY_TYPE_CANNOT_BE_EMPTY: {
+      code: 500,
+      message: "Error: Capability types are empty. Please import the capability types.",
+      messageId: "SVC4688"
+    }
+#---------SVC4689-----------------------------
+    RELATIONSHIP_TYPE_ALREADY_EXIST: {
+      code: 409,
+      message: "Error: Relationship Type with name '%1' already exists.",
+      messageId: "SVC4689"
+    }
+#---------SVC4690-----------------------------
+# %1 - Requirement name
+    INVALID_REQUIREMENT_NAME: {
+        code: 400,
+        message: "Requirement name '%1' is invalid, Only alphanumeric chars, underscore and dot allowed",
+        messageId: "SVC4690"
+    }
+
+#---------SVC4691-----------------------------
+# %1 - Capability name
+    INVALID_CAPABILITY_NAME: {
+        code: 400,
+        message: "Capability name '%1' is invalid, Only alphanumeric chars, underscore and dot allowed",
+        messageId: "SVC4691"
+    }

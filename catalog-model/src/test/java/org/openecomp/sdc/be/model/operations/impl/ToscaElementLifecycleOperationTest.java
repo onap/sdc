@@ -59,10 +59,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -147,7 +143,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         cap1.setDescription("create");
         cap1.setUniqueId(UniqueIdBuilder.buildCapabilityUid(id, "cap1"));
 
-        status = nodeTypeOperation.addToscaDataToToscaElement(id, EdgeLabelEnum.CAPABILITIES, VertexTypeEnum.CAPABILTIES, cap1, JsonPresentationFields.NAME);
+        status = nodeTypeOperation.addToscaDataToToscaElement(id, EdgeLabelEnum.CAPABILITIES, VertexTypeEnum.CAPABILITIES, cap1, JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
         res = lifecycleOperation.checkinToscaELement(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId());
@@ -164,7 +160,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
         cap1.setDescription("update");
 
-        status = nodeTypeOperation.updateToscaDataOfToscaElement(id, EdgeLabelEnum.CAPABILITIES, VertexTypeEnum.CAPABILTIES, cap1, JsonPresentationFields.NAME);
+        status = nodeTypeOperation.updateToscaDataOfToscaElement(id, EdgeLabelEnum.CAPABILITIES, VertexTypeEnum.CAPABILITIES, cap1, JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
         PropertyDataDefinition prop66 = new PropertyDataDefinition();

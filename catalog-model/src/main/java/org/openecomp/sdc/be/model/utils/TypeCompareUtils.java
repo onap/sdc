@@ -71,6 +71,22 @@ public class TypeCompareUtils {
                SetUtils.isEqualSet(ct1.getValidSourceTypes(), ct2.getValidSourceTypes()) &&
                propertiesEquals(ct1.getProperties(), ct2.getProperties());
     }
+
+    public static boolean isRelationshipTypesEquals(RelationshipTypeDefinition rs1, RelationshipTypeDefinition rs2) {
+        if (rs1 == rs2) {
+            return true;
+        }
+
+        if (rs1 == null || rs2 == null) {
+            return false;
+        }
+
+        return Objects.equals(rs1.getType(), rs2.getType()) &&
+                Objects.equals(rs1.getDerivedFrom(), rs2.getDerivedFrom()) &&
+                Objects.equals(rs1.getDescription(), rs2.getDescription()) &&
+                SetUtils.isEqualSet(rs1.getValidSourceTypes(), rs2.getValidSourceTypes()) &&
+                propertiesEquals(rs1.getProperties(), rs2.getProperties());
+    }
     
     private static boolean propertiesEquals(Map<String, PropertyDefinition> props1, Map<String, PropertyDefinition> props2) {
         if (props1 == props2) {
