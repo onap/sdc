@@ -12,6 +12,7 @@ from importNfvTypes import importNfvTypes
 from importOnapTypes import importOnapTypes
 from importSolTypes import importSolTypes
 from importNormativeCapabilities import importNormativeCapabilities
+from importNormativeRelationships import importNormativeRelationships
 from importCategoryTypes import importCategories
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
 from importDataTypes import importDataTypes
@@ -111,12 +112,15 @@ def main(argv):
 
 	print 'sleep until data type cache is updated'
 	time.sleep( 70 )
-	
+
 	fileLocation = baseFileLocation + "capability-types/"
 	importNormativeCapabilities(scheme, beHost, bePort, adminUser, False, fileLocation)
+	
+	fileLocation = baseFileLocation + "relationship-types/"
+	importNormativeRelationships(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "interface-lifecycle-types/"
-	importNormativeInterfaceLifecycleType(scheme, beHost, bePort, adminUser, False, fileLocation)	
+	importNormativeInterfaceLifecycleType(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "categories/"
 	importCategories(scheme, beHost, bePort, adminUser, False, fileLocation)

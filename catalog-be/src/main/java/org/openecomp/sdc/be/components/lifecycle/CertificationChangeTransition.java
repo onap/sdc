@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -193,6 +194,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
                 }
             }
             updateCalculatedCapabilitiesRequirements(componentAfterCertification);
+            updateCapReqOwnerId(componentAfterCertification);
             result = Either.left(componentAfterCertification);
             return result;
         } finally {
@@ -210,6 +212,12 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             }
         }
 
+    }
+
+    private void updateCapReqOwnerId(Component component) {
+        if(component.isTopologyTemplate() && ToscaUtils.isNotComplexVfc(component)) {
+            toscaOperationFacade.updateCapReqOwnerId(component.getUniqueId());
+        }
     }
 
     private void updateCalculatedCapabilitiesRequirements(Component certifiedComponent) {

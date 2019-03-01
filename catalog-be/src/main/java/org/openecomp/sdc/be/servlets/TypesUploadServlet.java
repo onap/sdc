@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.common.api.Constants;
@@ -72,15 +73,18 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private final DataTypeImportManager dataTypeImportManager;
     private final GroupTypeImportManager groupTypeImportManager;
     private final PolicyTypeImportManager policyTypeImportManager;
+    private final RelationshipTypeImportManager relationshipTypeImportManager;
 
     public TypesUploadServlet(CapabilityTypeImportManager capabilityTypeImportManager, InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager, CategoriesImportManager categoriesImportManager, DataTypeImportManager dataTypeImportManager,
-                              GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager) {
+                              GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager,
+                              RelationshipTypeImportManager relationshipTypeImportManager) {
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
         this.categoriesImportManager = categoriesImportManager;
         this.dataTypeImportManager = dataTypeImportManager;
         this.groupTypeImportManager = groupTypeImportManager;
         this.policyTypeImportManager = policyTypeImportManager;
+        this.relationshipTypeImportManager = relationshipTypeImportManager;
     }
 
     @POST
@@ -91,6 +95,21 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadCapabilityType(@ApiParam("FileInputStream") @FormDataParam("capabilityTypeZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name());
+    }
+
+    @POST
+    @Path("/relationship")
+    @ApiOperation(value = "Create Relationship Type from yaml", httpMethod = "POST",
+            notes = "Returns created Relationship Type", response = Response.class)
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Relationship Type created"),
+            @ApiResponse(code = 403, message = "Restricted operation"),
+            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
+            @ApiResponse(code = 409, message = "Relationship Type already exist")})
+    public Response uploadRelationshipType(@ApiParam("FileInputStream") @FormDataParam("relationshipTypeZip") File file,
+                                           @Context final HttpServletRequest request,
+                                           @HeaderParam("USER_ID") String creator) {
+        return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator,
+                NodeTypeEnum.RelationshipType.getName());
     }
 
     @POST
@@ -299,6 +318,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
         }
     }
-
+    // relationship types
+    private void createRelationshipTypes(Wrapper<Response> responseWrapper, String relationshipTypesYml) {
+        final Supplier<Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat>>
+                generateElementTypeFromYml =
+                () -> relationshipTypeImportManager.createRelationshipTypes(relationshipTypesYml);
+        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml,
+                ActionStatus.RELATIONSHIP_TYPE_ALREADY_EXIST, NodeTypeEnum.RelationshipType.name());
+    }
 
 }

@@ -32,6 +32,7 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 		this.setDescription(cdt.getDescription());
 		this.setType(cdt.getType());
 		this.setValidSourceTypes(cdt.getValidSourceTypes());
+		this.setValidTargetTypes(cdt.getValidTargetTypes());
 		this.setVersion(cdt.getVersion());
 		this.setOriginUI(cdt.isOriginUI());
 		this.setCreationTime(cdt.getCreationTime());
@@ -54,11 +55,11 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 		return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT);
 	}
 	public void setCapability(String capability) {
-		setToscaPresentationValue(JsonPresentationFields.CAPAPILITY, capability);
+		setToscaPresentationValue(JsonPresentationFields.CAPABILITY, capability);
 	}
 
 	public String getCapability() {
-		return (String) getToscaPresentationValue(JsonPresentationFields.CAPAPILITY);
+		return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY);
 	}
 	public void setToId(Object toId) {
 		setToscaPresentationValue(JsonPresentationFields.TO_ID, toId);
@@ -142,6 +143,14 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 
 	public void setValidSourceTypes(List<String> validSourceTypes) {
 		setToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPES, validSourceTypes);
+	}
+
+	public List<String> getValidTargetTypes() {
+		return (List<String>) getToscaPresentationValue(JsonPresentationFields.VALID_TARGET_TYPES);
+	}
+
+	public void setValidTargetTypes(List<String> validTargetTypes) {
+		setToscaPresentationValue(JsonPresentationFields.VALID_TARGET_TYPES, validTargetTypes);
 	}
 
 	public String getVersion() {

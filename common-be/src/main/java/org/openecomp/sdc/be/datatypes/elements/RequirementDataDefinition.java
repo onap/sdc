@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class RequirementDataDefinition extends ToscaDataDefinition {
 
-	public static final String MIN_OCCURRENCES = "1";
+	public static final String MIN_OCCURRENCES = "0";
 	public static final String MAX_OCCURRENCES = "UNBOUNDED";
 	public static final String MAX_DEFAULT_OCCURRENCES = "1";
 
@@ -107,11 +107,11 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
 	 */
 
 	public String getCapability() {
-		return (String) getToscaPresentationValue(JsonPresentationFields.CAPAPILITY);
+		return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY);
 	}
 
 	public void setCapability(String capability) {
-		setToscaPresentationValue(JsonPresentationFields.CAPAPILITY, capability);
+		setToscaPresentationValue(JsonPresentationFields.CAPABILITY, capability);
 	}
 
 	/**

@@ -42,6 +42,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +59,10 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     }
 
     private static final Logger log = Logger.getLogger(CapabilityTypeOperation.class.getName());
+    private static final String DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS = "Data type {} cannot be found in graph."
+            + " status is {}";
+    private static final String FAILED_TO_FETCH_PROPERTIES_OF_DATA_TYPE = "Failed to fetch properties of data type {}";
+
 
     /**
      * FOR TEST ONLY
@@ -268,10 +273,15 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         CapabilityTypeData ctData = capabilityTypesRes.left().value();
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition(ctData.getCapabilityTypeDataDefinition());
 
-        TitanOperationStatus propertiesStatus = fillProperties(uniqueId, capabilityTypeDefinition);
-        if (propertiesStatus != TitanOperationStatus.OK) {
+        Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus =
+                OperationUtils.fillProperties(uniqueId, propertyOperation, NodeTypeEnum.CapabilityType);
+        if (propertiesStatus.isRight() && propertiesStatus.right().value() != TitanOperationStatus.OK) {
             log.error("Failed to fetch properties of capability type {}", uniqueId);
-            return Either.right(propertiesStatus);
+            return Either.right(propertiesStatus.right().value());
+        }
+
+        if (propertiesStatus.isLeft()) {
+            capabilityTypeDefinition.setProperties(propertiesStatus.left().value());
         }
 
         Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, GraphEdgeLabels.DERIVED_FROM,
@@ -293,24 +303,6 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         result = Either.left(capabilityTypeDefinition);
 
         return result;
-    }
-
-    private TitanOperationStatus fillProperties(String uniqueId, CapabilityTypeDefinition capabilityTypeDefinition) {
-
-        Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfNode = propertyOperation.findPropertiesOfNode(NodeTypeEnum.CapabilityType, uniqueId);
-        if (findPropertiesOfNode.isRight()) {
-            TitanOperationStatus titanOperationStatus = findPropertiesOfNode.right().value();
-            log.debug("After looking for properties of vertex {}. status is {}", uniqueId, titanOperationStatus);
-            if (TitanOperationStatus.NOT_FOUND.equals(titanOperationStatus)) {
-                return TitanOperationStatus.OK;
-            } else {
-                return titanOperationStatus;
-            }
-        } else {
-            Map<String, PropertyDefinition> properties = findPropertiesOfNode.left().value();
-            capabilityTypeDefinition.setProperties(properties);
-            return TitanOperationStatus.OK;
-        }
     }
 
     public Either<Boolean, StorageOperationStatus> isCapabilityTypeDerivedFrom(String childCandidateType, String parentCandidateType) {
@@ -416,5 +408,108 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     @Override
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId) {
         return getCapabilityType(uniqueId, true);
+    }
+    public Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> getAllCapabilityTypes() {
+
+        Map<String, CapabilityTypeDefinition> capabilityTypes = new HashMap<>();
+        Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> result = Either.left(capabilityTypes);
+
+        Either<List<CapabilityTypeData>, TitanOperationStatus> getAllCapabilityTypes =
+                titanGenericDao.getByCriteria(NodeTypeEnum.CapabilityType, null, CapabilityTypeData.class);
+        if (getAllCapabilityTypes.isRight()) {
+            TitanOperationStatus status = getAllCapabilityTypes.right().value();
+            if (status != TitanOperationStatus.NOT_FOUND) {
+                return Either.right(status);
+            } else {
+                return result;
+            }
+        }
+
+        List<CapabilityTypeData> list = getAllCapabilityTypes.left().value();
+        if (list != null) {
+
+            log.trace("Number of data types to load is {}", list.size());
+            //Set properties
+            for (CapabilityTypeData capabilityTypeData : list) {
+
+                log.trace("Going to fetch data type {}. uid is {}",
+                        capabilityTypeData.getCapabilityTypeDataDefinition().getType(),
+                        capabilityTypeData.getUniqueId());
+                Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypesByUid =
+                        getAndAddPropertiesANdDerivedFrom(capabilityTypeData.getUniqueId(), capabilityTypes);
+                if (capabilityTypesByUid.isRight()) {
+                    TitanOperationStatus status = capabilityTypesByUid.right().value();
+                    if (status == TitanOperationStatus.NOT_FOUND) {
+                        status = TitanOperationStatus.INVALID_ID;
+                    }
+                    return Either.right(status);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void fillDerivedFrom(String uniqueId, CapabilityTypeDefinition capabilityType) {
+        log.debug("#fillDerivedFrom - fetching capability type {} derived node", capabilityType.getType());
+        derivedFromOperation.getDerivedFromChild(uniqueId, NodeTypeEnum.CapabilityType, CapabilityTypeData.class)
+                .right()
+                .bind(this::handleDerivedFromNotExist)
+                .left()
+                .map(derivedFrom -> setDerivedFrom(capabilityType, derivedFrom));
+
+    }
+
+    private Either<CapabilityTypeData, StorageOperationStatus> handleDerivedFromNotExist(StorageOperationStatus err) {
+        if (err == StorageOperationStatus.NOT_FOUND) {
+            return Either.left(null);
+        }
+        return Either.right(err);
+    }
+
+    private CapabilityTypeData setDerivedFrom(CapabilityTypeDefinition capabilityTypeDefinition, CapabilityTypeData derivedFrom) {
+        if (derivedFrom != null) {
+            capabilityTypeDefinition.setDerivedFrom(derivedFrom.getCapabilityTypeDataDefinition().getType());
+        }
+        return derivedFrom;
+    }
+
+    private Either<CapabilityTypeDefinition, TitanOperationStatus> getAndAddPropertiesANdDerivedFrom(
+            String uniqueId, Map<String, CapabilityTypeDefinition> capabilityTypeDefinitionMap) {
+        if (capabilityTypeDefinitionMap.containsKey(uniqueId)) {
+            return Either.left(capabilityTypeDefinitionMap.get(uniqueId));
+        }
+
+        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypesRes =
+                titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId,
+                        CapabilityTypeData.class);
+
+        if (capabilityTypesRes.isRight()) {
+            TitanOperationStatus status = capabilityTypesRes.right().value();
+            log.debug(DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS, uniqueId, status);
+            return Either.right(status);
+        }
+
+        CapabilityTypeData ctData = capabilityTypesRes.left().value();
+        CapabilityTypeDefinition capabilityTypeDefinition =
+                new CapabilityTypeDefinition(ctData.getCapabilityTypeDataDefinition());
+
+        Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus =
+                OperationUtils.fillProperties(uniqueId, propertyOperation, NodeTypeEnum.CapabilityType);
+
+        if (propertiesStatus.isRight() && propertiesStatus.right().value() != TitanOperationStatus.OK) {
+            log.error(FAILED_TO_FETCH_PROPERTIES_OF_DATA_TYPE, uniqueId);
+            return Either.right(propertiesStatus.right().value());
+        }
+
+        if (propertiesStatus.isLeft()) {
+            capabilityTypeDefinition.setProperties(propertiesStatus.left().value());
+        }
+
+        fillDerivedFrom(uniqueId, capabilityTypeDefinition);
+
+        capabilityTypeDefinitionMap.put(capabilityTypeDefinition.getType(), capabilityTypeDefinition);
+
+        return Either.left(capabilityTypeDefinition);
     }
 }

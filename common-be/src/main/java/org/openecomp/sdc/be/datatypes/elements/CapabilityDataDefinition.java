@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class CapabilityDataDefinition extends ToscaDataDefinition {
 
-    public static final String MIN_OCCURRENCES = "1";
+    public static final String MIN_OCCURRENCES = "0";
     public static final String MAX_OCCURRENCES = "UNBOUNDED";
 
     /**

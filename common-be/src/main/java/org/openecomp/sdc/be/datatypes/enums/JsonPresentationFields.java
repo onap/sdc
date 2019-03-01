@@ -129,10 +129,11 @@ public enum JsonPresentationFields {
     SOURCE("source", null),
 
     //Requirement
-    CAPAPILITY("capability", null),
+    CAPABILITY("capability", null),
     NODE("node", null),
     RELATIONSHIP("relationship", null),
     VALID_SOURCE_TYPES("validSourceTypes", null),
+    VALID_TARGET_TYPES("validTargetTypes", null),
     REQUIREMENT_ID("requirementId", null),
     PARENT_NAME("parentName", null),
     PREVIOUS_NAME("previousName", null),

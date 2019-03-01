@@ -125,7 +125,7 @@ public class TypesUploadServletTest extends JerseyTest {
     protected ResourceConfig configure() {
 
         ResourceConfig resourceConfig = new ResourceConfig()
-        .register(new TypesUploadServlet(importManager, null, null, null, null, null));
+        .register(new TypesUploadServlet(importManager, null, null, null, null, null, null));
 
         resourceConfig.register(MultiPartFeature.class);
         resourceConfig.register(new AbstractBinder() {

@@ -2546,5 +2546,8 @@ public class ToscaOperationFacade {
         }
         return Either.left(parentComponents);
     }
-
+    public void updateCapReqOwnerId(String componentId) {
+        topologyTemplateOperation
+                .updateCapReqOwnerId(componentId, getTopologyTemplate(componentId));
+    }
 }

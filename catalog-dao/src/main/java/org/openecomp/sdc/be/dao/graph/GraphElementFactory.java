@@ -172,6 +172,7 @@ public class GraphElementFactory {
 				element = clazz.cast(new InputValueData(properties));
 				break;
 			case RelationshipType:
+				element = clazz.cast(new RelationshipTypeData(properties));
 				break;
 			case LockNode:
 				element = clazz.cast(new GraphNodeLock(properties));

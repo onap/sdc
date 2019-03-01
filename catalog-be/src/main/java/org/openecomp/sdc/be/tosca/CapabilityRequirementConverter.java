@@ -258,22 +258,22 @@ public class CapabilityRequirementConverter {
 
     private Either<Map<String, String[]>, ToscaError> buildAddSubstitutionMappingsCapabilities(Map<String, Component> componentsCache, Component component, Map<String, List<CapabilityDefinition>> capabilities) {
 
-        Map<String, String[]> toscaRequirements = new HashMap<>();
+        Map<String, String[]> toscaCapabilities = new HashMap<>();
         Either<Map<String, String[]>, ToscaError> result = null;
         for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
             Optional<CapabilityDefinition> failedToAddRequirement = entry.getValue()
                     .stream()
-                    .filter(c->!addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""), c.getPreviousName(), c.getOwnerId(), c.getPath()))
+                    .filter(c->!addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""), c.getPreviousName(), c.getOwnerId(), c.getPath()))
                     .findAny();
             if(failedToAddRequirement.isPresent()){
-                logger.debug("Failed to convert capalility {} for substitution mappings section of a tosca template of the component {}. ",
+                logger.debug("Failed to convert capability {} for substitution mappings section of a tosca template of the component {}. ",
                         failedToAddRequirement.get().getName(), component.getName());
                 result = Either.right(ToscaError.NODE_TYPE_CAPABILITY_ERROR);
             }
-            logger.debug("Finish convert capalilities for the component {}. ", component.getName());
+            logger.debug("Finish convert capabilities for the component {}. ", component.getName());
         }
         if(result == null){
-            result = Either.left(toscaRequirements);
+            result = Either.left(toscaCapabilities);
         }
         return result;
     }
@@ -284,7 +284,7 @@ public class CapabilityRequirementConverter {
             return false;
         }
         logger.debug("The requirement/capability {} belongs to the component {} ", entry.getFullName(), component.getUniqueId());
-        if (entry.getSourceName() != null) {
+        if (StringUtils.isNotEmpty(entry.getSourceName())) {
             addEntry(capReqMap, component, path, entry);
         }
         logger.debug("Finish convert the requirement/capability {} for the component {}. ", entry.getFullName(), component.getName());
@@ -318,14 +318,15 @@ public class CapabilityRequirementConverter {
             }
         }
 
-        Optional<ComponentInstance> ci = component.getComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
+        Optional<ComponentInstance> ci =
+                component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
             logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
 
             Collections.reverse(path);
 
             logger.debug("try to reverse path {} component {}", path, component.getUniqueId());
-            ci = component.getComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
+            ci = component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         }
         if(ci.isPresent()){
             prefix = buildCapReqNamePrefix(ci.get().getNormalizedName());
@@ -352,10 +353,10 @@ public class CapabilityRequirementConverter {
 
     private void addEntry(Map<String, String[]> toscaRequirements, Component component, List<String> capPath, SubstitutionEntry entry) {
         Optional<ComponentInstance> findFirst = component.safeGetComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(Iterables.getLast(capPath))).findFirst();
-        if (findFirst.isPresent()) {
-            entry.setOwner(findFirst.get().getNormalizedName());
+        findFirst.ifPresent(componentInstance -> entry.setOwner(componentInstance.getName()));
+        if (StringUtils.isNotEmpty(entry.getOwner()) && StringUtils.isNotEmpty(entry.getSourceName())) {
+            toscaRequirements.put(entry.getFullName(), new String[] { entry.getOwner(), entry.getSourceName() });
         }
-        toscaRequirements.put(entry.getFullName(), new String[] { entry.getOwner(), entry.getSourceName() });
     }
 
     public Either<String, Boolean> buildSubstitutedName(Map<String, Component> componentsCache, String name, String previousName, List<String> path, String ownerId, ComponentInstance instance) {
@@ -469,31 +470,9 @@ public class CapabilityRequirementConverter {
         return buildCapReqNamePerOwnerByPath(componentsCache, component, c.getName(), c.getPreviousName(), c.getPath());
     }
 
-    private void convertProxyCapability(Map<String, ToscaCapability> toscaCapabilities, CapabilityDefinition c, Map<String, DataTypeDefinition> dataTypes, String capabilityName) {
-        ToscaCapability toscaCapability = new ToscaCapability();
-        toscaCapability.setDescription(c.getDescription());
-        toscaCapability.setType(c.getType());
-
-        List<Object> occurrences = new ArrayList<>();
-        occurrences.add(Integer.valueOf(c.getMinOccurrences()));
-        if (c.getMaxOccurrences().equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
-            occurrences.add(c.getMaxOccurrences());
-        } else {
-            occurrences.add(Integer.valueOf(c.getMaxOccurrences()));
-        }
-        toscaCapability.setOccurrences(occurrences);
-
-        toscaCapability.setValid_source_types(c.getValidSourceTypes());
-        List<ComponentInstanceProperty> properties = c.getProperties();
-        if (isNotEmpty(properties)) {
-            Map<String, ToscaProperty> toscaProperties = new HashMap<>();
-            for (PropertyDefinition property : properties) {
-                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.CAPABILITY);
-                toscaProperties.put(property.getName(), toscaProperty);
-            }
-            toscaCapability.setProperties(toscaProperties);
-        }
-        toscaCapabilities.put(capabilityName, toscaCapability);
+    private void convertProxyCapability(Map<String, ToscaCapability> toscaCapabilities, CapabilityDefinition c,
+                                        Map<String, DataTypeDefinition> dataTypes, String capabilityName) {
+        createToscaCapability(toscaCapabilities, c, dataTypes, capabilityName);
     }
 
     private void convertCapability(Map<String, Component> componentsCache, Component component, Map<String, ToscaCapability> toscaCapabilities, boolean isNodeType, CapabilityDefinition c, Map<String, DataTypeDefinition> dataTypes , String capabilityName) {
@@ -502,6 +481,11 @@ public class CapabilityRequirementConverter {
             name = buildCapNamePerOwnerByPath(componentsCache, c, component);
         }
         logger.debug("The capability {} belongs to resource {} ", name, component.getUniqueId());
+        createToscaCapability(toscaCapabilities, c, dataTypes, name);
+    }
+
+    private void createToscaCapability(Map<String, ToscaCapability> toscaCapabilities, CapabilityDefinition c,
+                                       Map<String, DataTypeDefinition> dataTypes, String name) {
         ToscaCapability toscaCapability = new ToscaCapability();
         toscaCapability.setDescription(c.getDescription());
         toscaCapability.setType(c.getType());
@@ -529,6 +513,9 @@ public class CapabilityRequirementConverter {
     }
 
     private String buildCapReqNamePerOwnerByPath(Map<String, Component> componentsCache, Component component, String name, String previousName, List<String> path) {
+        if (CollectionUtils.isEmpty(path)) {
+            return name;
+        }
         String ownerId = path.get(path.size() - 1);
         String prefix;
         if(CollectionUtils.isNotEmpty(component.getGroups())) {
@@ -541,14 +528,14 @@ public class CapabilityRequirementConverter {
                 return name;
             }
         }
-        Optional<ComponentInstance> ci = component.getComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
+        Optional<ComponentInstance> ci = component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
             logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
 
             Collections.reverse(path);
 
             logger.debug("try to reverse path {} component {}", path, component.getUniqueId());
-            ci = component.getComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
+            ci = component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         }
         if(ci.isPresent()){
             prefix = buildCapReqNamePrefix(ci.get().getNormalizedName());

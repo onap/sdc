@@ -152,6 +152,8 @@ public class ModelConverter {
         convertServiceInterfaces(topologyTemplate, service);
 
         convertNodeFiltersComponents(topologyTemplate, service);
+        setCapabilitiesToComponent(topologyTemplate, service);
+        setRequirementsToComponent(topologyTemplate, service);
         return service;
     }
 
@@ -200,6 +202,8 @@ public class ModelConverter {
             convertPolicies(topologyTemplate, resource);
             convertNodeFiltersComponents(topologyTemplate, resource);
             convertProperties(topologyTemplate, resource);
+            setCapabilitiesToComponent(topologyTemplate, resource);
+            setRequirementsToComponent(topologyTemplate, resource);
         }
         convertArtifacts(toscaElement, resource);
         convertAdditionalInformation(toscaElement, resource);
@@ -401,6 +405,7 @@ public class ModelConverter {
     }
 
     private static void convertCapabilities(Component component, TopologyTemplate topologyTemplate) {
+        convertTopologyTemplateCapabilities(component, topologyTemplate);
         if(componentInstancesCapabilitiesExist(component) || groupsCapabilitiesExist(component)){
             topologyTemplate.setCalculatedCapabilities(new HashMap<>());
             topologyTemplate.setCalculatedCapabilitiesProperties(new HashMap<>());
@@ -418,6 +423,65 @@ public class ModelConverter {
         }
     }
 
+    private static void convertTopologyTemplateCapabilities(Component component, ToscaElement toscaElement) {
+        Map<String, List<CapabilityDefinition>> capabilities = component.getCapabilities();
+
+        Map<String, ListCapabilityDataDefinition> toscaCapMap = new HashMap<>();
+        Map<String, MapPropertiesDataDefinition> toscaCapPropMap = new HashMap<>();
+
+        if (MapUtils.isNotEmpty(capabilities )) {
+            capabilities.forEach((s, caps) -> {
+                        if (CollectionUtils.isNotEmpty(caps)) {
+                            List<CapabilityDataDefinition> capList = caps.stream().filter(capabilityDefinition -> capabilityDefinition.getOwnerId()
+                                    .equals(component.getUniqueId())).map(CapabilityDataDefinition::new).collect(Collectors.toList());
+
+                            populateCapabilityMap(toscaCapMap, toscaCapPropMap, s, caps, capList);
+                        }
+                    }
+            );
+
+            toscaElement.setCapabilities(toscaCapMap);
+            toscaElement.setCapabilitiesProperties(toscaCapPropMap);
+        }
+    }
+    private static void populateCapabilityMap(Map<String, ListCapabilityDataDefinition> toscaCapMap,
+                                              Map<String, MapPropertiesDataDefinition> toscaCapPropMap,
+                                              String s, List<CapabilityDefinition> caps,
+                                              List<CapabilityDataDefinition> capList) {
+        ListCapabilityDataDefinition listCapabilityDataDefinition = new ListCapabilityDataDefinition(capList);
+        toscaCapMap.put(s, listCapabilityDataDefinition);
+
+        for (CapabilityDefinition cap : caps) {
+            List<ComponentInstanceProperty> capPrps = cap.getProperties();
+            if (CollectionUtils.isNotEmpty(capPrps)) {
+                MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition();
+                for (ComponentInstanceProperty cip : capPrps) {
+                    dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
+                }
+                toscaCapPropMap.put(s + CAP_PROP_DELIM + cap.getName(), dataToCreate);
+            }
+        }
+    }
+
+    private static void convertTopologyTemplateRequirements(Component component, ToscaElement toscaElement) {
+        Map<String, List<RequirementDefinition>> requirements = component.getRequirements();
+
+        Map<String, ListRequirementDataDefinition> toscaReqMap = new HashMap<>();
+
+        if (MapUtils.isNotEmpty(requirements )) {
+            requirements.forEach((s, reqs)-> {
+                        if (CollectionUtils.isNotEmpty(reqs)) {
+                            List<RequirementDataDefinition> reqList = reqs.stream().filter(requirementDefinition -> requirementDefinition.getOwnerId()
+                                    .equals(component.getUniqueId())).map(RequirementDataDefinition::new).collect(Collectors.toList());
+
+                            ListRequirementDataDefinition listRequirementDataDefinition = new ListRequirementDataDefinition(reqList);
+                            toscaReqMap.put(s, listRequirementDataDefinition);
+                        }
+                    }
+            );
+            toscaElement.setRequirements(toscaReqMap);
+        }
+    }
     private static void convertComponentInstancesCapabilities(Component component, TopologyTemplate topologyTemplate) {
         if (componentInstancesCapabilitiesExist(component)) {
             component.getComponentInstances()
@@ -510,6 +574,7 @@ public class ModelConverter {
 
     private static void convertRequirements(Component component, TopologyTemplate topologyTemplate) {
 
+        convertTopologyTemplateRequirements(component, topologyTemplate);
         if (component.getRequirements() != null && component.getComponentInstances() != null) {
             topologyTemplate.setCalculatedRequirements(new HashMap<>());
             for (ComponentInstance instance : component.getComponentInstances()) {
@@ -759,27 +824,13 @@ public class ModelConverter {
                     if (caps != null && !caps.isEmpty()) {
 						List<CapabilityDataDefinition> capList = caps.stream().map(CapabilityDataDefinition::new).collect(Collectors.toList());
 
-                        ListCapabilityDataDefinition listCapabilityDataDefinition = new ListCapabilityDataDefinition(capList);
-                        toscaCapMap.put(s, listCapabilityDataDefinition);
-
-                        for (CapabilityDefinition cap : caps) {
-                            List<ComponentInstanceProperty> capPrps = cap.getProperties();
-                            if (capPrps != null && !capPrps.isEmpty()) {
-
-                                MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition();
-                                for (ComponentInstanceProperty cip : capPrps) {
-                                    dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
-                                }
-
-                                toscaCapPropMap.put(s + CAP_PROP_DELIM + cap.getName(), dataToCreate);
-                            }
-                        }
+                        populateCapabilityMap(toscaCapMap, toscaCapPropMap, s, caps, capList);
                     }
                 }
 			);
 
-            toscaElement.setCapabilties(toscaCapMap);
-            toscaElement.setCapabiltiesProperties(toscaCapPropMap);
+            toscaElement.setCapabilities(toscaCapMap);
+            toscaElement.setCapabilitiesProperties(toscaCapPropMap);
         }
     }
 
@@ -812,8 +863,8 @@ public class ModelConverter {
     }
 
     private static void convertCapabilities(NodeType toscaElement, Component component) {
-        Map<String, ListCapabilityDataDefinition> toscaCapabilities = toscaElement.getCapabilties();
-        Map<String, MapPropertiesDataDefinition> toscaCapPropMap = toscaElement.getCapabiltiesProperties();
+        Map<String, ListCapabilityDataDefinition> toscaCapabilities = toscaElement.getCapabilities();
+        Map<String, MapPropertiesDataDefinition> toscaCapPropMap = toscaElement.getCapabilitiesProperties();
 
         Map<String, List<CapabilityDefinition>> compCap = new HashMap<>();
         if (toscaCapabilities == null || toscaCapabilities.isEmpty())
@@ -1295,7 +1346,76 @@ public class ModelConverter {
         }
     }
 
-	private static void setCapabilitiesToComponentAndGroups(TopologyTemplate topologyTemplate, Component component) {
+    private static void setCapabilitiesToComponent(TopologyTemplate topologyTemplate, Component component) {
+        Map<String, ListCapabilityDataDefinition> capabilities = topologyTemplate.getCapabilities();
+        Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
+        if(MapUtils.isNotEmpty(capabilities)) {
+            if(componentCapabilities == null) {
+                componentCapabilities = new HashMap<>();
+            }
+            componentCapabilities.putAll(groupCapabilityByType(capabilities));
+            component.setCapabilities(componentCapabilities);
+        }
+
+    }
+    private static Map<String, List<CapabilityDefinition>> groupCapabilityByType(Map<String,
+            ListCapabilityDataDefinition> capabilities) {
+        Map<String, List<CapabilityDefinition>>  groupedCapabilities = new HashMap<>();
+
+        Set<String> typesSet = new HashSet<>();
+        List<CapabilityDefinition> allCapabilityDefinitions = new ArrayList<>();
+        for (Entry<String, ListCapabilityDataDefinition> capabilitiesEntry : capabilities.entrySet()) {
+            typesSet.addAll( capabilitiesEntry.getValue().getListToscaDataDefinition()
+                    .stream().map(CapabilityDataDefinition::getType).collect(Collectors.toSet()));
+
+            allCapabilityDefinitions.addAll(capabilitiesEntry.getValue().getListToscaDataDefinition()
+                    .stream().map(CapabilityDefinition::new).collect(Collectors.toList()));
+        }
+
+        for(String capType : typesSet) {
+            groupedCapabilities.put(capType, allCapabilityDefinitions.stream()
+                    .filter(capabilityDefinition -> capabilityDefinition.getType()
+                            .equals(capType)).collect(Collectors.toList()));
+        }
+        return groupedCapabilities;
+    }
+
+    private static void setRequirementsToComponent(TopologyTemplate topologyTemplate, Component component) {
+        Map<String, ListRequirementDataDefinition> requirements = topologyTemplate.getRequirements();
+        Map<String, List<RequirementDefinition>> componentRequirements = component.getRequirements();
+        if(MapUtils.isNotEmpty(requirements)) {
+            if(componentRequirements == null) {
+                componentRequirements = new HashMap<>();
+            }
+            componentRequirements.putAll(groupRequirementByType(requirements));
+            component.setRequirements(componentRequirements);
+        }
+    }
+
+    private static Map<String, List<RequirementDefinition>> groupRequirementByType(Map<String,
+            ListRequirementDataDefinition> requirements) {
+        Map<String, List<RequirementDefinition>>  groupedRequirement = new HashMap<>();
+
+        Set<String> typesSet = new HashSet<>();
+        List<RequirementDefinition> allRequirements = new ArrayList<>();
+        for (Entry<String, ListRequirementDataDefinition> requirementsEntry : requirements.entrySet()) {
+            typesSet.addAll( requirementsEntry.getValue().getListToscaDataDefinition()
+                    .stream().map(RequirementDataDefinition::getCapability).collect(Collectors.toSet()));
+
+            allRequirements.addAll(requirementsEntry.getValue().getListToscaDataDefinition()
+                    .stream().map(RequirementDefinition::new).collect(Collectors.toList()));
+        }
+
+        for(String capType : typesSet) {
+            groupedRequirement.put(capType, allRequirements.stream().filter(requirementDefinition ->
+                    requirementDefinition.getCapability().equals(capType)).collect(Collectors.toList()));
+        }
+        return groupedRequirement;
+
+    }
+
+
+    private static void setCapabilitiesToComponentAndGroups(TopologyTemplate topologyTemplate, Component component) {
 
 		Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate.getCalculatedCapabilitiesProperties();
 

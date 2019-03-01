@@ -24,6 +24,7 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -1390,6 +1391,15 @@ public abstract class BaseOperation {
 
         StorageOperationStatus status = StorageOperationStatus.OK;
         String currKey = (String) toscaDataElement.getToscaPresentationValue(mapKeyField);
+
+        if(StringUtils.isEmpty(currKey) && toscaDataElement instanceof ListDataDefinition) {
+            ToscaDataDefinition toscaDataDefinition = ((ListDataDefinition<? extends ToscaDataDefinition>) toscaDataElement)
+                    .getListToscaDataDefinition().get(0);
+            if(toscaDataDefinition != null) {
+            currKey = (String) toscaDataDefinition.getToscaPresentationValue(mapKeyField);
+            }
+        }
+
         if (StringUtils.isEmpty(currKey)) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add tosca data to tosca element {}. The key is empty. ");
             status = StorageOperationStatus.BAD_REQUEST;

@@ -91,7 +91,7 @@ public class NodeTypeTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getCapabilties();
+		result = testSubject.getCapabilities();
 	}
 
 	
@@ -102,7 +102,7 @@ public class NodeTypeTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setCapabilties(capabilties);
+		testSubject.setCapabilities(capabilties);
 	}
 
 	
@@ -135,7 +135,7 @@ public class NodeTypeTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getCapabiltiesProperties();
+		result = testSubject.getCapabilitiesProperties();
 	}
 
 	
@@ -146,7 +146,7 @@ public class NodeTypeTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setCapabiltiesProperties(capabiltiesProperties);
+		testSubject.setCapabilitiesProperties(capabiltiesProperties);
 	}
 
 	
