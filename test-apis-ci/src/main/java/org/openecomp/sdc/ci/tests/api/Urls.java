@@ -408,4 +408,16 @@ public interface Urls {
 	final String UPDATE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
 	final String GET_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
 	final String DELETE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
+
+	//Requirements
+	String CREATE_REQUIREMENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirements";
+	String UPDATE_REQUIREMENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirements";
+	String DELETE_REQUIREMENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirements/%s";
+	String GET_REQUIREMENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirements/%s";
+	//Capabilities
+	String CREATE_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities";
+	String UPDATE_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities";
+	String DELETE_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities/%s";
+	String GET_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities/%s";
+
 }

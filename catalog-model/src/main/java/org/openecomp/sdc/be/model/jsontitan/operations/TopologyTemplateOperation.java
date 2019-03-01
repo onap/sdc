@@ -50,6 +50,8 @@ import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
@@ -272,6 +274,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return assosiateElementToData.right().value();
             }
         }
+        Map<String, ListCapabilityDataDefinition> capabilities = topologyTemplate.getCapabilities();
+        if(MapUtils.isNotEmpty(capabilities)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData =
+                    associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES,
+                            EdgeLabelEnum.CAPABILITIES, capabilities);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
         return StorageOperationStatus.OK;
 
     }
@@ -289,6 +300,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_REQUIREMENTS, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, fullfilledRequirements);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
+            }
+        }
+        Map<String, ListRequirementDataDefinition> requirements = topologyTemplate.getRequirements();
+        if(MapUtils.isNotEmpty(requirements)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData =
+                    associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
+                            EdgeLabelEnum.REQUIREMENTS, requirements);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
             }
         }
         return StorageOperationStatus.OK;
@@ -905,6 +925,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
+        Either<Map<String, ListRequirementDataDefinition>, TitanOperationStatus> requirementResult =
+                getDataFromGraph(componentV, EdgeLabelEnum.REQUIREMENTS);
+        if (requirementResult.isLeft()) {
+            toscaElement.setRequirements(requirementResult.left().value());
+        } else {
+            if (requirementResult.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return requirementResult.right().value();
+            }
+        }
         return TitanOperationStatus.OK;
 
     }
@@ -924,6 +953,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         } else {
             if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
                 return result.right().value();
+            }
+        }
+        Either<Map<String, ListCapabilityDataDefinition>, TitanOperationStatus> capabilitiesResult =
+                getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
+        if (capabilitiesResult.isLeft()) {
+            toscaElement.setCapabilities(capabilitiesResult.left().value());
+        } else {
+            if (capabilitiesResult.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return capabilitiesResult.right().value();
             }
         }
         return TitanOperationStatus.OK;
@@ -1137,6 +1175,21 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (status != TitanOperationStatus.OK) {
             log.debug("Failed to disassociate instance artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
+
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT,
+                EdgeLabelEnum.REQUIREMENTS);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate requirements for {} error {}",
+                    toscaElementVertex.getUniqueId(), status);
+            Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT,
+                EdgeLabelEnum.CAPABILITIES);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate capabilities for {} error {}",
+                    toscaElementVertex.getUniqueId(), status);
+            Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
 
         toscaElementVertex.getVertex().remove();
@@ -1443,6 +1496,33 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         filter.setIgnoreCapabiltyProperties(false);
         filter.setIgnoreRequirements(false);
         return filter;
+    }
+    public void updateCapReqOwnerId(String componentId, TopologyTemplate toscaElement) {
+        GraphVertex toscaElementV = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse)
+                .left().on(this::throwStorageException);
+        updateCapOwnerId(toscaElement, componentId);
+        updateReqOwnerId(toscaElement, componentId);
+        topologyTemplateOperation
+
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CAPABILITIES,
+                        VertexTypeEnum.CAPABILITIES, toscaElement.getCapabilities());
+        topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.REQUIREMENTS,
+                        VertexTypeEnum.REQUIREMENTS, toscaElement.getRequirements());
+    }
+
+    private void updateCapOwnerId(ToscaElement toscaElement, String ownerId) {
+        if(MapUtils.isNotEmpty(toscaElement.getCapabilities())) {
+            toscaElement.getCapabilities().values().stream().flatMap(listCapDef -> listCapDef.getListToscaDataDefinition().stream())
+                    .forEach(capabilityDefinition -> capabilityDefinition.setOwnerId(ownerId));
+        }
+    }
+
+    private void updateReqOwnerId(ToscaElement toscaElement, String ownerId) {
+        if(MapUtils.isNotEmpty(toscaElement.getRequirements())) {
+            toscaElement.getRequirements().values().stream().flatMap(listReqDef -> listReqDef.getListToscaDataDefinition().stream())
+                    .forEach(requirementDefinition -> requirementDefinition.setOwnerId(ownerId));
+        }
     }
 
 }

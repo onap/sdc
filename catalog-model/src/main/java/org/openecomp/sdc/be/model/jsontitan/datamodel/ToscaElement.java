@@ -22,6 +22,9 @@ package org.openecomp.sdc.be.model.jsontitan.datamodel;
 
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -45,6 +48,9 @@ public abstract class ToscaElement {
     private Map<String, ArtifactDataDefinition> deploymentArtifacts;
     private Map<String, AdditionalInfoParameterDataDefinition> additionalInformation;
     private Map<String, PropertyDataDefinition> properties;
+    private Map<String, ListCapabilityDataDefinition> capabilities;
+    private Map<String, MapPropertiesDataDefinition> capabiltiesProperties;
+    private Map<String, ListRequirementDataDefinition> requirements;
 
     protected ToscaElementTypeEnum toscaType;
     // User
@@ -123,6 +129,30 @@ public abstract class ToscaElement {
 
     public void setAllVersions(Map<String, String> allVersions) {
         this.allVersions = allVersions;
+    }
+
+    public Map<String, ListCapabilityDataDefinition> getCapabilities() {
+        return capabilities;
+    }
+
+    public void setCapabilities(Map<String, ListCapabilityDataDefinition> capabilities) {
+        this.capabilities = capabilities;
+    }
+
+    public Map<String, ListRequirementDataDefinition> getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(Map<String, ListRequirementDataDefinition> requirements) {
+        this.requirements = requirements;
+    }
+
+    public Map<String, MapPropertiesDataDefinition> getCapabilitiesProperties() {
+        return capabiltiesProperties;
+    }
+
+    public void setCapabilitiesProperties(Map<String, MapPropertiesDataDefinition> capabiltiesProperties) {
+        this.capabiltiesProperties = capabiltiesProperties;
     }
 
     // metadata properties

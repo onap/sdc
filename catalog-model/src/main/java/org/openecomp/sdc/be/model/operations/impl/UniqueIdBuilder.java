@@ -99,6 +99,10 @@ public class UniqueIdBuilder {
         return type;
     }
 
+    static String buildRelationshipTypeUid(String type) {
+        return type;
+    }
+
     public static String buildAttributeUid(String resourceId, String attName) {
         return buildTypeUid(NodeTypeEnum.Attribute.getName(), resourceId, attName);
     }

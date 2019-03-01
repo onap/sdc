@@ -10,6 +10,7 @@ from importDataTypes import importDataTypes
 from importPolicyTypes import importPolicyTypes
 from importGroupTypes import importGroupTypes
 from importNormativeCapabilities import importNormativeCapabilities
+from importNormativeRelationships import importNormativeRelationships
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
 from upgradeNfvTypes import upgradeNfvTypesPerConfigFile
 from upgradeONAPTypes import upgradeOnapTypesPerConfigFile
@@ -100,6 +101,9 @@ def main(argv):
 
 	fileLocation = baseFileLocation + "categories/"
 	importCategories(scheme, beHost, bePort, adminUser, False, fileLocation)
+
+	fileLocation = baseFileLocation + "relationship-types/"
+        importNormativeRelationships(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "data-types/"
 	importDataTypes(scheme, beHost, bePort, adminUser, False, fileLocation)

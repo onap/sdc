@@ -57,12 +57,19 @@ public class RelationshipTypeData extends GraphNode {
 		relationshipTypeDataDefinition
 				.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
 
-		Type listType = new TypeToken<List<String>>() {
+		Type listSourceType = new TypeToken<List<String>>() {
 		}.getType();
 		List<String> validSourceTypesfromJson = getGson().fromJson(
-				(String) properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES.getProperty()), listType);
+				(String) properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES.getProperty()), listSourceType);
 
 		relationshipTypeDataDefinition.setValidSourceTypes(validSourceTypesfromJson);
+
+        Type listTargetType = new TypeToken<List<String>>() {
+        }.getType();
+        List<String> validTargetTypesfromJson = getGson().fromJson(
+                (String) properties.get(GraphPropertiesDictionary.VALID_TARGET_TYPES.getProperty()), listTargetType);
+
+        relationshipTypeDataDefinition.setValidTargetTypes(validTargetTypesfromJson);
 
 		// relationshipTypeDataDefinition.setValidSourceTypes((List<String>)
 		// properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES
@@ -97,6 +104,9 @@ public class RelationshipTypeData extends GraphNode {
 
 		addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
 				relationshipTypeDataDefinition.getValidSourceTypes());
+
+        addIfExists(map, GraphPropertiesDictionary.VALID_TARGET_TYPES,
+                relationshipTypeDataDefinition.getValidTargetTypes());
 
 		addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, relationshipTypeDataDefinition.getCreationTime());
 

@@ -8,6 +8,7 @@ from importNormativeElements import *
 from importNormativeTypes import importNormativeTypes
 from importHeatTypes import importHeatTypes
 from importNormativeCapabilities import importNormativeCapabilities
+from importNormativeRelationships import importNormativeRelationships
 from importCategoryTypes import importCategories
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
 from importDataTypes import importDataTypes
@@ -115,6 +116,9 @@ def main(argv):
 
     fileLocation = baseFileLocation + "capability-types/"
     importNormativeCapabilities(scheme, beHost, bePort, adminUser, False, fileLocation)
+
+    fileLocation = baseFileLocation + "relationship-types/"
+    importNormativeRelationships(scheme, beHost, bePort, adminUser, False, fileLocation)
 
     fileLocation = baseFileLocation + "interface-lifecycle-types/"
     importNormativeInterfaceLifecycleType(scheme, beHost, bePort, adminUser, False, fileLocation)

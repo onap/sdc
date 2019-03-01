@@ -34,9 +34,6 @@ public class NodeType extends ToscaElement{
     private List<String> derivedFrom;
     private List<String> derivedList;
     private Map<String, PropertyDataDefinition> attributes;
-    private Map<String, ListCapabilityDataDefinition> capabilties;
-    private Map<String, MapPropertiesDataDefinition> capabiltiesProperties;
-    private Map<String, ListRequirementDataDefinition> requirements;
     private Map<String, InterfaceDataDefinition> interfaceArtifacts;
 
     public List<String> getDerivedList() {
@@ -61,30 +58,6 @@ public class NodeType extends ToscaElement{
 
     public void setAttributes(Map<String, PropertyDataDefinition> attributes) {
         this.attributes = attributes;
-    }
-
-    public Map<String, ListCapabilityDataDefinition> getCapabilties() {
-        return capabilties;
-    }
-
-    public void setCapabilties(Map<String, ListCapabilityDataDefinition> capabilties) {
-        this.capabilties = capabilties;
-    }
-
-    public Map<String, ListRequirementDataDefinition> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, ListRequirementDataDefinition> requirements) {
-        this.requirements = requirements;
-    }
-
-    public Map<String, MapPropertiesDataDefinition> getCapabiltiesProperties() {
-        return capabiltiesProperties;
-    }
-
-    public void setCapabiltiesProperties(Map<String, MapPropertiesDataDefinition> capabiltiesProperties) {
-        this.capabiltiesProperties = capabiltiesProperties;
     }
 
     public Map<String, InterfaceDataDefinition> getInterfaceArtifacts() {

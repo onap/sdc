@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Cap_Req" >
+	<test name="Cap_Req">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.requirements.RequirementsTest"/>
+			<class name="org.openecomp.sdc.ci.tests.capability.CapabilitiesTest"/>
+		</classes>
+	</test>
+</suite> <!-- Artifacts -->

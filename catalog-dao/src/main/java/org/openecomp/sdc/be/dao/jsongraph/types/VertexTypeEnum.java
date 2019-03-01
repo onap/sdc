@@ -33,7 +33,7 @@ public enum VertexTypeEnum {
 	INTERFACE_ARTIFACTS			("interface_artifacts",			InterfaceDataDefinition.class),
 	INSTANCE_ARTIFACTS			("instance_artifacts",			MapArtifactDataDefinition.class),
 	PROPERTIES					("properties",					PropertyDataDefinition.class),
-	CAPABILTIES					("capabilities",				ListCapabilityDataDefinition.class),
+	CAPABILITIES				("capabilities",				ListCapabilityDataDefinition.class),
 	CAPABILITIES_PROPERTIES		("capabilities_properties",		MapPropertiesDataDefinition.class),	
 	REQUIREMENTS				("requirements",				ListRequirementDataDefinition.class),
 	ATTRIBUTES					("attributes",					PropertyDataDefinition.class),
