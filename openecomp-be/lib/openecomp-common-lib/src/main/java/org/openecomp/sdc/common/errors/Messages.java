@@ -32,6 +32,7 @@ public enum Messages {
   MANIFEST_INVALID_LINE("Manifest contains invalid line : %s"),
   MANIFEST_NO_METADATA("Manifest must contain metadata"),
   MANIFEST_NO_SOURCES("Manifest must contain Source"),
+  MANIFEST_EMPTY("Manifest must contain data"),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),

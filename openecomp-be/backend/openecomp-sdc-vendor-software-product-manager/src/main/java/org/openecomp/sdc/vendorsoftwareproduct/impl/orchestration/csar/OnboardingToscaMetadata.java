@@ -27,8 +27,8 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import java.util.List;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
 
 public class OnboardingToscaMetadata {
 
