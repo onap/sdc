@@ -111,6 +111,24 @@
     },
     {
       "key": {
+        "uuid": "f2cb5328_7ce1a911",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/NonManoType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-04T13:48:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64ba7da9_30b34277",
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3483f040_fe627cc4",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
         "patchSetId": 3
