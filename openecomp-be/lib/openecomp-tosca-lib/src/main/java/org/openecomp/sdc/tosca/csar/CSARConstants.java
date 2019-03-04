@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar;
+package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -28,12 +28,16 @@ public class CSARConstants {
     public static final String MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME = "MainServiceTemplate.yaml";
     public static final String TOSCA_META_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta";
     public static final String TOSCA_META_ENTRY_DEFINITIONS="Entry-Definitions";
+    public static final String TOSCA_META_ENTRY_MANIFEST="Entry-Manifest";
+    public static final String TOSCA_META_ENTRY_CHANGE_LOG="Entry-Change-Log";
     public static final ImmutableSet<String> ELIGIBLE_FILES =
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
 
     public static final String METADATA_MF_ATTRIBUTE = "metadata";
     public static final String SOURCE_MF_ATTRIBUTE = "Source";
     public static final String SEPERATOR_MF_ATTRIBUTE = ":";
+    public static final String NON_MANO_MF_ATTRIBUTE = "non_mano_artifact_sets";
+    public static final String TOSCA_META_ORIG_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta.original";
 
     private CSARConstants() {
 

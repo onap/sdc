@@ -1,0 +1,36 @@
+metadata:
+    vnf_product_name: Mock
+    vnf_provider_id: ZTE
+    vnf_package_version: 1.0
+    vnf_release_data_time: 2017.01.01T10:00+03:00
+
+Source: MainServiceTemplate.yaml
+
+Source: Definitions/GlobalSubstitutionTypesServiceTemplate.yaml
+
+Source: Artifacts/install.sh
+
+Source: Artifacts/create_stack.sh
+
+Source: Licenses/license.xml
+
+non_mano_artifact_sets:
+   foo_bar:
+      Source:   foobar/foo/foo.yaml
+
+      Source:   foobar/foo/foo.script
+
+      Source:   foobar/bar/descriptor.xml
+
+   prv.happy-nfv.cool:
+
+      Source:   happy/cool/123.html
+
+      Source:   happy/cool/cool.json
+
+      Source:   happy/cool/hot/hot_or_cool.json
+
+
+vnf_product_name: Mock
+vnf_provider_id: ZTE
+vnf_package_version: 1.0

@@ -1,0 +1,7 @@
+nonManoKeyFolderMapping:
+  Some:
+    location: VES_EVENTS
+    type: Deployment
+  Other:
+    location: VES_EVENTS
+    type: Informational

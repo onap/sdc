@@ -31,7 +31,8 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingManifest;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingManifest;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -45,7 +46,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.*;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.*;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
@@ -114,7 +115,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
     try (InputStream fileContent = contentMap.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
 
-      OnboardingManifest onboardingManifest = new OnboardingManifest(fileContent);
+      Manifest onboardingManifest = OnboardingManifest.parse(fileContent);
       if (!onboardingManifest.isValid()) {
         onboardingManifest.getErrors().forEach(error -> uploadFileResponse.addStructureError(
             SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, error)));

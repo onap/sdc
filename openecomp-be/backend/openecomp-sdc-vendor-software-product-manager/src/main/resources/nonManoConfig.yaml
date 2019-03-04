@@ -1,0 +1,19 @@
+nonManoKeyFolderMapping:
+  onap_ves_events:
+        location: VES_EVENTS
+        type: Deployment
+  onap_pm_dictionary:
+        location: PM_DICTIONARY
+        type: Deployment
+  onap_yang_modules:
+        location: YANG_MODULES
+        type: Deployment
+  onap_ansible_playbooks:
+        location: ANSIBLE_PLAYBOOK
+        type: Deployment
+  onap_scripts:
+        location: SCRIPTS
+        type: Deployment
+  onap_others:
+        location: OTHER
+        type: Informational
