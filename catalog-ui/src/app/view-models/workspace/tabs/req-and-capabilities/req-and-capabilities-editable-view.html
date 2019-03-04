@@ -1,0 +1,197 @@
+<!--
+  ~ Copyright © 2016-2018 European Support Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+
+<div class="workspace-req-and-cap-editable">
+    <loader data-display="isLoading"></loader>
+
+    <div class="tabs-header">
+        <div class="req-and-cap-tabs">
+            <div data-tests-id="req-tab" data-ng-click="onSwitchTab()" class="tab"
+                 data-ng-class="{'selected':mode=='requirements'}">Requirements
+            </div>
+            <div data-tests-id="cap-tab" data-ng-click="onSwitchTab()" class="tab"
+                 data-ng-class="{'selected':mode=='capabilities'}">Capabilities
+            </div>
+        </div>
+        <div class="buttons-in-right" data-ng-if="!isListEmpty()">
+            <div class="search">
+                <input id="search-box" data-ng-if="filter.show" data-tests-id="search-box" placeholder="Search"
+                       data-ng-model-options="{debounce: 200}" data-ng-model="filter.txt" data-ng-change="onFilter()"/>
+                <div class="search-icon-container" data-tests-id="search-icon">
+                    <svg-icon
+                            class="hand"
+                            [name]="'search-o'"
+                            [mode]="'primary'"
+                            [size]="'small'"
+                            [clickable]="'true'"
+                            data-ng-click="onSearchIconClick()">
+                    </svg-icon>
+                </div>
+            </div>
+            <div class="add-button-icon-and-label" data-ng-if="isEditable" data-ng-click="onAddBtnClicked()"
+                 data-ng-class="{'disabled': isReadonly()}" data-tests-id="add-button">
+                <svg-icon
+                        name="plus"
+                        mode="primary"
+                        size="small"
+                        clickable="true"
+                        [disabled]="isReadonly()"
+                        labelPlacement="top">
+                </svg-icon>
+                <span class="icon-label-txt">{{mode === 'requirements' ? 'Add Requirement' : 'Add Capability'}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-list-container" data-ng-if="isListEmpty() && !isLoading" data-tests-id="empty-list-container">
+        <div class="empty-list-add-btn add-button-icon-and-label" data-ng-class="{'disabled': isReadonly()}"
+             data-ng-click="onAddBtnClicked()" data-tests-id="empty-list-add-btn">
+            <svg-icon
+                    name="plus-circle"
+                    mode="primary"
+                    size="x_large"
+                    clickable="true"
+                    [disabled]="isReadonly()">
+            </svg-icon>
+            <div class="icon-label-txt">{{mode === 'requirements' ? 'Add Requirement' : 'Add Capability'}}</div>
+        </div>
+    </div>
+
+    <div class="table-container-flex requirements-table" data-ng-if="mode=='requirements' && !isListEmpty()">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}" data-tests-id="requirement-table">
+            <div class="head flex-container">
+                <div data-ng-repeat="header in editableRequirementsTableHeadersList track by $index"
+                     data-ng-click="sort(header.property, requirementsSortTableDefined)"
+                     class="table-header head-row hand flex-item {{header.property}}"
+                     data-tests-id="table-header-{{header.property}}">
+                    {{header.title}}
+                    <span data-ng-if="requirementsSortTableDefined.sortByField === header.property"
+                          class="table-header-sort-arrow" data-tests-id="table-header-sort-arrow"
+                          data-ng-class="{'down': requirementsSortTableDefined.reverse, 'up':!requirementsSortTableDefined.reverse}"> </span>
+                </div>
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="editable-table-data">
+                    <div data-ng-if="filteredRequirementsList.length === 0" class="no-row-text"
+                         data-tests-id="no-rows-in-table">
+                        There are no requirements to display
+
+                    </div>
+                    <div data-ng-repeat="req in filteredRequirementsList | orderBy:requirementsSortTableDefined.sortByField:requirementsSortTableDefined.reverse  track by $index"
+                         data-tests-id="reqRow">
+                        <div class="flex-container data-row" data-ng-class="{'editable-row': req.isCreatedManually}"
+                             data-ng-click="req.isCreatedManually && onEditRequirement(req)">
+                            <div class="table-col-general flex-item text ellipsis-text" tooltips
+                                 tooltip-content="{{req.name}}">
+                                <span data-tests-id="{{req.name}}">{{req.name}}</span>
+                            </div>
+                            <div class="table-col-general flex-item text ellipsis-text" tooltips
+                                 tooltip-content="{{req.capability}}">
+                                <span data-tests-id="{{req.capability}}">{{req.capability && cutToscaTypePrefix(req.capability, 'capabilities.')}}</span>
+                            </div>
+                            <div class="table-col-general flex-item text ellipsis-text" tooltips
+                                 tooltip-content="{{req.node}}">
+                                <span data-tests-id="{{req.node}}">{{req.node && cutToscaTypePrefix(req.node, "nodes.")}}</span>
+                            </div>
+                            <div class="table-col-general flex-item text ellipsis-text" tooltips
+                                 tooltip-content="{{req.relationship}}">
+                                <span data-tests-id="{{req.relationship}}">{{req.relationship && cutToscaTypePrefix(req.relationship, "relationships.")}}</span>
+                            </div>
+                            <div class="table-col-general flex-item text ellipsis-text occurrences-col" tooltips
+                                 tooltip-content="{{req.minOccurrences}} - {{req.maxOccurrences}}">
+                                <span data-tests-id="{{req.minOccurrences}} - {{req.maxOccurrences}}">{{req.minOccurrences}} - {{req.maxOccurrences}}</span>
+                            </div>
+                            <div class="table-col-general flex-item text other-col" data-tests-id="delete-req"
+                                 data-ng-class="{'disabled': isReadonly()}">
+                                <svg-icon name="trash-o" class="trash-icon" size="small"
+                                          data-ng-if="req.isCreatedManually && !isReadonly()"
+                                          data-ng-click="onDeleteReq($event, req)"></svg-icon>
+                            </div>
+                        </div>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+    <div class="table-container-flex capabilities-table" data-ng-if="mode=='capabilities' && !isListEmpty()"
+         data-tests-id="capabilities-table">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div data-ng-repeat="header in editableCapabilitiesTableHeadersList track by $index"
+                     data-ng-click="sort(header.property, capabilitiesSortTableDefined)"
+                     class="table-header head-row hand flex-item {{header.property}}"
+                     data-tests-id="header-{{header.property}}">
+                    {{header.title}}
+                    <span data-ng-if="capabilitiesSortTableDefined.sortByField === header.property"
+                          class="table-header-sort-arrow" data-tests-id=="table-header-sort-arrow"
+                          data-ng-class="{'down': capabilitiesSortTableDefined.reverse, 'up':!capabilitiesSortTableDefined.reverse}"> </span>
+                </div>
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="editable-table-data">
+                    <div data-ng-if="filteredCapabilitiesList.length === 0" class="no-row-text"
+                         data-tests-id="no-rows-in-table">
+                        There are no capabilities to display
+
+                    </div>
+                    <div data-ng-repeat="capability in filteredCapabilitiesList | orderBy:capabilitiesSortTableDefined.sortByField:capabilitiesSortTableDefined.reverse  track by $index"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': capability.selected, 'editable-row': capability.isCreatedManually}"
+                         data-ng-click="capability.isCreatedManually && onEditCapability(capability)"
+                         data-tests-id="capabilities-table-row">
+
+                        <div class="table-col-general flex-item text ellipsis-text" tooltips
+                             tooltip-content="{{capability.name}}">
+                            <span data-tests-id="{{capability.name}}">{{capability.name}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text ellipsis-text" tooltips
+                             tooltip-content="{{capability.type}}">
+                            <span data-tests-id="{{capability.type}}">{{capability.type && cutToscaTypePrefix(capability.type, 'capabilities.')}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text description-col">
+                            <div data-tests-id="{{capability.description}}" class="multiline-ellipsis"
+                                 ellipsis="capability.description" max-chars="60">{{capability.description}}
+                            </div>
+                        </div>
+
+                        <div class="table-col-general flex-item text ellipsis-text" tooltips
+                             tooltip-content="{{capability.validSourceTypes.join(',')}}">
+                            <span data-tests-id="{{capability.validSourceTypes.join(',')}}">{{capability.validSourceTypes.join(',')}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text ellipsis-text occurrences-col" tooltips
+                             tooltip-content="{{capability.minOccurrences}} - {{capability.maxOccurrences}}">
+                            <span data-tests-id="{{capability.minOccurrences}} - {{capability.maxOccurrences}}">{{capability.minOccurrences}} - {{capability.maxOccurrences}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text other-col" data-tests-id="delete-cap"
+                             data-ng-class="{'disabled': isReadonly()}">
+                            <svg-icon name="trash-o" class="trash-icon" size="small"
+                                      data-ng-if="capability.isCreatedManually && !isReadonly()"
+                                      data-ng-click="onDeleteCap($event, capability)"></svg-icon>
+                        </div>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+</div>
+

@@ -465,8 +465,13 @@ const SDC_MENU_CONFIG = {
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
             {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
-            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
-            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
+            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
+            {
+                "text": "Properties Assignment",
+                "action": "onMenuItemPressed",
+                "state": "workspace.properties_assignment"
+            },
+            {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ],
         "PNF": [
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
@@ -475,7 +480,12 @@ const SDC_MENU_CONFIG = {
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
             {"text": "Operation", "action": "onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
-            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
+            {
+                "text": "Properties Assignment",
+                "action": "onMenuItemPressed",
+                "state": "workspace.properties_assignment"
+            },
+            {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ],
         "CR": [
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
@@ -495,8 +505,13 @@ const SDC_MENU_CONFIG = {
             {"text": "Management Workflow", "action": "onMenuItemPressed", "state": "workspace.management_workflow"},
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
             {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER"]},
-            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
-            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
+            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
+            {
+                "text": "Properties Assignment",
+                "action": "onMenuItemPressed",
+                "state": "workspace.properties_assignment"
+            },
+            {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ]
     }
 

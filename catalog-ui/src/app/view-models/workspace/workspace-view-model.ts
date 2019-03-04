@@ -23,7 +23,10 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {IUserProperties, IAppMenu, Resource, Component, Plugin, PluginsConfiguration, PluginDisplayOptions} from "app/models";
+import {
+    IUserProperties, IAppMenu, Resource, Component, Plugin, PluginsConfiguration, PluginDisplayOptions,
+    RelationshipTypeModel, NodeTypeModel, CapabilityTypeModel
+} from "app/models";
 import {
     WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler,
     MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType, PREVIOUS_CSAR_COMPONENT
@@ -78,6 +81,9 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     unsavedChanges:boolean;
     unsavedChangesCallback:Function;
     unsavedFile:boolean;
+    capabilityTypesList: Array<CapabilityTypeModel>;
+    relationshipTypesList: Array<RelationshipTypeModel>;
+    nodeTypesList: Array<NodeTypeModel>;
 
 
     startProgress(message:string):void;

@@ -65,13 +65,14 @@
             }
         }
     }
-    .expand-collapse-buttons{
+  .add-button {
+    color: @main_color_a;
+  }
+  .add-button, .expand-collapse-buttons {
         float: right;
-        width: 44px;
         margin-left: 11px;
         margin-top: 10px;
-        span{
-            vertical-align: bottom;
+    &, span {
             .hand;
         }
     }
@@ -107,6 +108,28 @@
             display: inline-block;
             white-space: nowrap;
         }
+
+      .editable-table-data {
+        max-height: 430px;
+      }
+
+      .data-row {
+        &:not(.editable-row) {
+          background: @tlv_color_t;
+          color: @main_color_n;
+        }
+        &.editable-row {
+          cursor: pointer;
+        }
+        .sprite-new.delete-icon {
+          visibility: hidden;
+        }
+        &:hover {
+          .sprite-new.delete-icon {
+            visibility: visible;
+          }
+        }
+      }
 
         &.requirements-table{
             border-top: 4px solid @main_color_a;
@@ -193,4 +216,166 @@
 
     }
 
+}
+
+.workspace-req-and-cap-editable {
+  .tabs-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid @main_color_o;
+    .req-and-cap-tabs {
+      display: flex;
+      .tab {
+        font-family: @font-opensans-regular;
+        font-size: 22px;
+        padding: 5px;
+        .hand;
+        &:first-of-type {
+          margin-right: 35px;
+        }
+        &.selected {
+          color: @main_color_a;
+          border-bottom: 2px solid @main_color_a;
+        }
+      }
+    }
+    .buttons-in-right {
+      display: flex;
+      .search {
+        display: flex;
+        height: min-content;
+        margin-top: 10px;
+        padding-right: 11px;
+        border-right: 1px solid @main_color_o;
+        #search-box {
+          border: none;
+          border-bottom: 1px solid @main_color_o;
+          text-indent: 10px;
+          &:focus {
+            outline: none;
+          }
+        }
+        .search-icon-container {
+          margin-top: 3px;
+          padding-top: 4px;
+        }
+
+      }
+      .add-button-icon-and-label {
+        font-size: 14px;
+        margin-left: 11px;
+        margin-top: 10px;
+        padding-top: 5px;
+        /deep/ svg-icon {
+          vertical-align: bottom;
+        }
+        &:hover {
+          &:not(.disabled) {
+            cursor: pointer;
+            color: @sdcui_color_light-blue;
+          }
+        }
+      }
+    }
+  }
+  .add-button-icon-and-label {
+    .icon-label-txt {
+      text-transform: uppercase;
+      font-family: @font-opensans-medium;
+      color: @main_color_a;
+      &:hover {
+        &:not(.disabled) {
+          color: @sdcui_color_light-blue;
+        }
+      }
+    }
+  }
+  .empty-list-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .empty-list-add-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid @main_color_o;
+      margin-top: 50px;
+      height: 229px;
+      width: 480px;
+      &.disabled {
+        pointer-events: none;
+      }
+      &:hover {
+        &:not(.disabled) {
+          border: 1px solid @main_color_a;
+          cursor: pointer;
+        }
+      }
+      .icon-label-txt {
+        margin-top: 15px;
+        font-size: 16px;
+      }
+    }
+  }
+  .table-container-flex .table .head .head-row {
+    text-align: left;
+    &.description {
+      flex: 2;
+    }
+    &.other {
+      flex: 0.25;
+      text-align: center;
+    }
+    &.occurrences {
+      flex: 0.75;
+    }
+  }
+  .data-row {
+    .ellipsis-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &:not(.editable-row) {
+      background: @tlv_color_t;
+      cursor: default;
+      color: @main_color_n;
+    }
+    &.editable-row {
+      cursor: pointer;
+      .table-col-general:hover {
+        color: @main_color_b;
+      }
+    }
+    .description-col {
+      flex: 2;
+    }
+    .occurrences-col {
+      flex: 0.75;
+    }
+    .other-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0.25;
+      .trash-icon {
+        visibility: hidden;
+      }
+    }
+    &:hover {
+      .trash-icon {
+        visibility: visible;
+      }
+    }
+    .multiline-ellipsis {
+      line-height: 1.5em;
+      padding: 1px 0 1px 0;
+      /deep/ .ellipsis-directive-more-less {
+        float: none;
+        margin-left: 5px;
+        color: @main_color_a;
+      }
+    }
+  }
 }
