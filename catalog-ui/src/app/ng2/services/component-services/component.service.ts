@@ -25,7 +25,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, CreateOperationResponse} from "app/models";
+    PropertyBEModel, OperationModel, BEOperationModel, CreateOperationResponse, Capability, Requirement
+} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -205,6 +206,68 @@ export class ComponentServiceNg2 {
 
     getCapabilitiesAndRequirements(componentType: string, componentId:string):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_REQUIREMENTS, COMPONENT_FIELDS.COMPONENT_CAPABILITIES]);
+    }
+
+    createCapability(component: Component, capabilityData: Capability): Observable<Array<Capability>> {
+        let capBEObj = {
+            'capabilities': {
+                [capabilityData.type]: [capabilityData]
+            }
+        };
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/capabilities', capBEObj)
+            .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    updateCapability(component: Component, capabilityData: Capability): Observable<Array<Capability>> {
+        let capBEObj = {
+            'capabilities': {
+                [capabilityData.type]: [capabilityData]
+            }
+        };
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/capabilities', capBEObj)
+            .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    deleteCapability(component: Component, capId: string): Observable<Capability> {
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/capabilities/' + capId)
+            .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    createRequirement(component: Component, requirementData: Requirement): Observable<any> {
+        let reqBEObj = {
+            'requirements': {
+                [requirementData.capability]: [requirementData]
+            }
+        };
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements', reqBEObj)
+            .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    updateRequirement(component: Component, requirementData: Requirement): Observable<any> {
+        let reqBEObj = {
+            'requirements': {
+                [requirementData.capability]: [requirementData]
+            }
+        };
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements', reqBEObj)
+            .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    deleteRequirement(component: Component, reqId: string): Observable<Requirement> {
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements/' + reqId)
+            .map((res: Response) => {
+                return res.json();
+            });
     }
 
     getDeploymentGraphData(component:Component):Observable<ComponentGenericResponse> {

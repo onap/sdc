@@ -548,5 +548,18 @@
     "SERVICE_CERTIFICATION_STATUS_TEXT": "Service {{serviceName}} was successfully certified",
     "SERVICE_AUTOMATED_UPGRADE_WITH_COMPONENTS_TO_UPGRADE":  "The following services reference <b>{{vspName}}</b>.<br/> One or more of the services were not yet upgraded with the most recently certified version of <b>{{vspName}}</b>.</br>Select services from the list to upgrade them with <b>{{vspName}} {{vspVersion}}</b>.",
     "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_LOCKED": "The listed services reference <b>{{vspName}}</b>.<br/> These services were not upgraded with the most recently certified version of <b>{{vspName}}</b>. Currently they are locked from being upgraded with <b>{{vspName}} {{vspVersion}}</b>",
-    "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each reference <b>{{vspName}}</b> and have already been updated with the most recently certified version of  the <b>{{vspName}} {{vspVersion}}</b>"
+  "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each reference <b>{{vspName}}</b> and have already been updated with the most recently certified version of  the <b>{{vspName}} {{vspVersion}}</b>",
+  "=========== REQUIREMENTS AND CAPABILITIES ===========": "",
+  "REQ_NAME": "Requirement Name",
+  "REQ_RELATED_CAPABILITY": "Related Capability",
+  "REQ_NODE": "Node",
+  "REQ_RELATIONSHIP": "Relationship",
+  "REQ_CAP_OCCURRENCES": "Occurrences",
+  "REQ_CAP_OCCURRENCES_UNBOUNDED": "UNBOUNDED",
+  "REQ_CAP_OCCURRENCES_MIN": "Min",
+  "REQ_CAP_OCCURRENCES_MAX": "Max",
+  "CAP_NAME": "Capability Name",
+  "CAP_TYPE": "Capability Type",
+  "CAP_DESCRIPTION": "Description",
+  "CAP_VALID_SOURCE": "Valid Sources"
 }

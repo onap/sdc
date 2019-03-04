@@ -57,7 +57,7 @@ export class Capability implements RequirementCapabilityModel{
     uniqueId:string;
     capabilitySources:Array<String>;
     leftOccurrences:string;
-    minOccurrences:string;
+    minOccurrences: number;
     maxOccurrences:string;
     description:string;
     validSourceTypes:Array<string>;
