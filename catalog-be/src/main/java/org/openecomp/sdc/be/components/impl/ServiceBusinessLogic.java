@@ -2246,13 +2246,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<CINodeFilterDataDefinition, ResponseFormat> updateServiceFilter(String serviceId, String componentInstanceId,
             List<String> constraints,  User inUser, boolean lock) {
         String errorContext =  "createIfNotAlreadyExistServiceFilter";
-        Either<?, ResponseFormat> eitherCreator1 = null;
         User user = validateUserExists(inUser, errorContext, true);
         validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
-        if (eitherCreator1 != null && eitherCreator1.isRight()) {
-            return Either.right(eitherCreator1.right().value());
-        }
-
         Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
 
         if(serviceStorageOperationStatusEither.isRight()){
@@ -2292,8 +2287,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         CINodeFilterDataDefinition serviceFilterResult;
         try {
-            List<RequirementNodeFilterPropertyDataDefinition> properties = (List<RequirementNodeFilterPropertyDataDefinition>) constraints.
-                                                                                                                                                  stream().map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
+            List<RequirementNodeFilterPropertyDataDefinition> properties =  constraints.stream().map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
             Either<CINodeFilterDataDefinition, StorageOperationStatus>  result =  serviceFilterOperation.updateProperties(serviceId, componentInstanceId, serviceFilter ,properties);
 
             if (result.isRight()) {
@@ -2329,12 +2323,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<CINodeFilterDataDefinition, ResponseFormat> addOrDeleteServiceFilter(String serviceId, String componentInstanceId,
             NodeFilterConstraintAction action, String constraint, int position, User inUser, boolean lock) {
         String errorContext =  "createIfNotAlreadyExistServiceFilter";
-        Either<?, ResponseFormat> eitherCreator1 = null;
         User user = validateUserExists(inUser, errorContext, true);
         validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
-        if (eitherCreator1 != null && eitherCreator1.isRight()) {
-            return Either.right(eitherCreator1.right().value());
-        }
 
         Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
 
