@@ -1,0 +1,38 @@
+@import '../../../../../assets/styles/variables.less';
+
+.capability-editor {
+  .i-sdc-form-content-capability-content {
+    padding: 10px 25px;
+    .group-with-border {
+      margin: 25px 0;
+      padding: 15px 0;
+      border-top: 1px solid @tlv_color_u;
+      border-bottom: 1px solid @tlv_color_u;
+      .content-row:not(:last-of-type) {
+        padding-bottom: 13px;
+      }
+    }
+
+    .occurrences-label {
+      font-family: @font-opensans-bold;
+      margin-bottom: 19px;
+    }
+    .occurrences-section, /deep/ .max-occurrences-value {
+      display: flex;
+      .min-occurrences-value {
+        padding-right: 30px;
+      }
+      .unbounded-value {
+        padding-top: 7px;
+        padding-right: 20px;
+        .sdc-checkbox__label {
+          text-transform: capitalize;
+        }
+      }
+    }
+    textarea {
+      min-height: unset;
+      height: unset;
+    }
+  }
+}

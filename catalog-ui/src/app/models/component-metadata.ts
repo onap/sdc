@@ -49,6 +49,7 @@ export class ComponentMetadata {
     public systemName:string;
     public archived:boolean;
     public vspArchived: boolean;
+    public toscaResourceName: string;
 
     //Resource only
     public resourceType: string;
@@ -118,6 +119,7 @@ export class ComponentMetadata {
         this.archived = response.archived;
         this.instantiationType = response.instantiationType;
         this.vspArchived = response.vspArchived;
+        this.toscaResourceName = response.toscaResourceName;
         return this;
     }
 

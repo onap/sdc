@@ -388,6 +388,18 @@ ng1appModule.config([
             }
         );
 
+        $stateProvider.state(
+            States.WORKSPACE_REQUIREMENTS_AND_CAPABILITIES_EDITABLE, {
+                url: 'req_and_capabilities_editable',
+                parent: 'workspace',
+                controller: viewModelsModuleName + '.ReqAndCapabilitiesViewModel',
+                templateUrl: './view-models/workspace/tabs/req-and-capabilities/req-and-capabilities-editable-view.html',
+                data: {
+                    bodyClass: 'attributes'
+                }
+            }
+        );
+
 
         $stateProvider.state(
             States.WORKSPACE_MANAGEMENT_WORKFLOW, {

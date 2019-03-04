@@ -264,6 +264,7 @@ export class States {
     public static WORKSPACE_DISTRIBUTION = 'workspace.distribution';
     public static WORKSPACE_PROPERTIES_ASSIGNMENT = 'workspace.properties_assignment';
     public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES = 'workspace.reqAndCap';
+    public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES_EDITABLE = 'workspace.reqAndCapEditable';
     public static WORKSPACE_PLUGINS = 'workspace.plugins';
     public static WORKSPACE_NG2 = 'workspace.ng2';
 }

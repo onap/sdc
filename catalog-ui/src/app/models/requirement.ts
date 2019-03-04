@@ -51,7 +51,7 @@ export class Requirement implements RequirementCapabilityModel{
     uniqueId:string;
     relationship:string;
     leftOccurrences:string;
-    minOccurrences:string;
+    minOccurrences: number;
     maxOccurrences:string;
     //custom
     filterTerm:string;

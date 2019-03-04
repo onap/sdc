@@ -43,6 +43,7 @@ import { ComponentServiceFactoryNg2 } from "./services/component-services/compon
 import { ServiceServiceNg2 } from "./services/component-services/service.service";
 import { ComponentInstanceServiceNg2 } from "./services/component-instance-services/component-instance.service";
 import { WorkflowServiceNg2 } from './services/workflow.service';
+import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
 import { ModalService } from "./services/modal.service";
 import { UiElementsModule } from "./components/ui/ui-elements.module";
 import { ConnectionWizardModule } from "./pages/connection-wizard/connection-wizard.module";
@@ -73,6 +74,8 @@ import {GroupsService} from "./services/groups.service";
 import {PoliciesService} from "./services/policies.service";
 import {AutomatedUpgradeService} from "./pages/automated-upgrade/automated-upgrade.service";
 import {AutomatedUpgradeModule} from "./pages/automated-upgrade/automated-upgrade.module";
+import {RequirementsEditorModule} from "./pages/req-and-capabilities-editor/requirements-editor/requirements-editor.module"
+import {CapabilitiesEditorModule} from "./pages/req-and-capabilities-editor/capabilities-editor/capabilities-editor.module"
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -114,12 +117,14 @@ export function configServiceFactory(config: ConfigService) {
         ServicePathModule,
         ServicePathSelectorModule,
         ServiceDependenciesModule,
-        ServiceDependenciesEditorModule
+        ServiceDependenciesEditorModule,
+        RequirementsEditorModule,
+        CapabilitiesEditorModule
     ],
     exports: [],
     entryComponents: [
         // *** sdc-ui components to be used as downgraded:
-        // SdcUiComponents.ButtonComponent
+        SdcUiComponents.SvgIconComponent
     ],
     providers: [
         WindowRef,
@@ -143,6 +148,7 @@ export function configServiceFactory(config: ConfigService) {
         ServiceServiceNg2,
         AutomatedUpgradeService,
         WorkflowServiceNg2,
+        ToscaTypesServiceNg2,
         HttpService,
         UserService,
         PoliciesService,

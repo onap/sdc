@@ -18,7 +18,8 @@
 {{actualText}}
 
 <span class="ellipsis-directive-more-less"
-      data-ng-click="collapsed = !collapsed; toggleText()"
-      data-ng-hide="ellipsis.length <= maxChars">
-  {{collapsed ? "More" : "Less"}}
+      data-ng-click="onMoreLessClick($event)"
+      data-ng-hide="ellipsis.length <= maxChars"
+      data-tests-id="ellipsis-more-less">
+  {{actualText ? (collapsed ? "More" : "Less") : ""}}
 </span>

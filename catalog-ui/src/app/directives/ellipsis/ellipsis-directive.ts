@@ -23,6 +23,7 @@ export interface IEllipsisScope extends ng.IScope {
     ellipsis:string;
     maxChars:number;
     toggleText():void;
+    onMoreLessClick(event): void;
     collapsed:boolean;
     actualText:string;
 
@@ -49,6 +50,12 @@ export class EllipsisDirective implements ng.IDirective {
 
 
         scope.collapsed = true;
+
+        scope.onMoreLessClick = (event): void => {
+            event.stopPropagation();
+            scope.collapsed = !scope.collapsed;
+            scope.toggleText();
+        };
 
         scope.toggleText = ():void => {
             if (scope.ellipsis && scope.collapsed) {

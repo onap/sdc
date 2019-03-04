@@ -1,0 +1,92 @@
+<div class="capability-editor">
+    <form class="w-sdc-form">
+        <div class="i-sdc-form-content-capability-content">
+            <div class="content-row">
+                <div class="i-sdc-form-item">
+                    <sdc-input
+                            label="{{ 'CAP_NAME' | translate}}"
+                            required="true"
+                            class="i-sdc-form-input"
+                            testId="capName"
+                            [disabled]="isReadonly"
+                            [(value)]="capabilityData.name"
+                            (valueChange)="validityChanged()">
+                    </sdc-input>
+                </div>
+            </div>
+
+            <div class="group-with-border">
+                <div class="content-row i-sdc-form-item">
+                    <sdc-dropdown
+                            label="{{ 'CAP_TYPE' | translate}}"
+                            required="true"
+                            class="i-sdc-form-select"
+                            testId="capType"
+                            [disabled]="isReadonly"
+                            [options]="capabilityTypesMappedList"
+                            selectedOption="{{capabilityData.type}}"
+                            (changed)="onSelectCapabilityType($event)">
+                    </sdc-dropdown>
+                </div>
+                <div class="content-row i-sdc-form-item">
+                    <label class="i-sdc-form-label"> {{ 'CAP_DESCRIPTION' | translate}} </label>
+                    <textarea
+                            rows="3"
+                            class="i-sdc-form-input description"
+                            data-tests-id="capDesc"
+                            disabled
+                            value="{{capabilityData.description}}">
+                    </textarea>
+                </div>
+                <div class="content-row i-sdc-form-item">
+                    <label class="i-sdc-form-label valid-source-label"> {{ 'CAP_VALID_SOURCE' | translate}} </label>
+                    <textarea
+                            rows="2"
+                            class="i-sdc-form-input"
+                            data-tests-id="capValidSrc"
+                            disabled
+                            value="{{capabilityData.validSourceTypes}}">
+                    </textarea>
+                </div>
+            </div>
+
+            <label class="i-sdc-form-label occurrences-label"> {{ 'REQ_CAP_OCCURRENCES' | translate}} </label>
+            <div class="content-row occurrences-section">
+                <div class="min-occurrences-value">
+                    <sdc-input
+                            label="{{ 'REQ_CAP_OCCURRENCES_MIN' | translate}}"
+                            class="i-sdc-form-input"
+                            testId="capOccurrencesMin"
+                            [disabled]="isReadonly"
+                            [(value)]="capabilityData.minOccurrences"
+                            (valueChange)="validityChanged()"
+                            type="number">
+                    </sdc-input>
+                </div>
+                <div class="sdc-input">
+                    <label class="sdc-input__label"> {{ 'REQ_CAP_OCCURRENCES_MAX' | translate}} </label>
+                    <div class="max-occurrences-value">
+                        <sdc-checkbox
+                                class="checkbox-label unbounded-value"
+                                testId="capOccurrencesMaxUnbounded"
+                                label="{{translatedUnboundTxt.toLowerCase()}}"
+                                (checkedChange)="onUnboundedChanged()"
+                                [checked]="isUnboundedChecked"
+                                [disabled]="isReadonly">
+                        </sdc-checkbox>
+
+                        <sdc-input
+                                *ngIf="!isUnboundedChecked"
+                                class="i-sdc-form-input"
+                                testId="capOccurrencesMax"
+                                [disabled]="isReadonly"
+                                [(value)]="capabilityData.maxOccurrences"
+                                (valueChange)="validityChanged()"
+                                type="number">
+                        </sdc-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
