@@ -128,6 +128,24 @@
     },
     {
       "key": {
+        "uuid": "7b35c8b8_80ce138e",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-04T13:14:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3483f040_fe627cc4",
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a078440_ebd03ed2",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/OnboardingManifest.java",
         "patchSetId": 3
@@ -139,6 +157,24 @@
       "writtenOn": "2019-03-04T07:08:14Z",
       "side": 1,
       "message": "Please follow onap code style \nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a38f119c_d5730ec8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/OnboardingManifest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-04T13:14:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a078440_ebd03ed2",
       "revId": "4b1597cd74ef9763ebb9ca91a5e2f479e389108a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
