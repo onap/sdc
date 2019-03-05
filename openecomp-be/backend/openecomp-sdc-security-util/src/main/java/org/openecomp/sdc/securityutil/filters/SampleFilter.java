@@ -28,8 +28,8 @@ public class SampleFilter extends SessionValidationFilter {
         private Configuration() {
             //security key should be exactly 16 characters long clear text and then encoded to base64
             this.securityKey = "AGLDdG4D04BKm2IxIWEr8o==";
-            this.maxSessionTimeOut = 24*60*60*1000;
-            this.sessionIdleTimeOut = 60*60*1000;
+            this.maxSessionTimeOut = 24L*60L*60L*1000L;
+            this.sessionIdleTimeOut = 60L*60L*1000L;
             this.redirectURL = "https://www.e-access.att.com/ecomp_portal_ist/ecompportal/process_csp";
             this.excludedUrls = new ArrayList<>(Arrays.asList("/config","/configmgr","/rest","/kibanaProxy","/healthcheck","/upload.*"));
 

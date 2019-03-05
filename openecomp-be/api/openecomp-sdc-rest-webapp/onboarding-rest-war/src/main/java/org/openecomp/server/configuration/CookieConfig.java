@@ -5,8 +5,8 @@ import java.util.List;
 public class CookieConfig {
 
     String securityKey = "";
-    long maxSessionTimeOut = 600*1000;
-    long sessionIdleTimeOut = 30*1000;
+    long maxSessionTimeOut = 600L*1000L;
+    long sessionIdleTimeOut = 30L*1000L;
     String cookieName = "AuthenticationCookie";
     String redirectURL = "portal_url";
     List<String> excludedUrls;
