@@ -1,4 +1,6 @@
 TOSCA-Meta-File-Version: 1.0
 CSAR-Version: 1.1
-Created-By: Feng yuanxing
+Created-By: Sergey Sachkov
 Entry-Definitions: Definitions/MainServiceTemplate.yaml
+Entry-Manifest: MainServiceTemplate.mf
+Entry-Change-Log: change.log
