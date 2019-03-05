@@ -29,11 +29,15 @@ import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.OnboardingManifest;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions.OrchestrationTemplateHandlerException;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
@@ -50,11 +54,12 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGBLE_FOLDERS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGIBLE_FILES;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
-
+  private static Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCSARHandler.class);
 
   @Override
   public Optional<FileContentHandler> getFileContentMap(UploadFileResponse uploadFileResponse,
@@ -67,10 +72,12 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
       contentMap = fileContentMapFromOrchestrationCandidateZip.getKey();
       folderList = fileContentMapFromOrchestrationCandidateZip.getRight();
     } catch (IOException exception) {
+      logger.error(exception.getMessage(), exception);
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE,
           new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
     } catch (CoreException coreException) {
+      logger.error(coreException.getMessage(), coreException);
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
     }
@@ -85,14 +92,14 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     validateNoExtraFiles(uploadFileResponse, contentMap);
     validateFolders(uploadFileResponse, folderList);
   }
-  
+
   private void validateMetadata(UploadFileResponse uploadFileResponse,
                                 FileContentHandler contentMap){
     if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
       try (InputStream metaFileContent = contentMap.getFileContent(TOSCA_META_PATH_FILE_NAME)) {
 
-        OnboardingToscaMetadata onboardingToscaMetadata = new OnboardingToscaMetadata(metaFileContent);
-        String entryDefinitionsPath = onboardingToscaMetadata.getEntryDefinitionsPath();
+        ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metaFileContent);
+        String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS);
         if (entryDefinitionsPath != null) {
         validateFileExist(uploadFileResponse, contentMap, entryDefinitionsPath);
         } else {
@@ -101,13 +108,14 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
                 Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
         }
       } catch (IOException exception) {
+        logger.error(exception.getMessage(), exception);
         uploadFileResponse.addStructureError(
             SdcCommon.UPLOAD_FILE,
             new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VALIDATE_METADATA.getErrorMessage()));
       }
     } else {
-    validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
-    }  
+        validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
+    }
   }
 
   private void validateManifest(UploadFileResponse uploadFileResponse,
@@ -127,7 +135,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
     } catch (IOException e) {
       // convert to runtime to keep the throws unchanged
-      throw new RuntimeException("Failed to validate manifest", e);
+      throw new OrchestrationTemplateHandlerException("Failed to validate manifest", e);
     }
   }
 
@@ -165,7 +173,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   private boolean filterFolders(String fileName) {
     return ELIGBLE_FOLDERS.stream().noneMatch(fileName::startsWith);
   }
-  
+
   private boolean validateTOSCAYamlFileInRootExist(FileContentHandler contentMap, String fileName) {
     return contentMap.containsFile(fileName);
   }
@@ -208,11 +216,4 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     return OnboardingTypesEnum.CSAR;
   }
 
-  @Override
-  protected boolean isInvalidRawZipData(String fileSuffix,
-                                        UploadFileResponse uploadFileResponse,
-                                        byte[] uploadedFileData,
-                                        CandidateService candidateService) {
-    return super.isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService);
-  }
 }

@@ -36,6 +36,7 @@ public enum Messages {
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),
+  METADATA_INVALID_ENTRY_DEFINITIONS("TOSCA.meta must contain key:value entries"),
   FAILED_TO_VALIDATE_METADATA("Failed to validate metadata file"),
   FAILED_TO_TRANSLATE_ZIP_FILE("Failed to translate zip file"),
   ZIP_NOT_EXIST("Zip file doesn't exist"),
