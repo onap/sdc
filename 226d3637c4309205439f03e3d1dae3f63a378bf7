@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5c34ad5_bfbd0fe4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-06T08:50:03Z",
+      "side": 1,
+      "message": "Code formatting is not correct, must follow the convention.\n\nIt would be good to add a constructor in AuditDistributionNotificationBuilder with all the argument instead of calling all the setter.",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b71b8dbe_8fc44017",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-06T08:50:03Z",
+      "side": 1,
+      "message": "Useless Parentheses",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
