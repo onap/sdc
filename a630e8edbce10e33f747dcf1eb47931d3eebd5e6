@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e44948a3_97ed00bc",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/configuration/CookieConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-06T06:59:45Z",
+      "side": 1,
+      "message": "Should be 600L * 1000L",
+      "revId": "a630e8edbce10e33f747dcf1eb47931d3eebd5e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f820805_e6b3aabc",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/configuration/CookieConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-06T06:59:45Z",
+      "side": 1,
+      "message": "Should be 30L * 1000L",
+      "revId": "a630e8edbce10e33f747dcf1eb47931d3eebd5e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90279d9d_f7c6459e",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/filters/SampleFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-06T06:59:45Z",
+      "side": 1,
+      "message": "Should be 24L * 60L * 60L * 1000L",
+      "revId": "a630e8edbce10e33f747dcf1eb47931d3eebd5e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dbdfb252_3130d10d",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/filters/SampleFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-06T06:59:45Z",
+      "side": 1,
+      "message": "Should be 60L * 60L * 1000L",
+      "revId": "a630e8edbce10e33f747dcf1eb47931d3eebd5e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
