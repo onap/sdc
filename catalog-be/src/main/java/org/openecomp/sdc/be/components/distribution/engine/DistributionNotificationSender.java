@@ -40,29 +40,37 @@ public class DistributionNotificationSender {
     @javax.annotation.Resource
     protected ComponentsUtils componentUtils;
     private CambriaHandler cambriaHandler = new CambriaHandler();
-    private DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
+    private DistributionEngineConfiguration deConfiguration =
+            ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
-    public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData, INotificationData notificationData, Service service, User modifier) {
+    public ActionStatus sendNotification(String topicName, String distributionId,
+            EnvironmentMessageBusData messageBusData, INotificationData notificationData, Service service,
+            User modifier) {
         long startTime = System.currentTimeMillis();
-        CambriaErrorResponse status = cambriaHandler.sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(), messageBusData.getUebPrivateKey(), messageBusData.getDmaaPuebEndpoints(), notificationData,
-                deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
-        logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
-        auditDistributionNotification(topicName, distributionId, status, service, messageBusData.getEnvId(), modifier, notificationData.getWorkloadContext(), messageBusData.getTenant());
+        CambriaErrorResponse status =
+                cambriaHandler.sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(),
+                        messageBusData.getUebPrivateKey(), messageBusData.getDmaaPuebEndpoints(), notificationData,
+                        deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
+        logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(),
+                status.getHttpCode());
+        auditDistributionNotification(new AuditDistributionNotificationBuilder().setTopicName(topicName).setDistributionId(distributionId).setStatus(status).setService(service).setEnvId(messageBusData.getEnvId()).setModifier(modifier).setWorkloadContext(notificationData.getWorkloadContext()).setTenant(messageBusData.getTenant()));
         long endTime = System.currentTimeMillis();
-        logger.debug("After building and publishing artifacts object. Total took {} milliseconds", (endTime - startTime));
+        logger.debug("After building and publishing artifacts object. Total took {} milliseconds",
+                (endTime - startTime));
         return convertCambriaResponse(status);
     }
 
-    private void auditDistributionNotification(String topicName, String distributionId, CambriaErrorResponse status, Service service, String envId, User modifier
-            , String workloadContext, String tenant) {
+    private void auditDistributionNotification(AuditDistributionNotificationBuilder builder) {
         if (this.componentUtils != null) {
-            Integer httpCode = status.getHttpCode();
+            Integer httpCode = builder.getStatus().getHttpCode();
             String httpCodeStr = String.valueOf(httpCode);
 
-            String desc = getDescriptionFromErrorResponse(status);
+            String desc = getDescriptionFromErrorResponse(builder.getStatus());
 
-            this.componentUtils.auditDistributionNotification(service.getUUID(), service.getName(), "Service", service.getVersion(), modifier, envId, service.getLifecycleState().name(), topicName,
-                    distributionId, desc, httpCodeStr, workloadContext, tenant);
+            this.componentUtils.auditDistributionNotification(builder.getService().getUUID(),
+                    builder.getService().getName(), "Service", builder.getService().getVersion(), builder.getModifier(),
+                    builder.getEnvId(), builder.getService().getLifecycleState().name(), builder.getTopicName(),
+                    builder.getDistributionId(), desc, httpCodeStr, builder.getWorkloadContext(), builder.getTenant());
         }
     }
 
