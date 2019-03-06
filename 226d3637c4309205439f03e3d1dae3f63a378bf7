@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "baea0567_d0df4a11",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-06T09:23:33Z",
+      "side": 1,
+      "message": "add default constructor",
+      "range": {
+        "startLine": 6,
+        "startChar": 13,
+        "endLine": 6,
+        "endChar": 48
+      },
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f5c34ad5_bfbd0fe4",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
         "patchSetId": 1
@@ -36,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "e681fc54_5b6ae6a1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-06T09:23:33Z",
+      "side": 1,
+      "message": "1. break the line into Multiple lines.\n2. Siddharth, adding a constructor with all parameters is the anti-pattern of builder",
+      "parentUuid": "f5c34ad5_bfbd0fe4",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b71b8dbe_8fc44017",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
         "patchSetId": 1
@@ -47,6 +88,29 @@
       "writtenOn": "2019-03-06T08:50:03Z",
       "side": 1,
       "message": "Useless Parentheses",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b8aa3bb_f892db6d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-06T09:23:33Z",
+      "side": 1,
+      "message": "add ifDebug condition since you have a calculated parameter",
+      "range": {
+        "startLine": 58,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 39
+      },
       "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
