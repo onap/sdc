@@ -94,7 +94,7 @@ public class RequirementValidation {
                                                                 ResponseFormatManager responseFormatManager) {
         String maxOccurrences = requirementDefinition.getMaxOccurrences();
         String minOccurrences = requirementDefinition.getMinOccurrences();
-        if(StringUtils.isNotEmpty(maxOccurrences) && StringUtils.isNotEmpty(minOccurrences)) {
+        if(maxOccurrences != null && minOccurrences !=null) {
             Either<Boolean, ResponseFormat> requirementOccurrencesValidationEither =
                     validateOccurrences(responseFormatManager, minOccurrences,
                             maxOccurrences);
@@ -151,19 +151,24 @@ public class RequirementValidation {
     private Either<Boolean, ResponseFormat> validateOccurrences	(
             ResponseFormatManager responseFormatManager,
             String minOccurrences, String maxOccurrences ) {
-        if(StringUtils.isNotEmpty(maxOccurrences)&& "UNBOUNDED".equalsIgnoreCase(maxOccurrences)
-                && Integer.parseInt(minOccurrences) >= 0) {
-            return Either.left(Boolean.TRUE);
-        } else if(Integer.parseInt(minOccurrences) < 0) {
-            LOGGER.debug("Invalid occurrences format.low_bound occurrence negative {}", minOccurrences);
+        try {
+            if (StringUtils.isNotEmpty(maxOccurrences) && "UNBOUNDED".equalsIgnoreCase(maxOccurrences)
+                    && Integer.parseInt(minOccurrences) >= 0) {
+                return Either.left(Boolean.TRUE);
+            } else if (Integer.parseInt(minOccurrences) < 0) {
+                LOGGER.debug("Invalid occurrences format.low_bound occurrence negative {}", minOccurrences);
+                ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_OCCURRENCES);
+                return Either.right(responseFormat);
+            } else if (Integer.parseInt(maxOccurrences) < Integer.parseInt(minOccurrences)) {
+                LOGGER.error("Requirement maxOccurrences should be greater than minOccurrences");
+                ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
+                        .MAX_OCCURRENCES_SHOULD_BE_GREATER_THAN_MIN_OCCURRENCES);
+                return Either.right(errorResponse);
+            }
+        } catch (NumberFormatException ex) {
+            LOGGER.debug("Invalid occurrences. Only Integer allowed");
             ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_OCCURRENCES);
             return Either.right(responseFormat);
-        }
-        else if(Integer.parseInt(maxOccurrences) < Integer.parseInt(minOccurrences)){
-            LOGGER.error("Requirement maxOccurrences should be greater than minOccurrences");
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .MAX_OCCURRENCES_SHOULD_BE_GREATER_THAN_MIN_OCCURRENCES);
-            return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
     }

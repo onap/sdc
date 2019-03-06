@@ -2638,10 +2638,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
         try {
             Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstanceCapabilityProperties = toscaOperationFacade.getComponentInstanceCapabilityProperties(componentId, instanceId, capabilityName, capabilityType, ownerId);
-            if(getComponentInstanceCapabilityProperties.isRight()){
-                resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getComponentInstanceCapabilityProperties.right().value()), capabilityType, instanceId, componentId));
+            if(getComponentInstanceCapabilityProperties != null) {
+                if (getComponentInstanceCapabilityProperties.isRight()) {
+                    resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getComponentInstanceCapabilityProperties.right().value()), capabilityType, instanceId, componentId));
+                } else {
+                    resultOp = Either.left(getComponentInstanceCapabilityProperties.left().value());
+                }
             } else {
-                resultOp =  Either.left(getComponentInstanceCapabilityProperties.left().value());
+                resultOp = Either.left(new ArrayList<>());
             }
         } catch(Exception e){
             log.error("The exception {} occurred upon the component {} instance {} capability {} properties retrieving. ", componentId, instanceId, capabilityName, e);

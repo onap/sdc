@@ -672,13 +672,10 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListCapabilityDataDefinition> capabilities,
             ComponentInstanceDataDefinition componentInstance,
             MapListCapabilityDataDefinition calculatedCap) {
-        if (capabilities != null) {
             MapListCapabilityDataDefinition allCalculatedCap =
                     new MapListCapabilityDataDefinition(calculatedCap);
             populateCapability(capabilities, componentInstance, allCalculatedCap);
             return allCalculatedCap;
-        }
-        return null;
     }
 
     private void populateCapability(Map<String, ListCapabilityDataDefinition> capabilities,
@@ -702,14 +699,11 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListRequirementDataDefinition> requirements,
             ComponentInstanceDataDefinition componentInstance,
             MapListRequirementDataDefinition calculatedReqs) {
-        if (requirements != null) {
             MapListRequirementDataDefinition allCalculatedReq =
                     new MapListRequirementDataDefinition(calculatedReqs);
 
             populateRequirement(requirements, componentInstance, allCalculatedReq);
             return allCalculatedReq;
-        }
-        return null;
     }
     private void populateRequirement(Map<String, ListRequirementDataDefinition> requirements,
                                      ComponentInstanceDataDefinition componentInstance,
