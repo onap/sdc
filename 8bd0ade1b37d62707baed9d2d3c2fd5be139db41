@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ff8b4a2_8bcf8bcb",
+        "filename": "catalog-ui/src/app/models/properties-inputs/input-fe-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "Most of the functions in this class are duplicates of the code in property-fe-model. To stick to the DRY principle, these classes can either inherit from a shared class, or functions can be extracted to a shared service.",
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd581d03_2a5b6899",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/dynamic-input/dynamic-input.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "This component is a close replica of dynamic-property.component.ts. How about refactoring dynamic-property.component.ts so that it is a bit more generic and usable for both properties and inputs, instead of creating a separate component that is so similar?",
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4d36a0f_2a16440d",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/pipes/filterChildInputs.pipe.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "The code here is an exact duplicate of filterChildProperties.pipe...\nHow about renaming filterChildProperties.pipe so the name is more generic, and moving it to a shared location so it can be re-used for both inputs and properties?",
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ae3f04d_bb922bdb",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "This can be shortened to:\n\ncase this.type \u003d\u003d\u003d \u0027map\u0027:\ncase this.type \u003d\u003d\u003d \u0027list:\n    this.createElementCreatorIdentifierForChild();\n    break;",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 12
+      },
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "239451d7_51a8c8b9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "To avoid repetitive code, this function should be given a more generic name and the parameter changed to be of type \"InputFEModel | PropertyFEModel\". Then, lines 120-131 above can be replaced with a call to this function.",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 5
+      },
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37580a75_d3fa97e9",
+        "filename": "catalog-ui/src/app/ng2/services/properties.service.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-03-06T20:19:25Z",
+      "side": 1,
+      "message": "As per my understanding, if a parent property (aka PropertyFEModel) is declared, then the children (aka derived) properties cannot be declared separately. Is the intent to change that behavior?\n\nIf so, the logic related to which parent/child properties are enabled/disabled upon checking a property needs to be changed accordingly as well.",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 15
+      },
+      "revId": "8bd0ade1b37d62707baed9d2d3c2fd5be139db41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
