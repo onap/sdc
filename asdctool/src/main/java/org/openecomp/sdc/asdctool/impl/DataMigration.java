@@ -516,9 +516,8 @@ public class DataMigration {
 	 * @return true if the operation was successful
 	 */
 	private boolean handleImport(Map<Table, File> files, Table table) {
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(files.get(table)));
+	    
+		try(BufferedReader br = new BufferedReader(new FileReader(files.get(table)))) {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				CassandraOperationStatus res = CassandraOperationStatus.GENERAL_ERROR;
@@ -541,15 +540,7 @@ public class DataMigration {
 		} catch (IOException e) {
 			log.error("failed to read file", e);
 			return false;
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					log.error("failed to close file reader", e);
-				}
-			}
-		}
+		} 
 	}
 
     AuditingGenericEvent createAuditRecordForCassandra(String json, Table table) throws IOException{

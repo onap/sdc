@@ -123,43 +123,24 @@ public class ExportImportTitanServlet {
 
 	}
 
-	public String exportGraph(TitanGraph graph, String outputDirectory) {
+    public String exportGraph(TitanGraph graph, String outputDirectory) {
 
-		String result = null;
+        String result = null;
+        GraphMLWriter graphMLWriter = GraphMLWriter.build().create();
+        String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".ml";
 
-		// GraphMLWriter graphMLWriter = new GraphMLWriter(graph);
-		GraphMLWriter graphMLWriter = GraphMLWriter.build().create();
+        try (OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
 
-		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".ml";
+            graphMLWriter.writeGraph(out, graph);
+            graph.tx().commit();
+            result = outputFile;
 
-		OutputStream out = null;
-		try {
-			out = new BufferedOutputStream(new ByteArrayOutputStream());
+        } catch (Exception e) {
+            log.info("export Graph failed - {}", e);
+            graph.tx().rollback();
+        }
+        return result;
 
-			// graphMLWriter.outputGraph(out);
-
-			graphMLWriter.writeGraph(out, graph);
-
-			// graph.commit();
-			graph.tx().commit();
-
-			result = outputFile;
-
-		} catch (Exception e) {
-			log.info("export Graph failed - {}" , e);
-			// graph.rollback();
-			graph.tx().rollback();
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
-			}
-		}
-		return result;
-
-	}
+    }
 
 }
