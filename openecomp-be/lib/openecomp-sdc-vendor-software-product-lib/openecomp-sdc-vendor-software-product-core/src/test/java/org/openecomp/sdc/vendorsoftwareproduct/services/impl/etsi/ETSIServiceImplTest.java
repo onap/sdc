@@ -49,28 +49,28 @@ public class ETSIServiceImplTest {
     }
 
     @Test
-    public void testIsSol004TrueOrigin() {
+    public void testIsSol004TrueOrigin() throws IOException {
         FileContentHandler fileContentHandler = new FileContentHandler();
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta.original", sol004MetaFile.getBytes(StandardCharsets.UTF_8));
         assertTrue(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler));
     }
 
     @Test
-    public void testIsSol004True() {
+    public void testIsSol004True() throws IOException  {
         FileContentHandler fileContentHandler = new FileContentHandler();
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta", sol004MetaFile.getBytes(StandardCharsets.UTF_8));
         assertTrue(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler));
     }
 
     @Test
-    public void testIsSol004False() {
+    public void testIsSol004False() throws IOException  {
         FileContentHandler fileContentHandler = new FileContentHandler();
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta.original", metaFile.getBytes(StandardCharsets.UTF_8));
         assertFalse(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler));
     }
 
     @Test
-    public void testIsSol004FalseWithNull() {
+    public void testIsSol004FalseWithNull() throws IOException  {
         FileContentHandler fileContentHandler = new FileContentHandler();
         assertFalse(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler));
     }

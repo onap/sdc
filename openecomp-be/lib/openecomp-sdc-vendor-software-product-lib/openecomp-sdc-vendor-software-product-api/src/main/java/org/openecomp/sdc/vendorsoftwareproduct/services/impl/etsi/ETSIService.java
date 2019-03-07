@@ -22,16 +22,19 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.csar.Manifest;
+import java.io.IOException;
 
 
 public interface ETSIService {
+
     /**
      * Checks package structure is CSAR with TOSCA-Metadata directory according to SOL004 v2.5.1
      * and contains mandatory Entries in Tosca.meta
      * @param handler contains csar artifacts
      * @return true if all condition matched, false otherwise
+     * @throws IOException when TOSCA.meta file is invalid
      */
-    boolean isSol004WithToscaMetaDirectory(FileContentHandler handler);
+    boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException;
 
     /**
      * Update file structure. Moves non mano files to Artifacts/Deployment/non mano key location

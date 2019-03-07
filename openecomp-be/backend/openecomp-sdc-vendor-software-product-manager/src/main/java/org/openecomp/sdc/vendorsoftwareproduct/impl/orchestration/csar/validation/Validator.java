@@ -1,7 +1,6 @@
-
 /*-
  * ============LICENSE_START=======================================================
- *  Modification Copyright (C) 2019 Nordix Foundation.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter;
+package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import java.util.List;
 import java.util.Map;
 
-public interface ServiceTemplateReaderService {
+/**
+ * Validates the contents of the CSAR package uploaded in SDC.
+ */
 
-  Map<String, Object> readServiceTemplate(byte[] serivceTemplateContent);
+public interface Validator {
 
-  Object getMetadata();
-
-  Object getToscaVersion();
-
-  Map<String, Object> getNodeTypes();
-
-  Object getTopologyTemplate();
-
-  Map<String, Object> getNodeTemplates();
-
-  Map<String, Object> getInputs();
-
-  Map<String, Object> getOutputs();
-
-  Map<String, Object> getSubstitutionMappings();
-
-  List<Object> getImports();
+    /**
+     *
+     * @param contentHandler contains file and its data
+     * @param folderList folder structure inside the package
+     * @return errors Map of errors that occur
+     */
+    Map<String, List<ErrorMessage>> validateContent(FileContentHandler contentHandler, List<String> folderList);
 }

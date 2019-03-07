@@ -1,0 +1,7 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+
+description: example definition file for testing
+
+imports:
+  - etsi_nfv_sol001_pnfd_2_5_2_types.yaml
+

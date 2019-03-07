@@ -30,11 +30,16 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.*;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
 public class ETSIServiceImpl implements ETSIService {
 
@@ -55,9 +60,9 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     @Override
-    public boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) {
+    public boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException {
         Map<String, byte[]> templates = handler.getFiles();
-        return isMetaFilePresent(templates) && hasMetaMandatoryEntries(templates);
+        return isMetaFilePresent(templates) && hasMetaMandatoryEntries(getMetadata(handler));
     }
 
     @Override
@@ -67,6 +72,15 @@ public class ETSIServiceImpl implements ETSIService {
             List<String> k = entry.getValue();
             updateNonManoLocation(handler, e, k);
         }
+    }
+
+    private InputStream getMetadata(FileContentHandler contentHandler) throws IOException{
+        if(contentHandler.containsFile(TOSCA_META_PATH_FILE_NAME)){
+            return contentHandler.getFileContent(TOSCA_META_PATH_FILE_NAME);
+        }else if(contentHandler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)){
+            return contentHandler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME);
+        }
+        throw new IOException("TOSCA.meta file does not exist");
     }
 
     private void updateNonManoLocation(FileContentHandler handler, String nonManoKey, List<String> sources) {
@@ -98,15 +112,12 @@ public class ETSIServiceImpl implements ETSIService {
         return key.substring(key.lastIndexOf('/') + 1);
     }
 
-    private boolean hasMetaMandatoryEntries(Map<String, byte[]> templates) {
-        Optional<byte[]> meta = templates.entrySet().stream().filter(e -> e.getKey().equals(TOSCA_META_PATH_FILE_NAME)
-                || e.getKey().equals(TOSCA_META_ORIG_PATH_FILE_NAME)).findFirst().map(Map.Entry::getValue);
-        if (!meta.isPresent()) {
-            return false;
-        }
-        String metaContent = new String(meta.get(), StandardCharsets.UTF_8);
-        return metaContent.contains(TOSCA_META_ENTRY_DEFINITIONS) && metaContent.contains(TOSCA_META_ENTRY_MANIFEST)
-                && metaContent.contains(TOSCA_META_ENTRY_CHANGE_LOG);
+    private boolean hasMetaMandatoryEntries(InputStream metadataInputStream) throws IOException {
+
+        ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metadataInputStream);
+        Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
+        return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries.containsKey(TOSCA_META_ENTRY_MANIFEST)
+                && metaDataEntries.containsKey(TOSCA_META_ENTRY_CHANGE_LOG);
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
