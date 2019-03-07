@@ -15,6 +15,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Formatter;
 
 public class SecurityUtil {
 
@@ -25,6 +26,8 @@ public class SecurityUtil {
     public static final String CHARSET = StandardCharsets.UTF_8.name();
 
     private static Key secKey = null ;
+
+    private SecurityUtil(){ super(); }
 
     /**
      *
@@ -54,21 +57,26 @@ public class SecurityUtil {
         }
     }
 
-    private SecurityUtil(){ super(); }
 
     static {
+        Formatter formatter = new Formatter();
         try{
             secKey = generateKey( KEY, ALGORITHM );
         }
         catch(Exception e){
-            LOG.warn("cannot generate key for {}", ALGORITHM);
+            if(LOG.isWarnEnabled())
+            {
+                LOG.warn(formatter.format("cannot generate key for %s", ALGORITHM).toString(), e);
+            }
+        }finally {
+            formatter.close();
         }
     }
 
 
 
-    public static Key generateKey(final byte[] KEY, String algorithm){
-        return new SecretKeySpec(KEY, algorithm);
+    public static Key generateKey(final byte[] key, String algorithm){
+        return new SecretKeySpec(key, algorithm);
     }
 
     //obfuscates key prefix -> **********
@@ -93,8 +101,10 @@ public class SecurityUtil {
      * 		c. Encrypt the bytes using doFinal method
      */
     public Either<String,String> encrypt(String strDataToEncrypt){
+
         if (strDataToEncrypt != null ){
-            try {
+            Formatter formatter = new Formatter();
+            try{
                 LOG.debug("Encrypt key -> {}", secKey);
                 Cipher aesCipherForEncryption = Cipher.getInstance("AES");          // Must specify the mode explicitly as most JCE providers default to ECB mode!!
                 aesCipherForEncryption.init(Cipher.ENCRYPT_MODE, secKey);
@@ -104,11 +114,23 @@ public class SecurityUtil {
                 LOG.debug("Cipher Text generated using AES is {}", strCipherText);
                 return Either.left(strCipherText);
             } catch( NoSuchAlgorithmException | UnsupportedEncodingException e){
-                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {}" ,secKey.getAlgorithm());
+                if(LOG.isWarnEnabled())
+                {
+                   LOG.warn(formatter.format("cannot encrypt data unknown algorithm or missing encoding for %s",secKey.getAlgorithm()).toString(), e);
+                }
             } catch( InvalidKeyException e){
-                LOG.warn( "invalid key recieved - > {} | {}" , java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e.getMessage() );
+                if(LOG.isWarnEnabled())
+                {
+                   LOG.warn(formatter.format("invalid key recieved - > %s", java.util.Base64.getDecoder().decode(secKey.getEncoded())).toString(), e);
+                }
             } catch( IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException  e){
-                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding" , e.getMessage() );
+                if(LOG.isWarnEnabled())
+                {
+                   LOG.warn("bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding", e);
+                }
+            }
+            finally {
+                formatter.close();
             }
         }
         return Either.right("Cannot encrypt "+strDataToEncrypt);
@@ -124,32 +146,51 @@ public class SecurityUtil {
     public Either<String,String> decrypt(byte[] byteCipherText , boolean isBase64Decoded){
         if (byteCipherText != null){
             byte[] alignedCipherText = byteCipherText;
+            Formatter formatter = new Formatter();
             try{
                 if (isBase64Decoded)
                     alignedCipherText = Base64.getDecoder().decode(byteCipherText);
-                LOG.debug("Decrypt key -> "+secKey.getEncoded());
+                LOG.debug("Decrypt key -> {}", secKey.getEncoded());
                 Cipher aesCipherForDecryption = Cipher.getInstance("AES"); // Must specify the mode explicitly as most JCE providers default to ECB mode!!
                 aesCipherForDecryption.init(Cipher.DECRYPT_MODE, secKey);
                 byte[] byteDecryptedText = aesCipherForDecryption.doFinal(alignedCipherText);
                 String strDecryptedText = new String(byteDecryptedText);
-                LOG.debug("Decrypted Text message is: {}" , obfuscateKey( strDecryptedText ));
+                String obfuscateKey = obfuscateKey( strDecryptedText );
+                LOG.debug("Decrypted Text message is: {}" , obfuscateKey);
                 return Either.left(strDecryptedText);
             } catch( NoSuchAlgorithmException e){
-                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {}" ,secKey.getAlgorithm());
+                if(LOG.isWarnEnabled())
+                {
+                    LOG.warn(formatter.format("cannot encrypt data unknown algorithm or missing encoding for %s", secKey.getAlgorithm()).toString(), e);
+                }
             } catch( InvalidKeyException e){
-                LOG.warn( "invalid key recieved - > {} | {}" , java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e.getMessage() );
+                if(LOG.isWarnEnabled())
+                {
+                    LOG.warn(formatter.format("invalid key recieved - > %s", java.util.Base64.getDecoder().decode(secKey.getEncoded())).toString(), e);
+                }
             } catch( IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException  e){
-                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding" , e.getMessage() );
+                if(LOG.isWarnEnabled())
+                {
+                    LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding", e);
+                }
+            }finally {
+                formatter.close();
             }
         }
         return Either.right("Decrypt FAILED");
     }
 
     public Either<String,String> decrypt(String byteCipherText){
+        Formatter formatter = new Formatter();
         try {
             return decrypt(byteCipherText.getBytes(CHARSET),true);
         } catch( UnsupportedEncodingException e ){
-            LOG.warn( "Missing encoding for {} | {} " ,secKey.getAlgorithm() , e.getMessage());
+            if(LOG.isWarnEnabled())
+            {
+                LOG.warn(formatter.format("Missing encoding for %s",secKey.getAlgorithm()).toString(), e);
+            }
+        }finally {
+            formatter.close();
         }
         return Either.right("Decrypt FAILED");
     }
