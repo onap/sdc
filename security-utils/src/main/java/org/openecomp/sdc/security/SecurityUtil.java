@@ -26,6 +26,8 @@ public class SecurityUtil {
 
     private static Key secKey = null ;
 
+    private SecurityUtil(){ super(); }
+
     /**
      *
      * cmd commands >$PROGRAM_NAME decrypt "$ENCRYPTED_MSG"
@@ -54,21 +56,20 @@ public class SecurityUtil {
         }
     }
 
-    private SecurityUtil(){ super(); }
 
     static {
         try{
             secKey = generateKey( KEY, ALGORITHM );
         }
         catch(Exception e){
-            LOG.warn("cannot generate key for {}", ALGORITHM);
+            LOG.warn("cannot generate key for {} | {}", ALGORITHM, e);
         }
     }
 
 
 
-    public static Key generateKey(final byte[] KEY, String algorithm){
-        return new SecretKeySpec(KEY, algorithm);
+    public static Key generateKey(final byte[] key, String algorithm){
+        return new SecretKeySpec(key, algorithm);
     }
 
     //obfuscates key prefix -> **********
@@ -104,11 +105,11 @@ public class SecurityUtil {
                 LOG.debug("Cipher Text generated using AES is {}", strCipherText);
                 return Either.left(strCipherText);
             } catch( NoSuchAlgorithmException | UnsupportedEncodingException e){
-                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {}" ,secKey.getAlgorithm());
+                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {} | {}", secKey.getAlgorithm(), e);
             } catch( InvalidKeyException e){
-                LOG.warn( "invalid key recieved - > {} | {}" , java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e.getMessage() );
+                LOG.warn( "invalid key recieved - > {} | {}", java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e);
             } catch( IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException  e){
-                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding" , e.getMessage() );
+                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding {}", e);
             }
         }
         return Either.right("Cannot encrypt "+strDataToEncrypt);
@@ -127,19 +128,20 @@ public class SecurityUtil {
             try{
                 if (isBase64Decoded)
                     alignedCipherText = Base64.getDecoder().decode(byteCipherText);
-                LOG.debug("Decrypt key -> "+secKey.getEncoded());
+                LOG.debug("Decrypt key -> {}", secKey.getEncoded());
                 Cipher aesCipherForDecryption = Cipher.getInstance("AES"); // Must specify the mode explicitly as most JCE providers default to ECB mode!!
                 aesCipherForDecryption.init(Cipher.DECRYPT_MODE, secKey);
                 byte[] byteDecryptedText = aesCipherForDecryption.doFinal(alignedCipherText);
                 String strDecryptedText = new String(byteDecryptedText);
-                LOG.debug("Decrypted Text message is: {}" , obfuscateKey( strDecryptedText ));
+                String obfuscateKey = obfuscateKey( strDecryptedText );
+                LOG.debug("Decrypted Text message is: {}" , obfuscateKey);
                 return Either.left(strDecryptedText);
             } catch( NoSuchAlgorithmException e){
-                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {}" ,secKey.getAlgorithm());
+                LOG.warn( "cannot encrypt data unknown algorithm or missing encoding for {} | {}" ,secKey.getAlgorithm(), e);
             } catch( InvalidKeyException e){
-                LOG.warn( "invalid key recieved - > {} | {}" , java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e.getMessage() );
+                LOG.warn( "invalid key recieved - > {} | {}" , java.util.Base64.getDecoder().decode( secKey.getEncoded() ), e);
             } catch( IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException  e){
-                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding" , e.getMessage() );
+                LOG.warn( "bad algorithm definition (Illegal Block Size or padding), please review you algorithm block&padding {}", e);
             }
         }
         return Either.right("Decrypt FAILED");
@@ -149,7 +151,7 @@ public class SecurityUtil {
         try {
             return decrypt(byteCipherText.getBytes(CHARSET),true);
         } catch( UnsupportedEncodingException e ){
-            LOG.warn( "Missing encoding for {} | {} " ,secKey.getAlgorithm() , e.getMessage());
+            LOG.warn( "Missing encoding for {} | {} " ,secKey.getAlgorithm() , e);
         }
         return Either.right("Decrypt FAILED");
     }
