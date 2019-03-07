@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "2135f012_1502975b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-07T05:20:11Z",
+      "side": 1,
+      "message": "No, it will be done as we go with reviews",
+      "parentUuid": "6f3c5185_5e5b9e3a",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baea0567_d0df4a11",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
         "patchSetId": 1
