@@ -54,7 +54,7 @@ public class Passwords {
 	public static String hashPassword(String password) {
 		if (password!=null){
 			byte[] salt = getNextSalt();
-			byte byteData[] = hash(salt, password.getBytes());
+			byte[] byteData = hash(salt, password.getBytes());
 			if (byteData != null) {
 				return toHex(salt) + ":" + toHex(byteData);
 			}
@@ -105,7 +105,7 @@ public class Passwords {
 		byte[] saltBytes = fromHex(salt);
 		byte[] hashBytes = fromHex(hash);
 
-		byte byteData[] = hash(saltBytes, password.getBytes());
+		byte[] byteData = hash(saltBytes, password.getBytes());
 		if (byteData != null) {
 			return Arrays.equals(byteData, hashBytes);
 		}
@@ -148,6 +148,7 @@ public class Passwords {
 			md.update(password);
 			byteData = md.digest();
 		} catch (NoSuchAlgorithmException e) {
+		    log.error("invalid algorithm name {}", e);
 			System.out.println("invalid algorithm name");
 		}
 		return byteData;
