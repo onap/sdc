@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6f3c5185_5e5b9e3a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-03-07T05:13:39Z",
+      "side": 1,
+      "message": "Added. \n\nFound many classes in catalog-be without a license.\nShall I create Jira and add the license in those classes?",
+      "parentUuid": "f76d3759_f9bed9ab",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baea0567_d0df4a11",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2019-03-06T09:23:33Z",
       "side": 1,
       "message": "add default constructor",
+      "range": {
+        "startLine": 6,
+        "startChar": 13,
+        "endLine": 6,
+        "endChar": 48
+      },
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f28550b_3e908777",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/AuditDistributionNotificationBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-03-07T05:13:39Z",
+      "side": 1,
+      "message": "Added",
+      "parentUuid": "baea0567_d0df4a11",
       "range": {
         "startLine": 6,
         "startChar": 13,
@@ -77,6 +119,24 @@
     },
     {
       "key": {
+        "uuid": "cdb1fcb5_837ec0e2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-03-07T05:13:39Z",
+      "side": 1,
+      "message": "1.My bad. formatted according to google-java-code-style as followed by the community.\n2. Added only default constructor.",
+      "parentUuid": "f5c34ad5_bfbd0fe4",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b71b8dbe_8fc44017",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
         "patchSetId": 1
@@ -105,6 +165,48 @@
       "writtenOn": "2019-03-06T09:23:33Z",
       "side": 1,
       "message": "add ifDebug condition since you have a calculated parameter",
+      "range": {
+        "startLine": 58,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 39
+      },
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df7d51e6_c9d4b9b9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-03-07T05:13:39Z",
+      "side": 1,
+      "message": "Existing code. Not modified be me.",
+      "parentUuid": "b71b8dbe_8fc44017",
+      "revId": "226d3637c4309205439f03e3d1dae3f63a378bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b66c082_d50a86cf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionNotificationSender.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-03-07T05:13:39Z",
+      "side": 1,
+      "message": "added",
+      "parentUuid": "7b8aa3bb_f892db6d",
       "range": {
         "startLine": 58,
         "startChar": 8,
