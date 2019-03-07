@@ -2,10 +2,10 @@
 .. http://creativecommons.org/licenses/by/4.0
 
 ==============
-DCAE-Desginer
+DCAE-Designer
 ==============
 
-Here are the links to our DCAE-Desginer pages found in the ONAP Services websites
+Here are the links to our DCAE-Designer pages found in the ONAP Services websites
 
 - `Introduction <https://wiki.onap.org/display/DW/DCAE-Design+Studio/>`_
 - `Deployment guide <https://wiki.onap.org/display/DW/DCAE-Design+Studio+deployment>`_
