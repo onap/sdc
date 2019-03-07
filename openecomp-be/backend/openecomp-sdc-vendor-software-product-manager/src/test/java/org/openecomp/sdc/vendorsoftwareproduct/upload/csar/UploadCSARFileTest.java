@@ -17,10 +17,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
 
 
-import static org.mockito.Matchers.any;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Predicate;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -42,8 +45,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremo
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.ManifestCreatorNamingConventionImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class UploadCSARFileTest {
 
@@ -68,7 +69,7 @@ public class UploadCSARFileTest {
   private static final String CSAR = "csar";
 
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     candidateService = new CandidateServiceImpl(manifestCreator, orchestrationTemplateCandidateDao);

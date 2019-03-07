@@ -16,7 +16,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.*;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.factory.impl.AbstractFactoryBase;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -33,9 +43,21 @@ import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
-import org.openecomp.sdc.vendorsoftwareproduct.*;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
+import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
+import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -46,10 +68,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,13 +75,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
+
 
 
 public class VendorSoftwareProductManagerImplTest {
@@ -116,16 +148,60 @@ public class VendorSoftwareProductManagerImplTest {
   @Captor
   private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
 
-  @BeforeMethod
+  @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     vendorSoftwareProductManager = null;
   }
 
+  @Test
+  public void testCreatePackageEtsi(){
+    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
+        InputStream manifestInput = getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
+
+      FileContentHandler handler = new FileContentHandler();
+      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
+      handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
+      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
+      VspDetails vsp =
+              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                      "category", "subCategory", "123", null);
+      //want to avoid triggering populateVersionsForVlm method
+      vsp.setVlmVersion(null);
+
+      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
+      vendorSoftwareProductManager.createPackage("0", new Version());
+    } catch (IOException e) {
+      fail();
+    }
+  }
+
+  @Test(expected = IOException.class)
+  public void testCreatePackageEtsiNoManifest() throws IOException {
+    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta"))
+    {
+      FileContentHandler handler = new FileContentHandler();
+      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
+      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
+      VspDetails vsp =
+              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                      "category", "subCategory", "123", null);
+      //want to avoid triggering populateVersionsForVlm method
+      vsp.setVlmVersion(null);
+
+      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
+      vendorSoftwareProductManager.createPackage("0", new Version());
+      fail();
+    }
+  }
 
   @Test
   public void testCreate() {
@@ -145,7 +221,7 @@ public class VendorSoftwareProductManagerImplTest {
     assertVspsEquals(vsp, vspToCreate);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testUpdateWithExistingName_negative() {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
@@ -238,7 +314,7 @@ public class VendorSoftwareProductManagerImplTest {
 
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testGetNonExistingVersion_negative() {
     Version notExistversion = new Version("43, 8");
     doReturn(null).when(vspInfoDaoMock).get(any(VspDetails.class));
