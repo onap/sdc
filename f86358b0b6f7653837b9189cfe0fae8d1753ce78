@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "d07d278c_c167190d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ONAPCsarValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-08T10:59:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7e63544_ccca096e",
+      "range": {
+        "startLine": 59,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 5
+      },
+      "revId": "f86358b0b6f7653837b9189cfe0fae8d1753ce78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "acc8db45_2f157496",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
         "patchSetId": 1
@@ -59,6 +83,30 @@
       "writtenOn": "2019-03-08T10:28:17Z",
       "side": 1,
       "message": "see previous comment on singletons",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 5
+      },
+      "revId": "f86358b0b6f7653837b9189cfe0fae8d1753ce78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98849f1d_4d1ddd18",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-08T10:59:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "acc8db45_2f157496",
       "range": {
         "startLine": 76,
         "startChar": 0,
