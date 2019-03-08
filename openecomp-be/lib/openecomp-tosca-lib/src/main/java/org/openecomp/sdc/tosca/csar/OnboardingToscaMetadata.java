@@ -56,6 +56,9 @@ public class OnboardingToscaMetadata implements ToscaMetadata{
    * @throws IOException
    */
   public static ToscaMetadata parseToscaMetadataFile(InputStream st) throws IOException {
+    if(st == null) {
+        throw new IOException(Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
+    }
     OnboardingToscaMetadata meta = new OnboardingToscaMetadata();
     List<String> metadataLines = IOUtils.readLines(st, "utf-8");
     for (String line : metadataLines) {

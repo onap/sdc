@@ -35,6 +35,10 @@ public enum Messages {
   MANIFEST_EMPTY("Manifest must contain data"),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
+  METADATA_MISSING_OPTIONAL_FOLDERS("Missing folder %s in package"),
+  METADATA_UNSUPPORTED_ENTRY("Following entry not supported in TOSCA.meta %s"),
+  METADATA_INVALID_VALUE("Invalid value %s in TOSCA.meta file"),
+  METADATA_MISSING_ENTRY("TOSCA.meta file missing entry %s"),
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),
   METADATA_INVALID_ENTRY_DEFINITIONS("TOSCA.meta must contain key:value entries"),
   FAILED_TO_VALIDATE_METADATA("Failed to validate metadata file"),
@@ -93,6 +97,12 @@ public enum Messages {
   CSAR_MANIFEST_FILE_NOT_EXIST("CSAR manifest file does not exist"),
   CSAR_FAILED_TO_READ("CSAR file is not readable"),
   TOSCA_PARSING_FAILURE("Invalid tosca file. Error code : %s, Error message : %s/"),
+
+  /*definition errors*/
+  MISSING_DEFINITION_FILE("Definition file %s does not exist"),
+  MISSING_IMPORT_FILE("Package must contain the referenced import file %s"),
+  INVALID_IMPORT_STATEMENT("Definition file contains an invalid import statement"),
+
   /* content errors*/
   INVALID_YAML_FORMAT("Invalid YAML format - %s"),
   INVALID_YAML_FORMAT_REASON("Invalid YAML format Problem - [%s]"),
