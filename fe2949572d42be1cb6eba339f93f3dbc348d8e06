@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3616b24_d597d47e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/NicManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-08T14:18:30Z",
+      "side": 1,
+      "message": "Remove: Never used",
+      "range": {
+        "startLine": 55,
+        "startChar": 30,
+        "endLine": 55,
+        "endChar": 47
+      },
+      "revId": "fe2949572d42be1cb6eba339f93f3dbc348d8e06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86bdcfe7_24b8dbe4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/NicManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-08T14:18:30Z",
+      "side": 1,
+      "message": "Suggestion to remove this - similar test exist at line 240.",
+      "range": {
+        "startLine": 452,
+        "startChar": 2,
+        "endLine": 455,
+        "endChar": 3
+      },
+      "revId": "fe2949572d42be1cb6eba339f93f3dbc348d8e06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
