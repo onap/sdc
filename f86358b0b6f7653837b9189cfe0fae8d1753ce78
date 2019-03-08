@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb22eea2_5af6685d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-08T10:28:17Z",
+      "side": 1,
+      "message": "info: this is removed in https://gerrit.onap.org/r/#/c/79910/ change and tests are updated.",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 21
+      },
+      "revId": "f86358b0b6f7653837b9189cfe0fae8d1753ce78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7e63544_ccca096e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ONAPCsarValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-08T10:28:17Z",
+      "side": 1,
+      "message": "suggestion: just my personal opinion, we shouldn\u0027t use singleton pattern, unless heavy lifting involved in object creation or we need single state for the whole app. Maintaining singleton is a headache:)",
+      "range": {
+        "startLine": 59,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 5
+      },
+      "revId": "f86358b0b6f7653837b9189cfe0fae8d1753ce78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "acc8db45_2f157496",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-08T10:28:17Z",
+      "side": 1,
+      "message": "see previous comment on singletons",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 5
+      },
+      "revId": "f86358b0b6f7653837b9189cfe0fae8d1753ce78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
