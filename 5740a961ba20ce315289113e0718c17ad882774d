@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3dc67f3_38ca312b",
+        "filename": "security-utils/src/main/java/org/openecomp/sdc/security/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-10T09:46:47Z",
+      "side": 1,
+      "message": "The warn API you are using does not receive Exception as parameter. \nOnly warn with one variable receives\n    void warn(String var1, Throwable var2);",
+      "revId": "5740a961ba20ce315289113e0718c17ad882774d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
