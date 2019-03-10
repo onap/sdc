@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fe282430_1159af26",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-10T11:13:04Z",
+      "side": 1,
+      "message": "consider if possible to add \"mf\" as a constant",
+      "revId": "0a1d82ac04a8ef78bfdcbcced4f5096c050edcfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f10e4bd9_32efd95d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-10T11:13:04Z",
+      "side": 1,
+      "message": "Consider if poissible to use ToscaFileOutputServiceCsarImpl.CSAR_VERSION",
+      "revId": "0a1d82ac04a8ef78bfdcbcced4f5096c050edcfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b6873dc_feb1b0fa",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-10T11:13:04Z",
+      "side": 1,
+      "message": "consider making \"pnf\" and \"vnf\" as global constants.",
+      "revId": "0a1d82ac04a8ef78bfdcbcced4f5096c050edcfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
