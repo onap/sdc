@@ -133,11 +133,12 @@ public class OnboardingManifest implements Manifest{
        }
        String[] metaSplit = line.split(SEPERATOR_MF_ATTRIBUTE);
         if (metaSplit.length < 2){
+            reportError(line);
             return;
         }
         if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE) && !metaSplit[0].equals(NON_MANO_MF_ATTRIBUTE)){
             String value = line.substring((metaSplit[0] + SEPERATOR_MF_ATTRIBUTE).length()).trim();
-            metadata.put(metaSplit[0],value);
+            metadata.put(metaSplit[0].trim(),value.trim());
             processMetadata(iterator);
         }
         else {

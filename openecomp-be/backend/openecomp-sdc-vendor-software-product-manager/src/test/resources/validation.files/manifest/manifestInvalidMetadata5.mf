@@ -1,0 +1,4 @@
+metadata:
+    vnf_product_name: RadioNode
+
+Source: Definitions/MainServiceTemplate.yaml

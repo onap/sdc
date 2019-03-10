@@ -1,0 +1,7 @@
+metadata:
+    invalid_product_name: RadioNode
+    invalid_provider_id: Bilal Iqbal
+    invalid_package_version: 1.0
+    invalid_release_date_time: 2019-12-14T11:25:00+00:00
+
+Source: Definitions/MainServiceTemplate.yaml

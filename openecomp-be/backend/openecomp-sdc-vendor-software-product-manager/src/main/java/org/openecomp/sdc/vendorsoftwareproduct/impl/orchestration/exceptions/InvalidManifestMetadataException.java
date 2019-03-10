@@ -1,7 +1,6 @@
-
 /*-
  * ============LICENSE_START=======================================================
- *  Modification Copyright (C) 2019 Nordix Foundation.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter;
+package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions;
 
-import java.util.List;
-import java.util.Map;
+public class InvalidManifestMetadataException extends RuntimeException{
 
-public interface ServiceTemplateReaderService {
-
-  Map<String, Object> readServiceTemplate(byte[] serivceTemplateContent);
-
-  Object getMetadata();
-
-  Object getToscaVersion();
-
-  Map<String, Object> getNodeTypes();
-
-  Object getTopologyTemplate();
-
-  Map<String, Object> getNodeTemplates();
-
-  Map<String, Object> getInputs();
-
-  Map<String, Object> getOutputs();
-
-  Map<String, Object> getSubstitutionMappings();
-
-  List<Object> getImports();
+    public InvalidManifestMetadataException(String message){
+        super(message);
+    }
 }
