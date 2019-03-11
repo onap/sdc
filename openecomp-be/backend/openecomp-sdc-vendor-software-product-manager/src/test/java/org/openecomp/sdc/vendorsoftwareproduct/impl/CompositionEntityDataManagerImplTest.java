@@ -21,6 +21,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -38,9 +41,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NetworkCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,12 +94,12 @@ public class CompositionEntityDataManagerImplTest {
   @Spy
   private CompositionEntityDataManagerImpl compositionEntityDataManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testAddNullEntity_negative() {
     compositionEntityDataManager.addEntity(null, null);
   }
@@ -139,8 +139,9 @@ public class CompositionEntityDataManagerImplTest {
     Assert.assertTrue(errorsById.containsKey(nicId.getParentId()));
   }
 
-  @Test(dependsOnMethods = "testAddEntity")
+  @Test
   public void testBuildTrees() {
+    testAddEntity();
     compositionEntityDataManager.buildTrees();
   }
 
@@ -249,8 +250,10 @@ public class CompositionEntityDataManagerImplTest {
     Assert.assertEquals(errorsById.size(), 1);
   }
 
-  @Test(dependsOnMethods = "testNicAndComponentValidQuestionnaire")
+  @Test
   public void testComponentInvalidQuestionnaire() {
+    //JUnit doesn't have depend on logic available
+    testNicAndComponentValidQuestionnaire();
     ComponentEntity componentEntity = new ComponentEntity(VSP1, VERSION, COMPONENT1);
     componentEntity.setQuestionnaireData(loadFileToString("quesionnaire/invalidComponent.json"));
     compositionEntityDataManager.addEntity(componentEntity, null);

@@ -1,5 +1,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,16 +25,17 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 
 public class ComputeManagerImplTest {
 
@@ -56,12 +61,12 @@ public class ComputeManagerImplTest {
   @Spy
   private ComputeManagerImpl computeManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     computeManager = null;
   }
@@ -78,7 +83,7 @@ public class ComputeManagerImplTest {
     doReturn(Arrays.asList(
         createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID),
         createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE2_ID)))
-        .when(computeDao).list(anyObject());
+        .when(computeDao).list(any());
 
 
     Collection<ListComputeResponse> computes =
@@ -101,7 +106,7 @@ public class ComputeManagerImplTest {
   @Test
   public void testCreateManualCompute() {
     ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     doNothing().when(computeManager)
         .validateUniqueName(VSP_ID, VERSION, COMPONENT_ID,
             expected.getComputeCompositionData().getName());
@@ -109,16 +114,16 @@ public class ComputeManagerImplTest {
         .createUniqueName(VSP_ID, VERSION, COMPONENT_ID,
             expected.getComputeCompositionData().getName());
     String questionnaireSchema = "{}";
-    doReturn(questionnaireSchema).when(computeManager).getComputeQuestionnaireSchema(anyObject());
+    doReturn(questionnaireSchema).when(computeManager).getComputeQuestionnaireSchema(any());
 
     computeManager.createCompute(expected);
     verify(computeDao).create(expected);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testCreateManualComputeWithDuplicateName() {
     ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     doThrow(new CoreException(
         new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
@@ -137,11 +142,11 @@ public class ComputeManagerImplTest {
   @Test
   public void testUpdateCompute() {
     ComputeEntity retrieved = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(retrieved).when(computeDao).get(anyObject());
+    doReturn(retrieved).when(computeDao).get(any());
 
     doReturn(new CompositionEntityValidationData(CompositionEntityType.compute, COMPUTE1_ID))
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
     ComputeData computeData = new ComputeData();
@@ -162,16 +167,16 @@ public class ComputeManagerImplTest {
   @Test
   public void testIllegalComputeUpdate() {
     doReturn(createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID))
-        .when(computeDao).get(anyObject());
+        .when(computeDao).get(any());
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.compute, COMPUTE1_ID);
     toBeReturned.setErrors(Arrays.asList("error1", "error2"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
     ComputeData computeData = new ComputeData();
@@ -190,7 +195,7 @@ public class ComputeManagerImplTest {
   @Test
   public void testUpdateHEATComputeName() throws Exception {
     doReturn(createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID))
-        .when(computeDao).get(anyObject());
+        .when(computeDao).get(any());
 
     String updatedName = COMPUTE1_ID + " name updated";
     CompositionEntityValidationData toBeReturned =
@@ -198,7 +203,7 @@ public class ComputeManagerImplTest {
 
     toBeReturned.setErrors(Arrays.asList("#/name: "+updatedName+" is not a valid value."+
         COMPUTE1_ID+"is the only possible value for this field"));
-    doReturn(toBeReturned).when(compositionEntityDataManagerMock).validateEntity(anyObject(),anyObject(),anyObject());
+    doReturn(toBeReturned).when(compositionEntityDataManagerMock).validateEntity(any(),any(),any());
 
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
     ComputeData computeData = new ComputeData();
@@ -214,8 +219,8 @@ public class ComputeManagerImplTest {
   @Test
   public void testUpdateManualComputeQuestionnaire() throws Exception {
     String json = "{\"md5\" :\"FFDSD33SS\"}";
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-    doReturn(new ComputeEntity(null, null, null, null)).when(computeDao).get(anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
+    doReturn(new ComputeEntity(null, null, null, null)).when(computeDao).get(any());
 
     computeManager
         .updateComputeQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID, json);
@@ -231,9 +236,9 @@ public class ComputeManagerImplTest {
   @Test
   public void testGet() {
     ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(expected).when(computeDao).get(anyObject());
+    doReturn(expected).when(computeDao).get(any());
     String compositionSchema = "schema string";
-    doReturn(compositionSchema).when(computeManager).getComputeCompositionSchema(anyObject());
+    doReturn(compositionSchema).when(computeManager).getComputeCompositionSchema(any());
 
     CompositionEntityResponse<ComputeData> response =
         computeManager.getCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
@@ -254,7 +259,7 @@ public class ComputeManagerImplTest {
 
     String schema = "schema string";
 
-    doReturn(schema).when(computeManager).getComputeQuestionnaireSchema(anyObject());
+    doReturn(schema).when(computeManager).getComputeQuestionnaireSchema(any());
 
     QuestionnaireResponse questionnaire =
         computeManager.getComputeQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
@@ -268,7 +273,7 @@ public class ComputeManagerImplTest {
   @Test
   public void testDeleteOnNotManualCompute() {
     ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(expected).when(computeDao).get(anyObject());
+    doReturn(expected).when(computeDao).get(any());
     testDelete_negative(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID,
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
@@ -276,13 +281,13 @@ public class ComputeManagerImplTest {
   @Test
   public void testDeleteOnManualCompute() {
     ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    doReturn(expected).when(computeDao).get(anyObject());
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(expected).when(computeDao).get(any());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     doNothing().when(computeManager).deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID,
         expected.getComputeCompositionData().getName());
 
     computeManager.deleteCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
-    verify(computeDao).delete(anyObject());
+    verify(computeDao).delete(any());
   }
 
   @Test

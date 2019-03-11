@@ -1,6 +1,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,18 +22,16 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ImageManagerImplTest {
 
@@ -63,12 +65,12 @@ public class ImageManagerImplTest {
     @Spy
     private ImageManagerImpl imageManager;
 
-    @BeforeMethod
+    @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
 
-    @AfterMethod
+    @After
     public void tearDown() {
         imageManager = null;
     }
@@ -84,7 +86,7 @@ public class ImageManagerImplTest {
     public void testList() {
 
         doReturn(Arrays.asList(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID),
-                createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE2_ID))).when(imageDao).list(anyObject());
+                createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE2_ID))).when(imageDao).list(any());
 
 
         final Collection<ImageEntity> images = imageManager.listImages(VSP_ID, VERSION, COMPONENT_ID);
@@ -105,7 +107,7 @@ public class ImageManagerImplTest {
     @Test
     public void testCreateManualImage() {
         ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+        doReturn(true).when(vspInfoDao).isManual(any(), any());
         imageManager.createImage(expected);
         verify(compositionEntityDataManagerMock).createImage(expected);
         verify(compositionEntityDataManagerMock).createImage(expected);
@@ -119,10 +121,10 @@ public class ImageManagerImplTest {
 
     @Test
     public void testUpdateImage() {
-        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(anyObject());
+        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(any());
 
         doReturn(new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID))
-                .when(compositionEntityDataManagerMock).validateEntity(anyObject(), anyObject(), anyObject());
+                .when(compositionEntityDataManagerMock).validateEntity(any(), any(), any());
 
         ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         Image imageData = new Image();
@@ -137,15 +139,15 @@ public class ImageManagerImplTest {
 
     @Test
     public void testIllegalImageUpdate() {
-        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(anyObject());
+        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(any());
 
-        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+        doReturn(true).when(vspInfoDao).isManual(any(), any());
 
         CompositionEntityValidationData toBeReturned =
                 new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID);
         toBeReturned.setErrors(Arrays.asList("error1", "error2"));
         doReturn(toBeReturned).when(compositionEntityDataManagerMock)
-                              .validateEntity(anyObject(), anyObject(), anyObject());
+                              .validateEntity(any(), any(), any());
 
         ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         Image imageData = new Image();
@@ -162,7 +164,7 @@ public class ImageManagerImplTest {
 
     @Test
     public void testUpdateHEATImageFileName() throws Exception {
-        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(anyObject());
+        doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID)).when(imageDao).get(any());
 
         String updatedName = IMAGE1_ID + " name updated";
         CompositionEntityValidationData toBeReturned =
@@ -171,7 +173,7 @@ public class ImageManagerImplTest {
         toBeReturned.setErrors(Arrays.asList("#/name: " + updatedName + " is not a valid value." + IMAGE1_ID
                                                      + "is the only possible value for this field"));
         doReturn(toBeReturned).when(compositionEntityDataManagerMock)
-                              .validateEntity(anyObject(), anyObject(), anyObject());
+                              .validateEntity(any(), any(), any());
 
         ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         Image imageData = new Image();
@@ -193,9 +195,9 @@ public class ImageManagerImplTest {
     @Test
     public void testGet() {
         ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-        doReturn(expected).when(imageDao).get(anyObject());
+        doReturn(expected).when(imageDao).get(any());
         String compositionSchema = "schema string";
-        doReturn(compositionSchema).when(imageManager).getImageCompositionSchema(anyObject());
+        doReturn(compositionSchema).when(imageManager).getImageCompositionSchema(any());
 
         CompositionEntityResponse<Image> response = imageManager.getImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         Assert.assertEquals(response.getId(), expected.getId());
@@ -208,7 +210,7 @@ public class ImageManagerImplTest {
     @Test
     public void testDeleteOnNotManualImage() {
         ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-        doReturn(expected).when(imageDao).get(anyObject());
+        doReturn(expected).when(imageDao).get(any());
         testDelete_negative(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID,
                 VendorSoftwareProductErrorCodes.DELETE_IMAGE_NOT_ALLOWED);
     }
@@ -222,10 +224,10 @@ public class ImageManagerImplTest {
     @Test
     public void testDeleteOnManualImage() {
         ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-        doReturn(expected).when(imageDao).get(anyObject());
-        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+        doReturn(expected).when(imageDao).get(any());
+        doReturn(true).when(vspInfoDao).isManual(any(), any());
         imageManager.deleteImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-        verify(imageDao).delete(anyObject());
+        verify(imageDao).delete(any());
     }
 
     @Test
@@ -235,7 +237,7 @@ public class ImageManagerImplTest {
         doReturn(image).when(imageDao).getQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
 
         String schema = "schema string";
-        doReturn(schema).when(imageManager).getImageQuestionnaireSchema(anyObject());
+        doReturn(schema).when(imageManager).getImageQuestionnaireSchema(any());
 
         QuestionnaireResponse questionnaire =
                 imageManager.getImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
@@ -248,8 +250,8 @@ public class ImageManagerImplTest {
     @Test
     public void testUpdateManualImageQuestionnaire() throws Exception {
         String json = "{\"md5\" :\"FFDSD33SS\"}";
-        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-        doReturn(new ImageEntity()).when(imageDao).get(anyObject());
+        doReturn(true).when(vspInfoDao).isManual(any(), any());
+        doReturn(new ImageEntity()).when(imageDao).get(any());
 
         imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json);
         verify(imageDao).updateQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json);
@@ -267,13 +269,13 @@ public class ImageManagerImplTest {
                 add(imageEntity);
             }};
 
-            doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-            doReturn(imageEntity).when(imageDao).get(anyObject());
-            doReturn(imageEntities).when(imageDao).list(anyObject());
+            doReturn(true).when(vspInfoDao).isManual(any(), any());
+            doReturn(imageEntity).when(imageDao).get(any());
+            doReturn(imageEntities).when(imageDao).list(any());
             doReturn(imageEntities.get(0)).when(imageDao)
-                                          .getQuestionnaireData(anyObject(), anyObject(), anyObject(), anyObject());
+                                          .getQuestionnaireData(any(), any(), any(), any());
 
-            doReturn(IMAGE_QUEST_SCHEMA).when(imageManager).getImageQuestionnaireSchema(anyObject());
+            doReturn(IMAGE_QUEST_SCHEMA).when(imageManager).getImageQuestionnaireSchema(any());
 
             imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json);
             Assert.fail();
@@ -289,10 +291,10 @@ public class ImageManagerImplTest {
         String json = "{\"format\" :\"qcow2\"}";
         ImageEntity image = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         image.setQuestionnaireData(json);
-        doReturn(image).when(imageDao).get(anyObject());
+        doReturn(image).when(imageDao).get(any());
 
-        doReturn(false).when(vspInfoDao).isManual(anyObject(), anyObject());
-        doReturn(IMAGE_QUEST_SCHEMA).when(imageManager).getImageQuestionnaireSchema(anyObject());
+        doReturn(false).when(vspInfoDao).isManual(any(), any());
+        doReturn(IMAGE_QUEST_SCHEMA).when(imageManager).getImageQuestionnaireSchema(any());
         doReturn(image).when(imageDao).getQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         String updJson = "{\"format\" :\"aki\"}";
         try {
@@ -308,7 +310,7 @@ public class ImageManagerImplTest {
         String json = "{\"format\" :\"qcow2\"}";
         ImageEntity image = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
         image.setQuestionnaireData(json);
-        doReturn(image).when(imageDao).get(anyObject());
+        doReturn(image).when(imageDao).get(any());
 
         String updJson = "{\"format\" :\"a22\"}";
         try {

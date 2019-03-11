@@ -1,6 +1,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,14 +27,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -57,12 +61,12 @@ public class DeploymentFlavorManagerImplTest {
   @Spy
   private DeploymentFlavorManagerImpl deploymentFlavorManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     deploymentFlavorManager = null;
   }
@@ -84,11 +88,11 @@ public class DeploymentFlavorManagerImplTest {
   @Test
   public void testCreateManualDepFlavor() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     vspDetails.setFeatureGroups(fgs);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
     deploymentFlavorManager.createDeploymentFlavor(expected);
     verify(compositionEntityDataManagerMock).createDeploymentFlavor(expected);
@@ -97,7 +101,7 @@ public class DeploymentFlavorManagerImplTest {
   @Test
   public void testCreateManualDepFlavorWithDuplicateName() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     DeploymentFlavorEntity expectedDiffName = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     DeploymentFlavor deploymentFlavor = expectedDiffName.getDeploymentFlavorCompositionData();
@@ -105,7 +109,7 @@ public class DeploymentFlavorManagerImplTest {
     expectedDiffName.setDeploymentFlavorCompositionData(deploymentFlavor);
     List<DeploymentFlavorEntity> list = new ArrayList<>();
     list.add(expectedDiffName);
-    doReturn(list).when(deploymentFlavorDaoMock).list(anyObject());
+    doReturn(list).when(deploymentFlavorDaoMock).list(any());
 
     try {
       deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -125,7 +129,7 @@ public class DeploymentFlavorManagerImplTest {
     deploymentFlavor.setFeatureGroupId("fg3");
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     List<String> featureGrps = new ArrayList<>();
     featureGrps.add("fg1");
@@ -133,7 +137,7 @@ public class DeploymentFlavorManagerImplTest {
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     vspDetails.setFeatureGroups(featureGrps);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
 
     try {
@@ -153,10 +157,10 @@ public class DeploymentFlavorManagerImplTest {
     deploymentFlavor.setFeatureGroupId(null);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
     deploymentFlavorManager.createDeploymentFlavor(expected);
     verify(compositionEntityDataManagerMock).createDeploymentFlavor(expected);
   }
@@ -174,11 +178,11 @@ public class DeploymentFlavorManagerImplTest {
     deploymentFlavor.setComponentComputeAssociations(list);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     vspDetails.setFeatureGroups(fgs);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
     try {
       deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -204,16 +208,16 @@ public class DeploymentFlavorManagerImplTest {
     deploymentFlavor.setComponentComputeAssociations(list);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     vspDetails.setFeatureGroups(fgs);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
-    doReturn(component).when(componentDaoMock).get(anyObject());
+    doReturn(component).when(componentDaoMock).get(any());
 
-    doReturn(null).when(computeDaoMock).get(anyObject());
+    doReturn(null).when(computeDaoMock).get(any());
 
     try {
       deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -237,17 +241,17 @@ public class DeploymentFlavorManagerImplTest {
     deploymentFlavor.setComponentComputeAssociations(list);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     vspDetails.setFeatureGroups(fgs);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
-    doReturn(component).when(componentDaoMock).get(anyObject());
+    doReturn(component).when(componentDaoMock).get(any());
 
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, "CF1");
-    doReturn(computeEntity).when(computeDaoMock).get(anyObject());
+    doReturn(computeEntity).when(computeDaoMock).get(any());
 
     try {
       deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -264,7 +268,7 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(Arrays.asList(
         createDeploymentFlavor(VSP_ID, VERSION, DF1_ID),
         createDeploymentFlavor(VSP_ID, VERSION, DF2_ID)))
-        .when(deploymentFlavorDaoMock).list(anyObject());
+        .when(deploymentFlavorDaoMock).list(any());
 
 
     final Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
@@ -284,24 +288,24 @@ public class DeploymentFlavorManagerImplTest {
 
   @Test
   public void testUpdateNonExistingManualDepFlavorId_negative() {
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     testUpdate_negative(VSP_ID, VERSION, DF1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
   @Test
   public void testManualUpdateDepFlavor() {
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     doReturn(createDeploymentFlavor(VSP_ID, VERSION, DF1_ID))
-        .when(deploymentFlavorDaoMock).get(anyObject());
+        .when(deploymentFlavorDaoMock).get(any());
 
     doReturn(new CompositionEntityValidationData(CompositionEntityType.image, DF1_ID))
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    doReturn(vspDetails).when(vspInfoDao).get(any());
 
     DeploymentFlavorEntity deploymentFlavorEntity =
         new DeploymentFlavorEntity(VSP_ID, VERSION, DF1_ID);
@@ -326,7 +330,7 @@ public class DeploymentFlavorManagerImplTest {
   @Test
   public void testDeleteDepFlavorOnHEAT() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    doReturn(expected).when(deploymentFlavorDaoMock).get(anyObject());
+    doReturn(expected).when(deploymentFlavorDaoMock).get(any());
     testDelete_negative(VSP_ID, VERSION, DF1_ID,
         VendorSoftwareProductErrorCodes.DELETE_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
@@ -340,10 +344,10 @@ public class DeploymentFlavorManagerImplTest {
   @Test
   public void testDeleteOnManualImage() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    doReturn(expected).when(deploymentFlavorDaoMock).get(anyObject());
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(expected).when(deploymentFlavorDaoMock).get(any());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     deploymentFlavorManager.deleteDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    verify(deploymentFlavorDaoMock).delete(anyObject());
+    verify(deploymentFlavorDaoMock).delete(any());
   }
 
   private void testCreate_negative(DeploymentFlavorEntity deploymentFlavorEntity,

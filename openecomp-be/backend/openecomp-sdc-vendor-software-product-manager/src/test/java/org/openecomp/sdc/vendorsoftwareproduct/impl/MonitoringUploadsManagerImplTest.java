@@ -1,5 +1,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -9,10 +13,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,9 +21,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class MonitoringUploadsManagerImplTest {
 
@@ -44,17 +45,17 @@ public class MonitoringUploadsManagerImplTest {
   @InjectMocks
   private MonitoringUploadsManagerImpl monitoringUploadsManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown(){
     monitoringUploadsManager = null;
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testUploadEmptyZip() {
     processFile(ZIP_DIR + EMPTY_ZIP_FILE_NAME, inputStream ->
         monitoringUploadsManager
@@ -62,8 +63,7 @@ public class MonitoringUploadsManagerImplTest {
                 MonitoringUploadType.SNMP_TRAP));
   }
 
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =
-      "Invalid zip file")
+  @Test(expected = CoreException.class)
   public void testUploadInvalidZip() {
     processFile("/notZipFile", inputStream ->
         monitoringUploadsManager
@@ -118,7 +118,7 @@ public class MonitoringUploadsManagerImplTest {
     artifact3.setArtifactName(VES_FILE_NAME);
 
     doReturn(Arrays.asList(artifact1, artifact2, artifact3))
-        .when(componentArtifactDaoMock).list(anyObject());
+        .when(componentArtifactDaoMock).list(any());
 
     MonitoringUploadStatus monitoringUploadStatus =
         monitoringUploadsManager.listFilenames(VSP_ID, VERSION, COMPONENT_ID);
@@ -128,13 +128,13 @@ public class MonitoringUploadsManagerImplTest {
     Assert.assertEquals(monitoringUploadStatus.getVesEvent(), VES_FILE_NAME);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testDeleteComponentMibWhenNone() {
     doReturn(Optional.empty()).when(componentArtifactDaoMock).getByType(any());
     monitoringUploadsManager
         .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL);
 
-    verify(componentArtifactDaoMock, never()).delete(anyObject());
+    verify(componentArtifactDaoMock, never()).delete(any());
   }
 
   @Test
@@ -142,12 +142,12 @@ public class MonitoringUploadsManagerImplTest {
     doReturn(Optional
         .of(new ComponentMonitoringUploadEntity(VSP_ID, VERSION, COMPONENT_ID, "artifactId")))
         .when
-            (componentArtifactDaoMock).getByType(anyObject());
+            (componentArtifactDaoMock).getByType(any());
 
     monitoringUploadsManager
         .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL);
 
-    verify(componentArtifactDaoMock).delete(anyObject());
+    verify(componentArtifactDaoMock).delete(any());
   }
 
 

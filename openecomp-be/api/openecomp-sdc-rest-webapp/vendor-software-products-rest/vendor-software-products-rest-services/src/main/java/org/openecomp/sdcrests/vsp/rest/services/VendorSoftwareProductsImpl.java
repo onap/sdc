@@ -354,7 +354,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         byte[] orchestrationTemplateFile =
                 vendorSoftwareProductManager.getOrchestrationTemplateFile(vspId, new Version(versionId));
 
-        if (orchestrationTemplateFile == null) {
+        if (orchestrationTemplateFile == null || orchestrationTemplateFile.length == 0) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);

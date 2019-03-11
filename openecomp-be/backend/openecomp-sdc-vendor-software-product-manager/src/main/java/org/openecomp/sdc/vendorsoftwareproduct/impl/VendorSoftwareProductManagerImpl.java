@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
@@ -27,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -64,6 +68,8 @@ import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -136,75 +142,25 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
-  private final VspMergeDao vspMergeDao;
-  private final OrchestrationTemplateDao orchestrationTemplateDao;
-  private final OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
-  private final VendorSoftwareProductInfoDao vspInfoDao;
-  private final VendorLicenseFacade vendorLicenseFacade;
-  private final ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
-  private final EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
-  private final VendorLicenseArtifactsService licenseArtifactsService;
-  private final InformationArtifactGenerator informationArtifactGenerator;
-  private final PackageInfoDao packageInfoDao;
-  private final DeploymentFlavorDao deploymentFlavorDao;
-  private final ComponentDao componentDao;
-  private final ComponentDependencyModelDao componentDependencyModelDao;
-  private final NicDao nicDao;
-  private final ComputeDao computeDao;
-  private final ImageDao imageDao;
-  private final ManualVspToscaManager manualVspToscaManager;
-  private final UniqueValueUtil uniqueValueUtil;
-  private final CandidateService candidateService;
-
-  public VendorSoftwareProductManagerImpl(
-      VspMergeDao vspMergeDao,
-      OrchestrationTemplateDao orchestrationTemplateDataDao,
-      OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager,
-      VendorSoftwareProductInfoDao vspInfoDao,
-      VendorLicenseFacade vendorLicenseFacade,
-      ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao,
-      EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao,
-      VendorLicenseArtifactsService licenseArtifactsService,
-      InformationArtifactGenerator informationArtifactGenerator,
-      PackageInfoDao packageInfoDao,
-      DeploymentFlavorDao deploymentFlavorDao,
-      ComponentDao componentDao,
-      ComponentDependencyModelDao componentDependencyModelDao,
-      NicDao nicDao,
-      ComputeDao computeDao,
-      ImageDao imageDao,
-      ManualVspToscaManager manualVspToscaManager,
-      UniqueValueDao uniqueValueDao,
-      CandidateService candidateService) {
-    this.vspMergeDao = vspMergeDao;
-    this.orchestrationTemplateDao = orchestrationTemplateDataDao;
-    this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
-    this.vspInfoDao = vspInfoDao;
-    this.vendorLicenseFacade = vendorLicenseFacade;
-    this.serviceModelDao = serviceModelDao;
-    this.enrichedServiceModelDao = enrichedServiceModelDao;
-    this.licenseArtifactsService = licenseArtifactsService;
-    this.informationArtifactGenerator = informationArtifactGenerator;
-    this.packageInfoDao = packageInfoDao;
-    this.deploymentFlavorDao = deploymentFlavorDao;
-    this.componentDao = componentDao;
-    this.componentDependencyModelDao = componentDependencyModelDao;
-    this.nicDao = nicDao;
-    this.computeDao = computeDao;
-    this.imageDao = imageDao;
-    this.manualVspToscaManager = manualVspToscaManager;
-    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
-    this.candidateService = candidateService;
-
-    registerToVersioning();
-  }
-
-  private void registerToVersioning() {
-    serviceModelDao.registerVersioning(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
-    enrichedServiceModelDao.registerVersioning(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
-  }
+  private VspMergeDao vspMergeDao;
+  private OrchestrationTemplateDao orchestrationTemplateDao;
+  private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
+  private VendorSoftwareProductInfoDao vspInfoDao;
+  private VendorLicenseFacade vendorLicenseFacade;
+  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
+  private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
+  private VendorLicenseArtifactsService licenseArtifactsService;
+  private InformationArtifactGenerator informationArtifactGenerator;
+  private PackageInfoDao packageInfoDao;
+  private DeploymentFlavorDao deploymentFlavorDao;
+  private ComponentDao componentDao;
+  private ComponentDependencyModelDao componentDependencyModelDao;
+  private NicDao nicDao;
+  private ComputeDao computeDao;
+  private ImageDao imageDao;
+  private ManualVspToscaManager manualVspToscaManager;
+  private UniqueValueUtil uniqueValueUtil;
+  private CandidateService candidateService;
 
   @Override
   public ValidationResponse validate(VspDetails vspDetails) throws IOException {
@@ -218,10 +174,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       if (!validationResponse.isValid()) {
         return validationResponse;
       }
-      if (vspDetails.getVlmVersion() != null || vspDetails.getLicenseAgreement() != null
-          || vspDetails.getFeatureGroups() != null) {
-        vspErrors.addAll(validateMandatoryLicenseFields(vspDetails));
-      }
+      validateLicense(vspDetails, vspErrors);
       OrchestrationTemplateEntity orchestrationTemplate =
           orchestrationTemplateDao.get(vspDetails.getId(), vspDetails.getVersion());
       ToscaServiceModel serviceModel =
@@ -259,6 +212,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         .setVspErrors(vspErrors);
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
     return validationResponse;
+  }
+
+  private void validateLicense(VspDetails vspDetails, List<ErrorCode> vspErrors) {
+    if (vspDetails.getVlmVersion() != null || vspDetails.getLicenseAgreement() != null
+            || vspDetails.getFeatureGroups() != null) {
+      vspErrors.addAll(validateMandatoryLicenseFields(vspDetails));
+    }
   }
 
   private void validateOrchestrationTemplateCandidate(ValidationResponse validationResponse,
@@ -352,34 +312,31 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     List<ComponentComputeAssociation> componentComputeAssociations =
         deploymentlocalFlavor.getComponentComputeAssociations();
     if (CollectionUtils.isEmpty(componentComputeAssociations)) {
-      CompositionEntityValidationData compositionEntityValidationData = new
-          CompositionEntityValidationData(CompositionEntityType.deployment, deploymentFlavor
-          .getId());
-      compositionEntityValidationData.setEntityName(deployment
-          .getDeploymentFlavorCompositionData().getModel());
-      ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
-          .getInvalidComponentComputeAssociationErrorBuilder(
-              deploymentlocalFlavor.getModel());
-
-      errorCodeList.add(deploymentFlavorErrorBuilder);
+        validateCompositionEntity(errorCodeList, deploymentFlavor, deployment, deploymentlocalFlavor);
     } else {
       componentComputeAssociations.forEach(componentComputeAssociation -> {
         if (componentComputeAssociation == null
             || !(componentComputeAssociation.getComponentId() != null
             && componentComputeAssociation.getComputeFlavorId() != null)) {
-          CompositionEntityValidationData compositionEntityValidationData = new
-              CompositionEntityValidationData(CompositionEntityType.deployment,
-              deploymentFlavor.getId());
-          compositionEntityValidationData.setEntityName(deployment
-              .getDeploymentFlavorCompositionData().getModel());
-          ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
-              .getInvalidComponentComputeAssociationErrorBuilder(
-                  deploymentlocalFlavor.getModel());
-
-          errorCodeList.add(deploymentFlavorErrorBuilder);
+            validateCompositionEntity(errorCodeList, deploymentFlavor, deployment, deploymentlocalFlavor);
         }
       });
     }
+  }
+
+  private void validateCompositionEntity(Collection<ErrorCode> errorCodeList,
+                                                                             DeploymentFlavorEntity deploymentFlavor,
+                                                                             DeploymentFlavorEntity deployment,
+                                                                             DeploymentFlavor deploymentlocalFlavor){
+    CompositionEntityValidationData compositionEntityValidationData = new
+            CompositionEntityValidationData(CompositionEntityType.deployment, deploymentFlavor
+            .getId());
+    compositionEntityValidationData.setEntityName(deployment
+            .getDeploymentFlavorCompositionData().getModel());
+    ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
+            .getInvalidComponentComputeAssociationErrorBuilder(
+                    deploymentlocalFlavor.getModel());
+    errorCodeList.add(deploymentFlavorErrorBuilder);
   }
 
   private Set<CompositionEntityValidationData> componentValidation(String vspId, Version version) {
@@ -625,7 +582,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDao.get(vspId, version);
     ByteBuffer contentData = uploadData.getContentData();
     if (contentData == null) {
-      return null;
+      return new byte[0];
     }
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -677,7 +634,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     ETSIService etsiService = new ETSIServiceImpl();
     if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
         FileContentHandler handler = toscaServiceModel.getArtifactFiles();
-        Manifest onboardingManifest = OnboardingManifest.parse(handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME));
+        Manifest onboardingManifest = OnboardingManifest.parse(getManifest(handler));
       etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
 
     }
@@ -686,6 +643,38 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     packageInfoDao.create(packageInfo);
     return packageInfo;
+  }
+
+  private InputStream getManifest(FileContentHandler handler) throws IOException {
+    ToscaMetadata metadata = getMetadata(handler);
+    return getManifestInputStream(handler, metadata.getMetaEntries().get(TOSCA_META_ENTRY_MANIFEST));
+  }
+
+  private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
+    ToscaMetadata metadata;
+    if(handler.containsFile(TOSCA_META_PATH_FILE_NAME)){
+      metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+
+    }else if(handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)){
+      metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+    }else {
+      throw new IOException("TOSCA.meta file not found!");
+    }
+    return metadata;
+  }
+
+  private InputStream getManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
+    InputStream io;
+    if(manifestLocation == null || !handler.containsFile(manifestLocation)){
+      io = handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
+    }else {
+      io = handler.getFileContent(manifestLocation);
+    }
+
+    if(io == null){
+      throw new IOException("Manifest file not found!");
+    }
+    return io;
   }
 
   void populateVersionsForVlm(String vlmId, Version vlmVersion) {
@@ -876,6 +865,159 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private boolean isServiceModelMissing(ToscaServiceModel serviceModel) {
     return serviceModel == null || serviceModel.getEntryDefinitionServiceTemplate() == null;
+  }
+
+  public static class Builder{
+    private VspMergeDao vspMergeDao;
+    private OrchestrationTemplateDao orchestrationTemplateDao;
+    private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
+    private VendorSoftwareProductInfoDao vspInfoDao;
+    private VendorLicenseFacade vendorLicenseFacade;
+    private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
+    private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
+    private VendorLicenseArtifactsService licenseArtifactsService;
+    private InformationArtifactGenerator informationArtifactGenerator;
+    private PackageInfoDao packageInfoDao;
+    private DeploymentFlavorDao deploymentFlavorDao;
+    private ComponentDao componentDao;
+    private ComponentDependencyModelDao componentDependencyModelDao;
+    private NicDao nicDao;
+    private ComputeDao computeDao;
+    private ImageDao imageDao;
+    private ManualVspToscaManager manualVspToscaManager;
+    private UniqueValueDao uniqueValueDao;
+    private CandidateService candidateService;
+
+    public Builder vspMerge(VspMergeDao vspMergeDao){
+      this.vspMergeDao = vspMergeDao;
+      return this;
+    }
+
+    public Builder orchestrationTemplate(OrchestrationTemplateDao orchestrationTemplateDao) {
+      this.orchestrationTemplateDao = orchestrationTemplateDao;
+      return this;
+    }
+
+    public Builder orchestrationTemplateCandidateManager(OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager) {
+      this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
+      return this;
+    }
+
+    public Builder vspInfo(VendorSoftwareProductInfoDao vspInfoDao) {
+      this.vspInfoDao = vspInfoDao;
+      return this;
+    }
+
+    public Builder vendorLicenseFacade(VendorLicenseFacade vendorLicenseFacade) {
+      this.vendorLicenseFacade = vendorLicenseFacade;
+      return this;
+    }
+
+    public Builder serviceModel(ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao) {
+      this.serviceModelDao = serviceModelDao;
+      return this;
+    }
+
+    public Builder enrichedServiceModel(EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao) {
+      this.enrichedServiceModelDao = enrichedServiceModelDao;
+      return this;
+    }
+
+    public Builder licenseArtifactsService(VendorLicenseArtifactsService licenseArtifactsService) {
+      this.licenseArtifactsService = licenseArtifactsService;
+      return this;
+    }
+
+    public Builder informationArtifactGenerator(InformationArtifactGenerator informationArtifactGenerator) {
+      this.informationArtifactGenerator = informationArtifactGenerator;
+      return this;
+    }
+
+    public Builder packageInfo(PackageInfoDao packageInfoDao) {
+      this.packageInfoDao = packageInfoDao;
+      return this;
+    }
+
+    public Builder deploymentFlavor(DeploymentFlavorDao deploymentFlavorDao) {
+      this.deploymentFlavorDao = deploymentFlavorDao;
+      return this;
+    }
+
+    public Builder component(ComponentDao componentDao) {
+      this.componentDao = componentDao;
+      return this;
+    }
+
+    public Builder componentDependencyModel(ComponentDependencyModelDao componentDependencyModelDao) {
+      this.componentDependencyModelDao = componentDependencyModelDao;
+      return this;
+    }
+
+    public Builder nic(NicDao nicDao) {
+      this.nicDao = nicDao;
+      return this;
+    }
+
+    public Builder compute(ComputeDao computeDao) {
+      this.computeDao = computeDao;
+      return this;
+    }
+
+    public Builder image(ImageDao imageDao) {
+      this.imageDao = imageDao;
+      return this;
+    }
+
+    public Builder manualVspToscaManager(ManualVspToscaManager manualVspToscaManager) {
+      this.manualVspToscaManager = manualVspToscaManager;
+      return this;
+    }
+
+    public Builder uniqueValue(UniqueValueDao uniqueValueDao) {
+      this.uniqueValueDao = uniqueValueDao;
+      return this;
+    }
+
+    public Builder candidateService(CandidateService candidateService) {
+      this.candidateService = candidateService;
+      return this;
+    }
+
+    private void registerToVersioning() {
+      if(serviceModelDao != null) {
+        serviceModelDao.registerVersioning(
+                VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
+      }
+      if(enrichedServiceModelDao != null) {
+        enrichedServiceModelDao.registerVersioning(
+                VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
+      }
+    }
+
+    public VendorSoftwareProductManager build(){
+      VendorSoftwareProductManagerImpl vendorSoftwareProductManager = new VendorSoftwareProductManagerImpl();
+      vendorSoftwareProductManager.vspMergeDao = this.vspMergeDao;
+      vendorSoftwareProductManager.orchestrationTemplateDao = this.orchestrationTemplateDao;
+      vendorSoftwareProductManager.orchestrationTemplateCandidateManager = this.orchestrationTemplateCandidateManager;
+      vendorSoftwareProductManager.vspInfoDao = this.vspInfoDao;
+      vendorSoftwareProductManager.vendorLicenseFacade = this.vendorLicenseFacade;
+      vendorSoftwareProductManager.serviceModelDao = this.serviceModelDao;
+      vendorSoftwareProductManager.enrichedServiceModelDao = this.enrichedServiceModelDao;
+      vendorSoftwareProductManager.licenseArtifactsService = this.licenseArtifactsService;
+      vendorSoftwareProductManager.informationArtifactGenerator = this.informationArtifactGenerator;
+      vendorSoftwareProductManager.packageInfoDao = this.packageInfoDao;
+      vendorSoftwareProductManager.deploymentFlavorDao = this.deploymentFlavorDao;
+      vendorSoftwareProductManager.componentDao = this.componentDao;
+      vendorSoftwareProductManager.componentDependencyModelDao = this.componentDependencyModelDao;
+      vendorSoftwareProductManager.nicDao = this.nicDao;
+      vendorSoftwareProductManager.computeDao = this.computeDao;
+      vendorSoftwareProductManager.imageDao = this.imageDao;
+      vendorSoftwareProductManager.manualVspToscaManager = this.manualVspToscaManager;
+      vendorSoftwareProductManager.uniqueValueUtil = new UniqueValueUtil(this.uniqueValueDao);
+      vendorSoftwareProductManager.candidateService = candidateService;
+      this.registerToVersioning();
+      return vendorSoftwareProductManager;
+    }
   }
 
 }

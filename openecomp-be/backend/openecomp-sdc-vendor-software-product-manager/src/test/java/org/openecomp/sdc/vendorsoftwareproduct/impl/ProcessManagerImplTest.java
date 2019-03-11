@@ -16,7 +16,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -26,10 +35,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -37,9 +42,13 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ProcessManagerImplTest {
 
@@ -60,12 +69,12 @@ public class ProcessManagerImplTest {
   @Captor
   private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     processManager = null;
   }
@@ -133,7 +142,7 @@ public class ProcessManagerImplTest {
     Assert.assertEquals(process, processToCreate);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testCreateWithExistingName_negative() {
     ProcessEntity process = createProcess(VSP_ID, VERSION, COMPONENT_ID, null);
     process.setName("p1 name");
@@ -153,7 +162,7 @@ public class ProcessManagerImplTest {
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testUpdateWithExistingName_negative() {
     ProcessEntity existingProcess = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     doReturn(existingProcess).when(processDaoMock).get(any(ProcessEntity.class));
@@ -210,7 +219,7 @@ public class ProcessManagerImplTest {
     Assert.assertEquals(actual.getArtifactName(), ARTIFACT_NAME);
   }
 
-  @Test(expectedExceptions = CoreException.class)
+  @Test(expected = CoreException.class)
   public void testDeleteNonExistingProcessId_negative() {
     processManager.deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
   }

@@ -1,6 +1,14 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
@@ -17,17 +25,15 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ComponentManagerImplTest {
   private static final String VSP_ID = "VSP_ID";
@@ -50,12 +56,12 @@ public class ComponentManagerImplTest {
   @Spy
   private ComponentManagerImpl componentManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     componentManager = null;
   }
@@ -66,10 +72,9 @@ public class ComponentManagerImplTest {
     Assert.assertEquals(components.size(), 0);
   }
 
-  @Test(expectedExceptions = CoreException.class,
-      expectedExceptionsMessageRegExp = COMP_NOT_EXIST_MSG)
+  @Test(expected = CoreException.class)
   public void validateExceptionWhenTryingToRetriveNotExistingComponentEntity() {
-    doReturn(null).when(componentDaoMock).get(anyObject());
+    doReturn(null).when(componentDaoMock).get(any());
     componentManager.validateComponentExistence(VSP_ID, VERSION, COMP1_ID);
   }
 
@@ -78,7 +83,7 @@ public class ComponentManagerImplTest {
     doReturn(Arrays.asList(
         createComponent(VSP_ID, VERSION, COMP1_ID),
         createComponent(VSP_ID, VERSION, COMP2_ID)))
-        .when(componentDaoMock).list(anyObject());
+        .when(componentDaoMock).list(any());
 
     Collection<ComponentEntity> actual = componentManager.listComponents(VSP_ID, VERSION);
     Assert.assertEquals(actual.size(), 2);
@@ -98,10 +103,10 @@ public class ComponentManagerImplTest {
     compData.setDescription("comp1 desc");
     expected.setComponentCompositionData(compData);
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<ComponentEntity> vspComponentList = new ArrayList<>();
-    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
-    doReturn(expected).when(compositionEntityDataManagerMock).createComponent(anyObject(), Matchers.anyBoolean());
+    doReturn(vspComponentList).when(componentDaoMock).list(any());
+    doReturn(expected).when(compositionEntityDataManagerMock).createComponent(any(), ArgumentMatchers.anyBoolean());
 
     ComponentEntity created = componentManager.createComponent(expected);
     Assert.assertNotNull(created);
@@ -122,10 +127,10 @@ public class ComponentManagerImplTest {
     compData.setDescription("comp1 desc");
     expected.setComponentCompositionData(compData);
 
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<ComponentEntity> vspComponentList = new ArrayList<>();
     vspComponentList.add(expected);
-    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(vspComponentList).when(componentDaoMock).list(any());
 
     try {
        componentManager.createComponent(expected);
@@ -144,13 +149,13 @@ public class ComponentManagerImplTest {
     compData.setDescription("comp1 desc");
     expected.setComponentCompositionData(compData);
 
-    doReturn(expected).when(componentDaoMock).get(anyObject());
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(expected).when(componentDaoMock).get(any());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<ComponentEntity> vspComponentList = new ArrayList<>();
     vspComponentList.add(expected);
-    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(vspComponentList).when(componentDaoMock).list(any());
     doReturn(new CompositionEntityValidationData(null, null)).when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     CompositionEntityValidationData created = componentManager.updateComponent(expected);
     Assert.assertNotNull(created);
@@ -165,16 +170,16 @@ public class ComponentManagerImplTest {
     compData.setDisplayName("comp1 displayname");
     expected.setComponentCompositionData(compData);
 
-    doReturn(expected).when(componentDaoMock).get(anyObject());
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(expected).when(componentDaoMock).get(any());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<ComponentEntity> vspComponentList = new ArrayList<>();
     vspComponentList.add(expected);
     ComponentEntity expected2 = new ComponentEntity(VSP_ID + "2", null, COMP1_ID + "2");
     expected2.setComponentCompositionData(compData);
     vspComponentList.add(expected2);
-    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(vspComponentList).when(componentDaoMock).list(any());
     doReturn(new CompositionEntityValidationData(null, null)).when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     try {
        componentManager.updateComponent(expected);
@@ -210,7 +215,7 @@ public class ComponentManagerImplTest {
   @Test
   public void testUpdateNonExistingComponentId_negative() {
     String componentId = "non existing component id";
-    doReturn(null).when(componentDaoMock).get(anyObject());
+    doReturn(null).when(componentDaoMock).get(any());
 
     testUpdate_negative(VSP_ID, VERSION, componentId,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
@@ -219,11 +224,11 @@ public class ComponentManagerImplTest {
   @Test
   public void testUpdateOnUploadVsp() {
     doReturn(createComponent(VSP_ID, VERSION, COMP1_ID)).when(componentDaoMock)
-        .get(anyObject());
+        .get(any());
 
     doReturn(new CompositionEntityValidationData(CompositionEntityType.component, COMP1_ID))
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, COMP1_ID);
     ComponentData compData = new ComponentData();
@@ -242,14 +247,14 @@ public class ComponentManagerImplTest {
   @Test
   public void testIllegalUpdateOnUploadVsp() {
     doReturn(createComponent(VSP_ID, VERSION, COMP1_ID))
-        .when(componentDaoMock).get(anyObject());
+        .when(componentDaoMock).get(any());
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.component, COMP1_ID);
     toBeReturned.setErrors(Arrays.asList("error1", "error2"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, COMP1_ID);
     ComponentData compData = new ComponentData();
@@ -267,7 +272,7 @@ public class ComponentManagerImplTest {
   @Test
   public void testGetNonExistingComponentId_negative() {
     String componentId = "non existing component id";
-    doReturn(null).when(componentDaoMock).get(anyObject());
+    doReturn(null).when(componentDaoMock).get(any());
 
     testGet_negative(VSP_ID, VERSION, componentId,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
@@ -276,9 +281,9 @@ public class ComponentManagerImplTest {
   @Test
   public void testGet() {
     ComponentEntity expected = createComponent(VSP_ID, VERSION, COMP1_ID);
-    doReturn(expected).when(componentDaoMock).get(anyObject());
+    doReturn(expected).when(componentDaoMock).get(any());
 
-    doReturn("schema string").when(componentManager).getComponentCompositionSchema(anyObject());
+    doReturn("schema string").when(componentManager).getComponentCompositionSchema(any());
 
     testGet(VSP_ID, VERSION, COMP1_ID, expected);
   }
@@ -313,8 +318,7 @@ public class ComponentManagerImplTest {
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
 
-  @Test(expectedExceptions = CoreException.class,
-      expectedExceptionsMessageRegExp = COMP_NOT_EXIST_MSG)
+  @Test(expected = CoreException.class)
   public void testGetNonExistingComponentQuestionnaire() throws Exception {
     componentManager.getQuestionnaire(VSP_ID, VERSION, COMP1_ID);
   }
@@ -324,7 +328,7 @@ public class ComponentManagerImplTest {
     doReturn(new ComponentEntity(VSP_ID, VERSION, COMP1_ID)).when(componentDaoMock)
         .getQuestionnaireData(VSP_ID, VERSION, COMP1_ID);
     String schema = "schema string";
-    doReturn(schema).when(componentManager).getComponentQuestionnaireSchema(anyObject());
+    doReturn(schema).when(componentManager).getComponentQuestionnaireSchema(any());
 
     QuestionnaireResponse questionnaire =
         componentManager.getQuestionnaire(VSP_ID, VERSION, COMP1_ID);
@@ -355,7 +359,7 @@ public class ComponentManagerImplTest {
         .when(nicManagerMock).listNics(VSP_ID, VERSION, COMP1_ID);
 
     String schema = "schema string";
-    doReturn(schema).when(componentManager).getComponentQuestionnaireSchema(anyObject());
+    doReturn(schema).when(componentManager).getComponentQuestionnaireSchema(any());
 
     QuestionnaireResponse questionnaire =
         componentManager.getQuestionnaire(VSP_ID, VERSION, COMP1_ID);
@@ -365,17 +369,16 @@ public class ComponentManagerImplTest {
     Assert.assertNull(questionnaire.getErrorMessage());
   }
 
-  @Test(expectedExceptions = CoreException.class,
-      expectedExceptionsMessageRegExp = COMP_NOT_EXIST_MSG)
+  @Test(expected = CoreException.class)
   public void testUpdateNonExistingComponentQuestionnaire() throws Exception {
-    doReturn(null).when(componentDaoMock).get(anyObject());
+    doReturn(null).when(componentDaoMock).get(any());
     componentManager.updateQuestionnaire(VSP_ID, VERSION, COMP1_ID, "questionnaire data");
   }
 
   @Test
   public void testUpdateQuestionnaire() throws Exception {
     ComponentEntity component = createComponent(VSP_ID, VERSION, COMP1_ID);
-    doReturn(component).when(componentDaoMock).get(anyObject());
+    doReturn(component).when(componentDaoMock).get(any());
 
     componentManager.updateQuestionnaire(VSP_ID, VERSION, COMP1_ID, "questionnaire data");
 
