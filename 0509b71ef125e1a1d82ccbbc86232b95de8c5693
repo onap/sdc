@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c2921af_1a90176d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-12T08:49:30Z",
+      "side": 1,
+      "message": "Input Stream should be in a try finally block since its creation.\nIt is very dangerous to pass Input Stream.\nIt is hard to follow the path and make sure that close is called. And if a Exception appears during code execution we will end with resource leak.\nBest practice will be to return String.",
+      "revId": "0509b71ef125e1a1d82ccbbc86232b95de8c5693",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
