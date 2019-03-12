@@ -16,9 +16,9 @@
 
 package org.openecomp.sdc.tosca.csar;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.common.errors.Messages;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -29,14 +29,21 @@ import static org.junit.Assert.assertFalse;
 
 public class ManifestParsingTest {
 
+  private Manifest manifest;
+
+  @Before
+  public void setUp(){
+    manifest = new SOL004ManifestOnboarding();
+  }
+
   @Test
   public void testSuccessfulParsing() throws IOException {
     try (InputStream is = getClass()
         .getResourceAsStream("/vspmanager.csar/manifest/ValidTosca.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertTrue(onboardingManifest.isValid());
-      assertEquals(onboardingManifest.getMetadata().size(), 4);
-      assertEquals(onboardingManifest.getSources().size(), 5);
+      manifest.parse(is);
+      assertTrue(manifest.isValid());
+      assertEquals(manifest.getMetadata().size(), 4);
+      assertEquals(manifest.getSources().size(), 5);
     }
   }
 
@@ -44,9 +51,9 @@ public class ManifestParsingTest {
   public void testNoMetadataParsing() throws IOException {
     try (InputStream is = getClass()
         .getResourceAsStream("/vspmanager.csar/manifest/InvalidTosca1.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
-      assertTrue(onboardingManifest.getErrors().stream().anyMatch(error -> error
+      manifest.parse(is);
+      assertFalse(manifest.isValid());
+      assertTrue(manifest.getErrors().stream().anyMatch(error -> error
           .contains(Messages.MANIFEST_INVALID_LINE.getErrorMessage().substring(0, 10))));
     }
   }
@@ -55,9 +62,9 @@ public class ManifestParsingTest {
   public void testBrokenMDParsing() throws IOException {
     try (InputStream is = getClass()
         .getResourceAsStream("/vspmanager.csar/manifest/InvalidTosca2.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
-      assertTrue(onboardingManifest.getErrors().stream().anyMatch(error -> error
+     manifest.parse(is);
+      assertFalse(manifest.isValid());
+      assertTrue(manifest.getErrors().stream().anyMatch(error -> error
           .contains(Messages.MANIFEST_INVALID_LINE.getErrorMessage().substring(0, 10))));
     }
   }
@@ -66,9 +73,9 @@ public class ManifestParsingTest {
   public void testNoMetaParsing() throws IOException {
     try (InputStream is = getClass()
         .getResourceAsStream("/vspmanager.csar/manifest/InvalidTosca4.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
-      assertTrue(onboardingManifest.getErrors().stream().anyMatch(error -> error
+      manifest.parse(is);
+      assertFalse(manifest.isValid());
+      assertTrue(manifest.getErrors().stream().anyMatch(error -> error
           .contains(Messages.MANIFEST_NO_METADATA.getErrorMessage().substring(0, 10))));
     }
   }
@@ -77,11 +84,11 @@ public class ManifestParsingTest {
   public void testSuccessfulNonManoParsing() throws IOException {
     try (InputStream is = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertTrue(onboardingManifest.isValid());
-      assertEquals(onboardingManifest.getMetadata().size(), 4);
-      assertEquals(onboardingManifest.getSources().size(), 5);
-      assertEquals(onboardingManifest.getNonManoSources().size(), 2);
+      manifest.parse(is);
+      assertTrue(manifest.isValid());
+      assertEquals(manifest.getMetadata().size(), 4);
+      assertEquals(manifest.getSources().size(), 5);
+      assertEquals(manifest.getNonManoSources().size(), 2);
     }
   }
 
@@ -89,8 +96,8 @@ public class ManifestParsingTest {
   public void testFailfulNonManoParsing() throws IOException {
     try (InputStream is = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/InValidNonManoTosca.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
+      manifest.parse(is);
+      assertFalse(manifest.isValid());
     }
   }
 
@@ -98,8 +105,8 @@ public class ManifestParsingTest {
   public void testFailfulNonManoParsingWithGarbadge() throws IOException {
     try (InputStream is = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/InvalidTocsaNonManoGarbadgeAtEnd.mf")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
+      manifest.parse(is);
+      assertFalse(manifest.isValid());
     }
   }
 
@@ -107,8 +114,8 @@ public class ManifestParsingTest {
   public void testParseManifestWithNoFile() throws IOException {
     try (InputStream is = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/SOME_WRONG_FILE")) {
-      Manifest onboardingManifest = OnboardingManifest.parse(is);
-      assertFalse(onboardingManifest.isValid());
+      manifest.parse(is);
+      assertFalse(manifest.isValid());
     }
   }
 }

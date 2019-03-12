@@ -64,6 +64,8 @@ import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.csar.ManifestFactory;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -108,7 +110,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilde
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
 import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.csar.OnboardingManifest;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
@@ -677,9 +678,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     ETSIService etsiService = new ETSIServiceImpl();
     if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
         FileContentHandler handler = toscaServiceModel.getArtifactFiles();
-        Manifest onboardingManifest = OnboardingManifest.parse(handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME));
-      etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
-
+        Manifest onboardingManifest = ManifestFactory.getOnboardingManifest(SOL004ManifestOnboarding.class);
+        onboardingManifest.parse(handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME));
+        etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
     }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));

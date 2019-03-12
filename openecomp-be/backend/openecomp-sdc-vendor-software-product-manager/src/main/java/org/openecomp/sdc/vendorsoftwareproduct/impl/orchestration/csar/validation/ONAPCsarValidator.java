@@ -28,7 +28,8 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.csar.OnboardingManifest;
+import org.openecomp.sdc.tosca.csar.ManifestFactory;
+import org.openecomp.sdc.tosca.csar.ONAPManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import java.io.IOException;
@@ -99,7 +100,8 @@ class ONAPCsarValidator implements Validator {
 
         try (InputStream fileContent = contentMap.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
 
-            Manifest onboardingManifest = OnboardingManifest.parse(fileContent);
+            Manifest onboardingManifest = ManifestFactory.getOnboardingManifest(ONAPManifestOnboarding.class);
+            onboardingManifest.parse(fileContent);
             if (!onboardingManifest.isValid()) {
                 onboardingManifest.getErrors().forEach(error -> uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
                         error)));
