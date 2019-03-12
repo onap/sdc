@@ -20,10 +20,19 @@
 
 package org.openecomp.sdc.tosca.csar;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 public interface Manifest {
+
+    /**
+     * This Method will parse manifest, extracting fields mandatory/non-mandatory,
+     * if error occurred it's recorded and will be used for deciding if manifest is valid
+     * @param is manifest file input stream
+     */
+    void parse(InputStream is);
+
     /**
      * Returns if manifest is valid
      * @return true/false

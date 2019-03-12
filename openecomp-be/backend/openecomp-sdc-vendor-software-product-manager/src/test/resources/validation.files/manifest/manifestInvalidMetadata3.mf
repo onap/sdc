@@ -7,5 +7,3 @@ metadata:
     vnf_provider_id: Bilal Iqbal
     vnf_package_version: 1.0
     vnf_release_date_time: 2019-12-14T11:26:00+00:00
-
-Source: Definitions/MainServiceTemplate.yaml
