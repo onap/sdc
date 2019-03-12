@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2558be56_29e112a7",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AbstractOnboardingManifest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-12T09:48:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da52afc0_ea3b0cab",
+      "revId": "399c04978acdc4559cd5c67ab0895f99ca4a2cdd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7efbd98f_ecc7bc61",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/SOL004ManifestOnboarding.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-12T08:11:56Z",
       "side": 1,
       "message": "Sonar Remark- Statements should be on separate lines\nThis sonar remark appears because the file does not follow onap code style:\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "399c04978acdc4559cd5c67ab0895f99ca4a2cdd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f616b91b_ccad9640",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/SOL004ManifestOnboarding.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-03-12T09:48:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7efbd98f_ecc7bc61",
       "revId": "399c04978acdc4559cd5c67ab0895f99ca4a2cdd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
