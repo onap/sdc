@@ -16,6 +16,24 @@
       "revId": "0509b71ef125e1a1d82ccbbc86232b95de8c5693",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ed9fa1_75a595c2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-12T10:20:02Z",
+      "side": 1,
+      "message": "totally agree, InputStream was used originally in the code, so I decided to align with initial approach. I\u0027ve added try block line 637. Let me know if it\u0027s OK.",
+      "parentUuid": "9c2921af_1a90176d",
+      "revId": "0509b71ef125e1a1d82ccbbc86232b95de8c5693",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
