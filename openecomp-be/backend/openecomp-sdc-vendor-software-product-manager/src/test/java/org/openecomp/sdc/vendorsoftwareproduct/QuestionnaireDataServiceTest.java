@@ -22,7 +22,13 @@ package org.openecomp.sdc.vendorsoftwareproduct;
 
 
 import org.apache.commons.collections4.MapUtils;
-import org.mockito.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.validation.util.MessageContainerUtil;
@@ -39,8 +45,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.tree.UploadFileTest;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +78,7 @@ public class QuestionnaireDataServiceTest {
   private static Version vspActiveVersion;
   private static final String USER1 = "vspTestUser1";
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }

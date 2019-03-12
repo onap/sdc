@@ -1,0 +1,7 @@
+metadata:
+    vnf_product_name: Mock
+    vnf_provider_id: ZTE
+    vnf_package_version: 1.0
+    vnf_release_data_time: 2017.01.01T10:00+03:00
+
+Source: MainServiceTemplate.yaml

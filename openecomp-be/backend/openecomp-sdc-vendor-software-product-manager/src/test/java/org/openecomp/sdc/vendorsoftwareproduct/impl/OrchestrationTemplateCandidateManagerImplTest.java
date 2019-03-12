@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -38,20 +42,20 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStru
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.ZipFileUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 public class OrchestrationTemplateCandidateManagerImplTest {
   private static final String VSP_ID = "vspId";
@@ -89,22 +93,18 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   @InjectMocks
   private OrchestrationUtil orchestrationUtil;
 
-  @BeforeClass
+  @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
-  private void resetMocks() {
+  @After
+  public void resetMocks() {
     Mockito.reset(vspInfoDaoMock);
     Mockito.reset(candidateServiceMock);
     Mockito.reset(orchestrationTemplateDaoMock);
     Mockito.reset(componentDependencyModelDaoMock);
     Mockito.reset(componentDaoMock);
-  }
-
-  @AfterClass
-  public void tearDown() {
     candidateManager = null;
     orchestrationUtil = null;
   }
@@ -203,7 +203,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     doReturn(initialVspComponents).when(componentDaoMock).list(any());
     Map<String, String> vspComponentIdNameInfo =
         orchestrationUtil.getVspComponentIdNameInfo(VSP_ID, VERSION01);
-    Assert.assertEquals(vspComponentIdNameInfo.size(), 0);
+    assertEquals(vspComponentIdNameInfo.size(), 0);
   }
 
   @Test
@@ -240,7 +240,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   public void testGetComponentDependenciesBeforeDeleteInvalid() {
     Collection<ComponentDependencyModelEntity> componentDependenciesBeforeDelete =
         orchestrationUtil.getComponentDependenciesBeforeDelete(null, null);
-    Assert.assertEquals(componentDependenciesBeforeDelete.size(), 0);
+    assertEquals(componentDependenciesBeforeDelete.size(), 0);
   }
 
   @Test
@@ -250,7 +250,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock).list(any());
     Collection<ComponentDependencyModelEntity> componentDependenciesBeforeDelete =
         orchestrationUtil.getComponentDependenciesBeforeDelete(VSP_ID, VERSION01);
-    Assert.assertEquals(componentDependenciesBeforeDelete.size(), 2);
+    assertEquals(componentDependenciesBeforeDelete.size(), 2);
   }
 
   @Test

@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
@@ -23,10 +25,11 @@ import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HeatTreeManagerTest extends TreeBaseTest {
 

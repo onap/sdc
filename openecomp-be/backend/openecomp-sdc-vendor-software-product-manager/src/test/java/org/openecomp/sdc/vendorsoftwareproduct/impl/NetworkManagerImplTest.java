@@ -17,6 +17,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -34,16 +38,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class NetworkManagerImplTest {
 
@@ -74,13 +76,13 @@ public class NetworkManagerImplTest {
     return networkEntity;
   }
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     SessionContextProviderFactory.getInstance().createInterface().create(USER_ID, tenant);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     networkManager = null;
     SessionContextProviderFactory.getInstance().createInterface().close();
@@ -98,7 +100,7 @@ public class NetworkManagerImplTest {
     doReturn(Arrays.asList(
         createNetwork(VSP_ID, VERSION, NETWORK1_ID),
         createNetwork(VSP_ID, VERSION, NETWORK2_ID)))
-        .when(networkDaoMock).list(anyObject());
+        .when(networkDaoMock).list(any());
 
     Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, VERSION);
     Assert.assertEquals(actual.size(), 2);
@@ -119,15 +121,15 @@ public class NetworkManagerImplTest {
   @Test
   public void testIllegalUpdateOnUploadVsp() {
     doReturn(createNetwork(VSP_ID, VERSION, NETWORK1_ID))
-        .when(networkDaoMock).get(anyObject());
+        .when(networkDaoMock).get(any());
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.network, NETWORK1_ID);
     toBeReturned.setErrors(Arrays.asList("error1", "error2"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
-    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
+        .validateEntity(any(), any(), any());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(),any());
 
     NetworkEntity networkEntity = new NetworkEntity(VSP_ID, VERSION, NETWORK1_ID);
     Network networkData = new Network();
@@ -153,9 +155,9 @@ public class NetworkManagerImplTest {
   public void testGet() {
     NetworkEntity network = createNetwork(VSP_ID, VERSION, NETWORK1_ID);
     doReturn(network)
-        .when(networkDaoMock).get(anyObject());
-    doReturn("schema string").when(networkManager).getCompositionSchema(anyObject());
-    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
+        .when(networkDaoMock).get(any());
+    doReturn("schema string").when(networkManager).getCompositionSchema(any());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(),any());
 
     CompositionEntityResponse<Network> response =
         networkManager.getNetwork(VSP_ID, VERSION, NETWORK1_ID);
@@ -164,15 +166,16 @@ public class NetworkManagerImplTest {
     Assert.assertNotNull(response.getSchema());
   }
 
-  @Test(dependsOnMethods = "testList")
+  @Test
   public void testDeleteOnUploadVsp_negative() {
+    testList();
     testDelete_negative(VSP_ID, VERSION, NETWORK1_ID,
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
 
   private void testCreate_negative(NetworkEntity network, String expectedErrorCode) {
     try {
-      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(),any());
       networkManager.createNetwork(network);
       Assert.fail();
     } catch (CoreException exception) {
@@ -212,7 +215,7 @@ public class NetworkManagerImplTest {
   private void testDelete_negative(String vspId, Version version, String networkId,
                                    String expectedErrorCode) {
     try {
-      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(),any());
       networkManager.deleteNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {

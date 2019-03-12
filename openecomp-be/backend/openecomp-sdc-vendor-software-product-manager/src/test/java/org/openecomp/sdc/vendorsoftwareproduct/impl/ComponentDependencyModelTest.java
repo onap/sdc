@@ -1,21 +1,25 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class ComponentDependencyModelTest {
@@ -37,8 +41,8 @@ public class ComponentDependencyModelTest {
   @Mock
   private ComponentDependencyModelDao componentDependencyModelDao;
 
-  @BeforeMethod
-  private void init() {
+  @Before
+  public void init() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -100,7 +104,7 @@ public class ComponentDependencyModelTest {
         createModelEntity(COMP_ID_1, COMP_ID_2);
     modelEntity.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity);
 
     componentDependencyModelManager.update(modelEntity);
     Mockito.verify(componentDependencyModelDao, Mockito.times(1)).update(modelEntity);
@@ -112,7 +116,7 @@ public class ComponentDependencyModelTest {
     ComponentDependencyModelEntity modelEntity = createModelEntity(null, COMP_ID_1);
     modelEntity.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity);
 
     testUpdateDependency_negative(modelEntity,
         ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder().id(),
@@ -121,7 +125,7 @@ public class ComponentDependencyModelTest {
     ComponentDependencyModelEntity modelEntity1 = createModelEntity("", COMP_ID_1);
     modelEntity1.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity1);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity1);
 
     testUpdateDependency_negative(modelEntity1,
         ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder().id(),
@@ -134,7 +138,7 @@ public class ComponentDependencyModelTest {
         createModelEntity(COMP_ID_1, COMP_ID_1);
     modelEntity.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity);
     testUpdateDependency_negative(modelEntity,
         ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder().id(),
         ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder().message());
@@ -146,7 +150,7 @@ public class ComponentDependencyModelTest {
         createModelEntity(COMP_ID_1, COMP_ID_2);
     modelEntity.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity);
 
     componentDependencyModelManager.delete(VSP_ID, VERSION, COMP_DEP_ID);
     Mockito.verify(componentDependencyModelDao, Mockito.times(1)).delete(modelEntity);
@@ -177,7 +181,7 @@ public class ComponentDependencyModelTest {
         createModelEntity(COMP_ID_1, COMP_ID_2);
     modelEntity.setId(COMP_DEP_ID);
 
-    when(componentDependencyModelDao.get(anyObject())).thenReturn(modelEntity);
+    when(componentDependencyModelDao.get(any())).thenReturn(modelEntity);
 
     ComponentDependencyModelEntity retrieved =
         componentDependencyModelManager.get(VSP_ID, VERSION, COMP_DEP_ID);

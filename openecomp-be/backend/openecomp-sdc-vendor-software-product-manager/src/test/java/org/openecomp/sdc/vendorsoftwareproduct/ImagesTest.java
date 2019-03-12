@@ -1,5 +1,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -10,12 +14,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.ImageManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -36,12 +36,12 @@ public class ImagesTest {
   @Spy
   private ImageManagerImpl imageManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown(){
     imageManager = null;
   }
@@ -49,7 +49,7 @@ public class ImagesTest {
   @Test
   public void createImage() {
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
-    doReturn(true).when(vendorSoftwareProductInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vendorSoftwareProductInfoDao).isManual(any(), any());
 
     imageManager.createImage(imageEntity);
     verify(compositionEntityDataManager).createImage(imageEntity);
@@ -58,7 +58,7 @@ public class ImagesTest {
   @Test
   public void createImageHeat() {
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
-    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(), anyObject());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(), any());
 
     try {
       imageManager.createImage(imageEntity);

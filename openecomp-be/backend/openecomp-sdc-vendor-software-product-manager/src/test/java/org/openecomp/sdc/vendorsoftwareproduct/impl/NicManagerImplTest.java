@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -36,17 +40,15 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class NicManagerImplTest {
 
@@ -74,12 +76,12 @@ public class NicManagerImplTest {
   @Spy
   private NicManagerImpl nicManager;
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown() {
     nicManager = null;
   }
@@ -95,7 +97,7 @@ public class NicManagerImplTest {
     doReturn(Arrays.asList(
         createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID),
         createNic(VSP_ID, VERSION, COMPONENT_ID, NIC2_ID, NETWORK2_ID)))
-        .when(nicDao).list(anyObject());
+        .when(nicDao).list(any());
 
     NetworkEntity network1 = NetworkManagerImplTest.createNetwork(VSP_ID, VERSION, NETWORK1_ID);
     NetworkEntity network2 = NetworkManagerImplTest.createNetwork(VSP_ID, VERSION, NETWORK2_ID);
@@ -118,10 +120,10 @@ public class NicManagerImplTest {
     Nic nic = nicEntity.getNicCompositionData();
     nic.setNetworkType(NetworkType.Internal);
     nicEntity.setNicCompositionData(nic);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<NicEntity> nicEntities = new ArrayList<>();
-    doReturn(nicEntities).when(nicDao).list(anyObject());
-    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+    doReturn(nicEntities).when(nicDao).list(any());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(any());
 
     NicEntity created = nicManager.createNic(nicEntity);
     Assert.assertNotNull(created);
@@ -133,7 +135,7 @@ public class NicManagerImplTest {
     Nic nic = nicEntity.getNicCompositionData();
     nic.setNetworkType(NetworkType.Internal);
     nicEntity.setNicCompositionData(nic);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<NicEntity> nicEntities = new ArrayList<>();
 
     NicEntity nicEntityDiffName = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
@@ -141,8 +143,8 @@ public class NicManagerImplTest {
     newNameNic.setName(NIC1_ID + "_Name/*");
     nicEntityDiffName.setNicCompositionData(newNameNic);
     nicEntities.add(nicEntityDiffName);
-    doReturn(nicEntities).when(nicDao).list(anyObject());
-    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+    doReturn(nicEntities).when(nicDao).list(any());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(any());
 
     try {
       NicEntity created = nicManager.createNic(nicEntity);
@@ -158,7 +160,7 @@ public class NicManagerImplTest {
     Nic nic = nicEntity.getNicCompositionData();
     nic.setNetworkType(NetworkType.Internal);
     nicEntity.setNicCompositionData(nic);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<NicEntity> nicEntities = new ArrayList<>();
 
     NicEntity nicEntityDiffName = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
@@ -166,8 +168,8 @@ public class NicManagerImplTest {
     newNameNic.setName(NIC1_ID + "_Name");
     nicEntityDiffName.setNicCompositionData(newNameNic);
     nicEntities.add(nicEntityDiffName);
-    doReturn(nicEntities).when(nicDao).list(anyObject());
-    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+    doReturn(nicEntities).when(nicDao).list(any());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(any());
 
     try {
       NicEntity created = nicManager.createNic(nicEntity);
@@ -186,10 +188,10 @@ public class NicManagerImplTest {
     Nic nic = nicEntity.getNicCompositionData();
     nic.setNetworkType(NetworkType.External);
     nicEntity.setNicCompositionData(nic);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<NicEntity> nicEntities = new ArrayList<>();
-    doReturn(nicEntities).when(nicDao).list(anyObject());
-    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+    doReturn(nicEntities).when(nicDao).list(any());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(any());
 
     try {
       NicEntity created = nicManager.createNic(nicEntity);
@@ -209,10 +211,10 @@ public class NicManagerImplTest {
     nic.setNetworkType(NetworkType.Internal);
     nic.setNetworkDescription(NIC1_ID);
     nicEntity.setNicCompositionData(nic);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
     Collection<NicEntity> nicEntities = new ArrayList<>();
-    doReturn(nicEntities).when(nicDao).list(anyObject());
-    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+    doReturn(nicEntities).when(nicDao).list(any());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(any());
 
     try {
       NicEntity created = nicManager.createNic(nicEntity);
@@ -227,8 +229,8 @@ public class NicManagerImplTest {
   @Test
   public void testDeleteNic() {
     NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-    doReturn(nicEntity).when(nicDao).get(anyObject());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
+    doReturn(nicEntity).when(nicDao).get(any());
 
     nicManager.deleteNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
 
@@ -238,8 +240,8 @@ public class NicManagerImplTest {
   public void testUpdateNicQuestionnaire() {
     NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
 
-    doReturn(nicEntity).when(nicDao).get(anyObject());
-    doReturn("{}").when(nicManager).getNicCompositionSchema(anyObject());
+    doReturn(nicEntity).when(nicDao).get(any());
+    doReturn("{}").when(nicManager).getNicCompositionSchema(any());
 
     nicManager
         .updateNicQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, "Ques");
@@ -287,7 +289,7 @@ public class NicManagerImplTest {
 
   @Test
   public void testUpdateNonExistingNicId_negative() {
-    doReturn(null).when(nicDao).get(anyObject());
+    doReturn(null).when(nicDao).get(any());
 
     testUpdate_negative(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
@@ -296,11 +298,11 @@ public class NicManagerImplTest {
   @Test
   public void testUpdateOnUploadVsp() {
     doReturn(createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID))
-        .when(nicDao).get(anyObject());
+        .when(nicDao).get(any());
 
     doReturn(new CompositionEntityValidationData(CompositionEntityType.nic, NIC1_ID))
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     NicEntity nicEntity = new NicEntity(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
     Nic nicData = new Nic();
@@ -318,14 +320,14 @@ public class NicManagerImplTest {
   @Test
   public void testIllegalUpdateOnUploadVsp() {
     doReturn(createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID))
-        .when(nicDao).get(anyObject());
+        .when(nicDao).get(any());
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.nic, NIC1_ID);
     toBeReturned.setErrors(Arrays.asList("error1", "error2"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
 
     NicEntity nicEntity = new NicEntity(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
     Nic nicData = new Nic();
@@ -344,15 +346,15 @@ public class NicManagerImplTest {
   @Test
   public void testUpdateIncorrectNameFormat() {
     doReturn(createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID))
-        .when(nicDao).get(anyObject());
+        .when(nicDao).get(any());
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.nic, NIC1_ID);
     toBeReturned.setErrors(Arrays.asList("Field does not conform to predefined criteria:name : must match [a-zA-Z0-9_]*$"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+        .validateEntity(any(), any(), any());
+    doReturn(true).when(vspInfoDao).isManual(any(), any());
 
     NicEntity nicEntity = new NicEntity(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
     Nic nicData = new Nic();
@@ -377,9 +379,9 @@ public class NicManagerImplTest {
   @Test
   public void testGet() {
     NicEntity expected = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
-    doReturn(expected).when(nicDao).get(anyObject());
+    doReturn(expected).when(nicDao).get(any());
     String compositionSchema = "schema string";
-    doReturn(compositionSchema).when(nicManager).getNicCompositionSchema(anyObject());
+    doReturn(compositionSchema).when(nicManager).getNicCompositionSchema(any());
 
     CompositionEntityResponse<Nic> response =
         nicManager.getNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
@@ -418,8 +420,7 @@ public class NicManagerImplTest {
         VendorSoftwareProductErrorCodes.DELETE_NIC_NOT_ALLOWED);
   }
 
-  @Test(expectedExceptions = CoreException.class,
-      expectedExceptionsMessageRegExp = NIC_NOT_EXIST_MSG)
+  @Test(expected = CoreException.class)
   public void testGetNonExistingNicQuestionnaire() throws Exception {
     nicManager.getNicQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
   }
@@ -431,7 +432,7 @@ public class NicManagerImplTest {
     doReturn(nic).when(nicDao).getQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
 
     String schema = "schema string";
-    doReturn(schema).when(nicManager).getNicQuestionnaireSchema(anyObject());
+    doReturn(schema).when(nicManager).getNicQuestionnaireSchema(any());
 
     QuestionnaireResponse questionnaire =
         nicManager.getNicQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
@@ -441,10 +442,9 @@ public class NicManagerImplTest {
     Assert.assertNull(questionnaire.getErrorMessage());
   }
 
-  @Test(expectedExceptions = CoreException.class,
-      expectedExceptionsMessageRegExp = NIC_NOT_EXIST_MSG)
+  @Test(expected = CoreException.class)
   public void testUpdateNonExistingNicQuestionnaire() throws Exception {
-    doReturn(null).when(nicDao).get(anyObject());
+    doReturn(null).when(nicDao).get(any());
     nicManager
         .updateNicQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, "questionnaire data");
   }

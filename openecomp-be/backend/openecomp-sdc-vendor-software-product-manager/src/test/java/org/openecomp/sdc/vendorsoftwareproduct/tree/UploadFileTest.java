@@ -21,9 +21,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
 
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.ZipOutputStream;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -52,8 +55,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremo
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VSPCommon;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 public class UploadFileTest {
   private static final String USER1 = "vspTestUser1";
@@ -85,7 +86,7 @@ public class UploadFileTest {
   public static Version activeVersion002 = null;
 
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }

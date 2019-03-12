@@ -24,32 +24,41 @@ import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 
 public class VspManagerFactoryImpl extends VspManagerFactory {
-  private static final VendorSoftwareProductManager INSTANCE =
-      new VendorSoftwareProductManagerImpl(
-          VspMergeDaoFactory.getInstance().createInterface(),
-          OrchestrationTemplateDaoFactory.getInstance().createInterface(),
-          OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface(),
-          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
-          VendorLicenseFacadeFactory.getInstance().createInterface(),
-          ServiceModelDaoFactory.getInstance().createInterface(),
-          EnrichedServiceModelDaoFactory.getInstance().createInterface(),
-          VendorLicenseArtifactServiceFactory.getInstance().createInterface(),
-          InformationArtifactGeneratorFactory.getInstance().createInterface(),
-          PackageInfoDaoFactory.getInstance().createInterface(),
-          DeploymentFlavorDaoFactory.getInstance().createInterface(),
-          ComponentDaoFactory.getInstance().createInterface(),
-          ComponentDependencyModelDaoFactory.getInstance().createInterface(),
-          NicDaoFactory.getInstance().createInterface(),
-          ComputeDaoFactory.getInstance().createInterface(),
-          ImageDaoFactory.getInstance().createInterface(),
-          new ManualVspToscaManagerImpl(),
-          UniqueValueDaoFactory.getInstance().createInterface(), CandidateServiceFactory
-          .getInstance().createInterface());
+  private static final VendorSoftwareProductManager INSTANCE = new VendorSoftwareProductManagerImpl.Builder()
+          .vspMerge(VspMergeDaoFactory.getInstance().createInterface())
+          .orchestrationTemplate(OrchestrationTemplateDaoFactory.getInstance().createInterface())
+          .orchestrationTemplateCandidateManager(OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface())
+          .vspInfo(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface())
+          .vendorLicenseFacade(VendorLicenseFacadeFactory.getInstance().createInterface())
+          .serviceModel(ServiceModelDaoFactory.getInstance().createInterface())
+          .enrichedServiceModel(EnrichedServiceModelDaoFactory.getInstance().createInterface())
+          .licenseArtifactsService(VendorLicenseArtifactServiceFactory.getInstance().createInterface())
+          .informationArtifactGenerator(InformationArtifactGeneratorFactory.getInstance().createInterface())
+          .packageInfo(PackageInfoDaoFactory.getInstance().createInterface())
+          .deploymentFlavor(DeploymentFlavorDaoFactory.getInstance().createInterface())
+          .component(ComponentDaoFactory.getInstance().createInterface())
+          .componentDependencyModel(ComponentDependencyModelDaoFactory.getInstance().createInterface())
+          .nic(NicDaoFactory.getInstance().createInterface())
+          .compute(ComputeDaoFactory.getInstance().createInterface())
+          .image(ImageDaoFactory.getInstance().createInterface())
+          .manualVspToscaManager(new ManualVspToscaManagerImpl())
+          .uniqueValue(UniqueValueDaoFactory.getInstance().createInterface())
+          .candidateService(CandidateServiceFactory.getInstance().createInterface())
+          .build();
 
   @Override
   public VendorSoftwareProductManager createInterface() {
