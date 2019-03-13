@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
   protected static final Logger logger =
       LoggerFactory.getLogger(ManifestCreatorNamingConventionImpl.class);
+  private static final String CLOUD_TECH_KEY_WORD = "cloud_tech";
   @Override
   public Optional<ManifestContent> createManifest(
       VspDetails vspDetails, FilesDataStructure filesDataStructure) {
@@ -139,7 +140,11 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
         .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
     if (CollectionUtils.isNotEmpty(forArtifacts)) {
       for (String artifact : forArtifacts) {
-        fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        if (artifact.contains(CLOUD_TECH_KEY_WORD)) {
+            fileDataList.add(createBaseFileData(FileData.Type.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, artifact));
+        } else {
+            fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        }
       }
     }
   }
