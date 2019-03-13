@@ -36,6 +36,11 @@ import java.util.regex.Pattern;
 public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
   protected static final Logger logger =
       LoggerFactory.getLogger(ManifestCreatorNamingConventionImpl.class);
+
+  private static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
+  private static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
+                                                              {"charts", "day0", "configtemplate"} /*cloud specific sub type*/};
+
   @Override
   public Optional<ManifestContent> createManifest(
       VspDetails vspDetails, FilesDataStructure filesDataStructure) {
@@ -132,6 +137,18 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     return Pattern.matches(Constants.BASE_HEAT_REGEX, fileName) && !isVolFile(fileName);
   }
 
+  protected boolean isCloudSpecificArtifact(String artifact) {
+      if (artifact.contains(CLOUD_SPECIFIC_FIXED_KEY_WORD)) {
+          for (int i = 0; i < CLOUD_SPECIFIC_KEY_WORDS.length; i++) {
+              if (Arrays.stream(CLOUD_SPECIFIC_KEY_WORDS[i]).noneMatch(str -> artifact.contains(str))) {
+                  return false;
+              }
+          }
+          return true;
+      } else {
+          return false;
+      }
+  }
 
   private void addArtifactsToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
@@ -139,7 +156,11 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
         .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
     if (CollectionUtils.isNotEmpty(forArtifacts)) {
       for (String artifact : forArtifacts) {
-        fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        if (isCloudSpecificArtifact(artifact)) {
+            fileDataList.add(createBaseFileData(FileData.Type.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, artifact));
+        } else {
+            fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        }
       }
     }
   }
