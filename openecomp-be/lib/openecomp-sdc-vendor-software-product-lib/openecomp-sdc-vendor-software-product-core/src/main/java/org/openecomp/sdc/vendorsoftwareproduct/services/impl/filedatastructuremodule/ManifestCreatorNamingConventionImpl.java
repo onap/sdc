@@ -36,6 +36,11 @@ import java.util.regex.Pattern;
 public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
   protected static final Logger logger =
       LoggerFactory.getLogger(ManifestCreatorNamingConventionImpl.class);
+
+  private static final String CLOUD_TECH_FIXED_KEY_WORD = "cloudtech";
+  private static final String[] CLOUD_TECHNOLOGY_KEY_WORDS = {"k8s", "azure", "aws"};
+  private static final String[] CLOUD_SUBTYPE_KEY_WORDS = {"charts", "day0", "configtemplate"};
+
   @Override
   public Optional<ManifestContent> createManifest(
       VspDetails vspDetails, FilesDataStructure filesDataStructure) {
@@ -132,6 +137,23 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     return Pattern.matches(Constants.BASE_HEAT_REGEX, fileName) && !isVolFile(fileName);
   }
 
+  private boolean isCloudSpecificArtifact(String artifact) {
+      if (artifact.contains(CLOUD_TECH_FIXED_KEY_WORD)) {
+          for (String tech : CLOUD_TECHNOLOGY_KEY_WORDS) {
+              if (artifact.contains(tech)) {
+                  for (String sub : CLOUD_SUBTYPE_KEY_WORDS) {
+                      if (artifact.contains(sub)) {
+                          return true;
+                      }
+                  }
+                  return false;
+              }
+          }
+          return false;
+      } else {
+          return false;
+      }
+  }
 
   private void addArtifactsToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
@@ -139,7 +161,11 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
         .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
     if (CollectionUtils.isNotEmpty(forArtifacts)) {
       for (String artifact : forArtifacts) {
-        fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        if (isCloudSpecificArtifact(artifact)) {
+            fileDataList.add(createBaseFileData(FileData.Type.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, artifact));
+        } else {
+            fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        }
       }
     }
   }
