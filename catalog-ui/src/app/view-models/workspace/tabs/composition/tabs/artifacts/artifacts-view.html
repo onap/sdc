@@ -77,7 +77,7 @@
             </div>
 
         </div>
-        <div class="w-sdc-designer-sidebar-section-footer" data-ng-if="!isViewMode() && artifactType!=='api' && (!isComponentInstanceSelected()||selectedComponent.resourceType=='VF') && ('deployment' != artifactType || selectedComponent.isComplex())">
+        <div class="w-sdc-designer-sidebar-section-footer" data-ng-if="!isViewMode() && artifactType!=='api' && (!isComponentInstanceSelected()||isVfOrPnf()) && ('deployment' != artifactType || selectedComponent.isComplex())">
             <button class="w-sdc-designer-sidebar-section-footer-action tlv-btn blue" data-tests-id="add_Artifact_Button" data-ng-click="addOrUpdate({})" type="button">Add Artifact</button>
         </div>
     </div>

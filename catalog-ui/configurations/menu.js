@@ -475,6 +475,7 @@ const SDC_MENU_CONFIG = {
         ],
         "PNF": [
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
+            {"text": "Deployment Artifact", "action": "onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},

@@ -411,7 +411,16 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - yaml
             - yml
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes:
+            - VFC
+            - CP
+            - VL
+            - VF
+            - CR
+            - VFCMT
+            - Abstract
+            - CVFC
+            - PNF
     PERFORMANCE_COUNTER:
         acceptedTypes:
             - csv
@@ -468,6 +477,13 @@ resourceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+    PM_DICTIONARY:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes:
+            - VF
+            - PNF
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:

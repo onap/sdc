@@ -81,7 +81,7 @@
                         data-ui-sref="workspace.composition.deployment"
                         tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Deployment Artifacts"
                         data-tests-id="deployment-artifact-tab"
-                        data-ng-if="!isPNF() && !isConfiguration() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
+                        data-ng-if="!isConfiguration() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
                         data-ng-class="{'disabled': disabledTabs}">
                     <div class="i-sdc-designer-sidebar-tab-icon sprite-new deployment-artifacts"></div>
                 </button>
