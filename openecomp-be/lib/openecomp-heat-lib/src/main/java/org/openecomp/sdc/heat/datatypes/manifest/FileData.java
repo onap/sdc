@@ -93,6 +93,7 @@ public class FileData {
         MURANO_PKG("MURANO_PKG"),
         VENDOR_LICENSE("VENDOR_LICENSE"),
         VF_LICENSE("VF_LICENSE"),
+        CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT("CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT"),
         OTHER("OTHER");
 
         private String displayName;
