@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import java.io.InputStream;
 import org.onap.sdc.tosca.datatypes.model.*;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
@@ -85,4 +86,6 @@ public interface ToscaAnalyzerService {
 
     List<Map<String, RequirementDefinition>> calculateExposedRequirements(List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
                                                                                  Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment);
+
+    ToscaServiceModel loadToscaCsarPackage(InputStream toscaCsarPackage);
 }
