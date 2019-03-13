@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4863a5d3_b421ffd0",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-13T11:24:04Z",
+      "side": 1,
+      "message": "there are code style errors. Please apply ONAP code style and apply it on this class",
+      "revId": "8a829419d0312767060fae3068b2dec2d9d8adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5dc32d9c_968368c2",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-13T11:24:04Z",
+      "side": 1,
+      "message": "do not pass InputStream as parameter. you can pass byte[] . the function must to handle the closing of the InputStream",
+      "range": {
+        "startLine": 118,
+        "startChar": 50,
+        "endLine": 118,
+        "endChar": 77
+      },
+      "revId": "8a829419d0312767060fae3068b2dec2d9d8adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad87de58_344b7edf",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-13T11:24:04Z",
+      "side": 1,
+      "message": "use contains instead of indexOf(you don\u0027t realey care about the index)",
+      "range": {
+        "startLine": 152,
+        "startChar": 25,
+        "endLine": 152,
+        "endChar": 32
+      },
+      "revId": "8a829419d0312767060fae3068b2dec2d9d8adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a45f27d_54bd6a08",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-13T11:24:04Z",
+      "side": 1,
+      "message": "use isNotEmpty",
+      "range": {
+        "startLine": 153,
+        "startChar": 20,
+        "endLine": 153,
+        "endChar": 40
+      },
+      "revId": "8a829419d0312767060fae3068b2dec2d9d8adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ba93756_1a7c2f27",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-13T11:24:04Z",
+      "side": 1,
+      "message": "obsolete",
+      "range": {
+        "startLine": 204,
+        "startChar": 8,
+        "endLine": 204,
+        "endChar": 43
+      },
+      "revId": "8a829419d0312767060fae3068b2dec2d9d8adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
