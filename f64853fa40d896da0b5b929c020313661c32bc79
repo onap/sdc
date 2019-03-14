@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7208cc55_dd445354",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AbstractOnboardingManifest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-14T07:47:12Z",
+      "side": 1,
+      "message": "Sonar remark on this line \nReason file is not formatted with ONAP code style.\nPlease use onap code style\nhttps://wiki.onap.org/display/DW/Java+code+style\n\nStatements should be on separate lines\n \nCode smell\n \nMajor\nsquid:S00122\n \nFor better readability, do not put more than one statement on a single line.\nNoncompliant Code Example\n  if(someCondition) doSomething();",
+      "revId": "f64853fa40d896da0b5b929c020313661c32bc79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
