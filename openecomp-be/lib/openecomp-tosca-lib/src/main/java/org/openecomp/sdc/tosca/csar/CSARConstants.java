@@ -45,6 +45,10 @@ public class CSARConstants {
     public static final int MANIFEST_METADATA_LIMIT = 4;
     public static final String METADATA_MF_ATTRIBUTE = "metadata";
     public static final String SOURCE_MF_ATTRIBUTE = "Source";
+    public static final String ALGORITHM_MF_ATTRIBUTE = "Algorithm";
+    public static final String HASH_MF_ATTRIBUTE = "Hash";
+    public static final String CMS_BEGIN = "----BEGIN CMS-----";
+    public static final String CMD_END = "----END CMS-----";
     public static final String SEPERATOR_MF_ATTRIBUTE = ":";
     public static final String NON_MANO_MF_ATTRIBUTE = "non_mano_artifact_sets";
     public static final String TOSCA_META_ORIG_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta.original";
@@ -54,6 +58,9 @@ public class CSARConstants {
     public static final String CSAR_VERSION_1_1 = "1.1";
     public static final ImmutableSet<String> NON_FILE_IMPORT_ATTRIBUTES =
             ImmutableSet.of("repository", "namespace_uri", "namespace_prefix");
+    public static final String TOSCA_TYPE_PNF = "pnf";
+    public static final String TOSCA_TYPE_VNF = "vnf";
+    public static final String TOSCA_MANIFEST_FILE_EXT = "mf";
 
     private CSARConstants() {
 

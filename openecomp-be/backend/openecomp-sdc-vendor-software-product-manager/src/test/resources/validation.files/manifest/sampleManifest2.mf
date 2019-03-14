@@ -5,3 +5,26 @@ metadata:
     pnf_release_date_time: 2019-12-14T11:25:00+00:00
 
 Source: Definitions/MainServiceTemplate.yaml
+Algorithm: SHA-abc
+Hash: 09e5a788acb180162c51679ae4c998039fa6644505db2415e35107d1ee213943
+
+Source: http://Definitions/MainServiceTemplate.yaml
+Algorithm: SHA-def
+Hash:36f945953929812aca2701b114b068c71bd8c95ceb3609711428c26325649165
+
+Source: ftp://Definitions/MainServiceTemplate.yaml
+Algorithm: SHA-ghi
+Hash: d0e7828293355a07c2dccaaa765c80b507e60e6167067c950dc2e6b0da0dbd8b
+
+
+----BEGIN CMS-----
+MIGDBgsqhkiG9w0BCRABCaB0MHICAQAwDQYLKoZIhvcNAQkQAwgwXgYJKoZIhvcN
+AQcBoFEET3icc87PK0nNK9ENqSxItVIoSa0o0S/ISczMs1ZIzkgsKk4tsQ0N1nUM
+dvb05OXi5XLPLEtViMwvLVLwSE0sKlFIVHAqSk3MBkkBAJv0Fx0=
+-----END CMS-----
+
+non_mano_artifact_sets:
+    onap_pm_events:
+        Source: Definitions/MainServiceTemplate.yaml
+        Source: http://Definitions/MainServiceTemplate.yaml
+        Source: ftp://Definitions/MainServiceTemplate.yaml

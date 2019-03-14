@@ -42,6 +42,7 @@ public enum Messages {
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
   METADATA_MISSING_OPTIONAL_FOLDERS("Missing folder %s in package"),
   METADATA_UNSUPPORTED_ENTRY("Following entry not supported in TOSCA.meta %s"),
+  METADATA_INVALID_VERSION("Invalid entry %s value %s"),
   METADATA_INVALID_VALUE("Invalid value %s in TOSCA.meta file"),
   METADATA_MISSING_ENTRY("TOSCA.meta file missing entry %s"),
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),

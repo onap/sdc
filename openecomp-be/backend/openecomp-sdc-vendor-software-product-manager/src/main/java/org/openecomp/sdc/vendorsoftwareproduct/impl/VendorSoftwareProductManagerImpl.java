@@ -70,6 +70,7 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -114,7 +115,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilde
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
 import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.csar.OnboardingManifest;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
@@ -635,7 +635,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
         FileContentHandler handler = toscaServiceModel.getArtifactFiles();
         try(InputStream manifestInputStream = getManifest(handler)) {
-          Manifest onboardingManifest = OnboardingManifest.parse(manifestInputStream);
+          Manifest onboardingManifest = new SOL004ManifestOnboarding();
+          onboardingManifest.parse(manifestInputStream);
           etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
         }
     }
