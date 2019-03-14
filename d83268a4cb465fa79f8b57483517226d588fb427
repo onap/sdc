@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b987a71e_7c4928a7",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-14T08:21:35Z",
+      "side": 1,
+      "message": "please add strict equality (\u003d\u003d\u003d) instead",
+      "revId": "d83268a4cb465fa79f8b57483517226d588fb427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
