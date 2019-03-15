@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31edeb89_d73fe59f",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_PNF/Generic_PNF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-03-15T10:56:19Z",
+      "side": 1,
+      "message": "should be sdnc_model_name",
+      "range": {
+        "startLine": 16,
+        "startChar": 6,
+        "endLine": 16,
+        "endChar": 30
+      },
+      "revId": "33d6f0068836a1a5b8636a1b21df417daf00e236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ec47456_d250dd03",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_PNF/Generic_PNF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-03-15T10:56:19Z",
+      "side": 1,
+      "message": "should be sdnc_model_version",
+      "range": {
+        "startLine": 18,
+        "startChar": 6,
+        "endLine": 18,
+        "endChar": 33
+      },
+      "revId": "33d6f0068836a1a5b8636a1b21df417daf00e236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da8466aa_22535dfe",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_VF/Generic_VF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-03-15T10:56:19Z",
+      "side": 1,
+      "message": "should be sdnc_model_name",
+      "range": {
+        "startLine": 30,
+        "startChar": 6,
+        "endLine": 30,
+        "endChar": 30
+      },
+      "revId": "33d6f0068836a1a5b8636a1b21df417daf00e236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f90e3265_9aa4c9d4",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_VF/Generic_VF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-03-15T10:56:19Z",
+      "side": 1,
+      "message": "sdnc_model_version",
+      "range": {
+        "startLine": 32,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 33
+      },
+      "revId": "33d6f0068836a1a5b8636a1b21df417daf00e236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd248aa4_16cef115",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_VF/Generic_VF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-03-15T10:56:19Z",
+      "side": 1,
+      "message": "for VNFs we need one more param \n\n  skip_cds_configBB:\n        type: boolean\n        default: true\n        constraints:\n        - valid_values: [true,false]",
+      "revId": "33d6f0068836a1a5b8636a1b21df417daf00e236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
