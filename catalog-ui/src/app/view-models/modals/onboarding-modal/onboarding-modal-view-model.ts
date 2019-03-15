@@ -202,6 +202,7 @@ export class OnboardingModalViewModel {
             {title: 'Vendor', property: 'vendorName'},
             {title: 'Category', property: 'categories'},
             {title: 'Version', property: 'csarVersion'},
+            {title: 'Type', property: 'resourceType'},
             {title: '#', property: 'importAndUpdate'}
             //{title: 'Date', property: 'componentDate'}
         ];
