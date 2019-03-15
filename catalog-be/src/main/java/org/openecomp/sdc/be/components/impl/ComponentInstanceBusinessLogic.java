@@ -95,6 +95,7 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,6 +119,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class.getName());
     private static final String VF_MODULE = "org.openecomp.groups.VfModule";
     public static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
+    private static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
+    private static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
+                                                                {"charts", "day0", "configtemplate"} /*cloud specific sub type*/};
     public static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
     public static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
     public static final String INVALID_COMPONENT_TYPE = "invalid component type";
@@ -489,6 +493,20 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
+  private boolean isCloudSpecificArtifact(String artifact) {
+      if (artifact.contains(CLOUD_SPECIFIC_FIXED_KEY_WORD)) {
+          for (int i = 0; i < CLOUD_SPECIFIC_KEY_WORDS.length; i++) {
+              if (Arrays.stream(CLOUD_SPECIFIC_KEY_WORDS[i]).noneMatch(str -> artifact.contains(str))) {
+                  return false;
+              }
+          }
+          return true;
+      } else {
+          return false;
+      }
+  }
+
+
     /**
      * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
      * @param containerComponent
@@ -520,7 +538,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (!type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())) {
                     finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
                 }
-                if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
+                if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT.getType()))) {
                     continue;
                 }
                 if (artifact.checkEsIdExist()) {
@@ -549,6 +567,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                 artifactsUid.add(artifactDefinition);
                                 groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
                                 break;
+                            }
+
+                            if (isCloudSpecificArtifact(artifactDefinition.getArtifactName())) {
+                                groupInstance.getArtifacts().add(artifactDefinition.getGeneratedFromId());
                             }
                         }
                     }
