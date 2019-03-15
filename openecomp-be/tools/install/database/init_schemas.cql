@@ -4,7 +4,7 @@ CREATE TYPE IF NOT EXISTS user_candidate_version (version frozen<version>, user 
 CREATE TABLE IF NOT EXISTS version_info (entity_type text, entity_id text, active_version frozen<version>, status text, candidate frozen<user_candidate_version>, viewable_versions set<frozen<version>>, latest_final_version frozen<version>, PRIMARY KEY (entity_type, entity_id));
 CREATE TABLE IF NOT EXISTS version_info_deleted (entity_type text, entity_id text, active_version frozen<version>, status text, candidate frozen<user_candidate_version>, viewable_versions set<frozen<version>>, latest_final_version frozen<version>, PRIMARY KEY (entity_type, entity_id));
 CREATE TABLE IF NOT EXISTS unique_value (type text, value text, PRIMARY KEY ((type, value)));
-CREATE TABLE IF NOT EXISTS package_details (VSP_ID text, version text,DISPLAY_NAME text,vsp_name text,vsp_description text,VENDOR_NAME text,CATEGORY text,SUB_CATEGORY text,VENDOR_RELEASE text,PACKAGE_CHECKSUM text,PACKAGE_TYPE text,TRANSLATE_CONTENT blob,PRIMARY KEY ((VSP_ID, version)));
+CREATE TABLE IF NOT EXISTS package_details (VSP_ID text, version text,DISPLAY_NAME text,vsp_name text,vsp_description text,VENDOR_NAME text,CATEGORY text,SUB_CATEGORY text,VENDOR_RELEASE text,PACKAGE_CHECKSUM text,PACKAGE_TYPE text, RESOURCE_TYPE text, TRANSLATE_CONTENT blob,PRIMARY KEY ((VSP_ID, version)));
 CREATE TABLE IF NOT EXISTS vsp_enriched_service_template (vsp_id text, version frozen<version>, base_name text static, name text, content_data blob, PRIMARY KEY ((vsp_id, version), name));
 CREATE TABLE IF NOT EXISTS vsp_enriched_service_artifact (vsp_id text, version frozen<version>, name text, content_data blob, PRIMARY KEY ((vsp_id, version), name));
 CREATE TABLE IF NOT EXISTS application_config (namespace text, key text, value text, PRIMARY KEY (namespace, key));
@@ -48,3 +48,8 @@ CREATE TABLE IF NOT EXISTS element (space text,item_id text,version_id text,elem
 CREATE TABLE IF NOT EXISTS element_synchronization_state (space text, item_id text, version_id text, element_id text,revision_id text, publish_time timestamp, dirty boolean, PRIMARY KEY (( space, item_id, version_id ), element_id,revision_id));
 CREATE TABLE IF NOT EXISTS element_stage (space text, item_id text,version_id text, element_id text, parent_id text, namespace text, info text, relations text,data blob, searchable_data blob, visualization blob, sub_element_ids set<text>,element_hash text, publish_time timestamp, action text, conflicted boolean,conflict_dependent_ids set<text>, PRIMARY KEY (( space, item_id, version_id, element_id )));
 CREATE TABLE IF NOT EXISTS version_stage (space text, item_id text, version_id text, base_version_id text, creation_time timestamp,modification_time timestamp, publish_time timestamp, action text, PRIMARY KEY (( space, item_id ), version_id));
+--This should be the last line in the file
+--temporary solution for schema update as cassandra doesn't support ALTER IF NOT EXISTS(CASSANDRA-14706),
+-- should be updated when ticket implemented
+-- or removed when not required, e.g. schema update strategy changed
+ALTER TABLE dox.package_details ADD  RESOURCE_TYPE text;

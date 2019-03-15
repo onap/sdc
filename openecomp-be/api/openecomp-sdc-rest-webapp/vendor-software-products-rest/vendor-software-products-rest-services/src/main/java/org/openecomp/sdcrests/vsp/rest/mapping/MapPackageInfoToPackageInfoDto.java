@@ -40,5 +40,6 @@ public class MapPackageInfoToPackageInfoDto extends MappingBase<PackageInfo, Pac
     target.setPackageChecksum(source.getPackageChecksum());
     target.setVendorRelease(source.getVendorRelease());
     target.setVendorName(source.getVendorName());
+    target.setResourceType(source.getResourceType());
   }
 }

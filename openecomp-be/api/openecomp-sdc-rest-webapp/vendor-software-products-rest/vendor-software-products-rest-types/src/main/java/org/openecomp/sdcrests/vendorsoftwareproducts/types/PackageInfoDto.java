@@ -35,5 +35,6 @@ public class PackageInfoDto {
     private String vendorRelease;
     private String packageChecksum;
     private String packageType;
+    private String resourceType;
 
 }

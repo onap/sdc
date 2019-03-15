@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
@@ -101,6 +102,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ResourceType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;
@@ -632,18 +634,31 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
             vspDetails.getFeatureGroups());
     ETSIService etsiService = new ETSIServiceImpl();
-    if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
-        FileContentHandler handler = toscaServiceModel.getArtifactFiles();
-        try(InputStream manifestInputStream = getManifest(handler)) {
-          Manifest onboardingManifest = OnboardingManifest.parse(manifestInputStream);
-          etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
-        }
+    if (etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())) {
+          FileContentHandler handler = toscaServiceModel.getArtifactFiles();
+      try(InputStream manifestInputStream = getManifest(handler)) {
+        Manifest onboardingManifest = OnboardingManifest.parse(manifestInputStream);
+        etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
+        //VSP PNF resource type is supported only for sol004 csar for now, default VSP resource type is VF
+        packageInfo.setResourceType(getResourceType(onboardingManifest));
+      }
     }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
 
     packageInfoDao.create(packageInfo);
     return packageInfo;
+  }
+
+  private String getResourceType(Manifest onboardingManifest) {
+    //Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
+    // validation of manifest done during package upload stage
+    if(onboardingManifest != null && !onboardingManifest.getMetadata().isEmpty()
+            && MANIFEST_PNF_METADATA.stream().anyMatch(e -> onboardingManifest.getMetadata().containsKey(e))){
+        return ResourceType.PNF.name();
+    }
+    //VNF is default resource type
+    return ResourceType.VF.name();
   }
 
   private InputStream getManifest(FileContentHandler handler) throws IOException {

@@ -1,0 +1,7 @@
+metadata:
+pnfd_name: MRF
+pnfd_provider: SunShineCompany
+pnfd_archive_version: 1.0
+pnfd_release_date_time: 2017-01-01T10:00:00+03:00
+
+Source: MainServiceTemplate.yaml

@@ -1,8 +1,8 @@
 metadata:
-    pnf_product_name: RadioNode
-    pnf_provider_id: Bilal Iqbal
-    pnf_package_version: 1.0
-    pnf_release_date_time: 2019-12-14T11:25:00+00:00
+    pnfd_name: RadioNode
+    pnfd_provider: Bilal Iqbal
+    pnfd_archive_version: 1.0
+    pnfd_release_date_time: 2019-12-14T11:25:00+00:00
 
 Source: Artifacts/Deployment/Events/RadioNode_pnf_v1.yaml
 

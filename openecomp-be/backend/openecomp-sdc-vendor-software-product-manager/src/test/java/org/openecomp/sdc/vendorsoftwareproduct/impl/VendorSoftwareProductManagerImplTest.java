@@ -57,6 +57,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ResourceType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
@@ -84,6 +85,8 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -159,7 +162,7 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
   @Test
-  public void testCreatePackageEtsi(){
+  public void testCreatePackageEtsiVNF(){
     try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
         InputStream manifestInput = getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
 
@@ -176,7 +179,8 @@ public class VendorSoftwareProductManagerImplTest {
 
       when(vspInfoDaoMock.get(any())).thenReturn(vsp);
       when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
-      vendorSoftwareProductManager.createPackage("0", new Version());
+      PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+      assertEquals(packageInfo.getResourceType(), ResourceType.VF.name());
     } catch (IOException e) {
       fail();
     }
@@ -199,6 +203,31 @@ public class VendorSoftwareProductManagerImplTest {
       when(vspInfoDaoMock.get(any())).thenReturn(vsp);
       when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
       vendorSoftwareProductManager.createPackage("0", new Version());
+      fail();
+    }
+  }
+
+  @Test
+  public void testCreatePackageEtsiPNF(){
+    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
+        InputStream manifestInput = getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoToscaPNF.mf")) {
+
+      FileContentHandler handler = new FileContentHandler();
+      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
+      handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
+      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
+      VspDetails vsp =
+              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                      "category", "subCategory", "123", null);
+      //want to avoid triggering populateVersionsForVlm method
+      vsp.setVlmVersion(null);
+
+      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
+      PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+      assertEquals(packageInfo.getResourceType(), ResourceType.PNF.name());
+    } catch (IOException e) {
       fail();
     }
   }
