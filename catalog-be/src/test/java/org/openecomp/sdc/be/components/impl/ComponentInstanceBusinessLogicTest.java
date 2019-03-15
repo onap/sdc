@@ -62,6 +62,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import java.util.function.BiPredicate;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -90,6 +91,11 @@ public class ComponentInstanceBusinessLogicTest {
     private final static String REQUIREMENT_UID = "requirementUid";
     private final static String REQUIREMENT_NAME = "requirementName";
     private final static String RELATIONSHIP_TYPE = "relationshipType";
+    private final static String ARTIFACT_1 = "cloudtech_k8s_charts.zip";
+    private final static String ARTIFACT_2 = "cloudtech_azure_day0.zip";
+    private final static String ARTIFACT_3 = "cloudtech_aws_configtemplate.zip";
+    private final static String ARTIFACT_4 = "k8s_charts.zip";
+    private final static String ARTIFACT_5 = "cloudtech_openstack_configtemplate.zip";
 
     @InjectMocks
     private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
@@ -152,6 +158,15 @@ public class ComponentInstanceBusinessLogicTest {
     @Test
     public void testForwardingPathOnVersionChange(){
         getforwardingPathOnVersionChange();
+    }
+
+    @Test
+    public void testIsCloudSpecificArtifact() {
+        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_1));
+        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_2));
+        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_3));
+        assertFalse(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_4));
+        assertFalse(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_5));
     }
 
     private void getforwardingPathOnVersionChange(){
