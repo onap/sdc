@@ -13,3 +13,14 @@ node_types:
         type: list
         entry_schema:
           type: string
+      sdnc_model_name:
+        type: string
+      sdnc_model_version:
+        type: string
+      sdnc_artifact_name:
+        type: string
+      skip_post_instantiation_configuration:
+        type: boolean
+        default: true
+        constraints:
+        - valid_values: [true,false]
