@@ -117,6 +117,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class.getName());
     private static final String VF_MODULE = "org.openecomp.groups.VfModule";
+    private static final String CLOUD_TECH_KEY_WORD = "cloud_tech";
     public static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
     public static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
     public static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
@@ -517,7 +518,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (!type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())) {
                     finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
                 }
-                if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
+                if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT.getType()))) {
                     continue;
                 }
                 if (artifact.checkEsIdExist()) {
@@ -546,6 +547,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                 artifactsUid.add(artifactDefinition);
                                 groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
                                 break;
+                            }
+
+                            if (artifactDefinition.getArtifactName().contains(CLOUD_TECH_KEY_WORD)) {
+                                groupInstance.getArtifacts().add(artifactDefinition.getGeneratedFromId());
                             }
                         }
                     }
