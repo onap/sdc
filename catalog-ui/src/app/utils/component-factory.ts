@@ -135,6 +135,7 @@ export class ComponentFactory {
         newResource.csarVersion = csar.version;
         newResource.packageId = csar.packageId;
         newResource.description = csar.description;
+        newResource.resourceType = csar.resourceType;
         newResource.filterTerm = newResource.name +  ' '  + newResource.description + ' ' + newResource.vendorName + ' ' + newResource.csarVersion
         return newResource;
     };

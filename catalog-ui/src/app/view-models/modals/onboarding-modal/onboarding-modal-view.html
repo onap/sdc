@@ -14,7 +14,7 @@
   ~ limitations under the License.
 -->
 
-<ng1-modal modal="modalOnboarding" class="w-sdc-modal-onboarding w-sdc-classic-top-line-modal" buttons="footerButtons" header="Import VF" show-close-button="true">
+<ng1-modal modal="modalOnboarding" class="w-sdc-modal-onboarding w-sdc-classic-top-line-modal" buttons="footerButtons" header="Import VSP" show-close-button="true">
     <info-tooltip class="general-info-button" info-message-translate="ON_BOARDING_GENERAL_INFO "></info-tooltip>
     <div class="title-wrapper">
         <div>
@@ -80,6 +80,11 @@
                         <!-- Version -->
                         <div class="table-col-general flex-item"  sdc-smart-tooltip>
                             {{component.csarVersion}}
+                        </div>
+
+                        <!-- Type -->
+                        <div class="table-col-general flex-item"  sdc-smart-tooltip>
+                            {{component.resourceType}}
                         </div>
 
                         <!-- Import And Update -->

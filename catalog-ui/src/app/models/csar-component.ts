@@ -30,6 +30,7 @@ export interface ICsarComponent {
     subCategory:string
     vendorName:string;
     packageType:string;
+    resourceType:string;
     vendorRelease:string;
 }
 
