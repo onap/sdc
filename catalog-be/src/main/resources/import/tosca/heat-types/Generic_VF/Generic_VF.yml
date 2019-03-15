@@ -26,3 +26,10 @@ node_types:
       multi_stage_design:
         type: boolean
         default: false
+        type: string
+      cds_blueprint_model_name:
+        type: string
+      cds_blueprint_model_version:
+        type: string
+      sdnc_artifact_name:
+        type: string
