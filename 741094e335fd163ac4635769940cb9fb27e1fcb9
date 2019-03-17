@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b66d83_6de2c53a",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-17T09:40:36Z",
+      "side": 1,
+      "message": "Add PNF to resourceTypes as PNF is known resource(for all similar changes)",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3882577c_44c49240",
+        "filename": "catalog-model/src/test/resources/config/catalog-model/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-17T09:40:36Z",
+      "side": 1,
+      "message": "Add PNF under resource type as it a known resource",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "395e3f11_bb191c15",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/PackageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-17T09:40:36Z",
+      "side": 1,
+      "message": "Replace ResourceType with ResourceTypeEnum if possible as we already have dedicated classes for possible Resource Types",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ced782b_642b44ea",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/ResourceType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-17T09:40:36Z",
+      "side": 1,
+      "message": "Check if we can use ResourceTypeEnum class in \"common-be\" as it contains all the supported resource Enum",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b38be0f2_dbb80566",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2019-03-17T09:40:36Z",
+      "side": 1,
+      "message": "Move this ALTER up under dox schema queries so that it is always with it group and dox.* is also not needed",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
