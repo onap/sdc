@@ -16,7 +16,11 @@
 
 package org.openecomp.sdc.tosca.services.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +31,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,13 +52,19 @@ import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.errors.InvalidToscaFile;
+import org.openecomp.sdc.tosca.errors.InvalidToscaMetaFile;
 import org.openecomp.sdc.tosca.errors.ToscaElementTypeNotFoundErrorBuilder;
+import org.openecomp.sdc.tosca.errors.ToscaEntryDefinitionWasNotFound;
 import org.openecomp.sdc.tosca.errors.ToscaFileNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
@@ -72,6 +84,9 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     private static final String GET_CAPABILITY_TYPE_METHOD_NAME = "getCapability_types";
     private static final String TOSCA_DOT = "tosca.";
     private static final String DOT_ROOT = ".Root";
+    private static final String IMPORTS = "imports";
+    private static final String TOSCA_META_FILE = "TOSCA-Metadata/TOSCA.meta";
+    private static final String ENTRY_DEFINITIONS = "Entry-Definitions";
 
     @Override
     public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
@@ -97,6 +112,151 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             }
         }
         return nodeTypeRequirementsDefinitionList;
+    }
+
+    @Override
+    public ToscaServiceModel loadToscaCsarPackage(byte[] toscaCsarPackage) {
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        FileContentHandler artifactFiles = new FileContentHandler();
+
+        try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(toscaCsarPackage))) {
+            ZipEntry zipEntry;
+            while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+                byte[] fileContent = FileUtils.toByteArray(inputZipStream);
+                String currentEntryName = zipEntry.getName();
+                if (!isFile(currentEntryName)) {
+                    continue;
+                }
+                if (isYamlFile(currentEntryName) && isToscaYamlFile(fileContent)) {
+                    loadToscaYamlFile(toscaServiceModel, toscaExtensionYamlUtil, fileContent, currentEntryName);
+                } else if (currentEntryName.equals(TOSCA_META_FILE)) {
+                    loadToscaMetaFile(toscaServiceModel, fileContent);
+                } else {
+                    artifactFiles.addFile(currentEntryName, fileContent);
+                }
+            }
+            toscaServiceModel.setArtifactFiles(artifactFiles);
+            if (StringUtils.isEmpty(toscaServiceModel.getEntryDefinitionServiceTemplate())) {
+                handleToscaCsarWithoutToscaMetadata(toscaServiceModel);
+            }
+
+        } catch (IOException exc) {
+            throw new SdcRuntimeException(exc.getMessage(), exc);
+        }
+        return toscaServiceModel;
+    }
+
+    private void handleToscaCsarWithoutToscaMetadata(ToscaServiceModel toscaServiceModel) {
+        for (String fileName : toscaServiceModel.getServiceTemplates().keySet()) {
+            if (!fileName.contains("/")) {
+                if (StringUtils.isNotEmpty(toscaServiceModel.getEntryDefinitionServiceTemplate())) {
+                    throw new CoreException(new ToscaEntryDefinitionWasNotFound().build());
+                }
+                toscaServiceModel.setEntryDefinitionServiceTemplate(fileName);
+            }
+        }
+    }
+
+    void loadToscaMetaFile(ToscaServiceModel toscaServiceModel, byte[] toscaMetaFileContent) {
+        String toscaMeta = new String(toscaMetaFileContent);
+        Map toscaMetaMap = new YamlUtil().yamlToObject(toscaMeta, Map.class);
+        if (Objects.isNull(toscaMetaMap.get(ENTRY_DEFINITIONS))) {
+            throw new CoreException(new InvalidToscaMetaFile(ENTRY_DEFINITIONS).build());
+        }
+        String entryDefinition = (String) toscaMetaMap.get(ENTRY_DEFINITIONS);
+        toscaServiceModel.setEntryDefinitionServiceTemplate(entryDefinition);
+    }
+
+    void loadToscaYamlFile(ToscaServiceModel toscaServiceModel, ToscaExtensionYamlUtil toscaExtensionYamlUtil,
+            byte[] fileContent, String fileFullName) {
+        try {
+            String serviceTemplateYamlString = convertServiceTemplateImport(toscaExtensionYamlUtil, fileContent);
+            ServiceTemplate serviceTemplate =
+                    toscaExtensionYamlUtil.yamlToObject(serviceTemplateYamlString, ServiceTemplate.class);
+            toscaServiceModel.addServiceTemplate(fileFullName, serviceTemplate);
+
+        } catch (Exception exc) {
+            throw new CoreException(new InvalidToscaFile(fileFullName, exc.getMessage()).build());
+        }
+    }
+
+    String convertServiceTemplateImport(ToscaExtensionYamlUtil toscaExtensionYamlUtil, byte[] fileContent) {
+
+        Map serviceTemplateMap = toscaExtensionYamlUtil.yamlToObject(new String(fileContent), Map.class);
+        convertToscaImports(serviceTemplateMap, toscaExtensionYamlUtil);
+        return toscaExtensionYamlUtil.objectToYaml(serviceTemplateMap);
+    }
+
+    private void convertToscaImports(Map serviceTemplateMap, ToscaExtensionYamlUtil toscaExtensionYamlUtil) {
+        List<Map<String, Import>> convertedImport = new ArrayList<>();
+        Object importObj = serviceTemplateMap.get(IMPORTS);
+        if (!(importObj instanceof List)) {
+            throw new SdcRuntimeException("Illegal Statement");
+        }
+        List<Object> imports = (List) importObj;
+        if (CollectionUtils.isEmpty(imports)) {
+            return;
+        }
+        for (Object importEntry : imports) {
+            convertToscaImportEntry(convertedImport, importEntry, toscaExtensionYamlUtil);
+        }
+        serviceTemplateMap.remove(IMPORTS);
+        serviceTemplateMap.put(IMPORTS, convertedImport);
+    }
+
+    private void convertToscaImportEntry(List<Map<String, Import>> convertedImport, Object importEntry,
+            ToscaExtensionYamlUtil toscaExtensionYamlUtil) {
+        if (importEntry instanceof String) {
+            convertImportShortNotation(convertedImport, importEntry.toString());
+        } else if (importEntry instanceof Map) {
+            if (((Map) importEntry).containsKey("file")) {
+                Import importObject = toscaExtensionYamlUtil
+                                              .yamlToObject(toscaExtensionYamlUtil.objectToYaml(importEntry),
+                                                      Import.class);
+                convertImportExtendNotation(convertedImport, importObject);
+            } else {
+                convertedImport.add((Map<String, Import>) importEntry);
+            }
+        }
+    }
+
+    private void convertImportExtendNotation(List<Map<String, Import>> convertedImport, Import importEntry) {
+        Map<String, Import> importMap = new HashMap();
+        importMap.put(FileUtils.getFileWithoutExtention(getFileName(importEntry.getFile()).replaceAll("/", "_")),
+                importEntry);
+        convertedImport.add(importMap);
+    }
+
+    private void convertImportShortNotation(List<Map<String, Import>> convertImport, String fileFullName) {
+        Import importObject = new Import();
+        importObject.setFile(fileFullName);
+        Map<String, Import> importMap = new HashMap();
+        importMap
+                .put((FileUtils.getFileWithoutExtention(getFileName(fileFullName)).replaceAll("/", "_")), importObject);
+        convertImport.add(importMap);
+    }
+
+    private static String getFileName(String relativeFileName) {
+        if (relativeFileName.contains("../")) {
+            return relativeFileName.replace("../", "");
+        } else {
+            return relativeFileName;
+        }
+
+    }
+
+    private static boolean isFile(String currentEntryName) {
+        return !(currentEntryName.endsWith("\\") || currentEntryName.endsWith("/"));
+    }
+
+    private boolean isYamlFile(String fileName) {
+        return fileName.endsWith("yaml") || fileName.endsWith("yml");
+    }
+
+    private boolean isToscaYamlFile(byte[] fileContent) {
+        Map fileMap = new YamlUtil().yamlToObject(new String(fileContent), Map.class);
+        return fileMap.containsKey("tosca_definitions_version");
     }
 
     private void updateMinMaxOccurencesForNodeTypeRequirement(Map.Entry<String, RequirementAssignment> entry,
@@ -209,7 +369,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         if (Objects.nonNull(serviceTemplate.getTopology_template()) && MapUtils.isNotEmpty(
                 serviceTemplate.getTopology_template().getNode_templates())) {
             for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : serviceTemplate.getTopology_template()
-                                                                             .getNode_templates().entrySet()) {
+                                                                                    .getNode_templates().entrySet()) {
                 if (isTypeOf(nodeTemplateEntry.getValue(), nodeType, serviceTemplate, toscaServiceModel)) {
                     nodeTemplates.put(nodeTemplateEntry.getKey(), nodeTemplateEntry.getValue());
                 }
@@ -222,8 +382,11 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     @Override
     public Optional<NodeType> fetchNodeType(String nodeTypeKey, Collection<ServiceTemplate> serviceTemplates) {
         Optional<Map<String, NodeType>> nodeTypeMap = serviceTemplates.stream().map(ServiceTemplate::getNode_types)
-                                                              .filter(nodeTypes -> Objects.nonNull(nodeTypes)
-                                                              && nodeTypes.containsKey(nodeTypeKey)).findFirst();
+                                                                      .filter(nodeTypes -> Objects.nonNull(nodeTypes)
+                                                                                                   && nodeTypes
+                                                                                                              .containsKey(
+                                                                                                                      nodeTypeKey))
+                                                                      .findFirst();
         return nodeTypeMap.map(stringNodeTypeMap -> stringNodeTypeMap.get(nodeTypeKey));
     }
 
@@ -285,9 +448,9 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             return Optional.empty();
         }
 
-        if (substitutableNodeTemplate.getProperties() != null
-              && substitutableNodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)
-                 != null) {
+        if (substitutableNodeTemplate.getProperties() != null &&
+                    substitutableNodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)
+                            != null) {
             Object serviceTemplateFilter =
                     substitutableNodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
             if (serviceTemplateFilter instanceof Map) {
@@ -389,14 +552,14 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     }
 
     private boolean isSameRelationship(RequirementAssignment requirementAssignment, String relationship) {
-        return relationship != null
-                       && (requirementAssignment.getRelationship() == null
-                                   || !requirementAssignment.getRelationship().equals(relationship));
+        return relationship != null && (requirementAssignment.getRelationship() == null || !requirementAssignment
+                                                                                                    .getRelationship()
+                                                                                                    .equals(relationship));
     }
 
     private boolean isSameRequirement(RequirementAssignment requirementAssignment, String node) {
         return node != null && (requirementAssignment.getNode() == null || !requirementAssignment.getNode()
-                                                                                    .equals(node));
+                                                                                                 .equals(node));
     }
 
     private boolean isSameCapability(RequirementAssignment requirementAssignment, String capability) {
@@ -486,8 +649,11 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                                               Import.class);
             handleImportWithNoFileEntry(anImport);
             String importFile = anImport.getFile();
-            ServiceTemplate template = toscaServiceModel.getServiceTemplates().get(fetchFileNameForImport(importFile,
-                    serviceTemplate.getMetadata() == null ? null : serviceTemplate.getMetadata().get("filename")));
+            ServiceTemplate template = toscaServiceModel.getServiceTemplates()
+                                                        .get(fetchFullFileNameForImport(importFile,
+                                                                serviceTemplate.getMetadata() == null ? null :
+                                                                        serviceTemplate.getMetadata().get("filename"),
+                                                                serviceTemplate, toscaServiceModel));
             if (Objects.isNull(template) || createdFilesScanned
                                                     .contains(ToscaUtil.getServiceTemplateFileName(template))) {
                 continue;
@@ -573,8 +739,9 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             Import importServiceTemplate = toscaExtensionYamlUtil
                                                    .yamlToObject(toscaExtensionYamlUtil.objectToYaml(importObject),
                                                            Import.class);
-            String fileName = fetchFileNameForImport(importServiceTemplate.getFile(),
-                    serviceTemplate.getMetadata() == null ? null : serviceTemplate.getMetadata().get("filename"));
+            String fileName = fetchFullFileNameForImport(importServiceTemplate.getFile(),
+                    serviceTemplate.getMetadata() == null ? null : serviceTemplate.getMetadata().get("filename"),
+                    serviceTemplate, toscaModel);
             if (filesScanned.contains(fileName)) {
                 return false;
             } else {
@@ -590,16 +757,27 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         return found;
     }
 
-    private String fetchFileNameForImport(String importServiceTemplateFile, String currentMetadatafileName) {
-        if (importServiceTemplateFile.contains("../")) {
-            return importServiceTemplateFile.replace("../", "");
-        } else if (currentMetadatafileName != null && currentMetadatafileName.indexOf('/') != -1) {
-            return currentMetadatafileName.substring(0, currentMetadatafileName.indexOf('/')) + "/"
-                           + importServiceTemplateFile;
-        } else {
-            return importServiceTemplateFile;
+    String fetchFullFileNameForImport(String importServiceTemplateFile, String currentMetadatafileName,
+            ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+        Optional<Map.Entry<String, ServiceTemplate>> serviceTemplateEntry =
+                toscaServiceModel.getServiceTemplates().entrySet().stream()
+                                 .filter(entry -> entry.getValue().equals(serviceTemplate)).findFirst();
+        if (!serviceTemplateEntry.isPresent()) {
+            if (importServiceTemplateFile.contains("../")) {
+                return importServiceTemplateFile.replace("../", "");
+            } else if (currentMetadatafileName != null && currentMetadatafileName.indexOf('/') != -1) {
+                return currentMetadatafileName.substring(0, currentMetadatafileName.indexOf('/')) + "/"
+                               + importServiceTemplateFile;
+            } else {
+                return importServiceTemplateFile;
+            }
         }
 
+        Path currentPath = Paths.get(serviceTemplateEntry.get().getKey()).getParent();
+        if (currentPath == null) {
+            currentPath = Paths.get("");
+        }
+        return currentPath.resolve(importServiceTemplateFile).normalize().toString().replaceAll("\\\\", "/");
     }
 
     private boolean enrichEntityFromCurrentServiceTemplate(ToscaElementTypes elementType, String typeId,
@@ -696,7 +874,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             int rootScanStartInx) {
         String derivedFrom;
         if (serviceTemplate.getCapability_types() != null && serviceTemplate.getCapability_types()
-                                                                     .containsKey(typeId)) {
+                                                                            .containsKey(typeId)) {
 
             filesScanned.clear();
             flatData.addInheritanceHierarchyType(typeId);
@@ -742,18 +920,20 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             targetNodeType.setInterfaces(interfaceNoMerge.get());
             return;
         }
-        targetNodeType.setInterfaces(combineInterfaces(sourceNodeType, targetNodeType));
+        combineInterfaces(sourceNodeType, targetNodeType).ifPresent(targetNodeType::setInterfaces);
     }
 
-    private Map<String, Object> combineInterfaces(NodeType sourceNodeType, NodeType targetNodeType) {
+    private Optional<Map<String, Object>> combineInterfaces(NodeType sourceNodeType, NodeType targetNodeType) {
+        if (MapUtils.isEmpty(sourceNodeType.getInterfaces())) {
+            return Optional.empty();
+        }
         Map<String, Object> combineInterfaces = new HashMap<>();
         for (Map.Entry<String, Object> sourceInterfaceDefEntry : sourceNodeType.getInterfaces().entrySet()) {
             String interfaceName = sourceInterfaceDefEntry.getKey();
             if (!MapUtils.isEmpty(targetNodeType.getInterfaces()) && targetNodeType.getInterfaces()
-                                                                             .containsKey(interfaceName)) {
-                combineInterfaces.put(interfaceName,
-                        combineInterfaceDefinition(sourceInterfaceDefEntry.getValue(),
-                                targetNodeType.getInterfaces().get(interfaceName)));
+                                                                                   .containsKey(interfaceName)) {
+                combineInterfaces.put(interfaceName, combineInterfaceDefinition(sourceInterfaceDefEntry.getValue(),
+                        targetNodeType.getInterfaces().get(interfaceName)));
             } else {
                 combineInterfaces.put(sourceInterfaceDefEntry.getKey(), sourceInterfaceDefEntry.getValue());
             }
@@ -766,7 +946,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             }
         }
 
-        return combineInterfaces;
+        return Optional.of(combineInterfaces);
     }
 
     private Optional<Map<String, Object>> combineInterfaceNoMerge(NodeType sourceNodeType, NodeType targetNodeType) {
@@ -836,13 +1016,13 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
 
     /*
-   * Create node type according to the input substitution service template, while the substitution
-   * service template can be mappted to this node type, for substitution mapping.
-   *
-   * @param substitutionServiceTemplate  substitution serivce template
-   * @param nodeTypeDerivedFromValue derived from value for the created node type
-   * @return the node type
-   */
+     * Create node type according to the input substitution service template, while the substitution
+     * service template can be mappted to this node type, for substitution mapping.
+     *
+     * @param substitutionServiceTemplate  substitution serivce template
+     * @param nodeTypeDerivedFromValue derived from value for the created node type
+     * @return the node type
+     */
     @Override
     public NodeType createInitSubstitutionNodeType(ServiceTemplate substitutionServiceTemplate,
             String nodeTypeDerivedFromValue) {
@@ -893,7 +1073,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
 
     private Map<String, AttributeDefinition> manageSubstitutionNodeTypeAttributes(
-                                                                         ServiceTemplate substitutionServiceTemplate) {
+            ServiceTemplate substitutionServiceTemplate) {
         Map<String, AttributeDefinition> substitutionNodeTypeAttributes = new HashMap<>();
         Map<String, ParameterDefinition> attributes = substitutionServiceTemplate.getTopology_template().getOutputs();
         if (attributes == null) {

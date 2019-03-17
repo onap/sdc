@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import org.apache.commons.io.IOUtils;
+import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -61,6 +62,7 @@ import org.onap.sdc.tosca.datatypes.model.Status;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.tosca.TestUtil;
@@ -83,6 +85,7 @@ public class ToscaAnalyzerServiceImplTest {
     private static final String TOSCA_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
     private static final String CMAUI_INTERFACE_TEST =
             "org.openecomp.resource.vfc.nodes.heat.cmaui_image_interfaceTest";
+    private static final String NODE_TYPE_NO_INTERFACE = "org.openecomp.resource.vfc.nodes.nodeBNoInterface";
 
     /*
     Dictionary:
@@ -222,6 +225,29 @@ public class ToscaAnalyzerServiceImplTest {
             List<String> inheritanceHierarchyType = flatData.getInheritanceHierarchyType();
             Assert.assertNotNull(inheritanceHierarchyType);
             Assert.assertEquals(5, inheritanceHierarchyType.size());
+        }
+    }
+
+    @Test
+    public void testGetFlatNodeTypeNoInterfaces() throws Exception {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        try (InputStream yamlFile = toscaExtensionYamlUtil.loadYamlFileIs(
+                "/mock/analyzerService/ServiceTemplateInterfaceInheritanceTest.yaml")) {
+
+            ServiceTemplate serviceTemplateFromYaml =
+                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+            ToscaFlatData flatData = toscaAnalyzerService
+                                             .getFlatEntity(ToscaElementTypes.NODE_TYPE, NODE_TYPE_NO_INTERFACE,
+                                                     serviceTemplateFromYaml, toscaServiceModel);
+
+            Assert.assertNotNull(flatData);
+            Assert.assertNotNull(flatData.getFlatEntity());
+            NodeType flatEntity = (NodeType) flatData.getFlatEntity();
+            Assert.assertNull(flatEntity.getInterfaces());
+            List<String> inheritanceHierarchyType = flatData.getInheritanceHierarchyType();
+            Assert.assertNotNull(inheritanceHierarchyType);
+            Assert.assertEquals(2, inheritanceHierarchyType.size());
         }
     }
 
@@ -1103,6 +1129,167 @@ public class ToscaAnalyzerServiceImplTest {
     @Test(expected = SdcRuntimeException.class)
     public void testGetFlatEntityThrowsExceptionIncorrectSwitchProvided() {
         toscaAnalyzerService.getFlatEntity(ToscaElementTypes.RELATIONSHIP_TYPE, null, null, null);
+    }
+
+    @Test
+    public void getFullPathFromRelativePathBackwards(){
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        String importFile = "../ImportedServiceTemplate";
+        ServiceTemplate mainServiceTemplate = new ServiceTemplate();
+        ServiceTemplate importedServiceTemplate = new ServiceTemplate();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        toscaServiceModel.addServiceTemplate("Definitions/service/MainServiceTemplate", mainServiceTemplate);
+        toscaServiceModel.addServiceTemplate("Definitions/ImportedServiceTemplate", importedServiceTemplate);
+
+        String fileNameForImport = toscaAnalyzerServiceImpl
+                           .fetchFullFileNameForImport(importFile, null, mainServiceTemplate, toscaServiceModel);
+        assertEquals("Definitions/ImportedServiceTemplate", fileNameForImport);
+    }
+
+    @Test
+    public void getFullPathFromRelativePathForwards(){
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        String importFile = "services/ImportedServiceTemplate";
+        ServiceTemplate mainServiceTemplate = new ServiceTemplate();
+        ServiceTemplate importedServiceTemplate = new ServiceTemplate();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        toscaServiceModel.addServiceTemplate("Definitions/MainServiceTemplate", mainServiceTemplate);
+        toscaServiceModel.addServiceTemplate("Definitions/services/ImportedServiceTemplate", importedServiceTemplate);
+
+        String fileNameForImport = toscaAnalyzerServiceImpl
+                                           .fetchFullFileNameForImport(importFile, null, mainServiceTemplate, toscaServiceModel);
+        assertEquals("Definitions/services/ImportedServiceTemplate", fileNameForImport);
+    }
+
+    @Test
+    public void getFullPathFromRelativePathMix(){
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        String importFile = "../types/global/ImportedServiceTemplate";
+        ServiceTemplate mainServiceTemplate = new ServiceTemplate();
+        ServiceTemplate importedServiceTemplate = new ServiceTemplate();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        toscaServiceModel.addServiceTemplate("Definitions/services/MainServiceTemplate", mainServiceTemplate);
+        toscaServiceModel.addServiceTemplate("Definitions/types/global/ImportedServiceTemplate", importedServiceTemplate);
+
+        String fileNameForImport = toscaAnalyzerServiceImpl
+                                           .fetchFullFileNameForImport(importFile, null, mainServiceTemplate, toscaServiceModel);
+        assertEquals("Definitions/types/global/ImportedServiceTemplate", fileNameForImport);
+    }
+
+    @Test
+    public void testConvertToscaImport() throws Exception {
+        String inputResourceName = "/mock/analyzerService/importConvertTest.yml";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        String convertServiceTemplateImport =
+                toscaAnalyzerServiceImpl.convertServiceTemplateImport(toscaExtensionYamlUtil, uploadedFileData);
+
+        Assert.assertNotNull(convertServiceTemplateImport);
+        ServiceTemplate serviceTemplate =
+                new YamlUtil().yamlToObject(convertServiceTemplateImport, ServiceTemplate.class);
+        Assert.assertNotNull(serviceTemplate.getImports().get(0).get("data"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(1).get("artifacts"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(2).get("capabilities"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(3).get("api_interfaces"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(4).get("api_util_relationships"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(5).get("common"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(6).get("api_util"));
+        Assert.assertNotNull(serviceTemplate.getImports().get(7).get("relationshipsExt"));
+    }
+
+    @Test
+    public void loadValidToscaYamlFileTest() throws Exception {
+        String inputResourceName = "/mock/analyzerService/ServiceTemplateInterfaceInheritanceTest.yaml";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        String fileFullName = "Definition/service.yaml";
+        toscaAnalyzerServiceImpl
+                .loadToscaYamlFile(toscaServiceModel, toscaExtensionYamlUtil, uploadedFileData, fileFullName);
+        Assert.assertNotNull(toscaServiceModel.getServiceTemplate(fileFullName));
+    }
+
+    @Test
+    public void loadInvalidToscaYamlFileTest() throws Exception {
+        thrown.expect(CoreException.class);
+        thrown.expectMessage(StringContains.containsString(
+                "Tosca file 'Definition/service.yaml' is not following TOSCA spec, can't be parsed. Related error - "));
+        String inputResourceName = "/mock/analyzerService/invalidToscaFileTest.yml";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        String fileFullName = "Definition/service.yaml";
+        toscaAnalyzerServiceImpl
+                .loadToscaYamlFile(toscaServiceModel, toscaExtensionYamlUtil, uploadedFileData, fileFullName);
+    }
+
+    @Test
+    public void loadValidToscaMetadataFileTest() throws Exception {
+        String inputResourceName = "/mock/analyzerService/validTosca.meta";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        toscaAnalyzerServiceImpl
+                .loadToscaMetaFile(toscaServiceModel, uploadedFileData);
+        Assert.assertEquals("Definitions/service-Service2-template.yml",
+                toscaServiceModel.getEntryDefinitionServiceTemplate());
+    }
+
+    @Test
+    public void loadInvalidToscaMetadataFileTest() throws Exception {
+        thrown.expect(CoreException.class);
+        thrown.expectMessage("Missing data - TOSCA.meta file must include 'Entry-Definitions' data.");
+        String inputResourceName = "/mock/analyzerService/invalidTosca.meta";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        toscaAnalyzerServiceImpl
+                .loadToscaMetaFile(toscaServiceModel, uploadedFileData);
+    }
+
+    @Test
+    public void loadToscaCsarPackageWithMetadataTest() throws Exception {
+        String inputResourceName = "/mock/analyzerService/toscaPackageWithMetadata.csar";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+        //InputStream toscaPackage = new ByteArrayInputStream(uploadedFileData);
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = toscaAnalyzerServiceImpl.loadToscaCsarPackage(uploadedFileData);
+        assertNotNull(toscaServiceModel);
+        assertEquals("Definitions/service.yaml", toscaServiceModel.getEntryDefinitionServiceTemplate());
+        assertEquals(10, toscaServiceModel.getServiceTemplates().size());
+        assertEquals(1, toscaServiceModel.getArtifactFiles().getFiles().size());
+    }
+
+    @Test
+    public void loadToscaCsarPackageWithoutMetadataTest() throws Exception {
+        String inputResourceName = "/mock/analyzerService/toscaPackageWithoutMetadata.csar";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+        //InputStream toscaPackage = new ByteArrayInputStream(uploadedFileData);
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        ToscaServiceModel toscaServiceModel = toscaAnalyzerServiceImpl.loadToscaCsarPackage(uploadedFileData);
+        assertNotNull(toscaServiceModel);
+        assertEquals("service.yaml", toscaServiceModel.getEntryDefinitionServiceTemplate());
+        assertEquals(10, toscaServiceModel.getServiceTemplates().size());
+        assertEquals(1, toscaServiceModel.getArtifactFiles().getFiles().size());
+    }
+
+    @Test
+    public void loadInvalidToscaCsarPackageWithoutEntryDefTest() throws Exception {
+        thrown.expect(CoreException.class);
+        thrown.expectMessage("TOSCA Entry Definition was not found");
+        String inputResourceName = "/mock/analyzerService/toscaPackageInvalidEntryDef.csar";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+        //InputStream toscaPackage = new ByteArrayInputStream(uploadedFileData);
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        toscaAnalyzerServiceImpl.loadToscaCsarPackage(uploadedFileData);
     }
 }
 

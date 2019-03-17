@@ -85,4 +85,6 @@ public interface ToscaAnalyzerService {
 
     List<Map<String, RequirementDefinition>> calculateExposedRequirements(List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
                                                                                  Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment);
+
+    ToscaServiceModel loadToscaCsarPackage(byte[] toscaCsarPackage);
 }
