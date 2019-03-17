@@ -25,9 +25,13 @@ package org.onap.sdc.tosca.datatypes.model;
 public enum Status {
 
   SUPPORTED("supported"),
+  supported("supported"),
   UNSUPPORTED("unsupported"),
+  unsupported("unsupported"),
   EXPERIMENTAL("experimental"),
-  DEPRECATED("deprecated"),;
+  experimental("experimental"),
+  DEPRECATED("deprecated"),
+  deprecated("deprecated"),;
   private String displayName;
 
   Status(String displayName) {

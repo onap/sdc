@@ -1,0 +1,7 @@
+TOSCA-Meta-File-Version: 1.0
+CSAR-Version: 1.1
+Created-By: Carlos Santana
+Entry-Definitions: Definitions/service-Service2-template.yml
+
+Name: csar.meta
+Content-Type: text/plain
