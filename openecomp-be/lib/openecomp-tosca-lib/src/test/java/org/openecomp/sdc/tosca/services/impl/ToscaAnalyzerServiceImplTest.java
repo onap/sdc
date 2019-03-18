@@ -85,6 +85,7 @@ public class ToscaAnalyzerServiceImplTest {
     private static final String TOSCA_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
     private static final String CMAUI_INTERFACE_TEST =
             "org.openecomp.resource.vfc.nodes.heat.cmaui_image_interfaceTest";
+    private static final String NODE_TYPE_NO_INTERFACE = "org.openecomp.resource.vfc.nodes.nodeBNoInterface";
 
     /*
     Dictionary:
@@ -224,6 +225,29 @@ public class ToscaAnalyzerServiceImplTest {
             List<String> inheritanceHierarchyType = flatData.getInheritanceHierarchyType();
             Assert.assertNotNull(inheritanceHierarchyType);
             Assert.assertEquals(5, inheritanceHierarchyType.size());
+        }
+    }
+
+    @Test
+    public void testGetFlatNodeTypeNoInterfaces() throws Exception {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        try (InputStream yamlFile = toscaExtensionYamlUtil.loadYamlFileIs(
+                "/mock/analyzerService/ServiceTemplateInterfaceInheritanceTest.yaml")) {
+
+            ServiceTemplate serviceTemplateFromYaml =
+                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+            ToscaFlatData flatData = toscaAnalyzerService
+                                             .getFlatEntity(ToscaElementTypes.NODE_TYPE, NODE_TYPE_NO_INTERFACE,
+                                                     serviceTemplateFromYaml, toscaServiceModel);
+
+            Assert.assertNotNull(flatData);
+            Assert.assertNotNull(flatData.getFlatEntity());
+            NodeType flatEntity = (NodeType) flatData.getFlatEntity();
+            Assert.assertNull(flatEntity.getInterfaces());
+            List<String> inheritanceHierarchyType = flatData.getInheritanceHierarchyType();
+            Assert.assertNotNull(inheritanceHierarchyType);
+            Assert.assertEquals(2, inheritanceHierarchyType.size());
         }
     }
 
