@@ -23,6 +23,7 @@
         <module>openecomp-sdc-model-lib</module>
         <module>openecomp-sdc-validation-lib</module>
         <module>openecomp-sdc-datatypes-lib</module>
+        <module>openecomp-sdc-externaltesting-lib</module>
         <module>openecomp-heat-lib</module>
         <module>openecomp-tosca-lib</module>
         <module>openecomp-sdc-action-lib</module>

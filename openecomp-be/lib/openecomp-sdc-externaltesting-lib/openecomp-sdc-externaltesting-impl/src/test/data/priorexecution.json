@@ -1,0 +1,21 @@
+{
+  "scenario": "compliance",
+  "testCaseName": "compliance.compliancetests.sriov",
+  "testSuiteName": "compliancetests",
+  "executionId": "621c97a1-045c-48bd-baeb-3678b6a97080-1552081390570",
+  "parameters": {
+    "vspId": "e1b2ce6d61604a9db5c9845db3a7d6ab",
+    "vspVersion": "bc248d7f8af24d60a8dc3f0ddb98efca",
+    "allowSriov": "true",
+    "csar:MainServiceTemplate.yaml": "",
+    "csp": "ZZFT",
+    "profilespec": "gsmafnw14",
+    "vnftype": "B"
+  },
+  "results": {
+    "this is": "a fake result"
+  },
+  "status": "COMPLETED",
+  "startTime": "2019-03-08T21:43:10.527",
+  "endTime": "2019-03-08T21:43:10.617"
+}
