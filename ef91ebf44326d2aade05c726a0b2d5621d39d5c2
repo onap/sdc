@@ -1,0 +1,486 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02a49310_2ce778c5",
+        "filename": "openecomp-ui/src/sdc-app/common/helpers/ConfigHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "Please explain what this does and why not add another entry to the configuration instead of replacing parts of the URL?",
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b7b8494_bc95b1c9",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "should be i18n",
+      "range": {
+        "startLine": 414,
+        "startChar": 0,
+        "endLine": 414,
+        "endChar": 39
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29b9f7d4_bd2bb711",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingPunchOut.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "this is set in a promise. please have this go through the state/store instead of relying on the order things get loaded and that it is only used after the promise is fulfilled",
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15249c6a_2633b6ef",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProduct.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "same comment as before",
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f94b920d_30e51347",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "code seems to repeat itself a bit. maybe refactor to functions?",
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2cee5125_4b9ff53e",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "turn strings into constants. they are resused",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 346,
+        "endChar": 79
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa3e4008_2a112334",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "isn\u0027t this the same code as before? maybe refactor into a function",
+      "range": {
+        "startLine": 358,
+        "startChar": 0,
+        "endLine": 379,
+        "endChar": 15
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8b9d7a6_9700d8ae",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "why not use the above function and send the e.target.value instead?",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 5
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "121ebc44_9f43e7eb",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 75,
+        "startChar": 40,
+        "endLine": 75,
+        "endChar": 51
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac1e56e0_e8921163",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 232,
+        "startChar": 53,
+        "endLine": 232,
+        "endChar": 64
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15cee13f_a45a8a99",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "isn\u0027t this the same as before?",
+      "range": {
+        "startLine": 243,
+        "startChar": 0,
+        "endLine": 308,
+        "endChar": 60
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f422fe80_d7c49809",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "again - same as before? why not a function that returns what you need",
+      "range": {
+        "startLine": 317,
+        "startChar": 0,
+        "endLine": 367,
+        "endChar": 54
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a9c93029_92b8aa9d",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 428,
+        "startChar": 32,
+        "endLine": 428,
+        "endChar": 77
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad19bb38_2eef1228",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 437,
+        "startChar": 32,
+        "endLine": 437,
+        "endChar": 78
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa064db1_1b26ebb3",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 450,
+        "startChar": 0,
+        "endLine": 455,
+        "endChar": 46
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e29ad04_48b77a03",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/setup/VspValidationSetupView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 126,
+        "startChar": 37,
+        "endLine": 126,
+        "endChar": 75
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ce072a7_b9dd00fb",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 83,
+        "startChar": 28,
+        "endLine": 83,
+        "endChar": 40
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62e1c7b3_a1edff39",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 85,
+        "startChar": 28,
+        "endLine": 85,
+        "endChar": 41
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1fd0df8_d6ba49c6",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "i18n",
+      "range": {
+        "startLine": 94,
+        "startChar": 28,
+        "endLine": 94,
+        "endChar": 76
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "397c7d95_b7fe9fea",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 103,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 37
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4a1d7e1_6492aac4",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 120,
+        "startChar": 0,
+        "endLine": 122,
+        "endChar": 38
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f55645d2_d94fa5a1",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-03-18T13:49:35Z",
+      "side": 1,
+      "message": "same as before",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 22
+      },
+      "revId": "ef91ebf44326d2aade05c726a0b2d5621d39d5c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
