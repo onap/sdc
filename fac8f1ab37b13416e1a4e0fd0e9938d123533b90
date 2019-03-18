@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d8260a0_06d37e9b",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-consumption/service-consumption.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2019-03-18T11:03:49Z",
+      "side": 1,
+      "message": "should be amdocs license",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 3
+      },
+      "revId": "fac8f1ab37b13416e1a4e0fd0e9938d123533b90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02f88eb5_fb16d6f8",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2019-03-18T11:03:49Z",
+      "side": 1,
+      "message": "add \u0027PropertyBEModel\u0027 to here (like it was before)",
+      "range": {
+        "startLine": 28,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 3
+      },
+      "revId": "fac8f1ab37b13416e1a4e0fd0e9938d123533b90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b749663b_32eb3747",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2019-03-18T11:03:49Z",
+      "side": 1,
+      "message": "add \u0027CommonUtils\u0027 to here (like it was before)",
+      "range": {
+        "startLine": 29,
+        "startChar": 25,
+        "endLine": 29,
+        "endChar": 26
+      },
+      "revId": "fac8f1ab37b13416e1a4e0fd0e9938d123533b90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b7ca566_2ec801ab",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2019-03-18T11:03:49Z",
+      "side": 1,
+      "message": "no need to add these lines",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 43
+      },
+      "revId": "fac8f1ab37b13416e1a4e0fd0e9938d123533b90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80618146_3da1ed4d",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2019-03-18T11:03:49Z",
+      "side": 1,
+      "message": "not related to our feature",
+      "range": {
+        "startLine": 256,
+        "startChar": 4,
+        "endLine": 257,
+        "endChar": 74
+      },
+      "revId": "fac8f1ab37b13416e1a4e0fd0e9938d123533b90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
