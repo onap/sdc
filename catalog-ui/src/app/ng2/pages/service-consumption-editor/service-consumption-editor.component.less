@@ -1,0 +1,143 @@
+@import './../../../../assets/styles/variables.less';
+@import './../../../../assets/styles/variables-old.less';
+@import './../../../../assets/styles/sprite.less';
+@import './../../../../assets/styles/mixins_old.less';
+
+.service-consumption-editor {
+  .sdc-modal-top-bar {
+    display: flex;
+    justify-content: space-between;
+    .operation-name {
+      text-transform: capitalize;
+      font-family: @font-opensans-bold;
+      font-size: 18px;
+    }
+  }
+  .expand-collapse-all {
+    display: flex;
+    .expand-all, .collapse-all {
+      color: @main_color_a;
+      border-bottom: solid 1px @main_color_a;
+      font-size: 12px;
+      font-family: @font-opensans-regular;
+      cursor: pointer;
+      width: max-content;
+      line-height: 24px;
+    }
+    .separator-line {
+      border-left: 1px solid @main_color_o;
+      margin: 0 7px;
+    }
+  }
+
+  .i-sdc-form-content-operation-inputs-content {
+    margin-top: 6px;
+    padding-top: 10px;
+    height: 390px;
+    overflow: auto;
+    &.no-inputs {
+      border: 1px solid @main_color_o;
+    }
+    .no-inputs-text {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.7;
+    }
+    .i-sdc-form-content-operation-input-box {
+      border: solid 1px @main_color_o;
+      &:not(:last-of-type) {
+        margin-bottom: 17px;
+      }
+
+      .i-sdc-form-content-operation-input-box-title {
+        .hand;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        height: 38px;
+        font-size: 14px;
+        .expand-collapse-icon {
+          .sprite-new;
+          .expand-collapse-plus-icon;
+          vertical-align: middle;
+          &.expanded {
+            .expand-collapse-minus-icon;
+          }
+        }
+        .operation-input-name {
+          margin-left: 10px;
+          margin-right: 7px;
+          font-family: @font-opensans-bold
+        }
+        .operation-input-type {
+          .type-text {
+            font-family: @font-opensans-bold;
+          }
+          .type-val {
+            font-family: @font-opensans-regular;
+          }
+        }
+      }
+
+      .operation-input-section-row {
+        &.with-top-border, .separator {
+          border-top: 1px solid @main_color_o;
+        }
+        background-color: @tlv_color_t;
+        display: flex;
+        padding: 19px 20px 12px 19px;
+        .operation-input-section-col {
+          flex: 45%;
+          &:not(:last-of-type) {
+            margin-right: 38px;
+          }
+          .i-sdc-form-label {
+            font-size: 12px;
+            font-family: @font-opensans-bold;
+          }
+
+          &.assigned-value {
+          display: flex;
+          flex-direction: column;
+            .i-sdc-form-label {
+              margin-bottom: 0;
+            }
+          }
+
+          /deep/ ui-element-dropdown select, select,
+          /deep/ dynamic-element input {
+            height: 30px;
+          }
+
+          select {
+            margin-top: 2px;
+            border: solid 1px @main_color_o;
+          }
+        }
+      }
+
+      //for complex types
+      /deep/ .operation-input-complex-type-section {
+        background-color: @tlv_color_t;
+        padding: 0 20px 12px 19px;
+        .separator {
+          border-top: 1px solid @main_color_o;
+          padding-bottom: 19px;
+        }
+        .static-values-title-for-complex-type {
+          font-size: 14px;
+          font-family: @font-opensans-bold;
+          margin-bottom: 10px;
+        }
+        .flat-children-container {
+          border: solid 1px @main_color_o;
+        }
+        .dynamic-property {
+          .dynamic-property-row {
+            background-color: @tlv_color_t;
+          }
+        }
+      }
+    }
+  }
+}

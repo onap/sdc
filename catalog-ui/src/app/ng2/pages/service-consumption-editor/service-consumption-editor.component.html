@@ -1,0 +1,98 @@
+
+<div class="service-consumption-editor">
+    <form class="w-sdc-form">
+
+        <div class="sdc-modal-top-bar">
+            <div class="operation-name">{{serviceOperation.operation.name}}</div>
+
+            <div class="sdc-modal-top-bar-buttons">
+                <span (click)="onChangePage(currentIndex - 1)" [ngClass]="{'disabled' : currentIndex === 0 || !checkFormValidForNavigation()}" class="sprite-new left-arrow" data-tests-id="get-prev" tooltip="Previous"></span>
+                <span (click)="onChangePage(currentIndex + 1)" [ngClass]="{'disabled' : currentIndex === serviceOperationsList.length - 1 || !checkFormValidForNavigation()}" class="sprite-new right-arrow" data-tests-id="get-next" tooltip="Next"></span>
+            </div>
+        </div>
+        <div class="expand-collapse-all" *ngIf="serviceOperation.consumptionInputs.length">
+            <div class="expand-all" (click)="onExpandAll()" [ngClass]="{'disabled': isAllInputExpanded()}"> {{'CONSUMPTION_EXPAND_ALL' | translate}}</div>
+            <div class="separator-line"></div>
+            <div class="collapse-all" (click)="onCollapseAll()" [ngClass]="{'disabled': isAllInputCollapsed()}"> {{'CONSUMPTION_COLLAPSE_ALL' | translate}}</div>
+        </div>
+
+
+        <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+
+        <div class="i-sdc-form-content-operation-inputs-content" [ngClass]="{'no-inputs': !serviceOperation.consumptionInputs.length}">
+            <div class="no-inputs-text" *ngIf="!serviceOperation.consumptionInputs.length">{{'CONSUMPTION_NO_INPUTS_TO_SHOW' | translate}}</div>
+            <div class="i-sdc-form-content-operation-input-box" *ngFor="let consumptionInput of serviceOperation.consumptionInputs">
+                <div class="i-sdc-form-content-operation-input-box-title" (click)="onExpandCollapse(consumptionInput)">
+                    <div class="expand-collapse-icon" [ngClass]="{'expanded': consumptionInput.expanded}"></div>
+                    <div class="operation-input-name">{{consumptionInput.name}}</div>
+                    <div class="operation-input-type">
+                        <span class="type-text"> | {{ 'CONSUMPTION_TYPE' | translate}}:</span>
+                        <span class="type-val"> {{consumptionInput.type}} </span>
+                    </div>
+                </div>
+
+                <div class="operation-input-section-row with-top-border" *ngIf="consumptionInput.expanded">
+                    <div class="i-sdc-form-item operation-input-section-col">
+                        <label class="i-sdc-form-label" [ngClass]="{'required': consumptionInput.required}" >{{ 'CONSUMPTION_SOURCE' | translate}}</label>
+                        <ui-element-dropdown
+                                class="i-sdc-form-select"
+                                data-tests-id="sourceType"
+                                [values]="sourceTypes"
+                                [(value)]="consumptionInput.source"
+                                (change)="onSourceChanged(consumptionInput)">
+                        </ui-element-dropdown>
+                    </div>
+
+                    <div class="operation-input-section-col assigned-value">
+                        <label class="i-sdc-form-label" *ngIf="consumptionInput.source !== SOURCE_TYPES.STATIC || consumptionInput.isSimpleType">
+                            {{consumptionInput.assignValueLabel}}
+                        </label>
+                        <dynamic-element
+                                class="dynamic-input-field"
+                                *ngIf="consumptionInput.isSimpleType && (consumptionInput.source === SOURCE_TYPES.STATIC ||  consumptionInput.source === '')"
+                                data-tests-id="inputValue"
+                                [(value)]="consumptionInput.value"
+                                (elementChanged)="onChange($event.value, $event.isValid, consumptionInput)"
+                                [type]="consumptionInput.type">
+                        </dynamic-element>
+                        <select
+                            class="i-sdc-form-select"
+                            *ngIf="consumptionInput.source !== SOURCE_TYPES.STATIC"
+                            [attr.data-tests-id]="inputValue"
+                            (change)="onChange(value, true, consumptionInput)"
+                            [(ngModel)]="consumptionInput.value"
+                            [ngModelOptions]="{standalone: true}">
+                            <option
+                                *ngFor="let propName of consumptionInput.associatedProps"
+                                [ngValue]="propName">
+                                {{propName}}
+                            </option>
+                            <optgroup
+                                *ngFor="let interfaceOperation of consumptionInput.associatedInterfaces"
+                                label="{{interfaceOperation.label}}">
+                                <option
+                                    *ngFor="let output of interfaceOperation.outputs"
+                                    [ngValue]="interfaceOperation.name + '.' + output.name">
+                                    {{output.name}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="operation-input-complex-type-section" *ngIf="consumptionInput.expanded && consumptionInput.source === SOURCE_TYPES.STATIC && !consumptionInput.isSimpleType">
+                    <div class="separator"></div>
+                    <label class="static-values-title-for-complex-type">{{ 'CONSUMPTION_STATIC_VALUES' | translate}}</label>
+                    <div class="dynamic-property" *ngFor="let property of inputFePropertiesMap[consumptionInput.name]">
+                        <dynamic-property
+                            [property]="property"
+                            [readonly]="false"
+                            [expandedChildId]="property.expandedChildPropertyId"
+                            (propertyChanged)="onComplexPropertyChanged(property, consumptionInput)"
+                            (expandChild)="property.updateExpandedChildPropertyId($event)">
+                        </dynamic-property>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
