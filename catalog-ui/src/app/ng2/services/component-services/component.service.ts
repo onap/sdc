@@ -25,16 +25,17 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement
-} from "app/models";
+    OperationModel, BEOperationModel, Capability, Requirement} from "app/models";
+import {COMPONENT_FIELDS, SERVICE_FIELDS} from "app/utils";
 import {downgradeInjectable} from '@angular/upgrade/static';
-import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
 import { ComponentType, ServerTypeUrl } from "../../../utils/constants";
 import { HttpService } from '../http.service';
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
+import {PropertyBEModel} from "../../../models";
+import {CommonUtils} from "../../../utils";
 import {ConstraintObject} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
 import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
@@ -282,7 +283,7 @@ export class ComponentServiceNg2 {
             })
     }
 
-    restoreComponent(componentType:string, componentId:string){ 
+    restoreComponent(componentType:string, componentId:string){
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
     }
 

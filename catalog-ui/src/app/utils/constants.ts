@@ -253,6 +253,8 @@ export class States {
     public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
     public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
     public static WORKSPACE_PROPERTIES = 'workspace.properties';
+    public static WORKSPACE_SERVICE_INPUTS = 'workspace.service_inputs';
+    public static WORKSPACE_RESOURCE_INPUTS = 'workspace.resource_inputs';
     public static WORKSPACE_ATTRIBUTES = 'workspace.attributes';
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
     public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
@@ -336,6 +338,7 @@ export class DEPENDENCY_EVENTS {
 
 export class COMPONENT_FIELDS {
     static COMPONENT_INSTANCES_PROPERTIES = "componentInstancesProperties";
+    static COMPONENT_INSTANCES_INPUTS = "componentInstancesInputs";
     static COMPONENT_INSTANCES_ATTRIBUTES = "componentInstancesAttributes";
     static COMPONENT_ATTRIBUTES = "attributes";
     static COMPONENT_INSTANCES = "componentInstances";
@@ -351,6 +354,7 @@ export class COMPONENT_FIELDS {
     static COMPONENT_POLICIES = "policies";
     static COMPONENT_GROUPS = "groups";
     static COMPONENT_INTERFACE_OPERATIONS = "interfaces";
+    static COMPONENT_INSTANCES_INTERFACES = "componentInstancesInterfaces";
     static COMPONENT_NON_EXCLUDED_GROUPS = "nonExcludedGroups";
     static COMPONENT_NON_EXCLUDED_POLICIES = "nonExcludedPolicies";
 }

@@ -87,6 +87,7 @@ export interface ICompositionGraphScope extends ng.IScope {
     zones: Array<Zone>;
     zoneMinimizeToggle(zoneType: ZoneInstanceType): void;
     zoneInstanceTagged(taggedInstance: ZoneInstance): void;
+    zoneBackgroundClicked() :void;
     zoneInstanceModeChanged(newMode: ZoneInstanceMode, instance: ZoneInstance, zoneId: ZoneInstanceType);
     unsetActiveZoneInstance(): void;
     clickOutsideZoneInstance(): void;

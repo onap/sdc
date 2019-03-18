@@ -26,6 +26,17 @@ import {PropertyModel} from "./properties";
 import {InputPropertyBase} from "./input-property-base";
 import {SchemaPropertyGroupModel} from "./aschema-property";
 
+export class InputsGroup {
+    constructor(inputsObj?:InputsGroup) {
+        _.forEach(inputsObj, (inputs:Array<InputModel>, instance) => {
+            this[instance] = [];
+            _.forEach(inputs, (input:InputModel):void => {
+                this[instance].push(new InputModel(input));
+            });
+        });
+    }
+}
+
 export interface IInputModel extends InputPropertyBase {
     //server data
     definition:boolean;

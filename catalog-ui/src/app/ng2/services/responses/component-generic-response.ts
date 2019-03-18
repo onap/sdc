@@ -22,11 +22,10 @@
  * Created by ob0695 on 4/18/2017.
  */
 
-import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
-    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup,InputFEModel} from "app/models";
+import { ArtifactGroupModel, PropertyModel, PropertiesGroup, InputsGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
+    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup, InterfaceModel} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
-import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../../../models/graph/zones/group-instance";
 
@@ -37,9 +36,11 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public artifacts:ArtifactGroupModel;
     public toscaArtifacts:ArtifactGroupModel;
     public componentInstancesProperties:PropertiesGroup;
+    public componentInstancesInputs:InputsGroup;
     public componentInstancesAttributes:AttributesGroup;
     public componentInstancesRelations:Array<RelationshipModel>;
     public componentInstances:Array<ComponentInstance>;
+    public componentInstancesInterfaces:Map<string,Array<InterfaceModel>>;
     public inputs:Array<InputBEModel>;
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
@@ -58,6 +59,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
 
         if(response.componentInstancesProperties) {
             this.componentInstancesProperties = new PropertiesGroup(response.componentInstancesProperties);
+        }
+        if(response.componentInstancesInputs) {
+            this.componentInstancesInputs = response.componentInstancesInputs;
         }
         if(response.componentInstancesAttributes) {
             this.componentInstancesAttributes = new AttributesGroup(response.componentInstancesAttributes);
@@ -95,6 +99,12 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         if(response.interfaces) {
             this.interfaces = CommonUtils.initInterfaces(response.interfaces);
             this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
+        }
+        if(response.componentInstancesInterfaces) {
+            this.componentInstancesInterfaces = new Map();
+            for (let resourceId in response.componentInstancesInterfaces) {
+                this.componentInstancesInterfaces[resourceId] = CommonUtils.initInterfaces(response.componentInstancesInterfaces[resourceId]);
+            }
         }
         if(response.metadata) {
             this.metadata = new ComponentMetadata().deserialize(response.metadata);

@@ -1,0 +1,26 @@
+<div class='service-consumption'>
+    <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
+    <div class="no-operations-text" data-tests-id="no-operations" *ngIf="!isLoading && !interfacesList.length">{{'CONSUMPTION_NO_OPERATIONS_TO_SHOW' | translate}}</div>
+
+    <div class="interface-operations-group"
+         *ngFor="let interface of interfacesList; let interfaceIndex = index"
+         (click)="expandCollapseInterfaceGroup(interface)">
+        <div class="interface-title first-level hand" [attr.data-tests-id]="interface.displayName" [ngClass]="{'expanded': interface.isExpanded}">
+            <span class="sprite-new expand-collapse-plus-icon expand-collapse-icon"></span>
+            <div class="title-text" tooltips tooltip="{{interface.displayName}}">{{interface.displayName}}</div>
+        </div>
+        <div class="i-sdc-designer-sidebar-section-content-item operations-group" *ngIf="interface.isExpanded">
+            <div class="operation-data"
+             [ngClass]="{'hand': !readonly}"
+             *ngFor="let serviceOperation of interface.operationsList; let opIndex = index"
+             (click)="onSelectOperation($event, interface, opIndex)">
+                <div class="operation-name"
+                     [attr.data-tests-id]="interface.displayName + '.' + serviceOperation.operation.name"
+                     [ngClass]="{'readonly': readonly}"
+                     tooltips tooltip="{{serviceOperation.operation.name}}">
+                    {{serviceOperation.operation.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

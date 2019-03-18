@@ -530,6 +530,14 @@ ng1appModule.config([
             }
         );
         $stateProvider.state(
+            'workspace.composition.consumption', {
+                url: 'consumption',
+                parent: 'workspace.composition',
+                templateUrl: './view-models/workspace/tabs/composition/tabs/service-consumption/service-consumption-view.html',
+                controller: viewModelsModuleName + '.ServiceConsumptionViewModel'
+            }
+        );
+        $stateProvider.state(
             'workspace.composition.dependencies', {
                 url: 'dependencies',
                 parent: 'workspace.composition',

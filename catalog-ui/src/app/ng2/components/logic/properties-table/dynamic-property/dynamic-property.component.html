@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  -->
- 
- 
+
+
 <div *ngIf="!property.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
     [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName, 'readonly':  property.isDisabled ||property.isDeclared}"
     [class.with-top-border]="property.isChildOfListOrMap"
@@ -24,7 +24,9 @@
             <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled ||property.isDeclared || readonly" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
             <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div>
-        <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
+        <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">
+            <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
+        </div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP"><!-- map left cell -->
             <!--<input [value]="property.mapKey" [placeholder]="property.name" (input)="mapKeyChanged.emit($event.target.value)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':property.mapKeyError}" required/>-->
             <dynamic-element #mapKeyInput

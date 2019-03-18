@@ -116,6 +116,14 @@
                     <div class="i-sdc-designer-sidebar-tab-icon sprite-new api"></div>
                 </button>
                 <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
+                        data-ui-sref="workspace.composition.consumption"
+                        tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Service Consumption"
+                        data-tests-id="service-consumption-tab"
+                        data-ng-if="(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
+                        data-ng-class="{'disabled': disabledTabs}">
+                    <div class="i-sdc-designer-sidebar-tab-icon sprite-new import-icon"></div>
+                </button>
+                <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
                         data-ui-sref="workspace.composition.dependencies"
                         tooltips tooltip-class="tooltip-custom tab-tooltip " tooltip-content="Service Dependencies"
                         data-tests-id="service-dependency-tab"
