@@ -70,7 +70,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 409, message = "Service state is invalid for this action"),
             @ApiResponse(code = 502, message = "The server was acting as a gateway or proxy and received an invalid response from the upstream server")})
     public Response activateServiceExternal(
-            @ApiParam(value = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
