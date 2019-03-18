@@ -1,0 +1,119 @@
+{
+  "name": "root",
+  "description": "root",
+  "tests": [],
+  "children": [
+    {
+      "name": "certification",
+      "description": "Available Certification Queries",
+      "children": [
+        {
+          "name": "certificationtests",
+          "description": "Certification Tests",
+          "tests": [
+            {
+              "scenario": "certification",
+              "testCaseName": "certquery",
+              "testSuiteName": "certificationtests",
+              "description": "VSP Certifications",
+              "author": "jguistwite@iconectiv.com",
+              "inputs": [
+                {
+                  "name": "vspId",
+                  "description": "VSP ID",
+                  "type": "text",
+                  "defaultValue": "",
+                  "isOptional": false,
+                  "metadata": {
+                    "maxLength": 36.0,
+                    "minLength": 1.0,
+                    "disabled": true
+                  }
+                },
+                {
+                  "name": "vspVersion",
+                  "description": "Previous VSP Version",
+                  "type": "text",
+                  "defaultValue": "",
+                  "isOptional": false,
+                  "metadata": {
+                    "maxLength": 36.0,
+                    "minLength": 1.0,
+                    "disabled": true
+                  }
+                }
+              ],
+              "endpoint": "opnfv"
+            }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "compliance",
+      "description": "Available Compliance Tests",
+      "tests": [],
+      "children": [
+        {
+          "name": "compliancetests",
+          "description": "Compliance Tests",
+          "tests": [
+            {
+              "scenario": "compliance",
+              "testCaseName": "sriov",
+              "testSuiteName": "compliancetests",
+              "description": "SR-IOV Test",
+              "author": "Jim",
+              "inputs": [
+                {
+                  "name": "vspId",
+                  "description": "VSP ID",
+                  "type": "text",
+                  "isOptional": false,
+                  "metadata": {
+                    "isDisabled": true,
+                    "maxLength": "36",
+                    "minLength": "1"
+                  }
+                },
+                {
+                  "name": "vspVersion",
+                  "description": "VSP Version",
+                  "type": "text",
+                  "isOptional": false,
+                  "metadata": {
+                    "isDisabled": true,
+                    "maxLength": "36",
+                    "minLength": "1"
+                  }
+                },
+                {
+                  "name": "allowSriov",
+                  "description": "Allow SRIOV?",
+                  "type": "select",
+                  "defaultValue": "false",
+                  "isOptional": false,
+                  "metadata": {
+                    "isDisabled": true,
+                    "choices": [
+                      {
+                        "key": "true",
+                        "label": "Yes"
+                      },
+                      {
+                        "key": "false",
+                        "label": "No"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "endpoint": "vtp"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

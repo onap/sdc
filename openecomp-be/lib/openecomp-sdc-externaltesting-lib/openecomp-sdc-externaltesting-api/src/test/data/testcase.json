@@ -1,0 +1,58 @@
+{
+  "scenario": "compliance",
+  "testCaseName": "sriov",
+  "testSuiteName": "compliancetests",
+  "description": "SR-IOV Test",
+  "author": "Jim",
+  "endpoint": "vtp",
+  "outputs": [
+    {
+      "name": "something",
+      "description": "is produced",
+      "type": "integer"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "vspId",
+      "description": "VSP ID",
+      "type": "text",
+      "defaultValue": "",
+      "metadata": {
+        "isDisabled": true,
+        "maxLength": "36",
+        "minLength": "1"
+      }
+    },
+    {
+      "name": "vspVersion",
+      "description": "VSP Version",
+      "type": "text",
+      "defaultValue": "",
+      "metadata": {
+        "isDisabled": true,
+        "maxLength": "36",
+        "minLength": "1"
+      }
+    },
+    {
+      "name": "allowSriov",
+      "description": "Allow SRIOV?",
+      "type": "select",
+      "defaultValue": "false",
+      "metadata": {
+        "isDisabled": true,
+        "choices": [
+          {
+            "key": "true",
+            "label": "Yes"
+          },
+          {
+            "key": "false",
+            "label": "No"
+          }
+        ]
+      }
+    }
+  ]
+}

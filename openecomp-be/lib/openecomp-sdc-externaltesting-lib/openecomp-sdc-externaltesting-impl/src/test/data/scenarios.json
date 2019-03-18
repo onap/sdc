@@ -1,0 +1,10 @@
+[
+  {
+    "name": "certification",
+    "description": "Available Certification Queries"
+  },
+  {
+    "name": "compliance",
+    "description": "Available Compliance Tests"
+  }
+]

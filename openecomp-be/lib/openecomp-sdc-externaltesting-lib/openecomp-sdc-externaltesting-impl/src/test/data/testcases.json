@@ -1,0 +1,16 @@
+[
+  {
+    "scenario": "compliance",
+    "testCaseName": "sriov",
+    "testSuiteName": "compliancetests",
+    "description": "SR-IOV Test",
+    "author": "Jim"
+  },
+  {
+    "scenario": "compliance",
+    "testCaseName": "computeflavors",
+    "testSuiteName": "compliancetests",
+    "description": "Compute Flavours Test",
+    "author": "Jim"
+  }
+]
