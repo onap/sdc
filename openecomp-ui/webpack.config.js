@@ -92,7 +92,8 @@ module.exports = (env, argv) => {
                         ),
                         path.join(__dirname, 'node_modules/react-datepicker/'),
                         path.join(__dirname, 'node_modules/react-select/'),
-                        path.join(__dirname, 'node_modules/sdc-ui/')
+                        path.join(__dirname, 'node_modules/sdc-ui/'),
+                        path.join(__dirname, 'node_modules/react-checkbox-tree/')
                     ]
                 },
                 {

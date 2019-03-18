@@ -48,6 +48,8 @@ import { actionTypes as filterActionTypes } from './onboard/filter/FilterConstan
 import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import SoftwareProductValidationActionHelper from './softwareProduct/validation/SoftwareProductValidationActionHelper.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
     dispatch({
@@ -379,6 +381,53 @@ const OnboardingActionHelper = {
             version,
             status
         });
+    },
+
+    navigateToSoftwareProductValidation(
+        dispatch,
+        { softwareProductId, version, status }
+    ) {
+        SoftwareProductValidationActionHelper.fetchVspChecks(dispatch)
+            .then(() => {
+                SoftwareProductValidationActionHelper.setCertificationChecked(
+                    dispatch,
+                    []
+                );
+                SoftwareProductValidationActionHelper.setComplianceChecked(
+                    dispatch,
+                    []
+                );
+                setCurrentScreen(
+                    dispatch,
+                    enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION,
+                    {
+                        softwareProductId,
+                        version,
+                        status
+                    }
+                );
+            })
+            .catch(error => {
+                dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                    data: {
+                        title: 'ERROR',
+                        msg: error.responseJSON.message,
+                        cancelButtonText: i18n('OK')
+                    }
+                });
+            });
+    },
+
+    navigateToSoftwareProductValidationResults(
+        dispatch,
+        { softwareProductId, version, status }
+    ) {
+        setCurrentScreen(
+            dispatch,
+            enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
+            { softwareProductId, version, status }
+        );
     },
 
     navigateToSoftwareProductDependencies(

@@ -31,6 +31,8 @@ import SoftwareProductAttachments from './softwareProduct/attachments/SoftwarePr
 import SoftwareProductProcesses from './softwareProduct/processes/SoftwareProductProcesses.js';
 import SoftwareProductDeployment from './softwareProduct/deployment/SoftwareProductDeployment.js';
 import SoftwareProductNetworks from './softwareProduct/networks/SoftwareProductNetworks.js';
+import SoftwareProductValidation from './softwareProduct/validation/SoftwareProductValidation.js';
+import SoftwareProductValidationResults from './softwareProduct/validationResults/SoftwareProductValidationResults.js';
 import SoftwareProductDependencies from './softwareProduct/dependencies/SoftwareProductDependencies.js';
 
 import SoftwareProductComponentsList from './softwareProduct/components/SoftwareProductComponents.js';
@@ -145,6 +147,8 @@ export default class OnboardingView extends React.Component {
                         case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
                         case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
                         case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+                        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION:
+                        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS:
                         case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
                         case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
                         case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
@@ -201,6 +205,21 @@ export default class OnboardingView extends React.Component {
                                                 .SOFTWARE_PRODUCT_NETWORKS:
                                                 return (
                                                     <SoftwareProductNetworks
+                                                        {...props}
+                                                    />
+                                                );
+                                            case enums.SCREEN
+                                                .SOFTWARE_PRODUCT_VALIDATION:
+                                                return (
+                                                    <SoftwareProductValidation
+                                                        className="no-padding-content-area"
+                                                        {...props}
+                                                    />
+                                                );
+                                            case enums.SCREEN
+                                                .SOFTWARE_PRODUCT_VALIDATION_RESULTS:
+                                                return (
+                                                    <SoftwareProductValidationResults
                                                         {...props}
                                                     />
                                                 );
