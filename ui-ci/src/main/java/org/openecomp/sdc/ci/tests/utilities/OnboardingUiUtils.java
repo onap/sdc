@@ -130,6 +130,14 @@ public class OnboardingUiUtils {
         DeploymentArtifactPage.verifyArtifactsExistInTable(filePath, updatedVnfFile);
     }
 
+    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String vnfFile, String filepath, User user) throws Exception {
+        ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
+        System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
+
+        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
+        return VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
+    }
+
 
     public static VendorSoftwareProductObject onboardAndValidate(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
         ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));

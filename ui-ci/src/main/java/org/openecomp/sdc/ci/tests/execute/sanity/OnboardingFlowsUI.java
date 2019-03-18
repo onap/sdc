@@ -108,6 +108,23 @@ public class OnboardingFlowsUI extends SetupCDTest {
     }
 
 
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPComplianceFlow(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
+        GeneralUIUtils.clickOnElementByText(vspName);
+        GeneralUIUtils.waitForLoader();
+        GeneralUIUtils.clickOnElementByTestId("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION");
+        GeneralUIUtils.clickOnElementByTestId("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION_RESULTS");
+        assertNotNull(GeneralUIUtils.findByText("No Validation Checks Performed"));
+
+    }
+
+    private String createNewVSP(String filePath, String vnfFile) throws Exception {
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        return OnboardingUiUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser()).getName();
+    }
     public void runOnboardToDistributionFlow(ResourceReqDetails resourceReqDetails, ServiceReqDetails serviceMetadata, String filePath, String vnfFile) throws Exception {
         getExtendTest().log(Status.INFO, "Going to create resource with category: " + resourceReqDetails.getCategories().get(0).getName()
                 + " subCategory: " + resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName()
