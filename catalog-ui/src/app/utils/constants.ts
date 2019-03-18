@@ -336,6 +336,7 @@ export class DEPENDENCY_EVENTS {
 
 export class COMPONENT_FIELDS {
     static COMPONENT_INSTANCES_PROPERTIES = "componentInstancesProperties";
+    static COMPONENT_INSTANCES_INPUTS = "componentInstancesInputs";
     static COMPONENT_INSTANCES_ATTRIBUTES = "componentInstancesAttributes";
     static COMPONENT_ATTRIBUTES = "attributes";
     static COMPONENT_INSTANCES = "componentInstances";
@@ -351,6 +352,7 @@ export class COMPONENT_FIELDS {
     static COMPONENT_POLICIES = "policies";
     static COMPONENT_GROUPS = "groups";
     static COMPONENT_INTERFACE_OPERATIONS = "interfaces";
+    static COMPONENT_INSTANCES_INTERFACES = "componentInstancesInterfaces";
     static COMPONENT_NON_EXCLUDED_GROUPS = "nonExcludedGroups";
     static COMPONENT_NON_EXCLUDED_POLICIES = "nonExcludedPolicies";
 }

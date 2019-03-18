@@ -1,0 +1,22 @@
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content service-consumption">
+    <div class="w-sdc-designer-sidebar-section">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content"
+                         class="w-sdc-designer-sidebar-section-title">
+            <span class="w-sdc-designer-sidebar-section-title-text" tooltips tooltip-content="Operation Consumption">Operation Consumption</span>
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <ng2-service-consumption
+                        [parent-service]="service"
+                        [selected-service]="selectedComponent"
+                        [selected-service-instance-id]="currentComponent.selectedInstance.uniqueId"
+                        [instances-mapped-list]="instancesMappedList"
+                        [parent-service-inputs]="componentInputs"
+                        [readonly]="isViewMode() || !isDesigner()">
+                </ng2-service-consumption>
+            </div>
+        </div>
+    </div>
+</perfect-scrollbar>

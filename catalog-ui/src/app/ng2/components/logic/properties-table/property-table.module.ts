@@ -24,7 +24,7 @@ import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multil
         DynamicPropertyComponent,
         PropertiesTableComponent
     ],
-    exports: [PropertiesTableComponent],
+    exports: [PropertiesTableComponent, DynamicPropertyComponent],
     providers: [FilterChildPropertiesPipe, PropertiesService]
 })
 export class PropertyTableModule {

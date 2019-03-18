@@ -25,10 +25,9 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement
-} from "app/models";
-import {downgradeInjectable} from '@angular/upgrade/static';
+    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement} from "app/models";
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
+import {downgradeInjectable} from '@angular/upgrade/static';
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
@@ -282,7 +281,7 @@ export class ComponentServiceNg2 {
             })
     }
 
-    restoreComponent(componentType:string, componentId:string){ 
+    restoreComponent(componentType:string, componentId:string){
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
     }
 

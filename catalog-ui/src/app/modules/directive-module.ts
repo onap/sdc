@@ -183,6 +183,7 @@ import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-wit
 import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
 import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
 import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
+import { ServiceConsumptionComponent } from '../ng2/components/logic/service-consumption/service-consumption.component';
 import { ServiceDependenciesComponent } from '../ng2/components/logic/service-dependencies/service-dependencies.component';
 import { MultilineEllipsisComponent } from "../ng2/shared/multiline-ellipsis/multiline-ellipsis.component";
 import { InterfaceOperationComponent } from '../ng2/pages/interface-operation/interface-operation.page.component';
@@ -243,6 +244,12 @@ directiveModule.directive('ng2ServicePath', downgradeComponent({
 directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
     component: ServicePathSelectorComponent,
     inputs: ['drawPath', 'deletePaths', 'service', 'selectedPathId'],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2ServiceConsumption', downgradeComponent({
+    component: ServiceConsumptionComponent,
+    inputs: ['parentService', 'selectedService', 'selectedServiceInstanceId', 'instancesMappedList','parentServiceInputs', 'readonly'],
     outputs: []
 }) as angular.IDirectiveFactory);
 

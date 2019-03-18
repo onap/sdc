@@ -23,8 +23,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { Response, URLSearchParams } from '@angular/http';
-import {Service} from "app/models";
-import { downgradeInjectable } from '@angular/upgrade/static';
+import {Service, OperationModel} from "app/models";
 import { HttpService } from '../http.service';
 
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
@@ -37,6 +36,7 @@ import {COMPONENT_FIELDS, SERVICE_FIELDS} from "app/utils/constants";
 import {ComponentServiceNg2} from "./component.service";
 import {ServiceGenericResponse} from "app/ng2/services/responses/service-generic-response";
 import {ServicePathMapItem} from "app/models/graph/nodes-and-links-map";
+import {ConsumptionInput} from 'app/ng2/components/logic/service-consumption/service-consumption.component';
 
 
 @Injectable()
@@ -108,6 +108,26 @@ export class ServiceServiceNg2 extends ComponentServiceNg2 {
             .map((res) => {
                 return this.parseServicePathResponse(res);
             });
+    }
+
+    getServiceConsumptionData(service: Service):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(service.componentType, service.uniqueId, [
+            COMPONENT_FIELDS.COMPONENT_INSTANCES_INTERFACES,
+            COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES,
+            COMPONENT_FIELDS.COMPONENT_INSTANCES_INPUTS,
+            COMPONENT_FIELDS.COMPONENT_INPUTS
+        ]);
+    }
+
+    getServiceConsumptionInputs(service: Service, serviceInstanceId: String, interfaceId: string, operation: OperationModel): Observable<any> {
+        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/consumption/' + serviceInstanceId + '/interfaces/' + interfaceId + '/operations/' + operation.uniqueId + '/inputs')
+            .map(res => {
+                return res.json();
+            });
+    }
+
+    createOrUpdateServiceConsumptionInputs(service: Service, serviceInstanceId: String, consumptionInputsList: Array<{[id: string]: Array<ConsumptionInput>}>): Observable<any> {
+        return this.http.post(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/consumption/' + serviceInstanceId, consumptionInputsList);
     }
 
     checkComponentInstanceVersionChange(service: Service, newVersionId: string):Observable<Array<string>> {
