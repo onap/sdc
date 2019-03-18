@@ -145,7 +145,7 @@ public class DistributionServlet extends BeGenericServlet {
      * @param requestId
      * @param instanceId
      * @param accept
-     * @param contenType
+     * @param contentType
      * @param contenLength
      * @param authorization
      * @param requestJson
@@ -172,7 +172,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
             @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam( hidden = true) String requestJson) {
@@ -251,7 +251,7 @@ public class DistributionServlet extends BeGenericServlet {
      * @param requestId
      * @param instanceId
      * @param accept
-     * @param contenType
+     * @param contentType
      * @param contenLength
      * @param authorization
      * @param requestJson
@@ -279,7 +279,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
             @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam( hidden = true) String requestJson) {

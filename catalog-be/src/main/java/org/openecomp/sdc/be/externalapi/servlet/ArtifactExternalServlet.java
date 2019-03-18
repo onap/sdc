@@ -112,7 +112,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response uploadInterfaceOperationArtifact(
-            @ApiParam(value = "Determines the format of the body of the request", required = true) @HeaderParam(value = HttpHeaders.CONTENT_TYPE) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true) @HeaderParam(value = HttpHeaders.CONTENT_TYPE) String contentType,
             @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
             @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -179,7 +179,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     /**
      * Uploads an artifact to resource or service
      *
-     * @param contenType
+     * @param contentType
      * @param checksum
      * @param userId
      * @param requestId
@@ -212,7 +212,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response uploadArtifact(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
             @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -310,7 +310,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response uploadArtifactToInstance(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
             @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -382,7 +382,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
     /**
      *
-     * @param contenType
+     * @param contentType
      * @param checksum
      * @param userId
      * @param requestId
@@ -415,7 +415,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response updateArtifact(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
             @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -514,7 +514,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response updateArtifactOnResourceInstance(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
             @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
             @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
