@@ -70,6 +70,17 @@ node_types:
             name:
               type: string
 
+  org.openecomp.resource.vfc.nodes.nodeANoInterface:
+    properties:
+      name:
+        type: string
+
+  org.openecomp.resource.vfc.nodes.nodeBNoInterface:
+    derived_from: org.openecomp.resource.vfc.nodes.nodeANoInterface
+    properties:
+      name:
+        type: string
+
 data_types:
   org.openecomp.datatypes.heat.network.MyAddressPair:
     derived_from: org.openecomp.datatypes.heat.network.AddressPair

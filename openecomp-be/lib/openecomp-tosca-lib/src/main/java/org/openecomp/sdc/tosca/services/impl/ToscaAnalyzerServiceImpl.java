@@ -920,10 +920,13 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             targetNodeType.setInterfaces(interfaceNoMerge.get());
             return;
         }
-        targetNodeType.setInterfaces(combineInterfaces(sourceNodeType, targetNodeType));
+        combineInterfaces(sourceNodeType, targetNodeType).ifPresent(targetNodeType::setInterfaces);
     }
 
-    private Map<String, Object> combineInterfaces(NodeType sourceNodeType, NodeType targetNodeType) {
+    private Optional<Map<String, Object>> combineInterfaces(NodeType sourceNodeType, NodeType targetNodeType) {
+        if (MapUtils.isEmpty(sourceNodeType.getInterfaces())) {
+            return Optional.empty();
+        }
         Map<String, Object> combineInterfaces = new HashMap<>();
         for (Map.Entry<String, Object> sourceInterfaceDefEntry : sourceNodeType.getInterfaces().entrySet()) {
             String interfaceName = sourceInterfaceDefEntry.getKey();
@@ -943,7 +946,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             }
         }
 
-        return combineInterfaces;
+        return Optional.of(combineInterfaces);
     }
 
     private Optional<Map<String, Object>> combineInterfaceNoMerge(NodeType sourceNodeType, NodeType targetNodeType) {
