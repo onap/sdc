@@ -1,0 +1,12 @@
+{
+  "scenario": "compliance",
+  "testCaseName": "sriov",
+  "testSuiteName": "compliancetests",
+  "profile": "compliance",
+  "parameters": {
+    "vspId": "VSP-ID",
+    "vspVersion": "VSP-VER",
+    "allowSriov": "true"
+  },
+  "endpoint": "repository"
+}

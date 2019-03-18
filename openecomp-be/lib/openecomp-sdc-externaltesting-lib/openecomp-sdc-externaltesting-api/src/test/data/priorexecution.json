@@ -1,0 +1,20 @@
+{
+  "scenario": "compliance",
+  "testCaseName": "computeflavors",
+  "testSuiteName": "compliancetests",
+  "executionId": "3053ed10-84e6-4f21-aa62-4ca66242d8d8",
+  "parameters": {
+    "vspId": "VSP-ID",
+    "vspVersion": "VSP-VER",
+    "allowSriov": "true",
+    "csp": "ZZFT",
+    "profilespec": "gsmafnw14",
+    "vnftype": "B"
+  },
+  "results": {
+    "hello": "world"
+  },
+  "status": "COMPLETED",
+  "startTime": 1550780567585,
+  "endTime": 1550780567585
+}

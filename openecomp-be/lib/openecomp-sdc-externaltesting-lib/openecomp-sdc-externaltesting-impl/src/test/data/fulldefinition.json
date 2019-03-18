@@ -1,0 +1,26 @@
+{
+  "id": "certquery",
+  "title": "VSP Certifications",
+  "parameters": [
+    {
+      "id": "vspId",
+      "label": "VSP ID",
+      "inputType": "text",
+      "maxLength": 36,
+      "minLength": 1,
+      "placeholder": "VSP ID",
+      "disabled": false,
+      "required": true
+    },
+    {
+      "id": "vspVersion",
+      "label": "VSP Version",
+      "inputType": "text",
+      "maxLength": 36,
+      "minLength": 1,
+      "placeholder": "VSP Version",
+      "disabled": false,
+      "required": true
+    }
+  ]
+}
