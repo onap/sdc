@@ -761,7 +761,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
         Optional<Map.Entry<String, ServiceTemplate>> serviceTemplateEntry =
                 toscaServiceModel.getServiceTemplates().entrySet().stream()
-                                 .filter(entry -> entry.getValue().equals(serviceTemplate)).findFirst();
+                                 .filter(entry -> entry.getValue() == serviceTemplate).findFirst();
         if (!serviceTemplateEntry.isPresent()) {
             if (importServiceTemplateFile.contains("../")) {
                 return importServiceTemplateFile.replace("../", "");
