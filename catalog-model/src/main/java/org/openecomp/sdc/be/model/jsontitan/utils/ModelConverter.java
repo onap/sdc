@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -278,6 +279,8 @@ public class ModelConverter {
             setComponentInstancesRequirementsToComponent(topologyTemplate, component);
 
             setComponentInstancesArtifactsToComponent(topologyTemplate, component);
+
+            setComponentInstancesInterfacesToComponent(topologyTemplate, component);
 
         }
     }
@@ -1181,6 +1184,10 @@ public class ModelConverter {
             if(topologyTemplate.getInstProperties() != null && topologyTemplate.getInstProperties().containsKey(key) && topologyTemplate.getInstProperties().get(key) != null ){
                 List<PropertyDefinition> instanceProps = topologyTemplate.getInstProperties().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new PropertyDefinition(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setProperties(instanceProps);
+            }
+            if(topologyTemplate.getInstInputs() != null && topologyTemplate.getInstInputs().containsKey(key) && topologyTemplate.getInstInputs().get(key) != null ){
+                List<InputDefinition> instanceInputs = topologyTemplate.getInstInputs().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new InputDefinition(e.getValue())).collect(Collectors.toList());
+                currComponentInstance.setInputs(instanceInputs);
             }
             if(topologyTemplate.getComponentInstInterfaces() != null && topologyTemplate.getComponentInstInterfaces().containsKey(key) && topologyTemplate.getComponentInstInterfaces().get(key) != null ){
                 Map<String, Object> interfacesMap = topologyTemplate.getComponentInstInterfaces().get(key).getMapToscaDataDefinition().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

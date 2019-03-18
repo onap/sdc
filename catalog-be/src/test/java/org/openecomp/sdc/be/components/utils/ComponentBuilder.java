@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.components.utils;
 
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.*;
 
@@ -131,6 +132,15 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
         componentInstanceInput.setName(propName);
         componentInstanceInput.setUniqueId(propName);
+        this.addInstanceInput(instanceId, componentInstanceInput);
+        return self();
+    }
+
+    public ComponentBuilder<T, B> addInstanceInput(String instanceId, String propName, List<GetInputValueDataDefinition> getInputValues) {
+        ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
+        componentInstanceInput.setName(propName);
+        componentInstanceInput.setUniqueId(propName);
+        componentInstanceInput.setGetInputValues(getInputValues);
         this.addInstanceInput(instanceId, componentInstanceInput);
         return self();
     }

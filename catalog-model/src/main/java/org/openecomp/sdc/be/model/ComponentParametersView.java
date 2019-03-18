@@ -40,6 +40,7 @@ public class ComponentParametersView {
     private boolean ignoreAdditionalInformation = false;
     private boolean ignoreArtifacts = false;
     private boolean ignoreInterfaces = false;
+    private boolean ignoreComponentInstancesInterfaces = false;
     private boolean ignoreDerivedFrom = false;
     private boolean ignoreAttributesFrom = false;
     private boolean ignoreComponentInstancesAttributesFrom = false;
@@ -146,6 +147,10 @@ public class ComponentParametersView {
                     break;
                 case NODE_FILTER:
                     this.setIgnoreNodeFilter(false);
+                    break;
+                case COMPONENT_INSTANCES_INTERFACES:
+                    this.setIgnoreComponentInstances(false);
+                    this.setIgnoreComponentInstancesInterfaces(false);
                     break;
                 default:
                     break;
@@ -349,6 +354,14 @@ public class ComponentParametersView {
 
     public void setIgnoreInterfaces(boolean ignoreInterfaces) {
         this.ignoreInterfaces = ignoreInterfaces;
+    }
+
+    public boolean isIgnoreComponentInstancesInterfaces() {
+        return ignoreComponentInstancesInterfaces;
+    }
+
+    public void setIgnoreComponentInstancesInterfaces(boolean ignoreComponentInstancesInterfaces) {
+        this.ignoreComponentInstancesInterfaces = ignoreComponentInstancesInterfaces;
     }
 
     public boolean isIgnoreAttributesFrom() {

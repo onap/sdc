@@ -21,9 +21,11 @@
 package org.openecomp.sdc.be.ui.model;
 
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
 import java.util.List;
+import java.util.Map;
 
 public class UiResourceDataTransfer extends UiComponentDataTransfer{
 
@@ -37,6 +39,7 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer{
 
     private List<PropertyDefinition> attributes;
 
+    private Map<String, InterfaceDefinition> interfaces;
 
     private List<String> defaultCapabilities;
 
@@ -89,6 +92,14 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer{
 
     public void setAttributes(List<PropertyDefinition> attributes) {
         this.attributes = attributes;
+    }
+
+    public Map<String, InterfaceDefinition> getInterfaces() {
+        return interfaces;
+    }
+
+    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+        this.interfaces = interfaces;
     }
 
     public List<String> getDefaultCapabilities() {

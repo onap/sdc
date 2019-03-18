@@ -20,6 +20,16 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -27,15 +37,20 @@ import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
-import org.openecomp.sdc.be.ui.model.*;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
+import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiResourceMetadata;
+import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiServiceMetadata;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.*;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 @org.springframework.stereotype.Component("uiComponentDataConverter")
 public class UiComponentDataConverter {
@@ -109,6 +124,16 @@ public class UiComponentDataConverter {
                     NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
                     dataTransfer.setNodeFilterData(nodeFilterConverter.convertDataMapToUI(component.getNodeFilterComponents()));
                 }
+                break;
+            case COMPONENT_INSTANCES_INTERFACES:
+                setComponentInstanceInterfaces(dataTransfer, component);
+                break;
+            case PROPERTIES:
+                setProperties(dataTransfer, component);
+                break;
+            case INTERFACES:
+                setInterfaces(dataTransfer, component);
+                break;
             default:
                 break;
         }
@@ -137,7 +162,6 @@ public class UiComponentDataConverter {
             dataTransfer.setComponentInstancesInputs(component.getComponentInstancesInputs());
         }
     }
-
     private void setComponentInstanceAttributes(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getComponentInstancesAttributes() == null) {
             dataTransfer.setComponentInstancesAttributes(new HashMap<>());
@@ -145,7 +169,6 @@ public class UiComponentDataConverter {
             dataTransfer.setComponentInstancesAttributes(component.getComponentInstancesAttributes());
         }
     }
-
     private void setArtifacts(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getArtifacts() == null) {
             dataTransfer.setArtifacts(new HashMap<>());
@@ -153,7 +176,6 @@ public class UiComponentDataConverter {
             dataTransfer.setArtifacts(component.getArtifacts());
         }
     }
-
     private void setToscaArtifacts(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getToscaArtifacts() == null) {
             dataTransfer.setToscaArtifacts(new HashMap<>());
@@ -221,6 +243,30 @@ public class UiComponentDataConverter {
         }
     }
 
+    private void setProperties(UiComponentDataTransfer dataTransfer, Component component) {
+        if (component.getProperties() == null) {
+            dataTransfer.setProperties(new ArrayList<>());
+        } else {
+            dataTransfer.setProperties(component.getProperties());
+        }
+    }
+
+    private void setInterfaces(UiComponentDataTransfer dataTransfer, Component component) {
+        if (component.getInterfaces() == null) {
+            dataTransfer.setInterfaces(new HashMap<>());
+        } else {
+            dataTransfer.setInterfaces(component.getInterfaces());
+        }
+    }
+
+    private void setComponentInstanceInterfaces(UiComponentDataTransfer dataTransfer, Component component) {
+        if (component.getComponentInstancesInterfaces() == null) {
+            dataTransfer.setComponentInstancesInterfaces(new HashMap<>());
+        } else {
+            dataTransfer.setComponentInstancesInterfaces(component.getComponentInstancesInterfaces());
+        }
+    }
+
     private void setNonExcludedGroups(UiComponentDataTransfer dataTransfer, Component component) {
         List<GroupDefinition> groups = component.getGroups();
         if (groups == null) {
@@ -254,15 +300,6 @@ public class UiComponentDataConverter {
                 continue;
             }
             switch (field) {
-
-                case PROPERTIES:
-                    setProperties(resource, dataTransfer);
-                    break;
-
-                case INTERFACES:
-                    setInterfaces(resource, dataTransfer);
-                    break;
-
                 case DERIVED_FROM:
                     setDerivedFrom(resource, dataTransfer);
                     break;
@@ -285,22 +322,6 @@ public class UiComponentDataConverter {
         }
 
         return dataTransfer;
-    }
-
-    private void setProperties(Resource resource, UiResourceDataTransfer dataTransfer) {
-        if (resource.getProperties() == null) {
-            dataTransfer.setProperties(new ArrayList<>());
-        } else {
-            dataTransfer.setProperties(resource.getProperties());
-        }
-    }
-
-    private void setInterfaces(Resource resource, UiResourceDataTransfer dataTransfer) {
-        if (resource.getInterfaces() == null) {
-            dataTransfer.setInterfaces(new HashMap<>());
-        } else {
-            dataTransfer.setInterfaces(resource.getInterfaces());
-        }
     }
 
     private void setDerivedFrom(Resource resource, UiResourceDataTransfer dataTransfer) {
@@ -338,7 +359,6 @@ public class UiComponentDataConverter {
             switch (field) {
                 case SERVICE_API_ARTIFACTS:
                     setServiceApiArtifacts(service, dataTransfer);
-
                     break;
                 case FORWARDING_PATHS:
                     setForwardingPaths(service, dataTransfer);
@@ -346,9 +366,6 @@ public class UiComponentDataConverter {
                 case METADATA:
                     UiServiceMetadata metadata = new UiServiceMetadata(service.getCategories(), (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
-                    break;
-                case INTERFACES:
-                    setInterfaces(service, dataTransfer);
                     break;
                 default:
                     setUiTranferDataByFieldName(dataTransfer, service, fieldName);
@@ -370,14 +387,6 @@ public class UiComponentDataConverter {
             dataTransfer.setForwardingPaths(new org.openecomp.sdc.be.ui.model.SerializedHashMap<>());
         } else {
             dataTransfer.setForwardingPaths(service.getForwardingPaths());
-        }
-    }
-
-    private void setInterfaces(Service service, UiServiceDataTransfer dataTransfer) {
-        if (service.getInterfaces() == null) {
-            dataTransfer.setInterfaces(new HashMap<>());
-        } else {
-            dataTransfer.setInterfaces(service.getInterfaces());
         }
     }
 

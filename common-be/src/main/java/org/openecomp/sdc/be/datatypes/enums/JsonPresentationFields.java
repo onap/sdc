@@ -224,12 +224,18 @@ public enum JsonPresentationFields {
     IO_WORKFLOW_ID("workflowId", null),
     IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
     IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),
+
+    //Interface
     INTERFACES("interfaces", null),
     OPERATIONS("operations", null),
     OPERATION_IMPLEMENTATION("implementation",null),
     OPERATION_INPUTS("inputs",null),
     OPERATION_OUTPUTS("outputs", null),
-    INPUTS("inputs", null);
+    INPUTS("inputs", null),
+
+    GET_PROPERTY("get_property", null),
+    GET_INPUT("get_input", null),
+    GET_OPERATION_OUTPUT("get_operation_output", null);
 
     private String presentation;
     private GraphPropertyEnum storedAs;

@@ -1,0 +1,72 @@
+package org.openecomp.sdc.be.components.merge.instance;
+
+import fj.data.Either;
+import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@org.springframework.stereotype.Component("ComponentInstanceInterfacesMerge")
+public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeInterface {
+
+    @Autowired
+    private ComponentsUtils componentsUtils;
+
+    @Autowired
+    private ToscaOperationFacade toscaOperationFacade;
+
+    @Override
+    public void saveDataBeforeMerge(DataForMergeHolder dataHolder, Component containerComponent, ComponentInstance currentResourceInstance, Component originComponent) {
+        dataHolder.setOrigInstanceNode(originComponent);
+        dataHolder.setOrigComponentInstanceInterfaces(containerComponent.safeGetComponentInstanceInterfaces(currentResourceInstance.getUniqueId()));
+    }
+
+    @Override
+    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+        List<ComponentInstanceInterface> origInstanceInterfaces = dataHolder.getOrigComponentInstanceInterfaces();
+        ActionStatus mergeStatus = mergeComponentInstanceInterfaces(updatedContainerComponent, newInstanceId, origInstanceInterfaces);
+        return Either.iif(!ActionStatus.OK.equals(mergeStatus), () -> componentsUtils.getResponseFormat(mergeStatus), () -> updatedContainerComponent);
+    }
+
+    private ActionStatus mergeComponentInstanceInterfaces(Component currentComponent, String instanceId, List<ComponentInstanceInterface> prevInstanceInterfaces) {
+        if (CollectionUtils.isEmpty(prevInstanceInterfaces) || MapUtils.isEmpty(currentComponent.getComponentInstancesInterfaces())) {
+            return ActionStatus.OK;
+        }
+
+        if(CollectionUtils.isEmpty(currentComponent.getComponentInstancesInterfaces().get(instanceId))){
+            return ActionStatus.OK;
+        }
+
+        currentComponent.getComponentInstancesInterfaces().get(instanceId).stream()
+            .forEach(newInterfaceDef -> newInterfaceDef.getOperationsMap().values()
+                .forEach(newOperationDef -> prevInstanceInterfaces.stream().filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId()))
+                    .forEach(prevInterfaceDef -> prevInterfaceDef.getOperationsMap().values().stream().filter(in1 -> in1.getUniqueId().equals(newOperationDef.getUniqueId()))
+                        .forEach(oldOperationDef -> mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs())))));
+
+        StorageOperationStatus updateStatus = toscaOperationFacade.updateComponentInstanceInterfaces(currentComponent, instanceId);
+        return componentsUtils.convertFromStorageResponse(updateStatus);
+    }
+
+
+    private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> origInputs, ListDataDefinition<OperationInputDefinition> newInputs){
+        newInputs.getListToscaDataDefinition()
+            .forEach(inp -> origInputs.getListToscaDataDefinition().stream().filter(in -> in.getInputId().equals(inp.getInputId()))
+                .forEach(in -> {
+                    inp.setSourceProperty(in.getSourceProperty());
+                    inp.setSource(in.getSource());
+                    inp.setValue(in.getValue());
+                }));
+    }
+
+}

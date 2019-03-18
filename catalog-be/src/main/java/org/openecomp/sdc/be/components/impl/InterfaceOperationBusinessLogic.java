@@ -17,9 +17,17 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedInputPropertyDefaultValue;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedOutputDefaultValue;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceId;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceType;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationFromInterfaceDefinition;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
+import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,14 +37,21 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
+
+import fj.data.Either;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.User;
@@ -83,9 +98,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
 
         try {
-            Optional<InterfaceDefinition> optionalInterface = InterfaceOperationUtils
-                                                                      .getInterfaceDefinitionFromComponentByInterfaceId(
-                                                                              storedComponent, interfaceId);
+            Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(
+                    storedComponent, interfaceId);
             if (!optionalInterface.isPresent()) {
                 return Either.right(
                         componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceId));
@@ -95,13 +109,19 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             Map<String, Operation> operationsCollection = new HashMap<>();
             for (String operationId : operationsToDelete) {
                 Optional<Map.Entry<String, Operation>> optionalOperation =
-                        InterfaceOperationUtils.getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
+                        getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
                 if (!optionalOperation.isPresent()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND,
                             storedComponent.getUniqueId()));
                 }
 
                 Operation storedOperation = optionalOperation.get().getValue();
+                Either<Boolean, ResponseFormat> validateDeleteOperationContainsNoMappedOutputResponse =
+                        interfaceOperationValidation.validateDeleteOperationContainsNoMappedOutput(storedOperation,
+                                storedComponent, interfaceDefinition);
+                if (validateDeleteOperationContainsNoMappedOutputResponse.isRight()) {
+                    return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
+                }
                 String artifactUuId = storedOperation.getImplementation().getArtifactUUID();
                 CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUuId);
                 if (cassandraStatus != CassandraOperationStatus.OK) {
@@ -190,9 +210,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
 
         try {
-            Optional<InterfaceDefinition> optionalInterface = InterfaceOperationUtils
-                                                                      .getInterfaceDefinitionFromComponentByInterfaceId(
-                                                                              storedComponent, interfaceId);
+            Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(
+                    storedComponent, interfaceId);
             if (!optionalInterface.isPresent()) {
                 return Either.right(
                         componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceId));
@@ -201,7 +220,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
             for (String operationId : operationsToGet) {
                 Optional<Map.Entry<String, Operation>> optionalOperation =
-                        InterfaceOperationUtils.getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
+                        getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
                 if (!optionalOperation.isPresent()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND,
                             storedComponent.getUniqueId()));
@@ -257,7 +276,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             Map<String, Operation> operationsCollection = new HashMap<>();
             for (InterfaceDefinition inputInterfaceDefinition : interfaceDefinitions) {
                 Optional<InterfaceDefinition> optionalInterface =
-                        InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceType(
+                        getInterfaceDefinitionFromComponentByInterfaceType(
                                 storedComponent, inputInterfaceDefinition.getType());
                 Either<Boolean, ResponseFormat> interfaceOperationValidationResponseEither =
                         interfaceOperationValidation
@@ -287,7 +306,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                         addOperationToInterface(interfaceDef, operation);
                     } else {
                         Optional<Map.Entry<String, Operation>> optionalOperation =
-                                InterfaceOperationUtils.getOperationFromInterfaceDefinition(interfaceDef,
+                                getOperationFromInterfaceDefinition(interfaceDef,
                                         operation.getUniqueId());
                         if (!optionalOperation.isPresent()) {
                             titanDao.rollback();
@@ -364,31 +383,53 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             InterfaceDefinition storedInterfaceDef) {
         if (storedInterfaceDef != null) {
             return Either.left(storedInterfaceDef);
-        } else {
-            interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
-            interfaceDefinition.setToscaResourceName(interfaceDefinition.getType());
-            Either<List<InterfaceDefinition>, StorageOperationStatus> interfaceCreateEither =
-                    interfaceOperation.addInterfaces(component.getUniqueId(),
-                            Collections.singletonList(interfaceDefinition));
-            if (interfaceCreateEither.isRight()) {
-                titanDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                        interfaceCreateEither.right().value(), component.getComponentType())));
-            }
-            return Either.left(interfaceCreateEither.left().value().get(0));
         }
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setToscaResourceName(interfaceDefinition.getType());
+        Either<List<InterfaceDefinition>, StorageOperationStatus> interfaceCreateEither =
+                interfaceOperation.addInterfaces(component.getUniqueId(),
+                        Collections.singletonList(interfaceDefinition));
+        if (interfaceCreateEither.isRight()) {
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                    interfaceCreateEither.right().value(), component.getComponentType())));
+        }
+        return Either.left(interfaceCreateEither.left().value().get(0));
     }
 
     private void updateOperationInputDefs(org.openecomp.sdc.be.model.Component component,
-            Collection<Operation> interfaceOperations) {
+                                          Collection<Operation> interfaceOperations) {
         interfaceOperations.stream().filter(operation -> Objects.nonNull(operation.getInputs())).forEach(
                 operation -> operation.getInputs().getListToscaDataDefinition().forEach(
-                        inp -> component.getInputs().stream().filter(in -> inp.getInputId().equals(in.getUniqueId()))
-                                       .forEach(in -> {
-                                           inp.setDefaultValue(in.getDefaultValue());
-                                           inp.setValue(in.getValue());
-                                           inp.setSchema(in.getSchema());
-                                       })));
+                        inp -> component.getInputs()
+                                .forEach(in -> updateOperationInputDefinition(component, inp, in))));
+    }
+
+    private void updateOperationInputDefinition(org.openecomp.sdc.be.model.Component component,
+                                                OperationInputDefinition operationInput,
+                                                InputDefinition componentInput) {
+        if (operationInput.getInputId().equals(componentInput.getUniqueId())) {
+            //Set the default value, value and schema only for inputs mapped to component inputs
+            operationInput.setDefaultValue(componentInput.getDefaultValue());
+            operationInput.setToscaDefaultValue(getInputToscaDefaultValue(operationInput, component));
+            operationInput.setValue(componentInput.getValue());
+            operationInput.setSchema(componentInput.getSchema());
+        }
+        //Set the tosca default value for inputs mapped to component inputs as well as other outputs
+        operationInput.setToscaDefaultValue(getInputToscaDefaultValue(operationInput, component));
+    }
+
+    private String getInputToscaDefaultValue(OperationInputDefinition input,
+                                             org.openecomp.sdc.be.model.Component component) {
+        Map<String, List<String>> defaultInputValue;
+        if (isOperationInputMappedToComponentInput(input, component.getInputs())) {
+            String propertyName = input.getInputId().substring(input.getInputId().indexOf('.') + 1);
+            defaultInputValue = createMappedInputPropertyDefaultValue(propertyName);
+        } else {
+            //Currently inputs can only be mapped to a declared input or an other operation outputs
+            defaultInputValue = createMappedOutputDefaultValue(SELF, input.getInputId());
+        }
+        return new Gson().toJson(defaultInputValue);
     }
 
     private void addOperationToInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation) {
@@ -418,6 +459,57 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             List<InterfaceDefinition> interfaceDefinitions, User user, boolean lock) {
         return createOrUpdateInterfaceOperation(componentId, interfaceDefinitions, user, true,
                 UPDATE_INTERFACE_OPERATION, lock);
+    }
+
+    public Either<List<OperationInputDefinition>, ResponseFormat> getInputsListForOperation(String componentId,
+                                                                                            String componentInstanceId, String interfaceId, String operationId, User user) {
+        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
+        if (componentEither.isRight()){
+            return Either.right(componentEither.right().value());
+        }
+
+        org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
+        validateUserExists(user.getUserId(), GET_INTERFACE_OPERATION, true);
+
+        Either<Boolean, ResponseFormat> lockResult = lockComponentResult(true, storedComponent, GET_INTERFACE_OPERATION);
+        if (lockResult.isRight()) {
+            return Either.right(lockResult.right().value());
+        }
+
+        try{
+            org.openecomp.sdc.be.model.Component parentComponent = componentEither.left().value();
+            Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces =
+                    parentComponent.getComponentInstancesInterfaces();
+            if(MapUtils.isEmpty(componentInstanceInterfaces)) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND,
+                        componentInstanceId));
+            }
+
+            List<ComponentInstanceInterface> componentInstanceInterfaceList =
+                    componentInstanceInterfaces.get(componentInstanceId);
+            for(ComponentInstanceInterface componentInstanceInterface : componentInstanceInterfaceList) {
+                if(componentInstanceInterface.getInterfaceId().equals(interfaceId)){
+                    Map<String, OperationDataDefinition> operations = componentInstanceInterface.getOperations();
+                    if(MapUtils.isNotEmpty(operations) && operations.containsKey(operationId)) {
+                        ListDataDefinition<OperationInputDefinition> inputs = operations.get(operationId).getInputs();
+                        return Either.left(CollectionUtils.isEmpty(inputs.getListToscaDataDefinition())
+                                ? new ArrayList<>() : inputs.getListToscaDataDefinition());
+                    }
+                }
+            }
+            return Either.left(new ArrayList<>());
+        }
+        catch (Exception e) {
+            LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "get", e);
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND));
+        }
+        finally {
+            if (lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
+                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
+            }
+        }
     }
 
 }

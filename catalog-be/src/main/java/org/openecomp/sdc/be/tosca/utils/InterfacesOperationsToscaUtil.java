@@ -16,16 +16,15 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentProperty;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.google.gson.Gson;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -33,6 +32,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
@@ -50,9 +51,7 @@ public class InterfacesOperationsToscaUtil {
     private static final String DOT = ".";
     private static final String DEFAULTP = "defaultp";
 
-    static final String SELF = "SELF";
-    static final String GET_PROPERTY = "get_property";
-    static final String GET_OPERATION_OUTPUT = "get_operation_output";
+    public static final String SELF = "SELF";
 
     private InterfacesOperationsToscaUtil() {
     }
@@ -153,7 +152,7 @@ public class InterfacesOperationsToscaUtil {
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());
-                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation, component);
+                fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaOperation, isServiceProxyInterface);
 
                 toscaOperations.put(operationEntry.getValue().getName(), toscaOperation);
             }
@@ -162,6 +161,7 @@ public class InterfacesOperationsToscaUtil {
             Map<String, Object> interfaceDefAsMap = getObjectAsMap(toscaInterfaceDefinition);
             Map<String, Object> operationsMap = (Map<String, Object>) interfaceDefAsMap.remove(OPERATIONS_KEY);
             if (isServiceProxyInterface) {
+                //Remove input type and copy default value directly into the proxy node template from the node type
                 handleServiceProxyOperationInputValue(operationsMap, interfaceType);
             } else {
                 handleDefaults(operationsMap);
@@ -235,8 +235,9 @@ public class InterfacesOperationsToscaUtil {
     }
 
     private static void fillToscaOperationInputs(OperationDataDefinition operation,
+                                                 Map<String, DataTypeDefinition> dataTypes,
                                                  ToscaLifecycleOperationDefinition toscaOperation,
-                                                 Component component) {
+                                                 boolean isServiceProxyInterface) {
         if (Objects.isNull(operation.getInputs()) || operation.getInputs().isEmpty()) {
             toscaOperation.setInputs(null);
             return;
@@ -246,61 +247,37 @@ public class InterfacesOperationsToscaUtil {
         for (OperationInputDefinition input : operation.getInputs().getListToscaDataDefinition()) {
             ToscaProperty toscaInput = new ToscaProperty();
             toscaInput.setDescription(input.getDescription());
-            String mappedPropertyName;
-            if (Objects.nonNull(input.getInputId())) {
-                if (isOperationInputMappedToComponentProperty(input, component.getInputs())) {
-                    mappedPropertyName = input.getInputId().substring(input.getInputId().indexOf(DOT) + 1);
-                    toscaInput.setDefaultp(createMappedInputPropertyDefaultValue(mappedPropertyName));
-                } else {
-                    mappedPropertyName = input.getInputId();
-                    toscaInput.setDefaultp(createMappedOutputDefaultValue(mappedPropertyName));
-                }
-            }
             toscaInput.setType(input.getType());
             toscaInput.setRequired(input.isRequired());
+            if (isServiceProxyInterface) {
+                String inputValue = Objects.nonNull(input.getValue()) ? getInputValue(input.getValue()) :
+                        getInputValue(input.getToscaDefaultValue());
+                toscaInput.setDefaultp(new PropertyConvertor().convertToToscaObject(input.getType(),
+                        inputValue, input.getSchemaType(), dataTypes, false));
+            } else {
+                toscaInput.setDefaultp(new PropertyConvertor().convertToToscaObject(input.getType(),
+                        getInputValue(input.getToscaDefaultValue()), input.getSchemaType(), dataTypes, false));
+            }
             toscaInputs.put(input.getName(), toscaInput);
         }
-
         toscaOperation.setInputs(toscaInputs);
     }
 
-    private static Map<String, List<String>> createMappedInputPropertyDefaultValue(String propertyName) {
-        Map<String, List<String>> getPropertyMap = new HashMap<>();
-        List<String> values = new ArrayList<>();
-        values.add(SELF);
-        if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
-            values.addAll(Arrays.asList(propertyName.split("\\.")));
+    private static String getInputValue(String inputValue) {
+        String toscaInputValue = inputValue;
+        if (Objects.nonNull(inputValue) && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
+            Gson gson = new Gson();
+            Map<String, List<String>> consumptionValue = gson.fromJson(inputValue, Map.class);
+            List<String> mappedOutputValue =
+                    consumptionValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
+            //Extract the interface name from the interface type
+            String interfaceType = mappedOutputValue.get(1);
+            String interfaceName = interfaceType.substring(interfaceType.lastIndexOf('.') + 1);
+            mappedOutputValue.remove(1);
+            mappedOutputValue.add(1, interfaceName);
+            toscaInputValue = gson.toJson(consumptionValue);
         }
-
-        getPropertyMap.put(GET_PROPERTY, values);
-
-        return getPropertyMap;
-    }
-
-    /**
-     * Create the value for operation input mapped to an operation output.
-     * @param propertyName the mapped other operation output full name
-     * @return input map for tosca
-     */
-    private static Map<String, List<String>> createMappedOutputDefaultValue(String propertyName) {
-        Map<String, List<String>> getOperationOutputMap = new HashMap<>();
-        //For operation input mapped to other operation output parameter, the mapped property value
-        // should be of the format <interface name>.<operation name>.<output parameter name>
-        // Operation name and output param name should not contain "."
-        List<String> defaultMappedOperationOutputValue = new ArrayList<>();
-        String[] tokens = propertyName.split("\\.");
-        if (tokens.length > 2) {
-            defaultMappedOperationOutputValue.add(SELF);
-            String outputPropertyName = tokens[tokens.length - 1];
-            String operationName = tokens[tokens.length - 2];
-            String mappedPropertyInterfaceType =
-                    propertyName.substring(0, propertyName.indexOf(operationName + '.' + outputPropertyName) - 1);
-            String interfaceName =
-                    mappedPropertyInterfaceType.substring(mappedPropertyInterfaceType.lastIndexOf('.') + 1);
-            defaultMappedOperationOutputValue.addAll(Arrays.asList(interfaceName, operationName, outputPropertyName));
-            getOperationOutputMap.put(GET_OPERATION_OUTPUT, defaultMappedOperationOutputValue);
-        }
-        return getOperationOutputMap;
+        return toscaInputValue;
     }
 
     private static Map<String, Object> getObjectAsMap(Object obj) {

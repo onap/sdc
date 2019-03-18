@@ -22,6 +22,7 @@ public class DataForMergeHolder {
     private Component origInstanceNode;
     private Component currInstanceNode;
     private String origComponentInstId;
+    private List<ComponentInstanceInterface> origComponentInstanceInterfaces;
 
     public DataForMergeHolder() {
         origComponentInstanceInputs = new ArrayList<>();
@@ -30,6 +31,7 @@ public class DataForMergeHolder {
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
         origInstanceCapabilities = new ArrayList<>();
+        origComponentInstanceInterfaces = new ArrayList<>();
     }
 
     List<ArtifactDefinition> getOrigComponentInstanceHeatEnvArtifacts() {
@@ -154,5 +156,13 @@ public class DataForMergeHolder {
 
     public void setOrigComponentInstId(String origComponentInstId) {
         this.origComponentInstId = origComponentInstId;
+    }
+
+    public List<ComponentInstanceInterface> getOrigComponentInstanceInterfaces() {
+        return origComponentInstanceInterfaces;
+    }
+
+    public void setOrigComponentInstanceInterfaces(List<ComponentInstanceInterface> origComponentInstanceInterfaces) {
+        this.origComponentInstanceInterfaces = origComponentInstanceInterfaces;
     }
 }

@@ -20,6 +20,13 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import fj.data.Either;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -30,7 +37,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -40,8 +53,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
@@ -279,6 +290,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     return Either.right(updateInputObjectValue.right().value());
                 }
                 String newValue = updateInputObjectValue.left().value();
+                currInput.setValue(newValue);
                 currInput.setDefaultValue(newValue);
                 currInput.setOwnerId(userId);
                 Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currInput);

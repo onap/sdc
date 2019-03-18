@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.tosca.model.*;
 import org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil;
@@ -509,27 +510,8 @@ public class ToscaExportHandler {
     }
 
     private Either<ToscaTemplate, ToscaError> convertNodeType(Map<String, Component> componentsCache, Component component, ToscaTemplate toscaNode,
-            Map<String, ToscaNodeType> nodeTypes) {
-        log.debug("start convert node type for {}", component.getUniqueId());
-        ToscaNodeType toscaNodeType = createNodeType(component);
-
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
-        if (dataTypesEither.isRight()) {
-            log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
-            return Either.right(ToscaError.GENERAL_ERROR);
-        }
-
-        Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
-        Either<ToscaNodeType, ToscaError> properties = propertyConvertor.convertProperties(component, toscaNodeType,
-                dataTypes);
-        if (properties.isRight()) {
-            return Either.right(properties.right().value());
-        }
-        toscaNodeType = properties.left().value();
-        log.debug("Properties converted for {}", component.getUniqueId());
-
-        // Extracted to method for code reuse
-        return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+                                                              Map<String, ToscaNodeType> nodeTypes) {
+        return convertInterfaceNodeType(componentsCache, component, toscaNode, nodeTypes, false);
     }
 
     private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache,
@@ -546,10 +528,10 @@ public class ToscaExportHandler {
             return Either.right(ToscaError.GENERAL_ERROR);
         }
         List<String> allGlobalInterfaceTypes = lifecycleTypeEither.left().value()
-                                                                  .values()
-                                                                  .stream()
-                                                                  .map(interfaceDef -> interfaceDef.getType())
-                                                                  .collect(Collectors.toList());
+                .values()
+                .stream()
+                .map(InterfaceDataDefinition::getType)
+                .collect(Collectors.toList());
         toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
 
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
@@ -570,14 +552,38 @@ public class ToscaExportHandler {
         if(CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
             mergedProperties = properties.stream().collect(Collectors.toMap(
-                PropertyDataDefinition::getName,
-                property -> propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY)));
+                    PropertyDataDefinition::getName,
+                    property -> propertyConvertor.convertProperty(dataTypes, property,
+                            PropertyConvertor.PropertyType.PROPERTY)));
         }
-        if (!mergedProperties.isEmpty()) {
+        if (MapUtils.isNotEmpty(mergedProperties) && Objects.nonNull(inputDef)) {
+            resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
             toscaNodeType.setProperties(mergedProperties);
         }
         // Extracted to method for code reuse
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+    }
+
+    private void resolveDefaultPropertyValue(List<InputDefinition> inputDef,
+                                             Map<String, ToscaProperty> mergedProperties,
+                                             Map<String, DataTypeDefinition> dataTypes) {
+        for (Map.Entry<String, ToscaProperty> mergedPropertyEntry : mergedProperties.entrySet()) {
+            ToscaProperty value = mergedPropertyEntry.getValue();
+            if (Objects.nonNull(value) && value.getDefaultp() instanceof Map) {
+                Map<String, String> valueAsMap = (Map<String, String>) value.getDefaultp();
+                String inputName = valueAsMap.get(ToscaFunctions.GET_INPUT.getFunctionName());
+                Optional<InputDefinition> matchedInputDefinition = inputDef.stream()
+                        .filter(componentInput -> componentInput.getName().equals(inputName))
+                        .findFirst();
+                if (matchedInputDefinition.isPresent()) {
+                    InputDefinition matchedInput = matchedInputDefinition.get();
+                    Object resolvedDefaultValue = new PropertyConvertor().convertToToscaObject(matchedInput.getType(),
+                            matchedInput.getDefaultValue(), matchedInput.getSchemaType(), dataTypes, false);
+                    value.setDefaultp(resolvedDefaultValue);
+                    mergedProperties.put(mergedPropertyEntry.getKey(), value);
+                }
+            }
+        }
     }
 
   private void addInputsToProperties(Map<String, DataTypeDefinition> dataTypes,
@@ -692,12 +698,14 @@ public class ToscaExportHandler {
                 addPropertiesOfParentComponent(dataTypes, originalComponent, props);
             }
 
-            if (null != componentInstancesProperties && componentInstancesProperties.containsKey(instanceUniqueId)) {
+            if (null != componentInstancesProperties && componentInstancesProperties.containsKey(instanceUniqueId)
+                    && !isComponentOfTypeServiceProxy(componentInstance)) {
                 addPropertiesOfComponentInstance(componentInstancesProperties, dataTypes,
                         instanceUniqueId, props);
             }
 
-            if (componentInstancesInputs != null && componentInstancesInputs.containsKey(instanceUniqueId)) {
+            if (componentInstancesInputs != null && componentInstancesInputs.containsKey(instanceUniqueId)
+                    && !isComponentOfTypeServiceProxy(componentInstance)) {
                 addComponentInstanceInputs(dataTypes, componentInstancesInputs, instanceUniqueId,
                         props);
             }
@@ -821,8 +829,8 @@ public class ToscaExportHandler {
         if (instanceInputsList != null) {
             instanceInputsList.forEach(input -> {
 
-                Supplier<String> supplier = () -> input.getValue() != null && !input.getValue().isEmpty()
-                                                          ? input.getValue() : input.getDefaultValue();
+                Supplier<String> supplier = () -> input.getValue() != null && !Objects.isNull(input.getValue())
+                        ? input.getValue() : input.getDefaultValue();
                 propertyConvertor.convertAndAddValue(dataTypes, props, input, supplier);
             });
         }
@@ -844,13 +852,13 @@ public class ToscaExportHandler {
     private void addPropertiesOfParentComponent(Map<String, DataTypeDefinition> dataTypes,
             Component componentOfInstance, Map<String, Object> props) {
 
-        List<PropertyDefinition> componentProperties = ((Resource) componentOfInstance).getProperties();
+        List<PropertyDefinition> componentProperties = componentOfInstance.getProperties();
         if (isNotEmpty(componentProperties)) {
             componentProperties.stream()
-                               // Filters out properties with empty default values
-                               .filter(prop -> isNotEmpty(prop.getDefaultValue()))
-                               // Converts and adds each value to property map
-                               .forEach(prop -> propertyConvertor.convertAndAddValue(dataTypes, props, prop,
+                    // Filters out properties with empty default values
+                               .filter(prop -> StringUtils.isNotEmpty(prop.getDefaultValue()))
+                    // Converts and adds each value to property map
+                    .forEach(prop -> propertyConvertor.convertAndAddValue(dataTypes, props, prop,
                                        prop::getDefaultValue));
         }
     }

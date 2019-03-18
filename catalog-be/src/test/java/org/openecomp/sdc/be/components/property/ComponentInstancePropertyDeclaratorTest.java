@@ -133,7 +133,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         String expectedInputName = generateExpectedInputName(parentProperty, innerProperty);
         InputDefinition input = inputsByName.get(expectedInputName);
         assertThat(input.getType()).isEqualTo(innerProperty.getType());
-        assertThat(input.getValue()).isEqualTo(null);
+        assertThat(input.getValue()).isEqualTo(innerProperty.getValue());
 //        assertThat(input.getDefaultValue()).isEqualTo(innerProperty.getValue());//bug
         assertThat(input.getUniqueId()).isEqualTo(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()));
         assertThat(input.getPropertyId()).isEqualTo(parentProperty.getUniqueId());
@@ -197,7 +197,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     private void verifyCreatedInput(PropertyDataDefinition property, InputDefinition input) {
         assertThat(input.getType()).isEqualTo(property.getType());
         assertThat(input.getName()).isEqualTo(generateExpectedInputName(property));
-        assertThat(input.getValue()).isEqualTo(null);
+        assertThat(input.getValue()).isEqualTo(property.getValue());
         assertThat(input.getDefaultValue()).isEqualTo(property.getValue());
         assertThat(input.getUniqueId()).isEqualTo(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()));
         assertThat(input.getPropertyId()).isEqualTo(property.getUniqueId());

@@ -16,17 +16,27 @@
 
 package org.openecomp.sdc.be.components.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil;
 
 public class InterfaceOperationUtils {
 
@@ -66,7 +76,17 @@ public class InterfaceOperationUtils {
                        .filter(entry -> entry.getValue().getUniqueId().equals(operationId)).findAny();
     }
 
-    public static boolean isOperationInputMappedToComponentProperty(OperationInputDefinition input,
+    public static Optional<InterfaceDefinition> getInterfaceDefinitionFromOperationId(List<InterfaceDefinition> interfaces,
+            String operationId) {
+        if (CollectionUtils.isEmpty(interfaces)) {
+            return Optional.empty();
+        }
+        return interfaces.stream()
+                       .filter(interfaceDefinition -> interfaceDefinition.getOperationsMap().containsKey(operationId))
+                       .findAny();
+    }
+
+    public static boolean isOperationInputMappedToComponentInput(OperationInputDefinition input,
                                                                  List<InputDefinition> inputs) {
         if (CollectionUtils.isEmpty(inputs)) {
             return false;
@@ -77,5 +97,87 @@ public class InterfaceOperationUtils {
                 input.getInputId().substring(0, input.getInputId().lastIndexOf('.'))))) ;
     }
 
+    public static boolean isOperationInputMappedToOtherOperationOutput(String outputName,
+                                                                       List<OperationOutputDefinition>
+                                                                               otherOperationOutputs) {
+        if (CollectionUtils.isEmpty(otherOperationOutputs)) {
+            return false;
+        }
+        return otherOperationOutputs.stream()
+                .anyMatch(output -> output.getName().equals(outputName));
 
+    }
+
+    public static Map<String, List<String>> createMappedInputPropertyDefaultValue(String propertyName) {
+        Map<String, List<String>> getPropertyMap = new HashMap<>();
+        List<String> values = new ArrayList<>();
+        values.add(InterfacesOperationsToscaUtil.SELF);
+        if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
+            values.addAll(Arrays.asList(propertyName.split("\\.")));
+        }
+        getPropertyMap.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), values);
+        return getPropertyMap;
+    }
+
+    /**
+     * Get the list of outputs of other operations of all the interfaces in the component.
+     * @param currentOperationIdentifier Fully qualified operation name e.g. org.test.interfaces.node.lifecycle.Abc.stop
+     * @param componentInterfaces VF or service interfaces
+     */
+
+    public static ListDataDefinition<OperationOutputDefinition> getOtherOperationOutputsOfComponent(
+            String currentOperationIdentifier, Map<String, ? extends InterfaceDataDefinition> componentInterfaces) {
+        ListDataDefinition<OperationOutputDefinition> componentOutputs = new ListDataDefinition<>();
+        if (MapUtils.isEmpty(componentInterfaces)) {
+            return componentOutputs;
+        }
+        for (Map.Entry<String, ? extends InterfaceDataDefinition> interfaceDefinitionEntry :
+                componentInterfaces.entrySet()) {
+            String interfaceName = interfaceDefinitionEntry.getKey();
+            final Map<String, OperationDataDefinition> operations = interfaceDefinitionEntry.getValue().getOperations();
+            if (MapUtils.isEmpty(operations)) {
+                continue;
+            }
+            for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
+                ListDataDefinition<OperationOutputDefinition> outputs = operationEntry.getValue().getOutputs();
+                String expectedOperationIdentifier = interfaceName + "." + operationEntry.getKey();
+                if (!currentOperationIdentifier.equals(expectedOperationIdentifier) && !outputs.isEmpty()) {
+                    outputs.getListToscaDataDefinition().forEach(componentOutputs::add);
+                }
+            }
+        }
+        return componentOutputs;
+    }
+
+    /**
+     * Create the value for operation input mapped to an operation output.
+     * @param propertyName the mapped other operation output full name
+     * @return input map for tosca
+     */
+    public static Map<String, List<String>> createMappedOutputDefaultValue(String componentName, String propertyName) {
+        Map<String, List<String>> getOperationOutputMap = new HashMap<>();
+        //For operation input mapped to other operation output parameter, the mapped property value
+        // should be of the format <interface name>.<operation name>.<output parameter name>
+        // Operation name and output param name should not contain "."
+        List<String> defaultMappedOperationOutputValue = new ArrayList<>();
+        String[] tokens = propertyName.split("\\.");
+        if (tokens.length > 2) {
+            defaultMappedOperationOutputValue.add(componentName);
+            String outputPropertyName = tokens[tokens.length - 1];
+            String operationName = tokens[tokens.length - 2];
+            String mappedPropertyInterfaceType =
+                    propertyName.substring(0, propertyName.indexOf(operationName + '.' + outputPropertyName) - 1);
+            defaultMappedOperationOutputValue.addAll(Arrays.asList(mappedPropertyInterfaceType, operationName,
+                    outputPropertyName));
+            getOperationOutputMap.put(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName(),
+                    defaultMappedOperationOutputValue);
+        }
+        return getOperationOutputMap;
+    }
+
+    public static String getOperationOutputName(String fullOutputIdentifier) {
+        return fullOutputIdentifier.contains(".")
+                ? fullOutputIdentifier.substring(fullOutputIdentifier.lastIndexOf('.') + 1)
+                : fullOutputIdentifier;
+    }
 }

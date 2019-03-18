@@ -25,6 +25,7 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
+import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -47,9 +49,14 @@ import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
@@ -65,11 +72,16 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
+import org.openecomp.sdc.be.types.ServiceConsumptionData;
+import org.openecomp.sdc.be.types.ServiceConsumptionSource;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -83,6 +95,7 @@ import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -95,7 +108,12 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
+import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
@@ -225,6 +243,441 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.left(result.left().value());
         }
 
+    }
+
+    public Either<List<Operation>, ResponseFormat> addServiceConsumptionData(String serviceId,
+                                                                             String serviceInstanceId,
+                                                                             String operationId,
+                                                                             List<ServiceConsumptionData> serviceConsumptionDataList,
+                                                                             String userId) {
+        List<Operation> operationList = new ArrayList<>();
+
+        Either<Service, StorageOperationStatus> serviceEither =
+                toscaOperationFacade.getToscaElement(serviceId);
+        if(serviceEither.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat
+                    (serviceEither.right().value()));
+        }
+
+        Service service = serviceEither.left().value();
+
+
+        StorageOperationStatus storageOperationStatus =
+                graphLockOperation.lockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+        if (storageOperationStatus != StorageOperationStatus.OK) {
+            return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));
+        }
+
+        try {
+            for (ServiceConsumptionData serviceConsumptionData : serviceConsumptionDataList) {
+                Either<Operation, ResponseFormat> operationEither =
+                        addPropertyServiceConsumption(serviceId, serviceInstanceId, operationId,
+                                userId, serviceConsumptionData);
+
+                if (operationEither.isRight()) {
+                    return Either.right(operationEither.right().value());
+                }
+
+                operationList.add(operationEither.left().value());
+            }
+
+            titanDao.commit();
+            return Either.left(operationList);
+        } catch (Exception e) {
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+
+        } finally {
+            graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+
+        }
+    }
+
+    public Either <Operation, ResponseFormat> addPropertyServiceConsumption(String serviceId,
+                                                                            String serviceInstanceId,
+                                                                            String operationId,
+                                                                            String userId,
+                                                                            ServiceConsumptionData serviceConsumptionData) {
+        validateUserExists(userId, "create Property", false);
+
+        Either<Service, StorageOperationStatus> serviceEither =
+                toscaOperationFacade.getToscaElement(serviceId);
+        if(serviceEither.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(serviceEither.right
+                    ().value()));
+        }
+
+        Service parentService = serviceEither.left().value();
+
+        List<ComponentInstance> componentInstances = parentService.getComponentInstances();
+        if(CollectionUtils.isEmpty(componentInstances)) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        Optional<ComponentInstance> serviceInstanceCandidate =
+                componentInstances.stream().filter(instance -> instance.getUniqueId().equals
+                        (serviceInstanceId)).findAny();
+
+        if(!serviceInstanceCandidate.isPresent()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces =
+                parentService.getComponentInstancesInterfaces();
+        if(MapUtils.isEmpty(componentInstancesInterfaces)) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        List<InterfaceDefinition> interfaces = new ArrayList<>();
+        for(ComponentInstanceInterface componentInstanceInterface :
+                componentInstancesInterfaces.get(serviceInstanceId)) {
+            interfaces.add(componentInstanceInterface);
+        }
+
+        ComponentInstance serviceInstance = serviceInstanceCandidate.get();
+        Optional<InterfaceDefinition> interfaceCandidate = InterfaceOperationUtils
+                .getInterfaceDefinitionFromOperationId(interfaces, operationId);
+
+        if(!interfaceCandidate.isPresent()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        InterfaceDefinition interfaceDefinition = interfaceCandidate.get();
+        Map<String, Operation> operations = interfaceDefinition.getOperationsMap();
+        if(MapUtils.isEmpty(operations)) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        Operation operation = operations.get(operationId);
+        Either<Operation, ResponseFormat> operationEither = Either.left(operation);
+
+        ListDataDefinition<OperationInputDefinition> inputs = operation.getInputs();
+        Optional<OperationInputDefinition> inputCandidate =
+                getOperationInputByInputId(serviceConsumptionData, inputs);
+
+        if(!inputCandidate.isPresent()) {
+            return Either.right(new ResponseFormat(HttpStatus.NOT_FOUND.value()));
+        }
+
+        OperationInputDefinition operationInputDefinition = inputCandidate.get();
+
+        // add data to operation
+
+        if(Objects.nonNull(serviceConsumptionData.getValue()))  {
+            operationEither =
+                    handleConsumptionValue(parentService, serviceInstanceId, serviceConsumptionData, operation,
+                            operationInputDefinition);
+        }
+
+        if(operationEither.isRight()) {
+            return Either.right(operationEither.right().value());
+        }
+
+        Operation updatedOperation = operationEither.left().value();
+        operations.remove(operationId);
+        operations.put(operationId, updatedOperation);
+        interfaceDefinition.setOperationsMap(operations);
+
+        parentService.getComponentInstances().remove(serviceInstance);
+        if(CollectionUtils.isEmpty(parentService.getComponentInstances())) {
+            parentService.setComponentInstances(new ArrayList<>());
+        }
+
+        Map<String, Object> instanceInterfaces =
+                MapUtils.isEmpty(serviceInstance.getInterfaces())? new HashMap<>() : serviceInstance.getInterfaces();
+        instanceInterfaces.remove(interfaceDefinition.getUniqueId());
+        instanceInterfaces.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
+        serviceInstance.setInterfaces(instanceInterfaces);
+
+        removeComponentInstanceInterfaceByInterfaceId(interfaceDefinition.getUniqueId(), componentInstancesInterfaces.get(serviceInstanceId));
+        componentInstancesInterfaces.get(serviceInstanceId).add(new ComponentInstanceInterface(interfaceDefinition.getUniqueId(), interfaceDefinition));
+
+        parentService.getComponentInstances().add(serviceInstance);
+
+        StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(parentService, serviceInstanceId);
+
+        if(status != StorageOperationStatus.OK) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+        }
+
+        return Either.left(operation);
+    }
+
+    private void removeComponentInstanceInterfaceByInterfaceId(String interfaceIdToRemove,
+                                                               List<ComponentInstanceInterface> instanceInterfaces) {
+        if(CollectionUtils.isEmpty(instanceInterfaces)) {
+            return;
+        }
+
+        Optional<ComponentInstanceInterface> interfaceToRemove =
+                instanceInterfaces.stream().filter(instInterface -> instInterface.getUniqueId().equals
+                        (interfaceIdToRemove)).findAny();
+
+        if(interfaceToRemove.isPresent()) {
+            instanceInterfaces.remove(interfaceToRemove.get());
+        }
+
+    }
+
+    private Either<Operation, ResponseFormat> handleConsumptionValue(Service containerService,
+                                                                     String serviceInstanceId,
+                                                                     ServiceConsumptionData serviceConsumptionData,
+                                                                     Operation operation,
+                                                                     OperationInputDefinition
+                                                                             operationInputDefinition) {
+        String source = serviceConsumptionData.getSource();
+        String consumptionValue = serviceConsumptionData.getValue();
+        String type = serviceConsumptionData.getType();
+        String operationIdentifier = consumptionValue.contains(".")
+                ? consumptionValue.substring(0, consumptionValue.lastIndexOf('.'))
+                : consumptionValue;
+
+        ServiceConsumptionSource sourceValue = ServiceConsumptionSource.getSourceValue(source);
+
+        if(STATIC.equals(sourceValue)) {
+            return handleConsumptionStaticValue(consumptionValue, type, operation,
+                    operationInputDefinition);
+        }
+
+        if (Objects.isNull(sourceValue)) {
+            List<PropertyDefinition> propertyDefinitions;
+            String componentName;
+            List<OperationOutputDefinition> outputs = null;
+            if (source.equals(containerService.getUniqueId())) {
+                Either<Service, StorageOperationStatus> serviceToTakePropEither =
+                        toscaOperationFacade.getToscaElement(source);
+                if (serviceToTakePropEither.isRight()) {
+                    return Either.right(componentsUtils.getResponseFormat(serviceToTakePropEither.right().value()));
+                }
+                Service service = serviceToTakePropEither.left().value();
+                operationInputDefinition.setSource(service.getUniqueId());
+                sourceValue = SERVICE_INPUT;
+                propertyDefinitions = service.getProperties();
+                componentName = service.getName();
+                outputs = InterfaceOperationUtils.getOtherOperationOutputsOfComponent(operationIdentifier,
+                        service.getInterfaces()).getListToscaDataDefinition();
+            } else {
+                Optional<ComponentInstance> getComponentInstance = containerService.getComponentInstanceById(source);
+                if(!getComponentInstance.isPresent()){
+                    return Either.right(componentsUtils.getResponseFormat(
+                            ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, source));
+                }
+                ComponentInstance componentInstance = getComponentInstance.get();
+                operationInputDefinition.setSource(componentInstance.getUniqueId());
+                propertyDefinitions = componentInstance.getProperties();
+                componentName = source.equals(serviceInstanceId) ? SELF : componentInstance.getName();
+                if (MapUtils.isNotEmpty(componentInstance.getInterfaces())) {
+                    Map<String, InterfaceDataDefinition> componentInstanceInterfaces =
+                            componentInstance.getInterfaces().entrySet().stream()
+                                    .collect(Collectors.toMap((Map.Entry::getKey),
+                                            (interfaceEntry -> (InterfaceDataDefinition) interfaceEntry.getValue())));
+                    outputs = InterfaceOperationUtils.getOtherOperationOutputsOfComponent(operationIdentifier,
+                            componentInstanceInterfaces).getListToscaDataDefinition();
+                }
+            }
+
+            if(sourceValue == ServiceConsumptionSource.SERVICE_INPUT) {
+                //The operation input in service consumption has been mapped to an input in the parent service
+                return handleConsumptionInputValue(consumptionValue, containerService, operation,
+                        operationInputDefinition);
+            }
+            return handleConsumptionPropertyValue(operation, operationInputDefinition,
+                    serviceConsumptionData, propertyDefinitions, outputs, consumptionValue, componentName);
+        }
+
+        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
+        operationInputDefinition.setSource(source);
+
+        return Either.left(operation);
+    }
+
+    private Optional<OperationInputDefinition> getOperationInputByInputId(ServiceConsumptionData serviceConsumptionData,
+                                                                          ListDataDefinition<OperationInputDefinition> inputs) {
+
+        if(CollectionUtils.isEmpty(inputs.getListToscaDataDefinition())) {
+            return Optional.empty();
+        }
+
+        return inputs.getListToscaDataDefinition().stream().filter(operationInput -> operationInput.getInputId().equals
+                (serviceConsumptionData.getInputId()))
+                .findAny();
+    }
+
+    private Either<Operation, ResponseFormat> handleConsumptionPropertyValue(
+            Operation operation, OperationInputDefinition operationInputDefinition,
+            ServiceConsumptionData serviceConsumptionData, List<PropertyDefinition> properties,
+            List<OperationOutputDefinition> outputs, String consumptionValue, String componentName) {
+
+        if (CollectionUtils.isEmpty(properties) && CollectionUtils.isEmpty(outputs)) {
+            return Either.left(operation);
+        }
+
+        if (CollectionUtils.isNotEmpty(outputs)
+                && isOperationInputMappedToOtherOperationOutput(getOperationOutputName(consumptionValue), outputs)) {
+            return handleConsumptionInputMappedToOperationOutput(operation, operationInputDefinition, outputs,
+                    consumptionValue, componentName);
+        }
+
+        if (CollectionUtils.isNotEmpty(properties)) {
+            return handleConsumptionInputMappedToProperty(operation, operationInputDefinition, serviceConsumptionData,
+                    properties, componentName);
+        }
+        return Either.left(operation);
+    }
+
+    private Either<Operation, ResponseFormat> handleConsumptionInputMappedToProperty(Operation operation,
+                                                                                     OperationInputDefinition operationInputDefinition, ServiceConsumptionData serviceConsumptionData,
+                                                                                     List<PropertyDefinition> properties, String componentName) {
+        Optional<PropertyDefinition> servicePropertyCandidate =
+                properties.stream().filter(property -> property.getName()
+                        .equals(serviceConsumptionData.getValue())).findAny();
+
+        if (servicePropertyCandidate.isPresent()) {
+            boolean isInputTypeSimilarToOperation =
+                    isAssignedValueFromValidType(operationInputDefinition.getType(),
+                            servicePropertyCandidate.get());
+
+            if (!isInputTypeSimilarToOperation) {
+                return Either.right(componentsUtils.getResponseFormat(
+                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+            }
+
+            addPropertyToInputValue(componentName, operation, operationInputDefinition,
+                    servicePropertyCandidate.get());
+        }
+        return Either.left(operation);
+    }
+
+    private Either<Operation, ResponseFormat> handleConsumptionInputMappedToOperationOutput(Operation operation,
+                                                                                            OperationInputDefinition operationInputDefinition, List<OperationOutputDefinition> outputs,
+                                                                                            String consumptionValue, String componentName) {
+        String outputName = getOperationOutputName(consumptionValue);
+        Optional<OperationOutputDefinition> servicePropertyOutputCandidate = outputs.stream()
+                .filter(output -> output.getName().equals(outputName)).findAny();
+        if (servicePropertyOutputCandidate.isPresent()) {
+            boolean isInputTypeSimilarToOperation =
+                    isAssignedValueFromValidType(operationInputDefinition.getType(),
+                            servicePropertyOutputCandidate.get());
+            if (!isInputTypeSimilarToOperation) {
+                return Either.right(componentsUtils.getResponseFormat(
+                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+            }
+            addOutputToInputValue(componentName, consumptionValue, operation, operationInputDefinition);
+        }
+        return Either.left(operation);
+    }
+
+    private void addPropertyToInputValue(String componentName, Operation operation,
+                                         OperationInputDefinition operationInputDefinition,
+                                         PropertyDefinition serviceProperty) {
+        Map<String, List<String>> getProperty = new HashMap<>();
+        List<String> getPropertyValues = new ArrayList<>();
+        getPropertyValues.add(componentName);
+        getPropertyValues.add(serviceProperty.getName());
+        getProperty.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), getPropertyValues);
+
+        operationInputDefinition.setSourceProperty(serviceProperty.getUniqueId());
+        operation.getInputs().delete(operationInputDefinition);
+        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_PROPERTY,
+                getPropertyValues);
+        operationInputDefinition.setValue((new Gson()).toJson(getProperty));
+        operation.getInputs().add(operationInputDefinition);
+    }
+
+    private void addOutputToInputValue(String componentName, String consumptionValue,
+                                       Operation operation, OperationInputDefinition operationInputDefinition) {
+        Map<String, List<String>> getOperationOutput =
+                InterfaceOperationUtils.createMappedOutputDefaultValue(componentName, consumptionValue);
+        operation.getInputs().delete(operationInputDefinition);
+        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_OPERATION_OUTPUT,
+                getOperationOutput);
+        operationInputDefinition.setValue((new Gson()).toJson(getOperationOutput));
+        operation.getInputs().add(operationInputDefinition);
+    }
+
+    public Either<Operation, ResponseFormat> handleConsumptionStaticValue(String value, String type,
+                                                                          Operation operation,
+                                                                          OperationInputDefinition
+                                                                                  operationInputDefinition) {
+        boolean isInputTypeSimilarToOperation =
+                isAssignedValueFromValidType(type, value);
+
+        if(!isInputTypeSimilarToOperation) {
+            return Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.INVALID_CONSUMPTION_TYPE, type));
+        }
+        addStaticValueToInputOperation(value, operation, operationInputDefinition);
+
+        return Either.left(operation);
+    }
+
+    private void addStaticValueToInputOperation(String value, Operation operation,
+                                                OperationInputDefinition operationInputDefinition) {
+        operation.getInputs().delete(operationInputDefinition);
+        operationInputDefinition.setSource(STATIC.getSource());
+        operationInputDefinition.setSourceProperty(null);
+        operationInputDefinition.setValue(value);
+        operation.getInputs().add(operationInputDefinition);
+    }
+
+    private Either<Operation, ResponseFormat>  handleConsumptionInputValue(String inputId,
+                                                                           Service service,
+                                                                           Operation operation,
+                                                                           OperationInputDefinition
+                                                                                   operationInputDefinition) {
+        List<InputDefinition> serviceInputs = service.getInputs();
+        Optional<InputDefinition> inputForValue =
+                serviceInputs.stream().filter(input -> input.getUniqueId().contains(inputId)).findAny();
+
+        if(inputForValue.isPresent()) {
+            boolean isInputTypeSimilarToOperation =
+                    isAssignedValueFromValidType(operationInputDefinition.getType(), inputForValue.get());
+
+            if(!isInputTypeSimilarToOperation) {
+                return Either.right(componentsUtils.getResponseFormat(
+                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+            }
+            addGetInputValueToOperationInput(operation, operationInputDefinition, inputForValue.get());
+        }
+
+        return Either.left(operation);
+    }
+
+
+    private boolean isAssignedValueFromValidType(String operationInputType, Object actualValue) {
+        if (actualValue instanceof String) {
+            // validate static value
+            ToscaPropertyType actualType = ToscaPropertyType.isValidType(operationInputType);
+            PropertyTypeValidator validator = actualType.getValidator();
+            return validator.isValid((String)actualValue, operationInputType);
+        } else if (actualValue instanceof PropertyDefinition) {
+            // validate input / property value
+            String actualType = ((PropertyDefinition) actualValue).getType();
+            return actualType.equalsIgnoreCase(operationInputType);
+        } else if (actualValue instanceof OperationOutputDefinition) {
+            // validate input / output value
+            String actualType = ((OperationOutputDefinition) actualValue).getType();
+            return actualType.equalsIgnoreCase(operationInputType);
+        }
+        return false;
+    }
+
+    private void addGetInputValueToOperationInput(Operation operation,
+                                                  OperationInputDefinition operationInputDefinition,
+                                                  InputDefinition inputForValue) {
+        operation.getInputs().delete(operationInputDefinition);
+        Map<String, String> getInputMap = new HashMap<>();
+        getInputMap.put(ToscaFunctions.GET_INPUT.getFunctionName(), inputForValue.getName());
+        operationInputDefinition.setSourceProperty(inputForValue.getUniqueId());
+        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_INPUT, getInputMap);
+        operationInputDefinition.setValue(new Gson().toJson(getInputMap));
+        operation.getInputs().add(operationInputDefinition);
     }
 
     private Either<List<Map<String, Object>>, ActionStatus> getAuditRecordsForUncertifiedComponent(String componentUUID, String componentVersion) {

@@ -16,22 +16,24 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.GET_OPERATION_OUTPUT;
-import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.GET_PROPERTY;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceDefinitionElement;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -39,15 +41,18 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
+
 
 public class InterfacesOperationsToscaUtilTest {
 
@@ -57,6 +62,8 @@ public class InterfacesOperationsToscaUtilTest {
     private static final String NODE_TYPE_NAME = "test";
     private String[] inputTypes = {"string", "integer", "float", "boolean"};
     private static ObjectMapper mapper;
+    private static final Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+
 
     @BeforeClass
     public static void setUp() {
@@ -122,7 +129,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, null, false);
+        addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
@@ -153,7 +160,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, null, false);
+        addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("testService");
@@ -171,6 +178,70 @@ public class InterfacesOperationsToscaUtilTest {
         Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
         Assert.assertTrue(mainYaml.contains("com.some.service.or.other.serviceName"));
     }
+
+
+    @Test
+    public void testGetInterfaceAsMapServiceProxy() {
+        Component component = new Resource();
+        component.setNormalizedName("normalizedComponentName");
+        InterfaceDefinition addedInterface = new InterfaceDefinition();
+        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
+        addedInterface.setType("com.some.resource.or.other.resourceName");
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false);
+        final String interfaceType = "normalizedComponentName-interface";
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(interfaceType, addedInterface);
+        Map<String, Object> interfacesMap = InterfacesOperationsToscaUtil
+                .getInterfacesMap(component, component.getInterfaces(), null, false, true);
+        ToscaNodeType nodeType = new ToscaNodeType();
+        nodeType.setInterfaces(interfacesMap);
+        ToscaExportHandler handler = new ToscaExportHandler();
+        ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
+        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+        nodeTypes.put(NODE_TYPE_NAME, nodeType);
+        template.setNode_types(nodeTypes);
+        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
+
+        String mainYaml = toscaRepresentation.getMainYaml();
+        Assert.assertFalse(mainYaml.contains("operations"));
+        Assert.assertTrue(mainYaml.contains("resourceName:"));
+        Assert.assertTrue(mainYaml.contains("inputs:"));
+        validateServiceProxyOperationInputs(mainYaml);
+        Assert.assertFalse(mainYaml.contains("defaultp"));
+        Assert.assertTrue(mainYaml.contains("has description"));
+        Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
+        Assert.assertTrue(mainYaml.contains("com.some.resource.or.other.resourceName"));
+    }
+
+//    @Test
+//    public void addInterfaceDefinitionElementToService() {
+//        Component component = new Service();
+//        component.setNormalizedName("normalizedServiceComponentName");
+//        InterfaceDefinition addedInterface = new InterfaceDefinition();
+//        addedInterface.setToscaResourceName("com.some.service.or.other.serviceName");
+//
+//        addOperationsToInterface(addedInterface, 3, 2, true);
+//        final String interfaceType = "normalizedServiceComponentName-interface";
+//        component.setInterfaces(new HashMap<>());
+//        component.getInterfaces().put(interfaceType, addedInterface);
+//        ToscaNodeType nodeType = new ToscaNodeType();
+//        InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType);
+//
+//        ToscaExportHandler handler = new ToscaExportHandler();
+//        ToscaTemplate template = new ToscaTemplate("testService");
+//        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+//        nodeTypes.put("test", nodeType);
+//        template.setNode_types(nodeTypes);
+//        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
+//
+//        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
+//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("serviceName:"));
+//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("inputs:"));
+//        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
+//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("has description"));
+//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("naming_function_"));
+//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("com.some.service.or.other.serviceName"));
+//    }
 
     @Test
     public void addInterfaceDefinitionElement_noInputs() {
@@ -218,7 +289,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(addedInterfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, null, false);
+        addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
@@ -226,7 +297,6 @@ public class InterfacesOperationsToscaUtilTest {
         nodeTypes.put("test", nodeType);
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-
         String mainYaml = toscaRepresentation.getMainYaml();
         Assert.assertFalse(mainYaml.contains("operations"));
         Assert.assertTrue(mainYaml.contains("resourceNameInputMappedToOutput:"));
@@ -243,30 +313,30 @@ public class InterfacesOperationsToscaUtilTest {
         addedInterface.setType(addedInterfaceType);
         addOperationsToInterface(component, addedInterface, 2, 2, true, true);
         addedInterface.getOperationsMap().values().stream()
-                      .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
-                              "name_for_op_0"))
-                      .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
-                                                     .filter(opInputDef -> opInputDef.getName().contains("integer"))
-                                                     .forEach(opInputDef -> opInputDef.setInputId(
-                                                             addedInterfaceType +".name_for_op_1.output_integer_1")));
+                .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
+                        "name_for_op_0"))
+                .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
+                        .filter(opInputDef -> opInputDef.getName().contains("integer"))
+                        .forEach(opInputDef -> opInputDef.setInputId(
+                                addedInterfaceType +".name_for_op_1.output_integer_1")));
         //Mapping to operation from another interface
         String secondInterfaceType = "org.test.lifecycle.standard.interfaceType.second";
         InterfaceDefinition secondInterface = new InterfaceDefinition();
         secondInterface.setType(secondInterfaceType);
         addOperationsToInterface(component, secondInterface, 2, 2, true, true);
         secondInterface.getOperationsMap().values().stream()
-                      .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
-                              "name_for_op_0"))
-                      .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
-                                                     .filter(opInputDef -> opInputDef.getName().contains("integer"))
-                                                     .forEach(opInputDef -> opInputDef.setInputId(
-                                                             addedInterfaceType +".name_for_op_1.output_integer_1")));
+                .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
+                        "name_for_op_0"))
+                .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
+                        .filter(opInputDef -> opInputDef.getName().contains("integer"))
+                        .forEach(opInputDef -> opInputDef.setInputId(
+                                addedInterfaceType +".name_for_op_1.output_integer_1")));
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(addedInterfaceType, addedInterface);
         component.getInterfaces().put(secondInterfaceType, secondInterface);
 
         ToscaNodeType nodeType = new ToscaNodeType();
-        addInterfaceDefinitionElement(component, nodeType, null,false);
+        addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
 
         ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null, null);
         ToscaTemplate template = new ToscaTemplate("test");
@@ -289,7 +359,7 @@ public class InterfacesOperationsToscaUtilTest {
         for (int i = 0; i < numOfOps; i++) {
             final OperationDataDefinition operation = new OperationDataDefinition();
             operation.setName("name_for_op_" + i);
-            operation.setDescription( "op "+i+" has description");
+            operation.setDescription("op " + i + " has description");
             final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
             implementation.setArtifactName(i + "_createBPMN.bpmn");
             operation.setImplementation(implementation);
@@ -297,12 +367,12 @@ public class InterfacesOperationsToscaUtilTest {
                 operation.setInputs(createInputs(component, numOfInputsPerOp));
             }
             if (hasOutputs) {
-                operation.setOutputs(createOutputs(numOfInputsPerOp));
+                operation.setOutputs(createOutputs(addedInterface.getToscaResourceName(),
+                        operation.getName(), numOfInputsPerOp));
             }
             addedInterface.getOperations().put(operation.getName(), operation);
         }
     }
-
 
     private ListDataDefinition<OperationInputDefinition> createInputs(Component component, int numOfInputs) {
         ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
@@ -326,10 +396,12 @@ public class InterfacesOperationsToscaUtilTest {
         component.getInputs().add(componentInput);
     }
 
-    private ListDataDefinition<OperationOutputDefinition> createOutputs(int numOfOutputs) {
+    private ListDataDefinition<OperationOutputDefinition> createOutputs(String interfaceName,
+                                                                        String operationName,
+                                                                        int numOfOutputs) {
         ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
         for (int i = 0; i < numOfOutputs; i++) {
-            operationOutputDefinitionList.add(createMockOperationOutputDefinition(
+            operationOutputDefinitionList.add(createMockOperationOutputDefinition(interfaceName, operationName,
                     OUTPUT_NAME_PREFIX + inputTypes[i] + "_" + i, i));
         }
         return operationOutputDefinitionList;
@@ -341,14 +413,29 @@ public class InterfacesOperationsToscaUtilTest {
         operationInputDefinition.setInputId(id);
         operationInputDefinition.setType(inputTypes[index]);
         operationInputDefinition.setRequired(index % 2 == 0);
+        Map<String, List<String>> toscaDefaultValueMap = new HashMap<>();
+        List<String> toscaDefaultValues = new ArrayList<>();
+        toscaDefaultValues.add(SELF);
+        toscaDefaultValues.add(id.substring(id.lastIndexOf('.') + 1));
+        toscaDefaultValueMap.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), toscaDefaultValues);
+        operationInputDefinition.setToscaDefaultValue(new Gson().toJson(toscaDefaultValueMap));
+        operationInputDefinition.setSource("ServiceInput");
         return operationInputDefinition;
     }
 
-    private OperationOutputDefinition createMockOperationOutputDefinition(String name, int index) {
+    private OperationOutputDefinition createMockOperationOutputDefinition(String interfaceName, String operationName,
+                                                                          String outputName, int index) {
         OperationOutputDefinition operationInputDefinition = new OperationOutputDefinition();
-        operationInputDefinition.setName(name);
+        operationInputDefinition.setName(outputName);
         operationInputDefinition.setType(inputTypes[index]);
         operationInputDefinition.setRequired(index % 2 == 0);
+        Map<String, List<String>> toscaDefaultValueMap = new HashMap<>();
+        List<String> toscaDefaultValues = new ArrayList<>();
+        toscaDefaultValues.add(SELF);
+        toscaDefaultValues.add(interfaceName);
+        toscaDefaultValues.add(operationName);
+        toscaDefaultValues.add(outputName);
+        toscaDefaultValueMap.put(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName(), toscaDefaultValues);
         return operationInputDefinition;
     }
 
@@ -392,14 +479,14 @@ public class InterfacesOperationsToscaUtilTest {
                                                               String inputType, int index,
                                                               Map<String, Object> inputValueObject) {
         Map<String, Object> mappedInputValue = (Map<String, Object>) inputValueObject.get("default");
-        if(mappedInputValue.containsKey(GET_PROPERTY)) {
+        if(mappedInputValue.containsKey(ToscaFunctions.GET_PROPERTY.getFunctionName())) {
             String mappedPropertyValue = MAPPED_PROPERTY_NAME + index;
-            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(GET_PROPERTY);
+            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(ToscaFunctions.GET_PROPERTY.getFunctionName());
             Assert.assertEquals(2, mappedPropertyDefaultValue.size());
             Assert.assertTrue(mappedPropertyDefaultValue.contains(SELF));
             Assert.assertTrue(mappedPropertyDefaultValue.contains(mappedPropertyValue));
-        } else if(mappedInputValue.containsKey(GET_OPERATION_OUTPUT)) {
-            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(GET_OPERATION_OUTPUT);
+        } else if(mappedInputValue.containsKey(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
+            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
             Assert.assertEquals(4, mappedPropertyDefaultValue.size());
             String mappedPropertyValue = OUTPUT_NAME_PREFIX + inputType + "_" + index;
             Assert.assertTrue(mappedPropertyDefaultValue.contains(SELF));
@@ -407,8 +494,31 @@ public class InterfacesOperationsToscaUtilTest {
             Assert.assertTrue(mappedPropertyDefaultValue.contains(operationName));
             Assert.assertTrue(mappedPropertyDefaultValue.contains(mappedPropertyValue));
         } else {
-            Assert.fail("Invalid Tosca function in default value. Allowed values: "+ GET_PROPERTY +
-                    "/"+ GET_OPERATION_OUTPUT);
+            Assert.fail("Invalid Tosca function in default value. Allowed values: "+ ToscaFunctions.GET_PROPERTY.getFunctionName() +
+                    "/"+ ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
+        }
+    }
+
+    private void validateServiceProxyOperationInputs(String mainYaml) {
+        String nodeTypeKey = NODE_TYPE_NAME + ":";
+        String nodeTypesRepresentation = mainYaml.substring(mainYaml.indexOf(nodeTypeKey) + nodeTypeKey.length(),
+                mainYaml.lastIndexOf(MAPPED_PROPERTY_NAME) + MAPPED_PROPERTY_NAME.length());
+        YamlUtil yamlUtil = new YamlUtil();
+        ToscaNodeType toscaNodeType = yamlUtil.yamlToObject(nodeTypesRepresentation, ToscaNodeType.class);
+        for (Object interfaceVal : toscaNodeType.getInterfaces().values()) {
+            Map<String, Object> interfaceDefinition = mapper.convertValue(interfaceVal, Map.class);
+            for (Object operationVal : interfaceDefinition.values()) {
+                if (operationVal instanceof Map) {
+                    Map<String, Object> operation = (Map<String, Object>) mapper.convertValue(operationVal, Map.class);
+                    Map<String, Object> operationInputs = (Map<String, Object>) operation.get("inputs");
+                    for (Object inputValue : operationInputs.values()) {
+                        Map<String, Object> inputValueAsMap = (Map<String, Object>) inputValue;
+                        Assert.assertFalse(inputValueAsMap.keySet().contains("type"));
+                        Assert.assertFalse(inputValueAsMap.keySet().contains("required"));
+                        Assert.assertFalse(inputValueAsMap.keySet().contains("default"));
+                    }
+                }
+            }
         }
     }
 }

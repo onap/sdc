@@ -332,6 +332,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         resourceInstance.setProperties(ProxyServicePropertiesUtils.getProperties(service));
 
+        List<InputDefinition> serviceInputs = service.getInputs();
+        resourceInstance.setInputs(serviceInputs);
+
         String name = service.getNormalizedName() + ToscaOperationFacade.PROXY_SUFFIX;
         String toscaResourceName = ((Resource) proxyTemplate).getToscaResourceName();
         int lastIndexOf = toscaResourceName.lastIndexOf('.');

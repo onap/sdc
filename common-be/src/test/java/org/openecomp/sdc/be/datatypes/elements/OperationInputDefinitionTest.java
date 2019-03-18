@@ -16,9 +16,9 @@ public class OperationInputDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		new OperationInputDefinition("", "", true, "");
-		new OperationInputDefinition("stam", testSubject);
+		new OperationInputDefinition("stam", testSubject, null, null);
 	}
-	
+
 	@Test
 	public void testGetLabel() throws Exception {
 		OperationInputDefinition testSubject;

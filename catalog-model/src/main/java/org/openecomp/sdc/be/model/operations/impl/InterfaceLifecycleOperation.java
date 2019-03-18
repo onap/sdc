@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -909,21 +909,18 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
             .collect(Collectors.toList());
 
         for (InterfaceDefinition interfaceDefinition : interfaceDefinitions) {
-
-                Either<List<ImmutablePair<OperationData, GraphEdge>>, TitanOperationStatus>
+            Either<List<ImmutablePair<OperationData, GraphEdge>>, TitanOperationStatus>
                     childrenNodes = titanGenericDao.getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),
                     interfaceDefinition.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class);
-                if(childrenNodes.isRight()) {
-                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenNodes.right().value()));
-                }
-
+            if (childrenNodes.isLeft()) {
                 Map<String, OperationDataDefinition> operationsDataDefinitionMap = new HashMap<>();
                 for(ImmutablePair<OperationData, GraphEdge> operation : childrenNodes.left().value()) {
                     OperationData operationData = operation.getLeft();
                     operationsDataDefinitionMap.put(operationData.getUniqueId(), operationData.getOperationDataDefinition());
                 }
                 interfaceDefinition.setOperations(operationsDataDefinitionMap);
-                interfaceTypes.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
+            }
+            interfaceTypes.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
         }
         return Either.left(interfaceTypes);
     }

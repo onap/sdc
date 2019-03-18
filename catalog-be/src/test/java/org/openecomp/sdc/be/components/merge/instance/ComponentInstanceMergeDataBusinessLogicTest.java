@@ -98,6 +98,7 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
         assertFalse(value.isIgnoreComponentInstancesProperties());
         assertFalse(value.isIgnoreComponentInstancesInputs());
         assertFalse(value.isIgnoreArtifacts());
+        assertFalse(value.isIgnoreComponentInstancesInterfaces());
     }
 
 

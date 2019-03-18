@@ -21,6 +21,7 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.openecomp.sdc.be.dao.utils.MapUtil.toMap;
+import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.resolveGetInputProperties;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceInputsRedeclareHandler {
@@ -43,7 +44,8 @@ public class ComponentInstanceInputsRedeclareHandler {
         Map<String, List<PropertyDataDefinition>> allPropertiesForInstance = getAllGetPropertiesForInstance(container, newInstanceId);
         List<InputDefinition> previouslyDeclaredInputs = declaredInputsResolver.getPreviouslyDeclaredInputsToMerge(oldInputs, container, allPropertiesForInstance);
         inputsValuesMergingBusinessLogic.mergeComponentInputs(oldInputs, previouslyDeclaredInputs);
-        updateInputsAnnotations(allPropertiesForInstance.get(newInstanceId), newInstanceOriginType, previouslyDeclaredInputs);
+        Map<String, List<PropertyDataDefinition>> getInputProperties = resolveGetInputProperties(allPropertiesForInstance);
+        updateInputsAnnotations(getInputProperties.get(newInstanceId), newInstanceOriginType, previouslyDeclaredInputs);
 
         return updateInputs(container.getUniqueId(), previouslyDeclaredInputs);
     }

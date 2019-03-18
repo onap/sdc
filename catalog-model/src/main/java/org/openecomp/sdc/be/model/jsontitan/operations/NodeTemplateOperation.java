@@ -38,15 +38,48 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipImpl;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -143,6 +176,16 @@ public class NodeTemplateOperation extends BaseOperation {
                 result = addServiceInstancePropertiesToProxyServiceInstance(updatedContainer, componentInstance);
                 if(result.isRight()) {
                   return result;
+                }
+
+                result = addServiceInstanceInputsToProxyServiceInstance(updatedContainer, componentInstance);
+                if(result.isRight()) {
+                    return result;
+                }
+
+                result = addServiceInstanceInterfacesToProxyServiceInstance(updatedContainer, componentInstance);
+                if(result.isRight()) {
+                    return result;
                 }
 
             }
@@ -285,8 +328,9 @@ public class NodeTemplateOperation extends BaseOperation {
         List<PropertyDefinition> propertiesList = componentInstance.getProperties();
 
         if (propertiesList != null && !propertiesList.isEmpty()) {
-            Map<String, PropertyDataDefinition> propertiesMap = propertiesList.stream().map(i -> new PropertyDataDefinition(i))
-                                                                              .collect(Collectors.toMap(i -> i.getName(), i -> i));
+            Map<String, PropertyDataDefinition> propertiesMap = propertiesList.stream().map(PropertyDataDefinition::new)
+                                                                              .collect(Collectors.toMap(
+                                                                                      PropertyDataDefinition::getName, i -> i));
             MapPropertiesDataDefinition instProperties = new MapPropertiesDataDefinition(propertiesMap);
             Map<String, MapPropertiesDataDefinition> instPropertiesMap = new HashMap<>();
             instPropertiesMap.put(componentInstance.getUniqueId(), instProperties);
@@ -308,8 +352,58 @@ public class NodeTemplateOperation extends BaseOperation {
         return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
     }
 
-    public Either<TopologyTemplate, StorageOperationStatus> addComponentInstanceToTopologyTemplate(TopologyTemplate container, ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex metadataVertex,
-            boolean allowDeleted, User user) {
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstanceInputsToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
+
+        List<InputDefinition> inputsList = componentInstance.getInputs();
+
+        if (CollectionUtils.isNotEmpty(inputsList)) {
+            Map<String, PropertyDataDefinition> inputsMap = inputsList.stream().map(
+                    PropertyDataDefinition::new).collect(Collectors.toMap(PropertyDataDefinition::getName, i -> i));
+            MapPropertiesDataDefinition instInputs = new MapPropertiesDataDefinition(inputsMap);
+            Map<String, MapPropertiesDataDefinition> instInputsMap = new HashMap<>();
+            instInputsMap.put(componentInstance.getUniqueId(), instInputs);
+            updatedContainer.setInstInputs(instInputsMap);
+
+            StorageOperationStatus status =
+                    addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
+                            EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, instInputs,
+                            componentInstance.getUniqueId());
+            if(status != StorageOperationStatus.OK) {
+                return Either.right(status);
+            }
+        }
+
+        return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
+    }
+
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstanceInterfacesToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
+        Map<String, Object> interfaces = componentInstance.getInterfaces();
+
+        if(interfaces != null && !interfaces.isEmpty()) {
+            Map<String, InterfaceDataDefinition> interfacesMap = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (InterfaceDataDefinition) e.getValue()));
+            MapInterfaceDataDefinition instIntrefaces = new MapInterfaceDataDefinition(interfacesMap);
+
+            Map<String, MapInterfaceDataDefinition> instInterfacesMap = new HashMap<>();
+            instInterfacesMap.put(componentInstance.getUniqueId(), instIntrefaces);
+            updatedContainer.setComponentInstInterfaces(instInterfacesMap);
+
+            StorageOperationStatus status =
+                    addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
+                            EdgeLabelEnum.INST_INTERFACES, VertexTypeEnum.INST_INTERFACES, instIntrefaces,
+                            componentInstance.getUniqueId());
+
+            if(status != StorageOperationStatus.OK) {
+                return Either.right(status);
+            }
+        }
+
+        return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
+    }
+
+    public Either<TopologyTemplate, StorageOperationStatus> addComponentInstanceToTopologyTemplate(
+            TopologyTemplate container, ToscaElement originToscaElement,
+            ComponentInstanceDataDefinition componentInstance, GraphVertex metadataVertex, boolean allowDeleted,
+            User user) {
 
         Either<TopologyTemplate, StorageOperationStatus> result = null;
         Either<ToscaElement, StorageOperationStatus> updateContainerComponentRes = null;
@@ -615,6 +709,14 @@ public class NodeTemplateOperation extends BaseOperation {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove instance external refs  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_INTERFACES,
+                VertexTypeEnum.INST_INTERFACES, componentInstanceId);
+        if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Failed to remove service instance interfaces  for instance {} in container {}. " +
+                            "error {] ", componentInstanceId, containerV.getUniqueId(), status);
+            return status;
+        }
         return StorageOperationStatus.OK;
     }
 
@@ -623,7 +725,7 @@ public class NodeTemplateOperation extends BaseOperation {
         Either<GraphVertex, StorageOperationStatus> result;
         StorageOperationStatus status;
         if (originToscaElement.getToscaType() == ToscaElementTypeEnum.NODE_TYPE) {
-            status = addComponentInstanceToscaDataToNodeTypeContainer((NodeType) originToscaElement, componentInstance, updatedContainerVertex, user, HEAT_VF_ENV_NAME);
+            status = addComponentInstanceToscaDataToNodeTypeContainer((NodeType) originToscaElement, componentInstance, updatedContainerVertex);
         } else {
             status = addComponentInstanceToscaDataToTopologyTemplateContainer((TopologyTemplate) originToscaElement, componentInstance, updatedContainerVertex);
         }
@@ -838,22 +940,29 @@ public class NodeTemplateOperation extends BaseOperation {
         }
         return StorageOperationStatus.OK;
     }
+    private StorageOperationStatus addComponentInstanceToscaDataToNodeTypeContainer(NodeType originNodeType,
+            ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex) {
 
-    private StorageOperationStatus addComponentInstanceToscaDataToNodeTypeContainer(NodeType originNodeType, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex, User user, String envType) {
+        StorageOperationStatus status;
 
-        MapPropertiesDataDefinition instProperties = new MapPropertiesDataDefinition(originNodeType.getProperties());
-
-        StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, instProperties, componentInstance.getUniqueId());
-        if (status != StorageOperationStatus.OK) {
-            return status;
+        if(MapUtils.isNotEmpty(originNodeType.getProperties())){
+            MapPropertiesDataDefinition instProperties =
+                    new MapPropertiesDataDefinition(originNodeType.getProperties());
+            status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_PROPERTIES,
+                    VertexTypeEnum.INST_PROPERTIES, instProperties, componentInstance.getUniqueId());
+            if (status != StorageOperationStatus.OK) {
+                return status;
+            }
         }
 
-        MapPropertiesDataDefinition instAttributes = new MapPropertiesDataDefinition(originNodeType.getAttributes());
-
-        status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, instAttributes, componentInstance.getUniqueId());
-
-        if (status != StorageOperationStatus.OK) {
-            return status;
+        if(MapUtils.isNotEmpty(originNodeType.getAttributes())){
+            MapPropertiesDataDefinition instAttributes =
+                    new MapPropertiesDataDefinition(originNodeType.getAttributes());
+            status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_ATTRIBUTES,
+                    VertexTypeEnum.INST_ATTRIBUTES, instAttributes, componentInstance.getUniqueId());
+            if (status != StorageOperationStatus.OK) {
+                return status;
+            }
         }
 
         return addCalculatedCapReqFromNodeType(originNodeType, componentInstance, updatedContainerVertex);

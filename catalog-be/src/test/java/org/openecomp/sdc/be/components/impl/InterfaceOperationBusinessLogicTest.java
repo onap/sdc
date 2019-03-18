@@ -112,6 +112,9 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceOperationValidation
                      .validateInterfaceOperations(anyObject(), anyObject(), any(), anyMap(), anyBoolean()))
                 .thenReturn(Either.left(true));
+        when(interfaceOperationValidation
+                .validateDeleteOperationContainsNoMappedOutput(anyObject(), anyObject(), any()))
+                .thenReturn(Either.left(true));
         when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
     }
 

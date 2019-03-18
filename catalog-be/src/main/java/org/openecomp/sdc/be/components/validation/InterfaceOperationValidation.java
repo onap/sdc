@@ -16,10 +16,12 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentProperty;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOtherOperationOutputsOfComponent;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
 
 import com.google.common.collect.Sets;
-import fj.data.Either;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,10 +34,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -90,16 +95,49 @@ public class InterfaceOperationValidation {
         return Either.left(Boolean.TRUE);
     }
 
+    public Either<Boolean, ResponseFormat> validateDeleteOperationContainsNoMappedOutput(
+            Operation interfaceOperationToDelete, org.openecomp.sdc.be.model.Component component,
+            InterfaceDefinition storedInterfaceDefinition) {
+        ResponseFormatManager responseFormatManager = getResponseFormatManager();
+        List<OperationOutputDefinition> existingOperationOutputs =
+                getInterfaceOperationOutputs(interfaceOperationToDelete.getUniqueId(), component.getInterfaces());
+        if (existingOperationOutputs.isEmpty()) {
+            return Either.left(Boolean.TRUE);
+        }
+        String mappedOutputPrefix = storedInterfaceDefinition.getType() + "." + interfaceOperationToDelete.getName();
+        List<OperationInputDefinition> interfaceOperationInputs =
+                getOtherOperationInputsOfComponent(mappedOutputPrefix, component.getInterfaces());
+        Set<String> mappedOutputsInDeletedOperation = new HashSet<>();
+        Set<String> existingOperationOutputNames = existingOperationOutputs.stream()
+                .map(OperationOutputDefinition::getName)
+                .collect(Collectors.toSet());
+        for (String existingOperationOutputName : existingOperationOutputNames) {
+            Set<String> matchedOutputsMappedToInputs = interfaceOperationInputs.stream()
+                    .filter(operationInputDefinition -> operationInputDefinition.getInputId()
+                            .equals(mappedOutputPrefix + "." + existingOperationOutputName))
+                    .map(operationInputDefinition -> getOperationOutputName(operationInputDefinition.getInputId()))
+                    .collect(Collectors.toSet());
+            mappedOutputsInDeletedOperation.addAll(matchedOutputsMappedToInputs);
+        }
+
+        if (CollectionUtils.isNotEmpty(mappedOutputsInDeletedOperation)) {
+            return getMappedOutputErrorResponse(responseFormatManager, mappedOutputsInDeletedOperation,
+                    "Cannot delete interface operation with output(s) '{}' mapped to another operation input",
+                    ActionStatus.INTERFACE_OPERATION_DELETE_WITH_MAPPED_OUTPUT);
+        }
+        return Either.left(Boolean.TRUE);
+    }
+
     private Either<Boolean, ResponseFormat> validateAllowedOperationCountOnLocalInterfaceType(
             InterfaceDefinition inputInterfaceDefinition, InterfaceDefinition storedInterfaceDefinition,
             Map<String, InterfaceDefinition> globalInterfaceTypes, boolean isUpdate) {
 
         boolean isInterfaceTypeExistInGlobalType =
                 globalInterfaceTypes.values().stream().map(InterfaceDefinition::getType)
-                .anyMatch(type -> type.equalsIgnoreCase(inputInterfaceDefinition.getType()));
-        if (!isInterfaceTypeExistInGlobalType && (inputInterfaceDefinition.getOperations().size() > 1
-                || (!isUpdate && storedInterfaceDefinition != null
-                && storedInterfaceDefinition.getType().equalsIgnoreCase(inputInterfaceDefinition.getType())))) {
+                        .anyMatch(type -> type.equalsIgnoreCase(inputInterfaceDefinition.getType()));
+        if (!isInterfaceTypeExistInGlobalType
+                && isValidOperationOnLocalInterfaceType(inputInterfaceDefinition, storedInterfaceDefinition,
+                isUpdate)) {
             return Either.right(getResponseFormatManager()
                     .getResponseFormat(ActionStatus.INTERFACE_OPERATION_INVALID_FOR_LOCAL_TYPE,
                             inputInterfaceDefinition.getType()));
@@ -108,22 +146,32 @@ public class InterfaceOperationValidation {
         return Either.left(Boolean.TRUE);
     }
 
+    private boolean isValidOperationOnLocalInterfaceType(InterfaceDefinition inputInterfaceDefinition,
+                                                         InterfaceDefinition storedInterfaceDefinition,
+                                                         boolean isUpdate) {
+        return inputInterfaceDefinition.getOperations().size() > 1
+                || (!isUpdate && storedInterfaceDefinition != null
+                && storedInterfaceDefinition.getType()
+                .equalsIgnoreCase(inputInterfaceDefinition.getType()));
+    }
+
     private Either<Boolean, ResponseFormat> validateAllowedOperationsOnGlobalInterfaceType(
             InterfaceDefinition interfaceDefinition, Map<String, InterfaceDefinition> globalInterfaceTypes) {
 
-        if (globalInterfaceTypes != null) {
-            boolean isOperationValidOnGlobalInterfaceType = Stream.of(interfaceDefinition)
-                    .filter(interfaceDef -> globalInterfaceTypes.values().stream().anyMatch(interfaceDef1 ->
-                            interfaceDef1.getType().equalsIgnoreCase(interfaceDef.getType())))
-                    .flatMap(interfaceDef -> interfaceDef.getOperationsMap().values().stream().map(Operation::getName))
-                    .allMatch(operationName -> globalInterfaceTypes.values().stream()
-                            .flatMap(interfaceDef -> interfaceDef.getOperationsMap().keySet().stream())
-                            .anyMatch(opName -> opName.equalsIgnoreCase(operationName)));
-            if (!isOperationValidOnGlobalInterfaceType) {
-                return Either.right(getResponseFormatManager()
-                        .getResponseFormat(ActionStatus.INTERFACE_OPERATION_INVALID_FOR_GLOBAL_TYPE,
-                                interfaceDefinition.getType()));
-            }
+        if (globalInterfaceTypes == null) {
+            return Either.left(Boolean.TRUE);
+        }
+        boolean isOperationValidOnGlobalInterfaceType = Stream.of(interfaceDefinition)
+                .filter(interfaceDef -> globalInterfaceTypes.values().stream().anyMatch(interfaceDef1 ->
+                        interfaceDef1.getType().equalsIgnoreCase(interfaceDef.getType())))
+                .flatMap(interfaceDef -> interfaceDef.getOperationsMap().values().stream().map(Operation::getName))
+                .allMatch(operationName -> globalInterfaceTypes.values().stream()
+                        .flatMap(interfaceDef -> interfaceDef.getOperationsMap().keySet().stream())
+                        .anyMatch(opName -> opName.equalsIgnoreCase(operationName)));
+        if (!isOperationValidOnGlobalInterfaceType) {
+            return Either.right(getResponseFormatManager()
+                    .getResponseFormat(ActionStatus.INTERFACE_OPERATION_INVALID_FOR_GLOBAL_TYPE,
+                            interfaceDefinition.getType()));
         }
         return Either.left(Boolean.TRUE);
     }
@@ -212,33 +260,47 @@ public class InterfaceOperationValidation {
                     .collect(Collectors.toSet());
         }
         String mappedOutputPrefix = interfaceDefinition.getType() + "." + interfaceOperation.getName();
+        //Get the deleted outputs (name changed also equivalent to deleted)
         Set<String> deletedOutputs = Sets.difference(existingOperationOutputNames, currentOperationOutputNames);
-        Set<String> deletedMappedOutputs = deletedOutputs.stream()
-                .filter(deletedOutputName -> isMappedOutputDeleted(mappedOutputPrefix, deletedOutputName,
-                        component.getInterfaces()))
-                .map(this::getOperationOutputName)
-                .collect(Collectors.toSet());
+        Set<String> deletedMappedOutputs = getModifiedMappedOutputs(deletedOutputs, mappedOutputPrefix,
+                component.getInterfaces());
 
         if (CollectionUtils.isNotEmpty(deletedMappedOutputs)) {
-            return getMappedOutputErrorResponse(responseFormatManager, deletedMappedOutputs);
+            return getMappedOutputErrorResponse(responseFormatManager, deletedMappedOutputs,
+                    "Cannot update or delete interface operation output(s) '{}' mapped to an operation input",
+                    ActionStatus.INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED);
         }
 
         if (currentOutputs != null && !currentOutputs.isEmpty()) {
+            //Get the unchanged outputs based on name to see if other attributes (type/mandatory) have not been changed
             Set<String> unchangedOutputNames = Sets.intersection(existingOperationOutputNames,
                     currentOperationOutputNames);
-            Set<String> modifiedMappedOutputNames =
-                    getModifiedMappedOutputNames(currentOutputs.getListToscaDataDefinition(),
+            Set<String> modifiedOutputNames =
+                    getModifiedOutputNames(currentOutputs.getListToscaDataDefinition(),
                             existingOperationOutputs, unchangedOutputNames);
+            Set<String> modifiedMappedOutputNames = getModifiedMappedOutputs(modifiedOutputNames, mappedOutputPrefix,
+                    component.getInterfaces());
             if (CollectionUtils.isNotEmpty(modifiedMappedOutputNames)) {
-                return getMappedOutputErrorResponse(responseFormatManager, modifiedMappedOutputNames);
+                return getMappedOutputErrorResponse(responseFormatManager, modifiedMappedOutputNames,
+                        "Cannot update or delete interface operation output(s) '{}' mapped to an operation input",
+                        ActionStatus.INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED);
             }
         }
 
         return Either.left(Boolean.TRUE);
     }
 
-    private boolean isMappedOutputDeleted(String mappedOutputPrefix, String outputName,
-                                          Map<String, InterfaceDefinition> componentInterfaces) {
+    private Set<String> getModifiedMappedOutputs(Set<String> modifiedOutputNames, String mappedOutputPrefix,
+                                                 Map<String, InterfaceDefinition> componentInterfaces) {
+        return modifiedOutputNames.stream()
+                .filter(modifiedOutputName -> isMappedOutputModified(mappedOutputPrefix, modifiedOutputName,
+                        componentInterfaces))
+                .map(InterfaceOperationUtils::getOperationOutputName)
+                .collect(Collectors.toSet());
+    }
+
+    private boolean isMappedOutputModified(String mappedOutputPrefix, String outputName,
+                                           Map<String, InterfaceDefinition> componentInterfaces) {
         List<OperationInputDefinition> interfaceOperationInputs =
                 getOtherOperationInputsOfComponent(mappedOutputPrefix, componentInterfaces);
         return interfaceOperationInputs.stream()
@@ -246,16 +308,16 @@ public class InterfaceOperationValidation {
                         .equals(mappedOutputPrefix + "." + outputName));
     }
 
-    private static Set<String> getModifiedMappedOutputNames(List<OperationOutputDefinition> currentOperationOutputs,
-            List<OperationOutputDefinition> existingOperationOutputs,
-            Set<String> unchangedOutputNames) {
+    private static Set<String> getModifiedOutputNames(List<OperationOutputDefinition> currentOperationOutputs,
+                                                      List<OperationOutputDefinition> existingOperationOutputs,
+                                                      Set<String> unchangedOutputNames) {
         Set<String> modifiedOutputDefinitionNames = new HashSet<>();
-        Map<String, OperationOutputDefinition> newOutputMap =
-                currentOperationOutputs.stream().collect(Collectors.toMap(OperationOutputDefinition::getName,
+        Map<String, OperationOutputDefinition> newOutputMap = currentOperationOutputs.stream()
+                .collect(Collectors.toMap(OperationOutputDefinition::getName,
                         (OperationOutputDefinition operationOutputDefinition) -> operationOutputDefinition));
 
-        Map<String, OperationOutputDefinition> existingOutputMap =
-                existingOperationOutputs.stream().collect(Collectors.toMap(OperationOutputDefinition::getName,
+        Map<String, OperationOutputDefinition> existingOutputMap = existingOperationOutputs.stream()
+                .collect(Collectors.toMap(OperationOutputDefinition::getName,
                         (OperationOutputDefinition operationOutputDefinition) -> operationOutputDefinition));
 
         for (String outputName : unchangedOutputNames) {
@@ -270,12 +332,12 @@ public class InterfaceOperationValidation {
     }
 
     private Either<Boolean, ResponseFormat> getMappedOutputErrorResponse(ResponseFormatManager responseFormatManager,
-                                                                         Set<String> modifiedMappedOutputs) {
+                                                                         Set<String> modifiedMappedOutputs,
+                                                                         String message,
+                                                                         ActionStatus errorStatus) {
         String modifiedOutputNameList = String.join(",", modifiedMappedOutputs);
-        LOGGER.error("Cannot update or delete interface operation output(s) '{}' mapped to an operation input",
-                modifiedOutputNameList);
-        ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED, modifiedOutputNameList);
+        LOGGER.error(message, modifiedOutputNameList);
+        ResponseFormat errorResponse = responseFormatManager.getResponseFormat(errorStatus, modifiedOutputNameList);
         return Either.right(errorResponse);
     }
 
@@ -461,11 +523,11 @@ public class InterfaceOperationValidation {
         List<OperationInputDefinition> inputListToscaDataDefinition =
                 operation.getInputs().getListToscaDataDefinition();
         for (OperationInputDefinition inputDefinition : inputListToscaDataDefinition) {
-            if (isOperationInputMappedToComponentProperty(inputDefinition, component.getInputs())) {
+            if (isOperationInputMappedToComponentInput(inputDefinition, component.getInputs())) {
                 isOperationInputToInputPropertyMappingValid = true;
             } else {
                 mappingName = inputDefinition.getInputId().contains(".")
-                        ? inputDefinition.getInputId().substring(inputDefinition.getInputId().lastIndexOf(".") + 1)
+                        ? inputDefinition.getInputId().substring(inputDefinition.getInputId().lastIndexOf('.') + 1)
                         : inputDefinition.getInputId();
                 break;
             }
@@ -476,8 +538,9 @@ public class InterfaceOperationValidation {
 
         //Mapped property not found in the component properties.. Check in other operation output parameters of
         // component (other operation => not having the same full name)
+        String actualOperationIdentifier = inputInterfaceDefinition.getType() + "." + operation.getName();
         ListDataDefinition<OperationOutputDefinition> outputListDataDefinition =
-                getOtherOperationOutputsOfComponent(inputInterfaceDefinition.getType(), operation.getName(), component);
+                getOtherOperationOutputsOfComponent(actualOperationIdentifier, component.getInterfaces());
 
         List<OperationOutputDefinition> componentOutputsFromOtherOperations =
                 outputListDataDefinition.getListToscaDataDefinition();
@@ -503,38 +566,6 @@ public class InterfaceOperationValidation {
                                                     List<OperationOutputDefinition> outputs) {
         return outputs.stream()
                 .anyMatch(output -> output.getName().equals(mappedOutputName));
-    }
-
-    /**
-     * Get the list of outputs of other operations of all the interfaces in the component.
-     * @param currentInterfaceName Fully qualified interface name e.g. org.test.interfaces.node.lifecycle.Abc
-     * @param currentOperationName Name entered on the operation screen e.g. create
-     * @param component VF or service
-     */
-
-    private ListDataDefinition<OperationOutputDefinition> getOtherOperationOutputsOfComponent(
-            String currentInterfaceName, String currentOperationName, org.openecomp.sdc.be.model.Component component) {
-        ListDataDefinition<OperationOutputDefinition> componentOutputs = new ListDataDefinition<>();
-        Map<String, InterfaceDefinition> componentInterfaces = component.getInterfaces();
-        if (MapUtils.isEmpty(componentInterfaces)) {
-            return componentOutputs;
-        }
-        for (Map.Entry<String, InterfaceDefinition> interfaceDefinitionEntry : componentInterfaces.entrySet()) {
-            String interfaceName = interfaceDefinitionEntry.getKey();
-            final Map<String, OperationDataDefinition> operations = interfaceDefinitionEntry.getValue().getOperations();
-            if (MapUtils.isEmpty(operations)) {
-                continue;
-            }
-            String actualOperationIdentifier = currentInterfaceName + "." + currentOperationName;
-            for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
-                ListDataDefinition<OperationOutputDefinition> outputs = operationEntry.getValue().getOutputs();
-                String expectedOperationIdentifier = interfaceName + "." + operationEntry.getKey();
-                if (!actualOperationIdentifier.equals(expectedOperationIdentifier) && !outputs.isEmpty()) {
-                    outputs.getListToscaDataDefinition().forEach(componentOutputs::add);
-                }
-            }
-        }
-        return componentOutputs;
     }
 
     /**
@@ -564,12 +595,6 @@ public class InterfaceOperationValidation {
             }
         }
         return otherOperationInputs;
-    }
-
-    private String getOperationOutputName(String outputName) {
-        return outputName.contains(".")
-                ? outputName.substring(outputName.lastIndexOf(".") + 1)
-                : outputName;
     }
 
     /**

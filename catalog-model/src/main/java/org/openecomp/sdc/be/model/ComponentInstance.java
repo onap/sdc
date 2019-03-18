@@ -41,6 +41,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private Map<String, Object> interfaces;
     private List<PropertyDefinition> properties;
     private CINodeFilterDataDefinition nodeFilter;
+    private List<InputDefinition> inputs;
 
     public ComponentInstance() {
         super();
@@ -145,7 +146,11 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         this.nodeFilter = nodeFilter;
     }
 
+    public List<InputDefinition> getInputs() {
+        return inputs;
+    }
 
-
-
+    public void setInputs(List<InputDefinition> inputs) {
+        this.inputs = inputs;
+    }
 }

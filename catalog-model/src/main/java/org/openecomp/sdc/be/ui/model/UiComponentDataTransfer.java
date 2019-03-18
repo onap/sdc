@@ -28,11 +28,13 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -84,6 +86,8 @@ public class UiComponentDataTransfer {
     private Map<String, CINodeFilterDataDefinition> nodeFilter;
 
     private Map<String, UINodeFilter> nodeFilterforNode;
+    private List<PropertyDefinition> properties;
+    private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
 
     public Map<String, InterfaceDefinition> getInterfaces() {
         return interfaces;
@@ -309,4 +313,22 @@ public class UiComponentDataTransfer {
     public void setNodeFilterData(Map<String, UINodeFilter> nodeFilterforNode) {
         this.nodeFilterforNode = nodeFilterforNode;
     }
+
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
+
+    public Map<String, List<ComponentInstanceInterface>> getComponentInstancesInterfaces() {
+        return componentInstancesInterfaces;
+    }
+
+    public void setComponentInstancesInterfaces(
+            Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces) {
+        this.componentInstancesInterfaces = componentInstancesInterfaces;
+    }
+
 }

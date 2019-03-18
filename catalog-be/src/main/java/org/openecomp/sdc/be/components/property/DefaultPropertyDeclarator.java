@@ -75,8 +75,6 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     private InputDefinition declarePropertyInput(String componentId, PROPERTYOWNER propertiesOwner, List<PROPERTYTYPE> declaredProperties, ComponentInstancePropInput propInput) {
         PropertyDataDefinition prop = resolveProperty(declaredProperties, propInput);
-        propInput.setOwnerId(null);
-        propInput.setParentUniqueId(null);
         InputDefinition inputDefinition = createInput(componentId, propertiesOwner, propInput, prop);
         PROPERTYTYPE declaredProperty = createDeclaredProperty(prop);
         if(!declaredProperties.contains(declaredProperty)){
@@ -86,15 +84,19 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         return inputDefinition;
     }
 
-    private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
-        String generatedInputName = generateInputName(propertiesOwner instanceof
-                        Service ? null : propertiesOwner.getNormalizedName(),
-            propInput);
+    private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner,
+                                        ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
+        String generatedInputPrefix = propertiesOwner.getNormalizedName();
+        if (propertiesOwner.getUniqueId().equals(propInput.getParentUniqueId())) {
+            //Creating input from property create on self using add property..Do not add the prefix
+            generatedInputPrefix = null;
+        }
+        String generatedInputName = generateInputName(generatedInputPrefix, propInput);
         return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
     }
 
     private String generateInputName(String inputName, ComponentInstancePropInput propInput) {
-        String declaredInputName = inputName;
+        String declaredInputName;
         String[] parsedPropNames = propInput.getParsedPropNames();
 
         if(parsedPropNames != null){
@@ -154,7 +156,6 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         input.setInputPath(propertiesName);
         input.setInstanceUniqueId(propertiesOwner.getUniqueId());
         input.setPropertyId(propInput.getUniqueId());
-        input.setValue(null);
         changePropertyValueToGetInputValue(inputName, parsedPropNames, input, prop, complexProperty);
 
         if(prop instanceof IComponentInstanceConnectedElement) {

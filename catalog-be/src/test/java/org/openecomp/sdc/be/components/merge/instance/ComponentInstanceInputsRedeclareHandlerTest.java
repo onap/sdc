@@ -16,6 +16,7 @@ import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -57,7 +58,8 @@ public class ComponentInstanceInputsRedeclareHandlerTest {
         currContainer = new ResourceBuilder()
                 .addInstanceProperty("inst1", "prop1")
                 .addInstanceProperty("inst1", "prop2")
-                .addInstanceInput("inst2", "prop3")
+                .addInstanceInput("inst1", "prop1", Collections.singletonList(new GetInputValueDataDefinition()))
+                .addInstanceInput("inst1", "prop2", Collections.singletonList(new GetInputValueDataDefinition()))
                 .setUniqueId(RESOURCE_ID)
                 .build();
 

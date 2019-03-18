@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -2294,6 +2295,13 @@ public class ToscaOperationFacade {
         return convertComponentInstanceProperties(containerComponent, componentInstanceUniqueId)
                 .map(instanceCapProps -> topologyTemplateOperation.updateComponentInstanceCapabilityProperties(containerComponent, componentInstanceUniqueId, instanceCapProps))
                 .orElse(StorageOperationStatus.NOT_FOUND);
+    }
+
+    public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent, String componentInstanceUniqueId) {
+        MapInterfaceDataDefinition mapInterfaceDataDefinition =
+                convertComponentInstanceInterfaces(containerComponent, componentInstanceUniqueId);
+        return topologyTemplateOperation
+                .updateComponentInstanceInterfaces(containerComponent, componentInstanceUniqueId, mapInterfaceDataDefinition);
     }
 
 	public StorageOperationStatus updateComponentCalculatedCapabilitiesProperties(Component containerComponent) {

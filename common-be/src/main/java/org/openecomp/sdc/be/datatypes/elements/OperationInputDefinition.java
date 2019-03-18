@@ -16,24 +16,29 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 
 public class OperationInputDefinition extends InputDataDefinition {
+    private String source;
+    private String sourceProperty;
+    private String toscaDefaultValue;
 
     @JsonCreator
     public OperationInputDefinition() {
         super();
     }
 
-    public OperationInputDefinition(String name, InputDataDefinition inputDefinition) {
+    public OperationInputDefinition(String name, InputDataDefinition inputDefinition, String source, String sourceProperty) {
         super(inputDefinition);
         setName(name);
+        setSource(source);
+        setSourceProperty(sourceProperty);
     }
 
-    public OperationInputDefinition(String name, String property,  Boolean mandatory, String type) {
+    public OperationInputDefinition(String name, String property, Boolean mandatory, String type) {
         super();
         setName(name);
         setInputId(property);
@@ -49,4 +54,27 @@ public class OperationInputDefinition extends InputDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL, name);
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSourceProperty() {
+        return sourceProperty;
+    }
+
+    public void setSourceProperty(String sourceProperty) {
+        this.sourceProperty = sourceProperty;
+    }
+
+    public String getToscaDefaultValue() {
+        return toscaDefaultValue;
+    }
+
+    public void setToscaDefaultValue(String toscaDefaultValue) {
+        this.toscaDefaultValue = toscaDefaultValue;
+    }
 }

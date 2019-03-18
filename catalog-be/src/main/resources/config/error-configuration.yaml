@@ -2250,10 +2250,16 @@ errors:
         message: "Error: Cannot update or delete interface operation output(s) '%1' mapped to an operation input",
         messageId: "SVC4723"
     }
-#---------SVC4723-----------------------------
+#---------SVC4724-----------------------------
 # %1 - Interface Operation output name
-    INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED: {
+    INTERFACE_OPERATION_DELETE_WITH_MAPPED_OUTPUT: {
         code: 400,
-        message: "Error: Cannot update or delete interface operation output(s) '%1' mapped to an operation input",
-        messageId: "SVC4723"
+        message: "Error: Cannot delete interface operation with output(s) '%1' mapped to another operation input",
+        messageId: "SVC4724"
+    }
+#---------SVC4725-----------------------------
+    INVALID_CONSUMPTION_TYPE: {
+        code: 400,
+        message: "Error: Given value is different than input type. Needs to be %1",
+        messageId: "SVC4725"
     }

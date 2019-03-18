@@ -480,6 +480,24 @@ public class InterfaceOperationValidationTest {
     }
 
 
+    @Test
+    public void shouldFailValidateDeleteOperationOperationWithMappedOutput() {
+        InterfaceDefinition inputInterfaceDefinition = InterfaceOperationTestUtils.createMockInterface(interfaceType2,
+                operationId, operationType1);
+        InterfaceDefinition inputParamOutputMappedInterface = InterfaceOperationTestUtils.createMockInterface(
+                interfaceType3, operationId, operationType2);
+        inputParamOutputMappedInterface.getOperationsMap().values()
+                .forEach(operation -> operation.getInputs().getListToscaDataDefinition()
+                        .forEach(operationInputDefinition -> operationInputDefinition.setInputId(interfaceType2 +
+                                "." + operationType1 + "." + outputName1)));
+        component.getInterfaces().put(interfaceType3, inputParamOutputMappedInterface);
+        component.getInterfaces().put(interfaceType2, InterfaceOperationTestUtils.createMockInterface(interfaceType2,
+                operationId, operationType1));
+        Assert.assertTrue(interfaceOperationValidationUtilTest.validateDeleteOperationContainsNoMappedOutput(
+                inputInterfaceDefinition.getOperationsMap().get(operationId), component,
+                inputInterfaceDefinition).isRight());
+    }
+
     private InterfaceDefinition createInterfaceOperationData(String uniqueID, String description,
                                                              ArtifactDefinition artifactDefinition,
                                                              ListDataDefinition<OperationInputDefinition> inputs,

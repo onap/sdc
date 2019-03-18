@@ -25,7 +25,6 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.model.MapInterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 

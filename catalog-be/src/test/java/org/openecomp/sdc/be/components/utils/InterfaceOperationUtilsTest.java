@@ -1,7 +1,10 @@
 package org.openecomp.sdc.be.components.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +20,8 @@ public class InterfaceOperationUtilsTest {
     private static final String operationId = "operationId";
     private static final String operationName = "createOperation";
     private static final String interfaceId = "interfaceId";
+    private static final String operationId1 = "operationId1";
+    private static final String interfaceId1 = "interfaceId1";
     private static Resource resource;
 
     @Before
@@ -92,6 +97,30 @@ public class InterfaceOperationUtilsTest {
         Optional<Map.Entry<String, Operation>> operationEntry =
                 InterfaceOperationUtils.getOperationFromInterfaceDefinition(interfaceDefinition, TEST_RESOURCE_NAME);
         Assert.assertFalse(operationEntry.isPresent());
+    }
+
+    @Test
+    public void testGetInterfaceDefinitionFromOperationIdSuccess() {
+        List<InterfaceDefinition> interfaces = new ArrayList<>();
+        interfaces.add(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName));
+        interfaces.add(InterfaceOperationTestUtils.createMockInterface(interfaceId1, operationId1, operationName));
+        Assert.assertTrue(InterfaceOperationUtils.getInterfaceDefinitionFromOperationId(interfaces, operationId)
+                                  .isPresent());
+    }
+
+    @Test
+    public void testGetInterfaceDefinitionFromOperationIdFailure() {
+        List<InterfaceDefinition> interfaces = new ArrayList<>();
+        interfaces.add(InterfaceOperationTestUtils.createMockInterface(interfaceId1, operationId1, operationName));
+        Assert.assertFalse(InterfaceOperationUtils.getInterfaceDefinitionFromOperationId(interfaces, operationId)
+                                  .isPresent());
+    }
+
+    @Test
+    public void testGetInterfaceDefinitionFromOperationIdFailureInterfacesEmpty() {
+        List<InterfaceDefinition> interfaces = new ArrayList<>();
+        Assert.assertFalse(InterfaceOperationUtils.getInterfaceDefinitionFromOperationId(interfaces, operationId)
+                                   .isPresent());
     }
 
 }

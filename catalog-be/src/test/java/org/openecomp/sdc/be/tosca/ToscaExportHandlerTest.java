@@ -144,6 +144,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 		Mockito.when(capabiltyRequirementConvertor.convertRequirements(Mockito.any(Map.class), Mockito.any(Resource.class),
 				Mockito.any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+				.thenReturn(Either.left(Collections.emptyMap()));
 
 		// default test when component is Resource
 		result = testSubject.exportComponent(component);
@@ -381,7 +383,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Either<ToscaTemplate, ToscaError> result;
 
 		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.ALREADY_EXIST));
-
+		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+				.thenReturn(Either.left(Collections.emptyMap()));
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertNodeType",new HashMap<>(), component, toscaNode, nodeTypes);
 	}

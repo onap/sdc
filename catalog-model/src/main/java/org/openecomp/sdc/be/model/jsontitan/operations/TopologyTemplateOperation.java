@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
@@ -71,6 +72,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
+
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -768,6 +770,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
 
+        if (!componentParametersView.isIgnoreComponentInstancesInterfaces()) {
+            TitanOperationStatus storageStatus =
+                    setComponentInstancesInterfacesFromGraph(componentV, toscaElement);
+            if (storageStatus != TitanOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(storageStatus));
+            }
+        }
         return Either.left(toscaElement);
     }
 
@@ -787,6 +796,22 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Either<Map<String, InterfaceDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE);
         if (result.isLeft()) {
             topologyTemplate.setInterfaces(result.left().value());
+        } else {
+            if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return TitanOperationStatus.OK;
+    }
+
+
+    private TitanOperationStatus setComponentInstancesInterfacesFromGraph(GraphVertex componentV,
+                                                                          TopologyTemplate topologyTemplate) {
+        Either<Map<String, MapInterfaceDataDefinition>, TitanOperationStatus> result =
+                getDataFromGraph(componentV, EdgeLabelEnum.INST_INTERFACES);
+        if (result.isLeft()) {
+            result.left().value().entrySet().forEach(entry -> topologyTemplate
+                    .addComponentInstanceInterfaceMap(entry.getKey(), entry.getValue()));
         } else {
             if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
                 return result.right().value();
@@ -1182,16 +1207,20 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (status != TitanOperationStatus.OK) {
             log.debug("Failed to disassociate requirements for {} error {}",
                     toscaElementVertex.getUniqueId(), status);
-            Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT,
                 EdgeLabelEnum.CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
             log.debug("Failed to disassociate capabilities for {} error {}",
                     toscaElementVertex.getUniqueId(), status);
-            Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
-
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INTERFACES);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate instances interfaces for {} error {}", toscaElementVertex.getUniqueId(), status);
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
         toscaElementVertex.getVertex().remove();
         log.trace("Tosca element vertex for {} was removed", toscaElementVertex.getUniqueId());
 
@@ -1347,6 +1376,16 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     public StorageOperationStatus updateComponentInstanceCapabilityProperties(Component containerComponent, String componentInstanceId, MapCapabilityProperty instanceProperties) {
         return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, instanceProperties, componentInstanceId);
+    }
+
+    public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent,
+                                                                    String componentInstanceId,
+                                                                    MapInterfaceDataDefinition instanceInterfaces) {
+        if (MapUtils.isNotEmpty(instanceInterfaces.getMapToscaDataDefinition())) {
+            return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(),
+                    EdgeLabelEnum.INST_INTERFACES, instanceInterfaces, componentInstanceId);
+        }
+        return StorageOperationStatus.OK;
     }
 
 
