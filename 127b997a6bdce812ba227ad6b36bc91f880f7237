@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51d2dec5_55705eb6",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-18T08:53:12Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 923,
+        "startChar": 38,
+        "endLine": 923,
+        "endChar": 55
+      },
+      "revId": "127b997a6bdce812ba227ad6b36bc91f880f7237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "589311be_92a3b588",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 924,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-18T08:53:12Z",
+      "side": 1,
+      "message": "put in one line",
+      "range": {
+        "startLine": 923,
+        "startChar": 8,
+        "endLine": 924,
+        "endChar": 67
+      },
+      "revId": "127b997a6bdce812ba227ad6b36bc91f880f7237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "642d775d_31a8e48f",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-18T08:53:12Z",
+      "side": 1,
+      "message": "why public?",
+      "range": {
+        "startLine": 88,
+        "startChar": 4,
+        "endLine": 88,
+        "endChar": 10
+      },
+      "revId": "127b997a6bdce812ba227ad6b36bc91f880f7237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
