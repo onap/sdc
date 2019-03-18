@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43b68a7e_bd6f5a64",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/test/java/org/openecomp/sdcrests/externaltesting/rest/services/ApiTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-18T13:36:52Z",
+      "side": 1,
+      "message": "Sonar issue :\nLambdas and anonymous classes should not have too many lines of code\n \nCode smell\n \nMajor\nsquid:S1188",
+      "revId": "b99b2bf2e9efff12d91e3d4898fda88c39ee8525",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ec6fa41_d20413bc",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/VtpTestExecutionResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-18T13:36:52Z",
+      "side": 1,
+      "message": "Sonar\nUseless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck",
+      "revId": "b99b2bf2e9efff12d91e3d4898fda88c39ee8525",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5c607f6_95fa9356",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/test/java/org/openecomp/core/externaltesting/api/ExecutionRequestTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-18T13:36:52Z",
+      "side": 1,
+      "message": "Sonar \nGeneric exceptions should never be thrown\n \nCode smell\n \nMajor\nsquid:S00112\n \nUsing such generic exceptions as Error, RuntimeException, Throwable, and Exception prevents calling methods from handling true, system-generated exceptions differently than application-generated errors.\nNoncompliant Code Example\n  public void foo(String bar) throws Throwable { // Noncompliant    throw new RuntimeException(\"My Message\"); // Noncompliant  }  \nCompliant Solution\n  public void foo(String bar) {    throw new MyOwnRuntimeException(\"My Message\");  }  \nExceptions\nGeneric exceptions in the signatures of overriding methods are ignored, because overriding method has to follow signature of the throw declaration in the superclass. The issue will be raised on superclass declaration of the method (or won\u0027t be raised at all if superclass is not part of the analysis).\n  @Override  public void myMethod() throws Exception {...}  \nGeneric exceptions are also ignored in the signatures of methods that make calls to methods that throw generic exceptions.\n  public void myOtherMethod throws Exception {    doTheThing(); // this method throws Exception  }  \nSee\nMITRE, CWE-397 - Declaration of Throws for Generic Exception\nCERT, ERR07-J. - Do not throw RuntimeException, Exception, or Throwable",
+      "revId": "b99b2bf2e9efff12d91e3d4898fda88c39ee8525",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee345567_4781240e",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/test/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImplTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-18T13:36:52Z",
+      "side": 1,
+      "message": "Methods should not be empty\n \nCode smell\n \nCritical\nsquid:S1186\n \nThere are several reasons for a method not to have a method body:\nIt is an unintentional omission, and should be fixed to prevent an unexpected behavior in production.\nIt is not yet, or never will be, supported. In this case an UnsupportedOperationException should be thrown.\nThe method is an intentionally-blank override. In this case a nested comment should explain the reason for the blank override.\nNoncompliant Code Example\n  public void doSomething() {  }    public void doSomethingElse() {  }  \nCompliant Solution\n  @Override  public void doSomething() {    // Do nothing because of X and Y.  }    @Override  public void doSomethingElse() {    throw new UnsupportedOperationException();  }",
+      "revId": "b99b2bf2e9efff12d91e3d4898fda88c39ee8525",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "480d4379_0f4f10ba",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/test/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImplTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-03-18T13:36:52Z",
+      "side": 1,
+      "message": "Try-catch blocks should not be nested\n \nCode smell\n \nMajor\nsquid:S1141\n \nNesting try/catch blocks severely impacts the readability of source code because it makes it too difficult to understand which block will catch which exception.",
+      "revId": "b99b2bf2e9efff12d91e3d4898fda88c39ee8525",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
