@@ -89,6 +89,7 @@ class Input extends React.Component {
                             inputRef={input => (this.input = input)}
                             type={type}
                             data-test-id={this.props['data-test-id']}
+                            placeholder={this.props.placeholder || ''}
                         />
                     )}
                     {type === 'number' && (

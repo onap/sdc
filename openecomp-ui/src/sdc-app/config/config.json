@@ -5,6 +5,7 @@
     "appContextPath": "/onboarding",
     "defaultRestPrefix": "/onboarding-api",
     "defaultRestCatalogPrefix": "/sdc1/feProxy/rest",
+    "defaultRestOnboardingPrefix": "/sdc1/feProxy/onboarding-api",
     "defaultWebsocketProtocol": "wss",
     "defaultWebsocketPort": "8181",
     "defaultDebugWebsocketPort": "9000",

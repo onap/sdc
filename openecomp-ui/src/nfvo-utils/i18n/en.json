@@ -631,6 +631,27 @@
   "VNF Header Vendor" : "Vendor",
   "VNF Header Desc" : "Description",
   "VNF Header Action" : "Action",
-  
-  "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance."
+
+  "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance.",
+
+  "VSP ID" : "VSP ID",
+  "VSP Version" : "VSP Version",
+  "BACK" : "BACK",
+  "NEXT" : "NEXT",
+  "Validation Results" : "Validation Results",
+  "Validation" : "Validation",
+  "Setup": "Setup",
+  "Inputs": "Inputs",
+  "Certifications Query": "Certifications Query",
+  "No Certifications Query are Available": "No Certifications Query are Available",
+  "Selected Certifications Query": "Selected Certifications Query",
+  "Compliance Checks": "Compliance Checks",
+  "No Compliance Checks are Available": "No Compliance Checks are Available",
+  "Selected Compliance Tests": "Selected Compliance Tests",
+  "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters": "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters",
+  "{title} Inputs :": "{title} Inputs :",
+  "Scenario: {scenario} | Status: {status}": "Scenario: {scenario} | Status: {status}",
+  "{title} results are not available": "{title} results are not available",
+  "Test Results": "Test Results",
+  "No Validation Checks Performed": "No Validation Checks Performed"
 }

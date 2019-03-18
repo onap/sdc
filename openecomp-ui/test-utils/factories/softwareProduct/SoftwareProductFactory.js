@@ -13,35 +13,35 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {Factory} from 'rosie';
+import { Factory } from 'rosie';
 
-export const SoftwareProductFactory = new Factory()
-	.attrs({
-		softwareProductAttachments: {},
-		softwareProductCreation: {},
-		softwareProductEditor: {},
-		softwareProductProcesses: {
-			processesList: [],
-			processesEditor: {},
-			processToDelete: false
-		},
-		softwareProductNetworks: {
-			networksList: []
-		},
-		softwareProductComponents: {
-			componentsList: [],
-			componentEditor: {},
-			componentProcesses: {
-				processesList: [],
-				processesEditor: {},
-				processToDelete: false
-			},
-			network: {
-				nicList: [],
-				nicEditor: {}
-			}
-		},
-		monitoring: {},
-		softwareProductCategories: [],
-		softwareProductQuestionnaire: {}
-	});
+export const SoftwareProductFactory = new Factory().attrs({
+    softwareProductAttachments: {},
+    softwareProductCreation: {},
+    softwareProductEditor: {},
+    softwareProductValidation: {},
+    softwareProductProcesses: {
+        processesList: [],
+        processesEditor: {},
+        processToDelete: false
+    },
+    softwareProductNetworks: {
+        networksList: []
+    },
+    softwareProductComponents: {
+        componentsList: [],
+        componentEditor: {},
+        componentProcesses: {
+            processesList: [],
+            processesEditor: {},
+            processToDelete: false
+        },
+        network: {
+            nicList: [],
+            nicEditor: {}
+        }
+    },
+    monitoring: {},
+    softwareProductCategories: [],
+    softwareProductQuestionnaire: {}
+});
