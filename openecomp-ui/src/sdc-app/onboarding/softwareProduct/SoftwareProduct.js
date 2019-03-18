@@ -140,6 +140,7 @@ const buildNavigationBarProps = ({
         candidateOnboardingOrigin,
         onboardingOrigin
     } = currentSoftwareProduct;
+    let { isValidationDisabled } = softwareProduct.softwareProductValidation;
     const groups = [
         {
             id: id,
@@ -174,6 +175,20 @@ const buildNavigationBarProps = ({
                     id: enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS,
                     name: i18n('Networks'),
                     disabled: false,
+                    meta
+                },
+                {
+                    id: enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION,
+                    name: i18n('Validation'),
+                    disabled: false,
+                    hidden: isValidationDisabled,
+                    meta
+                },
+                {
+                    id: enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
+                    name: i18n('Validation Results'),
+                    disabled: false,
+                    hidden: isValidationDisabled,
                     meta
                 },
                 {
@@ -586,6 +601,8 @@ const mapActionsToProps = (
         case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS:
         case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
         case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION:
+        case enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS:
         case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
         case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
         case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
