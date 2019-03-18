@@ -101,6 +101,7 @@ Modifications copyright (c) 2018 Nokia
         <extentreports.version>3.0.3</extentreports.version>
         <cucumber.version>2.4.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
+        <hamcrest-all.version>1.3</hamcrest-all.version>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.3.5</sdc-tosca-parser.version>
