@@ -21,6 +21,8 @@ import org.openecomp.sdc.generator.core.services.ManualVspToscaGenerationService
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionService;
@@ -32,6 +34,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ManualVspToscaManagerImpl.class);
 
   private final ManualVspDataCollectionService
       manualVspDataCollectionService = new ManualVspDataCollectionService();
@@ -45,6 +49,7 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       releaseVendor = manualVspDataCollectionService.getReleaseVendor(vspId, version);
     } catch (Exception ex) {
       releaseVendor = Optional.empty();
+      LOGGER.error("Failed to get release vendor: {}", ex.getMessage(), ex);
     }
     releaseVendor.ifPresent(vspModelInfo::setReleaseVendor);
 
@@ -54,6 +59,7 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       allowedFlavors = manualVspDataCollectionService.getAllowedFlavors(vspId, version);
     } catch (Exception ex) {
       allowedFlavors = null;
+      LOGGER.error("Failed to get allowed flavours: {}", ex.getMessage(), ex);
     }
     if (MapUtils.isNotEmpty(allowedFlavors)) {
       vspModelInfo.setAllowedFlavors(allowedFlavors);
@@ -66,6 +72,7 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
           manualVspDataCollectionService.getVspComponentImages(vspId, version);
     } catch (Exception ex) {
       vspComponentImages = null;
+      LOGGER.error("Failed to get VSP components Images: {}", ex.getMessage(), ex);
     }
     if (MapUtils.isNotEmpty(vspComponentImages)) {
       vspModelInfo.setMultiFlavorVfcImages(vspComponentImages);
@@ -77,6 +84,7 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       vspComponents = manualVspDataCollectionService.getVspComponents(vspId, version);
     } catch (Exception ex) {
       vspComponents = null;
+      LOGGER.error("Failed to get VSP components: {}", ex.getMessage(), ex);
     }
     if (MapUtils.isNotEmpty(vspComponents)) {
       vspModelInfo.setComponents(vspComponents);
@@ -88,6 +96,7 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       vspComponentNics = manualVspDataCollectionService.getVspComponentNics(vspId, version);
     } catch (Exception ex) {
       vspComponentNics = null;
+      LOGGER.error("Failed to get VSP component NIC data: {}", ex.getMessage(), ex);
     }
     if (MapUtils.isNotEmpty(vspComponentNics)) {
       vspModelInfo.setNics(vspComponentNics);

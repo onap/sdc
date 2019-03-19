@@ -288,9 +288,9 @@ class SOL004MetaDirectoryValidator implements Validator{
     }
 
     private boolean isPnfMetadata(Map<String, String> metadata) {
-        String metadataType = null;
+        String metadataType = "";
         for(String key: metadata.keySet()) {
-            if(metadataType == null){
+            if(metadataType.isEmpty()){
                  metadataType = key.contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
             }else if(!key.contains(metadataType)){
                 throw new InvalidManifestMetadataException(Messages.MANIFEST_METADATA_INVALID_ENTRY.getErrorMessage());
@@ -300,9 +300,9 @@ class SOL004MetaDirectoryValidator implements Validator{
     }
 
     private void handleVnfMetadataEntries(Map<String, String> metadata) {
-        for (String requiredPnfEntry : MANIFEST_VNF_METADATA) {
-            if (!metadata.containsKey(requiredPnfEntry)) {
-                reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredPnfEntry));
+        for (String requiredVnfEntry : MANIFEST_VNF_METADATA) {
+            if (!metadata.containsKey(requiredVnfEntry)) {
+                reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredVnfEntry));
             }
         }
     }

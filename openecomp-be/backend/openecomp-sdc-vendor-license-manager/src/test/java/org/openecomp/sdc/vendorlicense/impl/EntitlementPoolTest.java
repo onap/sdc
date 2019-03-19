@@ -17,6 +17,10 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -28,11 +32,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.*;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -94,13 +93,13 @@ public class EntitlementPoolTest {
     return entitlementPool;
   }
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
 
-  @AfterMethod
+  @After
   public void tearDown(){
     vendorLicenseManagerImpl = null;
   }
@@ -127,8 +126,7 @@ public class EntitlementPoolTest {
   }
 
 
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp = "Vendor " +
-      "license model with id vlm1_id has invalid date range.")
+  @Test(expected = CoreException.class)
   public void createWithInvalidStartExpiryDateTest() {
 
     Set<OperationalScope> opScopeChoices;
@@ -146,12 +144,11 @@ public class EntitlementPoolTest {
     ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
     ep2.setVendorLicenseModelId(vlm1_id);
     vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail();
+    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
 
   }
 
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp = "Vendor " +
-      "license model with id vlm1_id has invalid date range.")
+  @Test(expected = CoreException.class)
   public void createWithoutStartDateTest() {
 
     Set<OperationalScope> opScopeChoices;
@@ -168,12 +165,11 @@ public class EntitlementPoolTest {
     ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
     ep2.setVendorLicenseModelId(vlm1_id);
     vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail();
+    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
 
   }
 
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp = "Vendor " +
-      "license model with id vlm1_id has invalid date range.")
+  @Test(expected = CoreException.class)
   public void createWithSameStartExpiryDateTest() {
 
     Set<OperationalScope> opScopeChoices;
@@ -191,7 +187,7 @@ public class EntitlementPoolTest {
     ep2.setExpiryDate(LocalDate.now().format(formatter));
     ep2.setVendorLicenseModelId(vlm1_id);
     vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail();
+    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
   }
 
   @Test
@@ -214,8 +210,7 @@ public class EntitlementPoolTest {
     vendorLicenseManagerImpl.updateEntitlementPool(ep2);
   }
 
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp = "Vendor " +
-      "license model with id vlm1_id has invalid date range.")
+  @Test(expected = CoreException.class)
   public void updateWithInvalidStartExpiryDateTest() {
 
     Set<OperationalScope> opScopeChoices;
@@ -233,7 +228,7 @@ public class EntitlementPoolTest {
     ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
     ep2.setVendorLicenseModelId(vlm1_id);
     vendorLicenseManagerImpl.updateEntitlementPool(ep2);
-    Assert.fail();
+    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
 
   }
 

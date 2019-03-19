@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -28,11 +32,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -87,7 +86,7 @@ public class FeatureGroupTest {
   private VendorLicenseManagerImpl vendorLicenseManagerImpl;
 
 
-  @AfterMethod
+  @After
   public void tearDown(){
     vendorLicenseManagerImpl = null;
   }
@@ -114,7 +113,7 @@ public class FeatureGroupTest {
     return featureGroup;
   }
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
