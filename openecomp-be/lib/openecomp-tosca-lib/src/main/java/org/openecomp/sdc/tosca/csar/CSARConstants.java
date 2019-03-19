@@ -39,7 +39,7 @@ public class CSARConstants {
     public static final ImmutableSet<String> ELIGIBLE_FILES =
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
     public static final ImmutableSet<String> MANIFEST_PNF_METADATA =
-            of("pnf_provider_id", "pnf_product_name", "pnf_release_date_time", "pnf_package_version");
+            of("pnfd_provider", "pnfd_name", "pnfd_release_date_time", "pnfd_archive_version");
     public static final ImmutableSet<String> MANIFEST_VNF_METADATA =
             of("vnf_provider_id", "vnf_product_name", "vnf_release_date_time", "vnf_package_version");
     public static final int MANIFEST_METADATA_LIMIT = 4;

@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
@@ -62,6 +63,7 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.api.ValidationManager;
 import org.openecomp.core.validation.util.MessageContainerUtil;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
@@ -638,6 +640,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           Manifest onboardingManifest = new SOL004ManifestOnboarding();
           onboardingManifest.parse(manifestInputStream);
           etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
+          //VSP PNF resource type is supported only for sol004 csar for now, default VSP resource type is VF
+          packageInfo.setResourceType(getResourceType(onboardingManifest));
         }
     }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
@@ -645,6 +649,17 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     packageInfoDao.create(packageInfo);
     return packageInfo;
+  }
+
+  private String getResourceType(Manifest onboardingManifest) {
+    //Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
+    // validation of manifest done during package upload stage
+    if(onboardingManifest != null && !onboardingManifest.getMetadata().isEmpty()
+            && MANIFEST_PNF_METADATA.stream().anyMatch(e -> onboardingManifest.getMetadata().containsKey(e))){
+        return ResourceTypeEnum.PNF.name();
+    }
+    //VNF is default resource type
+    return ResourceTypeEnum.VF.name();
   }
 
   private InputStream getManifest(FileContentHandler handler) throws IOException {

@@ -445,7 +445,15 @@ resourceDeploymentArtifacts:
             - VF
     OTHER:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes:
+          - VFC
+          - CVFC
+          - CP
+          - VL
+          - VF
+          - VFCMT
+          - Abstract
+          - PNF
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -565,6 +573,7 @@ resourceInformationalArtifacts:
             - VF
             - VFC
             - CVFC
+            - PNF
 
 resourceInformationalDeployedArtifacts:
 

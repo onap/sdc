@@ -82,7 +82,7 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
 
     @Query(
         "SELECT vsp_id,version,display_name,vsp_name,vsp_description,vendor_name,category"
-            + " ,sub_category, vendor_release,package_checksum,package_type FROM package_details")
+            + " ,sub_category, vendor_release,package_checksum,package_type, resource_type FROM package_details")
     Result<PackageInfo> listInfo();
   }
 }

@@ -23,11 +23,16 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.NoArgsConstructor;
+import lombok.Data;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.nio.ByteBuffer;
 
 
+@Data
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "package_details")
 public class PackageInfo {
 
@@ -68,113 +73,11 @@ public class PackageInfo {
   @Column(name = "translate_content")
   private ByteBuffer translatedFile;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public PackageInfo() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
+  @Column(name = "resource_type")
+  private String resourceType = ResourceTypeEnum.VF.name();
 
   public PackageInfo(String packageId, Version version) {
     this.vspId = packageId;
     this.version = version.getName();
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getVspDescription() {
-    return vspDescription;
-  }
-
-  public void setVspDescription(String vspDescription) {
-    this.vspDescription = vspDescription;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-  public String getVspId() {
-    return vspId;
-  }
-
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
-
-  public String getCategory() {
-    return category;
-  }
-
-  public void setCategory(String category) {
-    this.category = category;
-  }
-
-  public String getSubCategory() {
-    return subCategory;
-  }
-
-  public void setSubCategory(String subCategory) {
-    this.subCategory = subCategory;
-  }
-
-  public String getVendorName() {
-    return vendorName;
-  }
-
-  public void setVendorName(String vendorName) {
-    this.vendorName = vendorName;
-  }
-
-  public String getVendorRelease() {
-    return vendorRelease;
-  }
-
-  public void setVendorRelease(String vendorRelease) {
-    this.vendorRelease = vendorRelease;
-  }
-
-  public String getPackageChecksum() {
-    return packageChecksum;
-  }
-
-  public void setPackageChecksum(String packageChecksum) {
-    this.packageChecksum = packageChecksum;
-  }
-
-  public String getPackageType() {
-    return packageType;
-  }
-
-  public void setPackageType(String packageType) {
-    this.packageType = packageType;
-  }
-
-  public ByteBuffer getTranslatedFile() {
-    return translatedFile;
-  }
-
-  public void setTranslatedFile(ByteBuffer translatedFile) {
-    this.translatedFile = translatedFile;
-  }
-
-  public String getVspName() {
-    return vspName;
-  }
-
-  public void setVspName(String vendorName) {
-    this.vspName = vendorName;
   }
 }
