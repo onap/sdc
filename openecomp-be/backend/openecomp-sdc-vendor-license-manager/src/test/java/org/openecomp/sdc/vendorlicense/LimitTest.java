@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.vendorlicense;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,11 +35,6 @@ import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,12 +81,12 @@ public class LimitTest {
     return limitEntity;
   }
 
-  @BeforeMethod
+  @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
   }
 
-  @AfterMethod
+  @After
   public void tearDown(){
     vendorLicenseManagerImpl = null;
   }

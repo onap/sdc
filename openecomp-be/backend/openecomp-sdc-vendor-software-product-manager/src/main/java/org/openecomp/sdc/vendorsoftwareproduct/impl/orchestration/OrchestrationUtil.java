@@ -36,6 +36,8 @@ import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
@@ -56,6 +58,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConst
 
 public class OrchestrationUtil {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationUtil.class);
   public static final String ORCHESTRATION_CONFIG_NAMESPACE = "orchestration";
   public static final String ORCHESTRATION_IMPL_KEY = "orchestration_impl";
 
@@ -112,9 +115,12 @@ public class OrchestrationUtil {
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE,
           new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
+      LOGGER.error("{}\n{}", Messages.INVALID_ZIP_FILE.getErrorMessage(),
+              exception.getMessage(), exception);
     } catch (CoreException coreException) {
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
+      LOGGER.error(coreException.getMessage(), coreException);
     }
     return Optional.ofNullable(contentMap);
   }
