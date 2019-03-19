@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9509e9b0_fbbddbeb",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-19T13:17:32Z",
+      "side": 1,
+      "message": "are you sure that we need to add PNF to recourceTypes as it is used in most places and can mess with existing logic and some VF only attributes will be available for PNF, e.g HEAT, etc?",
+      "parentUuid": "04b66d83_6de2c53a",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3882577c_44c49240",
         "filename": "catalog-model/src/test/resources/config/catalog-model/configuration.yaml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-17T09:40:36Z",
       "side": 1,
       "message": "Add PNF under resource type as it a known resource",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b79257_58b0dc13",
+        "filename": "catalog-model/src/test/resources/config/catalog-model/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-19T13:17:32Z",
+      "side": 1,
+      "message": "are you sure that we need to add PNF to recourceTypes as it is used in most places and can mess with existing logic and some VF only attributes will be available for PNF, e.g HEAT, etc?",
+      "parentUuid": "3882577c_44c49240",
       "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
