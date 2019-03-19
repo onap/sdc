@@ -248,101 +248,73 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool) {
-    entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
-        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + EP_POOL_START_TIME
-        : null) : null);
-    entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
-        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + EP_POOL_EXPIRY_TIME 
-        : null) : null);
-
+    entitlementPool.setStartDate(getDate(entitlementPool.getStartDate(), EP_POOL_START_TIME));
+    entitlementPool.setExpiryDate(getDate(entitlementPool.getExpiryDate(), EP_POOL_EXPIRY_TIME));
     validateCreateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
         entitlementPool.getVendorLicenseModelId());
     return vendorLicenseFacade.createEntitlementPool(entitlementPool);
   }
 
-  private void validateCreateDate(String startDate, String expiryDate,
-                                  String vendorLicenseModelId) {
-  LocalDate parsedStartDate = parseLocalDate(startDate);
-  LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
-
-
-    validateIfStartAndExpiryDateIsNotNull(startDate, expiryDate,
-            vendorLicenseModelId, parsedStartDate, parsedExpiryDate);
-
-    if (startDate != null && expiryDate == null
-                      && parsedStartDate.atStartOfDay().isBefore
-          (LocalDate.now().atStartOfDay())) {
-        throw new CoreException(
-            new InvalidDateErrorBuilder(vendorLicenseModelId)
-                .build());
-    }
-
-    if (startDate == null && expiryDate != null) {
-      throw new CoreException(
-          new InvalidDateErrorBuilder(vendorLicenseModelId)
-              .build());
-
-    }
+  private String getDate(String date, String poolTime){
+    return date != null ? (!date.trim().isEmpty() ? date + poolTime: null) : null;
   }
 
-  private void validateIfStartAndExpiryDateIsNotNull(String startDate, String expiryDate,
-                                                     String vendorLicenseModelId,
-                                                     LocalDate parsedStartDate,
-                                                     LocalDate parsedExpiryDate) {
-    if (startDate != null && expiryDate != null
-            && isValidatStartAndExpiryDate(parsedStartDate, parsedExpiryDate)) {
+  private void validateCreateDate(String startDate, String expiryDate,
+                                  String vendorLicenseModelId) {
+    if(isNull(startDate, expiryDate) || isEmpty(startDate, expiryDate) ||
+            isInvalidStartEndDate(startDate, expiryDate)){
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
     }
   }
 
-  private boolean isValidatStartAndExpiryDate(LocalDate parsedStartDate,
-                                              LocalDate parsedExpiryDate) {
+  private boolean isInvalidStartEndDate(String startDate, String expiryDate) {
+    LocalDate parsedStartDate = parseLocalDate(startDate);
+    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
+
     return parsedStartDate.atStartOfDay().isBefore(LocalDate.now().atStartOfDay())
-    || parsedExpiryDate.atStartOfDay().isEqual(parsedStartDate.atStartOfDay())
-    || parsedExpiryDate.isBefore(parsedStartDate);
+            || parsedExpiryDate.atStartOfDay().isEqual(parsedStartDate.atStartOfDay())
+            || parsedExpiryDate.isBefore(parsedStartDate);
+  }
+
+  private boolean isEmpty(String startDate, String expiryDate) {
+    return startDate.isEmpty() || expiryDate.isEmpty();
+  }
+
+  private boolean isNull(String startDate, String expiryDate) {
+    return startDate == null || expiryDate == null;
   }
 
   private static LocalDate parseLocalDate(String date) {
-    if (date == null || date.isEmpty()) {
-      return null;
-    }
-
     return LocalDate.parse(date, FORMATTER );
   }
 
   private void validateUpdateDate(String startDate, String expiryDate,
                                   String vendorLicenseModelId) {
-    LocalDate parsedStartDate = parseLocalDate(startDate);
-    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
 
-    if (startDate != null && expiryDate != null
-            && (parsedExpiryDate.atStartOfDay()
-            .isEqual(parsedStartDate.atStartOfDay())
-            || parsedExpiryDate.isBefore(parsedStartDate ))) {
+    if(isNull(startDate, expiryDate) || isEmpty(startDate, expiryDate)
+     || isInvalidUpdateDate(startDate, expiryDate)){
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
     }
+  }
 
-    if (startDate == null && expiryDate != null) {
-      throw new CoreException(
-          new InvalidDateErrorBuilder(vendorLicenseModelId)
-              .build());
+  private boolean isInvalidUpdateDate(String startDate, String expiryDate) {
 
-    }
+    LocalDate parsedStartDate = parseLocalDate(startDate);
+    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
+
+    return parsedExpiryDate.atStartOfDay()
+            .isEqual(parsedStartDate.atStartOfDay())
+            || parsedExpiryDate.isBefore(parsedStartDate);
   }
 
   @Override
   public void updateEntitlementPool(EntitlementPoolEntity entitlementPool) {
-    entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
-        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + EP_POOL_START_TIME
-        : null) : null);
-    entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
-        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + EP_POOL_EXPIRY_TIME 
-        : null) : null);
-
+    entitlementPool.setStartDate(getDate(entitlementPool.getStartDate(), EP_POOL_START_TIME));
+    entitlementPool.setExpiryDate(getDate(entitlementPool.getExpiryDate(), EP_POOL_EXPIRY_TIME));
     validateUpdateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
         entitlementPool.getVendorLicenseModelId());
     vendorLicenseFacade.updateEntitlementPool(entitlementPool);

@@ -18,12 +18,12 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.ToscaConverterImpl;
+import org.openecomp.core.impl.ToscaSolConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
@@ -39,6 +39,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
@@ -46,12 +48,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class OrchestrationTemplateProcessCsarHandler
-    implements OrchestrationTemplateProcessHandler {
-  private static final Logger LOGGER = LoggerFactory
-          .getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private final CandidateService candidateService = CandidateServiceFactory
-          .getInstance().createInterface();
+public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
+  private static final String SDC_ONBOARDED_PACKAGE_DIR = "ONBOARDED_PACKAGE/";
+  private static final String EXT_SEPARATOR = ".";
+  private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
   private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
 
   @Override
@@ -69,8 +71,11 @@ public class OrchestrationTemplateProcessCsarHandler
         FileContentHandler fileContentHandler = fileContent.get();
         processCsar(vspDetails, fileContentHandler, candidateData, response);
       } catch (CoreException e) {
-        LOGGER.error(e.getMessage());
+        LOGGER.error(e.getMessage(), e);
         response.addErrorMessageToMap(e.code().id(), e.code().message(),ErrorLevel.ERROR);
+      }catch (IOException e){
+        LOGGER.error(e.getMessage(), e);
+        response.addErrorMessageToMap(SdcCommon.PROCESS_FILE, e.getMessage(), ErrorLevel.ERROR);
       }
     } else {
       if (!uploadFileResponse.getErrors().isEmpty()) {
@@ -83,7 +88,7 @@ public class OrchestrationTemplateProcessCsarHandler
   private void processCsar(VspDetails vspDetails,
                            FileContentHandler fileContentHandler,
                            OrchestrationTemplateCandidateData candidateData,
-                           OrchestrationTemplateActionResponse response) {
+                           OrchestrationTemplateActionResponse response) throws IOException{
     response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
     Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
     toscaTreeManager.createTree();
@@ -117,7 +122,15 @@ public class OrchestrationTemplateProcessCsarHandler
             .saveUploadData(vspDetails, candidateData, byteArrayInputStream,
             fileContentHandler, tree));
 
-    ToscaServiceModel toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
+    ETSIService etsiService = new ETSIServiceImpl();
+    ToscaServiceModel toscaServiceModel;
+    if(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)){
+      fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() +
+                      EXT_SEPARATOR + candidateData.getFileSuffix(), candidateData.getContentData().array());
+      toscaServiceModel = new ToscaSolConverterImpl().convert(fileContentHandler);
+    }else{
+      toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
+    }
     orchestrationUtil.saveServiceModel(vspDetails.getId(),
             vspDetails.getVersion(), toscaServiceModel,
         toscaServiceModel);

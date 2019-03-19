@@ -1,0 +1,7 @@
+: tosca_simple_yaml_1_0
+
+  template_name: vCPE_vgw
+  template_version: "1.0"
+  template_author: onap
+
+description: vCPE_vgw
