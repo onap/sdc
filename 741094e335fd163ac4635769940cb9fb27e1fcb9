@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a3d7899d_f1e06458",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/PackageInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-19T13:33:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "395e3f11_bb191c15",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ced782b_642b44ea",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/ResourceType.java",
         "patchSetId": 1
@@ -106,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "a3faa13f_22b72216",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/ResourceType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-19T13:33:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ced782b_642b44ea",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b38be0f2_dbb80566",
         "filename": "openecomp-be/tools/install/database/init_schemas.cql",
         "patchSetId": 1
@@ -117,6 +153,24 @@
       "writtenOn": "2019-03-17T09:40:36Z",
       "side": 1,
       "message": "Move this ALTER up under dox schema queries so that it is always with it group and dox.* is also not needed",
+      "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb705057_f5efb868",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-19T13:33:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b38be0f2_dbb80566",
       "revId": "741094e335fd163ac4635769940cb9fb27e1fcb9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
