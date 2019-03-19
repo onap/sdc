@@ -1,0 +1,412 @@
+---
+# registration for Fault\_vMrf\_alarm003
+# Constants: the values of domain, eventName, priority, vfstatus
+# , version, alarmCondition, eventSeverity, eventSourceType,
+# faultFieldsVersion, specificProblem,
+# Variables (to be supplied at runtime) include: eventId, lastEpochMicrosec,
+
+# reportingEntityId, reportingEntityName, sequence, sourceId, sourceName,
+# startEpochMicrosec
+
+event: {presence: required, action: [ any, any, alarm003,RECO-rebuildVnf ],
+        structure: {
+          commonEventHeader: {presence: required, structure: {
+            domain: {presence: required, value: fault},
+            eventName: {presence: required, value: Fault\_vMrf\_alarm003},
+            eventId: {presence: required},
+            nfNamingCode: {value: mrfx},
+            priority: {presence: required, value: Medium},
+            reportingEntityId: {presence: required},
+            reportingEntityName: {presence: required},
+            sequence: {presence: required},
+            sourceId: {presence: required},
+            sourceName: {presence: required},
+            startEpochMicrosec: {presence: required},
+            lastEpochMicrosec: {presence: required},
+            version: {presence: required, value: 3.0}
+          }},
+          faultFields: {presence: required, structure: {
+            alarmCondition: {presence: required, value: alarm003},
+            eventSeverity: {presence: required, value: MAJOR},
+            eventSourceType: {presence: required, value: virtualNetworkFunction},
+            faultFieldsVersion: {presence: required, value: 2.0},
+            specificProblem: {presence: required, value: "Configuration file was
+                        corrupt or not present"},
+            vfStatus: {presence: required, value: "Requesting Termination"}
+          }}
+        }}
+---
+# registration for clearing Fault\_vMrf\_alarm003Cleared
+# Constants: the values of domain, eventName, priority,
+# , version, alarmCondition, eventSeverity, eventSourceType,
+# faultFieldsVersion, specificProblem,
+# Variables (to be supplied at runtime) include: eventId,lastEpochMicrosec,
+# reportingEntityId, reportingEntityName, sequence, sourceId,
+# sourceName, startEpochMicrosec, vfStatus
+event: {presence: required, action: [ any, any, alarm003, Clear ], structure: {
+  commonEventHeader: {presence: required, structure: {
+    domain: {presence: required, value: fault},
+    eventName: {presence: required, value: Fault\_vMrf\_alarm003Cleared},
+    eventId: {presence: required},
+    nfNamingCode: {value: mrfx},
+    priority: {presence: required, value: Medium},
+    reportingEntityId: {presence: required},
+    reportingEntityName: {presence: required},
+    sequence: {presence: required},
+    sourceId: {presence: required},
+    sourceName: {presence: required},
+    startEpochMicrosec: {presence: required},
+    lastEpochMicrosec: {presence: required},
+    version: {presence: required, value: 3.0}
+  }},
+  faultFields: {presence: required, structure: {
+    alarmCondition: {presence: required, value: alarm003},
+    eventSeverity: {presence: required, value: NORMAL},
+    eventSourceType: {presence: required, value: virtualNetworkFunction},
+    faultFieldsVersion: {presence: required, value: 2.0},
+    specificProblem: {presence: required, value: "Valid configuration file found"},
+    vfStatus: {presence: required, value: "Requesting Termination"}
+  }}
+}}
+---
+# registration for Heartbeat_vMRF
+# Constants: the values of domain, eventName, priority, version
+# Variables (to be supplied at runtime) include: eventId, lastEpochMicrosec,
+# reportingEntityId, reportingEntityName, sequence, sourceId, sourceName,
+# startEpochMicrosec
+event: {presence: required, heartbeatAction: [3, vnfDown,RECO-rebuildVnf],
+        structure: {
+          commonEventHeader: {presence: required, structure: {
+            domain: {presence: required, value: heartbeat},
+            eventName: {presence: required, value: Heartbeat\_vMrf},
+            eventId: {presence: required},
+            nfNamingCode: {value: mrfx},
+            priority: {presence: required, value: Normal},
+            reportingEntityId: {presence: required},
+            reportingEntityName: {presence: required},
+            sequence: {presence: required},
+            sourceId: {presence: required},
+            sourceName: {presence: required},
+            startEpochMicrosec: {presence: required},
+            lastEpochMicrosec: {presence: required},
+            version: {presence: required, value: 3.0}
+          }},
+          heartbeatFields: {presence: optional, structure:{
+            heartbeatFieldsVersion: {presence: required, value: 1.0},
+            heartbeatInterval: {presence: required, range: [ 15, 300 ], default: 60 }
+          }}
+        }}
+---
+# registration for Mfvs\_vMRF
+# Constants: the values of domain, eventName, priority, version,
+# measurementFieldsVersion, additionalMeasurements.namedArrayOfFields.name,
+# Variables (to be supplied at runtime) include: eventId, reportingEntityName, sequence,
+# sourceName, start/lastEpochMicrosec, measurementInterval,
+# concurrentSessions, requestRate, numberOfMediaPortsInUse,
+# cpuUsageArray.cpuUsage,cpuUsage.cpuIdentifier, cpuUsage.percentUsage,
+# additionalMeasurements.namedArrayOfFields.arrayOfFields,
+# vNicPerformance.receivedOctetsAccumulated,
+# vNicPerformance.transmittedOctetsAccumulated,
+# vNicPerformance.receivedTotalPacketsAccumulated,
+# vNicPerformance.transmittedTotalPacketsAccumulated,
+# vNicPerformance.vNicIdentifier, vNicPerformance.receivedOctetsDelta,
+# vNicPerformance.receivedTotalPacketsDelta,
+# vNicPerformance.transmittedOctetsDelta,
+# vNicPerformance.transmittedTotalPacketsDelta,
+# vNicPerformance.valuesAreSuspect, memoryUsageArray.memoryUsage,
+# memoryUsage.memoryConfigured, memoryUsage.vmIdentifier,
+# memoryUsage.memoryUsed, memoryUsage.memoryFree
+event: {presence: required, structure: {
+  commonEventHeader: {presence: required, structure: {
+    domain: {presence: required, value: measurementsForVfScaling},
+    eventName: {presence: required, value: Mfvs\_vMrf},
+    eventId: {presence: required},
+    nfNamingCode: {value: mrfx},
+    priority: {presence: required, value: Normal},
+    reportingEntityId: {presence: required},
+    reportingEntityName: {presence: required},
+    sequence: {presence: required},
+    sourceId: {presence: required},
+    sourceName: {presence: required},
+    startEpochMicrosec: {presence: required},
+    lastEpochMicrosec: {presence: required},
+    version: {presence: required, value: 3.0}
+  }},
+  measurementsForVfScalingFields: {presence: required, structure: {
+    measurementFieldsVersion: {presence: required, value: 2.0},
+    measurementInterval: {presence: required, range: [ 60, 3600 ], default:300},
+    concurrentSessions: {presence: required, range: [ 0, 100000 ]},
+    requestRate: {presence: required, range: [ 0, 100000 ]},
+    numberOfMediaPortsInUse: {presence: required, range: [ 0, 100000 ]},
+    cpuUsageArray: {presence: required, array: [
+      cpuUsage: {presence: required, structure: {
+        cpuIdentifier: {presence: required},
+        percentUsage: {presence: required, range: [ 0, 100 ],
+                       action: [80, up, CpuUsageHigh, RECO-scaleOut],
+                       action: [10, down, CpuUsageLow, RECO-scaleIn]}
+      }}
+    ]},
+    memoryUsageArray: {presence: required, array: [
+      memoryUsage: {presence: required, structure: {
+        memoryConfigured: {presence: required, value: 33554432},
+        memoryFree: {presence: required, range: [ 0, 33554432 ],
+                     action: [100, down, FreeMemLow, RECO-scaleOut],
+                     action: [30198989, up, FreeMemHigh, RECO-scaleIn]},
+        memoryUsed: {presence: required, range: [ 0, 33554432 ]},
+        vmIdentifier: {presence: required}
+      }}
+    ]},
+    additionalMeasurements: {presence: required, array: [
+      namedArrayOfFields: {presence: required, structure: {
+        name: {presence: required, value: licenseUsage},
+        arrayOfFields: {presence: required, array: [
+          field: {presence: required, structure: {
+            name: {presence: required, value: G711AudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: G729AudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: G722AudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: AMRAudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: AMRWBAudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: OpusAudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: H263VideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: H264NonHCVideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: H264HCVideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: MPEG4VideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: VP8NonHCVideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: VP8HCVideoPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: PLC},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: AEC},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: NR},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: NG},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: NLD},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: G711FaxPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: T38FaxPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: RFactor},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: T140TextPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: EVSAudioPort},
+            value: {presence: required, range: [ 0, 100000 ],
+                    units: numberOfPorts }
+          }}
+        ]}
+      }},
+      namedArrayOfFields: {presence: required, structure: {
+        name: {presence: required, value: mediaCoreUtilization},
+        arrayOfFields: {presence: required, array: [
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualAvgAudio},
+            value: {presence: required, range: [ 0, 255 ],
+                    action: [80, up, AudioCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, AudioCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelAvgAudio},
+            value: {presence: required, range: [ 0, 100 ],
+                    action: [80, up, AudioCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, AudioCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualMaxAudio},
+            value: {presence: required, range: [ 0, 255 ]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelMaxAudio},
+            value: {presence: required, range: [ 0, 100 ]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualAvgVideo},
+            value: {presence: required, range: [ 0, 255 ],
+                    action: [80, up, VideoCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, VideoCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelAvgVideo},
+            value: {presence: required, range: [ 0, 100 ],
+                    action: [80, up, VideoCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, VideoCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualMaxVideo},
+            value: {presence: required, range: [ 0, 255 ]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelMaxVideo},
+            value: {presence: required, range: [ 0, 100 ]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualAvgHcVideo},
+            value: {presence: required, range: [ 0, 255 ],
+                    action: [80, up, HcVideoCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, HcVideoCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelAvgHcVideo},
+            value: {presence: required, range: [ 0, 100 ],
+                    action: [80, up, HcVideoCoreUsageHigh, RECO-scaleOut],
+                    action: [10, down, HcVideoCoreUsageLow, RECO-scaleIn]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: actualMaxHcVideo},
+            value: {presence: required, range: [ 0, 255 ]}
+          }},
+          field: {presence: required, structure: {
+            name: {presence: required, value: modelMaxHcVideo},
+            value: {presence: required, range: [ 0, 100 ]}
+          }}
+        ]}
+      }}
+    ]},
+    vNicPerformanceArray: {presence: required, array: [
+      vNicPerformance: {presence: required, structure: {
+        receivedOctetsAccumulated: {presence: required,
+                                    range: [ 0, 18446744073709551615 ]},
+        receivedTotalPacketsAccumulated: {presence: required,
+                                          range: [ 0, 18446744073709551615 ]},
+        receivedOctetsDelta: {presence: required},
+        range: [ 0, 18446744073709551615 ],
+        receivedTotalPacketsDelta: {presence: required,
+                                    range: [ 0, 18446744073709551615 ]},
+        transmittedOctetsDelta: {presence: required,
+                                 range: [ 0, 18446744073709551615 ]},
+        transmittedOctetsAccumulated: {presence: required,
+                                       range: [ 0, 18446744073709551615 ]},
+        transmittedTotalPacketsAccumulated: {presence: required,
+                                             range: [ 0, 18446744073709551615 ]},
+        transmittedTotalPacketsDelta: {presence: required,
+                                       range: [ 0, 18446744073709551615 ]},
+        valuesAreSuspect: {presence: required, value: [ true, false ]},
+        vNicIdentifier: {presence: required}
+      }}
+    ]}
+  }}
+}}
+---
+# registration for Syslog\_vMRF
+# Constants: the values of domain, eventName, priority, lastEpochMicrosec, version,
+# syslogFields.syslogFieldsVersion, syslogFields.syslogTag
+# Variables include: eventId, lastEpochMicrosec, reportingEntityId, reportingEntityName,
+# sequence, sourceId, sourceName, startEpochMicrosec,
+# syslogFields.eventSourceHost, syslogFields.eventSourceType,
+# syslogFields.syslogFacility, syslogFields.syslogMsg
+event: {presence: required, structure: {
+  commonEventHeader: {presence: required, structure: {
+    domain: {presence: required, value: syslog},
+    eventName: {presence: required, value: Syslog\_vMrf},
+    eventId: {presence: required},
+    nfNamingCode: {value: mrfx},
+    priority: {presence: required, value: Normal},
+    reportingEntityId: {presence: required},
+    reportingEntityName: {presence: required},
+    sequence: {presence: required},
+    sourceId: {presence: required},
+    sourceName: {presence: required},
+    startEpochMicrosec: {presence: required},
+    lastEpochMicrosec: {presence: required},
+    version: {presence: required, value: 3.0},
+  }},
+  syslogFields: {presence: required, structure: {
+    eventSourceHost: {presence: required},
+    eventSourceType: {presence: required, value: virtualNetworkFunction},
+    syslogFacility: {presence: required, range: [16, 23]},
+    syslogSev: {presence: required, value: [ 0, 1, 2, 3, 4 ]},
+    syslogFieldsVersion: {presence: required, value: 3.0},
+    syslogMsg: {presence: required},
+    syslogTag: {presence: required, value: vMRF},
+  }}
+}}
+---
+#Rules
+Rules: [
+  rule: {
+    trigger: CpuUsageHigh \|\| FreeMemLow \|\| AudioCoreUsageHigh \|\|
+      VideoCoreUsageHigh \|\| HcVideoCoreUsageHigh,
+    microservices: [scaleOut]
+  },
+  rule: {
+    trigger: CpuUsageLow && FreeMemHigh && AudioCoreUsageLow &&
+      VideoCoreUsageLow && HcVideoCoreUsageLow,
+    microservices: [scaleIn]
+  }
+]

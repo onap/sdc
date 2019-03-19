@@ -35,6 +35,7 @@
     <modules>
         <module>onap-common-configuration-management</module>
         <module>onap-tosca-datatype</module>
+        <module>onap-generic-artifact-browser</module>
     </modules>
 
     <build>
