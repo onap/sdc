@@ -46,6 +46,14 @@
   "org.openecomp.policies.External": {
     "displayName": "External",
     "icon": "policy-external"
+  },
+  "onap.policies.Monitoring": {
+    "displayName": "Monitoring",
+    "icon": "policy-monitoring"
+  },
+  "onap.policy.monitoring.cdap.tca.hi.lo.app": {
+    "displayName": "TCA",
+    "icon": "policy-tca"
   }
 
 }

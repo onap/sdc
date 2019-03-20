@@ -115,3 +115,17 @@ org.openecomp.policies.External:
       type: string
       description: The name of the policy, that related to specific type, same as it is defined in the source.
       required: false
+
+### Policy types for closed loop ###
+onap.policies.Monitoring:
+  derived_from: tosca.policies.Root
+  description: A base policy type for all policies that governs monitoring provisioning
+onap.policy.monitoring.cdap.tca.hi.lo.app:
+  derived_from: onap.policies.Monitoring
+  version: 1.0.0
+  properties:
+    tca_policy:
+      type: map
+      description: TCA Policy JSON
+      entry_schema:
+        type: onap.datatypes.monitoring.tca_policy
