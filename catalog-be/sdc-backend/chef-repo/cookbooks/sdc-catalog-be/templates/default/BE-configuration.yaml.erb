@@ -135,6 +135,7 @@ artifactTypes:
    - SNMP_TRAP
    - GUIDE
    - PLAN
+   - CONTROLLER_BLUEPRINT_ARCHIVE
 
 licenseTypes:
    - User
@@ -154,9 +155,18 @@ resourceTypes: &allResourceTypes
 
 
 deploymentResourceArtifacts:
-
+  cdsBlueprint:
+      displayName: "CDS Blueprint"
+      type: CONTROLLER_BLUEPRINT_ARCHIVE
+      description: "CDS deployment artifact"
+      fileExtension: "zip"
 
 deploymentResourceInstanceArtifacts:
+  cdsBlueprint:
+      displayName: "CDS Blueprint"
+      type: CONTROLLER_BLUEPRINT_ARCHIVE
+      description: "CDS deployment artifact"
+      fileExtension: "zip"
   heatEnv:
       displayName: "HEAT ENV"
       type: HEAT_ENV
@@ -283,6 +293,9 @@ systemMonitoring:
 defaultHeatArtifactTimeoutMinutes: 60
 
 serviceDeploymentArtifacts:
+    CONTROLLER_BLUEPRINT_ARCHIVE:
+        acceptedTypes:
+            - zip
     YANG_XML:
         acceptedTypes:
             - xml
@@ -515,7 +528,12 @@ resourceInstanceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
-
+    CONTROLLER_BLUEPRINT_ARCHIVE:
+        acceptedTypes:
+            - zip
+        validForResourceTypes:
+            - VF
+            - PNF
 #PLAN
     PLAN:
         acceptedTypes:
