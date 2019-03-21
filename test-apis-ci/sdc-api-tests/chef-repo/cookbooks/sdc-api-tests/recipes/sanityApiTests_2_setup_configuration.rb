@@ -38,6 +38,6 @@ template "titan.properties" do
       :CASSANDRA_PWD => node['cassandra'][:cassandra_password],
       :CASSANDRA_USR => node['cassandra'][:cassandra_user],
       :rep_factor => replication_factor,
-      :DC_NAME      => node['cassandra']['datacenter_name']+node.chef_environment
+      :DC_NAME      => node['cassandra']['datacenter_name']
    })
 end

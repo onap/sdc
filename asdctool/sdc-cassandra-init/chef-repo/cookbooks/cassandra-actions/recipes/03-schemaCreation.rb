@@ -18,7 +18,7 @@ template "titan.properties" do
   source "titan.properties.erb"
   mode "0755"
   variables({
-     :DC_NAME      => node['cassandra']['datacenter_name']+node.chef_environment,
+     :DC_NAME      => node['cassandra']['datacenter_name'],
      :cassandra_ip  => node['Nodes']['CS'].first,
      :cassandra_pwd => node['cassandra'][:cassandra_password],
      :cassandra_usr => node['cassandra'][:cassandra_user],
@@ -37,7 +37,7 @@ template "/tmp/sdctool/config/configuration.yaml" do
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].first,
       :rep_factor             => 1,
-      :DC_NAME                => node['cassandra']['datacenter_name']+node.chef_environment,
+      :DC_NAME                => node['cassandra']['datacenter_name'],
       :titan_Path             => "/tmp/sdctool/config/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout    => node['cassandra']['socket_read_timeout'],
