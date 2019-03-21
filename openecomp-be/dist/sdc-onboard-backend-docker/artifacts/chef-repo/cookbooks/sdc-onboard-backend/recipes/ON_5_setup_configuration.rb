@@ -9,7 +9,7 @@ template "onboard-be-config" do
       :onboard_port                    => node['ONBOARDING_BE'][:http_port],
       :ssl_port                        => node['ONBOARDING_BE'][:https_port],
       :cassandra_ip                    => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
-      :DC_NAME                         => node['cassandra']['datacenter_name']+node.chef_environment,
+      :DC_NAME                         => node['cassandra']['datacenter_name'],
       :socket_connect_timeout          => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout             => node['cassandra']['socket_read_timeout'],
       :cassandra_pwd                   => node['cassandra'][:cassandra_password],
