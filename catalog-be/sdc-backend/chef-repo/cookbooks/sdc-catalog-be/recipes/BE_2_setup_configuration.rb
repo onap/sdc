@@ -1,21 +1,12 @@
 # Set the cassandra replica number
-cassandra_nodes = node['Nodes']['CS']
-if cassandra_nodes.length <=2
-   replication_factor=1
-elsif cassandra_nodes.length >2 && cassandra_nodes.length <=4
-   replication_factor=3
-else
-   replication_factor=4
-end
-
-
+replication_factor=node['cassandra']['replication_factor']
 
 if node['Pair_EnvName'] == ""
-    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + node.chef_environment + ","   + replication_factor.to_s
-    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + node.chef_environment + "','" + replication_factor.to_s
+    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s
+    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s
 else
-    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + node.chef_environment + ","   + replication_factor.to_s + "," + node['cassandra']['cluster_name']   + node['Pair_EnvName'] + ","   + replication_factor.to_s
-    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + node.chef_environment + "','" + replication_factor.to_s + "','" + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "','" + replication_factor.to_s
+    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s + "," + node['cassandra']['cluster_name']   + node['Pair_EnvName'] + ","   + replication_factor.to_s
+    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s + "','" + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "','" + replication_factor.to_s
 end
 
 
@@ -31,7 +22,7 @@ template "titan.properties" do
       :cassandra_pwd            => node['cassandra'][:cassandra_password],
       :cassandra_usr            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
-      :DC_NAME                  => node['cassandra']['datacenter_name']+node.chef_environment,
+      :DC_NAME                  => node['cassandra']['datacenter_name'],
       :DC_NAME_WITH_REP         => titan_dcname_with_rep,
       :titan_connection_timeout => node['cassandra']['titan_connection_timeout'],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
@@ -52,7 +43,7 @@ template "catalog-be-config" do
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
       :rep_factor             => replication_factor,
-      :DC_NAME                => node['cassandra']['datacenter_name']+node.chef_environment,
+      :DC_NAME                => node['cassandra']['datacenter_name'],
       :REP_STRING             => conf_dcname_with_rep,
       :titan_Path             => "/var/lib/jetty/config/catalog-be/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
