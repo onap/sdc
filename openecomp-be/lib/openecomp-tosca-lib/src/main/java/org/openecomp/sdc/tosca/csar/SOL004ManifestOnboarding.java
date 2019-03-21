@@ -32,7 +32,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_MANO_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
 
-public class SOL004ManifestOnboarding extends AbstractOnboardingManifest implements Manifest {
+public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
 
     @Override
     protected void processMetadata(Iterator<String> iterator) {

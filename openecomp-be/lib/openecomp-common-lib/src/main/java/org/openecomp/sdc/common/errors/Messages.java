@@ -33,10 +33,11 @@ public enum Messages {
   MANIFEST_NO_METADATA("Manifest must contain metadata"),
   MANIFEST_NO_SOURCES("Manifest must contain Source"),
   MANIFEST_METADATA_MISSING_ENTRY("Manifest metadata missing entry %s"),
-  MANIFEST_INVALID_NAME("Manifest file has a different name than main TOSCA definitions file"),
-  MANIFEST_INVALID_EXT("Manifest file does not have extension \".mf\" "),
+  MANIFEST_INVALID_NAME("Manifest file %s and TOSCA definitions file %s must have the same name"),
+  MANIFEST_INVALID_EXT("Manifest file must have extension \".mf\" "),
   MANIFEST_METADATA_INVALID_ENTRY("Manifest metadata should only have pnf or vnf entries"),
-  MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT("Manifest metadata must only have the required number of values [%s]"),
+  MANIFEST_INVALID_PNF_METADATA("%s TOSCA.meta file is applicable for VF only"),
+  MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT("Manifest metadata must only have the required number [%s] of values"),
   MANIFEST_EMPTY("Manifest must contain data"),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
@@ -44,7 +45,7 @@ public enum Messages {
   METADATA_UNSUPPORTED_ENTRY("Following entry not supported in TOSCA.meta %s"),
   METADATA_INVALID_VERSION("Invalid entry %s value %s"),
   METADATA_INVALID_VALUE("Invalid value %s in TOSCA.meta file"),
-  METADATA_MISSING_ENTRY("TOSCA.meta file missing entry %s"),
+  METADATA_MISSING_ENTRY("TOSCA.meta file in TOSCA-metadata directory missing entry %s"),
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),
   METADATA_INVALID_ENTRY_DEFINITIONS("TOSCA.meta must contain key:value entries"),
   FAILED_TO_VALIDATE_METADATA("Failed to validate metadata file"),
@@ -68,6 +69,7 @@ public enum Messages {
       "Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML files" +
           " (using .yaml/.yml extensions)"),
   MANIFEST_NOT_EXIST("Manifest doesn't exist"),
+  MANIFEST_NOT_FOUND("Manifest file %s referenced in TOSCA.meta does not exist"),
   FILE_TYPE_NOT_LEGAL("File type not legal as data for other file"),
   MODULE_IN_MANIFEST_NO_YAML("Module '%s', has no yaml file reference"),
   NO_MODULES_IN_MANIFEST("At least one Base/Module must be defined \n"),
@@ -95,6 +97,8 @@ public enum Messages {
   MISSING_FILE_NAME_IN_MANIFEST("Missing file name in manifest"),
   MISSING_NESTED_FILE("Missing nested file - %s"),
   MISSING_ARTIFACT("Missing artifact - %s"),
+  MISSING_MANIFEST_SOURCE("%s artifact %s referenced in manifest file does not exist"),
+  MISSING_METADATA_FILES("%s file referenced in TOSCA.meta does not exist"),
   WRONG_HEAT_FILE_EXTENSION("Wrong HEAT file extension - %s"),
   WRONG_ENV_FILE_EXTENSION("Wrong ENV file extension - %s"),
   INVALID_MANIFEST_FILE("invalid manifest file"),
@@ -105,9 +109,9 @@ public enum Messages {
   TOSCA_PARSING_FAILURE("Invalid tosca file. Error code : %s, Error message : %s/"),
 
   /*definition errors*/
-  MISSING_DEFINITION_FILE("Definition file %s does not exist"),
-  MISSING_IMPORT_FILE("Package must contain the referenced import file %s"),
-  INVALID_IMPORT_STATEMENT("Definition file contains an invalid import statement"),
+  MISSING_DEFINITION_FILE("Definition file %s referenced in TOSCA.meta does not exist"),
+  MISSING_IMPORT_FILE("Package must contain the referenced import file %s in %s directory"),
+  INVALID_IMPORT_STATEMENT("Definition file contains an invalid import statement in %s"),
 
   /* content errors*/
   INVALID_YAML_FORMAT("Invalid YAML format - %s"),
