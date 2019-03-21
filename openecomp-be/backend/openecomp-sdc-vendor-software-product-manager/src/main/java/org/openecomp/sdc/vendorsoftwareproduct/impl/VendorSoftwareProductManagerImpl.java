@@ -17,7 +17,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
@@ -664,7 +664,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private InputStream getManifest(FileContentHandler handler) throws IOException {
     ToscaMetadata metadata = getMetadata(handler);
-    return getManifestInputStream(handler, metadata.getMetaEntries().get(TOSCA_META_ENTRY_MANIFEST));
+    return getManifestInputStream(handler, metadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST));
   }
 
   private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {

@@ -2,9 +2,9 @@ TOSCA-Meta-File-Version: 1.0
 CSAR-Version: 1.1
 Created-by: Bilal Iqbal
 Entry-Definitions: Definitions/MainServiceTemplate.yml
-Entry-Manifest: Definitions/MainServiceTemplate.mf
-Entry-Change-Log: Definitions/changeLog.text
+ETSI-Entry-Manifest: Definitions/MainServiceTemplate.mf
+ETSI-Entry-Change-Log: Definitions/changeLog.text
 
 Entry-Definitions: Definitions/MainServiceTemplate2.yml
-Entry-Manifest: Definitions/MainServiceTemplate2.mf
-Entry-Change-Log: Definitions/changeLog2.text
+ETSI-Entry-Manifest: Definitions/MainServiceTemplate2.mf
+ETSI-Entry-Change-Log: Definitions/changeLog2.text

@@ -3,19 +3,18 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validati
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.ENTRY_CHANGE_LOG;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.ENTRY_MANIFEST;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.ENTRY_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_CHANGELOG_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_METADATA_FILEPATH;
 
 public class ValidatorFactoryTest {
 
@@ -33,7 +32,7 @@ public class ValidatorFactoryTest {
 
     @Test(expected = IOException.class)
     public void testGivenEmptyMetaFile_thenIOExceptionIsThrown() throws IOException{
-        handler.addFile(TOSCA_METADATA_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -43,7 +42,7 @@ public class ValidatorFactoryTest {
 
     @Test
     public void testGivenEmptyBlock0_thenONAPCsarValidatorIsReturned() throws IOException{
-        handler.addFile(TOSCA_METADATA_FILEPATH, " ".getBytes(StandardCharsets.UTF_8));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, " ".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -55,8 +54,8 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenNonSOL004MetaDirectoryCompliantMetaFile_thenONAPCSARValidatorIsReturned() throws IOException{
         metaFile = metaFile +
-                ENTRY_DEFINITIONS + ENTRY_SEPARATOR + TOSCA_DEFINITION_FILEPATH;
-        handler.addFile(TOSCA_METADATA_FILEPATH, metaFile.getBytes(StandardCharsets.UTF_8));
+                TOSCA_META_ENTRY_DEFINITIONS + SEPERATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH;
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(ONAPCsarValidator.class, ValidatorFactory.getValidator(handler).getClass());
     }
@@ -65,10 +64,10 @@ public class ValidatorFactoryTest {
     public void testGivenSOL004MetaDirectoryCompliantMetafile_thenONAPCsarValidatorIsReturned() throws IOException{
 
         metaFile = metaFile +
-                ENTRY_DEFINITIONS + ENTRY_SEPARATOR + TOSCA_DEFINITION_FILEPATH + "\n"
-                + ENTRY_MANIFEST + ENTRY_SEPARATOR + TOSCA_MANIFEST_FILEPATH + "\n"
-                + ENTRY_CHANGE_LOG + ENTRY_SEPARATOR + TOSCA_CHANGELOG_FILEPATH + "\n";
-        handler.addFile(TOSCA_METADATA_FILEPATH, metaFile.getBytes(StandardCharsets.UTF_8));
+                TOSCA_META_ENTRY_DEFINITIONS + SEPERATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH + "\n"
+                + TOSCA_META_ETSI_ENTRY_MANIFEST + SEPERATOR_MF_ATTRIBUTE + TOSCA_MANIFEST_FILEPATH + "\n"
+                + TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPERATOR_MF_ATTRIBUTE + TOSCA_CHANGELOG_FILEPATH + "\n";
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
        assertEquals(SOL004MetaDirectoryValidator.class, ValidatorFactory.getValidator(handler).getClass());
     }
@@ -76,7 +75,7 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenMultiBlockMetadataWithSOL00CompliantMetaFile_thenSOL004MetaDirectoryValidatorReturned() throws IOException {
 
-        handler.addFile(TOSCA_METADATA_FILEPATH, ValidatorUtil.getFileResource("/validation.files/metafile/metaFileWithMultipleBlocks.meta"));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, ValidatorUtil.getFileResource("/validation.files/metafile/metaFileWithMultipleBlocks.meta"));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));

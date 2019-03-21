@@ -71,9 +71,9 @@ public class ToscaSolConverterImplTest {
         Map<String, ServiceTemplate> serviceTemplateMap = toscaServiceModel.getServiceTemplates();
         String entryDefinitionTemplateName = toscaServiceModel.getEntryDefinitionServiceTemplate();
         Assert.assertTrue("Artifacts should contain external files", contentHandler.containsFile("Main.mf"));
-        Assert.assertTrue("Main service template should exist", serviceTemplateMap.containsKey("Definitions/Main.yaml"));
+        Assert.assertTrue("Main service template should exist", serviceTemplateMap.containsKey("Main.yaml"));
         Assert.assertEquals("Entry Definition name should be same as passed in TOSCA.meta",
-                "Definitions/Main.yaml", entryDefinitionTemplateName);
+                "Main.yaml", entryDefinitionTemplateName);
     }
 
     @Test(expected = IOException.class)

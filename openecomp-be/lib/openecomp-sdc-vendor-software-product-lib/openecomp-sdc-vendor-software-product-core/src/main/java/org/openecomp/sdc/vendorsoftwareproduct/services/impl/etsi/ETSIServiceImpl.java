@@ -35,9 +35,9 @@ import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
@@ -116,8 +116,8 @@ public class ETSIServiceImpl implements ETSIService {
 
         ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metadataInputStream);
         Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
-        return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries.containsKey(TOSCA_META_ENTRY_MANIFEST)
-                && metaDataEntries.containsKey(TOSCA_META_ENTRY_CHANGE_LOG);
+        return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_MANIFEST)
+                && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_CHANGE_LOG);
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
