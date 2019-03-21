@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17b03010_a9861a00",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5169
+      },
+      "writtenOn": "2019-03-21T17:02:51Z",
+      "side": 1,
+      "message": "Minor issue... v2.5.1 should be changed to v2.6.1",
+      "revId": "93d97f079ae2eb3e45c1938fe408c2dabf30acb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54893bd5_8e0633ca",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 5169
+      },
+      "writtenOn": "2019-03-21T17:02:51Z",
+      "side": 1,
+      "message": "\"Source\" should be defined in constant.",
+      "revId": "93d97f079ae2eb3e45c1938fe408c2dabf30acb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a4e6692_74318b21",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 5169
+      },
+      "writtenOn": "2019-03-21T17:02:51Z",
+      "side": 1,
+      "message": "Should be defined in constant.",
+      "revId": "93d97f079ae2eb3e45c1938fe408c2dabf30acb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
