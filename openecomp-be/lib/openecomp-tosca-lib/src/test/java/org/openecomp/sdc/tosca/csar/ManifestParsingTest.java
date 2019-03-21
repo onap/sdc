@@ -18,9 +18,11 @@ package org.openecomp.sdc.tosca.csar;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -44,6 +46,10 @@ public class ManifestParsingTest {
       assertTrue(manifest.isValid());
       assertEquals(manifest.getMetadata().size(), 4);
       assertEquals(manifest.getSources().size(), 5);
+      Optional<ResourceTypeEnum> resourceTypeEnum = manifest.getType();
+      if(resourceTypeEnum.isPresent()){
+        assertTrue(resourceTypeEnum.get() == ResourceTypeEnum.VF);
+      }
     }
   }
 
