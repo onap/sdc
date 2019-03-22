@@ -162,7 +162,7 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-testng-common</artifactId>
+            <artifactId>powermock-module-junit4-common</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
@@ -174,7 +174,7 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-testng</artifactId>
+            <artifactId>powermock-module-junit4</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
