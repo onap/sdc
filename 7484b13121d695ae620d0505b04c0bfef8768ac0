@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6381489d_2fb3eea2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-25T15:12:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "88d8f591_b669fa1a",
+      "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5e094df6_733c6ad2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-25T07:37:50Z",
       "side": 1,
       "message": "static",
+      "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7fedbaf7_b14fcc46",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-25T15:12:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e094df6_733c6ad2",
       "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "6a9602f9_1a335b39",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaSolConverterImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-25T15:12:13Z",
+      "side": 1,
+      "message": "this functionality covered by existing unit test.",
+      "parentUuid": "c0dea220_9384157d",
+      "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a20c884c_d01bcf7c",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AbstractOnboardingManifest.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-25T07:37:50Z",
       "side": 1,
       "message": "why 4?\nWhy 4 is not constant?\nIs there a better way to distinguish types?",
+      "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d0766a0_68c1bf77",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AbstractOnboardingManifest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 4813
+      },
+      "writtenOn": "2019-03-25T15:12:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a20c884c_d01bcf7c",
       "revId": "7484b13121d695ae620d0505b04c0bfef8768ac0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
