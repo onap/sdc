@@ -32,10 +32,11 @@ public class CSARConstants {
     public static final String TOSCA_META_CSAR_VERSION_ENTRY = "CSAR-Version";
     public static final String TOSCA_META_CREATED_BY_ENTRY = "Created-by";
     public static final String TOSCA_META_ENTRY_DEFINITIONS="Entry-Definitions";
-    public static final String TOSCA_META_ENTRY_MANIFEST="Entry-Manifest";
-    public static final String TOSCA_META_ENTRY_CHANGE_LOG="Entry-Change-Log";
-    public static final String TOSCA_META_ENTRY_TESTS = "Entry-Tests";
-    public static final String TOSCA_META_ENTRY_LICENSES= "Entry-Licenses";
+    public static final String TOSCA_META_ETSI_ENTRY_MANIFEST ="ETSI-Entry-Manifest";
+    public static final String TOSCA_META_ETSI_ENTRY_CHANGE_LOG ="ETSI-Entry-Change-Log";
+    public static final String TOSCA_META_ETSI_ENTRY_TESTS = "ETSI-Entry-Tests";
+    public static final String TOSCA_META_ETSI_ENTRY_LICENSES = "ETSI-Entry-Licenses";
+    public static final String TOSCA_META_ETSI_ENTRY_CERTIFICATE = "ETSI-Entry-Certificate";
     public static final ImmutableSet<String> ELIGIBLE_FILES =
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
     public static final ImmutableSet<String> MANIFEST_PNF_METADATA =

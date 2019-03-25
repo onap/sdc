@@ -51,7 +51,7 @@ import java.util.*;
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private static final String SDC_ONBOARDED_PACKAGE_DIR = "ONBOARDED_PACKAGE/";
+  private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/ONBOARDED_PACKAGE/";
   private static final String EXT_SEPARATOR = ".";
   private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
   private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();

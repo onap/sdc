@@ -19,6 +19,7 @@ package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -33,24 +34,41 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.METADATA_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
 
  abstract class AbstractOnboardingManifest implements Manifest{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOnboardingManifest.class);
+    private static final int MAX_ALLOWED_MANIFEST_META_ENTRIES = 4;
     protected Map<String, String> metadata;
     protected List<String> sources;
     protected List<String> errors;
     protected Map<String, List<String>> nonManoSources;
+    protected ResourceTypeEnum type;
 
     protected AbstractOnboardingManifest() {
         errors = new ArrayList<>();
         sources = new ArrayList<>();
         metadata = new HashMap<>();
         nonManoSources = new HashMap<>();
+    }
+
+    @Override
+    public Optional<ResourceTypeEnum> getType(){
+        if(errors.isEmpty() && !metadata.isEmpty() && metadata.size() == MAX_ALLOWED_MANIFEST_META_ENTRIES) {
+            for (String key : metadata.keySet()) {
+                if (MANIFEST_PNF_METADATA.stream().anyMatch(key::equals)) {
+                    return Optional.of(ResourceTypeEnum.PNF);
+                }
+                return Optional.of(ResourceTypeEnum.VF);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

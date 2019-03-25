@@ -20,9 +20,11 @@
 
 package org.openecomp.sdc.tosca.csar;
 
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface Manifest {
 
@@ -62,4 +64,10 @@ public interface Manifest {
      * @return
      */
     Map<String, List<String>> getNonManoSources();
+
+    /**
+     * Gets the type based on the metadata of manifest file (VF/PNF)
+     * @return enum for type values
+     */
+    Optional<ResourceTypeEnum> getType();
 }

@@ -55,19 +55,21 @@ public class ToscaSolConverterImpl extends AbstractToscaConverter {
         Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
         FileContentHandler artifacts = new FileContentHandler();
         GlobalSubstitutionServiceTemplate gsst = new GlobalSubstitutionServiceTemplate();
-        String mServiceDefinitionFileName = getMainServiceDefinitionFileName(fileContentHandler);
-        handleMainServiceTemplate(csarFiles, serviceTemplates, gsst, mServiceDefinitionFileName);
+        String mServiceDefinitionPath = getMainServiceDefinitionFileName(fileContentHandler);
+        handleMainServiceTemplate(csarFiles, serviceTemplates, gsst, mServiceDefinitionPath);
         handleExternalArtifacts(csarFiles, serviceTemplates, artifacts);
         handleMetadataFile(csarFiles);
-        updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, mServiceDefinitionFileName);
+        updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, getSimpleName(mServiceDefinitionPath));
         return toscaServiceModel;
     }
 
     private void handleMainServiceTemplate(Map<String, byte[]> csarFiles, Map<String, ServiceTemplate> serviceTemplates,
                                            GlobalSubstitutionServiceTemplate gsst, String mServiceDefinitionFileName) {
-        handleServiceTemplate(mServiceDefinitionFileName, mServiceDefinitionFileName, csarFiles, serviceTemplates);
-        handleImportDefinitions(mServiceDefinitionFileName, csarFiles, mServiceDefinitionFileName.substring(0,
-                mServiceDefinitionFileName.lastIndexOf("/")), gsst);
+        if(mServiceDefinitionFileName != null){
+            handleServiceTemplate(getSimpleName(mServiceDefinitionFileName), mServiceDefinitionFileName, csarFiles, serviceTemplates);
+            String parentDir = mServiceDefinitionFileName.substring(0, mServiceDefinitionFileName.lastIndexOf("/"));
+            handleImportDefinitions(mServiceDefinitionFileName, csarFiles, parentDir, gsst);
+        }
     }
 
     private void handleExternalArtifacts(Map<String, byte[]> csarFiles, Map<String, ServiceTemplate> serviceTemplates, FileContentHandler artifacts) {
@@ -127,5 +129,12 @@ public class ToscaSolConverterImpl extends AbstractToscaConverter {
             LOGGER.error(e.getMessage(), e);
             throw new IOException(e.getMessage());
         }
+    }
+
+    private String getSimpleName(String path){
+        if(path != null && path.contains("/")){
+            path = path.substring(path.lastIndexOf("/") + 1);
+        }
+        return path;
     }
 }

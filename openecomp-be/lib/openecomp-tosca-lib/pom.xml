@@ -97,6 +97,12 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>common-be</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <properties>
         <useSystemClassLoader>false</useSystemClassLoader>

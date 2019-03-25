@@ -25,8 +25,8 @@ public class ETSIServiceImplTest {
             "CSAR-Version: 1.0\n" +
             "Created-By: Kuku\n" +
             "Entry-Definitions: MainServiceTemplate.yaml\n" +
-            "Entry-Manifest: MainServiceTemplate.mf\n" +
-            "Entry-Change-Log: MainServiceTemplate.log";
+            "ETSI-Entry-Manifest: MainServiceTemplate.mf\n" +
+            "ETSI-Entry-Change-Log: MainServiceTemplate.log";
     private String metaFile = "TOSCA-Meta-Version: 1.0\n" +
             "CSAR-Version: 1.0\n" +
             "Created-By: Kuku\n" +
