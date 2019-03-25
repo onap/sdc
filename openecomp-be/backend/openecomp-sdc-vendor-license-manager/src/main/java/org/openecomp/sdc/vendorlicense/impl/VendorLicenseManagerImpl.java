@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
@@ -23,8 +24,21 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
-import org.openecomp.sdc.vendorlicense.dao.*;
-import org.openecomp.sdc.vendorlicense.dao.types.*;
+import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
+import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
+import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
+import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
+import org.openecomp.sdc.vendorlicense.dao.LimitDao;
+import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
+import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.errors.InvalidDateErrorBuilder;
 import org.openecomp.sdc.vendorlicense.errors.LimitErrorBuilder;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
@@ -38,14 +52,14 @@ import java.util.Optional;
 import java.util.Set;
 
 public class VendorLicenseManagerImpl implements VendorLicenseManager {
-  private final UniqueValueUtil uniqueValueUtil;
-  private final VendorLicenseFacade vendorLicenseFacade;
-  private final VendorLicenseModelDao vendorLicenseModelDao;
-  private final LicenseAgreementDao licenseAgreementDao;
-  private final FeatureGroupDao featureGroupDao;
-  private final EntitlementPoolDao entitlementPoolDao;
-  private final LicenseKeyGroupDao licenseKeyGroupDao;
-  private final LimitDao limitDao;
+  private UniqueValueUtil uniqueValueUtil;
+  private VendorLicenseFacade vendorLicenseFacade;
+  private VendorLicenseModelDao vendorLicenseModelDao;
+  private LicenseAgreementDao licenseAgreementDao;
+  private FeatureGroupDao featureGroupDao;
+  private EntitlementPoolDao entitlementPoolDao;
+  private LicenseKeyGroupDao licenseKeyGroupDao;
+  private LimitDao limitDao;
 
   private static final String EP_POOL_START_TIME = "T00:00:00Z";
   private static final String EP_POOL_EXPIRY_TIME = "T23:59:59Z";
@@ -261,54 +275,68 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   private void validateCreateDate(String startDate, String expiryDate,
                                   String vendorLicenseModelId) {
-    if(isNull(startDate, expiryDate) || isEmpty(startDate, expiryDate) ||
-            isInvalidStartEndDate(startDate, expiryDate)){
+    //original logic allows both nulls
+    if(StringUtils.isEmpty(startDate) && StringUtils.isEmpty(expiryDate)){
+      return;
+    }
+
+    Optional<LocalDate> parsedStartDate = parseLocalDate(startDate);
+    Optional<LocalDate> parsedExpiryDate = parseLocalDate(expiryDate);
+    if (!parsedStartDate.isPresent()) {
+      throw new CoreException(
+              new InvalidDateErrorBuilder(vendorLicenseModelId)
+                      .build());
+    }
+
+    if (!parsedExpiryDate.isPresent()
+            && parsedStartDate.get().atStartOfDay().isBefore
+            (LocalDate.now().atStartOfDay())) {
+      throw new CoreException(
+              new InvalidDateErrorBuilder(vendorLicenseModelId)
+                      .build());
+    }
+
+    if(parsedExpiryDate.isPresent() && isNotValidatStartAndExpiryDate(parsedStartDate.get(), parsedExpiryDate.get())){
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
     }
   }
 
-  private boolean isInvalidStartEndDate(String startDate, String expiryDate) {
-    LocalDate parsedStartDate = parseLocalDate(startDate);
-    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
-
+  private boolean isNotValidatStartAndExpiryDate(LocalDate parsedStartDate,
+                                                 LocalDate parsedExpiryDate) {
     return parsedStartDate.atStartOfDay().isBefore(LocalDate.now().atStartOfDay())
-            || parsedExpiryDate.atStartOfDay().isEqual(parsedStartDate.atStartOfDay())
-            || parsedExpiryDate.isBefore(parsedStartDate);
+    || parsedExpiryDate.atStartOfDay().isEqual(parsedStartDate.atStartOfDay())
+    || parsedExpiryDate.isBefore(parsedStartDate);
   }
 
-  private boolean isEmpty(String startDate, String expiryDate) {
-    return startDate.isEmpty() || expiryDate.isEmpty();
-  }
+  private static Optional<LocalDate> parseLocalDate(String date) {
+    if (StringUtils.isEmpty(date)) {
+      return Optional.empty();
+    }
 
-  private boolean isNull(String startDate, String expiryDate) {
-    return startDate == null || expiryDate == null;
-  }
-
-  private static LocalDate parseLocalDate(String date) {
-    return LocalDate.parse(date, FORMATTER );
+    return Optional.of(LocalDate.parse(date, FORMATTER ));
   }
 
   private void validateUpdateDate(String startDate, String expiryDate,
                                   String vendorLicenseModelId) {
+    Optional<LocalDate> parsedStartDate = parseLocalDate(startDate);
+    Optional<LocalDate> parsedExpiryDate = parseLocalDate(expiryDate);
 
-    if(isNull(startDate, expiryDate) || isEmpty(startDate, expiryDate)
-     || isInvalidUpdateDate(startDate, expiryDate)){
+    if (parsedStartDate.isPresent() && parsedExpiryDate.isPresent()
+            && (parsedExpiryDate.get().atStartOfDay()
+            .isEqual(parsedStartDate.get().atStartOfDay())
+            || parsedExpiryDate.get().isBefore(parsedStartDate.get() ))) {
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
     }
-  }
 
-  private boolean isInvalidUpdateDate(String startDate, String expiryDate) {
-
-    LocalDate parsedStartDate = parseLocalDate(startDate);
-    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
-
-    return parsedExpiryDate.atStartOfDay()
-            .isEqual(parsedStartDate.atStartOfDay())
-            || parsedExpiryDate.isBefore(parsedStartDate);
+    if (startDate == null && expiryDate != null) {
+      throw new CoreException(
+              new InvalidDateErrorBuilder(vendorLicenseModelId)
+                      .build());
+    }
   }
 
   @Override
@@ -378,7 +406,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
-        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME 
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME
         : null) : null);
 
     validateCreateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),
@@ -392,7 +420,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
-        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME 
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME
         : null) : null);
 
     validateUpdateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),

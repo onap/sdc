@@ -28,7 +28,13 @@ import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
-import org.openecomp.sdc.vendorlicense.dao.types.*;
+import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
+import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
+import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -40,8 +46,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 public class EntitlementPoolTest {
 
@@ -191,6 +199,49 @@ public class EntitlementPoolTest {
   }
 
   @Test
+  public void createWithExpiryDateNullTest() {
+
+    Set<OperationalScope> opScopeChoices;
+    opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Core);
+    opScopeChoices.add(OperationalScope.CPU);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                    ThresholdUnit.Absolute,
+                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    ep2.setStartDate(LocalDate.now().format(formatter));
+    ep2.setExpiryDate(null);
+    ep2.setVendorLicenseModelId(vlm1_id);
+    vendorLicenseManagerImpl.createEntitlementPool(ep2);
+    verify(vendorLicenseFacade).createEntitlementPool(ep2);
+
+  }
+
+  @Test
+  public void createWithStartAndExpiryDateNullTest() {
+
+    Set<OperationalScope> opScopeChoices;
+    opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Core);
+    opScopeChoices.add(OperationalScope.CPU);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                    ThresholdUnit.Absolute,
+                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+    ep2.setStartDate(null);
+    ep2.setExpiryDate(null);
+    ep2.setVendorLicenseModelId(vlm1_id);
+    vendorLicenseManagerImpl.createEntitlementPool(ep2);
+    verify(vendorLicenseFacade).createEntitlementPool(ep2);
+
+  }
+
+  @Test
   public void testUpdate() {
     Set<OperationalScope> opScopeChoices;
     opScopeChoices = new HashSet<>();
@@ -298,12 +349,12 @@ public class EntitlementPoolTest {
     entitlementPool.setStartDate(LocalDate.now().format(formatter));
     entitlementPool.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
 
-    doReturn(entitlementPool).when(entitlementPoolDao).get(anyObject());
+    doReturn(entitlementPool).when(entitlementPoolDao).get(any());
 
     doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, ep1_id);
 
-    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(anyObject(), anyObject(),
-        anyObject(), anyObject());
+    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
+        any(), any());
 
     vendorLicenseManagerImpl.deleteEntitlementPool(entitlementPool);
 
@@ -328,7 +379,7 @@ public class EntitlementPoolTest {
     entitlementPool.setStartDate(LocalDateTime.now().format(formatter));
     entitlementPool.setExpiryDate(LocalDateTime.now().plusDays(1L).format(formatter));
 
-    doReturn(entitlementPool).when(entitlementPoolDao).get(anyObject());
+    doReturn(entitlementPool).when(entitlementPoolDao).get(any());
 
     EntitlementPoolEntity retrieved = vendorLicenseManagerImpl.getEntitlementPool(entitlementPool);
 
