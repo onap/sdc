@@ -158,7 +158,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private String getModifiedUrl(HttpServletRequest request) throws MalformedURLException {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet getModifiedUrl", "sdc-FE", "failed to retrive configuration.");
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet getModifiedUrl", "sdc-FE", "failed to retrieve configuration.");
 			throw new RuntimeException("failed to read FE configuration");
 		}
 		String uri = request.getRequestURI();

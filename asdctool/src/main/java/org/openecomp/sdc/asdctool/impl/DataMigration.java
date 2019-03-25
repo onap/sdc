@@ -213,7 +213,7 @@ public class DataMigration {
      * corresponding audit event according to the table name
 	 * 
 	 * @param map
-	 *            the map from which we will retrive the fields enum values
+	 *            the map from which we will retrieve the fields enum values
 	 * @param table
 	 *            the table we are going to store the record in.
 	 * @return an AuditingGenericEvent event representing the audit record that is going to be

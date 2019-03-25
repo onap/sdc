@@ -4560,7 +4560,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Either<List<CategoryDefinition>, ActionStatus> categories = elementDao
                     .getAllCategories(NodeTypeEnum.ResourceNewCategory, inTransaction);
             if (categories.isRight()) {
-                log.debug("failed to retrive resource categories from Titan");
+                log.debug("failed to retrieve resource categories from Titan");
                 responseFormat = componentsUtils.getResponseFormat(categories.right().value());
                 componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
                 throw new ComponentException(categories.right().value());

@@ -131,8 +131,8 @@ public class ImageManagerImpl implements ImageManager {
     }
   }
 
-  private void validateHeatVspImageUpdate(String name, String value, String retrivedValue) {
-    if (value != null && !value.equals(retrivedValue)) {
+  private void validateHeatVspImageUpdate(String name, String value, String retrievedValue) {
+    if (value != null && !value.equals(retrievedValue)) {
       final ErrorCode updateHeatImageErrorBuilder =
           ImageErrorBuilder.getImageHeatReadOnlyErrorBuilder(name);
       throw new CoreException(updateHeatImageErrorBuilder);
@@ -189,8 +189,8 @@ public class ImageManagerImpl implements ImageManager {
           componentId, imageId);
       final String data = imageQuestionnaire.getData();
       if (data != null) {
-        String retrivedFormat = JsonUtil.json2Object(data, ImageDetails.class).getFormat();
-        validateHeatVspImageUpdate("format", format, retrivedFormat);
+        String retrievedFormat = JsonUtil.json2Object(data, ImageDetails.class).getFormat();
+        validateHeatVspImageUpdate("format", format, retrievedFormat);
       }
     }
 

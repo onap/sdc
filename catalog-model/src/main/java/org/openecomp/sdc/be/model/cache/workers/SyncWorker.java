@@ -236,7 +236,7 @@ public class SyncWorker implements Runnable, IWorker {
     }
 
     /**
-     * the method retrives all nodes matching the given node type from the graph
+     * the method retrieves all nodes matching the given node type from the graph
      *
      * @param nodeTypeEnum
      *            node type we want to lookup on the graph
