@@ -50,7 +50,7 @@ public class EsGateway extends ProxyServlet {
         String esPort = null;
         MonitoringBusinessLogic monitoringBL = getMonitoringBL(request.getSession().getServletContext());
         if (monitoringBL == null) {
-            log.error("failed to retrive monitoringBL.");
+            log.error("failed to retrieve monitoringBL.");
         } else {
             esHost = monitoringBL.getEsHost();
             esPort = monitoringBL.getEsPort();

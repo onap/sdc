@@ -52,7 +52,7 @@ public class CacheWorker implements Runnable, IWorker {
     }
 
     /**
-     * the method will try to get a job if one is avilable it will be retrived
+     * the method will try to get a job if one is avilable it will be retrieved
      * and handled. if no jobs are available the worker will block for 500
      * milliseconds and then it wil check if it needs to shutdown. if not it
      * will block again and so on until sutdown or a new job is available

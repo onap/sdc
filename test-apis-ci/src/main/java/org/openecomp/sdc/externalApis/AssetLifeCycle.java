@@ -693,7 +693,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
 		BaseRestUtils.checkSuccess(restResponse);
 		ResourceAssetStructure dataOutOfSearchResponseForResourceName = ResponseParser.getDataOutOfSearchExternalAPIResponseForResourceName(restResponse.getResponse(), parsedCreatedResponse.getName());
-		Assert.assertEquals(parsedCreatedResponse.getUuid(), dataOutOfSearchResponseForResourceName.getUuid(), "Created resourceUUID not equal to search retrive resourceUUID.");
+		Assert.assertEquals(parsedCreatedResponse.getUuid(), dataOutOfSearchResponseForResourceName.getUuid(), "Created resourceUUID not equal to search retrieve resourceUUID.");
 		
 		// 3. Use getSpecificMetadata external API to receive full information of the VFCMT.
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, dataOutOfSearchResponseForResourceName.getUuid());

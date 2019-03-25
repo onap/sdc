@@ -22,7 +22,7 @@ final class HttpClientConfigImmutable {
     private final int numOfRetries;
     
     static HttpClientConfigImmutable getOrCreate(HttpClientConfig httpClientConfig) {
-        // TODO: retrive from a pool if exist, otherwise create new
+        // TODO: retrieve from a pool if exist, otherwise create new
         return new HttpClientConfigImmutable(httpClientConfig); 
     }
 

@@ -1531,7 +1531,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validating service category {} against valid categories list", list);
             Either<List<CategoryDefinition>, ActionStatus> categorys = elementDao.getAllServiceCategories();
             if (categorys.isRight()) {
-                log.debug("failed to retrive service categories from Titan");
+                log.debug("failed to retrieve service categories from Titan");
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(categorys.right().value());
                 return Either.right(responseFormat);
             }

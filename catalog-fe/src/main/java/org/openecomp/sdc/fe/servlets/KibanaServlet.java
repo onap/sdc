@@ -48,7 +48,7 @@ public class KibanaServlet extends ProxyServlet {
 	public String getModifiedUrl(HttpServletRequest request) {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
-			log.error("failed to retrive configuration.");
+			log.error("failed to retrieve configuration.");
 		}
 		// String scheme = request.getScheme();
 		String contextPath = request.getContextPath(); // /mywebapp

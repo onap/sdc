@@ -330,12 +330,12 @@ public class EntitlementPoolTest {
 
     doReturn(entitlementPool).when(entitlementPoolDao).get(anyObject());
 
-    EntitlementPoolEntity retrived = vendorLicenseManagerImpl.getEntitlementPool(entitlementPool);
+    EntitlementPoolEntity retrieved = vendorLicenseManagerImpl.getEntitlementPool(entitlementPool);
 
-    Assert.assertEquals(retrived.getId(), entitlementPool.getId());
-    Assert.assertEquals(retrived.getVendorLicenseModelId(),
+    Assert.assertEquals(retrieved.getId(), entitlementPool.getId());
+    Assert.assertEquals(retrieved.getVendorLicenseModelId(),
         entitlementPool.getVendorLicenseModelId());
-    Assert.assertEquals(retrived.getVersion(), entitlementPool.getVersion());
+    Assert.assertEquals(retrieved.getVersion(), entitlementPool.getVersion());
   }
 
   @Test
