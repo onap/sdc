@@ -140,6 +140,10 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
     }
 
+    protected GenericArtifactBrowserBusinessLogic getGenericArtifactBrowserBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> GenericArtifactBrowserBusinessLogic.class);
+    }
+
     protected ResourceBusinessLogic getResourceBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
     }
