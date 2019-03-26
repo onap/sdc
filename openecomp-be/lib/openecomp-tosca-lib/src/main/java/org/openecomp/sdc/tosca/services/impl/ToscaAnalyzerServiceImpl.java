@@ -182,7 +182,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     }
 
     String convertServiceTemplateImport(ToscaExtensionYamlUtil toscaExtensionYamlUtil, byte[] fileContent) {
-
         Map serviceTemplateMap = toscaExtensionYamlUtil.yamlToObject(new String(fileContent), Map.class);
         convertToscaImports(serviceTemplateMap, toscaExtensionYamlUtil);
         return toscaExtensionYamlUtil.objectToYaml(serviceTemplateMap);
@@ -191,8 +190,8 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     private void convertToscaImports(Map serviceTemplateMap, ToscaExtensionYamlUtil toscaExtensionYamlUtil) {
         List<Map<String, Import>> convertedImport = new ArrayList<>();
         Object importObj = serviceTemplateMap.get(IMPORTS);
-        if (!(importObj instanceof List)) {
-            throw new SdcRuntimeException("Illegal Statement");
+        if (Objects.nonNull(importObj) && !(importObj instanceof List)) {
+            throw new SdcRuntimeException(new IllegalStateException("Invalid TOSCA import section"));
         }
         List<Object> imports = (List) importObj;
         if (CollectionUtils.isEmpty(imports)) {
