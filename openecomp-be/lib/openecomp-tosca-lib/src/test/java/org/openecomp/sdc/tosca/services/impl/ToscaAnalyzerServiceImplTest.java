@@ -1200,6 +1200,22 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
+    public void testConvertToscaImportForEmptyImport() throws Exception {
+        String inputResourceName = "/mock/analyzerService/importConvertTestNoImport.yml";
+        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
+
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
+        String convertServiceTemplateImport =
+                toscaAnalyzerServiceImpl.convertServiceTemplateImport(toscaExtensionYamlUtil, uploadedFileData);
+
+        Assert.assertNotNull(convertServiceTemplateImport);
+        ServiceTemplate serviceTemplate =
+                new YamlUtil().yamlToObject(convertServiceTemplateImport, ServiceTemplate.class);
+        Assert.assertNull(serviceTemplate.getImports());
+    }
+
+    @Test
     public void loadValidToscaYamlFileTest() throws Exception {
         String inputResourceName = "/mock/analyzerService/ServiceTemplateInterfaceInheritanceTest.yaml";
         byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
