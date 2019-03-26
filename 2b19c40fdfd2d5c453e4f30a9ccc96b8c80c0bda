@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e74366a5_ddb63ef6",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-26T07:51:19Z",
+      "side": 1,
+      "message": "what will happen if it is null? it will fail right after the if statement",
+      "range": {
+        "startLine": 193,
+        "startChar": 12,
+        "endLine": 193,
+        "endChar": 38
+      },
+      "revId": "2b19c40fdfd2d5c453e4f30a9ccc96b8c80c0bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d085e9e1_bdbdf9e4",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-03-26T07:51:19Z",
+      "side": 1,
+      "message": "did you meant illegal state? if so, there is exception for it",
+      "range": {
+        "startLine": 194,
+        "startChar": 44,
+        "endLine": 194,
+        "endChar": 60
+      },
+      "revId": "2b19c40fdfd2d5c453e4f30a9ccc96b8c80c0bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
