@@ -60,6 +60,7 @@ import {EventBusService} from "../ng2/services/event-bus.service";
 import {DynamicComponentService} from "app/ng2/services/dynamic-component.service";
 import {AutomatedUpgradeService} from "../ng2/pages/automated-upgrade/automated-upgrade.service";
 import {ArchiveService as ArchiveServiceNg2} from "app/ng2/services/archive.service";
+import {GabService as GabServiceNg2} from "app/ng2/services/gab.service";
 import {ComponentFactory} from "app/utils/component-factory";
 import {ToscaTypesServiceNg2} from "app/ng2/services/tosca-types.service";
 
@@ -115,5 +116,6 @@ serviceModule.factory('PluginsService', downgradeInjectable(PluginsService));
 serviceModule.factory('EventBusService', downgradeInjectable(EventBusService));
 serviceModule.factory('DynamicComponentService', downgradeInjectable(DynamicComponentService));
 serviceModule.factory('ArchiveServiceNg2', downgradeInjectable(ArchiveServiceNg2));
+serviceModule.factory('GabServiceNg2', downgradeInjectable(GabServiceNg2));
 serviceModule.factory('AutomatedUpgradeService', downgradeInjectable(AutomatedUpgradeService));
 serviceModule.factory('ToscaTypesServiceNg2', downgradeInjectable(ToscaTypesServiceNg2));
