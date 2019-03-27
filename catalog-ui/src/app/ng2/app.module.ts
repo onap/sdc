@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +79,8 @@ import {AutomatedUpgradeService} from "./pages/automated-upgrade/automated-upgra
 import {AutomatedUpgradeModule} from "./pages/automated-upgrade/automated-upgrade.module";
 import {RequirementsEditorModule} from "./pages/req-and-capabilities-editor/requirements-editor/requirements-editor.module"
 import {CapabilitiesEditorModule} from "./pages/req-and-capabilities-editor/capabilities-editor/capabilities-editor.module"
+import {GenericArtifactBrowserModule} from "./components/logic/generic-artifact-browser/generic-artifact-browser.module";
+import {GabService} from "./services/gab.service";
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -123,7 +126,8 @@ export function configServiceFactory(config: ConfigService) {
         ServiceDependenciesModule,
         ServiceDependenciesEditorModule,
         RequirementsEditorModule,
-        CapabilitiesEditorModule
+        CapabilitiesEditorModule,
+        GenericArtifactBrowserModule
     ],
     exports: [],
     entryComponents: [
@@ -163,6 +167,7 @@ export function configServiceFactory(config: ConfigService) {
         ComponentInstanceServiceNg2,
         TranslationServiceConfig,
         PluginsService,
+        GabService,
         ArchiveService,
         EventBusService,
         {
