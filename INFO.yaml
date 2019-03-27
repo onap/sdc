@@ -88,4 +88,7 @@ tsc:
     - type: 'Addition'
           name: 'Priyanshu Agarwal'
           link: 'https://wiki.onap.org/pages/viewpage.action?pageId=48531570'
+    - type: 'Removal'
+        name: 'Vitaliy Emporopulo'
+        link: 'https://wiki.onap.org/pages/viewpage.action?pageId=48531570'
 
