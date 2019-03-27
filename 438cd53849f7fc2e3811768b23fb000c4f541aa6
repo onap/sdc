@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3849d27_9386ecc8",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-03-27T17:08:34Z",
+      "side": 1,
+      "message": "indent this line 4 spaces",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 14
+      },
+      "revId": "438cd53849f7fc2e3811768b23fb000c4f541aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa8519d1_3c6414c0",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-03-27T17:08:34Z",
+      "side": 1,
+      "message": "Remove Vitaliy from here too",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 29
+      },
+      "revId": "438cd53849f7fc2e3811768b23fb000c4f541aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
