@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34ee3b46_891831ad",
+        "filename": "asdctool/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-27T14:10:21Z",
+      "side": 1,
+      "message": "It is worth checking whether hamcrest-all includes the features that are in hamcrest-library.\nIf so, please notice there\u0027s a use of hamcrest-all over:\ntest-apis-ci/pom.xml:40\nSo, you can move the version into the parent pom file and use a var instead of a declaration of a specific version.\n\nOtherwise (all do not contains the features you need), please ignore this comment",
+      "revId": "f1b73ffd081b8e444512ced0ece1bc00cf819f74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
