@@ -249,7 +249,6 @@ export class ModalsHandler implements IModalsHandler {
 
     openArtifactModal = (artifact:ArtifactModel, component:Component):ng.IPromise<any> => {
         let deferred = this.$q.defer();
-
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
             templateUrl: '../view-models/forms/artifact-form/artifact-form-view.html',
             controller: 'Sdc.ViewModels.ArtifactResourceFormViewModel',

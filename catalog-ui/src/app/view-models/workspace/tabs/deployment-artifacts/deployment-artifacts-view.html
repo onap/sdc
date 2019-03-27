@@ -1,5 +1,6 @@
 <!--
   ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~ Modifications Copyright (C) 2019 Nokia. All rights reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -78,6 +79,10 @@
                                     data-ng-if="!isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" data-ng-click="delete(artifact)"> </button>
                              <button class="table-download-btn" download-artifact  data-tests-id="download_{{artifact.artifactDisplayName}}"
                                      data-ng-if="artifact.artifactDisplayName" component="component" artifact="artifact"></button>
+                            <button ng-if="artifact.isGenericBrowseable()"
+                                    class="table-magnifier-btn"
+                                    data-ng-click="openGenericArtifactBrowserModal(artifact)" component="component" artifact="artifact"
+                                    data-tests-id="gab-{{artifact.artifactDisplayName}}"></button>
                             <button ng-if="!isViewMode() && artifact.isHEAT()"
                                     class="sprite e-sdc-small-icon-pad edit-paramtes-button"
                                     data-ng-click="openEditEnvParametersModal(artifact)" type="button"

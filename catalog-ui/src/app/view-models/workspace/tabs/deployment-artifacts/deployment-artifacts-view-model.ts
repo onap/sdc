@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,10 @@ import {ArtifactModel, ArtifactGroupModel, Resource} from "app/models";
 import {ArtifactsUtils, ModalsHandler, ValidationUtils} from "app/utils";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
+import {GenericArtifactBrowserComponent} from "../../../../ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component";
+import {PathsAndNamesDefinition} from "../../../../models/paths-and-names";
+import {ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
+import {IModalConfig} from "sdc-ui/lib/angular/modals/models/modal-config";
 
 interface IDeploymentArtifactsViewModelScope extends IWorkspaceViewModelScope {
     tableHeadersList:Array<any>;
@@ -64,7 +69,8 @@ export class DeploymentArtifactsViewModel {
         'ValidationUtils',
         'ArtifactsUtils',
         'ModalsHandler',
-        'ComponentServiceNg2'
+        'ComponentServiceNg2',
+        'ModalServiceSdcUI'
     ];
 
     constructor(private $scope:IDeploymentArtifactsViewModelScope,
@@ -73,7 +79,8 @@ export class DeploymentArtifactsViewModel {
                 private validationUtils:ValidationUtils,
                 private artifactsUtils:ArtifactsUtils,
                 private ModalsHandler:ModalsHandler,
-                private ComponentServiceNg2: ComponentServiceNg2) {
+                private ComponentServiceNg2: ComponentServiceNg2,
+                private ModalServiceSdcUI: ModalServiceSdcUI) {
         this.initScope();
     }
 
@@ -268,6 +275,35 @@ export class DeploymentArtifactsViewModel {
             if (envArtifact) {
                 return envArtifact.artifactDisplayName;
             }
+        };
+
+        this.$scope.openGenericArtifactBrowserModal = (artifact:ArtifactModel):void => {
+            let modalConfig: IModalConfig = {
+                size: 'xl',
+                title: 'Generic Artifact Browser',
+                type: 'custom',
+                buttons: [{
+                        id: 'okButton',
+                        text: 'OK',
+                        size: "'x-small'",
+                        closeModal: true
+                    },
+                    {text: "Cancel", size: "'x-small'", closeModal: true}]
+            };
+
+            let pathsandnames: PathsAndNamesDefinition[] = [
+                {friendlyName: 'Action', path: 'event.action[2]'},
+                {friendlyName: 'Comment', path: 'event.comment'},
+                {friendlyName: 'Alarm Additional Information',
+                    path: 'event.structure.faultFields.structure.alarmAdditionalInformation.comment'}];
+
+            let modalInputs = {
+                pathsandnames: pathsandnames,
+                artifactid: artifact.esId,
+                resourceid: this.$scope.component.uniqueId
+            };
+
+            this.ModalServiceSdcUI.openCustomModal(modalConfig, GenericArtifactBrowserComponent, modalInputs);
         };
 
         this.$scope.openEditEnvParametersModal = (artifact:ArtifactModel):void => {
