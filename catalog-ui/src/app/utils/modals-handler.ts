@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +19,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PropertyModel, Component, ArtifactModel, Distribution, InputModel, DisplayModule, InputPropertyBase} from "../models";
+import {
+    PropertyModel,
+    Component,
+    ArtifactModel,
+    Distribution,
+    InputModel,
+    DisplayModule,
+    InputPropertyBase,
+    IAppConfigurtaion
+} from "../models";
 import {IEmailModalModel} from "../view-models/modals/email-modal/email-modal-view-model";
 import {IClientMessageModalModel} from "../view-models/modals/message-modal/message-client-modal/client-message-modal-view-model";
 import {IServerMessageModalModel} from "../view-models/modals/message-modal/message-server-modal/server-message-modal-view-model";
@@ -208,6 +218,27 @@ export class ModalsHandler implements IModalsHandler {
         return deferred.promise;
     };
 
+    openGenericArtifactBrowserModal = (artifactResource:ArtifactModel, component?:Component):ng.IPromise<any> => {
+        let deferred = this.$q.defer();
+        let modalOptions:ng.ui.bootstrap.IModalSettings = {
+            templateUrl: '../view-models/modals/generic-artifact-browser-modal/generic-artifact-browser-modal-view.html',
+            controller: 'Sdc.ViewModels.GenericArtifactBrowserModalViewModel',
+            size: 'sdc-xl',
+            backdrop: 'static',
+            resolve: {
+                artifact: ():ArtifactModel => {
+                    return artifactResource;
+                },
+                component: ():Component => {
+                    return component;
+                }
+            }
+        };
+        let modalInstance:ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
+        deferred.resolve(modalInstance.result);
+        return deferred.promise;
+    };
+
     openEditEnvParametersModal = (artifactResource:ArtifactModel, component?:Component):ng.IPromise<any> => {
         let deferred = this.$q.defer();
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
@@ -249,7 +280,6 @@ export class ModalsHandler implements IModalsHandler {
 
     openArtifactModal = (artifact:ArtifactModel, component:Component):ng.IPromise<any> => {
         let deferred = this.$q.defer();
-
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
             templateUrl: '../view-models/forms/artifact-form/artifact-form-view.html',
             controller: 'Sdc.ViewModels.ArtifactResourceFormViewModel',

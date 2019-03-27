@@ -67,6 +67,7 @@
     "@angular/upgrade": "2.4.10",
     "@bardit/cytoscape-expand-collapse": "2.0.3",
     "@bardit/cytoscape-qtip": "2.5.1",
+    "@swimlane/ngx-datatable": "^6.3.0",
     "@types/core-js": "0.9.46",
     "@types/js-md5": "0.4.2",
     "@types/lodash": "4.14.85",
