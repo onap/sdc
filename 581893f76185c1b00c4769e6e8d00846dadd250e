@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "88e5892a_7182f384",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5e53c75_8d90c494",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9ace0964_07e8d566",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/java/org/onap/sdc/gab/cucumber/actions/gabcontroller/GABControllerStepDefinitions.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-27T13:58:14Z",
       "side": 1,
       "message": "This function and the following are basically doing the exact same thing, just getting 2 different method descriptions.\nConsider unite them.",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "adaf8ff1_b46e491c",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/java/org/onap/sdc/gab/cucumber/actions/gabcontroller/GABControllerStepDefinitions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ace0964_07e8d566",
       "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "050e0dad_076cd739",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/java/org/onap/sdc/gab/cucumber/actions/gabcontroller/GABControllerStepDefinitions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d2aee34_7b07f1a4",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e85bc6e8_54944fa0",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/resources/org/onap/sdc/gab/cucumber/gab_controller.feature",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-27T13:58:14Z",
       "side": 1,
       "message": "Consider moving Given new GAB service to a @Before and conduct it over there. Then you wouldn\u0027t \u0027Have to\u0027 repeat it in any test.",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7558ead_b5a42304",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/resources/org/onap/sdc/gab/cucumber/gab_controller.feature",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e85bc6e8_54944fa0",
       "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "b106ec5b_cefe50dc",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/resources/org/onap/sdc/gab/cucumber/gab_controller.feature",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Some unification of the cucumber logic has been done. I wouldnt want to add a data table to make those scenarios more similar for the reason of loosing descriptive nature of this framework. Off course we can make from those scenarios fully parameterized testcases but I would considered them as less understandable as in current state.",
+      "parentUuid": "9bd1c6a4_391e95b2",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e194deb8_99e8f447",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/resources/org/onap/sdc/gab/cucumber/gab_controller.feature",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2019-03-27T13:58:14Z",
       "side": 1,
       "message": "refer to previous comment",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63f51b24_71428a88",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test/resources/org/onap/sdc/gab/cucumber/gab_controller.feature",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "refer to previous comment",
+      "parentUuid": "e194deb8_99e8f447",
       "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "413a4c4e_47a63f0c",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "Done. Some deps as you noticed like i.e. junit have to stay specific for the project.",
+      "parentUuid": "51813c71_f8db3185",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72688a9f_e81470c3",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/model/GABQuery.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2019-03-27T13:58:14Z",
       "side": 1,
       "message": "Are the fields unique? i.e given 2 objects in fields, can they equal? order matter?\nIf 2 fields must be unique, maybe it is worth to consider using a Set instead of a List?",
+      "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a214ec5_dedad559",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/model/GABQuery.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-27T16:36:37Z",
+      "side": 1,
+      "message": "They are unique in fact and such uniqueness was checked at the phase of mapping a response so You are right and there were some redundant searching inside a document. Changed regarding to your suggestion.",
+      "parentUuid": "72688a9f_e81470c3",
       "revId": "581893f76185c1b00c4769e6e8d00846dadd250e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
