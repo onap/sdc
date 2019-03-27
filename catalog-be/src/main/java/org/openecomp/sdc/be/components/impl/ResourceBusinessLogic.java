@@ -3324,6 +3324,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 newResource.setInterfaces(oldResource.getInterfaces());
             }
 
+            if (CollectionUtils.isEmpty(newResource.getProperties())) {
+                newResource.setProperties(oldResource.getProperties());
+            }
+
             Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade
                     .overrideComponent(newResource, oldResource);
 
