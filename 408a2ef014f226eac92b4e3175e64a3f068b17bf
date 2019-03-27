@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b57e22ba_f1af81fb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-03-27T14:50:39Z",
+      "side": 1,
+      "message": "what about reverse if statement? expected scenario would be in first place -\u003e it\u0027ll become more readable",
+      "range": {
+        "startLine": 71,
+        "startChar": 11,
+        "endLine": 71,
+        "endChar": 61
+      },
+      "revId": "408a2ef014f226eac92b4e3175e64a3f068b17bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07fb6aba_9ad2c166",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-03-27T14:50:39Z",
+      "side": 1,
+      "message": "i\u0027d prefer to have this in separate method",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 97
+      },
+      "revId": "408a2ef014f226eac92b4e3175e64a3f068b17bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
