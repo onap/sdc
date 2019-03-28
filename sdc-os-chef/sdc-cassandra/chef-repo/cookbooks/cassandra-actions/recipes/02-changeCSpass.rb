@@ -12,7 +12,8 @@ template "/tmp/change_cassandra_pass.sh" do
   mode 0755
   variables({
      :cassandra_ip => application_host,
-     :cassandra_pwd => ENV['CS_PASSWORD']
+     :cassandra_pwd => ENV['CS_PASSWORD'],
+     :cassandra_port   => node['cassandra']['cassandra_port']
   })
 end
 

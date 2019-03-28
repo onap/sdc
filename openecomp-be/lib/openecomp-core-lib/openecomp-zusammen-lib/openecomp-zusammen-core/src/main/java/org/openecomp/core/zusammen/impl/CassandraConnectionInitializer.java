@@ -26,7 +26,9 @@ public class CassandraConnectionInitializer {
     private static final String DATA_CENTER_PROPERTY_NAME = CASSANDRA_PREFIX + "datacenter";
     private static final String CONSISTENCY_LEVEL_PROPERTY_NAME =
             CASSANDRA_PREFIX + "consistency.level";
+    private static final String CASSANDRA_RECONNECT_TIMEOUT = CASSANDRA_PREFIX + "reconnectTimeout";
     private static final String NODES_PROPERTY_NAME = CASSANDRA_PREFIX + "nodes";
+    private static final String CASSANDRA_PORT_PROPERTY_NAME = CASSANDRA_PREFIX + "cassandraPort";
     private static final String AUTHENTICATE_PROPERTY_NAME = CASSANDRA_PREFIX + "authenticate";
     private static final String SSL_PROPERTY_NAME = CASSANDRA_PREFIX + "ssl";
     private static final String TRUSTSTORE_PROPERTY_NAME = CASSANDRA_PREFIX + "truststore";
@@ -50,16 +52,18 @@ public class CassandraConnectionInitializer {
         static {
             setSystemProperty(NODES_PROPERTY_NAME, () ->
                                                            StringUtils.join(CassandraUtils.getAddresses(), ','));
+            setSystemProperty(CASSANDRA_PORT_PROPERTY_NAME, () -> Integer.toString(CassandraUtils.getCassandraPort()));
             setBooleanSystemProperty(AUTHENTICATE_PROPERTY_NAME, CassandraUtils::isAuthenticate);
             setBooleanSystemProperty(SSL_PROPERTY_NAME, CassandraUtils::isSsl);
-            setSystemProperty(TRUSTSTORE_PROPERTY_NAME, CassandraUtils::getTruststore);
-            setSystemProperty(TRUSTSTORE_PASSWORD_PROPERTY_NAME, CassandraUtils::getTruststorePassword);
+            setNullableSystemProperty(TRUSTSTORE_PROPERTY_NAME, CassandraUtils::getTruststore);
+            setNullableSystemProperty(TRUSTSTORE_PASSWORD_PROPERTY_NAME, CassandraUtils::getTruststorePassword);
             setSystemProperty(USER_PROPERTY_NAME, CassandraUtils::getUser);
             setSystemProperty(PASSWORD_PROPERTY_NAME, CassandraUtils::getPassword);
             setSystemProperty(KEYSPACE_PROPERTY_NAME, () -> ZUSAMMEN);
             setNullableSystemProperty(DATA_CENTER_PROPERTY_NAME, CassandraUtils::getLocalDataCenter);
             setNullableSystemProperty(CONSISTENCY_LEVEL_PROPERTY_NAME,
                     CassandraUtils::getConsistencyLevel);
+            setSystemProperty(CASSANDRA_RECONNECT_TIMEOUT, () -> Long.toString(CassandraUtils.getReconnectTimeout()));
         }
 
         private DeferredInitializer() { }

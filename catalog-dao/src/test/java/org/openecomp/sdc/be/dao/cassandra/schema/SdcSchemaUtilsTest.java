@@ -37,6 +37,7 @@ public class SdcSchemaUtilsTest {
 	private static final String SINGLE_STATEMENT = "SELECT COUNT(*) FROM system.peers";
 	private static final String[] MULTIPLE_STATEMENTS = new String[] {SINGLE_STATEMENT, SINGLE_STATEMENT};
 	private static final List<String> CASSANDRA_HOSTS = Collections.singletonList(CassandraTestHelper.SERVER);
+	private static final Integer CASSANDRA_PORT = 9042;
 	private static final String CASSANDRA_USERNAME = "username";
 	private static final String CASSANDRA_PASSWORD = "password";
 	private static final String TRUSTSTORE_PATH = "pathToTruststore";
@@ -80,6 +81,7 @@ public class SdcSchemaUtilsTest {
 	public void testCreateClusterNoAuthNoSsl() {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
+		cfg.setCassandraPort(CASSANDRA_PORT);
 
 		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
 		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
@@ -105,10 +107,26 @@ public class SdcSchemaUtilsTest {
 	}
 
 	@Test
+	public void testCreateClusterWithDefaultOnLackOfCassandraPort() {
+		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
+		cfg.setCassandraHosts(CASSANDRA_HOSTS);
+		cfg.setCassandraPort(null);
+
+		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
+		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
+		when(sdcSchemaUtils.createCluster()).thenCallRealMethod();
+
+		try(Cluster cluster = sdcSchemaUtils.createCluster()) {
+			Assert.assertNotNull(cluster);
+		}
+	}
+
+	@Test
 	public void testCreateClusterFailOnAuthEnabledWithNoCredentials() {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setAuthenticate(true);
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
+		cfg.setCassandraPort(CASSANDRA_PORT);
 		cfg.setUsername(null);
 		cfg.setPassword(null);
 
@@ -125,6 +143,7 @@ public class SdcSchemaUtilsTest {
 	public void testCreateClusterFailOnSSLWithNoCredentials() {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
+		cfg.setCassandraPort(CASSANDRA_PORT);
 		cfg.setSsl(true);
 		cfg.setTruststorePath(null);
 		cfg.setTruststorePassword(null);
@@ -143,6 +162,7 @@ public class SdcSchemaUtilsTest {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setAuthenticate(true);
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
+		cfg.setCassandraPort(CASSANDRA_PORT);
 		cfg.setUsername(CASSANDRA_USERNAME);
 		cfg.setPassword(CASSANDRA_PASSWORD);
 		cfg.setSsl(true);
