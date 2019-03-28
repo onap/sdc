@@ -653,8 +653,10 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class CassandrConfig {
+        private static final Integer CASSANDRA_DEFAULT_PORT = 9042;
 
         List<String> cassandraHosts;
+        Integer cassandraPort;
         String localDataCenter;
         Long reconnectTimeout;
 		Integer socketReadTimeout;
@@ -666,6 +668,10 @@ public class Configuration extends BasicConfiguration {
         boolean ssl;
         String truststorePath;
         String truststorePassword;
+
+        public Integer getCassandraPort() { return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT; }
+
+        public void setCassandraPort(Integer cassandraPort) { this.cassandraPort = cassandraPort; }
 
         public String getLocalDataCenter() {
             return localDataCenter;
