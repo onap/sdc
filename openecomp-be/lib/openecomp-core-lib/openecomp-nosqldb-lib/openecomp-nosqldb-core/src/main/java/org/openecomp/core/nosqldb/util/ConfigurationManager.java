@@ -42,6 +42,7 @@ import java.util.function.Function;
 public class ConfigurationManager {
 
   static final String CONFIGURATION_YAML_FILE = "configuration.yaml";
+  static private final Integer DEAFAULT_CASSANDRA_PORT = 9042;
   private static final String CASSANDRA = "cassandra";
   private static final String CASSANDRA_KEY = CASSANDRA + "Config";
   private static final String DEFAULT_KEYSPACE_NAME = "dox";
@@ -50,13 +51,13 @@ public class ConfigurationManager {
   private static final String CASSANDRA_AUTHENTICATE = CASSANDRA + ".authenticate";
   private static final String CASSANDRA_USER = CASSANDRA + ".user";
   private static final String CASSANDRA_PASSWORD = CASSANDRA + ".password";
-  private static final String CASSANDRA_PORT = CASSANDRA + ".port";
   private static final String CASSANDRA_SSL = CASSANDRA + ".ssl";
   private static final String CASSANDRA_TRUSTSTORE = CASSANDRA + ".Truststore";
   private static final String CASSANDRA_TRUSTSTORE_PASSWORD = CASSANDRA + ".TruststorePassword";
   private static final String CASSANDRA_HOSTS_KEY = CASSANDRA + "Hosts";
-  private static final String CASSANDRA_PORT_KEY = "port";
+  private static final String CASSANDRA_PORT_KEY = "cassandraPort";
   private static final String CASSANDRA_USERNAME_KEY = "username";
+  private static final String CASSANDRA_RECONNECT_TIMEOUT = "reconnectTimeout";
   @SuppressWarnings("squid:S2068")
   private static final String CASSANDRA_PASSWORD_KEY = "password";          
   private static final String CASSANDRA_AUTHENTICATE_KEY = "authenticate";
@@ -130,6 +131,32 @@ public class ConfigurationManager {
   }
 
   /**
+   * Gets Cassandra port.
+   *
+   * @return the port
+   */
+  public int getCassandraPort() {
+    Integer cassandraPort = (Integer) cassandraConfiguration.get(CASSANDRA_PORT_KEY);
+    if (Objects.isNull(cassandraPort)) {
+        cassandraPort = DEAFAULT_CASSANDRA_PORT;
+    }
+    return cassandraPort;
+  }
+
+  /**
+   * Gets Cassandra reconnection timeout
+   *
+   * @return
+   */
+  public Long getReconnectTimeout() {
+    Integer cassandraReconnectTimeout = (Integer) cassandraConfiguration.get(CASSANDRA_RECONNECT_TIMEOUT);
+    if (Objects.isNull(cassandraReconnectTimeout)) {
+      LOG.info("No Cassandra reconnect timeout are defined.");
+    }
+    return cassandraReconnectTimeout.longValue();
+  }
+
+  /**
    * Gets key space.
    *
    * @return the key space
@@ -193,25 +220,6 @@ public class ConfigurationManager {
     }
     return truststorePassword;
   }
-
-  /**
-   * Gets ssl port.
-   *
-   * @return the ssl port
-   */
-  public int getSslPort() {
-    int port;
-    String sslPort = System.getProperty(CASSANDRA_PORT);
-    if (Objects.isNull(sslPort)) {
-      sslPort = (String) cassandraConfiguration.get(CASSANDRA_PORT_KEY);
-      if (Objects.isNull(sslPort)) {
-        sslPort = "0";
-      }
-    }
-    port = Integer.valueOf(sslPort);
-    return port;
-  }
-
 
   /**
    * Is ssl boolean.

@@ -17,69 +17,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>clean.tosca.chef.os.folder</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/</directory>
-                                    <followSymlinks>false</followSymlinks>
-                                    <includes>
-                                        <include>**/default.rb</include>
-                                    </includes>
-                                </fileset>
-                                <!-- Sanity jar -->
-                                <fileset>
-                                    <directory>${project.basedir}/sdc-sanity</directory>
-                                    <followSymlinks>false</followSymlinks>
-                                    <includes>
-                                        <include>*.jar</include>
-                                    </includes>
-                                </fileset>
-                                <!-- Sanity test suites -->
-                                <fileset>
-                                    <directory>${project.basedir}/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites</directory>
-                                    <followSymlinks>false</followSymlinks>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>ru.yaal.maven</groupId>
-                <artifactId>write-text-files-maven-plugin</artifactId>
-                <configuration>
-                    <charset>UTF-8</charset>
-                    <files>
-                        <file>
-                            <path>
-                                ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb
-                            </path>
-                            <lines>
-                                <line>normal['version'] ="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
-                            </lines>
-                        </file>
-                    </files>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>write-text-files</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>write-text-files</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.github.sylvainlaurent.maven</groupId>
                 <artifactId>yaml-json-validator-maven-plugin</artifactId>
                 <executions>

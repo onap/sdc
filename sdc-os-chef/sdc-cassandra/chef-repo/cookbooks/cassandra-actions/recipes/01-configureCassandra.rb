@@ -21,18 +21,19 @@ template "cassandra-yaml-config" do
     group "cassandra"
     mode "0755"
     variables ({
-        :cassandra_cluster => cluster_name,
-        :cassandra_data_dir => node['cassandra'][:data_dir],
-        :cassandra_commitlog_dir => node['cassandra'][:commitlog_dir],
-        :cassandra_cache_dir => node['cassandra'][:cache_dir],
-        :seeds_address => cas_ips,
-        :listen_address => application_host,
-        :broadcast_address => application_host,
-		:broadcast_rpc_address => application_host,
-        :rpc_address => "0.0.0.0",
-        :num_tokens  => node['cassandra'][:num_tokens],
-        :internode_encryption => "none",
-        :cassandra_truststore_dir => "/etc/cassandra/cs_trust"
+        :cassandra_port             => node['cassandra']['cassandra_port'],
+        :cassandra_cluster          => cluster_name,
+        :cassandra_data_dir         => node['cassandra'][:data_dir],
+        :cassandra_commitlog_dir    => node['cassandra'][:commitlog_dir],
+        :cassandra_cache_dir        => node['cassandra'][:cache_dir],
+        :seeds_address              => cas_ips,
+        :listen_address             => application_host,
+        :broadcast_address          => application_host,
+		:broadcast_rpc_address      => application_host,
+        :rpc_address                => "0.0.0.0",
+        :num_tokens                 => node['cassandra'][:num_tokens],
+        :internode_encryption       => "none",
+        :cassandra_truststore_dir   => "/etc/cassandra/cs_trust"
      })
 end
 

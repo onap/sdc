@@ -91,6 +91,7 @@ neo4j:
 
 cassandraConfig:
     cassandraHosts: [192.168.33.10]
+    cassandraPort: 9042
     localDataCenter: DC-AIO-Ubuntu1
     reconnectTimeout : 30000
     authenticate: true
