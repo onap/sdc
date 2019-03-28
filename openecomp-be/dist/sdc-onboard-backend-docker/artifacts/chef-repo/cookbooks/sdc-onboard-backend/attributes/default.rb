@@ -12,6 +12,7 @@ default['VnfRepo']['vnfRepoPort'] = 8702
 default['VnfRepo']['vnfRepoHost'] = "192.168.50.5"
 
 #Cassandra
+default['cassandra']['cassandra_port'] = 9042
 default['cassandra']['datacenter_name'] = "DC-"
 default['cassandra']['cluster_name'] = "SDC-CS-"
 default['cassandra']['socket_read_timeout'] = 20000
