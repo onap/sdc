@@ -11,7 +11,7 @@
   },
   "process_impl": {
     "zip" : {
-      "enzble": true,
+      "enable": true,
       "implementationClass" : "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process.OrchestrationTemplateProcessZipHandler"
     },
     "csar": {
