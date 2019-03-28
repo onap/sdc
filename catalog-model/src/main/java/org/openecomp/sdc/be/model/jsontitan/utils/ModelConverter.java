@@ -1181,6 +1181,9 @@ public class ModelConverter {
                 List<GroupInstance> groupInstances = topologyTemplate.getInstGroups().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new GroupInstance(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setGroupInstances(groupInstances);
             }
+            if(nodeFilterComponents != null && nodeFilterComponents.containsKey(key)){
+                currComponentInstance.setNodeFilter(nodeFilterComponents.get(key));
+            }
             if(topologyTemplate.getInstProperties() != null && topologyTemplate.getInstProperties().containsKey(key) && topologyTemplate.getInstProperties().get(key) != null ){
                 List<PropertyDefinition> instanceProps = topologyTemplate.getInstProperties().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new PropertyDefinition(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setProperties(instanceProps);
