@@ -74,6 +74,7 @@ neo4j:
 
 cassandraConfig:
     cassandraHosts: ['localhost']
+    cassandraPort: 9042
     localDataCenter: datacenter1
     reconnectTimeout : 30000
     authenticate: false

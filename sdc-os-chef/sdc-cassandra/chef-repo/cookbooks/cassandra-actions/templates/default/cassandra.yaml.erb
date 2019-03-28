@@ -403,7 +403,9 @@ broadcast_address: <%= @broadcast_address %>
 start_native_transport: true
 # port for the CQL native transport to listen for clients on
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-native_transport_port: 9042
+#Default value 9042
+#native_transport_port: 9042
+native_transport_port: <%= @cassandra_port %>
 # The maximum threads for handling requests when the native transport is used.
 # This is similar to rpc_max_threads though the default differs slightly (and
 # there is no native_transport_min_threads, idle threads will always be stopped

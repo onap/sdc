@@ -16,9 +16,6 @@
 
 package org.openecomp.core.nosqldb.impl.cassandra;
 
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
@@ -27,6 +24,7 @@ import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 
 
+import com.datastax.driver.core.policies.*;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.sdc.common.errors.SdcConfigurationException;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
@@ -59,8 +57,19 @@ public class CassandraSessionFactory {
      * @return the session
      */
     public static Session newCassandraSession() {
-        Cluster.Builder builder = Cluster.builder();
         String[] addresses = CassandraUtils.getAddresses();
+        int cassandraPort = CassandraUtils.getCassandraPort();
+        Long reconnectTimeout = CassandraUtils.getReconnectTimeout();
+
+        Cluster.Builder builder = Cluster.builder();
+
+        if(null != reconnectTimeout) {
+            builder.withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout))
+                    .withRetryPolicy(DefaultRetryPolicy.INSTANCE);
+        }
+
+        builder.withPort(cassandraPort);
+
         for (String address : addresses) {
             builder.addContactPoint(address);
         }
@@ -70,10 +79,7 @@ public class CassandraSessionFactory {
         if (isSsl) {
             builder.withSSL(getSslOptions());
         }
-        int port = CassandraUtils.getCassandraPort();
-        if (port > 0) {
-            builder.withPort(port);
-        }
+
         //Check if user/pass
         Boolean isAuthenticate = CassandraUtils.isAuthenticate();
         if (isAuthenticate) {
@@ -84,18 +90,19 @@ public class CassandraSessionFactory {
 
         setLocalDataCenter(builder);
 
-
         Cluster cluster = builder.build();
         String keyStore = SessionContextProviderFactory.getInstance().createInterface().get()
             .getTenant();
+        LOGGER.info("Cassandra client created hosts: {} port: {} SSL enabled: {} reconnectTimeout",
+                addresses, cassandraPort, isSsl, reconnectTimeout);
         return cluster.connect(keyStore);
     }
 
     private static void setLocalDataCenter(Cluster.Builder builder) {
         String localDataCenter = CassandraUtils.getLocalDataCenter();
         if (Objects.nonNull(localDataCenter)) {
-            LOGGER.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as " +
-                    "local.", localDataCenter);
+            LOGGER.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as local.",
+                    localDataCenter);
 
             LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(
                     DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
@@ -165,6 +172,4 @@ public class CassandraSessionFactory {
             // prevent instantiation
         }
     }
-
-
 }

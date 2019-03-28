@@ -3,6 +3,7 @@
 CASSANDRA_USER='<%= @cassandra_usr %>'
 CASSANDRA_PASS='<%= @cassandra_pwd %>'
 CASSANDRA_IP='<%= @cassandra_ip %>'
+CASSANDRA_PORT=<%= @cassandra_port %>
 
 KEYSPACE="CREATE KEYSPACE IF NOT EXISTS dox WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', '<%= @DC_NAME %>': '1'};"
 KEYSPACE1="CREATE KEYSPACE IF NOT EXISTS zusammen_dox WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', '<%= @DC_NAME %>': '1'};"
@@ -11,10 +12,10 @@ echo "run create_dox_keyspace.cql"
 echo -e "$KEYSPACE\n$KEYSPACE1" > /tmp/create_dox_keyspace.cql
 
 chmod 755 /tmp/create_dox_keyspace.cql
-cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP -f /tmp/create_dox_keyspace.cql > /dev/null 2>&1
+cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT -f /tmp/create_dox_keyspace.cql > /dev/null 2>&1
 
 
-res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP |grep -c dox 2>/dev/null`
+res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT |grep -c dox 2>/dev/null`
 
 if [ $res -gt 0 ]; then
         echo "`date` --- dox keyspace was created "
@@ -25,11 +26,11 @@ fi
 
 echo "run create_dox_db.cql"
 chmod 755 /tmp/tools/build/scripts/create_dox_db.cql
-cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP -f /tmp/tools/build/scripts/create_dox_db.cql > /dev/null 2>&1
+cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT -f /tmp/tools/build/scripts/create_dox_db.cql > /dev/null 2>&1
 
 sleep 10
 
 echo "run alter_dox_db.cql"
 chmod 755 /tmp/tools/build/scripts/alter_dox_db.cql
-cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP -f /tmp/tools/build/scripts/alter_dox_db.cql > /dev/null 2>&1
+cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT -f /tmp/tools/build/scripts/alter_dox_db.cql > /dev/null 2>&1
 

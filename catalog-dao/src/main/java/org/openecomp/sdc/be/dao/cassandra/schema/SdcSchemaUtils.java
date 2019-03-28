@@ -44,13 +44,14 @@ public class SdcSchemaUtils {
     public Cluster createCluster() {
         final Configuration.CassandrConfig config = getCassandraConfig();
         List<String> nodes = config.getCassandraHosts();
-        if (nodes == null) {
-            log.info("no nodes were supplied in configuration.");
+        Integer cassandraPort = config.getCassandraPort();
+        if (nodes == null || cassandraPort == null) {
+            log.info("no nodes or port were supplied in configuration.");
             return null;
         }
-        log.info("connecting to node:{}.", nodes);
+        log.info("connecting to node:{} port{}.", nodes, cassandraPort);
         Cluster.Builder clusterBuilder = Cluster.builder();
-        nodes.forEach(clusterBuilder::addContactPoint);
+        nodes.forEach(node -> clusterBuilder.addContactPoint(node).withPort(cassandraPort));
 
         clusterBuilder.withMaxSchemaAgreementWaitSeconds(60);
 

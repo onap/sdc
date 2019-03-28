@@ -72,6 +72,7 @@ users:
 
 cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
+    cassandraPort: <%= @cassandra_port %>
     localDataCenter: <%= @DC_NAME %>
     reconnectTimeout : 30000
     socketReadTimeout: <%= @socket_read_timeout %>
