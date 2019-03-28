@@ -49,15 +49,16 @@ public class CassandraClient {
 		try {
 			cassandraHosts = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
 					.getCassandraHosts();
+			Integer cassandraPort = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
+					.getCassandraPort();
 			Long reconnectTimeout = ConfigurationManager.getConfigurationManager().getConfiguration()
 					.getCassandraConfig().getReconnectTimeout();
-
-			logger.debug("creating cluster to hosts:{} with reconnect timeout:{}", cassandraHosts, reconnectTimeout);
+			logger.debug("creating cluster to hosts:{} port:{} with reconnect timeout:{}", cassandraHosts, cassandraPort, reconnectTimeout);
 			Cluster.Builder clusterBuilder = Cluster.builder()
 					.withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout))
 					.withRetryPolicy(DefaultRetryPolicy.INSTANCE);
 
-			cassandraHosts.forEach(clusterBuilder::addContactPoint);
+			cassandraHosts.forEach(host -> clusterBuilder.addContactPoint(host).withPort(cassandraPort));
 			setSocketOptions(clusterBuilder);
 			enableAuthentication(clusterBuilder);
 			enableSsl(clusterBuilder);
@@ -154,8 +155,7 @@ public class CassandraClient {
 					return Either.right(CassandraOperationStatus.KEYSPACE_NOT_CONNECTED);
 				}
 			} catch (Throwable e) {
-				logger.debug("Failed to connect to keyspace [{}], error ,", keyspace);
-				logger.debug("Exception :",  e);
+				logger.debug("Failed to connect to keyspace [{}], error :", keyspace, e);
 				return Either.right(CassandraOperationStatus.KEYSPACE_NOT_CONNECTED);
 			}
 		}

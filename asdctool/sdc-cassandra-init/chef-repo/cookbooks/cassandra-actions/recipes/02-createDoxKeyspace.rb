@@ -3,10 +3,11 @@ template "/tmp/create_dox_keyspace.sh" do
     sensitive true
     mode 0755
     variables({
-      :cassandra_ip => node['Nodes']['CS'].first,
-      :DC_NAME      => node['cassandra']['datacenter_name']+node.chef_environment,
-      :cassandra_pwd => node['cassandra'][:cassandra_password],
-      :cassandra_usr => node['cassandra'][:cassandra_user]
+      :cassandra_ip     => node['Nodes']['CS'].first,
+      :cassandra_port   => node['cassandra']['cassandra_port'],
+      :DC_NAME          => node['cassandra']['datacenter_name']+node.chef_environment,
+      :cassandra_pwd    => node['cassandra'][:cassandra_password],
+      :cassandra_usr    => node['cassandra'][:cassandra_user]
     })
 end
 
