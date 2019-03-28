@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c82bfbe_fe39d500",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/GABYamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "Nicely done with J8, I think you should consider hardening the logic and check that parsedContent is not null / empty?",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ee547e3_9a737593",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "Aren\u0027t there any Built In Yaml Parser packages that achieve any functionality you wish to have in this class that you can extend?",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa12b0eb_51feb7c4",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "InputStream deals with IO, hence - you cannot know if it is empty by checking if it is null (null would only suggest that you initialised the IO stream object in a valid way).\nIn order to check wether there\u0027s data coming, I would suggest using the available() method.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a1a156_288f3aa1",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "Please note that a wrap using Exception would detain the real cause for fail, so that only a WARNING message would appear.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21810831_660cbb53",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "Consider using stream.available() to serve your purpose.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0ec6069_51ac55c4",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "It is advisable to use AssertThat in terms of type safety, error logging etc rather than assertEquals.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3dcb6a2c_2e25925f",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "I think it would be wise to export the parse of faultRegistration.yaml to a service method (it is redundant) or to a field which is initiated prior to the tests(@Before), then consume it from the tests and manipulate it as needed.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e7e710e_07e0ee80",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-28T13:15:54Z",
+      "side": 1,
+      "message": "You should strive for a test that focus on checking logic, rather than moving from entry to entry.\n\nIf you decide not to:\nExport this chunk of assertions into a service private method.\n\nEither way:  I would suggest using enum/constants for the redundant strings.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
