@@ -345,6 +345,8 @@ serviceDeploymentArtifacts:
     CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
         acceptedTypes:
             - zip
+            - tgz
+            - csar
     OTHER:
         acceptedTypes:
 
