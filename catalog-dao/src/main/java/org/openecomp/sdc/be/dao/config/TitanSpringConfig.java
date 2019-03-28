@@ -2,7 +2,8 @@ package org.openecomp.sdc.be.dao.config;
 
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.transactions.SimpleTitanTransactionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,8 +23,8 @@ public class TitanSpringConfig {
 
     @Bean(name = "titan-generic-dao")
     @Primary
-    public TitanGenericDao titanGenericDao(@Qualifier("titan-client") TitanGraphClient titanGraphClient) {
-        return new TitanGenericDao(titanGraphClient);
+    public HealingTitanGenericDao titanGenericDao(@Qualifier("titan-client") TitanGraphClient titanGraphClient) {
+        return new HealingTitanGenericDao(titanGraphClient);
     }
 
     @Bean(name = "titan-client", initMethod = "createGraph")
@@ -40,5 +41,13 @@ public class TitanSpringConfig {
     @Bean
     public PlatformTransactionManager txManager() {
         return new SimpleTitanTransactionManager(titanGraphClient(titanClientStrategy()));
+    }
+
+    @Bean(name = "healingPipelineDao")
+    public HealingPipelineDao  healingPipeline(){
+        HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
+        healingPipelineDao.setHealVersion(1);
+        healingPipelineDao.initHealVersion();
+        return healingPipelineDao;
     }
 }

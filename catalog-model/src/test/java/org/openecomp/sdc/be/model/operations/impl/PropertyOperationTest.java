@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -50,7 +51,7 @@ import static org.junit.Assert.*;
 
 public class PropertyOperationTest extends ModelTestBase {
 
-    TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    HealingTitanGenericDao titanGenericDao = Mockito.mock(HealingTitanGenericDao.class);
 
     PropertyOperation propertyOperation = new PropertyOperation(titanGenericDao, null);
 
@@ -511,7 +512,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new TitanGenericDao(new TitanGraphClient()), null);
+		return new PropertyOperation(new HealingTitanGenericDao(new TitanGraphClient()), null);
 	}
 
 	
@@ -642,11 +643,12 @@ public class PropertyOperationTest extends ModelTestBase {
 		result = testSubject.updatePropertyFromGraph(propertyId, propertyDefinition);
 	}
 
-	
+
 	@Test
-	public void testSetTitanGenericDao() throws Exception {
+	public void testSetTitanGenericDao()  {
+
 		PropertyOperation testSubject;
-		TitanGenericDao titanGenericDao = null;
+        HealingTitanGenericDao titanGenericDao = null;
 
 		// default test
 		testSubject = createTestSubject();
@@ -655,7 +657,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
 	
 	@Test
-	public void testAddPropertyToNodeType() throws Exception {
+	public void testAddPropertyToNodeType()  {
 		PropertyOperation testSubject;
 		String propertyName = "";
 		PropertyDefinition propertyDefinition = new PropertyDefinition();

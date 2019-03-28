@@ -20,11 +20,29 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -35,20 +53,32 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.enums.*;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
-import org.openecomp.sdc.be.model.jsontitan.operations.*;
+import org.openecomp.sdc.be.model.jsontitan.operations.ArchiveOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.CategoryOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -66,26 +96,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 public class ArchiveEndpointTest extends JerseyTest {
 
@@ -105,16 +118,17 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final AccessValidations accessValidationsMock = mock(AccessValidations.class);
     private static final ComponentValidations componentValidationsMock = mock(ComponentValidations.class);
     private static final IGraphLockOperation graphLockOperation = mock(IGraphLockOperation.class);
-    private static final TitanGenericDao titanGenericDao = mock(TitanGenericDao.class);
-
+    private static final HealingTitanGenericDao titanGenericDao = mock(HealingTitanGenericDao.class);
+    private static final HealingPipelineDao HEALING_PIPELINE_DAO = mock(HealingPipelineDao.class);
     private static final ICacheMangerOperation cacheManagerOperation = mock(ICacheMangerOperation.class);
     private static GraphVertex serviceVertex;
     private static GraphVertex resourceVertex;
     private static GraphVertex resourceVertexVspArchived;
 
-    private static TitanDao titanDao;
+    private static HealingTitanDao titanDao;
 
     @Configuration
+    @PropertySource("classpath:dao.properties")
     static class TestSpringConfig {
         private ArchiveOperation archiveOperation;
         private GraphVertex catalogVertex;
@@ -193,8 +207,8 @@ public class ArchiveEndpointTest extends JerseyTest {
         }
 
         @Bean
-        TitanDao titanDao() {
-            titanDao = new TitanDao(titanGraphClient());
+        HealingTitanDao titanDao() {
+            titanDao = new HealingTitanDao(titanGraphClient());
             return titanDao;
         }
 
@@ -221,6 +235,11 @@ public class ArchiveEndpointTest extends JerseyTest {
         @Bean
         TitanGenericDao titanGenericDao() {
             return titanGenericDao;
+        }
+
+        @Bean
+        HealingPipelineDao healingPipelineDao(){
+            return HEALING_PIPELINE_DAO;
         }
 
         private void initGraphForTest() {
@@ -264,7 +283,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     /* Users */
     private static final User adminUser = new User("admin", "admin", "admin", "admin@email.com", Role.ADMIN.name(), System.currentTimeMillis());
     private static final User designerUser = new User("designer", "designer", "designer", "designer@email.com", Role.DESIGNER.name(), System
-            .currentTimeMillis());
+                                                                                                                                              .currentTimeMillis());
     private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.OPS.name(), System.currentTimeMillis());
 
     @BeforeClass
@@ -336,11 +355,11 @@ public class ArchiveEndpointTest extends JerseyTest {
         csarIds.add("123456");
         csarIds.add(CSAR_UUID2);   //An archived CSAR ID
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                .post(Entity.json(csarIds));
+                                    .path(path)
+                                    .request(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+                                    .post(Entity.json(csarIds));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertOnVertexProp(resourceVertexVspArchived.getUniqueId(), true);
@@ -353,11 +372,11 @@ public class ArchiveEndpointTest extends JerseyTest {
         csarIds.add("123456");
         csarIds.add(CSAR_UUID1);   //Non archived CSAR_ID
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                .post(Entity.json(csarIds));
+                                    .path(path)
+                                    .request(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+                                    .post(Entity.json(csarIds));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertOnVertexProp(resourceVertex.getUniqueId(), false);
@@ -380,11 +399,11 @@ public class ArchiveEndpointTest extends JerseyTest {
     public void archiveWithTester() {
         String path = String.format("/v1/catalog/services/%s/%s", serviceVertex.getUniqueId(), "archive");
         Response response = target()
-                .path(path)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, otherUser.getUserId())
-                .post(null);
+                                    .path(path)
+                                    .request()
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .header(Constants.USER_ID_HEADER, otherUser.getUserId())
+                                    .post(null);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
@@ -410,11 +429,11 @@ public class ArchiveEndpointTest extends JerseyTest {
     private void archiveOrRestoreComponent(String compUid, ArchiveOperation.Action action, int expectedStatus) {
         String path = String.format("/v1/catalog/services/%s/%s", compUid, action.name().toLowerCase());
         Response response = target()
-                .path(path)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                .post(null);
+                                    .path(path)
+                                    .request()
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+                                    .post(null);
 
         assertThat(response.getStatus()).isEqualTo(expectedStatus);
     }
@@ -423,11 +442,11 @@ public class ArchiveEndpointTest extends JerseyTest {
         String path = "/v1/catalog/archive";
 
         Response response = target()
-                .path(path)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                .get();
+                                    .path(path)
+                                    .request()
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+                                    .get();
 
         Map<String, List<CatalogComponent>> archivedComponents = response.readEntity(new GenericType<Map<String, List<CatalogComponent>>>() {  });
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -444,9 +463,9 @@ public class ArchiveEndpointTest extends JerseyTest {
     protected Application configure() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TestSpringConfig.class);
         return new ResourceConfig(ArchiveEndpoint.class)
-                .register(DefaultExceptionMapper.class)
-                .register(ComponentExceptionMapper.class)
-                .register(StorageExceptionMapper.class)
-                .property("contextConfig", context);
+                       .register(DefaultExceptionMapper.class)
+                       .register(ComponentExceptionMapper.class)
+                       .register(StorageExceptionMapper.class)
+                       .property("contextConfig", context);
     }
 }

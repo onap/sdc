@@ -1,12 +1,6 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.springframework.stereotype.Component;
+import static java.util.Collections.emptyList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,17 +9,23 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CommonTypeOperations {
 
-    private final TitanGenericDao titanGenericDao;
+    private final HealingTitanGenericDao titanGenericDao;
     private final PropertyOperation propertyOperation;
     private final OperationUtils operationUtils;
 
-    public CommonTypeOperations(TitanGenericDao titanGenericDao, PropertyOperation propertyOperation, OperationUtils operationUtils) {
+    public CommonTypeOperations(HealingTitanGenericDao titanGenericDao, PropertyOperation propertyOperation,
+            OperationUtils operationUtils) {
         this.titanGenericDao = titanGenericDao;
         this.propertyOperation = propertyOperation;
         this.operationUtils = operationUtils;

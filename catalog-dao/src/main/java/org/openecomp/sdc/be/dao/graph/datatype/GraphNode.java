@@ -21,12 +21,13 @@
 package org.openecomp.sdc.be.dao.graph.datatype;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.jsongraph.heal.HealConstants;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public abstract class GraphNode extends GraphElement {
 
@@ -61,15 +62,39 @@ public abstract class GraphNode extends GraphElement {
 		}
 	}
 
+
+
+	public abstract String getUniqueId();
+
+
 	public String getUniqueIdKey() {
 		return GraphPropertiesDictionary.UNIQUE_ID.getProperty();
 	}
 
-	public abstract String getUniqueId();
+	public String getHealingVersionKey() {
+		return GraphPropertyEnum.HEALING_VERSION.getProperty();
+	}
+
+	/**
+	 * Must be overridden in implelemting classes
+	 * @return current heal version. Default heal version if function not implemented.
+	 */
+	public Integer getHealingVersion(){
+		return HealConstants.DEFAULT_HEAL_VERSION;
+	}
+
+	/**
+	 * Must be overriden in implementing classes
+	 * @param version healing version number
+	 */
+	public void setHealingVersion(Integer version){
+
+	}
 
 	@Override
 	public String toString() {
 		return "GraphNode [label=" + label + ", parent: " + super.toString() + "]";
 	}
+
 
 }

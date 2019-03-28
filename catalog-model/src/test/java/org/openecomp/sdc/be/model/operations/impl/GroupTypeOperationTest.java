@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
@@ -44,7 +45,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
     private static final String NULL_STRING = null;
 
     @Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
+    private HealingTitanGenericDao titanDao;
     
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;

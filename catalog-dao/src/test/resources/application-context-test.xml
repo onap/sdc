@@ -18,5 +18,5 @@
 	">
    
   </context:component-scan>
-
+  <context:property-placeholder location="classpath:dao.properties" />
 </beans>

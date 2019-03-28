@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.TitanSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -39,7 +40,7 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
     @Autowired
-    private TitanDao titanDao;
+    private HealingTitanDao titanDao;
 
     private PolicyDefinition policy1, policy2;
 

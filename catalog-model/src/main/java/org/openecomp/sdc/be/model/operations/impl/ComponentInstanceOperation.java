@@ -23,6 +23,10 @@ package org.openecomp.sdc.be.model.operations.impl;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
@@ -34,26 +38,29 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.resources.data.*;
+import org.openecomp.sdc.be.resources.data.AttributeData;
+import org.openecomp.sdc.be.resources.data.AttributeValueData;
+import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
+import org.openecomp.sdc.be.resources.data.InputValueData;
+import org.openecomp.sdc.be.resources.data.InputsData;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 @org.springframework.stereotype.Component("component-instance-operation")
 public class ComponentInstanceOperation extends AbstractOperation implements IComponentInstanceOperation {
@@ -78,7 +85,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
      *
      * @param titanGenericDao
      */
-    public void setTitanGenericDao(TitanGenericDao titanGenericDao) {
+    public void setTitanGenericDao(HealingTitanGenericDao titanGenericDao) {
         this.titanGenericDao = titanGenericDao;
     }
 

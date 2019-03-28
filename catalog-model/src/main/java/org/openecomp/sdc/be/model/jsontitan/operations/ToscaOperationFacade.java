@@ -28,7 +28,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -84,7 +84,7 @@ public class ToscaOperationFacade {
     @Autowired
     private GroupsOperation groupsOperation;
     @Autowired
-    private TitanDao titanDao;
+    private HealingTitanDao titanDao;
 
     private static final Logger log = Logger.getLogger(ToscaOperationFacade.class.getName());
     // endregion
@@ -1921,7 +1921,7 @@ public class ToscaOperationFacade {
         return result;
     }
 
-    public TitanDao getTitanDao() {
+    public HealingTitanDao getTitanDao() {
         return titanDao;
     }
 

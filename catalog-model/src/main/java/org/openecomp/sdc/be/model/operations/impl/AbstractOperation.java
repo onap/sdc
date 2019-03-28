@@ -26,6 +26,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -33,7 +38,7 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -53,18 +58,12 @@ import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 public abstract class AbstractOperation {
 
     private static final Logger log = Logger.getLogger(AbstractOperation.class.getName());
 
     @Autowired
-    protected TitanGenericDao titanGenericDao;
+    protected HealingTitanGenericDao titanGenericDao;
 
     public static final String EMPTY_VALUE = null;
 

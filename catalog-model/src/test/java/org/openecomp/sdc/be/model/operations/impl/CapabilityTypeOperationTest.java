@@ -20,9 +20,24 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Resource;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,6 +45,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -62,7 +78,7 @@ import static org.junit.Assert.assertTrue;
 public class CapabilityTypeOperationTest extends ModelTestBase {
 
     @Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
+    private HealingTitanGenericDao titanDao;
 
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
@@ -74,7 +90,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
     
     @Before
     public void cleanUp() {
-        TitanGenericDao titanGenericDao = capabilityTypeOperation.titanGenericDao;
+        HealingTitanGenericDao titanGenericDao = capabilityTypeOperation.titanGenericDao;
         Either<TitanGraph, TitanOperationStatus> graphResult = titanGenericDao.getGraph();
         TitanGraph graph = graphResult.left().value();
 

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
+import com.google.common.collect.ImmutableListMultimap;
 import fj.data.Either;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -36,8 +37,14 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.heal.Heal;
+import org.openecomp.sdc.be.dao.jsongraph.heal.HealVersionBuilder;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -63,10 +70,12 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -105,10 +114,9 @@ public class ExternalRefServletTest extends JerseyTest {
     private static final ToscaOperationFacade toscaOperationFacadeMock = Mockito.mock(ToscaOperationFacade.class);
     private static final AccessValidations accessValidationsMock = Mockito.mock(AccessValidations.class);
     private static final ComponentLocker componentLocker = Mockito.mock(ComponentLocker.class);
-    private static final TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    private static final HealingTitanGenericDao titanGenericDao = Mockito.mock(HealingTitanGenericDao.class);
     private static final ICacheMangerOperation cacheManagerOperation = Mockito.mock(ICacheMangerOperation.class);
     private static final IGraphLockOperation graphLockOperation = Mockito.mock(IGraphLockOperation.class);
-
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
 
@@ -126,12 +134,13 @@ public class ExternalRefServletTest extends JerseyTest {
     private static final String REF_6 = "ref6";
 
     @Configuration
+    @PropertySource("classpath:dao.properties")
     static class TestSpringConfig {
 
         private GraphVertex serviceVertex;
         private GraphVertex resourceVertex;
         private ExternalReferencesOperation externalReferenceOperation;
-        private TitanDao titanDao;
+        private HealingTitanDao titanDao;
         private OperationUtils operationUtils;
 
         @Bean
@@ -170,6 +179,7 @@ public class ExternalRefServletTest extends JerseyTest {
         @Bean
         ExternalReferencesOperation externalReferencesOperation() {
             this.externalReferenceOperation = new ExternalReferencesOperation(titanDao(), nodeTypeOpertaion(), topologyTemplateOperation(), idMapper());
+            this.externalReferenceOperation.setHealingPipelineDao(healingPipelineDao());
             GraphTestUtils.clearGraph(titanDao);
             initGraphForTest();
             return this.externalReferenceOperation;
@@ -191,7 +201,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         TopologyTemplateOperation topologyTemplateOperation() {
-            return new TopologyTemplateOperation();
+           return new TopologyTemplateOperation();
         }
 
         @Bean
@@ -225,8 +235,8 @@ public class ExternalRefServletTest extends JerseyTest {
         }
 
         @Bean
-        TitanDao titanDao() {
-            this.titanDao = new TitanDao(titanGraphClient());
+        HealingTitanDao titanDao() {
+            this.titanDao = new HealingTitanDao(titanGraphClient());
             return titanDao;
         }
 
@@ -254,6 +264,15 @@ public class ExternalRefServletTest extends JerseyTest {
         TitanGenericDao titanGenericDao() {
             return titanGenericDao;
         }
+
+        @Bean("healingPipelineDao")
+        HealingPipelineDao healingPipelineDao() {
+            HealingPipelineDao healingPipelineDao = new HealingPipelineDao() ;
+            healingPipelineDao.setHealVersion(1);
+            healingPipelineDao.initHealVersion();
+            return healingPipelineDao;
+        }
+
 
         private void initGraphForTest() {
             if (!setupDone) {

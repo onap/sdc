@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.TitanSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -44,7 +45,7 @@ public class PolicyOperationIntegrationTest extends ModelTestBase {
     @Resource
     private TopologyTemplateOperation topologyTemplateOperation;
     @Resource
-    private TitanDao titanDao;
+    private HealingTitanDao titanDao;
     @Resource
     private PolicyOperation policyOperation;
     private PropertyDataDefinition prop1, prop2;

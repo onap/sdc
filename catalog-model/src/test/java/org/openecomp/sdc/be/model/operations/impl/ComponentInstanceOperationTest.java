@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -63,7 +64,7 @@ public class ComponentInstanceOperationTest {
 	private ComponentInstanceOperation componentInstanceOperation;
 
 	@Mock
-	protected TitanGenericDao titanGenericDao;
+	protected HealingTitanGenericDao titanGenericDao;
 
 
 	@Test

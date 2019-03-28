@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by yavivi on 21/03/2018.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@ContextConfiguration(value = {"classpath:application-context-test.xml", "classpath:healing-context-test.xml"})
 public class ArchiveOperationTest extends ModelTestBase {
 
     private static final String CI_UID_RES1_CP = "cp_uid";

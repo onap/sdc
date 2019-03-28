@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.CommonImportManager;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -55,7 +56,7 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
     static final String userId = "jh0003";
 
     private static AccessValidations accessValidations;
-    private static TitanGenericDao titanGenericDao;
+    private static HealingTitanGenericDao titanGenericDao;
     private static PropertyOperation propertyOperation;
     private static ComponentsUtils componentUtils;
     private static OperationUtils operationUtils;
@@ -87,7 +88,7 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
 
     @BeforeClass
     public static void initClass() {
-        titanGenericDao = mock(TitanGenericDao.class);
+        titanGenericDao = mock(HealingTitanGenericDao.class);
         accessValidations = mock(AccessValidations.class);
         propertyOperation = mock(PropertyOperation.class);
         componentUtils = Mockito.mock(ComponentsUtils.class);
