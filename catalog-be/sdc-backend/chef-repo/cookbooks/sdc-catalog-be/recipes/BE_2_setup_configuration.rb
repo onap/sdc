@@ -51,6 +51,7 @@ template "catalog-be-config" do
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
+      :cassandra_port         => node['cassandra']['cassandra_port'],
       :rep_factor             => replication_factor,
       :DC_NAME                => node['cassandra']['datacenter_name']+node.chef_environment,
       :REP_STRING             => conf_dcname_with_rep,

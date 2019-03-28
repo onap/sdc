@@ -506,47 +506,6 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>clean-static-files</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<filesets>
-								<!-- tosca files -->
-								<fileset>
-									<directory>${project.parent.basedir}/asdctool/tosca</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<fileset>
-									<directory>${project.basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/attributes/</directory>
-									<followSymlinks>false</followSymlinks>
-									<includes>
-										<include>**/default.rb</include>
-									</includes>
-								</fileset>
-								<fileset>
-									<directory>${project.basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<fileset>
-									<directory>${project.basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default</directory>
-									<followSymlinks>false</followSymlinks>
-									<includes>
-										<include>**/sdctool.tar</include>
-									</includes>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
@@ -573,7 +532,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -604,32 +562,6 @@
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
 							</transformers>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>ru.yaal.maven</groupId>
-				<artifactId>write-text-files-maven-plugin</artifactId>
-				<configuration>
-					<charset>UTF-8</charset>
-					<files>
-						<file>
-							<path>
-								${project.basedir}\sdc-cassandra-init\chef-repo\cookbooks\cassandra-actions\attributes\default.rb
-							</path>
-							<lines>
-								<line>normal['version'] ="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
-							</lines>
-						</file>
-					</files>
-				</configuration>
-				<executions>
-					<execution>
-						<id>write-text-files</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>write-text-files</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>

@@ -19,7 +19,7 @@ LOCAL=false
 RUNTESTS=false
 BE_DEBUG_PORT="--publish 4000:4000"
 FE_DEBUG_PORT="--publish 6000:6000"
-ONBOARD_DEBUG_PORT="--publish 4001:4000"
+ONBOARD_DEBUG_PORT="--publish 4001:4001"
 
 
 # Java Options:
