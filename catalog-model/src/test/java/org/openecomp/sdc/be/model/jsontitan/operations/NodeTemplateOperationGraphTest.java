@@ -1,8 +1,23 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -14,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.TitanSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -27,21 +42,11 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TitanSpringConfig.class, ModelOperationsSpringConfig.class})
 public class NodeTemplateOperationGraphTest extends ModelTestBase{
     @Resource
-    private TitanDao titanDao;
+    private HealingTitanDao titanDao;
     @Resource
     private NodeTemplateOperation nodeTemplateOperation;
     

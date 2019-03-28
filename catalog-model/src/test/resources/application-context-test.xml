@@ -12,8 +12,11 @@
     	org.openecomp.sdc.be.model.cache,
 		org.openecomp.sdc.be.dao.titan,
 		org.openecomp.sdc.be.dao.cassandra,
-		org.openecomp.sdc.be.model.jsontitan.utils">
+		org.openecomp.sdc.be.model.jsontitan.utils
+        ">
+
    
   </context:component-scan>
-
+  <bean name="healingPipelineDao" class="org.openecomp.sdc.be.dao.impl.HealingPipelineDao"/>
+  <import resource="healing-context-test.xml"/>
 </beans>

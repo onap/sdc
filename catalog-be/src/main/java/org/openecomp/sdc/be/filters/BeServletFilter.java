@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
@@ -146,7 +146,7 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
 
     private void writeToTitan(ContainerResponseContext responseContext) {
         log.debug("Close transaction from filter");
-        TitanDao titanDao = getTitanDao();
+        HealingTitanDao titanDao = getTitanDao();
         if (titanDao != null) {
             int status = responseContext.getStatus();
             if (status == Response.Status.OK.getStatusCode() ||
@@ -202,12 +202,12 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
         return webApplicationContext.getBean(ComponentsUtils.class);
     }
 
-    private TitanDao getTitanDao() {
+    private HealingTitanDao getTitanDao() {
         ServletContext context = this.sr.getSession().getServletContext();
 
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(TitanDao.class);
+        return webApplicationContext.getBean(HealingTitanDao.class);
     }
 
     // Extracted for purpose of clear method name, for logback %M parameter

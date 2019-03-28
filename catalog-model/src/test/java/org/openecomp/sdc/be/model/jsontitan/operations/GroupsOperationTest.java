@@ -1,6 +1,10 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import fj.data.Either;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -8,19 +12,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.TitanSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.config.ModelOperationsSpringConfig;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,7 +34,7 @@ public class GroupsOperationTest extends ModelTestBase {
     private GroupsOperation groupsOperation;
 
     @Autowired
-    TitanDao titanDao;
+    HealingTitanDao titanDao;
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;

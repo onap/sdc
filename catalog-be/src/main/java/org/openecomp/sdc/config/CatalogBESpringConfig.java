@@ -25,8 +25,7 @@ import org.springframework.core.annotation.Order;
         "org.openecomp.sdc.be.components.csar",
         "org.openecomp.sdc.be.components.property",
         "org.openecomp.sdc.be.datamodel.utils",
-        "org.openecomp.sdc.be.components.upgrade"
-})
+        "org.openecomp.sdc.be.components.upgrade"})
 public class CatalogBESpringConfig {
 
     private static final int BEFORE_TRANSACTION_MANAGER = 0;

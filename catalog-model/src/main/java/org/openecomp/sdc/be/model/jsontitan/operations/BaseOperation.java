@@ -59,6 +59,7 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 
 import java.util.*;
 import java.util.EnumMap;
@@ -84,6 +85,9 @@ public abstract class BaseOperation {
 
     @Autowired
     protected TopologyTemplateOperation topologyTemplateOperation;
+
+//    @Autowired
+    protected HealingPipelineDao healingPipelineDao;
 
     public void setTitanDao(TitanDao titanDao) {
         this.titanDao = titanDao;
@@ -284,6 +288,7 @@ public abstract class BaseOperation {
     }
 
     protected Either<GraphVertex, TitanOperationStatus> updateOrCopyOnUpdate(GraphVertex dataVertex, GraphVertex toscaElementVertex, EdgeLabelEnum label) {
+//        healingPipelineDao.setHealingVersion(dataVertex);
         Iterator<Edge> edges = dataVertex.getVertex().edges(Direction.IN, label.name());
         int edgeCount = 0;
         Edge edgeToRemove = null;
@@ -1482,5 +1487,9 @@ public abstract class BaseOperation {
 
     private GraphVertex throwStorageException(TitanOperationStatus status) {
         throw new StorageException(status);
+    }
+
+    public void setHealingPipelineDao(HealingPipelineDao healingPipelineDao) {
+        this.healingPipelineDao = healingPipelineDao;
     }
 }

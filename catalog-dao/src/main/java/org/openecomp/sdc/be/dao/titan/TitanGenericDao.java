@@ -20,28 +20,44 @@
 
 package org.openecomp.sdc.be.dao.titan;
 
-import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.PropertyKey;
+import com.thinkaurelius.titan.core.TitanEdge;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.TitanVertexQuery;
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.tinkerpop.gremlin.structure.*;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
-import org.openecomp.sdc.be.dao.graph.datatype.*;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.graph.datatype.RelationEndPoint;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.GraphNodeLock;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-@Component("titan-generic-dao")
 public class TitanGenericDao {
 
 	private static final String FAILED_TO_RETRIEVE_GRAPH_STATUS_IS = "Failed to retrieve graph. status is {}";
@@ -51,7 +67,7 @@ public class TitanGenericDao {
 	private static Logger log = Logger.getLogger(TitanGenericDao.class.getName());
 	private static final String LOCK_NODE_PREFIX = "lock_";
 
-	public TitanGenericDao(TitanGraphClient titanClient) {
+	public TitanGenericDao(@Qualifier("titan-client") TitanGraphClient titanClient) {
 		this.titanClient = titanClient;
 		log.info("** TitanGenericDao created");
 	}

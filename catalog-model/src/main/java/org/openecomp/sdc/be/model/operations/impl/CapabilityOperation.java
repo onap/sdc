@@ -20,16 +20,26 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -43,12 +53,6 @@ import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Component("capability-operation")
 public class CapabilityOperation extends AbstractOperation {
@@ -67,7 +71,7 @@ public class CapabilityOperation extends AbstractOperation {
     
     
     @VisibleForTesting
-    public void setTitanGenericDao(TitanGenericDao titanGenericDao) {
+    public void setTitanGenericDao(HealingTitanGenericDao titanGenericDao) {
         this.titanGenericDao = titanGenericDao;
     }
 

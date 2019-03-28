@@ -48,7 +48,7 @@ import java.util.Map.Entry;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
-@Component("titan-dao")
+
 public class TitanDao {
     TitanGraphClient titanClient;
 

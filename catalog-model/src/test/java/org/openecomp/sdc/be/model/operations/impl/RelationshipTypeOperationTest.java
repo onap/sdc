@@ -44,6 +44,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
@@ -69,7 +70,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     private static final String PROP = "prop";
 
     @Mock
-    TitanGenericDao titanGenericDao;
+    HealingTitanGenericDao titanGenericDao;
 
     @Mock
     PropertyOperation propertyOperation;

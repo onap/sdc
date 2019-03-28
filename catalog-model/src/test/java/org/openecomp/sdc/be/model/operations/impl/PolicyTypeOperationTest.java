@@ -20,9 +20,18 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -31,6 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
@@ -45,16 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class PolicyTypeOperationTest extends ModelTestBase {
@@ -64,7 +64,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     private PolicyTypeOperation policyTypeOperation;
 
     @Autowired
-    private TitanGenericDao titanGenericDao;
+    private HealingTitanGenericDao titanGenericDao;
 
     @BeforeClass
     public static void setupBeforeClass() {

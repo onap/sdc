@@ -21,13 +21,17 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -41,11 +45,6 @@ import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component("capability-type-operation")
 public class CapabilityTypeOperation extends AbstractOperation implements ICapabilityTypeOperation {
@@ -69,7 +68,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
      *
      * @param titanGenericDao
      */
-    public void setTitanGenericDao(TitanGenericDao titanGenericDao) {
+    public void setTitanGenericDao(HealingTitanGenericDao titanGenericDao) {
         this.titanGenericDao = titanGenericDao;
     }
 

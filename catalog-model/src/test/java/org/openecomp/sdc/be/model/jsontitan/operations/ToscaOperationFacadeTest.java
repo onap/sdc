@@ -40,6 +40,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -89,7 +90,7 @@ public class ToscaOperationFacadeTest {
     private ToscaOperationFacade testInstance;
 
     @Mock
-    private TitanDao titanDaoMock;
+    private HealingTitanDao titanDaoMock;
 
     @Mock
     private TopologyTemplateOperation topologyTemplateOperationMock;
