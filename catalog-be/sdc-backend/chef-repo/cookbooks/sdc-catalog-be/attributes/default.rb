@@ -15,6 +15,7 @@ default['DCAE']['BE'][:https_port] = 8444
 default['DCAE_BE_VIP'] = "dcae-be"
 
 #Cassandra
+default['cassandra']['cassandra_port'] = 9042
 default['cassandra']['datacenter_name'] = "DC-"
 default['cassandra']['cluster_name'] = "SDC-CS-"
 default['cassandra']['socket_read_timeout'] = 20000

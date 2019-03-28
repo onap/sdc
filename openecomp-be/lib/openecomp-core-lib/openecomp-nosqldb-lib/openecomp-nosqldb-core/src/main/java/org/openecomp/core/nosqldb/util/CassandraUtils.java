@@ -34,7 +34,10 @@ public class CassandraUtils {
 
   public static String[] getAddresses() {
     return ConfigurationManager.getInstance().getAddresses();
+  }
 
+  public static Long getReconnectTimeout() {
+    return ConfigurationManager.getInstance().getReconnectTimeout();
   }
 
   public static String getKeySpace() {
@@ -78,7 +81,7 @@ public class CassandraUtils {
   }
 
   public static int getCassandraPort() {
-    return ConfigurationManager.getInstance().getSslPort();
+    return ConfigurationManager.getInstance().getCassandraPort();
 
   }
 

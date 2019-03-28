@@ -36,6 +36,7 @@ template "/tmp/sdctool/config/configuration.yaml" do
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].first,
+      :cassandra_port         => node['cassandra']['cassandra_port'],
       :rep_factor             => 1,
       :DC_NAME                => node['cassandra']['datacenter_name']+node.chef_environment,
       :titan_Path             => "/tmp/sdctool/config/",
