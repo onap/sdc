@@ -31,6 +31,20 @@
         [selected]="selectedRows"
         [selectionType]="'cell'"
         >
-        Loading...
+        <ngx-datatable-column prop="{{col.prop}}" [minWidth]="100" *ngFor="let col of columns">
+            <template let-column="column" height="100" ngx-datatable-header-template>
+            <span style="height:10px">
+              <b>{{col.name}}</b>
+            </span>
+                <br/>
+                <input
+                    type='text'
+                    class="datattable-input-filter"
+                    placeholder='Filter column...'
+                    (keyup)='updateColumnFilter($event, col.prop)'
+                />
+            </template>
+        </ngx-datatable-column>
+
     </ngx-datatable>
 </div>
