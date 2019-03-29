@@ -40,9 +40,11 @@ export class GenericArtifactBrowserComponent {
 
     columns: ColumnDefinition[];
     rows: any[];
+    originRows: any[];
     selectedRows: any[];
     isLoading: boolean;
     ready: boolean;
+    columnsFilters: Map<string, string>;
 
     constructor(private gabService: GabService) {
     }
@@ -51,6 +53,7 @@ export class GenericArtifactBrowserComponent {
         this.ready = false;
         this.isLoading = true;
         this.columns = [];
+        this.columnsFilters = new Map<string,string>();
         let paths: string[] = this.pathsandnames.map(item => item.path);
         this.gabService.getArtifact(this.artifactid, this.resourceid, paths)
         .subscribe(
@@ -66,9 +69,30 @@ export class GenericArtifactBrowserComponent {
         );
     }
 
+  updateColumnFilter(event, column) {
+    const val = event.target.value.toLowerCase();
+    this.columnsFilters.set(column, val);
+    let temp_rows = [...this.originRows];
+
+    this.columnsFilters.forEach((value: string, key: string) => {
+      temp_rows = this.updateSingleColumnFilter(value, key, temp_rows);
+    });
+
+    // update the rows
+    this.rows = temp_rows
+  }
+
+  private updateSingleColumnFilter(value, column, rows) {
+    return rows.filter(function(obj) {
+      const row = obj[column];
+      return row !== undefined && row.toLowerCase().indexOf(value) !== -1 || !value;
+    });
+  }
+
     private normalizeDataForNgxDatatable(data: [{ [key: string]: string }]) {
         let result: NormalizationResult = this.getNormalizationResult(data, this.pathsandnames);
         this.rows = result.rows;
+        this.originRows = result.rows;
         this.columns = result.columns;
     }
 
@@ -111,6 +135,7 @@ export class GenericArtifactBrowserComponent {
             }
             arrayOfRows.push(row);
         });
+
         return arrayOfRows;
     }
 }
