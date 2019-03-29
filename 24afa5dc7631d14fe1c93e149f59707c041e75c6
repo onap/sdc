@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "35a7f5ff_abcd6f5f",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/GABYamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c82bfbe_fe39d500",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2ee547e3_9a737593",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-28T13:15:54Z",
       "side": 1,
       "message": "Aren\u0027t there any Built In Yaml Parser packages that achieve any functionality you wish to have in this class that you can extend?",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a972117_41b8cf88",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "In a general concept this feature wasn\u0027t strictly connected to any ONAP component, so had to be implemented such way not to have any coupling nor dependencies to existing code.",
+      "parentUuid": "2ee547e3_9a737593",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1001b08c_724343b5",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa12b0eb_51feb7c4",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a1a156_288f3aa1",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-28T13:15:54Z",
       "side": 1,
       "message": "Please note that a wrap using Exception would detain the real cause for fail, so that only a WARNING message would appear.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45c9c62b_a5a97830",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Done. Thanks for pointing this out.",
+      "parentUuid": "c4a1a156_288f3aa1",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "92df30f8_73d3a2c5",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "I dont see a point in this case to call available method. According to J doc:\n\u003e \u0027Note that while some implementations of InputStream will return the total number of bytes in the stream, many will not. It is never correct to use the return value of this method to allocate a buffer intended to hold all data in this stream.\nA subclass\u0027 implementation of this method may choose to throw an IOException if this input stream has been closed by invoking the close() method.\u0027\n\nIn total - IOException can be thrown from available method as well as from close() (assuming that stream would be already closed).\n\nNull-check is necessary to avoid null pointers as it still could be not initialized.",
+      "parentUuid": "21810831_660cbb53",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0ec6069_51ac55c4",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2019-03-28T13:15:54Z",
       "side": 1,
       "message": "It is advisable to use AssertThat in terms of type safety, error logging etc rather than assertEquals.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc0e6694_a77879d7",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Right but would need to add a hamcrest or other external matcher lib cause Jupiter does not support assertThat keyword.",
+      "parentUuid": "b0ec6069_51ac55c4",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "196d0305_18b67308",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Concept of this yaml parser was to introduce stream-base mechanism for parsing yaml, so proper flow would be to parse a content -\u003e apply all the filters -\u003e consume the results (At this level streams which stores the content are already closed). \n\nAlso if You will check next merge requests about GAB - the usage of GABYamlParser is planned such way to provide data and filters and make single call for the response. I mean that this parser is rather to handle single requests for filtering the file content not to making a complicated transformations of the data.",
+      "parentUuid": "3dcb6a2c_2e25925f",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6e7e710e_07e0ee80",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2019-03-28T13:15:54Z",
       "side": 1,
       "message": "You should strive for a test that focus on checking logic, rather than moving from entry to entry.\n\nIf you decide not to:\nExport this chunk of assertions into a service private method.\n\nEither way:  I would suggest using enum/constants for the redundant strings.",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88d79b6d_867695d3",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-03-29T10:53:45Z",
+      "side": 1,
+      "message": "Done. At this moment exposed a method for checking data and path for a given result entry and extracted all the constants.",
+      "parentUuid": "6e7e710e_07e0ee80",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
