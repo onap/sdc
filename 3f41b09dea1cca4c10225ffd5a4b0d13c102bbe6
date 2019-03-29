@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7ec87b6_6922f559",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-03-29T07:09:07Z",
+      "side": 1,
+      "message": "what about errors? maybe we should log something into console?",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 10
+      },
+      "revId": "3f41b09dea1cca4c10225ffd5a4b0d13c102bbe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8a8547f_0b3fc830",
+        "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-03-29T07:09:07Z",
+      "side": 1,
+      "message": "from what I know this \u0027post\u0027 doesn\u0027t actually performs request, just preparing it. I\u0027m wonder if name \u0027getArtifact\u0027 is correct here",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 45
+      },
+      "revId": "3f41b09dea1cca4c10225ffd5a4b0d13c102bbe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c565b1eb_f216ea54",
+        "filename": "catalog-ui/src/app/view-models/modals/generic-artifact-browser-modal/generic-artifact-browser-modal-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-03-29T07:09:07Z",
+      "side": 1,
+      "message": "placeholder?",
+      "range": {
+        "startLine": 23,
+        "startChar": 9,
+        "endLine": 23,
+        "endChar": 18
+      },
+      "revId": "3f41b09dea1cca4c10225ffd5a4b0d13c102bbe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
