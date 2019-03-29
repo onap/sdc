@@ -77,6 +77,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import {ConformanceLevelModalViewModel} from "../view-models/modals/conformance-level-modal/conformance-level-modal-view-model";
 import {PluginsTabViewModel} from "../view-models/plugins/plugins-tab-view-model";
 import {PluginsContextViewModel} from "../view-models/workspace/tabs/plugins/plugins-context-view-model";
+import {GenericArtifactBrowserModalViewModel} from "../view-models/modals/generic-artifact-browser-modal/generic-artifact-browser-modal-view-model";
 let moduleName:string = 'Sdc.ViewModels';
 let viewModelModule:ng.IModule = angular.module(moduleName, []);
 
@@ -123,6 +124,7 @@ viewModelModule
   // //NEW
   .controller(moduleName + '.WorkspaceViewModel', WorkspaceViewModel)
   .controller(moduleName + '.ConformanceLevelModalViewModel', ConformanceLevelModalViewModel)
+  .controller(moduleName + '.GenericArtifactBrowserModalViewModel', GenericArtifactBrowserModalViewModel)
   .controller(moduleName + '.CompositionViewModel', CompositionViewModel)
   .controller(moduleName + '.GeneralViewModel', GeneralViewModel)
   .controller(moduleName + '.DeploymentArtifactsViewModel', DeploymentArtifactsViewModel)
