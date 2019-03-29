@@ -12,7 +12,7 @@ node_types:
       client: 
         type: tosca.capabilities.Endpoint.Public
         occurrences: [0, UNBOUNDED]
-        description: the Floating (IP) client’s on the public network can connect to
+        description: the Floating (IP) client's on the public network can connect to
     requirements: 
       - application: 
           capability: tosca.capabilities.Endpoint

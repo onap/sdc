@@ -15,7 +15,7 @@ node_types:
       network_role_tag:
         type: string
         required: true
-        description: Must correlate to the set of defined “network-role” tag identifiers from the associated HEAT template
+        description: Must correlate to the set of defined network-role tag identifiers from the associated HEAT template
       mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: false
