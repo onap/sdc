@@ -1,0 +1,50 @@
+<!--
+  ~ Copyright (C) 2019 Nokia. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div>
+    <ngx-datatable
+        class="material"
+        *ngIf="ready"
+        [rows]="rows"
+        [columns]="columns"
+        [columnMode]="'force'"
+        [headerHeight]="50"
+        [scrollbarV]="true"
+        [scrollbarH]="true"
+        [footerHeight]="0"
+        [loadingIndicator]="isLoading"
+        [rowHeight]="200"
+        [reorderable]="false"
+        [selected]="selectedRows"
+        [selectionType]="'cell'"
+        >
+        <ngx-datatable-column prop="{{col.prop}}" [minWidth]="100" *ngFor="let col of columns">
+            <template let-column="column" height="100" ngx-datatable-header-template>
+            <span style="height:10px">
+              <b>{{col.name}}</b>
+            </span>
+                <br/>
+                <input
+                    type='text'
+                    class="datattable-input-filter"
+                    placeholder='Filter column...'
+                    (keyup)='updateColumnFilter($event, col.prop)'
+                />
+            </template>
+        </ngx-datatable-column>
+
+    </ngx-datatable>
+</div>

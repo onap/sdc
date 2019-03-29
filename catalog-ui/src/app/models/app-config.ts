@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +85,7 @@ export interface IApi {
     GET_requirements_capabilities:string;
     GET_onboarding:string;
     GET_component_from_csar_uuid:string;
+    POST_GAB_Search:string;
     kibana:string;
     services_api_root:string;
 }

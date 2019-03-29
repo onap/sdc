@@ -66,6 +66,8 @@ const SDC_CONFIG = {
 		"services_api_root": "/v1/catalog/services/",
 		"create_policy_instance":"/v1/catalog/:entityType/:entityId/policies/:policyId",
 		"CRUD_policy":"/v1/catalog/:entityType/policies/:policyId",
+		"POST_GAB_Search": "/v1/catalog/gab/searchFor",
+
 	},
 	"resourceTypesFilter":{
         "resource":["CP","VFC","VL","CVFC","GROUP","POLICY"],
