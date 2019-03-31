@@ -177,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "8bab5266_48011bd9",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-31T10:00:50Z",
+      "side": 1,
+      "message": "I understand the purpose of the method call, on the other hand - which purpose would it serve checking if the InputStream is not null when closing the stream? shouldn\u0027t that be verified before parsing any data out of the stream, e.g at parseFile / parseContent?\navailable(), would verify that you have parsed all data inside the stream - which seems to be needed before closing a stream.",
+      "parentUuid": "21810831_660cbb53",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0ec6069_51ac55c4",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
         "patchSetId": 4
@@ -206,6 +224,24 @@
       "side": 1,
       "message": "Right but would need to add a hamcrest or other external matcher lib cause Jupiter does not support assertThat keyword.",
       "parentUuid": "b0ec6069_51ac55c4",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22cf870a_f53ca7ef",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-03-31T10:00:50Z",
+      "side": 1,
+      "message": "hamcrest is already in use in sdc project, only thing needed is adding it to the component pom and refer to the parent for version.\nCurrently it can be found at test-apis-ci / pom.xml (Line 44) with a specific version, can you please move the version into the parent pom and refer to it using a var?",
+      "parentUuid": "fc0e6694_a77879d7",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
