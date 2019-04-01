@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba6839d8_c24537c0",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/ManifestCreatorNamingConventionImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-01T05:45:51Z",
+      "side": 1,
+      "message": "Critical Sonar Remark\n\nControl flow statements \"if\", \"for\", \"while\", \"switch\" and \"try\" should not be nested too deeply\n \nCode smell\n \nCritical\nsquid:S134\n \nNested if, for, while, switch, and try statements are key ingredients for making what\u0027s known as \"Spaghetti code\".\nSuch code is hard to read, refactor and therefore maintain.\nNoncompliant Code Example\nWith the default threshold of 3:\n  if (condition1) { // Compliant - depth \u003d 1    /* ... */    if (condition2) { // Compliant - depth \u003d 2      /* ... */      for(int i \u003d 0; i \u003c 10; i++) { // Compliant - depth \u003d 3, not exceeding the limit        /* ... */        if (condition4) { // Noncompliant - depth \u003d 4          if (condition5) { // Depth \u003d 5, exceeding the limit, but issues are only reported on depth \u003d 4            /* ... */          }          return;        }      }    }  }  ",
+      "revId": "f5ea97f357a2e95daebe5104e9a5ccf14650e5dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
