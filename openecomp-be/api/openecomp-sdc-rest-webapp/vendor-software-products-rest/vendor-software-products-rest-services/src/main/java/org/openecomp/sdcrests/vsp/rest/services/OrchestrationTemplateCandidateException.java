@@ -17,15 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.vendorsoftwareproduct.security;
+package org.openecomp.sdcrests.vsp.rest.services;
 
-public class SecurityManagerException extends Exception {
+public class OrchestrationTemplateCandidateException extends Exception{
 
-    public SecurityManagerException(String s) {
-        super(s);
-    }
-
-    public SecurityManagerException(String s, Throwable t) {
-        super(s, t);
+    public OrchestrationTemplateCandidateException(String message, Throwable t){
+        super(message, t);
     }
 }
