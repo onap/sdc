@@ -195,6 +195,24 @@
     },
     {
       "key": {
+        "uuid": "9a544045_08648885",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main/java/org/onap/sdc/gab/yaml/YamlParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-01T09:26:33Z",
+      "side": 1,
+      "message": "Added check for available stream content. \n\nAbout the NullPointer please consider such scenario:\n\n @Test\n    void nullPointerOnClosing() throws Exception {\n        GABYamlParser yamlParser \u003d new GABYamlParser(new YamlParser());\n        yamlParser.close();\n    }\n\nIf anyone will use YamlParser in try-with-resources block there wont be a problem if close() wont check whether the inputstream is null or not. NullPointer exception will occur behind the scene, but even exception will occur stream is not initialized so still nothing to worry.\n\nBut I wanted to have guarantee that someone wont use this parser like in the example above (so would try to call close method without parsing any content before. It would give ugly NullPointer which I really didnt want to expose to the client).",
+      "parentUuid": "8bab5266_48011bd9",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0ec6069_51ac55c4",
         "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
         "patchSetId": 4
@@ -242,6 +260,24 @@
       "side": 1,
       "message": "hamcrest is already in use in sdc project, only thing needed is adding it to the component pom and refer to the parent for version.\nCurrently it can be found at test-apis-ci / pom.xml (Line 44) with a specific version, can you please move the version into the parent pom and refer to it using a var?",
       "parentUuid": "fc0e6694_a77879d7",
+      "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0a0d327_a6ff12f6",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test/java/org/onap/sdc/gab/yaml/GABYamlParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-01T09:26:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22cf870a_f53ca7ef",
       "revId": "24afa5dc7631d14fe1c93e149f59707c041e75c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
