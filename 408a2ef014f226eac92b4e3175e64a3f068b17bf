@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "50a7021d_5419bb98",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-01T13:47:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b57e22ba_f1af81fb",
+      "range": {
+        "startLine": 71,
+        "startChar": 11,
+        "endLine": 71,
+        "endChar": 61
+      },
+      "revId": "408a2ef014f226eac92b4e3175e64a3f068b17bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07fb6aba_9ad2c166",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2019-03-27T14:50:39Z",
       "side": 1,
       "message": "i\u0027d prefer to have this in separate method",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 97
+      },
+      "revId": "408a2ef014f226eac92b4e3175e64a3f068b17bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc81b8f1_f2a977e5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-01T13:47:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07fb6aba_9ad2c166",
       "range": {
         "startLine": 74,
         "startChar": 0,
