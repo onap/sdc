@@ -188,7 +188,8 @@ public enum Messages {
 
   /* Notifications */
   FAILED_TO_MARK_NOTIFICATION_AS_READ("Failed to mark notifications as read"),
-  FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION("Failed to update last seen notification for user %s");
+  FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION("Failed to update last seen notification for user %s"),
+  FAILED_TO_VERIFY_SIGNATURE("Cannot verify signature of signed archive!");
 
   private String errorMessage;
 

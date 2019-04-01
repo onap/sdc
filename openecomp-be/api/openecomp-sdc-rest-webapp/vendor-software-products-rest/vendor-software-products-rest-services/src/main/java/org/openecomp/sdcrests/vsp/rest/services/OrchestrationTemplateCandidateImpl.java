@@ -25,6 +25,7 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
@@ -43,6 +44,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplate
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 import org.openecomp.sdcrests.vsp.rest.OrchestrationTemplateCandidate;
+import org.openecomp.sdcrests.vsp.rest.data.PackageArchive;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapFilesDataStructureToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
@@ -51,9 +53,13 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
@@ -75,14 +81,28 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
 
   @Override
   public Response upload(String vspId, String versionId, Attachment fileToUpload, String user) {
+    PackageArchive archive = new PackageArchive(fileToUpload.getObject(byte[].class));
+    if (archive.isSigned() && !archive.isSignatureValid()) {
+      ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
+              getErrorWithParameters( Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage(),""));
+      UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+      Map<String, List<ErrorMessage>> errorMap = new HashMap<>();
+      List<ErrorMessage> errorMessages = new ArrayList<>();
+      errorMessages.add(errorMessage);
+      errorMap.put(SdcCommon.UPLOAD_FILE, errorMessages);
+      uploadFileResponseDto.setErrors(errorMap);
+      LOGGER.error(errorMessage.getMessage());
+      //returning OK as SDC UI won't show error message if NOT OK error code.
+      return Response.ok(uploadFileResponseDto).build();
+    }
 
-    String filename = fileToUpload.getContentDisposition().getParameter("filename");
+    String filename = archive.getArchiveFileName().orElse(fileToUpload.getContentDisposition().getFilename());
     UploadFileResponse uploadFileResponse = candidateManager
-        .upload(vspId, new Version(versionId), fileToUpload.getObject(InputStream.class),
-            getFileExtension(filename), getNetworkPackageName(filename));
+            .upload(vspId, new Version(versionId), new ByteArrayInputStream(archive.getPackageFileContents()),
+                    getFileExtension(filename), getNetworkPackageName(filename));
 
     UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
-        .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+            .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
 
     return Response.ok(uploadFileResponseDto).build();
   }
@@ -146,7 +166,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       String errorWithParameters = ErrorMessagesFormatBuilder
           .getErrorWithParameters(Messages.MAPPING_OBJECTS_FAILURE.getErrorMessage(),
               fileDataStructureDto.toString(), fileDataStructure.toString());
-      throw new Exception(errorWithParameters, exception);
+      throw new OrchestrationTemplateCandidateException(errorWithParameters, exception);
     }
     ValidationResponse response = candidateManager
         .updateFilesDataStructure(vspId, new Version(versionId), fileDataStructure);
