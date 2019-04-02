@@ -125,6 +125,7 @@
         <zusammen-index-store.version>1.0.0</zusammen-index-store.version>
         <build.tools.version>${project.version}</build.tools.version>
         <togglz.version>2.4.1.Final</togglz.version>
+        <bouncycastle.version>1.61</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
