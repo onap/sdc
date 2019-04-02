@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Jessica Wagantall <jwagantall@linuxfoundation.org>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Tue, 02 Apr 2019 07:11:26 +0000
+Reviewed-on: https://gerrit.onap.org/r/83564
+Project: sdc
+Branch: refs/heads/master
