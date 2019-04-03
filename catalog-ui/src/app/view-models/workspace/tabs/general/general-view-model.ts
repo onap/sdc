@@ -258,7 +258,9 @@ export class GeneralViewModel {
 
         // Init the decision if to show onboarding
         if (this.$scope.component.isResource() && this.$scope.isEditMode() &&
-            (<Resource>this.$scope.component).resourceType == ResourceType.VF && (<Resource>this.$scope.component).csarUUID) {
+            ((<Resource>this.$scope.component).resourceType == ResourceType.VF ||
+                (<Resource>this.$scope.component).resourceType == ResourceType.PNF)
+            && (<Resource>this.$scope.component).csarUUID) {
             this.$scope.isShowOnboardingSelectionBrowse = true;
             this.setImportedFileText();
         } else {
