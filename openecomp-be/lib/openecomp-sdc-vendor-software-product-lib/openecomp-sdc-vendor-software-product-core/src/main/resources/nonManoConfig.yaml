@@ -6,7 +6,7 @@ nonManoKeyFolderMapping:
     location: PM_DICTIONARY
     type: Deployment
   onap_yang_modules:
-    location: YANG_MODULES
+    location: YANG_MODULE
     type: Deployment
   onap_ansible_playbooks:
     location: ANSIBLE_PLAYBOOK

@@ -39,15 +39,14 @@ public enum ArtifactTypeEnum {
 	AAI_SERVICE_MODEL("AAI_SERVICE_MODEL"), AAI_VF_MODEL("AAI_VF_MODEL"), AAI_VF_MODULE_MODEL("AAI_VF_MODULE_MODEL"), AAI_VF_INSTANCE_MODEL("AAI_VF_INSTANCE_MODEL"),
 	// MIB artifacts
 	SNMP_POLL ("SNMP_POLL"), SNMP_TRAP("SNMP_TRAP"), GUIDE("GUIDE"),
-	PLAN("PLAN"),
-	PM_DICTIONARY("PM_DICTIONARY")
-	;
-	
+	PLAN("PLAN"), PM_DICTIONARY("PM_DICTIONARY"), YANG_MODULE("YANG_MODULE"),
+	ANSIBLE_PLAYBOOK("ANSIBLE_PLAYBOOK"), ONBOARDED_PACKAGE("ONBOARDED_PACKAGE");
+
+	private String type;
+
 	ArtifactTypeEnum(String type) {
 		this.type = type;
 	}
-
-	private String type;
 
 	public String getType() {
 		return type;
