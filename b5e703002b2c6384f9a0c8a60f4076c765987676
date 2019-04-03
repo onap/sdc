@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c7a3550_d020add7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-03T12:22:23Z",
+      "side": 1,
+      "message": "Java stream any match will reduce this function to one line.\nhttps://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#anyMatch-java.util.function.Predicate-",
+      "revId": "b5e703002b2c6384f9a0c8a60f4076c765987676",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
