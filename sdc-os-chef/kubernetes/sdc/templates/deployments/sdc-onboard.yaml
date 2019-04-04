@@ -74,6 +74,8 @@ spec:
           name: sdc-logs-2
         - mountPath: /tmp/logback.xml
           name: sdc-logback
+        - mountPath: "{{ .Values.certDir }}"
+          name: sdc-cert-dir
         env:
         - name: ENVNAME
           value: "{{ .Values.env.name }}"
@@ -93,6 +95,8 @@ spec:
           value: "-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
         - name: cassandra_ssl_enabled
           value: "false"
+        - name: SDC_CERT_DIR
+          value: "{{ .Values.certDir }}"
         lifecycle:
           postStart:
             exec:
@@ -107,6 +111,9 @@ spec:
         - name: filebeat-conf
           hostPath:
             path: /dockerdata-nfs/{{ .Values.nsPrefix }}/log/filebeat/logback/filebeat.yml
+        - name: sdc-cert-dir
+          hostPath:
+            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/cert
         - name: sdc-logs-2
           emptyDir: {}
         - name: sdc-data-filebeat
