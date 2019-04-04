@@ -188,11 +188,6 @@ catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-er
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
 
-sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
-sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
-sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar
-sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/*
-sdc-os-chef/sdc-normatives/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
 test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/testSuites/*
 ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites/*
  
@@ -239,9 +234,6 @@ automationDownloadDir*/
 
 *.xls
 
-
-/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
-
 /asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default/*
 /asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
 /openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/vsp_*
@@ -278,3 +270,4 @@ asdctool/test-output/*
 
 asdctool/report_delete_1538046694389.json
 asdctool/report_test_1538046722484.json
+

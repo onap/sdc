@@ -33,7 +33,7 @@ export const mapStateToProps = ({
     let { versions = [], selectedVersion } = versionsList;
     let { owner, contributors, viewers } = permissions;
 
-    versions.sort((a, b) => Number(a.name) > Number(b.name));
+    versions.sort((a, b) => Number(a.name) - Number(b.name));
     const curentSoftwareProduct = softwareProductList.find(
         item => item.id === itemId
     );
