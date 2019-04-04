@@ -1,0 +1,205 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "edcfa8e2_9b64f35c",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "I think this file would be much more readable if LESS nesting was used to place rules within other rules.",
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ccd1859_aeeb26b0",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "This can be replaced with a mixin to add browser prefixes",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 34
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e431010_dc3984fc",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "This can be combined with the above rule.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 22
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25467483_a9c128f8",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "This code is repeated in multiple places, please use a mixin",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 22
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "710b2939_c552c0d5",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "Isn\u0027t span included in the above rule (.datatable-body-cell *)? Is there a reason this is repeated?",
+      "range": {
+        "startLine": 31,
+        "startChar": 21,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eadbfc07_6103e24d",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "Please nest to make this more readable.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 1
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "78706e55_30d54809",
+        "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "Please prefix interface names with \"I\" to match our current conventions (so this should be \"IServerResponse\" instead).",
+      "range": {
+        "startLine": 27,
+        "startChar": 17,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "559cfc55_47244acd",
+        "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "Why not turn this into a proper class with a constructor? Then, the constructor can be called from getArtifact, instead of the inline new class, and it will improve readability IMO.",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 27
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc9bcd54_d172460f",
+        "filename": "catalog-ui/src/assets/styles/table-flex.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-04T06:59:45Z",
+      "side": 1,
+      "message": "These lines are shared with the class above. Perhaps create a shared class for these lines, and then just differentiate the icon.",
+      "range": {
+        "startLine": 153,
+        "startChar": 15,
+        "endLine": 158,
+        "endChar": 24
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
