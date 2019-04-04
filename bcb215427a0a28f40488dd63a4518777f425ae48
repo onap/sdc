@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dab9bbb1_e3ba1d8e",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "edcfa8e2_9b64f35c",
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ccd1859_aeeb26b0",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
         "patchSetId": 3
@@ -30,6 +48,30 @@
       "writtenOn": "2019-04-04T06:59:45Z",
       "side": 1,
       "message": "This can be replaced with a mixin to add browser prefixes",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 34
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "573719e6_43d82f5e",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ccd1859_aeeb26b0",
       "range": {
         "startLine": 2,
         "startChar": 0,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "28a1dfb5_7d4ab2fe",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e431010_dc3984fc",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 22
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "25467483_a9c128f8",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
         "patchSetId": 3
@@ -76,6 +142,30 @@
       "writtenOn": "2019-04-04T06:59:45Z",
       "side": 1,
       "message": "This code is repeated in multiple places, please use a mixin",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 22
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98eee008_f01fb5a5",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25467483_a9c128f8",
       "range": {
         "startLine": 25,
         "startChar": 0,
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "e9e9ce8e_caee1328",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "710b2939_c552c0d5",
+      "range": {
+        "startLine": 31,
+        "startChar": 21,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eadbfc07_6103e24d",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
         "patchSetId": 3
@@ -122,6 +236,30 @@
       "writtenOn": "2019-04-04T06:59:45Z",
       "side": 1,
       "message": "Please nest to make this more readable.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 1
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6db70abf_80f7bbb5",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eadbfc07_6103e24d",
       "range": {
         "startLine": 43,
         "startChar": 0,
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "2fe50ee9_f579b1be",
+        "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78706e55_30d54809",
+      "range": {
+        "startLine": 27,
+        "startChar": 17,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "559cfc55_47244acd",
         "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
         "patchSetId": 3
@@ -180,6 +342,30 @@
     },
     {
       "key": {
+        "uuid": "d5c0e8fe_5fa6b684",
+        "filename": "catalog-ui/src/app/ng2/services/gab.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "I followed your advice with interface to class refactoring. Additionally, I utilized object creation in-place instead of constructor. I think it\u0027s readable and multiple parameters don\u0027t get confused with each other (sadly, TypeScript does not provide named parameters).",
+      "parentUuid": "559cfc55_47244acd",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 27
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc9bcd54_d172460f",
         "filename": "catalog-ui/src/assets/styles/table-flex.less",
         "patchSetId": 3
@@ -191,6 +377,30 @@
       "writtenOn": "2019-04-04T06:59:45Z",
       "side": 1,
       "message": "These lines are shared with the class above. Perhaps create a shared class for these lines, and then just differentiate the icon.",
+      "range": {
+        "startLine": 153,
+        "startChar": 15,
+        "endLine": 158,
+        "endChar": 24
+      },
+      "revId": "bcb215427a0a28f40488dd63a4518777f425ae48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35b3a041_a65792dd",
+        "filename": "catalog-ui/src/assets/styles/table-flex.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-04T11:04:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc9bcd54_d172460f",
       "range": {
         "startLine": 153,
         "startChar": 15,
