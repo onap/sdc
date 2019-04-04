@@ -35,10 +35,8 @@ public class ArtifactAccessInfo {
         urlBuilder = urlBuilder.append(servletContext).append("/");
         urlBuilder.append("resources/")
                 // .append(artifactData.getResourceId()).append("/")
-
-                .append("/artifacts/");
+                .append("artifacts/");
         this.url = urlBuilder.toString();
-
     }
 
     private String name;

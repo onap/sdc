@@ -14,7 +14,6 @@ public class AccessValidations {
     private final UserValidations userValidations;
     private final ComponentValidations componentValidations;
 
-
     public AccessValidations(UserValidations userValidations, ComponentValidations componentValidations) {
         this.userValidations = userValidations;
         this.componentValidations = componentValidations;
@@ -31,8 +30,16 @@ public class AccessValidations {
         validateUserIsAdminOrDesigner(user);
         return componentValidations.validateComponentIsCheckedOutByUser(componentId, componentType, userId);
     }
-    private User retrieveUser(String userId, String actionContext) {
-        return userValidations.validateUserExists(userId, actionContext, true);
+
+
+    public void validateUserCanWorkOnComponent(Component component, String userId, String actionContext) {
+        User user = retrieveUser(userId, actionContext);
+        validateUserIsAdminOrDesigner(user);
+        componentValidations.validateComponentIsCheckedOutByUser(component, userId);
+    }
+
+    public void validateUserExists(String userId, String context) {
+        retrieveUser(userId, context);
     }
 
     public void validateUserExist(String userId, String actionContext) {
@@ -45,6 +52,10 @@ public class AccessValidations {
         return user;
     }
 
+    private User retrieveUser(String userId, String actionContext) {
+        return userValidations.validateUserExists(userId, actionContext, true);
+    }
+
     private void validateUserIsAdminOrDesigner(User user) {
         List<Role> roles = new ArrayList<>(2);
         roles.add(Role.ADMIN);
@@ -52,13 +63,4 @@ public class AccessValidations {
         userValidations.validateUserRole(user, roles);
     }
 
-    public void validateUserCanWorkOnComponent(Component component, String userId, String actionContext) {
-        User user = retrieveUser(userId, actionContext);
-        validateUserIsAdminOrDesigner(user);
-        componentValidations.validateComponentIsCheckedOutByUser(component, userId);
-    }
-
-    public void validateUserExists(String userId, String context) {
-        retrieveUser(userId, context);
-    }
 }
