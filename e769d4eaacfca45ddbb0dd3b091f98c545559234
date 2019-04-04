@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00138e37_27dfd984",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/create_cassandra_user.sh.erb",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-04-04T07:22:30Z",
+      "side": 1,
+      "message": "it seems to not being used anywhere?",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 38
+      },
+      "revId": "e769d4eaacfca45ddbb0dd3b091f98c545559234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5725799_b8c01c12",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/impl/cassandra/CassandraSessionFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-04-04T07:22:30Z",
+      "side": 1,
+      "message": "please don\u0027t use * in imports in ONAP.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 43
+      },
+      "revId": "e769d4eaacfca45ddbb0dd3b091f98c545559234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d005cc4_a9011778",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-04-04T07:22:30Z",
+      "side": 1,
+      "message": "minor static code violation on spelling",
+      "range": {
+        "startLine": 45,
+        "startChar": 31,
+        "endLine": 45,
+        "endChar": 54
+      },
+      "revId": "e769d4eaacfca45ddbb0dd3b091f98c545559234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddadb19b_e6f25e52",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2019-04-04T07:22:30Z",
+      "side": 1,
+      "message": "This will result in NPE if cassandraReconnectTimeout is null",
+      "range": {
+        "startLine": 153,
+        "startChar": 4,
+        "endLine": 156,
+        "endChar": 49
+      },
+      "revId": "e769d4eaacfca45ddbb0dd3b091f98c545559234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
