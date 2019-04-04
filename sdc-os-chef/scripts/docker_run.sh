@@ -13,6 +13,7 @@ SDC_USER="asdc_user"
 SDC_PASSWORD="Aa1234%^!"
 
 JETTY_BASE="/var/lib/jetty"
+SDC_CERT_DIR="onap/cert"
 
 RELEASE=latest
 LOCAL=false
@@ -89,6 +90,9 @@ function dir_perms {
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
 	mkdir -p ${WORKSPACE}/data/logs/WS
+	echo "create dir"
+	echo "${WORKSPACE}data/${SDC_CERT_DIR}"
+	mkdir -p ${WORKSPACE}/data/${SDC_CERT_DIR}
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 #
@@ -427,7 +431,7 @@ function sdc-onboard-BE {
     else
         ADDITIONAL_ARGUMENTS=${ONBOARD_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/ONBOARD:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env SDC_CERT_DIR="${SDC_CERT_DIR}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:/var/lib/jetty/onap/cert --volume ${WORKSPACE}/data/logs/ONBOARD:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while sdc-onboard-BE is starting..."
     monitor_docker ${DOCKER_NAME}

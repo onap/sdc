@@ -93,4 +93,5 @@ print_header "SDC - Deploy Pods ..."
 sudo mkdir -p /dockerdata-nfs/onap/sdc/logs//BE/SDC/SDC-BE
 sudo mkdir -p /dockerdata-nfs/onap/sdc/logs/FE/SDC/SDC-FE
 sudo mkdir -p /dockerdata-nfs/onap/sdc/logs/ONBOARD/SDC/ONBOARD-BE
+sudo mkdir -p /dockerdata-nfs/onap/sdc/cert
 sudo chmod -R 777 /dockerdata-nfs/onap/sdc/logs/*

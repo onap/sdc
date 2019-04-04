@@ -22,3 +22,5 @@ secrets:
     sdc_user: YXNkY191c2Vy
     sdc_password: QWExMjM0JV4h
     cs_password: b25hcDEyMyNAIQ==
+
+certDir: /var/lib/jetty/cert
