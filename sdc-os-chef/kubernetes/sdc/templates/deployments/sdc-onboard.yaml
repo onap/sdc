@@ -74,6 +74,8 @@ spec:
           name: sdc-logs-2
         - mountPath: /tmp/logback.xml
           name: sdc-logback
+        - mountPath: "{{ .Values.certDir }}"
+          name: sdc-cert-dir
         env:
         - name: ENVNAME
           value: "{{ .Values.env.name }}"
@@ -93,6 +95,8 @@ spec:
           value: "-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
         - name: cassandra_ssl_enabled
           value: "false"
+        - name: SDC_CERT_DIR
+          value: "{{ .Values.certDir }}"
         lifecycle:
           postStart:
             exec:
@@ -126,6 +130,8 @@ spec:
         - name: sdc-check-job-completion
           configMap:
             name: sdc-check-job-completion
+        -name: sdc-cert-dir
+           path: /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/cert
       imagePullSecrets:
       - name: "{{ .Values.nsPrefix }}-docker-registry-key"
 #{{ end }}
