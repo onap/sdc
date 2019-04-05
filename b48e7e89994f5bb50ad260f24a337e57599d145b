@@ -22,6 +22,30 @@
       "revId": "b48e7e89994f5bb50ad260f24a337e57599d145b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85264e1d_3cb1de24",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/AccessValidationsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-05T06:19:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30f12e47_92937d40",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 45
+      },
+      "revId": "b48e7e89994f5bb50ad260f24a337e57599d145b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
