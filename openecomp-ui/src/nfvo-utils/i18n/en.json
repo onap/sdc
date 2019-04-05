@@ -650,8 +650,10 @@
   "Selected Compliance Tests": "Selected Compliance Tests",
   "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters": "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters",
   "{title} Inputs :": "{title} Inputs :",
-  "Scenario: {scenario} | Status: {status}": "Scenario: {scenario} | Status: {status}",
+  "Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}": "Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}",
   "{title} results are not available": "{title} results are not available",
   "Test Results": "Test Results",
-  "No Validation Checks Performed": "No Validation Checks Performed"
+  "No Validation Checks Performed": "No Validation Checks Performed",
+  "Unknown": "Unknown"
+
 }

@@ -1,4 +1,20 @@
 
 .validation-results-test-result-label {
-  padding-left: 10px
+  padding-left: 10px;
+}
+.validation-results-test-result-json {
+  min-height: 50px;
+  overflow: auto;
+  min-width: 100px;
+  height: 100px;
+  width: 900px;
+  max-width: 900px;
+}
+.validation-results-test-result-string {
+  min-height: 50px;
+  overflow: auto;
+  min-width: 100px;
+  height: 100px;
+  width: 900px;
+  max-width: 900px;
 }

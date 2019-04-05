@@ -32,7 +32,7 @@ function postVSPCertificationChecks(tests) {
 
 function fetchVspChecks() {
     const restPrefix = Configuration.get('restPrefix');
-    return RestAPIUtil.get(`${restPrefix}/v1.0/externaltesting/testcasetree`);
+    return RestAPIUtil.fetch(`${restPrefix}/v1.0/externaltesting/testcasetree`);
 }
 
 const SoftwareProductValidationActionHelper = {

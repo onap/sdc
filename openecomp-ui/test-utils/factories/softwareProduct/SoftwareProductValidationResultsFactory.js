@@ -18,6 +18,86 @@ import { Factory } from 'rosie';
 export const VSPTestResultsFailureFactory = new Factory().attrs({
     vspTestResults: [
         {
+            scenario: 'certification',
+            description: 'Other Certifications',
+            testCaseName: 'certification.certificationtests.certquery',
+            testSuiteName: 'certificationtests',
+            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
+            parameters: {
+                vspId: 'uuidval',
+                vspVersion: 'ver',
+                other: 'values'
+            },
+            results: {
+                UnknownObject: {
+                    someKeyanotherobject2: 'someValue',
+                    someKey1: 'someValue',
+                    someKey2: 'someValue',
+                    someKey3: 'someValue',
+                    someKey4: 'someValue',
+                    someKey5: 'someValue',
+                    someKey21: 'someValue11',
+                    someKey111: 'someValue11',
+                    someKey222: 'someValue'
+                },
+                StringResult: 'String Value of Result',
+                EmptyObject: {},
+                EmptyArray: []
+            },
+            status: 'COMPLETED',
+            startTime: '2019-02-19T11:17:05.670',
+            endTime: '2019-02-19T11:17:05.683'
+        },
+        {
+            scenario: 'compliance',
+            testCaseName: 'compliance.compliancetests.sriov',
+            description: 'Allow_SR-IOV',
+            testSuiteName: 'compliancetests',
+            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
+            parameters: {
+                vspId: 'uuidval',
+                vspVersion: 'ver',
+                other: 'values'
+            },
+            results: {
+                errors: [
+                    {
+                        attribute: '',
+                        reason: 'Record Not Found',
+                        advice:
+                            'User must query with (vspId, vspVersion) values for a certifications record that is present in the Repository',
+                        code: 40
+                    },
+                    {
+                        attribute: '',
+                        reason: 'Record Not Found',
+                        advice:
+                            'User must query with (vspId, vspVersion) values for a certifications record that is present in the Repository',
+                        code: 40
+                    }
+                ]
+            },
+            status: 'FAILED',
+            startTime: '2019-02-19T11:17:05.670',
+            endTime: '2019-02-19T11:17:05.683'
+        },
+        {
+            scenario: 'compliance',
+            testCaseName: ' compliance.compliancetests.computeflavours',
+            description: 'Allow  SR-IOV ',
+            testSuiteName: 'compliancetests',
+            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
+            parameters: {
+                vspId: 'uuidval',
+                vspVersion: 'ver',
+                other: 'values'
+            },
+            results: {},
+            status: 'COMPLETED',
+            startTime: '2019-02-19T11:17:05.670',
+            endTime: '2019-02-19T11:17:05.683'
+        },
+        {
             code: '500',
             message: 'VTP Test(s) could not be completed',
             httpStatus: 500
