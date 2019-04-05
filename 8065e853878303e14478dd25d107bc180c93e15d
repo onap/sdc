@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29a6ebba_185c4d62",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/monitoring/EsGatewayTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-04-05T12:52:53Z",
+      "side": 1,
+      "message": "privates",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 52
+      },
+      "revId": "8065e853878303e14478dd25d107bc180c93e15d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
