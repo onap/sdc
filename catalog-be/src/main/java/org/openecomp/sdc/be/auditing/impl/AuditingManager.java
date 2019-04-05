@@ -16,12 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.auditing.impl;
 
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -30,6 +31,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,15 +41,17 @@ public class AuditingManager {
 
     private final AuditingDao auditingDao;
     private final AuditCassandraDao cassandraDao;
+    private final ConfigurationProvider configurationProvider;
 
-    public AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao) {
+    @Autowired
+    public AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao, ConfigurationProvider configurationProvider) {
         this.auditingDao = auditingDao;
         this.cassandraDao = cassandraDao;
+        this.configurationProvider = configurationProvider;
     }
 
-
     public String auditEvent(AuditEventFactory factory) {
-        if (ConfigurationManager.getConfigurationManager().getConfiguration().isDisableAudit()) {
+        if (configurationProvider.getConfiguration().isDisableAudit()) {
             return null;
         }
         String msg = factory.getLogMessage();
