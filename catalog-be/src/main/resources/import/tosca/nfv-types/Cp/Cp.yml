@@ -2,30 +2,36 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 node_types:
   tosca.nodes.nfv.Cp:
     derived_from: tosca.nodes.Root
+    description:  Provides information regarding the purpose of the connection point
     properties:
-        layer_protocol:
-          type: list
-          entry_schema:
-            type: string
-            constraints:
-              - valid_values: [ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
-          required: true
-        role: #Name in ETSI NFV IFA011 v0.7.3 cpRole
+      layer_protocols:
+        type: list
+        description: Identifies which protocol the connection point uses for connectivity purposes
+        required: true
+        entry_schema:
           type: string
           constraints:
-            - valid_values: [ root, leaf ]
-          required: false
-        description:
-          type: string
-          required: false
-        protocol_data:
-          type: list
-          entry_schema:
-            type: tosca.datatypes.nfv.CpProtocolData
-          required: true
-        trunk_mode:
-          type: boolean
-          required: true
-        allowed_address_data: # Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.             
-          type: tosca.datatypes.nfv.AddressData   #In the IM, it is a array, but here it is not a array. TBD.
-          required: false
+            - valid_values: [ ethernet, mpls, odu2, ipv4, ipv6, pseudo-wire ]
+      role: #Name in ETSI NFV IFA011 v0.7.3: cpRole
+        type: string
+        description: Identifies the role of the port in the context of the traffic flow patterns in the VNF or parent NS
+        required: false
+        constraints:
+          - valid_values: [ root, leaf ]
+      description:
+        type: string
+        description: Provides human-readable information on the purpose of the connection point
+        required: false
+      protocol:
+        type: list
+        description: Provides information on the addresses to be assigned to the connection point(s) instantiated from this Connection Point Descriptor
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.CpProtocolData
+      trunk_mode:
+        type: boolean
+        description: Provides information about whether the CP instantiated from this Cp is in Trunk mode (802.1Q or other), When operating in "trunk mode", the Cp is capable of carrying traffic for several VLANs. Absence of this property implies that trunkMode is not configured for the Cp i.e. It is equivalent to boolean value "false".
+        required: false
+      allowed_address_data: # #Introduced from Beijing release, align with resource IM, outside the scope of SOL001 v2.5.1
+        type: tosca.datatypes.nfv.AddressData   # In the IM, it is a array, but here it is not a array. TBD.
+        required: false

@@ -3,6 +3,10 @@
     "displayName": "Root",
     "icon": "group-root"
   },
+  "tosca.groups.nfv.PlacementGroup": {
+    "displayName": "NFV PlacementGroup",
+    "icon": "group-nfv-placementgroup"
+  },
   "org.openecomp.groups.heat.HeatStack": {
     "displayName": "Heat Stack",
     "icon": "group-heat-stack"

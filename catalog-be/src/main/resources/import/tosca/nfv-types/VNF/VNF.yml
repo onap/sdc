@@ -1,65 +1,95 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 node_types:
-    tosca.nodes.nfv.VNF:
-      derived_from: tosca.nodes.Root
-      properties:
-        descriptor_id: # instead of vnfd_id
-          type: string # GUID
-          required: true
-        descriptor_version: # instead of vnfd_version
+  tosca.nodes.nfv.VNF:
+    derived_from: tosca.nodes.Root
+    description: The generic abstract type from which all VNF specific abstract node types shall be derived to form, together with other node types, the TOSCA service template(s) representing the VNFD
+    properties:
+      descriptor_id: # instead of vnfd_id
+        type: string # GUID
+        description: Globally unique identifier of the VNFD
+        required: true
+      descriptor_version: # instead of vnfd_version
+        type: string
+        description: Identifies the version of the VNFD
+        required: true
+      provider: # instead of vnf_provider
+        type: string
+        description: Provider of the VNF and of the VNFD
+        required: true
+      product_name: # instead of vnf_product_name
+        type: string
+        description: Human readable name for the VNF Product
+        required: true
+      software_version: # instead of vnf_software_version
+        type: string
+        description: Software version of the VNF
+        required: true
+      product_info_name: # instead of vnf_product_info_name
+        type: string
+        description: Human readable name for the VNF Product
+        required: false
+      product_info_description: # instead of vnf_product_info_description
+        type: string
+        description: Human readable description of the VNF Product
+        required: false
+      vnfm_info:
+        type: list
+        required: true
+        description: Identifies VNFM(s) compatible with the VNF
+        entry_schema:
           type: string
-          required: true
-        provider: # instead of vnf_provider
-          type: string
-          required: true
-        product_name: # instead of vnf_product_name
-          type: string
-          required: true
-        software_version: # instead of vnf_software_version
-          type: string
-          required: true
-        product_info_name: # instead of vnf_product_info_name
-          type: string
-          required: false
-        product_info_description: # instead of vnf_product_info_description
-          type: string
-          required: false
-        vnfm_info:
-          type: list
-          entry_schema:
-            type: string
-          required: true
-        localization_languages:
-          type: list
-          entry_schema:
-            type: string
-          required: false
-        default_localization_language:
-          type: string
-          required: false
-        configurable_properties:
-          type: tosca.datatypes.nfv.VnfConfigurableProperties
-          required: false
-        modifiable_attributes:
-          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
-          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
-        flavour_id:
-          type: string
-          required: true 
-        flavour_description:
-          type: string
-          required: true 
-      #capabilities:
-          # monitoring_parameter:
-          # modelled as ad hoc capabilities in the VNF node template
-      requirements:
-        - virtual_link:
-            capability: tosca.capabilities.nfv.VirtualLinkable
-            relationship: tosca.relationships.nfv.VirtualLinksTo
-            node: tosca.nodes.nfv.VnfVirtualLink
-            occurrences:
-            - 0
-            - UNBOUNDED
-      interfaces:
-        Nfv:
-          type: tosca.interfaces.nfv.vnf.lifecycle.Nfv
+      localization_languages:
+        type: list
+        description: Information about localization languages of the VNF
+        required: false
+        entry_schema:
+          type: string #IETF RFC 5646 string
+      default_localization_language:
+        type: string #IETF RFC 5646 string
+        description: Default localization language that is instantiated if no information about selected localization language is available
+        required: false
+      #configurable_properties:
+        #type: tosca.datatypes.nfv.VnfConfigurableProperties
+        #description: Describes the configurable properties of the VNF
+        #required: false
+        # derived types are expected to introduce configurable_properties
+        # with its type derived from
+        # tosca.datatypes.nfv.VnfConfigurableProperties
+      #modifiable_attributes:
+        #type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+        #description: Describes the modifiable attributes of the VNF
+        #required: false
+        # derived types are expected to introduce modifiable_attributes
+        # with its type derived from
+        # tosca.datatypes.nfv.VnfInfoModifiableAttributes
+      lcm_operations_configuration:
+        type: tosca.datatypes.nfv.VnfLcmOperationsConfiguration
+        description: Describes the configuration parameters for the VNF LCM operations
+        required: false
+      monitoring_parameters:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfMonitoringParameter
+        description: Describes monitoring parameters applicable to the VNF.
+        required: false
+      flavour_id:
+        type: string
+        description: Identifier of the Deployment Flavour within the VNFD
+        required: true
+      flavour_description:
+        type: string
+        description: Human readable description of the DF
+        required: true
+      #vnf_profile:
+      #  type: tosca.datatypes.nfv.VnfProfile
+      #  description: Describes a profile for instantiating VNFs of a particular NS DF according to a specific VNFD and VNF DF
+      #  required: false
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [ 0, 1 ]
+  # Additional requirements shall be defined in the VNF specific node type (deriving from tosca.nodes.nfv.VNF) corresponding to NS virtual links that need to connect to VnfExtCps
+    interfaces:
+      Vnflcm:
+        type: tosca.interfaces.nfv.Vnflcm
