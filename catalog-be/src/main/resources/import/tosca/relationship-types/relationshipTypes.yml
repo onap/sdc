@@ -13,7 +13,7 @@ tosca.relationships.Root:
       default: initial
   interfaces:
     Configure:
-      type: tosca.interfaces.relationship.Configure        
+      type: tosca.interfaces.relationship.Configure
 
 tosca.relationships.ConnectsTo:
   derived_from: tosca.relationships.Root
@@ -118,16 +118,21 @@ org.openecomp.relationships.AssignsTo:
 org.openecomp.relationships.RoutesTo:
     derived_from: tosca.relationships.RoutesTo
     description: This type represents an intentional network routing between internal and external network
-    
+
 tosca.relationships.nfv.VirtualBindsTo:
-    derived_from: tosca.relationships.DependsOn
-    valid_target_types:
-    - tosca.capabilities.nfv.VirtualBindable
+  derived_from: tosca.relationships.DependsOn
+  description: Represents an association relationship between Vdu.Compute and VduCp node types
+  valid_target_types: [ tosca.capabilities.nfv.VirtualBindable ]
 
 tosca.relationships.nfv.VirtualLinksTo:
-    derived_from: tosca.relationships.DependsOn
-    valid_target_types:
-    - tosca.capabilities.nfv.VirtualLinkable
+  derived_from: tosca.relationships.DependsOn
+  description: Represents an association relationship between the VduCp and VnfVirtualLink node types
+  valid_target_types: [ tosca.capabilities.nfv.VirtualLinkable ]
+
+tosca.relationships.nfv.AttachesTo:
+  derived_from: tosca.relationships.Root
+  description: Represents an association relationship between the Vdu.Compute and one of the node types, Vdu.VirtualBlockStorage, Vdu.VirtualObjectStorage or Vdu.VirtualFileStorage
+  valid_target_types: [ tosca.capabilities.nfv.VirtualStorage ]
 
 tosca.relationships.nfv.Vdu.AttachedTo:
   derived_from: tosca.relationships.DependsOn

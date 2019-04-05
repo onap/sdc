@@ -129,3 +129,189 @@ onap.policy.monitoring.cdap.tca.hi.lo.app:
       description: TCA Policy JSON
       entry_schema:
         type: onap.datatypes.monitoring.tca_policy
+
+## NFV policies ##
+tosca.policies.nfv.InstantiationLevels:
+  derived_from: tosca.policies.Root
+  description: The InstantiationLevels type is a policy type representing all the instantiation levels of resources to be instantiated within a deployment flavour and including default instantiation level in term of the number of VNFC instances to be created as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    levels:
+      type: map # key: levelId
+      description: Describes the various levels of resources that can be used to instantiate the VNF using this flavour.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.InstantiationLevel
+    default_level:
+      type: string # levelId
+      description: The default instantiation level for this flavour.
+      required: false # required if multiple entries in levels
+tosca.policies.nfv.VduInstantiationLevels:
+  derived_from: tosca.policies.Root
+  description:  The VduInstantiationLevels type is a policy type representing all the instantiation levels of resources to be instantiated within a deployment flavour in term of the number of VNFC instances to be created from each vdu.Compute. as defined in ETSI GS NFV-IFA 011 [1]
+  properties:
+    levels:
+      type: map # key: levelId
+      description: Describes the Vdu.Compute levels of resources that can be used to instantiate the VNF using this flavour
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.VduLevel
+  targets: [ tosca.nodes.nfv.Vdu.Compute ]
+
+tosca.policies.nfv.VirtualLinkInstantiationLevels:
+  derived_from: tosca.policies.Root
+  description:  The VirtualLinkInstantiationLevels type is a policy type representing all the instantiation levels of virtual link resources to be instantiated within a deployment flavour as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    levels:
+      type: map # key: levelId
+      description: Describes the virtual link levels of resources that can be used to instantiate the VNF using this flavour.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.VirtualLinkBitrateLevel
+  targets: [ tosca.nodes.nfv.VnfVirtualLink ]
+tosca.policies.nfv.ScalingAspects:
+  derived_from: tosca.policies.Root
+  description: The ScalingAspects type is a policy type representing the scaling aspects used for horizontal scaling as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    aspects:
+      type: map # key: aspectId
+      description: Describe maximum scale level for total number of scaling steps that can be applied to a particular aspect
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.ScalingAspect
+tosca.policies.nfv.VduScalingAspectDeltas:
+  derived_from: tosca.policies.Root
+  description: The VduScalingAspectDeltas type is a policy type representing the Vdu.Compute detail of an aspect deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    aspect:
+      type: string
+      description: Represents the scaling aspect to which this policy applies
+      required: true
+    deltas:
+      type: map # key: scalingDeltaId
+      description: Describes the Vdu.Compute scaling deltas to be applied for every scaling steps of a particular aspect.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.VduLevel
+  targets: [ tosca.nodes.nfv.Vdu.Compute ]
+tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas:
+  derived_from: tosca.policies.Root
+  description: The VirtualLinkBitrateScalingAspectDeltas type is a policy type representing the VnfVirtualLink detail of an aspect deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    aspect:
+      type: string
+      description: Represents the scaling aspect to which this policy applies.
+      required: true
+    deltas:
+      type: map # key: scalingDeltaId
+      description: Describes the VnfVirtualLink scaling deltas to be applied for every scaling steps of a particular aspect.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.VirtualLinkBitrateLevel
+  targets: [ tosca.nodes.nfv.VnfVirtualLink ]
+
+tosca.policies.nfv.VduInitialDelta:
+  derived_from: tosca.policies.Root
+  description: The VduInitialDelta type is a policy type representing the Vdu.Compute detail of an initial delta used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    initial_delta:
+      type: tosca.datatypes.nfv.VduLevel
+      description: Represents the initial minimum size of the VNF.
+      required: true
+  targets: [ tosca.nodes.nfv.Vdu.Compute ]
+
+tosca.policies.nfv.VirtualLinkBitrateInitialDelta:
+  derived_from: tosca.policies.Root
+  description: The VirtualLinkBitrateInitialDelta type is a policy type representing the VnfVirtualLink detail of an initial deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    initial_delta:
+      type: tosca.datatypes.nfv.VirtualLinkBitrateLevel
+      description: Represents the initial minimum size of the VNF.
+      required: true
+  targets: [ tosca.nodes.nfv.VnfVirtualLink ]
+
+tosca.policies.nfv.AffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The AffinityRule describes the affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+
+tosca.policies.nfv.AntiAffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+
+tosca.policies.nfv.SecurityGroupRule:
+  derived_from: tosca.policies.Root
+  description: The SecurityGroupRule type is a policy type specified the matching criteria for the ingress and/or egress traffic to/from visited connection points as defined in ETSI GS NFV-IFA 011 [1].
+  properties:
+    description:
+      type: string
+      description: Human readable description of the security group rule.
+      required: false
+    direction:
+      type: string
+      description: The direction in which the security group rule is applied. The direction of 'ingress' or 'egress' is specified against the associated CP. I.e., 'ingress' means the packets entering a CP, while 'egress' means the packets sent out of a CP.
+      required: false
+      constraints:
+        - valid_values: [ ingress, egress ]
+      default: ingress
+    ether_type:
+      type: string
+      description: Indicates the protocol carried over the Ethernet layer.
+      required: false
+      constraints:
+        - valid_values: [ ipv4, ipv6 ]
+      default: ipv4
+    protocol:
+      type: string
+      description: Indicates the protocol carried over the IP layer. Permitted values include any protocol defined in the IANA protocol registry, e.g. TCP, UDP, ICMP, etc.
+      required: false
+      constraints:
+        - valid_values: [ hopopt, icmp, igmp, ggp, ipv4, st, tcp, cbt, egp, igp, bbn_rcc_mon, nvp_ii, pup, argus, emcon, xnet, chaos, udp, mux, dcn_meas, hmp, prm, xns_idp, trunk_1, trunk_2, leaf_1, leaf_2, rdp, irtp, iso_tp4, netblt, mfe_nsp, merit_inp, dccp, 3pc, idpr, xtp, ddp, idpr_cmtp, tp++, il, ipv6, sdrp, ipv6_route, ipv6_frag, idrp, rsvp, gre, dsr, bna, esp, ah, i_nlsp, swipe, narp, mobile, tlsp, skip, ipv6_icmp, ipv6_no_nxt, ipv6_opts, cftp, sat_expak, kryptolan, rvd, ippc, sat_mon, visa, ipcv, cpnx, cphb, wsn, pvp, br_sat_mon, sun_nd, wb_mon, wb_expak, iso_ip, vmtp, secure_vmtp, vines, ttp, iptm, nsfnet_igp, dgp, tcf, eigrp, ospfigp, sprite_rpc, larp, mtp, ax.25, ipip, micp, scc_sp, etherip, encap, gmtp, ifmp, pnni, pim, aris, scps, qnx, a/n, ip_comp, snp, compaq_peer, ipx_in_ip, vrrp, pgm, l2tp, ddx, iatp, stp, srp, uti, smp, sm, ptp, isis, fire, crtp, crudp, sscopmce, iplt, sps, pipe, sctp, fc, rsvp_e2e_ignore, mobility, udp_lite, mpls_in_ip, manet, hip, shim6, wesp, rohc ]
+      default: tcp
+    port_range_min:
+      type: integer
+      description: Indicates minimum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.
+      required: false
+      constraints:
+        - greater_or_equal: 0
+        - less_or_equal: 65535
+      default: 0
+    port_range_max:
+      type: integer
+      description: Indicates maximum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.
+      required: false
+      constraints:
+        - greater_or_equal: 0
+        - less_or_equal: 65535
+      default: 65535
+  targets: [ tosca.nodes.nfv.VduCp, tosca.nodes.nfv.VnfExtCp ]
+
+tosca.policies.nfv.SupportedVnfInterface:
+  derived_from: tosca.policies.Root
+  description:  this policy type represents interfaces produced by a VNF, the details to access them and the applicable connection points to use to access these interfaces
+  properties:
+    interface_name:
+      type: string
+      description: Identifies an interface produced by the VNF.
+      required: true
+      constraints:
+        - valid_values: [ vnf_indicator, vnf_configuration ]
+    details:
+      type: tosca.datatypes.nfv.InterfaceDetails
+      description: Provide additional data to access the interface endpoint
+      required: false
+  targets: [ tosca.nodes.nfv.VnfExtCp, tosca.nodes.nfv.VduCp ]

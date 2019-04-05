@@ -31,3 +31,9 @@ tosca.artifacts.Implementation:
 
 tosca.artifacts.nfv.SwImage:
   derived_from: tosca.artifacts.Deployment.Image
+  description: describes the software image which is directly loaded on the virtualisation container realizing of the VDU or is to be loaded on a virtual
+tosca.artifacts.Implementation.nfv.Mistral:
+  derived_from: tosca.artifacts.Implementation
+  description: artifacts for Mistral workflows
+  mime_type: application/x-yaml
+  file_ext: [ yaml ]

@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.Vdu.VirtualBlockStorage:
+    derived_from: tosca.nodes.Root
+    description: This node type describes the specifications of requirements related to virtual block storage resources
+    properties:
+      virtual_block_storage_data:
+        type: tosca.datatypes.nfv.VirtualBlockStorageData
+        description: Describes the block storage characteristics.
+        required: true
+      sw_image_data:
+        type: tosca.datatypes.nfv.SwImageData
+        description: Defines information related to a SwImage artifact used by this Vdu.Compute node.
+        required: false # property is required when the node template has an associated artifact of type tosca.artifacts.nfv.SwImage and not required otherwise
+    capabilities:
+      virtual_storage:
+        type: tosca.capabilities.nfv.VirtualStorage
+        description: Defines the capabilities of virtual_storage.
