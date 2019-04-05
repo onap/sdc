@@ -210,7 +210,10 @@ class SoftwareProductValidation extends Component {
                     softwareProductValidation.vspChecks
                 );
             }
-            this.setState({ activeTab: tabsMapping.SETUP });
+            this.setState({
+                activeTab: tabsMapping.SETUP,
+                goToValidationInput: false
+            });
             setActiveTab({ activeTab: tabsMapping.SETUP });
         }
     }
@@ -269,6 +272,20 @@ class SoftwareProductValidation extends Component {
         }
     }
 
+    fetchDefaultValue(value) {
+        let { softwareProductId, version } = this.props;
+        let versionName = parseFloat(version.name).toFixed(1),
+            versionNumber =
+                versionName > 1 ? (versionName - 1).toFixed(1) : versionName,
+            versionUUID = version.id;
+        value =
+            value === '$vspid'
+                ? softwareProductId
+                : value === '$vspPreviousVersion' ? versionNumber : value;
+        value = value === '$vspVersionUUID' ? versionUUID : value || '';
+        return value;
+    }
+
     formTestsRequest(item, testsRequest) {
         let { vspTestsMap } = this.props.softwareProductValidation;
         testsRequest[item] = {
@@ -279,8 +296,9 @@ class SoftwareProductValidation extends Component {
             endpoint: vspTestsMap[item]['endpoint']
         };
         vspTestsMap[item].parameters.forEach(parameter => {
-            testsRequest[item].parameters[parameter.name] =
-                parameter.defaultValue || '';
+            testsRequest[item].parameters[
+                parameter.name
+            ] = this.fetchDefaultValue(parameter.defaultValue);
         });
         return testsRequest;
     }

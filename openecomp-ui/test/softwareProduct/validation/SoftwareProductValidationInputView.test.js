@@ -19,6 +19,7 @@ import { mapStateToProps } from 'sdc-app/onboarding/softwareProduct/validation/i
 
 import VspValidationInputsView from 'sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx';
 import TestUtils from 'react-dom/test-utils';
+import { storeCreator } from 'sdc-app/AppStore.js';
 
 import { VSPComplianceCheckedFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPCertificationCheckedFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
@@ -26,6 +27,7 @@ import { VSPChecksFactory } from 'test-utils/factories/softwareProduct/SoftwareP
 import { VSPTestsMapFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPTestsRequestFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPGeneralInfoFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
+import { mapActionsToProps } from 'sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidation.js';
 
 describe('SoftwareProductValidation Mapper and View Classes', () => {
     it('mapStateToProps mapper exists', () => {
@@ -76,22 +78,39 @@ describe('SoftwareProductValidation Mapper and View Classes', () => {
         const status = 'draft';
 
         var obj = {
-            version: version,
-            softwareProductId: softwareProductId,
-            status: status,
-            softwareProductValidation: {
-                complianceChecked: complianceChecked.complianceChecked,
-                certificationChecked: certificationChecked.certificationChecked,
-                vspTestsMap: vspTestsMap.vspTestsMap,
-                vspChecks: vspChecksList,
-                testsRequest: testsRequest.testsRequest,
-                generalInfo: generalInfo.generalInfo
+            softwareProduct: {
+                version: version,
+                softwareProductId: softwareProductId,
+                status: status,
+                softwareProductValidation: {
+                    complianceChecked: complianceChecked.complianceChecked,
+                    certificationChecked:
+                        certificationChecked.certificationChecked,
+                    vspTestsMap: vspTestsMap.vspTestsMap,
+                    vspChecks: vspChecksList,
+                    testsRequest: testsRequest.testsRequest,
+                    generalInfo: generalInfo.generalInfo
+                }
             }
         };
+        const store = storeCreator();
+        let dispatch = store.dispatch;
+        let props = Object.assign(
+            {},
+            mapStateToProps(obj),
+            mapActionsToProps(dispatch)
+        );
 
         let vspValidationInputView = TestUtils.renderIntoDocument(
-            <VspValidationInputsView {...obj} />
+            <VspValidationInputsView {...props} />
         );
         expect(vspValidationInputView).toBeTruthy();
+
+        let inputForm = TestUtils.findRenderedDOMComponentWithTag(
+            vspValidationInputView,
+            'form'
+        );
+        expect(inputForm).toBeTruthy();
+        TestUtils.Simulate.submit(inputForm);
     });
 });

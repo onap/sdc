@@ -284,8 +284,8 @@ class VspValidationInputs extends Component {
                         size="default"
                         data-test-id="proceed-to-validation-results-btn"
                         disabled={false}
-                        className="proceed-to-validation-monitor-btn"
-                        onClick={() => this.performVSPTests()}>
+                        type="submit"
+                        className="proceed-to-validation-monitor-btn">
                         {i18n('Submit')}
                     </Button>
                 </Form>
