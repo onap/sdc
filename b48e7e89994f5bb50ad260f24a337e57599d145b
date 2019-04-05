@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30f12e47_92937d40",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/AccessValidationsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-04-05T05:55:29Z",
+      "side": 1,
+      "message": "those fields should be private",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 45
+      },
+      "revId": "b48e7e89994f5bb50ad260f24a337e57599d145b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
