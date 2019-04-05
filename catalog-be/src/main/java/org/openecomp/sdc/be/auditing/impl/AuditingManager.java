@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.auditing.impl;
 
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -39,15 +40,26 @@ public class AuditingManager {
 
     private final AuditingDao auditingDao;
     private final AuditCassandraDao cassandraDao;
+    private final ConfigurationProvider configurationProvider;
 
     public AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao) {
         this.auditingDao = auditingDao;
         this.cassandraDao = cassandraDao;
+        this.configurationProvider = new ConfigurationProviderImpl();
     }
 
+    AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao, ConfigurationProvider configurationProvider) {
+        this.auditingDao = auditingDao;
+        this.cassandraDao = cassandraDao;
+        this.configurationProvider = configurationProvider;
+    }
+
+    public interface ConfigurationProvider{
+        Configuration getConfiguration();
+    }
 
     public String auditEvent(AuditEventFactory factory) {
-        if (ConfigurationManager.getConfigurationManager().getConfiguration().isDisableAudit()) {
+        if (configurationProvider.getConfiguration().isDisableAudit()) {
             return null;
         }
         String msg = factory.getLogMessage();
@@ -83,5 +95,12 @@ public class AuditingManager {
         }
         log.trace("logAuditEvent - end");
     }
+
+    private class ConfigurationProviderImpl implements ConfigurationProvider {
+        public Configuration getConfiguration() {
+            return ConfigurationManager.getConfigurationManager().getConfiguration();
+        }
+    }
+
 
 }
