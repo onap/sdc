@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.Vdu.VirtualObjectStorage:
+    derived_from: tosca.nodes.Root
+    description: This node type describes the specifications of requirements related to virtual object storage resources
+    properties:
+      virtual_object_storage_data:
+        type: tosca.datatypes.nfv.VirtualObjectStorageData
+        description: Describes the object  storage characteristics.
+        required: true
+    capabilities:
+      virtual_storage:
+        type: tosca.capabilities.nfv.VirtualStorage
+        description: Defines the capabilities of virtual_storage.

@@ -1,0 +1,19 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.VnfExtCp:
+    derived_from: tosca.nodes.nfv.Cp
+    description: Describes a logical external connection point, exposed by the VNF enabling connection with an external Virtual Link
+    properties:
+      virtual_network_interface_requirements:
+        type: list
+        description: The actual virtual NIC requirements that is been assigned when instantiating the connection point
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+    requirements:
+      - external_virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+      - internal_virtual_link: #name in ETSI NFV IFA011 v0.7.3: intVirtualLinkDesc
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo

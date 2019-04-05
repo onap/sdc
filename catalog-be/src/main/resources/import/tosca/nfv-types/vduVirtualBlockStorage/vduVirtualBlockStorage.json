@@ -1,0 +1,15 @@
+{
+	"payloadName": "vduVirtualBlockStorage.yml",
+	"contactId": "jh0003",
+	"name": "VDU VirtualBlockStorage",
+	"description": "VDU VirtualBlockStorage",
+	"resourceIconPath": "objectStorage",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["VDU VirtualBlockStorage"]
+}

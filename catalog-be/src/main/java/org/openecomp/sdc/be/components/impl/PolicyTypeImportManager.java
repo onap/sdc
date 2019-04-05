@@ -27,9 +27,11 @@ import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.impl.utils.PolicyTypeImportUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -48,13 +50,17 @@ public class PolicyTypeImportManager {
     private final IGroupOperation groupOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final CommonImportManager commonImportManager;
+    private final IGroupTypeOperation groupTypeOperation;
 
-    public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils, IGroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade, CommonImportManager commonImportManager) {
+    public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils,
+        IGroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade,
+        CommonImportManager commonImportManager, IGroupTypeOperation groupTypeOperation) {
         this.policyTypeOperation = policyTypeOperation;
         this.componentsUtils = componentsUtils;
         this.groupOperation = groupOperation;
         this.toscaOperationFacade = toscaOperationFacade;
         this.commonImportManager = commonImportManager;
+        this.groupTypeOperation = groupTypeOperation;
     }
 
     public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData) {
@@ -94,6 +100,13 @@ public class PolicyTypeImportManager {
                         if (!isValid) {
                             isValid = groupOperation.isGroupExist(targetId, false);
                         }
+
+                        if (!isValid) { // check if it is a groupType
+                            final Either<GroupTypeDefinition, StorageOperationStatus> groupTypeFound = groupTypeOperation
+                                .getLatestGroupTypeByType(targetId, false);
+                            isValid = groupTypeFound.isLeft() && !groupTypeFound.left().value().isEmpty();
+                        }
+
                         if (!isValid) {
                             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.TARGETS_NON_VALID, policyType.getType(), targetId);
                             result = Either.right(responseFormat);
