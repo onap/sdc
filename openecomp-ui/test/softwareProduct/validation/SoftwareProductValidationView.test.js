@@ -24,10 +24,11 @@ import SoftwareProductValidationView from 'sdc-app/onboarding/softwareProduct/va
 import { VSPComplianceCheckedFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPCertificationCheckedFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPChecksFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
+import { VSPGeneralInfoFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPTestsMapFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { tabsMapping } from 'sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationConstants.js';
 import TestUtils from 'react-dom/test-utils';
-//import { scryRenderedDOMComponentsWithTestId } from 'test-utils/Util.js';
+import { scryRenderedDOMComponentsWithTestId } from 'test-utils/Util.js';
 
 describe('SoftwareProductValidation Mapper and View Classes', () => {
     it('mapStateToProps mapper exists', () => {
@@ -43,15 +44,18 @@ describe('SoftwareProductValidation Mapper and View Classes', () => {
         const vspTestsMap = VSPTestsMapFactory.build();
         const certificationChecked = VSPCertificationCheckedFactory.build();
         const complianceChecked = VSPComplianceCheckedFactory.build();
+        const generalInfo = VSPGeneralInfoFactory.build();
 
         var obj = {
             softwareProduct: {
                 softwareProductValidation: {
                     vspChecks: vspChecksList,
                     vspTestsMap: vspTestsMap.vspTestsMap,
-                    certificationChecked: certificationChecked.certificationChecked,
+                    certificationChecked:
+                        certificationChecked.certificationChecked,
                     complianceChecked: complianceChecked.complianceChecked,
-                    activeTab: tabsMapping.SETUP
+                    activeTab: tabsMapping.SETUP,
+                    generalInfo: generalInfo.generalInfo
                 }
             }
         };
@@ -65,6 +69,7 @@ describe('SoftwareProductValidation Mapper and View Classes', () => {
             results.softwareProductValidation.complianceChecked
         ).toBeTruthy();
         expect(results.softwareProductValidation.activeTab).toBeTruthy();
+        expect(results.softwareProductValidation.generalInfo).toBeTruthy();
     });
 
     it('SoftwareProductValidationView render test', () => {
@@ -72,51 +77,63 @@ describe('SoftwareProductValidation Mapper and View Classes', () => {
         const vspTestsMap = VSPTestsMapFactory.build();
         const certificationChecked = VSPCertificationCheckedFactory.build();
         const complianceChecked = VSPComplianceCheckedFactory.build();
-        let dummyFunc = () => {};
+        // let dummyFunc = () => {};
         const version = {
+            id: 12345,
             name: 1
         };
         const softwareProductId = '1234';
         const status = 'draft';
         var obj = {
-            version: version,
-            softwareProductId: softwareProductId,
-            status: status,
-            softwareProductValidation: {
-                vspChecks: vspChecksList,
-                vspTestsMap: vspTestsMap,
-                certificationChecked: certificationChecked.certificationChecked,
-                complianceChecked: complianceChecked.complianceChecked,
-                activeTab: tabsMapping.SETUP
+            softwareProduct: {
+                version: version,
+                softwareProductId: softwareProductId,
+                status: status,
+                softwareProductValidation: {
+                    vspChecks: vspChecksList,
+                    vspTestsMap: vspTestsMap.vspTestsMap,
+                    certificationChecked:
+                        certificationChecked.certificationChecked,
+                    complianceChecked: complianceChecked.complianceChecked,
+                    activeTab: tabsMapping.SETUP
+                }
             }
         };
+
         const store = storeCreator();
+        let dispatch = store.dispatch;
+
+        let props = Object.assign(
+            {},
+            mapStateToProps(obj),
+            mapActionsToProps(dispatch)
+        );
+
         let softwareProductValidationView = TestUtils.renderIntoDocument(
             <Provider store={store}>
-                <SoftwareProductValidationView
-                    {...obj}
-                    onErrorThrown={dummyFunc}
-                    onTestSubmit={dummyFunc}
-                    setVspTestsMap={dummyFunc}
-                    setActiveTab={dummyFunc}
-                    setComplianceChecked={dummyFunc}
-                    setCertificationChecked={dummyFunc}
-                />
+                <SoftwareProductValidationView {...props} />
             </Provider>
         );
 
         expect(softwareProductValidationView).toBeTruthy();
 
-        // let goToInput = scryRenderedDOMComponentsWithTestId(
-        //     softwareProductValidationView,
-        //     'go-to-inputs'
-        // );
-        // expect(goToInput).toBeTruthy();
+        let goToInput = scryRenderedDOMComponentsWithTestId(
+            softwareProductValidationView,
+            'go-to-vsp-validation-inputs'
+        );
+        expect(goToInput).toBeTruthy();
         // TestUtils.Simulate.click(goToInput[0]);
-        // let goToInput = TestUtils.findRenderedDOMComponentWithClass(
+        // expect(
+        //     store.getState().softwareProduct.softwareProductValidation.activeTab
+        // ).toBe(tabsMapping.INPUTS);
+        // let goToSetup = scryRenderedDOMComponentsWithTestId(
         //     softwareProductValidationView,
-        //     'go-to-inputs-btn'
+        //     'go-to-vsp-validation-setup'
         // );
-        // TestUtils.Simulate.click(goToInput);
+        // expect(goToSetup).toBeTruthy();
+        // TestUtils.Simulate.click(goToSetup[0]);
+        // expect(
+        //     store.getState().softwareProduct.softwareProductValidation.activeTab
+        // ).toBe(tabsMapping.SETUP);
     });
 });

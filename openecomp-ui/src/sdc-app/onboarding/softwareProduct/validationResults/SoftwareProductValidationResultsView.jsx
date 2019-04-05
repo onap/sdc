@@ -74,107 +74,213 @@ class SoftwareProductValidationResultsView extends React.Component {
         };
     }
 
-    buildSubAccordions(result) {
-        if (result.status && result.status.toLowerCase() === 'completed') {
-            if (!result.results.testResults) {
+    getTitle(result) {
+        let { vspTestsMap } = this.props.softwareProductValidation;
+        let title = vspTestsMap[result.testCaseName]
+            ? vspTestsMap[result.testCaseName].title
+            : i18n('Unknown');
+        return i18n(
+            'Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}',
+            {
+                scenario: result.scenario || i18n('Unknown'),
+                status: result.status || i18n('Unknown'),
+                testCaseName: result.testCaseName || i18n('Unknown'),
+                title: title
+            }
+        );
+    }
+
+    renderJSON(result) {
+        return (
+            <li type="none">
+                <textarea
+                    disabled={true}
+                    className="validation-results-test-result-json"
+                    value={JSON.stringify(result, null, 2)}
+                />
+            </li>
+        );
+    }
+
+    renderError(result) {
+        if (Array.isArray(result)) {
+            return result.map((parameter, index) => {
                 return (
-                    <div
-                        title={i18n('Scenario: {scenario} | Status: {status}', {
-                            scenario: result.scenario,
-                            status: result.status
-                        })}>
+                    <li type="none" key={index}>
                         <SVGIcon
                             color="negative"
                             name="errorCircle"
                             labelPosition="right"
                         />
                         <span className="validation-results-test-result-label">
-                            {i18n('{title} results are not available', {
-                                title: result.scenario
-                            })}
+                            {(parameter.code || '') +
+                                ' | ' +
+                                (parameter.advice || parameter.message)}
                         </span>
-                    </div>
+                    </li>
                 );
-            }
+            });
+        } else {
             return (
-                <Accordion
-                    dataTestId="vsp-validation-test-result-success"
-                    title={i18n('Scenario: {scenario} | Status: {status}', {
-                        scenario: result.scenario,
-                        status: result.status
-                    })}>
-                    {Object.keys(result.results.testResults).map(
-                        (key, index) => {
-                            let title = unCamelCasedString(key);
-                            if (result.results.testResults[key].length > 0) {
-                                return (
-                                    <Accordion
-                                        dataTestId={title}
-                                        title={title}
-                                        key={index}>
-                                        <TestResultComponent
-                                            tests={
-                                                result.results.testResults[key]
-                                            }
-                                        />
-                                    </Accordion>
-                                );
-                            } else {
-                                return (
-                                    <div>
-                                        {i18n(
-                                            '{title} results are not available',
-                                            {
-                                                title: title
-                                            }
-                                        )}
-                                    </div>
-                                );
-                            }
-                        }
-                    )}
-                </Accordion>
-            );
-        } else if (
-            result.status &&
-            result.status.toLowerCase() === 'failed' &&
-            result.results.errors
-        ) {
-            return (
-                <Accordion
-                    dataTestId="vsp-validation-test-result-success"
-                    title={i18n('Scenario: {scenario} | Status: {status}', {
-                        scenario: result.scenario,
-                        status: result.status
-                    })}>
-                    {result.results.errors.map((element, index) => {
-                        return (
-                            <li type="none" key={index}>
-                                <SVGIcon
-                                    color="negative"
-                                    name="errorCircle"
-                                    labelPosition="right"
-                                />
-                                <span className="validation-results-test-result-label">
-                                    {element.reason + ' | ' + element.advice}
-                                </span>
-                            </li>
-                        );
-                    })}
-                </Accordion>
-            );
-        } else if (result.message || result.httpStatus) {
-            return (
-                <div>
+                <li type="none">
                     <SVGIcon
                         color="negative"
                         name="errorCircle"
                         labelPosition="right"
                     />
                     <span className="validation-results-test-result-label">
-                        {result.message + ' | ' + result.httpStatus}
+                        {(result.code || '') +
+                            ' | ' +
+                            (result.advice || result.message)}
+                    </span>
+                </li>
+            );
+        }
+    }
+
+    renderResults(result) {
+        if (typeof result === 'string' || result instanceof String) {
+            return (
+                <div>
+                    <SVGIcon
+                        color="warning"
+                        name="errorCircle"
+                        labelPosition="right"
+                    />
+                    <span className="validation-results-test-result-label">
+                        {result}
                     </span>
                 </div>
+            );
+        }
+        return Object.keys(result).map((key, index) => {
+            let title = unCamelCasedString(key);
+            if (
+                typeof result[key] === 'string' ||
+                result[key] instanceof String
+            ) {
+                return (
+                    <Accordion
+                        defaultExpanded
+                        dataTestId={title}
+                        title={title}
+                        key={index}>
+                        {this.renderString(result[key])}
+                    </Accordion>
+                );
+            } else if (Array.isArray(result[key])) {
+                if (result[key].length > 0) {
+                    return (
+                        <Accordion
+                            defaultExpanded
+                            dataTestId={title}
+                            title={title}
+                            key={index}>
+                            <TestResultComponent tests={result[key]} />
+                        </Accordion>
+                    );
+                } else {
+                    return (
+                        <Accordion
+                            defaultExpanded
+                            dataTestId={title}
+                            title={title}
+                            key={index}>
+                            {i18n('{title} results are not available', {
+                                title: title
+                            })}
+                        </Accordion>
+                    );
+                }
+            } else {
+                return (
+                    <Accordion
+                        defaultExpanded
+                        dataTestId={title}
+                        title={title}
+                        key={index}>
+                        {this.renderJSON(result[key])}
+                    </Accordion>
+                );
+            }
+        });
+    }
+
+    renderString(result) {
+        return (
+            <li type="none">
+                <textarea
+                    type="textarea"
+                    disabled={true}
+                    className="validation-results-test-result-string"
+                    value={result}
+                />
+            </li>
+        );
+    }
+
+    buildSubAccordions(result) {
+        let results = result.results;
+
+        if (!results) {
+            return (
+                <Accordion
+                    defaultExpanded
+                    dataTestId="vsp-test-no-results"
+                    title={this.getTitle(result)}>
+                    {this.renderJSON(result)}
+                </Accordion>
+            );
+        } else if (typeof results === 'string' || results instanceof String) {
+            return (
+                <Accordion
+                    defaultExpanded
+                    dataTestId="vsp-test-string-results"
+                    title={this.getTitle(result)}>
+                    {this.renderString(results)}
+                </Accordion>
+            );
+        } else {
+            return (
+                <Accordion
+                    defaultExpanded
+                    dataTestId="vsp-test-object-results"
+                    title={this.getTitle(result)}>
+                    {Object.keys(results).length === 0
+                        ? this.renderString(
+                              i18n('{title} results are not available', {
+                                  title: 'Test'
+                              })
+                          )
+                        : Object.keys(results).map(key => {
+                              if (key === 'errors' || key === 'error') {
+                                  return this.renderError(results[key]);
+                              } else if (key === 'testResults') {
+                                  return this.renderResults(results[key]);
+                              } else {
+                                  let title = unCamelCasedString(key);
+                                  if (results[key] instanceof Object) {
+                                      return (
+                                          <Accordion
+                                              defaultExpanded
+                                              dataTestId={title}
+                                              title={title}>
+                                              {this.renderJSON(results[key])}
+                                          </Accordion>
+                                      );
+                                  } else {
+                                      return (
+                                          <Accordion
+                                              defaultExpanded
+                                              dataTestId={title}
+                                              title={title}>
+                                              {this.renderString(results[key])}
+                                          </Accordion>
+                                      );
+                                  }
+                              }
+                          })}
+                </Accordion>
             );
         }
     }

@@ -263,7 +263,7 @@ export const VSPTestsMapFactory = new Factory().attrs({
                     name: 'vspId',
                     description: 'VSP ID',
                     type: 'text',
-                    defaultValue: '',
+                    defaultValue: '$vspid',
                     isOptional: true,
                     metadata: {
                         maxLength: 36,
@@ -275,7 +275,7 @@ export const VSPTestsMapFactory = new Factory().attrs({
                     name: 'vspVersion',
                     description: 'Previous VSP Version',
                     type: 'text',
-                    defaultValue: '',
+                    defaultValue: '$vspPreviousVersion',
                     isOptional: true,
                     metadata: {
                         maxLength: 36,
@@ -315,7 +315,7 @@ export const VSPChecksFactory = new Factory().attrs({
                                     name: 'vspId',
                                     description: 'VSP ID',
                                     type: 'text',
-                                    defaultValue: '',
+                                    defaultValue: '$vspid',
                                     isOptional: true,
                                     metadata: {
                                         maxLength: 36,
@@ -327,7 +327,7 @@ export const VSPChecksFactory = new Factory().attrs({
                                     name: 'vspVersion',
                                     description: 'Previous VSP Version',
                                     type: 'text',
-                                    defaultValue: '',
+                                    defaultValue: '$vspPreviousVersion',
                                     isOptional: true,
                                     metadata: {
                                         maxLength: 36,

@@ -19,6 +19,8 @@ import { mapStateToProps } from 'sdc-app/onboarding/softwareProduct/validationRe
 import SoftwareProductValidationResultsView from 'sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx';
 import { VSPTestResultsSuccessFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationResultsFactory.js';
 import { VSPTestResultsFailureFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationResultsFactory.js';
+import { VSPTestsMapFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
+
 import TestUtils from 'react-dom/test-utils';
 
 describe('SoftwareProductValidationResults Mapper and View Classes', () => {
@@ -28,11 +30,13 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
 
     it('mapStateToProps fail data test', () => {
         const vspTestResults = VSPTestResultsFailureFactory.build();
+        const vspTestsMap = VSPTestsMapFactory.build();
 
         var obj = {
             softwareProduct: {
                 softwareProductValidation: {
-                    vspTestResults: vspTestResults.vspTestResults
+                    vspTestResults: vspTestResults.vspTestResults,
+                    vspTestsMap: vspTestsMap.vspTestsMap
                 }
             }
         };
@@ -42,11 +46,13 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
 
     it('mapStateToProps success data test', () => {
         const vspTestResults = VSPTestResultsSuccessFactory.build();
+        const vspTestsMap = VSPTestsMapFactory.build();
 
         var obj = {
             softwareProduct: {
                 softwareProductValidation: {
-                    vspTestResults: vspTestResults.vspTestResults
+                    vspTestResults: vspTestResults.vspTestResults,
+                    vspTestsMap: vspTestsMap.vspTestsMap
                 }
             }
         };
@@ -56,6 +62,7 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
 
     it('SoftwareProductValidationResultsView test fail render test', () => {
         const vspTestResults = VSPTestResultsFailureFactory.build();
+        const vspTestsMap = VSPTestsMapFactory.build();
 
         const version = {
             name: 1
@@ -65,7 +72,8 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
             softwareProductId: softwareProductId,
             version: version,
             softwareProductValidation: {
-                vspTestResults: vspTestResults.vspTestResults
+                vspTestResults: vspTestResults.vspTestResults,
+                vspTestsMap: vspTestsMap.vspTestsMap
             }
         };
         let vspValidationResultsView = TestUtils.renderIntoDocument(
@@ -76,6 +84,7 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
 
     it('SoftwareProductValidationResultsView test success render test', () => {
         const vspTestResults = VSPTestResultsSuccessFactory.build();
+        const vspTestsMap = VSPTestsMapFactory.build();
 
         let version = {
             name: 1
@@ -85,7 +94,8 @@ describe('SoftwareProductValidationResults Mapper and View Classes', () => {
             softwareProductId: softwareProductId,
             version: version,
             softwareProductValidation: {
-                vspTestResults: vspTestResults.vspTestResults
+                vspTestResults: vspTestResults.vspTestResults,
+                vspTestsMap: vspTestsMap.vspTestsMap
             }
         };
         let vspValidationResultsView = TestUtils.renderIntoDocument(
