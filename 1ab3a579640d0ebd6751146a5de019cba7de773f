@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0866bcb1_ab160a0e",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-04-05T20:36:41Z",
+      "side": 1,
+      "message": "Serge, lets not put any restriction in SDC. Lets make this for allResourceTypes.",
+      "revId": "1ab3a579640d0ebd6751146a5de019cba7de773f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aa71f1b_9f409279",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2019-04-05T20:36:41Z",
+      "side": 1,
+      "message": "Serge, lets not put any restriction in SDC. Lets make this for allResourceTypes.",
+      "revId": "1ab3a579640d0ebd6751146a5de019cba7de773f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
