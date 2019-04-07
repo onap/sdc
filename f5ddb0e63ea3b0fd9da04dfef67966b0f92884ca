@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4265c721_86be87a1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-04-07T12:19:56Z",
+      "side": 1,
+      "message": "Please avoid the use of Either in SDC, we put an effort to remove all of it in the project.",
+      "revId": "f5ddb0e63ea3b0fd9da04dfef67966b0f92884ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64b6f955_e5ba3b1f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-04-07T12:19:56Z",
+      "side": 1,
+      "message": "Please sanitise the received query from user, in order to prevent reflected XSS",
+      "revId": "f5ddb0e63ea3b0fd9da04dfef67966b0f92884ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
