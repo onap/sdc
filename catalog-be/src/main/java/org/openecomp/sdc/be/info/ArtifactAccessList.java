@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.info;
@@ -24,11 +26,13 @@ import java.util.List;
 
 public class ArtifactAccessList {
 
+    ArtifactAccessList() {}
+
+    private List<ArtifactAccessInfo> artifacts;
+
     public ArtifactAccessList(List<ArtifactAccessInfo> artifacts) {
         this.artifacts = artifacts;
     }
-
-    private List<ArtifactAccessInfo> artifacts;
 
     public List<ArtifactAccessInfo> getArtifacts() {
         return artifacts;
