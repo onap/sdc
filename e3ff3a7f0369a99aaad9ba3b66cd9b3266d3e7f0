@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a296e9bf_581ffa7c",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "please convert version.name to a number if that\u0027s how you are comparing it. if the name of the parameters is \u0027name\u0027 i would expect it to return as a string one day",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46cba1d7_913d832a",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "please separate into 2 different assignment for code clarity",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f386a0b_3b756454",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "shouldn\u0027t one comparison be enough here?",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5e9b1730_9aa852af",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "see above",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73daae79_69cec50f",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "why not hide the logic inside a function that returns the accordion]",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 205,
+        "endChar": 13
+      },
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e82c050a_59affa05",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "see above, one method to return the accordion",
+      "range": {
+        "startLine": 225,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 14
+      },
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c25edfbc_c6557da2",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-04-07T08:16:24Z",
+      "side": 1,
+      "message": "see above, one method to return the accordion",
+      "range": {
+        "startLine": 262,
+        "startChar": 0,
+        "endLine": 280,
+        "endChar": 35
+      },
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
