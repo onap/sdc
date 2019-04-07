@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.info;
@@ -31,13 +33,15 @@ public class ArtifactDefinitionInfo {
     private String artifactVersion;
     private String artifactUUID;
 
+    ArtifactDefinitionInfo() {
+    }
+
     public ArtifactDefinitionInfo(ArtifactDefinition artifactDefinition) {
         uniqueId = artifactDefinition.getUniqueId();
         artifactName = artifactDefinition.getArtifactName();
         artifactDisplayName = artifactDefinition.getArtifactDisplayName();
         artifactVersion = artifactDefinition.getArtifactVersion();
         artifactUUID = artifactDefinition.getArtifactUUID();
-
     }
 
     public String getUniqueId() {
