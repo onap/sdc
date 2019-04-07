@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9edbfdb7_9edbf5e4",
+        "filename": "catalog-be/src/main/resources/import/tosca/group-types/groupTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-04-07T13:16:16Z",
+      "side": 1,
+      "message": "Move to the bottom of the file",
+      "revId": "2972ee8a430f8cfa465ed0399f8186ae0d3f09b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "540a38ad_de3079d7",
+        "filename": "catalog-be/src/main/resources/import/tosca/interface-lifecycle-types/interfaceLifecycleTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-04-07T13:16:16Z",
+      "side": 1,
+      "message": "Please move it to bottom of the file, after comment: #ONAP types\nSame way that other files are organized, that way it\u0027s easier to track ONAP changes",
+      "revId": "2972ee8a430f8cfa465ed0399f8186ae0d3f09b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
