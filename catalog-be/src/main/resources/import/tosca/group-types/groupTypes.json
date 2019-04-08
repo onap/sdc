@@ -3,10 +3,6 @@
     "displayName": "Root",
     "icon": "group-root"
   },
-  "tosca.groups.nfv.PlacementGroup": {
-    "displayName": "NFV PlacementGroup",
-    "icon": "group-nfv-placementgroup"
-  },
   "org.openecomp.groups.heat.HeatStack": {
     "displayName": "Heat Stack",
     "icon": "group-heat-stack"
@@ -22,5 +18,9 @@
   "org.openecomp.groups.VfcInstanceGroup": {
     "displayName": "Vfc Instance",
     "icon": "group-vfc-instance"
+  },
+  "tosca.groups.nfv.PlacementGroup": {
+    "displayName": "NFV PlacementGroup",
+    "icon": "group-nfv-placementgroup"
   }
 }

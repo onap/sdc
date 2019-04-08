@@ -3,15 +3,6 @@ tosca.groups.Root:
   interfaces:
     Standard:
       type: tosca.interfaces.node.lifecycle.Standard
-tosca.groups.nfv.PlacementGroup:
-  derived_from: tosca.groups.Root
-  description: PlacementGroup is used for describing the affinity or anti-affinity relationship applicable between the virtualization containers to be created based on different VDUs, or between internal VLs to be created based on different VnfVirtualLinkDesc(s)
-  properties:
-    description:
-      type: string
-      description: Human readable description of the group
-      required: true
-  members: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink ]
 org.openecomp.groups.heat.HeatStack:
   derived_from: tosca.groups.Root
   description: Grouped all heat resources which are in the same heat stack
@@ -129,3 +120,13 @@ org.openecomp.groups.VfcInstanceGroup:
       properties:
         vfc_instance_group_reference:
           type: string
+# NFV group types
+tosca.groups.nfv.PlacementGroup:
+  derived_from: tosca.groups.Root
+  description: PlacementGroup is used for describing the affinity or anti-affinity relationship applicable between the virtualization containers to be created based on different VDUs, or between internal VLs to be created based on different VnfVirtualLinkDesc(s)
+  properties:
+    description:
+      type: string
+      description: Human readable description of the group
+      required: true
+  members: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink ]
