@@ -214,13 +214,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     // new flow US556184
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleArtifactRequest(String componentId, String userId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo,
-                                                                                               String origMd5, String originData, String interfaceUuid, String operationUuid, String parentId, String containerComponentType) {
-        return handleArtifactRequest(componentId, userId, componentType, operation, artifactId, artifactInfo, origMd5, originData, interfaceUuid, operationUuid, parentId, containerComponentType, true, false);
+    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleArtifactRequest(
+            HandleArtifactRequestData requestData) {
+        return handleArtifactRequest(requestData.getComponentId(), requestData.getUserId(),
+                requestData.getComponentType(), requestData.getOperation(), requestData.getArtifactId(),
+                requestData.getArtifactInfo(), requestData.getOrigMd5(), requestData.getOriginData(),
+                requestData.getInterfaceUuid(), requestData.getOperationUuid(), requestData.getParentId(),
+                requestData.getContainerComponentType(), true, false);
     }
 
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleArtifactRequest(String componentId, String userId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo,
-                                                                                               String origMd5, String originData, String interfaceUuid, String operationUuid, String parentId, String containerComponentType, boolean shouldLock, boolean inTransaction) {
+    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleArtifactRequest(String componentId,
+            String userId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId,
+            ArtifactDefinition artifactInfo, String origMd5, String originData, String interfaceUuid,
+            String operationUuid, String parentId, String containerComponentType, boolean shouldLock,
+            boolean inTransaction) {
 
         // step 1 - detect auditing type
         AuditingActionEnum auditingAction = detectAuditingType(operation, origMd5);
@@ -652,8 +659,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     public Either<ImmutablePair<String, byte[]>, ResponseFormat> handleDownloadRequestById(String componentId, String artifactId, String userId, ComponentTypeEnum componentType, String parentId, String containerComponentType) {
         // perform all validation in common flow
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = handleArtifactRequest(componentId, userId, componentType, new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DOWNLOAD), artifactId, null, null, null, null,
-                null, parentId, containerComponentType);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = handleArtifactRequest(new HandleArtifactRequestData()
+                .setComponentId(componentId)
+                .setUserId(userId)
+                .setComponentType(componentType)
+                .setOperation(new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DOWNLOAD))
+                .setArtifactId(artifactId)
+                .setArtifactInfo(null)
+                .setOrigMd5(null)
+                .setOriginData(null)
+                .setInterfaceUuid(null)
+                .setOperationUuid(null)
+                .setParentId(parentId)
+                .setContainerComponentType(containerComponentType));
+                
         if (result.isRight()) {
             return Either.right(result.right().value());
         }
@@ -4776,7 +4795,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
-            actionResult = handleArtifactRequest(componentId, userId, componentType, operation, null, artifactInfo, origMd5, data, null, null, null, null);
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentId)
+                    .setUserId(userId)
+                    .setComponentType(componentType)
+                    .setOperation(operation)
+                    .setArtifactId(null)
+                    .setArtifactInfo(artifactInfo)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(data)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(null)
+                    .setContainerComponentType(null));
+            
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
@@ -4840,8 +4872,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             componentId = componentRiPair.getLeft().getUniqueId();
             ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
 
-            actionResult = handleArtifactRequest(componentInstanceId, userId, ComponentTypeEnum.RESOURCE_INSTANCE, operation, null, artifactInfo, origMd5, data, null, null, componentId, ComponentTypeEnum
-                    .findParamByType(componentType));
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentInstanceId)
+                    .setUserId(userId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperation(operation)
+                    .setArtifactId(null)
+                    .setArtifactInfo(artifactInfo)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(data)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(componentId)
+                    .setContainerComponentType(ComponentTypeEnum.findParamByType(componentType)));
+                    
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult
                         .right()
@@ -4910,7 +4954,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactId = getLatestParentArtifactDataIdByArtifactUUID(artifactUUID, errorWrapper, componentId, componentType);
         }
         if (errorWrapper.isEmpty()) {
-            actionResult = handleArtifactRequest(componentId, userId, componentType, operation, artifactId, artifactInfo, origMd5, data, null, null, null, null);
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentId)
+                    .setUserId(userId)
+                    .setComponentType(componentType)
+                    .setOperation(operation)
+                    .setArtifactId(artifactId)
+                    .setArtifactInfo(artifactInfo)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(data)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(null)
+                    .setContainerComponentType(null));
+                    
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
@@ -4988,8 +5045,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (errorWrapper.isEmpty()) {
             ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
 
-            actionResult = handleArtifactRequest(componentInstanceId, userId, ComponentTypeEnum.RESOURCE_INSTANCE, operation, artifactId, artifactInfo, origMd5, data, null, null, componentId, ComponentTypeEnum
-                    .findParamByType(componentType));
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentInstanceId)
+                    .setUserId(userId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperation(operation)
+                    .setArtifactId(artifactId)
+                    .setArtifactInfo(artifactInfo)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(data)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(componentId)
+                    .setContainerComponentType(ComponentTypeEnum.findParamByType(componentType)));
+
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult
                         .right()
@@ -5060,9 +5129,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 errorWrapper.setInnerElement(interfaceName.right().value());
             }
             if (errorWrapper.isEmpty()) {
-                actionResult = handleArtifactRequest(componentId, userId, componentType, operation,
-                        artifactUUID, artifactInfo, origMd5, data, interfaceName.left().value(),
-                        operationUUID, null, null);
+                actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                        .setComponentId(componentId)
+                        .setUserId(userId)
+                        .setComponentType(componentType)
+                        .setOperation(operation)
+                        .setArtifactId(artifactUUID)
+                        .setArtifactInfo(artifactInfo)
+                        .setOrigMd5(origMd5)
+                        .setOriginData(data)
+                        .setInterfaceUuid(interfaceName.left().value())
+                        .setOperationUuid(operationUUID)
+                        .setParentId(null)
+                        .setContainerComponentType(null));
+
                 if (actionResult.isRight()) {
                     log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                             .right()
@@ -5150,7 +5230,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactId = getLatestParentArtifactDataIdByArtifactUUID(artifactUUID, errorWrapper, componentId, componentType);
         }
         if (errorWrapper.isEmpty()) {
-            actionResult = handleArtifactRequest(componentId, userId, componentType, operation, artifactId, null, origMd5, null, null, null, null, null);
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentId)
+                    .setUserId(userId)
+                    .setComponentType(componentType)
+                    .setOperation(operation)
+                    .setArtifactId(artifactId)
+                    .setArtifactInfo(null)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(null)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(null)
+                    .setContainerComponentType(null));
+                    
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
@@ -5224,8 +5317,21 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         if (errorWrapper.isEmpty()) {
 
-            actionResult = handleArtifactRequest(componentInstanceId, userId, ComponentTypeEnum.RESOURCE_INSTANCE, operation, artifactId, null, origMd5, null, null, null, componentId, ComponentTypeEnum
-                    .findParamByType(componentType));
+            actionResult = handleArtifactRequest(new HandleArtifactRequestData()
+                    .setComponentId(componentInstanceId)
+                    .setUserId(userId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperation(operation)
+                    .setArtifactId(artifactId)
+                    .setArtifactInfo(null)
+                    .setOrigMd5(origMd5)
+                    .setOriginData(null)
+                    .setInterfaceUuid(null)
+                    .setOperationUuid(null)
+                    .setParentId(componentId)
+                    .setContainerComponentType(ComponentTypeEnum
+                            .findParamByType(componentType)));
+                    
 
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_INSTANCE, resourceInstanceName, componentType, componentUuid, actionResult

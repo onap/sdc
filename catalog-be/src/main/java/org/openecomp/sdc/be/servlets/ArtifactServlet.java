@@ -26,7 +26,9 @@ import io.swagger.annotations.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.HandleArtifactRequestData;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -537,8 +539,20 @@ public class ArtifactServlet extends BeGenericServlet {
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         ServletContext context = request.getSession().getServletContext();
         ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType, artifactsLogic.new ArtifactOperationInfo (false, false, ArtifactOperationEnum.DELETE), artifactId, null, null, null, interfaceType, operationName,
-                parentId, null);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(new HandleArtifactRequestData()
+                .setComponentId(componentId)
+                .setUserId(userId)
+                .setComponentType(componentType)
+                .setOperation(artifactsLogic.new ArtifactOperationInfo (false, false, ArtifactOperationEnum.DELETE))
+                .setArtifactId(artifactId)
+                .setArtifactInfo(null)
+                .setOrigMd5(null)
+                .setOriginData(null)
+                .setInterfaceUuid(interfaceType)
+                .setOperationUuid(operationName)
+                .setParentId(parentId)
+                .setContainerComponentType(null));
+                
         Response response;
         if (actionResult.isRight()) {
             response = buildErrorResponse(actionResult.right().value());
@@ -563,9 +577,20 @@ public class ArtifactServlet extends BeGenericServlet {
 
         ServletContext context = request.getSession().getServletContext();
         ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType,
-                artifactsLogic.new ArtifactOperationInfo (false, false,operationEnum), artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
-                containerComponentType);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(new HandleArtifactRequestData()
+                .setComponentId(componentId)
+                .setUserId(userId)
+                .setComponentType(componentType)
+                .setOperation(artifactsLogic.new ArtifactOperationInfo (false, false,operationEnum))
+                .setArtifactId(artifactId)
+                .setArtifactInfo(artifactInfo)
+                .setOrigMd5(origMd5)
+                .setOriginData(data)
+                .setInterfaceUuid(interfaceName)
+                .setOperationUuid(operationName)
+                .setParentId(parentId)
+                .setContainerComponentType(containerComponentType));
+                
         Response response;
         if (actionResult.isRight()) {
             response = buildErrorResponse(actionResult.right().value());
