@@ -22,7 +22,12 @@
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-generic-artifact-browser-service</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
