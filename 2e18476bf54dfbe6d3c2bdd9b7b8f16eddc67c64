@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e429054_295e2207",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-04-08T12:58:54Z",
+      "side": 1,
+      "message": "please unify indentations with another .erb file",
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03a1a6cf_5a23c813",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-04-08T12:58:54Z",
+      "side": 1,
+      "message": "unify indentations",
+      "range": {
+        "startLine": 722,
+        "startChar": 0,
+        "endLine": 736,
+        "endChar": 24
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b47a3654_d3437dbb",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/Configuration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1637,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-04-08T12:58:54Z",
+      "side": 1,
+      "message": "other classes within this file don\u0027t have default constructor in code (at least few of them) so I suggest to remove this one (also applicable to PathsAndNamesDefinition)",
+      "range": {
+        "startLine": 1636,
+        "startChar": 0,
+        "endLine": 1637,
+        "endChar": 9
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
