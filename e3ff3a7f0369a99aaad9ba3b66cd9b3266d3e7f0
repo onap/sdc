@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3d7d94cd_669c108a",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 5282
+      },
+      "writtenOn": "2019-04-08T12:39:43Z",
+      "side": 1,
+      "message": "This is fixed.",
+      "parentUuid": "a296e9bf_581ffa7c",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46cba1d7_913d832a",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "3093f3c3_4b2e7ac8",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5282
+      },
+      "writtenOn": "2019-04-08T12:39:43Z",
+      "side": 1,
+      "message": "This is fixed.",
+      "parentUuid": "46cba1d7_913d832a",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f386a0b_3b756454",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2019-04-07T08:16:24Z",
       "side": 1,
       "message": "shouldn\u0027t one comparison be enough here?",
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b9c5213_42de6efa",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5282
+      },
+      "writtenOn": "2019-04-08T12:39:43Z",
+      "side": 1,
+      "message": "It was done to ensure fail safe identification string values - based on one of the feedbacks from stack-overflow.",
+      "parentUuid": "3f386a0b_3b756454",
       "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -81,6 +135,30 @@
       "writtenOn": "2019-04-07T08:16:24Z",
       "side": 1,
       "message": "why not hide the logic inside a function that returns the accordion]",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 205,
+        "endChar": 13
+      },
+      "revId": "e3ff3a7f0369a99aaad9ba3b66cd9b3266d3e7f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39055163_e6e28b26",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 5282
+      },
+      "writtenOn": "2019-04-08T12:39:43Z",
+      "side": 1,
+      "message": "The logic is already added under a method to construct the accordion. The page view is different based on whether the results are in root node or child node of the accordion. This is to handle inconsistent API response from VTP backend. We discussed with Ofir about the possible complexity in code due to the backend api specs and this was agreed to be fixed in later releases when the VTP backend is standardized. Since this logic is going to be changed after API standardization, can we leave it as-is in this release - as discussed with Ofir, and refactor in subsequent releases?",
+      "parentUuid": "73daae79_69cec50f",
       "range": {
         "startLine": 162,
         "startChar": 0,
