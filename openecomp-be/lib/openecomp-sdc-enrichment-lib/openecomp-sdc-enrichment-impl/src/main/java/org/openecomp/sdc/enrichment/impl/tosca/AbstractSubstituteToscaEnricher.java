@@ -16,6 +16,30 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
+import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
@@ -30,29 +54,6 @@ import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBST
 import static org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType.NATIVE_DEPENDS_ON;
 import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.VNF_NODE_TEMPLATE_ID_SUFFIX;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class AbstractSubstituteToscaEnricher {
 
@@ -77,6 +78,11 @@ public class AbstractSubstituteToscaEnricher {
                 toscaModel.getServiceTemplates().get(toscaModel.getEntryDefinitionServiceTemplate());
 
         if (serviceTemplate == null) {
+            return errors;
+        }
+
+        final TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
+        if (topologyTemplate == null) {
             return errors;
         }
 

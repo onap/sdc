@@ -23,7 +23,11 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 import org.apache.commons.io.IOUtils;
 import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
 import org.openecomp.core.utilities.file.FileContentHandler;
-
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,12 +35,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
-import org.openecomp.sdc.tosca.csar.ToscaMetadata;
-
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
@@ -47,7 +49,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     public ETSIServiceImpl() throws IOException {
         InputStream io = getClass().getClassLoader().getResourceAsStream("nonManoConfig.yaml");
-        if(io == null){
+        if (io == null) {
             throw new IOException("Non Mano configuration not found");
         }
         String data = IOUtils.toString(io, StandardCharsets.UTF_8);
@@ -74,14 +76,6 @@ public class ETSIServiceImpl implements ETSIService {
         }
     }
 
-    private InputStream getMetadata(FileContentHandler contentHandler) throws IOException{
-        if(contentHandler.containsFile(TOSCA_META_PATH_FILE_NAME)){
-            return contentHandler.getFileContent(TOSCA_META_PATH_FILE_NAME);
-        }else if(contentHandler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)){
-            return contentHandler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME);
-        }
-        throw new IOException("TOSCA.meta file does not exist");
-    }
 
     private void updateNonManoLocation(FileContentHandler handler, String nonManoKey, List<String> sources) {
         Map<String, byte[]> files = handler.getFiles();
@@ -92,7 +86,7 @@ public class ETSIServiceImpl implements ETSIService {
         }
     }
 
-    private void updateLocation(String key, String nonManoKey, Map<String, byte[]> files){
+    private void updateLocation(String key, String nonManoKey, Map<String, byte[]> files) {
         if (nonManoKey == null || nonManoKey.isEmpty()) {
             return;
         }
@@ -107,14 +101,11 @@ public class ETSIServiceImpl implements ETSIService {
         }
     }
 
-
     private String getFileName(String key) {
         return key.substring(key.lastIndexOf('/') + 1);
     }
 
-    private boolean hasMetaMandatoryEntries(InputStream metadataInputStream) throws IOException {
-
-        ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metadataInputStream);
+    private boolean hasMetaMandatoryEntries(ToscaMetadata toscaMetadata) {
         Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
         return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_MANIFEST)
                 && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_CHANGE_LOG);
@@ -122,5 +113,61 @@ public class ETSIServiceImpl implements ETSIService {
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
         return handler.containsKey(TOSCA_META_PATH_FILE_NAME) || handler.containsKey(TOSCA_META_ORIG_PATH_FILE_NAME);
+    }
+
+    public ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException {
+        ToscaMetadata metadata = getMetadata(handler);
+        Manifest manifest = getManifest(handler, metadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST));
+        return getResourceType(manifest);
+    }
+
+    public ResourceTypeEnum getResourceType(Manifest manifest) {
+        // Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
+        // validation of manifest done during package upload stage
+        if (manifest != null && !manifest.getMetadata().isEmpty()
+                && MANIFEST_PNF_METADATA.stream().anyMatch(e -> manifest.getMetadata().containsKey(e))) {
+            return ResourceTypeEnum.PNF;
+        }
+        // VNF is default resource type
+        return ResourceTypeEnum.VF;
+    }
+
+    public Manifest getManifest(FileContentHandler handler) throws IOException {
+        ToscaMetadata metadata = getMetadata(handler);
+        return getManifest(handler, metadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST));
+    }
+
+    private Manifest getManifest(FileContentHandler handler, String manifestLocation) throws IOException {
+        try(InputStream manifestInputStream = getManifestInputStream(handler, manifestLocation)) {
+            Manifest onboardingManifest = new SOL004ManifestOnboarding();
+            onboardingManifest.parse(manifestInputStream);
+            return onboardingManifest;
+        }
+    }
+
+    private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
+        ToscaMetadata metadata;
+        if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+        } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+        } else {
+            throw new IOException("TOSCA.meta file not found!");
+        }
+        return metadata;
+    }
+
+    private InputStream getManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
+        InputStream io;
+        if (manifestLocation == null || !handler.containsFile(manifestLocation)) {
+            io = handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
+        } else {
+            io = handler.getFileContent(manifestLocation);
+        }
+
+        if (io == null) {
+            throw new IOException("Manifest file not found!");
+        }
+        return io;
     }
 }

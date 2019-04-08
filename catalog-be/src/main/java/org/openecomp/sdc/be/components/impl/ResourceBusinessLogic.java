@@ -60,13 +60,48 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipImpl;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadCapInfo;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
+import org.openecomp.sdc.be.model.UploadPropInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
+import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
@@ -95,12 +130,25 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.servlet.ServletContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
@@ -477,6 +525,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         try {
             uploadComponentInstanceInfoMap = csarBusinessLogic.getParsedToscaYamlInfo(yamlFileContent, yamlFileName, nodeTypesInfo, csarInfo, nodeName);
             Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
+            if (MapUtils.isEmpty(instances) && newRresource.getResourceType() != ResourceTypeEnum.PNF) {
+                throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
+            }
             preparedResource = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(),
                     inTransaction, shouldLock, isNested).left;
             log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContent);
@@ -917,6 +968,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Resource createdResource;
         try{
             ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName);
+            if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances()) && resource.getResourceType() != ResourceTypeEnum.PNF) {
+                throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+            }
             log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", resource.getName());
             createdResource = createResourceAndRIsFromYaml(yamlName, resource,
                     parsedToscaYamlInfo, AuditingActionEnum.IMPORT_RESOURCE, false, createdArtifacts, topologyTemplateYaml,
@@ -2091,9 +2145,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                       Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
         log.debug("#createResourceInstancesRelations - Going to create relations ");
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
-        if (isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) {
+        if (((isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) &&
+                resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", resource.getUniqueId(), yamlName);
-            BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations","No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
             throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
         }
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
@@ -2969,7 +3024,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Resource, ResponseFormat> eitherResource = null;
         log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
-        if (isEmpty(uploadResInstancesMap)) {
+        if (isEmpty(uploadResInstancesMap) && resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
             throw new ComponentException(responseFormat);
         }
@@ -3002,7 +3057,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
             throw new ComponentException(responseFormat);
         }
-        if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances())) {
+        if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances()) &&
+                resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             log.debug("Error when create resource instance from csar. ComponentInstances list empty");
             BeEcompErrorManager.getInstance().logBeDaoSystemError(
                     "Error when create resource instance from csar. ComponentInstances list empty");
