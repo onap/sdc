@@ -234,6 +234,8 @@ public class Configuration extends BasicConfiguration {
 
     private EnvironmentContext environmentContext;
 
+    private List<GabConfig> gabConfig;
+
     public Map<String, String> getGenericAssetNodeTypes() {
         return genericAssetNodeTypes;
     }
@@ -615,6 +617,14 @@ public class Configuration extends BasicConfiguration {
 
     public void setEnvironmentContext(EnvironmentContext environmentContext) {
         this.environmentContext = environmentContext;
+    }
+
+    public List<GabConfig> getGabConfig() {
+        return gabConfig;
+    }
+
+    public void setGabConfig(List<GabConfig> gabConfig) {
+        this.gabConfig = gabConfig;
     }
 
     public static class ElasticSearchConfig {
@@ -1585,4 +1595,55 @@ public class Configuration extends BasicConfiguration {
         this.healthStatusExclude = healthStatusExclude;
     }
 
+
+    public static class PathsAndNamesDefinition {
+        private String friendlyName;
+        private String path;
+        private String searchable;
+
+        public String getFriendlyName() {
+            return friendlyName;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getSearchable() {
+            return searchable;
+        }
+
+        public void setFriendlyName(String friendlyName) {
+            this.friendlyName = friendlyName;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public void setSearchable(String searchable) {
+            this.searchable = searchable;
+        }
+    }
+
+    public static class GabConfig {
+        private String artifactType;
+        private List<PathsAndNamesDefinition> pathsAndNamesDefinitions;
+
+        public String getArtifactType() {
+            return artifactType;
+        }
+
+        public List<PathsAndNamesDefinition> getPathsAndNamesDefinitions() {
+            return pathsAndNamesDefinitions;
+        }
+
+        public void setArtifactType(String artifactType) {
+            this.artifactType = artifactType;
+        }
+
+        public void setPathsAndNamesDefinitions(List<PathsAndNamesDefinition> pathsAndNamesDefinitions) {
+            this.pathsAndNamesDefinitions = pathsAndNamesDefinitions;
+        }
+    }
 }

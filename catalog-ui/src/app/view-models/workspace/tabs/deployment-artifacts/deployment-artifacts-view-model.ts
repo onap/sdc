@@ -31,6 +31,8 @@ import {GenericArtifactBrowserComponent} from "../../../../ng2/components/logic/
 import {PathsAndNamesDefinition} from "../../../../models/paths-and-names";
 import {ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
 import {IModalConfig} from "sdc-ui/lib/angular/modals/models/modal-config";
+import {CacheService} from "../../../../services/cache-service";
+import {GabConfig} from "../../../../models/gab-config";
 
 interface IDeploymentArtifactsViewModelScope extends IWorkspaceViewModelScope {
     tableHeadersList:Array<any>;
@@ -66,6 +68,7 @@ export class DeploymentArtifactsViewModel {
         '$scope',
         '$templateCache',
         '$filter',
+        'Sdc.Services.CacheService',
         'ValidationUtils',
         'ArtifactsUtils',
         'ModalsHandler',
@@ -76,6 +79,7 @@ export class DeploymentArtifactsViewModel {
     constructor(private $scope:IDeploymentArtifactsViewModelScope,
                 private $templateCache:ng.ITemplateCacheService,
                 private $filter:ng.IFilterService,
+                private cacheService:CacheService,
                 private validationUtils:ValidationUtils,
                 private artifactsUtils:ArtifactsUtils,
                 private ModalsHandler:ModalsHandler,
@@ -278,9 +282,11 @@ export class DeploymentArtifactsViewModel {
         };
 
         this.$scope.openGenericArtifactBrowserModal = (artifact:ArtifactModel):void => {
+            let self = this;
+            const title = 'Generic Artifact Browser';
             let modalConfig: IModalConfig = {
                 size: 'xl',
-                title: 'Generic Artifact Browser',
+                title: title,
                 type: 'custom',
                 buttons: [{
                         id: 'okButton',
@@ -291,13 +297,28 @@ export class DeploymentArtifactsViewModel {
                     {text: "Cancel", size: "'x-small'", closeModal: true}]
             };
 
-            let pathsandnames: PathsAndNamesDefinition[] = [
-                {friendlyName: 'Action', path: 'event.action[2]'},
-                {friendlyName: 'Comment', path: 'event.comment'},
-                {friendlyName: 'Alarm Additional Information',
-                    path: 'event.structure.faultFields.structure.alarmAdditionalInformation.comment'}];
+            const uiConfiguration: any = this.cacheService.get('UIConfiguration');
+            let noConfig: boolean = false;
+            let pathsandnames: PathsAndNamesDefinition[] = [];
 
-            let modalInputs = {
+            if(typeof uiConfiguration.gab === 'undefined') {
+                noConfig = true
+            } else {
+                const gabConfig: GabConfig = uiConfiguration.gab
+                    .find(config => config.artifactType === artifact.artifactType);
+                if(typeof gabConfig === 'undefined') {
+                    noConfig = true;
+                } else {
+                    pathsandnames = gabConfig.pathsAndNamesDefinitions;
+                }
+            }
+
+            if(noConfig) {
+                const msg = self.$filter('translate')("DEPLOYMENT_ARTIFACT_GAB_NO_CONFIG");
+                this.ModalServiceSdcUI.openAlertModal(title, msg);
+            }
+
+            const modalInputs = {
                 pathsandnames: pathsandnames,
                 artifactid: artifact.esId,
                 resourceid: this.$scope.component.uniqueId
