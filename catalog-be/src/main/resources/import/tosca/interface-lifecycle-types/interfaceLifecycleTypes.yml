@@ -53,6 +53,19 @@ tosca.interfaces.nfv.vnf.lifecycle.Nfv:
     description: Invoked before scale_to_level
   scale_to_level_end:
     description: Invoked after scale_to_level
+tosca.interfaces.node.lifecycle.Standard:
+  create:
+    description: Standard lifecycle create operation.
+  configure:
+    description: Standard lifecycle configure operation.
+  start:
+    description: Standard lifecycle start operation.
+  stop:
+    description: Standard lifecycle stop operation.
+  delete:
+    description: Standard lifecycle delete operation.
+
+# NFV interface types
 tosca.interfaces.nfv.Vnflcm:
   #derived_from: tosca.interfaces.Root
   #description: This interface encompasses a set of TOSCA operations corresponding to the VNF LCM operations defined in ETSI GS NFV-IFA 007 as well as to preamble and postamble procedures to the execution of the VNF LCM operations.
@@ -166,14 +179,3 @@ tosca.interfaces.nfv.Vnflcm:
     description: Invoked before scale_to_level
   scale_to_level_end:
     description: Invoked after scale_to_level
-tosca.interfaces.node.lifecycle.Standard:
-  create:
-    description: Standard lifecycle create operation.
-  configure:
-    description: Standard lifecycle configure operation.
-  start:
-    description: Standard lifecycle start operation.
-  stop:
-    description: Standard lifecycle stop operation.
-  delete:
-    description: Standard lifecycle delete operation.
