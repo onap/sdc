@@ -696,6 +696,22 @@ environmentContext:
        - Useful_Non-Revenue
        - General_Non-Revenue
 
+gabConfig:
+  - artifactType: 'VES_EVENTS'
+    pathsandnames:
+      -
+        friendlyName: Action
+        path: event.action[2]
+        searchable: true
+      -
+        friendlyName: Comment
+        path: event.comment
+        searchable: true
+      -
+        friendlyName: Alarm Additional Information
+        path: event.structure.faultFields.structure.alarmAdditionalInformation.comment
+        searchable: true
+
 dmaapConsumerConfiguration:
     hosts: localhost:3905
     consumerGroup: sdc
