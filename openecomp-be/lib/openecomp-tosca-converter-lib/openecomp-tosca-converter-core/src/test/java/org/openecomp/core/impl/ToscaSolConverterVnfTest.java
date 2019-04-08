@@ -36,14 +36,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 
-public class ToscaSolConverterImplTest {
+public class ToscaSolConverterVnfTest {
 
-    private ToscaSolConverterImpl toscaSolConverter;
+    private AbstractToscaSolConverter toscaSolConverter;
     private FileContentHandler fileContentHandler;
 
     @Before
     public void setUp(){
-        toscaSolConverter = new ToscaSolConverterImpl();
+        toscaSolConverter = new ToscaSolConverterVnf();
         fileContentHandler = new FileContentHandler();
     }
 

@@ -112,11 +112,7 @@ public class YamlTemplateParsingHandler {
                 .left()
                 .on(err -> failIfNoNodeTemplates(yamlName));
 
-        Map<String, UploadComponentInstanceInfo> componentInstances = getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemlates);
-        if (MapUtils.isEmpty(componentInstances)) {
-            failIfNotTopologyTemplate(yamlName);
-        }
-        return componentInstances;
+        return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemlates);
     }
 
     private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames, Map<String, Object> nodeTemlates) {

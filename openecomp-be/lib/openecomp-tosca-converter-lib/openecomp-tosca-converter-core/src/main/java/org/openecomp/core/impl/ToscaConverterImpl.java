@@ -17,6 +17,7 @@
 package org.openecomp.core.impl;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.datatypes.CsarFileTypes;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -66,4 +67,8 @@ public class ToscaConverterImpl extends AbstractToscaConverter {
       return toscaServiceModel;
     }
 
+    @Override
+    public void convertTopologyTemplate(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
+        new VnfTopologyTemplateConverter().convertTopologyTemplate(serviceTemplate, readerService);
+    }
 }
