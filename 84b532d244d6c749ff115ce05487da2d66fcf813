@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "47a6b8d4_bb1f5f61",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfMultipleNodeTemplatesTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fd16582_8a3433c2",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4efb729b_f0aeabc8",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfMultipleNodeTemplatesTest.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-08T12:49:15Z",
       "side": 1,
       "message": "Input stream should be protected with try with resource block.",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67152eca_07c6ae77",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfMultipleNodeTemplatesTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4efb729b_f0aeabc8",
       "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "18ccf7d5_c266f269",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Ran Sonar on the code, however test classes were ignored while running sonarlint in intellij. Have you configured sonarqube in intellij to include test classes? How was this configured?",
+      "parentUuid": "406ddf15_bb3f5e48",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d92b3b84_60717589",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2019-04-08T12:49:15Z",
       "side": 1,
       "message": "Resources should be closed\n \nBug\n \nBlocker\nsquid:S2095\n \nConnections, streams, files, and other classes that implement the Closeable interface or its super-interface, AutoCloseable, needs to be closed after use. Further, that close call must be made in a finally block otherwise an exception could keep the call from being made. Preferably, when class implements AutoCloseable, resource should be created using \"try-with-resources\" pattern and will be closed automatically.\nFailure to properly close resources will result in a resource leak which could bring first the application and then perhaps the box it\u0027s on to their knees.\nNoncompliant Code Example\n  private void readTheFile() throws IOException {    Path path \u003d Paths.get(this.fileName);    BufferedReader reader \u003d Files.newBufferedReader(path, this.charset);    // ...    reader.close(); // Noncompliant    // ...    Files.lines(\"input.txt\").forEach(System.out::println); // Noncompliant: The stream needs to be closed  }    private void doSomething() {    OutputStream stream \u003d null;    try {      for (String property : propertyList) {        stream \u003d new FileOutputStream(\"myfile.txt\"); // Noncompliant        // ...      }    } catch (Exception e) {      // ...    } finally {      stream.close(); // Multiple streams were opened. Only the last is closed.    }  }  \nCompliant Solution\n  private void readTheFile(String fileName) throws IOException {      Path path \u003d Paths.get(fileName);      try (BufferedReader reader \u003d Files.newBufferedReader(path, StandardCharsets.UTF_8)) {        reader.readLine();        // ...      }      // ..      try (Stream\u003cString\u003e input \u003d Files.lines(\"input.txt\")) {        input.forEach(System.out::println);      }  }    private void doSomething() {    OutputStream stream \u003d null;    try {      stream \u003d new FileOutputStream(\"myfile.txt\");      for (String property : propertyList) {        // ...      }    } catch (Exception e) {      // ...    } finally {      stream.close();    }  }  \nExceptions\nInstances of the following classes are ignored by this rule because close has no effect:\njava.io.ByteArrayOutputStream\njava.io.ByteArrayInputStream\njava.io.CharArrayReader\njava.io.CharArrayWriter\njava.io.StringReader\njava.io.StringWriter\nJava 7 introduced the try-with-resources statement, which implicitly closes Closeables. All resources opened in a try-with-resources statement are ignored by this rule.\n  try (BufferedReader br \u003d new BufferedReader(new FileReader(fileName))) {    //...  }  catch ( ... ) {    //...  }  \nSee\nMITRE, CWE-459 - Incomplete Cleanup\nCERT, FIO04-J. - Release resources when they are no longer needed\nCERT, FIO42-C. - Close files when they are no longer needed\nTry With Resources",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "187de488_28d5537d",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d92b3b84_60717589",
       "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a341de20_4de9de83",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d485b915_099042e4",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3dfeb126_43747a5a",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2019-04-08T12:49:15Z",
       "side": 1,
       "message": "Should be with try resource block",
+      "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c17b0a9_c30bc6be",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/impl/ToscaSolConverterPnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 4799
+      },
+      "writtenOn": "2019-04-08T16:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dfeb126_43747a5a",
       "revId": "84b532d244d6c749ff115ce05487da2d66fcf813",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
