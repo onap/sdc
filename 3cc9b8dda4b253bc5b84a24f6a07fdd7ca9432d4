@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92dd15d3_f58f646d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/ArtifactTemplateInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-04-08T05:52:52Z",
+      "side": 1,
+      "message": "Please rename with some context to the mock\u0027s purpose/role",
+      "revId": "3cc9b8dda4b253bc5b84a24f6a07fdd7ca9432d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
