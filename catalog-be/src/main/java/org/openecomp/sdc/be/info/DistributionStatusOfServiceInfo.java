@@ -16,27 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.info;
 
 public class DistributionStatusOfServiceInfo {
-    String distributionID;
-    String timestamp;
-    String userId;
-    String deployementStatus;
+    private String distributionID;
+    private String timestamp;
+    private String userId;
+    private String deployementStatus;
 
-    public DistributionStatusOfServiceInfo() {
-        super();
+    public DistributionStatusOfServiceInfo() {}
 
-    }
-
-    public DistributionStatusOfServiceInfo(String distributionID, String timestamp, String userId, String deployementStatus) {
+    public DistributionStatusOfServiceInfo(String distributionID, String timestamp, String userId, String deploymentStatus) {
         super();
         this.distributionID = distributionID;
         this.timestamp = timestamp;
         this.userId = userId;
-        this.deployementStatus = deployementStatus;
+        this.deployementStatus = deploymentStatus;
     }
 
     public String getDistributionID() {

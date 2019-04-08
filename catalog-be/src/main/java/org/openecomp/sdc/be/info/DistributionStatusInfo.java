@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.info;
@@ -24,23 +26,25 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
 public class DistributionStatusInfo {
-    String omfComponentID;
-    String timestamp;
-    String url;
-    String status;
-    String errorReason;
+
+    private String omfComponentID;
+    private String timestamp;
+    private String url;
+    private String status;
+    private String errorReason;
+
+    DistributionStatusInfo() {
+    }
 
     public DistributionStatusInfo(ESTimeBasedEvent distributionStatusEvent) {
-        super();
-        omfComponentID = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName());
-        timestamp = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName());
-        url = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName());
-        status = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_STATUS.getDisplayName());
-        errorReason = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DESC.getDisplayName());
+        omfComponentID = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName()));
+        timestamp = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName()));
+        url = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName()));
+        status = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_STATUS.getDisplayName()));
+        errorReason = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DESC.getDisplayName()));
     }
 
     public DistributionStatusInfo(String omfComponentID, String timestamp, String url, String status) {
-        super();
         this.omfComponentID = omfComponentID;
         this.timestamp = timestamp;
         this.url = url;
