@@ -16,36 +16,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
-
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -63,16 +33,13 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.api.ValidationManager;
 import org.openecomp.core.validation.util.MessageContainerUtil;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
-import org.openecomp.sdc.tosca.csar.ToscaMetadata;
-import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
+import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -116,10 +83,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
-import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -141,6 +107,31 @@ import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
@@ -634,64 +625,17 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
             vspDetails.getFeatureGroups());
     ETSIService etsiService = new ETSIServiceImpl();
-    if(etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())){
+    if (etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())) {
         FileContentHandler handler = toscaServiceModel.getArtifactFiles();
-        try(InputStream manifestInputStream = getManifest(handler)) {
-          Manifest onboardingManifest = new SOL004ManifestOnboarding();
-          onboardingManifest.parse(manifestInputStream);
-          etsiService.moveNonManoFileToArtifactFolder(handler, onboardingManifest);
-          //VSP PNF resource type is supported only for sol004 csar for now, default VSP resource type is VF
-          packageInfo.setResourceType(getResourceType(onboardingManifest));
-        }
+        Manifest manifest = etsiService.getManifest(handler);
+        etsiService.moveNonManoFileToArtifactFolder(handler, manifest);
+        packageInfo.setResourceType(etsiService.getResourceType(manifest).name());
     }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
 
     packageInfoDao.create(packageInfo);
     return packageInfo;
-  }
-
-  private String getResourceType(Manifest onboardingManifest) {
-    //Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
-    // validation of manifest done during package upload stage
-    if(onboardingManifest != null && !onboardingManifest.getMetadata().isEmpty()
-            && MANIFEST_PNF_METADATA.stream().anyMatch(e -> onboardingManifest.getMetadata().containsKey(e))){
-        return ResourceTypeEnum.PNF.name();
-    }
-    //VNF is default resource type
-    return ResourceTypeEnum.VF.name();
-  }
-
-  private InputStream getManifest(FileContentHandler handler) throws IOException {
-    ToscaMetadata metadata = getMetadata(handler);
-    return getManifestInputStream(handler, metadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST));
-  }
-
-  private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
-    ToscaMetadata metadata;
-    if(handler.containsFile(TOSCA_META_PATH_FILE_NAME)){
-      metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
-
-    }else if(handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)){
-      metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
-    }else {
-      throw new IOException("TOSCA.meta file not found!");
-    }
-    return metadata;
-  }
-
-  private InputStream getManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
-    InputStream io;
-    if(manifestLocation == null || !handler.containsFile(manifestLocation)){
-      io = handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
-    }else {
-      io = handler.getFileContent(manifestLocation);
-    }
-
-    if(io == null){
-      throw new IOException("Manifest file not found!");
-    }
-    return io;
   }
 
   void populateVersionsForVlm(String vlmId, Version vlmVersion) {

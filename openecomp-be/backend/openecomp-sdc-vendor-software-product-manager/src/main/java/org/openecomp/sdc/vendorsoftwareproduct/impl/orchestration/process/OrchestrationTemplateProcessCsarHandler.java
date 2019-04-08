@@ -17,11 +17,14 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.impl.AbstractToscaSolConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
-import org.openecomp.core.impl.ToscaSolConverterImpl;
+import org.openecomp.core.impl.ToscaSolConverterPnf;
+import org.openecomp.core.impl.ToscaSolConverterVnf;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -46,7 +49,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
@@ -124,11 +132,12 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
 
     ETSIService etsiService = new ETSIServiceImpl();
     ToscaServiceModel toscaServiceModel;
-    if(etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)){
+    if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
       fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() +
-                      EXT_SEPARATOR + candidateData.getFileSuffix(), candidateData.getContentData().array());
-      toscaServiceModel = new ToscaSolConverterImpl().convert(fileContentHandler);
-    }else{
+              EXT_SEPARATOR + candidateData.getFileSuffix(), candidateData.getContentData().array());
+      final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
+      toscaServiceModel = instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
+    } else {
       toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
     }
     orchestrationUtil.saveServiceModel(vspDetails.getId(),
@@ -136,6 +145,14 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         toscaServiceModel);
     candidateService
         .deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
+  }
+
+  private AbstractToscaSolConverter instantiateToscaConverterFor(ResourceTypeEnum resourceType) {
+    if (resourceType == ResourceTypeEnum.PNF) {
+      return new ToscaSolConverterPnf();
+    }
+    // default is VF
+    return new ToscaSolConverterVnf();
   }
 
   private void addFiles(FileContentHandler fileContentHandler) {
