@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import java.io.IOException;
 
@@ -42,4 +43,25 @@ public interface ETSIService {
      * @param manifest
      */
     void moveNonManoFileToArtifactFolder(FileContentHandler handler, Manifest manifest);
+
+    /**
+     * Retrieves the manifest file from the CSAR
+     * @param handler contains csar artifacts
+     * @throws IOException when TOSCA.meta file or manifest file is invalid
+     */
+    Manifest getManifest(FileContentHandler handler) throws IOException;
+
+    /**
+     * Determmines the type of resource that the CSAR represents
+     * @param handler contains csar artifacts
+     * @throws IOException when TOSCA.meta file or manifest file is invalid
+     */
+    ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException;
+
+    /**
+     * Determmines the type of resource that the CSAR represents
+     * @param manifest contains manifest content
+     * @throws IOException when TOSCA.meta file or manifest file is invalid
+     */
+    ResourceTypeEnum getResourceType(Manifest manifest) throws IOException;
 }
