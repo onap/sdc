@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d5ba31f7_c50f2d8b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-08T07:23:12Z",
+      "side": 1,
+      "message": "I am also not a fan of \u0027Either\u0027 but please notice that I used here an existing implementation of ArtifactsBusinessLogic class and its API which exposes Either as a result.\n\nBut still I understand Your effort and btw this Either is provided against common practice to keep the correct response at right side of the monad. \n\nAnyway if You need a help with removing all those Eithers from SDC components I can also do some cleaning. Just let me know.",
+      "parentUuid": "4265c721_86be87a1",
+      "revId": "f5ddb0e63ea3b0fd9da04dfef67966b0f92884ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64b6f955_e5ba3b1f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GenericArtifactBrowserServlet.java",
         "patchSetId": 6
