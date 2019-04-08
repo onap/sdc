@@ -1,57 +1,50 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.info;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
-
 public class CreateAndAssotiateInfoTest {
 
-	private CreateAndAssotiateInfo createTestSubject() {
-		return new CreateAndAssotiateInfo(new ComponentInstance(), new RequirementCapabilityRelDef());
-	}
-
-	
 	@Test
-	public void testGetNode() throws Exception {
-		CreateAndAssotiateInfo testSubject;
-		ComponentInstance result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getNode();
+	public void shouldHaveValidGettersAndSetters() {
+		assertThat(CreateAndAssotiateInfo.class, hasValidGettersAndSetters());
 	}
 
-	
 	@Test
-	public void testSetNode() throws Exception {
-		CreateAndAssotiateInfo testSubject;
-		ComponentInstance node = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setNode(node);
+	public void testCtor() {
+		ComponentInstance componentInstance = new ComponentInstance();
+		RequirementCapabilityRelDef requirementCapabilityRelDef = new RequirementCapabilityRelDef();
+		CreateAndAssotiateInfo createAndAssotiateInfo = new CreateAndAssotiateInfo(componentInstance, requirementCapabilityRelDef);
+		Assert.assertThat(createAndAssotiateInfo.getAssociate(), is(requirementCapabilityRelDef));
+		Assert.assertThat(createAndAssotiateInfo.getNode(), is(componentInstance));
 	}
 
-	
-	@Test
-	public void testGetAssociate() throws Exception {
-		CreateAndAssotiateInfo testSubject;
-		RequirementCapabilityRelDef result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAssociate();
-	}
-
-	
-	@Test
-	public void testSetAssociate() throws Exception {
-		CreateAndAssotiateInfo testSubject;
-		RequirementCapabilityRelDef associate = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setAssociate(associate);
-	}
 }

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.info;
@@ -27,8 +29,9 @@ public class CreateAndAssotiateInfo {
     private ComponentInstance node;
     private RequirementCapabilityRelDef associate;
 
+    CreateAndAssotiateInfo() {}
+
     public CreateAndAssotiateInfo(ComponentInstance node, RequirementCapabilityRelDef associate) {
-        super();
         this.node = node;
         this.associate = associate;
     }
