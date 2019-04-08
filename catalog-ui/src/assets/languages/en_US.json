@@ -387,7 +387,8 @@
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_BASE_HEAT": "Add Base HEAT Artifact",
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_NETWORK_HEAT": "Add Network HEAT Artifact",
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_VOLUME_HEAT": "Add Volume HEAT Artifact",
-    "DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER": "Add Other Artifact"
+    "DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER": "Add Other Artifact",
+    "DEPLOYMENT_ARTIFACT_GAB_NO_CONFIG": "Generic Artifact Browser has no columns configured"
 
 ,"=========== IMPORT VF ===========": "",
     "IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE": "Create VF",

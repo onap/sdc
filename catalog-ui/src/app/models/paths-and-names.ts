@@ -19,5 +19,5 @@
  */
 
 export class PathsAndNamesDefinition {
-  constructor(public path: string, public friendlyName: string) {}
+  constructor(public path: string, public friendlyName: string, public searchable: boolean) {}
 }
