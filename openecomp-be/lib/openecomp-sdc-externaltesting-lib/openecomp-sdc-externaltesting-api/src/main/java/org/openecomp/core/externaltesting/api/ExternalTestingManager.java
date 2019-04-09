@@ -25,7 +25,12 @@ public interface ExternalTestingManager {
    * Return the configuration of this feature that we want to
    * expose to the client.  Treated as a JSON blob for flexibility.
    */
-  String getConfig();
+  ClientConfiguration getConfig();
+
+  /**
+   * For testing purposes, set the client configuration.
+   */
+  ClientConfiguration setConfig(ClientConfiguration config);
 
   /**
    * Build a tree of all test cases for the client including all
@@ -35,9 +40,16 @@ public interface ExternalTestingManager {
   TestTreeNode getTestCasesAsTree();
 
   /**
-   * Get a list of testing endpoints with name and description.
+   * Get a list of testing endpoints.
    */
-  List<VtpNameDescriptionPair> getEndpoints();
+  List<RemoteTestingEndpointDefinition> getEndpoints();
+
+
+  /**
+   * For functional testing purposes, allow the endpoint configuration
+   * to be provisioned to the BE.
+   */
+  List<RemoteTestingEndpointDefinition> setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
 
   /**
    * Get a list of scenarios from and endpoint.

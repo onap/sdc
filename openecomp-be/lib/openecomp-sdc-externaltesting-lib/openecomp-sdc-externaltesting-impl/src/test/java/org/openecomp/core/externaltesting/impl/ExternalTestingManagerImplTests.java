@@ -19,25 +19,30 @@ package org.openecomp.core.externaltesting.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.core.externaltesting.api.*;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
+import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.dao.types.Version;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -48,36 +53,25 @@ public class ExternalTestingManagerImplTests {
   @Mock
   private RestTemplate restTemplate;
 
-  static {
-    System.setProperty("configuration.yaml", "src/test/data/testconfiguration.yaml");
-  }
+  @Mock
+  private VersioningManager versioningManager;
 
-  class JUnitExternalTestingManagerImpl extends ExternalTestingManagerImpl {
-    JUnitExternalTestingManagerImpl() {
-      super(Collections.singletonList(
-        new VariableResolver() {
+  @Mock
+  private VendorSoftwareProductManager vendorSoftwareProductManager;
 
-        @Override
-        public boolean resolvesVariablesForRequest(VtpTestExecutionRequest requestItem) {
-          return false;
-        }
-
-        @Override
-        public void resolve(VtpTestExecutionRequest requestItem, MultiValueMap<String, Object> body) {
-
-              // unit test resolver does nothing for this case.  See specific test for resolver.
-        }
-      }));
-    }
-  }
+  @Mock
+  private OrchestrationTemplateCandidateManager candidateManager;
 
   @InjectMocks
-  private ExternalTestingManager mgr = new JUnitExternalTestingManagerImpl();
+  private ExternalTestingManagerImpl mgr = new ExternalTestingManagerImpl();
 
   @SuppressWarnings("unchecked")
-  private ExternalTestingManager configTestManager(boolean loadConfig) throws IOException {
+  private ExternalTestingManagerImpl configTestManager(boolean loadConfig) throws IOException {
+
+    MockitoAnnotations.initMocks(this);
+
     if (loadConfig) {
-      ((ExternalTestingManagerImpl) mgr).loadConfig();
+      mgr.init();
     }
 
     ObjectMapper mapper = new ObjectMapper();
@@ -112,7 +106,55 @@ public class ExternalTestingManagerImplTests {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.parseMediaType("application/problem+json"));
-    HttpStatusCodeException missingException = new HttpServerErrorException(HttpStatus.NOT_FOUND, "Not Found", headers, notFound.getBytes(), Charset.defaultCharset());
+
+    byte[] csar = IOUtils.toByteArray(new FileInputStream("src/test/data/csar.zip"));
+    byte[] heat = IOUtils.toByteArray(new FileInputStream("src/test/data/heat.zip"));
+
+    List<Version> versionList = new ArrayList<>();
+    versionList.add(new Version(UUID.randomUUID().toString()));
+
+    Mockito
+        .when(candidateManager.get(
+            ArgumentMatchers.contains("csar"),
+            ArgumentMatchers.any()))
+        .thenReturn(Optional.of(Pair.of("Processed.zip", csar)));
+
+    Mockito
+        .when(candidateManager.get(
+            ArgumentMatchers.contains("heat"),
+            ArgumentMatchers.any()))
+        .thenReturn(Optional.empty());
+
+    Mockito
+        .when(vendorSoftwareProductManager.get(
+            ArgumentMatchers.contains("heat"),
+            ArgumentMatchers.any()))
+        .thenReturn(Optional.of(Pair.of("Processed.zip", heat)));
+
+
+
+    Mockito
+        .when(vendorSoftwareProductManager.get(
+            ArgumentMatchers.contains("missing"),
+            ArgumentMatchers.any()))
+        .thenReturn(Optional.empty());
+
+    Mockito
+        .when(candidateManager.get(
+            ArgumentMatchers.contains("missing"),
+            ArgumentMatchers.any()))
+        .thenReturn(Optional.empty());
+
+
+    Mockito
+        .when(versioningManager.list(
+            ArgumentMatchers.contains("missing")))
+        .thenReturn(versionList);
+
+
+
+
+
 
     Mockito
         .when(restTemplate.exchange(
@@ -124,10 +166,10 @@ public class ExternalTestingManagerImplTests {
 
     Mockito
         .when(restTemplate.exchange(
-        ArgumentMatchers.endsWith("/testsuites"),
-        ArgumentMatchers.eq(HttpMethod.GET),
-        ArgumentMatchers.any(),
-        ArgumentMatchers.eq(listOfPairType)))
+            ArgumentMatchers.endsWith("/testsuites"),
+            ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.eq(listOfPairType)))
         .thenReturn(new ResponseEntity(testSuites, HttpStatus.OK));
 
     Mockito
@@ -166,6 +208,8 @@ public class ExternalTestingManagerImplTests {
             ArgumentMatchers.eq(new ParameterizedTypeReference<VtpTestExecutionResponse>() {})))
         .thenReturn(new ResponseEntity(priorExecution, HttpStatus.OK));
 
+
+    HttpStatusCodeException missingException = new HttpServerErrorException(HttpStatus.NOT_FOUND, "Not Found", headers, notFound.getBytes(), Charset.defaultCharset());
     Mockito
         .when(restTemplate.exchange(
             ArgumentMatchers.endsWith("/missing"),
@@ -173,6 +217,7 @@ public class ExternalTestingManagerImplTests {
             ArgumentMatchers.any(),
             ArgumentMatchers.eq(caseType)))
         .thenThrow(missingException);
+
 
     Mockito
         .when(restTemplate.exchange(
@@ -182,18 +227,31 @@ public class ExternalTestingManagerImplTests {
             ArgumentMatchers.eq(caseType)))
         .thenThrow(new ResourceAccessException("Remote site is down"));
 
+    Mockito
+        .when(restTemplate.exchange(
+            ArgumentMatchers.endsWith("throwexception"),
+            ArgumentMatchers.eq(HttpMethod.POST),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.eq(new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() {})))
+        .thenThrow(missingException);
+
+
     return mgr;
+  }
+
+  @Before
+  public void setConfigLocation() {
+    System.setProperty("config.location", "src/test/data");
   }
 
   @Test
   public void testManager() throws IOException {
-    System.setProperty("configuration.yaml", "src/test/data/managertestconfiguration.yaml");
     ExternalTestingManager m = configTestManager(true);
 
-    String config = m.getConfig();
+    ClientConfiguration config = m.getConfig();
     Assert.assertNotNull(config);
 
-    List<VtpNameDescriptionPair> endpoints = m.getEndpoints();
+    List<RemoteTestingEndpointDefinition> endpoints = m.getEndpoints();
     Assert.assertEquals("two endpoints", 2, endpoints.size());
 
 
@@ -210,8 +268,8 @@ public class ExternalTestingManagerImplTests {
     catch (ExternalTestingException e) {
       // expecting this exception.
       Assert.assertNotNull(e.getDetail());
-      Assert.assertNotEquals(0, e.getCode());
-      Assert.assertNotNull(e.getTitle());
+      Assert.assertNotEquals(0, e.getHttpStatus());
+      Assert.assertNotNull(e.getMessageCode());
     }
 
     // get a particular test case
@@ -222,10 +280,14 @@ public class ExternalTestingManagerImplTests {
     catch (ExternalTestingException e) {
       // expecting this exception.
       Assert.assertNotNull(e.getDetail());
-      Assert.assertNotEquals(0, e.getCode());
-      Assert.assertNotNull(e.getTitle());
+      Assert.assertNotEquals(0, e.getHttpStatus());
+      Assert.assertNotNull(e.getMessageCode());
     }
+  }
 
+  @Test
+  public void testManagerExecution() throws IOException {
+    ExternalTestingManager m = configTestManager(true);
 
     // execute a test.
     List<VtpTestExecutionRequest> requests = new ArrayList<>();
@@ -234,8 +296,8 @@ public class ExternalTestingManagerImplTests {
     requests.add(req);
 
     // send a request with the endpoint defined.
-    List<VtpTestExecutionResponse> responses = m.execute( requests, "rid");
-    Assert.assertEquals(1,responses.size());
+    List<VtpTestExecutionResponse> responses = m.execute(requests, "rid");
+    Assert.assertEquals(1, responses.size());
 
     // send a request for a prior execution.
     VtpTestExecutionResponse execRsp = m.getExecution("repository", "execId");
@@ -243,26 +305,67 @@ public class ExternalTestingManagerImplTests {
   }
 
   @Test
+  public void testMissingConfig() throws IOException {
+    // directory exists but no config file should be found here.
+    System.setProperty("config.location", "src/test");
+    ExternalTestingManager m = configTestManager(true);
+    Assert.assertFalse("missing config client enabled false", m.getConfig().isEnabled());
+    Assert.assertEquals("missing config no endpoints", 0, m.getEndpoints().size());
+  }
+
+  @Test
+  public void testMissingEndpoint() throws IOException {
+    ExternalTestingManager m = configTestManager(true);
+
+    // execute a test.
+    List<VtpTestExecutionRequest> requests = new ArrayList<>();
+    VtpTestExecutionRequest req = new VtpTestExecutionRequest();
+    req.setEndpoint("repository");
+    requests.add(req);
+
+    // send a request with the endpoint defined.
+    try {
+      m.execute(requests, "throwexception");
+    }
+    catch (ExternalTestingException e) {
+      // expected.
+    }
+  }
+
+
+  @Test
+  public void testManagerConfigOverrides() throws IOException {
+    ExternalTestingManager m = configTestManager(false);
+
+    ClientConfiguration cc = new ClientConfiguration();
+    cc.setEnabled(true);
+    m.setConfig(cc);
+    Assert.assertTrue(m.getConfig().isEnabled());
+
+    List<RemoteTestingEndpointDefinition> lst = new ArrayList<>();
+    lst.add(new RemoteTestingEndpointDefinition());
+    lst.get(0).setEnabled(true);
+    m.setEndpoints(lst);
+    Assert.assertEquals(1,m.getEndpoints().size());
+  }
+
+  @Test
   public void testManagerErrorCases() throws IOException {
     ExternalTestingManager m = configTestManager(false);
-      Map<String,Object> expectedEmptyConfig = new HashMap<>();
-      expectedEmptyConfig.put("enabled", false);
-      String expected = new ObjectMapper().writeValueAsString(expectedEmptyConfig);
-      String emptyConfig = m.getConfig();
-      Assert.assertEquals(expected, emptyConfig);
+    ClientConfiguration emptyConfig = m.getConfig();
+    Assert.assertFalse("empty configuration should have client enabled of false", emptyConfig.isEnabled());
 
-      try {
-        m.getEndpoints();
-        Assert.assertTrue("should have exception here", true);
-      }
-      catch (ExternalTestingException e) {
-        // eat the exception cause this is what should happen.
-      }
+    try {
+      m.getEndpoints();
+      Assert.assertTrue("should have exception here", true);
     }
+    catch (ExternalTestingException e) {
+      // eat the exception cause this is what should happen.
+    }
+  }
 
   @Test
   public void testExecutionDistribution() throws IOException {
-    System.setProperty("configuration.yaml", "src/test/data/managertestconfiguration.yaml");
     ExternalTestingManager m = configTestManager(true);
 
     VtpTestExecutionRequest r1 = new VtpTestExecutionRequest();
@@ -279,5 +382,41 @@ public class ExternalTestingManagerImplTests {
 
     List<VtpTestExecutionResponse> results = m.execute(Arrays.asList(r1,r2,r3), "rid");
     Assert.assertEquals("three in two out merged", 2, results.size());
+  }
+
+  @Test
+  public void testArchiveProcessing() throws IOException {
+    ExternalTestingManagerImpl m = configTestManager(true);
+    VtpTestExecutionRequest r1 = new VtpTestExecutionRequest();
+    r1.setScenario("scenario1");
+    r1.setEndpoint("vtp");
+    r1.setParameters(new HashMap<>());
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.csar.content");
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
+
+    LinkedMultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
+    m.attachArchiveContent(r1, body);
+
+    r1.setParameters(new HashMap<>());
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.heat.content");
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
+
+    LinkedMultiValueMap<String,Object> body2 = new LinkedMultiValueMap<>();
+    m.attachArchiveContent(r1, body2);
+
+    // now, let's handle a missing archive.
+    r1.setParameters(new HashMap<>());
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.missing.content");
+    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
+
+    LinkedMultiValueMap<String,Object> body3 = new LinkedMultiValueMap<>();
+    try {
+      m.attachArchiveContent(r1, body3);
+      Assert.fail("expected to receive an exception here");
+    }
+    catch (ExternalTestingException ex) {
+      Assert.assertEquals(500, ex.getHttpStatus());
+    }
+
   }
 }

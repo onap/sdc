@@ -45,7 +45,6 @@
 
     <!-- External Testing Interface Beans -->
     <bean id = "externalTestingManager" class="org.openecomp.core.externaltesting.impl.ExternalTestingManagerImpl"/>
-    <bean id = "csarHandler" class="org.openecomp.core.externaltesting.impl.CsarMetadataVariableResolver"/>
 
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">

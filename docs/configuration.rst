@@ -1222,28 +1222,20 @@ BE-onboarding-configuration.yaml
         truststorePath: /config/truststore
         truststorePassword: <%= @cassandra_truststore_password %>
 
-    # External Testing Configuration
-    externalTestingConfig:
-      #configuration to make available to the front end of this feature
-      client:
-        enabled: true
-      #array of endpoints that SDC-BE should connect with for external testing
-      endpoints:
-        // ID for endpoint
-      - id: vtp
-        // what format of post request does the endpoint accept for runs - json or multi-part form
-        postStyle: application/json
-        // is this endpoint enabled or disabled.
-        enabled: false
-        // base URL for the endpoint
-        url: http://ec2-34-237-35-152.compute-1.amazonaws.com:9090
-        // optional api key to pass in header to endpoint
-        apiKey: blahblahblah
-      - id: certifications repository
-        postStyle: application/json
-        url: http://ec2-34-237-35-152.compute-1.amazonaws.com:9090
-        enabled: true
-        apiKey: blahblahblah2
+externaltesting-configuration.yaml
+**********************************
+
+::
+
+    # configuration to make available to the front end of this feature
+    client:
+      enabled: true
+    # array of endpoints that SDC-BE should connect with for external testing
+    # id,label,enabled,url[,scenariofilter][,apikey]
+    endpoints:
+      - vtp:VTP,true,http://<hostname>[:<port>]/onapapi/vnfsdk-marketplace,c.*
+      - repository:Repository,false,http://<ovphostname>[:<ovpport>]
+
 
 
 vnfrepo-configuration.yaml

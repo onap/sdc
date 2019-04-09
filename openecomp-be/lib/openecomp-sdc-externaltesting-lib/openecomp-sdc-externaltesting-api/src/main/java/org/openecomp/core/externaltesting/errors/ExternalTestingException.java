@@ -26,21 +26,21 @@ public class ExternalTestingException extends RuntimeException {
 
   private static final long serialVersionUID = -4357810130868566088L;
 
-  private final String title;
-  private final int code;
+  private final String messageCode;
+  private final int httpStatus;
   private final String detail;
 
-  public ExternalTestingException(String title, int code, String detail) {
-    super(title);
-    this.title = title;
-    this.code = code;
+  public ExternalTestingException(String messageCode, int httpStatus, String detail) {
+    super(messageCode);
+    this.messageCode = messageCode;
+    this.httpStatus = httpStatus;
     this.detail = detail;
   }
 
-  public ExternalTestingException(String title, int code, String detail, Throwable parent) {
-    super(title, parent);
-    this.title = title;
-    this.code = code;
+  public ExternalTestingException(String messageCode, int httpStatus, String detail, Throwable parent) {
+    super(messageCode, parent);
+    this.messageCode = messageCode;
+    this.httpStatus = httpStatus;
     this.detail = detail;
   }
 

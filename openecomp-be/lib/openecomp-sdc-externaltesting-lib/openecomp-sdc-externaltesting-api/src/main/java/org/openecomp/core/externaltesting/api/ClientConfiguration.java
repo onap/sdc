@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.core.externaltesting.impl;
+package org.openecomp.core.externaltesting.api;
 
 import lombok.Data;
 

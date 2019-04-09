@@ -1,0 +1,5 @@
+client:
+  enabled: true
+endpoints:
+  - vtp,VTP,true,http://bogus.ec2-34-237-35-152.compute-1.amazonaws.com,c.*,FOO
+  - repository,Repository,true,http://bogus.ec2-34-237-35-152.compute-1.amazonaws.com,.*
