@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fj.data.Either;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -41,6 +42,9 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     private static final String INTERFACES = "interfaces";
     private static final String TOSCA_PRESENTATION = "toscaPresentation";
     private static final User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+    private static final String WORKFLOW_ID_STR = "WorkflowId";
+    private static final String WORKFLOW_VERSION_ID_STR = "workflowVersionId";
+    private static final String WORKFLOW_ASSOCIATION_TYPE_NONE_STR = "NONE";
 
     private static Service service;
     private static Resource resource;
@@ -76,26 +80,29 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         // Create default PNF resource
         Either<Resource, RestResponse> createDefaultPNFResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
         if (createDefaultPNFResourceEither.isRight()) {
             fail("Error creating default pnf resource");
         }
         pnfResource = createDefaultPNFResourceEither.left().value();
     }
 
-    private Map<String, Object> buildInterfaceDefinitionForResource(String resourceInterfaceUniqueId,
+    public Map<String, Object> buildInterfaceDefinitionForResource(Resource resource,
+                                                                    String resourceInterfaceUniqueId,
                                                                     String resourceOperationUniqueId) {
         Operation operation = new Operation();
         operation.setName("TestOperationOnResource");
-        operation.setWorkflowId("WorkflowId");
-        operation.setWorkflowVersionId("workflowVersionId");
-        operation.setWorkflowAssociationType("NONE");
-        PropertyDefinition property =
-                resource.getInputs().stream().filter(a -> a.getName().equalsIgnoreCase("nf_naming")).findFirst()
-                        .orElse(new InputDefinition());
-        ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
-        operationInputDefinitionList.add(createOperationInputDefinition("TestInput1", property.getUniqueId()));
-        operation.setInputs(operationInputDefinitionList);
+        operation.setWorkflowId(WORKFLOW_ID_STR);
+        operation.setWorkflowVersionId(WORKFLOW_VERSION_ID_STR);
+        operation.setWorkflowAssociationType(WORKFLOW_ASSOCIATION_TYPE_NONE_STR);
+        if(CollectionUtils.isNotEmpty(resource.getInputs())){
+            PropertyDefinition property =
+                    resource.getInputs().stream().filter(a -> a.getName().equalsIgnoreCase("nf_naming")).findFirst()
+                            .orElse(new InputDefinition());
+            ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
+            operationInputDefinitionList.add(createOperationInputDefinition("TestInput1", property.getUniqueId()));
+            operation.setInputs(operationInputDefinitionList);
+        }
         ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
         operationOutputDefinitionList.add(createOperationOutputDefinition("TestOutput1"));
         operation.setOutputs(operationOutputDefinitionList);
@@ -106,15 +113,17 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     private Map<String, Object> buildInterfaceDefinitionOfGlobalTypeForResource(Resource resource) {
         Operation operation = new Operation();
         operation.setName("create");
-        operation.setWorkflowId("WorkflowId");
-        operation.setWorkflowVersionId("workflowVersionId");
+        operation.setWorkflowId(WORKFLOW_ID_STR);
+        operation.setWorkflowVersionId(WORKFLOW_VERSION_ID_STR);
         operation.setWorkflowAssociationType("NONE");
-        PropertyDefinition property =
-                resource.getInputs().stream().filter(a -> a.getName().equalsIgnoreCase("nf_naming")).findFirst()
-                        .orElse(new InputDefinition());
-        ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
-        operationInputDefinitionList.add(createOperationInputDefinition("TestInput1", property.getUniqueId()));
-        operation.setInputs(operationInputDefinitionList);
+        if(CollectionUtils.isNotEmpty(resource.getInputs())){
+            PropertyDefinition property =
+                    resource.getInputs().stream().filter(a -> a.getName().equalsIgnoreCase("nf_naming")).findFirst()
+                            .orElse(new InputDefinition());
+            ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
+            operationInputDefinitionList.add(createOperationInputDefinition("TestInput1", property.getUniqueId()));
+            operation.setInputs(operationInputDefinitionList);
+        }
         ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
         operationOutputDefinitionList.add(createOperationOutputDefinition("TestOutput1"));
         operation.setOutputs(operationOutputDefinitionList);
@@ -175,11 +184,11 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         return objectAsMap;
     }
 
-    private Map<String, Object> buildInterfaceDefinitionForService() {
+    public Map<String, Object> buildInterfaceDefinitionForService() {
         Operation operation = new Operation();
         operation.setName("TestOperationOnService");
-        operation.setWorkflowId("WorkflowId");
-        operation.setWorkflowVersionId("workflowVersionId");
+        operation.setWorkflowId(WORKFLOW_ID_STR);
+        operation.setWorkflowVersionId(WORKFLOW_VERSION_ID_STR);
         operation.setWorkflowAssociationType("NONE");
         return buildInterfaceDefinitionMap(operation, "TestInterface", serviceInterfaceUniqueId,
                 serviceOperationUniqueId);
@@ -189,8 +198,8 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     public void addInterfaceOperationsOnResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
                 .addInterfaceOperations(resource,
-                        buildInterfaceDefinitionForResource(resourceInterfaceUniqueId, resourceOperationUniqueId),
-                        user);
+                        buildInterfaceDefinitionForResource(resource, resourceInterfaceUniqueId,
+                                resourceOperationUniqueId), user);
         logger.info("addInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
         String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
@@ -213,7 +222,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     public void updateInterfaceOperationsOnResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
                 .updateInterfaceOperations(resource,
-                        buildInterfaceDefinitionForResource(resourceInterfaceUniqueId, resourceOperationUniqueId),
+                        buildInterfaceDefinitionForResource(resource, resourceInterfaceUniqueId, resourceOperationUniqueId),
                         user);
         logger.info("updateInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
@@ -231,7 +240,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test
     public void addInterfaceOperationsOnPNFResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
-                .addInterfaceOperations(pnfResource, buildInterfaceDefinitionForResource(pnfResourceInterfaceUniqueId,
+                .addInterfaceOperations(pnfResource, buildInterfaceDefinitionForResource(pnfResource, pnfResourceInterfaceUniqueId,
                         pnfResourceOperationUniqueId), user);
         logger.info("addInterfaceOperationsOnPNFResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
@@ -256,7 +265,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     public void updateInterfaceOperationsOnPNFResource() throws Exception {
         RestResponse restResponse = InterfaceOperationsRestUtils
                 .updateInterfaceOperations(pnfResource,
-                        buildInterfaceDefinitionForResource(pnfResourceInterfaceUniqueId,
+                        buildInterfaceDefinitionForResource(pnfResource, pnfResourceInterfaceUniqueId,
                                 pnfResourceOperationUniqueId), user);
         logger.info("updateInterfaceOperationsOnPNFResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
@@ -320,9 +329,6 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         logger.info("addInterfaceOperationsOnResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
-        String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, INTERFACES).get(0).toString();
-        InterfaceDefinition interfaceDefinition =
-                ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefinitionStr);
     }
 
     @Test

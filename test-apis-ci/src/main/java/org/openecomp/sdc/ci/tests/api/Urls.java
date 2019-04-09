@@ -408,6 +408,7 @@ public interface Urls {
 	final String UPDATE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaceOperations";
 	final String GET_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
 	final String DELETE_INTERFACE_OPERATIONS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s";
+    final String UPLOAD_INTERFACE_OPERATION_ARTIFACT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/interfaces/%s/operations/%s/artifacts/%s";
 
 	//Requirements
 	String CREATE_REQUIREMENT = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirements";
