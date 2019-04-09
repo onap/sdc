@@ -1,0 +1,88 @@
+.adaptive_placeholder(@height, @radius, @margin: 0em, @border: 1px) {
+  @borders: (@border * 2);
+  box-sizing: border-box;
+  width: 80%;
+  height: ~"calc(@{height} + @{borders})";
+  margin: @margin;
+  padding: @margin;
+  border: @border solid #00bafa;
+  border-radius: @radius;
+  background: #fff;
+  resize: none;
+  outline: none;
+  &[required] {
+    &:focus {
+      border-color: #00bafa;
+      + label {
+        &[placeholder] {
+          &:before {
+            margin: 0;
+            color: #00bafa;
+          }
+        }
+      }
+    }
+    &:focus,
+    &:valid {
+      + label {
+        &[placeholder] {
+          &:before {
+            transform: translate(0, (-1em)) scale(.9, .9);
+          }
+        }
+      }
+    }
+    &:invalid {
+      + label {
+        &[placeholder] {
+          &[alt] {
+            &:before {
+              content: attr(alt);
+            }
+          }
+        }
+      }
+    }
+    + label {
+      &[placeholder] {
+        display: block;
+        pointer-events: none;
+        line-height: @margin * 1.25;
+        margin-top: ~"calc(-1em - @{borders})";
+        margin-bottom: ~"calc((@{height} - @{margin}) + @{borders})";
+        &:before {
+          content: attr(placeholder);
+          display: inline-block;
+          margin: 0 ~"calc(@{margin} + @{borders})";
+          padding: 0 2px;
+          color: #00bafa;
+          font-size: small;
+          white-space: nowrap;
+          transition: .3s ease-in-out;
+
+          background-image: linear-gradient(to bottom, #fff, #fff);
+          background-size: 100% 5px;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      }
+    }
+  }
+}
+
+.gab-column-provider-input {
+  @height: 2em;
+  &[type="text"] {
+    .adaptive_placeholder(@height, (@height / 2));
+  }
+}
+
+.gab-column-provider-input.ng-valid[required], .gab-column-provider-input.ng-valid.required  {
+  border-left: 5px solid #42bb48;
+  border-right: 5px solid #42bb48;
+}
+
+.gab-column-provider-input.ng-invalid:not(form)  {
+  border-left: 5px solid #ff0511;
+  border-right: 5px solid #ff0511;
+}
