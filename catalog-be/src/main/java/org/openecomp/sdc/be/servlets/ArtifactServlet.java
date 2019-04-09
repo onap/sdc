@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -475,6 +476,57 @@ public class ArtifactServlet extends BeGenericServlet {
         }
     }
 
+
+    @POST
+    @Path("/{assetType}/{uuid}/interfaces/{interfaceUUID}/operations/{operationUUID}/artifacts/{artifactUUID}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "uploads of artifact to component operation workflow", httpMethod = "POST", notes = "uploads of artifact to component operation workflow")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
+            @ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+            @ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+            @ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+            @ApiResponse(code = 400, message = "Artifact name given in input already exists in the context of the asset - SVC4125"),
+            @ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+            @ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+            @ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+    public Response uploadInterfaceOperationArtifact(
+            @ApiParam(value = "Asset type") @PathParam("assetType") String assetType,
+            @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+            @ApiParam(value = "The uuid of the interface", required = true)@PathParam("interfaceUUID") final String interfaceUUID,
+            @ApiParam(value = "The uuid of the operation", required = true)@PathParam("operationUUID") final String operationUUID,
+            @ApiParam(value = "The uuid of the artifact", required = true)@PathParam("artifactUUID") final String artifactUUID,
+            @ApiParam( hidden = true) String data,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @HeaderParam(value = Constants.MD5_HEADER) String origMd5,
+            @Context final HttpServletRequest request) {
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}" , url);
+
+        try {
+            ServletContext context = request.getSession().getServletContext();
+            ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
+            Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither =
+                    artifactsLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request,
+                            ComponentTypeEnum.findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
+                            new ResourceCommonInfo(assetType), artifactsLogic.new ArtifactOperationInfo(true,
+                                    false, ArtifactOperationEnum.UPDATE));
+            if (uploadArtifactEither.isRight()) {
+                log.debug("failed to update artifact");
+                return buildErrorResponse(uploadArtifactEither.right().value());
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), uploadArtifactEither.left().value());
+        }
+        catch (Exception e) {
+            final String message = "failed to update artifact on a resource or service";
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+            log.debug(message, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
 
     // ////////// API END ///////////////////////////
 

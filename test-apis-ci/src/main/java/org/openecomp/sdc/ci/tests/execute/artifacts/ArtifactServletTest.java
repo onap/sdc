@@ -42,6 +42,7 @@ import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -54,6 +55,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.*;
@@ -73,6 +75,10 @@ import java.util.Map;
 
 public class ArtifactServletTest extends ComponentBaseTest {
 
+	private static final String ARTIFACT_NAME_STR = "artifactName";
+	private static final String ARTIFACT_TYPE_STR = "artifactType";
+	private static final String ARTIFACT_DESCRIPTION_STR = "description";
+	private static final String ARTIFACT_PAYLOAD_DATA_STR = "payloadData";
 	private static Logger log = LoggerFactory.getLogger(ArtifactServletTest.class.getName());
 	protected static final String UPLOAD_ARTIFACT_PAYLOAD = "UHVUVFktVXNlci1LZXktRmlsZS0yOiBzc2gtcnNhDQpFbmNyeXB0aW9uOiBhZXMyNTYtY2JjDQpDb21tZW5wOA0K";
 	protected static final String UPLOAD_ARTIFACT_NAME = "TLV_prv.ppk";
@@ -84,6 +90,8 @@ public class ArtifactServletTest extends ComponentBaseTest {
 	protected String serviceVersion;
 	protected Resource resourceDetailsVFCcomp;
 	protected Service defaultService1;
+	protected Resource resource;
+	protected Resource pnfResource;
 
 	protected User sdncUserDetails;
 
@@ -106,6 +114,14 @@ public class ArtifactServletTest extends ComponentBaseTest {
 		Either<Service, RestResponse> defaultService1e = AtomicOperationUtils
 				.createDefaultService(UserRoleEnum.DESIGNER, true);
 		defaultService1 = defaultService1e.left().value();
+
+		Either<Resource, RestResponse> createDefaultResourceEither =
+				AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+		resource = createDefaultResourceEither.left().value();
+
+		Either<Resource, RestResponse> createDefaultPNFResourceEither =
+				AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+		pnfResource = createDefaultPNFResourceEither.left().value();
 	}
 
 	@Test
@@ -161,12 +177,12 @@ public class ArtifactServletTest extends ComponentBaseTest {
 			String artifactId = getLifecycleArtifactUid(response);
 
 			Map<String, Object> jsonBody = new HashMap<String, Object>();
-			jsonBody.put("artifactName", "TLV_prv.ppk");
+			jsonBody.put(ARTIFACT_NAME_STR, "TLV_prv.ppk");
 			jsonBody.put("artifactDisplayName", "configure");
-			jsonBody.put("artifactType", "SHELL");
+			jsonBody.put(ARTIFACT_TYPE_STR, "SHELL");
 			jsonBody.put("mandatory", "false");
 			String newDescription = "new something";
-			jsonBody.put("description", newDescription);
+			jsonBody.put(ARTIFACT_DESCRIPTION_STR, newDescription);
 			jsonBody.put("artifactLabel", "configure");
 			userBodyJson = gson.toJson(jsonBody);
 
@@ -193,7 +209,7 @@ public class ArtifactServletTest extends ComponentBaseTest {
 			responseMap = (JSONObject) responseMap.get("operations");
 			responseMap = (JSONObject) responseMap.get(operationName.toLowerCase());
 			responseMap = (JSONObject) responseMap.get("implementation");
-			String description = (String) responseMap.get("description");
+			String description = (String) responseMap.get(ARTIFACT_DESCRIPTION_STR);
 
 			AssertJUnit.assertEquals("the new description value was not set", newDescription, description);
 
@@ -214,12 +230,12 @@ public class ArtifactServletTest extends ComponentBaseTest {
 
 	protected String createUploadArtifactBodyJson() {
 		Map<String, Object> jsonBody = new HashMap<String, Object>();
-		jsonBody.put("artifactName", UPLOAD_ARTIFACT_NAME);
+		jsonBody.put(ARTIFACT_NAME_STR, UPLOAD_ARTIFACT_NAME);
 		jsonBody.put("artifactDisplayName", "configure");
-		jsonBody.put("artifactType", "SHELL");
+		jsonBody.put(ARTIFACT_TYPE_STR, "SHELL");
 		jsonBody.put("mandatory", "false");
-		jsonBody.put("description", "ff");
-		jsonBody.put("payloadData", UPLOAD_ARTIFACT_PAYLOAD);
+		jsonBody.put(ARTIFACT_DESCRIPTION_STR, "ff");
+		jsonBody.put(ARTIFACT_PAYLOAD_DATA_STR, UPLOAD_ARTIFACT_PAYLOAD);
 		jsonBody.put("artifactLabel", "configure");
 		return gson.toJson(jsonBody);
 	}
@@ -310,10 +326,10 @@ public class ArtifactServletTest extends ComponentBaseTest {
 
 	protected String createLoadArtifactBody() {
 		Map<String, Object> json = new HashMap<String, Object>();
-		json.put("artifactName", "install_apache2.sh");
-		json.put("artifactType", "SHELL");
-		json.put("description", "ddd");
-		json.put("payloadData", "UEsDBAoAAAAIAAeLb0bDQz");
+		json.put(ARTIFACT_NAME_STR, "install_apache2.sh");
+		json.put(ARTIFACT_TYPE_STR, "SHELL");
+		json.put(ARTIFACT_DESCRIPTION_STR, "ddd");
+		json.put(ARTIFACT_PAYLOAD_DATA_STR, "UEsDBAoAAAAIAAeLb0bDQz");
 		json.put("artifactLabel", "name123");
 
 		String jsonStr = gson.toJson(json);
@@ -442,8 +458,8 @@ public class ArtifactServletTest extends ComponentBaseTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			Map<String, Object> json = new HashMap<String, Object>();
-			json.put("description", "desc");
-			json.put("payloadData", "UEsDBAoAAAAIAAeLb0bDQz");
+			json.put(ARTIFACT_DESCRIPTION_STR, "desc");
+			json.put(ARTIFACT_PAYLOAD_DATA_STR, "UEsDBAoAAAAIAAeLb0bDQz");
 			json.put("Content-MD5", "YTg2Mjg4MWJhNmI5NzBiNzdDFkMWI=");
 
 			String jsonBody = gson.toJson(json);
@@ -466,10 +482,10 @@ public class ArtifactServletTest extends ComponentBaseTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			HashMap<String, Object> json = new HashMap<String, Object>();
-			json.put("artifactName", "install_apache.sh");
-			json.put("artifactType", "SHELL");
-			json.put("description", "kjglkh");
-			json.put("payloadData", "UEsDBYTEIWUYIFHWFMABCNAoAAAAIAAeLb0bDQz");
+			json.put(ARTIFACT_NAME_STR, "install_apache.sh");
+			json.put(ARTIFACT_TYPE_STR, "SHELL");
+			json.put(ARTIFACT_DESCRIPTION_STR, "kjglkh");
+			json.put(ARTIFACT_PAYLOAD_DATA_STR, "UEsDBYTEIWUYIFHWFMABCNAoAAAAIAAeLb0bDQz");
 			json.put("artifactLabel", "name123");
 			String url = String.format(Urls.ADD_ARTIFACT_TO_RESOURCE, config.getCatalogBeHost(),
 					config.getCatalogBePort(), resourceDetailsVFCcomp.getUniqueId());
@@ -575,10 +591,10 @@ public class ArtifactServletTest extends ComponentBaseTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			Map<String, Object> json = new HashMap<String, Object>();
-			json.put("artifactName", "install_apache.sh");
-			json.put("artifactType", "SHELL11");
-			json.put("description", "fff");
-			json.put("payloadData", "UEsDBAoAAAAIAAeLb0bDQz");
+			json.put(ARTIFACT_NAME_STR, "install_apache.sh");
+			json.put(ARTIFACT_TYPE_STR, "SHELL11");
+			json.put(ARTIFACT_DESCRIPTION_STR, "fff");
+			json.put(ARTIFACT_PAYLOAD_DATA_STR, "UEsDBAoAAAAIAAeLb0bDQz");
 			json.put("artifactLabel", "name123");
 
 			String jsonStr = gson.toJson(json);
@@ -643,4 +659,91 @@ public class ArtifactServletTest extends ComponentBaseTest {
 		}
 		AssertJUnit.assertTrue(isExist);
 	}
+
+	@Test
+	public void addInterfaceOperationArtifactOnResource() throws Exception {
+		try (CloseableHttpClient httpclient = HttpClients.createDefault()){
+			Map<String, Object> artifactData = new HashMap<>();
+			artifactData.put(ARTIFACT_NAME_STR, "TestWF-1_0.bpmn");
+			artifactData.put(ARTIFACT_TYPE_STR, "WORKFLOW");
+			artifactData.put(ARTIFACT_DESCRIPTION_STR, "Resource Workflow Artifact Description");
+			artifactData.put(ARTIFACT_PAYLOAD_DATA_STR, "Test Data of Resource");
+
+			String jsonStr = gson.toJson(artifactData);
+			RestResponse restResponse = InterfaceOperationsRestUtils.addInterfaceOperations(resource,
+					new InterfaceOperationsTest().buildInterfaceDefinitionForResource(resource,
+							null, null),
+					ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+			String interfaceDefStr = ResponseParser.getListFromJson(restResponse, "interfaces").get(0).toString();
+			InterfaceDefinition interfaceDefinition = ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefStr);
+			String interfaceUUID = interfaceDefinition.getUniqueId();
+			String operationUUID = interfaceDefinition.getOperationsMap().keySet().stream().findFirst().orElse(null);
+			String artifactUUID = interfaceDefinition.getOperationsMap().values().stream().findFirst().get().getImplementation().getArtifactUUID();
+
+			String url = String.format(Urls.UPLOAD_INTERFACE_OPERATION_ARTIFACT, config.getCatalogBeHost(),
+					config.getCatalogBePort(), ComponentTypeEnum.findParamByType(resource.getComponentType()),
+					resource.getUUID(), interfaceUUID, operationUUID, artifactUUID);
+			CloseableHttpResponse result = httpclient.execute(createPostAddArtifactRequeast(jsonStr, url, true));
+			int status = result.getStatusLine().getStatusCode();
+			AssertJUnit.assertEquals("add informational artifact request returned status: " + status, 200, status);
+		}
+	}
+
+	@Test
+	public void addInterfaceOperationArtifactOnPNFResource() throws Exception {
+		try (CloseableHttpClient httpclient = HttpClients.createDefault()){
+			Map<String, Object> artifactData = new HashMap<>();
+			artifactData.put(ARTIFACT_NAME_STR, "TestWF-1_0.bpmn");
+			artifactData.put(ARTIFACT_TYPE_STR, "WORKFLOW");
+			artifactData.put(ARTIFACT_DESCRIPTION_STR, "PNF Resource Workflow Artifact Description");
+			artifactData.put(ARTIFACT_PAYLOAD_DATA_STR, "Test Data of PNF Resource");
+
+			String jsonStr = gson.toJson(artifactData);
+			RestResponse restResponse = InterfaceOperationsRestUtils.addInterfaceOperations(pnfResource,
+					new InterfaceOperationsTest().buildInterfaceDefinitionForResource(pnfResource,
+							null, null),
+					ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+			String interfaceDefStr = ResponseParser.getListFromJson(restResponse, "interfaces").get(0).toString();
+			InterfaceDefinition interfaceDefinition = ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefStr);
+			String interfaceUUID = interfaceDefinition.getUniqueId();
+			String operationUUID = interfaceDefinition.getOperationsMap().keySet().stream().findFirst().orElse(null);
+			String artifactUUID = interfaceDefinition.getOperationsMap().values().stream().findFirst().get().getImplementation().getArtifactUUID();
+
+			String url = String.format(Urls.UPLOAD_INTERFACE_OPERATION_ARTIFACT, config.getCatalogBeHost(),
+					config.getCatalogBePort(), ComponentTypeEnum.findParamByType(pnfResource.getComponentType()),
+					pnfResource.getUUID(), interfaceUUID, operationUUID, artifactUUID);
+			CloseableHttpResponse result = httpclient.execute(createPostAddArtifactRequeast(jsonStr, url, true));
+			int status = result.getStatusLine().getStatusCode();
+			AssertJUnit.assertEquals("add informational artifact request returned status: " + status, 200, status);
+		}
+	}
+
+	@Test
+	public void addInterfaceOperationArtifactOnService() throws Exception {
+		try (CloseableHttpClient httpclient = HttpClients.createDefault()){
+			Map<String, Object> artifactData = new HashMap<>();
+			artifactData.put(ARTIFACT_NAME_STR, "TestWF-1_0.bpmn");
+			artifactData.put(ARTIFACT_TYPE_STR, "WORKFLOW");
+			artifactData.put(ARTIFACT_DESCRIPTION_STR, "Service Workflow Artifact Description");
+			artifactData.put(ARTIFACT_PAYLOAD_DATA_STR, "Test Data of Service");
+
+			String jsonStr = gson.toJson(artifactData);
+			RestResponse restResponse = InterfaceOperationsRestUtils.addInterfaceOperations(defaultService1,
+					new InterfaceOperationsTest().buildInterfaceDefinitionForService(),
+					ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+			String interfaceDefinitionStr = ResponseParser.getListFromJson(restResponse, "interfaces").get(0).toString();
+			InterfaceDefinition interfaceDefinition = ResponseParser.convertInterfaceDefinitionResponseToJavaObject(interfaceDefinitionStr);
+			String interfaceUUID = interfaceDefinition.getUniqueId();
+			String operationUUID = interfaceDefinition.getOperationsMap().keySet().stream().findFirst().orElse(null);
+			String artifactUUID = interfaceDefinition.getOperationsMap().values().stream().findFirst().get().getImplementation().getArtifactUUID();
+
+			String url = String.format(Urls.UPLOAD_INTERFACE_OPERATION_ARTIFACT, config.getCatalogBeHost(),
+					config.getCatalogBePort(), ComponentTypeEnum.findParamByType(defaultService1.getComponentType()),
+					defaultService1.getUUID(), interfaceUUID, operationUUID, artifactUUID);
+			CloseableHttpResponse result = httpclient.execute(createPostAddArtifactRequeast(jsonStr, url, true));
+			int status = result.getStatusLine().getStatusCode();
+			AssertJUnit.assertEquals("add informational artifact request returned status: " + status, 200, status);
+		}
+	}
+
 }
