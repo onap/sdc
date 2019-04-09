@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.externaltesting.api.ClientConfiguration;
+import org.openecomp.core.externaltesting.api.RemoteTestingEndpointDefinition;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +42,7 @@ public class ConfigurationTests {
 
   @Test
   public void testConfig() throws Exception {
-    try (InputStream fileInput = new FileInputStream(new File("src/test/data/testconfiguration.yaml"))) {
+    try (InputStream fileInput = new FileInputStream(new File("src/test/data/config-externaltesting.yaml"))) {
       YamlUtil yamlUtil = new YamlUtil();
       Object raw = yamlUtil.yamlToMap(fileInput);
       TestingAccessConfig accessConfig = new ObjectMapper().convertValue(raw, TestingAccessConfig.class);

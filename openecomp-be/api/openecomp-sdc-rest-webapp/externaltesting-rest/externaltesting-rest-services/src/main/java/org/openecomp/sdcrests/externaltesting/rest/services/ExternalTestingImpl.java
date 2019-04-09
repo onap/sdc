@@ -24,6 +24,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdcrests.externaltesting.rest.ExternalTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Named;
@@ -62,6 +63,22 @@ public class ExternalTestingImpl implements ExternalTesting {
   }
 
   /**
+   * To enable automated functional testing, allow
+   * a put for the client configuration.
+   * @return JSON response content.
+   */
+  @Override
+  public Response setConfig(ClientConfiguration config) {
+    try {
+      return Response.ok(testingManager.setConfig(config)).build();
+    }
+    catch (ExternalTestingException e) {
+      return convertTestingException(e);
+    }
+  }
+
+
+  /**
    * Return the test tree structure created by the testing manager.
    * @return JSON response content.
    */
@@ -83,8 +100,22 @@ public class ExternalTestingImpl implements ExternalTesting {
     catch (ExternalTestingException e) {
       return convertTestingException(e);
     }
-
   }
+
+  /**
+   * To enable automated functional testing, allow a put of the endpoints.
+   * @return JSON response content.
+   */
+  @Override
+  public Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints) {
+    try {
+      return Response.ok(testingManager.setEndpoints(endpoints)).build();
+    }
+    catch (ExternalTestingException e) {
+      return convertTestingException(e);
+    }
+  }
+
   @Override
   public Response getScenarios(String endpoint) {
     try {
@@ -130,13 +161,12 @@ public class ExternalTestingImpl implements ExternalTesting {
   public Response execute(List<VtpTestExecutionRequest> req, String requestId) {
     try {
       List<VtpTestExecutionResponse> responses = testingManager.execute(req, requestId);
-      List<Integer> statuses = responses.stream().map(r-> Optional.ofNullable(r.getHttpStatus()).orElse(200)).distinct().collect(Collectors.toList());
+      List<Integer> statuses = responses.stream().map(r-> Optional.ofNullable(r.getHttpStatus()).orElse(HttpStatus.OK.value())).distinct().collect(Collectors.toList());
       if (statuses.size() == 1) {
-        // 1 status so use it...
-        return Response.status(statuses.get(0)).entity(responses).build();
+        return Response.status(HttpStatus.OK.value()).entity(responses).build();
       }
       else {
-        return Response.status(207).entity(responses).build();
+        return Response.status(HttpStatus.MULTI_STATUS.value()).entity(responses).build();
       }
     }
     catch (ExternalTestingException e) {
@@ -156,9 +186,9 @@ public class ExternalTestingImpl implements ExternalTesting {
 
   private Response convertTestingException(ExternalTestingException e) {
     if (logger.isErrorEnabled()) {
-      logger.error("testing exception {} {} {}", e.getTitle(), e.getCode(), e.getDetail(), e);
+      logger.error("testing exception {} {} {}", e.getMessageCode(), e.getHttpStatus(), e.getDetail(), e);
     }
-    TestErrorBody body = new TestErrorBody(e.getTitle(), e.getCode(), e.getDetail());
-    return Response.status(e.getCode()).entity(body).build();
+    TestErrorBody body = new TestErrorBody(e.getMessageCode(), e.getHttpStatus(), e.getDetail());
+    return Response.status(e.getHttpStatus()).entity(body).build();
   }
 }

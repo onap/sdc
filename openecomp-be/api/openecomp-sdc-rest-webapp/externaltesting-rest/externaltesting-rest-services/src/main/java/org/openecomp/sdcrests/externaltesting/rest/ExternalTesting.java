@@ -17,6 +17,8 @@
 package org.openecomp.sdcrests.externaltesting.rest;
 
 import io.swagger.annotations.Api;
+import org.openecomp.core.externaltesting.api.ClientConfiguration;
+import org.openecomp.core.externaltesting.api.RemoteTestingEndpointDefinition;
 import org.openecomp.core.externaltesting.api.VtpTestExecutionRequest;
 import org.springframework.validation.annotation.Validated;
 
@@ -38,6 +40,10 @@ public interface ExternalTesting {
   @Path("/config")
   Response getConfig();
 
+  @PUT
+  @Path("/config")
+  Response setConfig(ClientConfiguration config);
+
   @GET
   @Path("/testcasetree")
   Response getTestCasesAsTree();
@@ -45,6 +51,10 @@ public interface ExternalTesting {
   @GET
   @Path("/endpoints")
   Response getEndpoints();
+
+  @PUT
+  @Path("/endpoints")
+  Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
 
   @GET
   @Path("/endpoints/{endpointId}/scenarios")

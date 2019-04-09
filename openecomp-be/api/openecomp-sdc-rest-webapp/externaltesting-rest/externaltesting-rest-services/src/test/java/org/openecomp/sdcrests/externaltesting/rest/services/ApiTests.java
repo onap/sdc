@@ -58,13 +58,23 @@ public class ApiTests {
     Assert.assertNotNull(testing.getTestCasesAsTree());
 
     List<VtpTestExecutionRequest> requests =
-            Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
+        Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
     Assert.assertNotNull(testing.execute(requests, "requestId"));
   }
 
   class ApiTestExternalTestingManager implements ExternalTestingManager {
     @Override
-    public String getConfig() {
+    public ClientConfiguration getConfig() {
+      throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
+    }
+
+    @Override
+    public ClientConfiguration setConfig(ClientConfiguration config) {
+      throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
+    }
+
+    @Override
+    public List<RemoteTestingEndpointDefinition> setEndpoints(List<RemoteTestingEndpointDefinition> endpoints) {
       throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
     }
 
@@ -74,7 +84,7 @@ public class ApiTests {
     }
 
     @Override
-    public List<VtpNameDescriptionPair> getEndpoints() {
+    public List<RemoteTestingEndpointDefinition> getEndpoints() {
       throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
     }
 
@@ -177,7 +187,7 @@ public class ApiTests {
     }
 
     List<VtpTestExecutionRequest> requestsF =
-            Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
+        Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
 
     try {
       testingF.execute(requestsF, null);

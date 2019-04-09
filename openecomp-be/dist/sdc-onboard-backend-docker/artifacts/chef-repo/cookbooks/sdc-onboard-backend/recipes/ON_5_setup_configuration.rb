@@ -37,3 +37,17 @@ template "VnfrepoConfiguration" do
       :VNFREPO_PORT => node['VnfRepo']['vnfRepoPort']
    })
 end
+
+
+
+template "ExternalTestingConfiguration" do
+   path "#{ENV['JETTY_BASE']}/config/onboarding-be/externaltesting-configuration.yaml"
+   source "externaltesting-configuration.yaml.erb"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+   variables({
+      :EP1_CONFIG => node['EXTTEST']['ep1_config'],
+      :EP2_CONFIG => node['EXTTEST']['ep2_config']
+   })
+end

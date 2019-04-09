@@ -47,18 +47,4 @@ public class TestTreeNode extends VtpNameDescriptionPair {
   public TestTreeNode(String name, String description) {
     super(name, description);
   }
-
-  public void addTest(VtpTestCase test) {
-    if (tests == null) {
-      tests = new ArrayList<>();
-    }
-    tests.add(test);
-  }
-
-  public void addChild(TestTreeNode child) {
-    if (children == null) {
-      children = new ArrayList<>();
-    }
-    children.add(child);
-  }
 }

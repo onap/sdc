@@ -98,13 +98,5 @@ public class ExecutionRequestTests {
 
     Assert.assertEquals(2, tree.getChildren().size());
     Assert.assertEquals(0, tree.getTests().size());
-
-    TestTreeNode manual = new TestTreeNode("root", "Root");
-
-    manual.addChild(new TestTreeNode("child", "child"));
-    manual.addTest(new VtpTestCase());
-    Assert.assertEquals(1, manual.getChildren().size());
-    Assert.assertEquals(1, manual.getTests().size());
-
   }
 }
