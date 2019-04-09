@@ -73,7 +73,6 @@ import {DeploymentViewModel} from "../view-models/workspace/tabs/deployment/depl
 import {ReqAndCapabilitiesViewModel} from "../view-models/workspace/tabs/req-and-capabilities/req-and-capabilities-view-model";
 import {InputFormViewModel} from "../view-models/forms/input-form/input-form-view-modal";
 import {HierarchyViewModel} from "../view-models/tabs/hierarchy/hierarchy-view-model";
-import {downgradeComponent} from "@angular/upgrade/static";
 import {ConformanceLevelModalViewModel} from "../view-models/modals/conformance-level-modal/conformance-level-modal-view-model";
 import {PluginsTabViewModel} from "../view-models/plugins/plugins-tab-view-model";
 import {PluginsContextViewModel} from "../view-models/workspace/tabs/plugins/plugins-context-view-model";
