@@ -1,0 +1,15 @@
+{
+	"payloadName": "PonUni.yml",
+	"contactId": "jh0003",
+	"name": "PonUni",
+	"description": "PonUni",
+	"resourceIconPath": "port",
+	"resourceType": "CP",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Network Elements"
+		}]
+	}],
+	"tags": ["PonUni"]
+}

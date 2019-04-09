@@ -42,7 +42,10 @@ def importNfvTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 				       "vnfVirtualLink",
                "vnfExtCp",
 				       "vduCp",
-				       "VNF"
+				       "VNF",
+					   "PonUni",
+					   "OltNni",
+					   "OntNni"
 				     ]
 
 	responseCodes = [200, 201]

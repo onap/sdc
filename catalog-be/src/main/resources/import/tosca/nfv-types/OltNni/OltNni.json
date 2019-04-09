@@ -1,0 +1,15 @@
+{
+	"payloadName": "OltNni.yml",
+	"contactId": "jh0003",
+	"name": "OltNni",
+	"description": "OltNni",
+	"resourceIconPath": "port",
+	"resourceType": "CP",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Network Elements"
+		}]
+	}],
+	"tags": ["OltNni"]
+}

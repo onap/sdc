@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.cp.PonUni: 
+    derived_from: tosca.nodes.nfv.VduCp
+    properties:
+      expected_ont_id:
+        type: string
+        required: true
+      cvlan_id:
+        type: string
+        required: true
+      olt_name:
+        type: string
+        required: true
+      olt_pon_port:
+        type: string
+        required: true
+      olt_pon_slot:
+        type: string
+        required: true
+    requirements:
+        - virtual_link:
+            capability: tosca.capabilities.nfv.VirtualLinkable
+            relationship: tosca.relationships.nfv.VirtualLinksTo
+            node: tosca.nodes.nfv.VnfVirtualLink
+        - virtual_binding:
+            capability: tosca.capabilities.nfv.VirtualBindable
+            relationship: tosca.relationships.nfv.VirtualBindsTo
+            node: org.openecomp.resource.vfc.accessConnectivity
