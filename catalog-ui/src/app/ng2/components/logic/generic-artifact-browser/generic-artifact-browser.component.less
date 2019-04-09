@@ -18,7 +18,9 @@
         border-bottom: 6px solid white;
 
         .selectable();
-
+        :last-of-type {
+          background-color: white;
+        }
         span {
           display: inline-block;
           line-height: 15pt;
@@ -27,6 +29,31 @@
       }
     }
   }
+}
+
+.datatable-column-span {
+  height: 10px;
+}
+
+.add-btn-div {
+  width: 45px;
+}
+
+.datattable-input-filter{
+  height: 23px;
+  margin: 2px auto;
+  border: none;
+  border-bottom: solid 3px #009fdb;
+  border-radius: 15px;
+  width: 75% !important;
+  padding: 0 15px 0 15px !important;
+  color: #009fdb;
+  outline: none;
+}
+
+.datattable-input-filter::placeholder {
+  color: #009fdb;
+  font-style: italic;
 }
 
 .datatable-row-group {
@@ -45,8 +72,10 @@
   }
 }
 
-.datatable-header span.datatable-header-cell-label {
-  .break-all-words();
+.datatable-header {
+  span.datatable-header-cell-label {
+    .break-all-words();
+  }
 }
 
 .datatable-input-filter{
@@ -68,6 +97,9 @@
   font-weight: bold;
   font-size: 14px;
   text-align: center;
+  div {
+    display: inline-block;
+  }
 }
 
 .break-all-words {

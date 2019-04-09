@@ -283,12 +283,11 @@ export class DeploymentArtifactsViewModel {
                 title: 'Generic Artifact Browser',
                 type: 'custom',
                 buttons: [{
-                        id: 'okButton',
-                        text: 'OK',
+                        id: 'closeGABButton',
+                        text: 'Close',
                         size: "'x-small'",
                         closeModal: true
-                    },
-                    {text: "Cancel", size: "'x-small'", closeModal: true}]
+                    }]
             };
 
             let pathsandnames: PathsAndNamesDefinition[] = [
