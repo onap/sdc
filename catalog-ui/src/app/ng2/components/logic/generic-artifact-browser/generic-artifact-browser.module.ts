@@ -22,17 +22,22 @@ import {GenericArtifactBrowserComponent} from "./generic-artifact-browser.compon
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {GabService} from "../../../services/gab.service";
 import {BrowserModule} from "@angular/platform-browser";
+import {GenericArtifactBrowserColumnProviderComponent} from "./generic-artifact-browser-column-provider.component";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
     declarations: [
-        GenericArtifactBrowserComponent
+        GenericArtifactBrowserComponent,
+        GenericArtifactBrowserColumnProviderComponent
     ],
     imports: [
         BrowserModule,
+        FormsModule,
         NgxDatatableModule
     ],
     entryComponents: [ //need to add anything that will be dynamically created
-        GenericArtifactBrowserComponent
+        GenericArtifactBrowserComponent,
+        GenericArtifactBrowserColumnProviderComponent
     ],
     exports: [],
     providers: [GabService]

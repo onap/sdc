@@ -178,7 +178,6 @@ import { TopNavComponent } from "../ng2/components/layout/top-nav/top-nav.compon
 import { ZoneContainerComponent } from "../ng2/components/ui/canvas-zone/zone-container.component";
 import { ZoneInstanceComponent } from "../ng2/components/ui/canvas-zone/zone-instance/zone-instance.component";
 import { CompositionPanelComponent } from 'app/ng2/pages/composition/panel/panel.component';
-import { CompositionPanelHeaderComponent } from 'app/ng2/pages/composition/panel/panel-header/panel-header.component';
 import { PropertiesAssignmentComponent } from "../ng2/pages/properties-assignment/properties-assignment.page.component";
 import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
 import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
@@ -190,7 +189,6 @@ import { MultilineEllipsisComponent } from "../ng2/shared/multiline-ellipsis/mul
 import { InterfaceOperationComponent } from '../ng2/pages/interface-operation/interface-operation.page.component';
 import { PluginFrameComponent } from "../ng2/components/ui/plugin/plugin-frame.component";
 import { TileComponent } from "../ng2/components/ui/tile/tile.component";
-import {GenericArtifactBrowserComponent} from "../ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component";
 
 
 directiveModule.directive('menuListNg2', downgradeComponent({
@@ -202,12 +200,6 @@ directiveModule.directive('topNav', downgradeComponent({
     component: TopNavComponent,
     inputs: ['version', 'menuModel', 'topLvlSelectedIndex', 'hideSearch', 'searchTerm', 'notificationIconCallback', 'unsavedChanges', 'unsavedChangesCallback'],
     outputs: ['searchTermChange']
-}) as ng.IDirectiveFactory);
-
-directiveModule.directive('gab', downgradeComponent({
-    component: GenericArtifactBrowserComponent,
-    inputs: ['pathsandnames', 'artifactid', 'resourceid'],
-    outputs: []
 }) as ng.IDirectiveFactory);
 
 directiveModule.directive('ng2ZoneContainer', downgradeComponent({

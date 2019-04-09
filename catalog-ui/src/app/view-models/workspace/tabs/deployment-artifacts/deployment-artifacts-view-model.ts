@@ -289,12 +289,11 @@ export class DeploymentArtifactsViewModel {
                 title: title,
                 type: 'custom',
                 buttons: [{
-                        id: 'okButton',
-                        text: 'OK',
+                        id: 'closeGABButton',
+                        text: 'Close',
                         size: "'x-small'",
                         closeModal: true
-                    },
-                    {text: "Cancel", size: "'x-small'", closeModal: true}]
+                    }]
             };
 
             const uiConfiguration: any = this.cacheService.get('UIConfiguration');

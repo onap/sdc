@@ -25,49 +25,85 @@ import {PathsAndNamesDefinition} from "../../../../models/paths-and-names";
 const COLUMN_PREFIX: string = 'col';
 
 @Component({
-    selector: 'gab',
-    templateUrl: './generic-artifact-browser.component.html',
-    styleUrls:['./generic-artifact-browser.component.less'],
-    encapsulation: ViewEncapsulation.None
+  selector: 'gab',
+  templateUrl: './generic-artifact-browser.component.html',
+  styleUrls: ['./generic-artifact-browser.component.less'],
+  encapsulation: ViewEncapsulation.None
 })
 export class GenericArtifactBrowserComponent {
-    @Input()
-    pathsandnames: PathsAndNamesDefinition[];
-    @Input()
-    artifactid: string;
-    @Input()
-    resourceid: string;
+  @Input()
+  pathsandnames: PathsAndNamesDefinition[];
+  @Input()
+  artifactid: string;
+  @Input()
+  resourceid: string;
 
-    columns: ColumnDefinition[];
-    rows: any[];
-    originRows: any[];
-    selectedRows: any[];
-    isLoading: boolean;
-    ready: boolean;
-    columnsFilters: Map<string, string>;
+  columns: ColumnDefinition[];
+  originColumns: ColumnDefinition[];
+  rows: any[];
+  originRows: any[];
+  isLoading: boolean;
+  ready: boolean;
+  columnsFilters: Map<string, string>;
+  addNewColumn: boolean;
 
-    constructor(private gabService: GabService) {
-    }
+  constructor(private gabService: GabService) {
+  }
 
-    ngOnInit() {
-        this.ready = false;
-        this.isLoading = true;
-        this.columns = [];
-        this.columnsFilters = new Map<string,string>();
-        let paths: string[] = this.pathsandnames.map(item => item.path);
-        this.gabService.getArtifact(this.artifactid, this.resourceid, paths)
-        .subscribe(
-            response => {
-            let typedServerResponse:IServerResponse = <IServerResponse>response.json();
-            this.normalizeDataForNgxDatatable(typedServerResponse.data);
-            },
-            err => console.log(err),
-            () => {
-                this.ready = true;
-                this.isLoading = false;
-            }
-        );
-    }
+  ngOnInit() {
+    this.ready = false;
+    this.isLoading = true;
+    this.columns = [];
+    this.loadArtifacts();
+  }
+
+  loadArtifacts() {
+    this.addNewColumn = false;
+    this.columnsFilters = new Map<string, string>();
+    let paths: string[] = this.pathsandnames.map(item => item.path);
+    this.gabService.getArtifact(this.artifactid, this.resourceid, paths)
+    .subscribe(
+        response => {
+          let typedServerResponse: IServerResponse = response.json() as IServerResponse;
+          this.normalizeDataForNgxDatatable(typedServerResponse.data);
+        },
+        () => {
+            this.ready = false;
+            this.isLoading = false;
+        },
+        () => {
+          this.ready = true;
+          this.isLoading = false;
+        }
+    );
+  }
+
+  refresh() {
+    this.loadArtifacts();
+  }
+
+  canBeDeleted(name: string){
+    return this.originColumns.filter(function(column){
+      return column.name === name;
+    }).length === 0;
+  }
+
+  deleteColumn(col: ColumnDefinition) {
+    this.pathsandnames = this.pathsandnames.filter(function(pathandname){
+      return pathandname.friendlyName != col.name;
+    });
+    this.columns = this.columns.filter(function(column){
+      return column != col;
+    })
+  }
+
+  hideAddNewColumn() {
+    this.addNewColumn = false;
+  }
+
+  showAddNewColumn() {
+    this.addNewColumn = true;
+  }
 
   updateColumnFilter(event, column) {
     const val = event.target.value.toLowerCase();
@@ -83,68 +119,73 @@ export class GenericArtifactBrowserComponent {
   }
 
   private updateSingleColumnFilter(value, column, rows) {
-    return rows.filter(function(obj) {
+    return rows.filter(function (obj) {
       const row = obj[column];
       return row !== undefined && row.toLowerCase().indexOf(value) !== -1 || !value;
     });
   }
 
-    private normalizeDataForNgxDatatable(data: [{ [key: string]: string }]) {
-        let result: NormalizationResult = this.getNormalizationResult(data, this.pathsandnames);
-        this.rows = result.rows;
-        this.originRows = result.rows;
-        this.columns = result.columns;
+  private normalizeDataForNgxDatatable(data: [{ [key: string]: string }]) {
+    let result: NormalizationResult = this.getNormalizationResult(data, this.pathsandnames);
+    this.rows = result.rows;
+    this.originRows = result.rows;
+    this.columns = result.columns;
+    if (!this.originColumns){
+      this.originColumns = [...result.columns];
     }
+  }
 
-    private getNormalizationResult(data: [{ [key: string]: string }],
-                                   pathsAndNames: PathsAndNamesDefinition[]): NormalizationResult {
-        //Prepare column names and column data property names
-        let mappingsPathToProp = new Map<string,string>();
-        let columnsDefinitions = this.normalizeColumns(pathsAndNames, mappingsPathToProp);
+  private getNormalizationResult(data: [{ [key: string]: string }],
+                                 pathsAndNames: PathsAndNamesDefinition[]): NormalizationResult {
+    //Prepare column names and column data property names
+    let mappingsPathToProp = new Map<string, string>();
+    let columnsDefinitions = this.normalizeColumns(pathsAndNames, mappingsPathToProp);
 
-        //Convert rows from { "string": "string" } to { prop : "string" } format
-        //This is required by NgxDatatable component
-        let arrayOfRows = this.normalizeRows(data, mappingsPathToProp);
+    //Convert rows from { "string": "string" } to { prop : "string" } format
+    //This is required by NgxDatatable component
+    let arrayOfRows = this.normalizeRows(data, mappingsPathToProp);
 
-        return new NormalizationResult(arrayOfRows, columnsDefinitions);
-    }
+    return new NormalizationResult(arrayOfRows, columnsDefinitions);
+  }
 
-    private normalizeColumns(pathsAndNames: PathsAndNamesDefinition[], mappingsPathToProp: Map<string,string>) {
-        let columnsDefinitions: ColumnDefinition[] = [];
-        let index: number = 1;
+  private normalizeColumns(pathsAndNames: PathsAndNamesDefinition[], mappingsPathToProp: Map<string, string>) {
+    let columnsDefinitions: ColumnDefinition[] = [];
+    let index: number = 1;
 
-        pathsAndNames.forEach(function (col) {
-            let columnDataPropertyName: string = COLUMN_PREFIX + index;
-            mappingsPathToProp.set(col.path, columnDataPropertyName);
-            let cell: ColumnDefinition = new ColumnDefinition(col.friendlyName, columnDataPropertyName);
-            columnsDefinitions.push(cell);
-            index += 1;
-        });
-        return columnsDefinitions;
-    }
+    pathsAndNames.forEach(function (col) {
+      let columnDataPropertyName: string = COLUMN_PREFIX + index;
+      mappingsPathToProp.set(col.path, columnDataPropertyName);
+      let cell: ColumnDefinition = new ColumnDefinition(col.friendlyName, columnDataPropertyName);
+      columnsDefinitions.push(cell);
+      index += 1;
+    });
+    return columnsDefinitions;
+  }
 
-    private normalizeRows(data: [{ [key: string]: string }], mappingsPathToProp: Map<string,string>) {
-        let arrayOfRows = [];
-        data.forEach(function (col) {
-            let row = {};
-            for (let key in col) {
-                if (col.hasOwnProperty(key)) {
-                    let columnNameAsProp = mappingsPathToProp.get(key);
-                    row[columnNameAsProp] = col[key];
-                }
-            }
-            arrayOfRows.push(row);
-        });
+  private normalizeRows(data: [{ [key: string]: string }], mappingsPathToProp: Map<string, string>) {
+    let arrayOfRows = [];
+    data.forEach(function (col) {
+      let row = {};
+      for (let key in col) {
+        if (col.hasOwnProperty(key)) {
+          let columnNameAsProp = mappingsPathToProp.get(key);
+          row[columnNameAsProp] = col[key];
+        }
+      }
+      arrayOfRows.push(row);
+    });
 
-        return arrayOfRows;
-    }
+    return arrayOfRows;
+  }
 }
 
 class NormalizationResult {
-    constructor(public rows: any[], public columns: ColumnDefinition[]) {}
+  constructor(public rows: any[], public columns: ColumnDefinition[]) {
+  }
 }
 
 export class ColumnDefinition {
-    constructor(public name: string, public prop: string) {}
+  constructor(public name: string, public prop: string) {
+  }
 }
 
