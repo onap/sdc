@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
+import com.datastax.driver.core.DataType;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -46,6 +47,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
+import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -171,6 +173,7 @@ public class ToscaOperationFacade {
         VertexTypeEnum label = componentV.getLabel();
 
         ToscaElementOperation toscaOperation = getToscaElementOperation(componentV);
+        log.debug("getToscaElementByOperation: toscaOperation={}", toscaOperation.getClass());
         Either<ToscaElement, StorageOperationStatus> toscaElement;
         String componentId = componentV.getUniqueId();
         if (toscaOperation != null) {
@@ -971,7 +974,74 @@ public class ToscaOperationFacade {
 
     }
 
-	public Either<List<InputDefinition>, StorageOperationStatus> getComponentInputs(String componentId) {
+    /**
+     * Add data types into a Component.
+     *
+     * @param dataTypes   datatypes to be added. the key should be each name of data type.
+     * @param componentId unique ID of Component.
+     * @return list of data types.
+     */
+    public Either<List<DataTypeDefinition>, StorageOperationStatus> addDataTypesToComponent(Map<String, DataTypeDefinition> dataTypes, String componentId) {
+
+        log.trace("#addDataTypesToComponent - enter, componentId={}", componentId);
+
+        /* get component vertex */
+        Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            /* not found / error */
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value()));
+        }
+        GraphVertex vertex = getVertexEither.left().value();
+        log.trace("#addDataTypesToComponent - get vertex ok");
+
+        // convert DataTypeDefinition to DataTypeDataDefinition
+        Map<String, DataTypeDataDefinition> dataTypeDataMap = dataTypes.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> convertDataTypeToDataTypeData(e.getValue())));
+
+        // add datatype(s) to the Component.
+        // if child vertex does not exist, it will be created.
+        StorageOperationStatus status = topologyTemplateOperation.addToscaDataToToscaElement(vertex,
+                EdgeLabelEnum.DATA_TYPES, VertexTypeEnum.DATA_TYPES, dataTypeDataMap, JsonPresentationFields.NAME);
+
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            List<DataTypeDefinition> inputsResList = null;
+            if (!dataTypes.isEmpty()) {
+                inputsResList = new ArrayList<>(dataTypes.values());
+            }
+            return Either.left(inputsResList);
+        }
+
+        log.trace("#addDataTypesToComponent - leave");
+        return Either.right(status);
+    }
+
+    private DataTypeDataDefinition convertDataTypeToDataTypeData(DataTypeDefinition dataType) {
+        DataTypeDataDefinition dataTypeData = new DataTypeDataDefinition(dataType);
+        if (CollectionUtils.isNotEmpty(dataType.getProperties())) {
+            List<PropertyDataDefinition> propertyDataList = dataType.getProperties().stream()
+                    .map(PropertyDataDefinition::new).collect(Collectors.toList());
+            dataTypeData.setPropertiesData(propertyDataList);
+        }
+
+        // if "derivedFrom" data_type exists, copy the name to "derivedFromName"
+        if (dataType.getDerivedFrom() != null && StringUtils.isNotEmpty(dataType.getDerivedFrom().getName())) {
+            // if names are different, log it
+            if (!StringUtils.equals(dataTypeData.getDerivedFromName(), dataType.getDerivedFrom().getName())) {
+                log.debug("#convertDataTypeToDataTypeData - derivedFromName(={}) overwritten by derivedFrom.name(={})",
+                        dataType.getDerivedFromName(), dataType.getDerivedFrom().getName());
+            }
+            dataTypeData.setDerivedFromName(dataType.getDerivedFrom().getName());
+        }
+
+        // supply "name" field to toscaPresentationValue in each datatype object for DAO operations
+        dataTypeData.setToscaPresentationValue(JsonPresentationFields.NAME, dataType.getName());
+        return dataTypeData;
+    }
+
+
+    public Either<List<InputDefinition>, StorageOperationStatus> getComponentInputs(String componentId) {
 
 		Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
 		if (getVertexEither.isRight()) {
@@ -2066,6 +2136,16 @@ public class ToscaOperationFacade {
 
     public StorageOperationStatus deleteInputOfResource(Component resource, String inputName) {
         return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, inputName, JsonPresentationFields.NAME);
+    }
+
+    /**
+     * Deletes a data type from a component.
+     * @param component the container which has the data type
+     * @param dataTypeName the data type name to be deleted
+     * @return Operation result.
+     */
+    public StorageOperationStatus deleteDataTypeOfComponent(Component component, String dataTypeName) {
+        return getToscaElementOperation(component).deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.DATA_TYPES, VertexTypeEnum.DATA_TYPES, dataTypeName, JsonPresentationFields.NAME);
     }
 
 	public Either<PropertyDefinition, StorageOperationStatus> updatePropertyOfComponent(Component component,

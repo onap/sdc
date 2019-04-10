@@ -35,6 +35,7 @@
                             (selectPropertyRow)="selectPropertyRow($event)"
                             (selectChildProperty)="selectChildProperty($event)"
                             (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
+                            (updateCheckedChildPropertyCount)="updateCheckedChildPropertyCount($event)"
                             (selectInstanceRow)="selectInstanceRow($event)"
                             (deleteProperty)="deleteProperty($event)">
                         </properties-table>
@@ -63,6 +64,7 @@
                     <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
+                <button class="tlv-btn blue declare-list-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()">Declare List</button>
             </div>
         </div>
         <div class="right-column">

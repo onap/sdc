@@ -86,6 +86,13 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
                 .orElse(StorageOperationStatus.OK);
     }
 
+    @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputForDelete) {
+        return getGroupPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
+                .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
+                .orElse(StorageOperationStatus.OK);
+    }
+
     private StorageOperationStatus unDeclareGroupProperties(Component container, InputDefinition input, GroupProperties groupProperties) {
         String groupId = groupProperties.getGroupId();
         List<PropertyDataDefinition> propsDeclaredAsInput = groupProperties.getProperties();

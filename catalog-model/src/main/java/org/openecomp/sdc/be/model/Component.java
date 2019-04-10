@@ -46,20 +46,7 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
 
 public abstract class Component implements PropertiesOwner {
 
@@ -86,8 +73,17 @@ public abstract class Component implements PropertiesOwner {
 	protected List<PropertyDefinition> properties;
 	private Map<String, InterfaceDefinition> interfaces;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+    private List<DataTypeDefinition> dataTypes;
 
-	public Map<String, InterfaceDefinition> getInterfaces() {
+    public List<DataTypeDefinition> getDataTypes() {
+        return dataTypes;
+    }
+
+    public void setDataTypes(List<DataTypeDefinition> dataTypes) {
+        this.dataTypes = dataTypes;
+    }
+
+    public Map<String, InterfaceDefinition> getInterfaces() {
 		return interfaces;
 	}
 

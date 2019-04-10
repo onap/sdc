@@ -22,19 +22,8 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -47,6 +36,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -72,7 +62,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
-
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -91,6 +80,19 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("topology-template-operation")
 public class TopologyTemplateOperation extends ToscaElementOperation {
@@ -777,7 +779,27 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(storageStatus));
             }
         }
+
+        if (!componentParametersView.isIgnoreDataType()) {
+            TitanOperationStatus storageStatus = setDataTypesFromGraph(componentV, toscaElement);
+            if (storageStatus != TitanOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(storageStatus));
+            }
+        }
+
         return Either.left(toscaElement);
+    }
+
+    private TitanOperationStatus setDataTypesFromGraph(GraphVertex componentV, TopologyTemplate toscaElement) {
+        Either<Map<String, DataTypeDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.DATA_TYPES);
+        if (result.isLeft()) {
+            toscaElement.setDataTypes(result.left().value());
+        } else {
+            if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return TitanOperationStatus.OK;
     }
 
     private TitanOperationStatus setPoliciesFromGraph(GraphVertex componentV, TopologyTemplate toscaElement) {

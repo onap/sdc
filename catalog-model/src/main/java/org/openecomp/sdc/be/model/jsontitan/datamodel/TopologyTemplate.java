@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.MapInterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 
@@ -57,6 +58,7 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, InterfaceDataDefinition> interfaces;
     private Map<String, MapInterfaceInstanceDataDefinition> instInterfaces;
     private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
+    private Map<String, DataTypeDataDefinition> dataTypes;
 
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
     //Component Instances External References (instanceId -> ExternalRefsMap)
@@ -237,6 +239,22 @@ public class TopologyTemplate extends ToscaElement{
 
     public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilters) {
         this.nodeFilterComponents = nodeFilters;
+    }
+
+    /**
+     * Gets data types.
+     * @return Current data types.
+     */
+    public Map<String, DataTypeDataDefinition> getDataTypes() {
+        return dataTypes;
+    }
+
+    /**
+     * Sets data types.
+     * @param dataTypes New data types.
+     */
+    public void setDataTypes(Map<String, DataTypeDataDefinition> dataTypes) {
+        this.dataTypes = dataTypes;
     }
 
       /**

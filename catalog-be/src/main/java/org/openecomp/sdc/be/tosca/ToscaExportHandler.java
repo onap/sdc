@@ -76,7 +76,6 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceDefinitionElement;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
 
@@ -313,6 +312,7 @@ public class ToscaExportHandler {
         topologyTemplate.setSubstitution_mappings(substitutionMapping);
 
         toscaNode.setTopology_template(topologyTemplate);
+
         return Either.left(toscaNode);
     }
 
@@ -560,6 +560,30 @@ public class ToscaExportHandler {
             resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
             toscaNodeType.setProperties(mergedProperties);
         }
+
+        /* convert private data_types */
+        List<DataTypeDefinition> privateDataTypes = component.getDataTypes();
+        if (CollectionUtils.isNotEmpty(privateDataTypes) ) {
+            Map<String, ToscaDataType> toscaDataTypeMap = new HashMap<>();
+            for (DataTypeDefinition dataType: privateDataTypes) {
+                log.debug("Emitting private data type: component.name={} dataType.name={}",
+                        component.getNormalizedName(), dataType.getName());
+                ToscaDataType toscaDataType = new ToscaDataType();
+                toscaDataType.setDerived_from(dataType.getDerivedFromName());
+                toscaDataType.setDescription(dataType.getDescription());
+                toscaDataType.setVersion(dataType.getVersion());
+                if (CollectionUtils.isNotEmpty(dataType.getProperties())) {
+                    toscaDataType.setProperties(dataType.getProperties().stream()
+                            .collect(Collectors.toMap(
+                                    s -> s.getName(),
+                                    s -> propertyConvertor.convertProperty(dataTypes, s, PropertyConvertor.PropertyType.PROPERTY)
+                            )));
+                }
+                toscaDataTypeMap.put(dataType.getName(), toscaDataType);
+            }
+            toscaNode.setData_types(toscaDataTypeMap);
+        }
+
         // Extracted to method for code reuse
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
     }
@@ -570,17 +594,28 @@ public class ToscaExportHandler {
         for (Map.Entry<String, ToscaProperty> mergedPropertyEntry : mergedProperties.entrySet()) {
             ToscaProperty value = mergedPropertyEntry.getValue();
             if (Objects.nonNull(value) && value.getDefaultp() instanceof Map) {
-                Map<String, String> valueAsMap = (Map<String, String>) value.getDefaultp();
-                String inputName = valueAsMap.get(ToscaFunctions.GET_INPUT.getFunctionName());
-                Optional<InputDefinition> matchedInputDefinition = inputDef.stream()
-                        .filter(componentInput -> componentInput.getName().equals(inputName))
-                        .findFirst();
-                if (matchedInputDefinition.isPresent()) {
-                    InputDefinition matchedInput = matchedInputDefinition.get();
-                    Object resolvedDefaultValue = new PropertyConvertor().convertToToscaObject(matchedInput.getType(),
-                            matchedInput.getDefaultValue(), matchedInput.getSchemaType(), dataTypes, false);
-                    value.setDefaultp(resolvedDefaultValue);
-                    mergedProperties.put(mergedPropertyEntry.getKey(), value);
+                Map<String, Object> valueAsMap = (Map<String, Object>) value.getDefaultp();
+                Object getInputValue = valueAsMap.get(ToscaFunctions.GET_INPUT.getFunctionName());
+                if (getInputValue instanceof String) {
+                    String inputName = (String)getInputValue;
+                    Optional<InputDefinition> matchedInputDefinition = inputDef.stream()
+                            .filter(componentInput -> componentInput.getName().equals(inputName))
+                            .findFirst();
+                    if (matchedInputDefinition.isPresent()) {
+                        InputDefinition matchedInput = matchedInputDefinition.get();
+                        Object resolvedDefaultValue = new PropertyConvertor().convertToToscaObject(matchedInput.getType(),
+                                matchedInput.getDefaultValue(), matchedInput.getSchemaType(), dataTypes, false);
+                        value.setDefaultp(resolvedDefaultValue);
+                        mergedProperties.put(mergedPropertyEntry.getKey(), value);
+                    }
+                } else if (getInputValue instanceof List) {
+                    // new get_input syntax to refer to sub-element (introduced from TOSCA v1.3)
+                    // e.g. get_input: [input_name, INDEX, inner_property]
+                    // currently resolving default value for the syntax is not supported
+                    log.debug("#resolveDefaultPropertyValue: ignore get_input list syntax. propname={}, val={}",
+                            mergedPropertyEntry.getKey(), getInputValue);
+                } else {
+                    // Ignore unknown get_input syntax
                 }
             }
         }
