@@ -16,6 +16,24 @@
       "revId": "28d39ad97cd22b0fea2e7fe9bfb29189e6f39f71",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4fb3f5cb_d2bba6f8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/auditing/impl/AuditingManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:44:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25179826_bd667676",
+      "revId": "28d39ad97cd22b0fea2e7fe9bfb29189e6f39f71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
