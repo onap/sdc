@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "81476f87_94d3ec02",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/ManifestCreatorNamingConventionImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-10T05:51:24Z",
+      "side": 1,
+      "message": "Sonar issue \n\nLambdas should be replaced with method references\n \nCode smell\n \nMinor\nsquid:S1612\n \nMethod/constructor references are more compact and readable than using lambdas, and are therefore preferred. Similarly, null checks can be replaced with references to the Objects::isNull and Objects::nonNull methods.\nNote that this rule is automatically disabled when the project\u0027s sonar.java.source is lower than 8.\nNoncompliant Code Example\n  class A {    void process(List\u003cA\u003e list) {      list.stream()        .map(a -\u003e a.\u003cString\u003egetObject())        .forEach(a -\u003e { System.out.println(a); });    }      \u003cT\u003e T getObject() {      return null;    }  }  \nCompliant Solution\n  class A {    void process(List\u003cA\u003e list) {      list.stream()        .map(A::\u003cString\u003egetObject)        .forEach(System.out::println);    }      \u003cT\u003e T getObject() {      return null;    }  }  ",
+      "revId": "a096b7efde39e9550f39f92730238044398b3455",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8bbdb4f0_79d60f2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/ManifestCreatorNamingConventionImplTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-10T05:51:24Z",
+      "side": 1,
+      "message": "Sonar issue\n\nUseless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck\n \nThe imports part of a file should be handled by the Integrated Development Environment (IDE), not manually by the developer.\nUnused and useless imports should not occur if that is the case.\nLeaving them in reduces the code\u0027s readability, since their presence can be confusing.\nNoncompliant Code Example\n  package my.company;    import java.lang.String; // Noncompliant; java.lang classes are always implicitly imported  import my.company.SomeClass; // Noncompliant; same-package files are always implicitly imported  import java.io.File; // Noncompliant; File is not used    import my.company2.SomeType;  import my.company2.SomeType; // Noncompliant; \u0027SomeType\u0027 is already imported    class ExampleClass {      public String someString;    public SomeType something;    }  \nExceptions\nImports for types mentioned in comments, such as Javadocs, are ignored.",
+      "revId": "a096b7efde39e9550f39f92730238044398b3455",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
