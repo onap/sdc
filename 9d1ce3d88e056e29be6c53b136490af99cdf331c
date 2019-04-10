@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0ae07005_a9f6a073",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T13:51:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ad066a9_7200e4f5",
+      "range": {
+        "startLine": 58,
+        "startChar": 1,
+        "endLine": 58,
+        "endChar": 24
+      },
+      "revId": "9d1ce3d88e056e29be6c53b136490af99cdf331c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1097cfac_d219df86",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-04-10T11:08:19Z",
       "side": 1,
       "message": "This can be nested in the above rule.",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 36
+      },
+      "revId": "9d1ce3d88e056e29be6c53b136490af99cdf331c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddd045ba_b6aa7d11",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T13:51:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1097cfac_d219df86",
       "range": {
         "startLine": 63,
         "startChar": 0,
