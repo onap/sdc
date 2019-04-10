@@ -24,12 +24,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -246,6 +250,10 @@ public class InputsServlet extends AbstractValidationsServlet {
         return getComponentsUtils().convertJsonToObjectUsingObjectMapper(serviceJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
     }
 
+    private Either<ComponentInstListInput, ResponseFormat> parseToComponentInstListInput(String json, User user) {
+        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(json, user, ComponentInstListInput.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
+    }
+
     @POST
     @Path("/{componentType}/{componentId}/create/inputs")
     @ApiOperation(value = "Create inputs on service", httpMethod = "POST", notes = "Return inputs list", response = Resource.class)
@@ -293,6 +301,66 @@ public class InputsServlet extends AbstractValidationsServlet {
     }
 
 
+    /**
+     * Creates a "list input" and updates given list of properties to get value from the input.
+     * also a data type which has same properties is created.
+     * the data type will be the entry_schema of the list input.
+     * @param componentType the container type (service, resource, ...)
+     * @param componentId the container ID
+     * @param request HttpServletRequest object
+     * @param userId the User ID
+     * @param componentInstInputsMapObj the list of properties to be declared and the "list input" to be created.
+     *                                  the type of the input must be "list".
+     *                                  schema.type of the input will be the name of new data type.
+     * @return the created input
+     */
+    @POST
+    @Path("/{componentType}/{componentId}/create/listInput")
+    @ApiOperation(value = "Create a list input on service", httpMethod = "POST", notes = "Return input", response = Resource.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
+    public Response createListInput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "ComponentIns Inputs Object to be created", required = true) String componentInstInputsMapObj) {
+
+        ServletContext context = request.getSession().getServletContext();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(get) Start handle request of {}", url);
+        Response response = null;
+
+        try {
+            InputsBusinessLogic businessLogic = getInputBL(context);
+
+            // get modifier id
+            User modifier = new User();
+            modifier.setUserId(userId);
+            log.debug("modifier id is {}", userId);
+
+            Either<ComponentInstListInput, ResponseFormat> componentInstInputsMapRes = parseToComponentInstListInput(componentInstInputsMapObj, modifier);
+            if (componentInstInputsMapRes.isRight()) {
+                log.debug("failed to parse componentInstInputsMap");
+                response = buildErrorResponse(componentInstInputsMapRes.right().value());
+                return response;
+            }
+
+            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
+            ComponentInstListInput componentInstInputsMap = componentInstInputsMapRes.left().value();
+            log.debug("converted json into: {}", ReflectionToStringBuilder.toString(componentInstInputsMap));
+
+            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = businessLogic.createListInput(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
+            if (inputPropertiesRes.isRight()) {
+                log.debug("failed to create inputs  for service: {}", componentId);
+                return buildErrorResponse(inputPropertiesRes.right().value());
+            }
+            Object properties = RepresentationUtils.toRepresentation(inputPropertiesRes.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
+
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
+            log.debug("createMultipleInputs failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
 
     @DELETE
     @Path("/{componentType}/{componentId}/delete/{inputId}/input")
@@ -329,10 +397,148 @@ public class InputsServlet extends AbstractValidationsServlet {
         }
     }
 
+    /**
+     * Gets a specific data type associated with a component.
+     * @param componentType the container type (service, resource, ...)
+     * @param componentId the container ID
+     * @param dataTypeName the data type name
+     * @param request HttpServletRequest object
+     * @return the data type info
+     */
+    @GET
+    @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
+    @ApiOperation(value = "Get data type in service", httpMethod = "GET", notes = "Get data type in service",
+            response = DataTypeDefinition.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Data type found"),
+            @ApiResponse(code = 403, message = "Restricted operation"),
+            @ApiResponse(code = 404, message = "Data type not found")})
+    public Response getDataType(
+            @PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId,
+            @PathParam("dataTypeName") final String dataTypeName,
+            @Context final HttpServletRequest request
+    ) {
+        ServletContext context = request.getSession().getServletContext();
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(getDataType) Start handle request of {}", url);
+        Response response;
+
+        try {
+            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
+            Either<DataTypeDefinition, StorageOperationStatus> getResult = businessLogic.getPrivateDataType(componentId, dataTypeName);
+            if (getResult.isRight()) {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getResult.right().value());
+                return buildErrorResponse(componentsUtils.getResponseFormat(actionStatus));
+            }
+            Object json = RepresentationUtils.toRepresentation(getResult.left().value());
+            return buildOkResponse(componentsUtils.getResponseFormat(ActionStatus.OK), json);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get data type from service + " + componentId + " + with name: " + dataTypeName);
+            log.debug("Get data type failed with exception", e);
+            response = buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
+    /**
+     * Gets a list of data types which a component has.
+     * @param componentType the container type (service, resource, ...)
+     * @param componentId the container ID
+     * @param request HttpServletRequest object
+     * @return the list of data types in the component
+     */
+    @GET
+    @Path("/{componentType}/{componentId}/dataTypes")
+    @ApiOperation(value = "Get data types that service has", httpMethod = "GET", notes = "Get data types in service",
+            response = Resource.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Data type found"),
+            @ApiResponse(code = 403, message = "Restricted operation"),
+            @ApiResponse(code = 404, message = "Component not found")})
+    public Response getDataTypes(
+            @PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId,
+            @Context final HttpServletRequest request
+    ) {
+        ServletContext context = request.getSession().getServletContext();
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(getDataType) Start handle request of {}", url);
+        Response response;
+
+        try {
+            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
+            Either<List<DataTypeDefinition>, StorageOperationStatus> getResult = businessLogic.getPrivateDataTypes(componentId);
+            if (getResult.isRight()) {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getResult.right().value());
+                return buildErrorResponse(componentsUtils.getResponseFormat(actionStatus));
+            }
+            Object json = RepresentationUtils.toRepresentation(getResult.left().value());
+            return buildOkResponse(componentsUtils.getResponseFormat(ActionStatus.OK), json);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get data type from service + " + componentId);
+            log.debug("Get data type failed with exception", e);
+            response = buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
+    /**
+     * Deletes a data type from a component.
+     * @param componentType the container type (service, resource, ...)
+     * @param componentId the container ID
+     * @param dataTypeName the data type name to be deleted
+     * @param request HttpServletRequest object
+     * @return operation result
+     */
+    @DELETE
+    @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
+    @ApiOperation(value = "Delete data type from service", httpMethod = "DELETE", notes = "Delete service input",
+            response = Resource.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Data type deleted"),
+            @ApiResponse(code = 403, message = "Restricted operation"),
+            @ApiResponse(code = 404, message = "Data type not found")})
+    public Response deleteDataType(
+            @PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId,
+            @PathParam("dataTypeName") final String dataTypeName,
+            @Context final HttpServletRequest request
+    ) {
+        ServletContext context = request.getSession().getServletContext();
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(get) Start handle request of {}", url);
+        Response response;
+
+        try {
+            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
+            Either<DataTypeDefinition, StorageOperationStatus> deleteResult = businessLogic.deletePrivateDataType(componentId, dataTypeName);
+            if (deleteResult.isRight()) {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteResult.right().value());
+                return buildErrorResponse(componentsUtils.getResponseFormat(actionStatus));
+            }
+            Object json = RepresentationUtils.toRepresentation(deleteResult.left().value());
+            return buildOkResponse(componentsUtils.getResponseFormat(ActionStatus.OK), json);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete data type for service + " + componentId + " + with name: " + dataTypeName);
+            log.debug("Delete data type failed with exception", e);
+            response = buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
     private InputsBusinessLogic getInputBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(InputsBusinessLogic.class);
     }
 
+    private DataTypeBusinessLogic getDataTypeBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(DataTypeBusinessLogic.class);
+    }
 }

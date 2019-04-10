@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+import java.util.List;
+
 public class DataTypeDataDefinition extends ToscaDataDefinition {
 
 	private String name;
@@ -42,6 +44,8 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
 	 * Timestamp of the data type last update
 	 */
 	private Long modificationTime;
+
+	private List<PropertyDataDefinition> propertiesData;
 
 	public DataTypeDataDefinition() {
 
@@ -102,6 +106,14 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
 
 	public void setModificationTime(Long modificationTime) {
 		this.modificationTime = modificationTime;
+	}
+
+	public List<PropertyDataDefinition> getPropertiesData() {
+		return propertiesData;
+	}
+
+	public void setPropertiesData(List<PropertyDataDefinition> propertiesData) {
+		this.propertiesData = propertiesData;
 	}
 
 	@Override

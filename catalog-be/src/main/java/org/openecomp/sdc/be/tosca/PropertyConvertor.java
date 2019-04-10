@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.tosca;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fj.data.Either;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
@@ -187,6 +189,15 @@ public class PropertyConvertor {
                 return converter.convertToToscaValue(value, innerType, dataTypes);
             } else {
                 log.trace("It's data type or inputs in primitive type. convert as map");
+                if (jsonElement.isJsonObject()) {
+                    JsonObject jsonObj = jsonElement.getAsJsonObject();
+                    // check if value is a get_input function
+                    if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
+                        Object obj = mapConverterInst.handleComplexJsonValue(jsonElement);
+                        log.debug("It's get_input function. obj={}", obj);
+                        return obj;
+                    }
+                }
                 Object convertedValue;
                 if (innerConverter != null && (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(type))) {
                     convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);

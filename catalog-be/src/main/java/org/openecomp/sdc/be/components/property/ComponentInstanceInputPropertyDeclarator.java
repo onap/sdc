@@ -71,6 +71,16 @@ public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDec
     }
 
     @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input) {
+        List<ComponentInstanceInput> componentInstanceInputsByInputId = componentInstanceBusinessLogic.getComponentInstanceInputsByInputId(component, input.getUniqueId());
+        if (isEmpty(componentInstanceInputsByInputId)) {
+            return StorageOperationStatus.OK;
+        }
+        componentInstanceInputsByInputId.forEach(cmptInstanceInput -> prepareValueBeforeDelete(input, cmptInstanceInput, cmptInstanceInput.getPath()));
+        return toscaOperationFacade.updateComponentInstanceInputs(component, componentInstanceInputsByInputId.get(0).getComponentInstanceId(), componentInstanceInputsByInputId);
+    }
+
+    @Override
     InputDefinition createInputFromProperty(String componentId, ComponentInstance propertiesOwner, String inputName, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
         InputDefinition inputFromProperty = super.createInputFromProperty(componentId, propertiesOwner, inputName, propInput, prop);
         Component propertiesOwnerNodeType = getInstanceOriginType(propertiesOwner);

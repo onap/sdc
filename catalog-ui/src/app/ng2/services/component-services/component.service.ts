@@ -285,7 +285,26 @@ export class ComponentServiceNg2 {
             })
     }
 
-    restoreComponent(componentType:string, componentId:string){
+    createListInput(component:Component, input:any, isSelf:boolean):Observable<any> {
+        let inputs: any;
+        if(isSelf) {
+            // change componentInstanceProperties -> serviceProperties
+            inputs = {
+                componentInstInputsMap: {
+                    serviceProperties: input.componentInstInputsMap.componentInstanceProperties
+                },
+                listInput: input.listInput
+            };
+        } else {
+            inputs = input;
+        }
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/listInput', inputs)
+            .map(res => {
+                return res.json();
+            })
+    }
+
+    restoreComponent(componentType:string, componentId:string){ 
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
     }
 

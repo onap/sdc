@@ -21,18 +21,31 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -40,9 +53,9 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class InputsBusinessLogicTest {
@@ -50,7 +63,13 @@ public class InputsBusinessLogicTest {
     private static final String COMPONENT_INSTANCE_ID = "instanceId";
     private static final String COMPONENT_ID = "componentId";
     private static final String USER_ID = "userId";
-    public static final String INSTANCE_INPUT_ID = "inputId";
+    private static final String INSTANCE_INPUT_ID = "inputId";
+    private static final String LISTINPUT_NAME = "listInput";
+    private static final String LISTINPUT_SCHEMA_TYPE = "org.onap.datatypes.listinput";
+    private static final String LISTINPUT_PROP1_NAME = "prop1";
+    private static final String LISTINPUT_PROP1_TYPE = "string";
+    private static final String LISTINPUT_PROP2_NAME = "prop2";
+    private static final String LISTINPUT_PROP2_TYPE = "integer";
 
     @Mock
     private ComponentsUtils componentsUtilsMock;
@@ -67,26 +86,54 @@ public class InputsBusinessLogicTest {
     @Mock
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
+    @Mock
+    private IGraphLockOperation graphLockOperation;
+
+    @Mock
+    private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
+
+    @Mock
+    private ApplicationDataTypeCache applicationDataTypeCache;
+
+    @Mock
+    private PropertyOperation propertyOperation;
+
+    @Mock
+    private TitanDao titanDao;
+
+    @Mock
+    private DataTypeBusinessLogic dataTypeBusinessLogic;
+
     @InjectMocks
     private InputsBusinessLogic testInstance;
 
     private Service service;
 
+    @Captor
+    ArgumentCaptor<Map<String, DataTypeDefinition>> dataTypesMapCaptor;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         service = new Service();
-        service.setUniqueId(COMPONENT_INSTANCE_ID);
+        service.setUniqueId(COMPONENT_ID);
+        service.setLastUpdaterUserId(USER_ID);
+        service.setIsDeleted(false);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        // add a ComponentInstance
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(COMPONENT_INSTANCE_ID);
         service.setComponentInstances(Collections.singletonList(componentInstance));
 
+        // add inputs to the ComponentInstance
         Map<String, List<ComponentInstanceInput>> instanceInputMap = new HashMap<>();
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
         componentInstanceInput.setInputId(INSTANCE_INPUT_ID);
         instanceInputMap.put(COMPONENT_INSTANCE_ID, Collections.singletonList(componentInstanceInput));
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
+
         when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
         when(userAdminMock.getUser(USER_ID, false)).thenReturn(Either.left(new User()));
     }
@@ -96,7 +143,7 @@ public class InputsBusinessLogicTest {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, "nonExisting");
         assertTrue(componentInstanceInputs.isRight());
-        Mockito.verify(componentsUtilsMock).getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
+        verify(componentsUtilsMock).getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
     }
 
     @Test
@@ -263,4 +310,321 @@ public class InputsBusinessLogicTest {
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
         assertEquals(true,result.isLeft());
     }
+
+
+    private InputDefinition setUpListInput() {
+        InputDefinition listInput = new InputDefinition();
+        listInput.setName(LISTINPUT_NAME);
+        listInput.setType("list");
+        SchemaDefinition listInputSchema = new SchemaDefinition();
+        listInputSchema.setProperty(new PropertyDataDefinitionBuilder()
+                .setType(LISTINPUT_SCHEMA_TYPE)
+                .setIsRequired(false)
+                .build()
+        );
+        listInput.setSchema(listInputSchema);
+        return listInput;
+    }
+
+    private ComponentInstListInput setUpCreateListInputParams() {
+        ComponentInstListInput componentInstListInput = new ComponentInstListInput();
+
+        // Create a "list input"
+        InputDefinition listInput = setUpListInput();
+        componentInstListInput.setListInput(listInput);
+
+        // Create ComponentInstancePropInputs
+        // for inputs in the ComponentInstance
+        Map<String, List<ComponentInstancePropInput>> propInputsListMap = new HashMap<>();
+        // Add 2 PropInputs. property owner is COMPONENT_INSTANCE_ID
+        List<ComponentInstancePropInput> propInputsList = new ArrayList<>();
+        ComponentInstancePropInput propInput = new ComponentInstancePropInput();
+        propInput.setName(LISTINPUT_PROP1_NAME);
+        propInput.setType(LISTINPUT_PROP1_TYPE);
+        propInput.setUniqueId(COMPONENT_INSTANCE_ID+"."+LISTINPUT_PROP1_NAME);
+        propInputsList.add(propInput);
+        propInput = new ComponentInstancePropInput();
+        propInput.setName(LISTINPUT_PROP2_NAME);
+        propInput.setType(LISTINPUT_PROP2_TYPE);
+        propInput.setUniqueId(COMPONENT_INSTANCE_ID+"."+LISTINPUT_PROP2_NAME);
+        propInputsList.add(propInput);
+        propInputsListMap.put(COMPONENT_INSTANCE_ID, propInputsList);
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        componentInstInputsMap.setComponentInstanceInputsMap(propInputsListMap);
+        componentInstListInput.setComponentInstInputsMap(componentInstInputsMap);
+
+        return componentInstListInput;
+    }
+
+    @Test
+    public void test_createListInput_success() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
+        List<ComponentInstancePropInput> propInputsList = componentInstInputsMap.getComponentInstanceInputsMap().get(COMPONENT_INSTANCE_ID);
+        InputDefinition listInput = createListInputParams.getListInput();
+
+        // set up mock returns
+        // for get component object:
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        // for data type creation (use captor):
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
+        when(propertyDeclarationOrchestrator.declarePropertiesToListInput(service, componentInstInputsMap, listInput)).thenReturn(Either.left(listInput));
+        // for BaseOperation.getAllDataTypes:
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        // for BaseOperation.validatePropertyDefaultValue:
+        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
+        when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
+        when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
+        // for createListInputsInGraph:
+        when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID))).thenReturn(Either.left(Arrays.asList(listInput)));
+        // for rollback/commit:
+        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        // for unlock resource
+        when(graphLockOperation.unlockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        // validate result
+        assertEquals(true, result.isLeft());
+        List<InputDefinition> resultInputList = result.left().value();
+        assertEquals(1, resultInputList.size());
+        //InputDefinition resultInput = resultInputList.get(0);
+        Map<String, DataTypeDefinition> captoredDataTypeMap = dataTypesMapCaptor.getValue();
+        assertEquals(1, captoredDataTypeMap.size());
+        assertEquals(true, captoredDataTypeMap.containsKey(LISTINPUT_SCHEMA_TYPE));
+        DataTypeDefinition captoredDataType = captoredDataTypeMap.get(LISTINPUT_SCHEMA_TYPE);
+        assertEquals("tosca.datatypes.Root", captoredDataType.getDerivedFromName());
+        assertEquals( propInputsList.size(), captoredDataType.getProperties().size());
+        // confirm if corresponding property exists in data type
+        captoredDataType.getProperties().forEach(dataTypeProp -> {
+            Optional<ComponentInstancePropInput> find = propInputsList.stream()
+                    .filter(propInput -> propInput.getName().equals(dataTypeProp.getName())).findAny();
+            assertEquals(true, find.isPresent());
+        });
+    }
+
+    @Test
+    public void test_createListInput_fail_getComponent() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertEquals(true, result.isRight());
+    }
+
+
+    @Test
+    public void test_createListInput_fail_lockComponent() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.FAILED_TO_LOCK_ELEMENT);
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertEquals(true, result.isRight());
+    }
+
+    @Test
+    public void test_createListInput_fail_getAllDataTypes() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(componentsUtilsMock.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY)).thenReturn(new ResponseFormat());
+
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertEquals(true, result.isRight());
+        verify(applicationDataTypeCache, times(1)).getAll();
+        verify(componentsUtilsMock, times(1)).getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY);
+    }
+
+    @Test
+    public void test_createListInput_fail_prepareAndValidateInput() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
+        InputDefinition listInput = createListInputParams.getListInput();
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        // for BaseOperation.validatePropertyDefaultValue:
+        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(false);
+
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertEquals(true, result.isRight());
+        verify(propertyOperation, times(1)).isPropertyTypeValid(any());
+    }
+
+    @Test
+    public void test_createListInput_fail_addInputsToComponent() throws Exception {
+        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
+        InputDefinition listInput = createListInputParams.getListInput();
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        // for BaseOperation.validatePropertyDefaultValue:
+        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
+        when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
+        when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
+        when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+        Either<List<InputDefinition>, ResponseFormat> result =
+                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertEquals(true, result.isRight());
+        verify(toscaOperationFacadeMock, times(1)).addInputsToComponent(anyMap(), eq(COMPONENT_ID));
+    }
+
+    @Test
+    public void test_deleteInput_listInput_fail_getComponent() throws Exception {
+        //ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, LISTINPUT_NAME);
+        assertEquals(true, result.isRight());
+        verify(toscaOperationFacadeMock, times(1)).getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class));
+    }
+
+
+    @Test
+    public void test_deleteInput_listInput_fail_validateInput() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        service.setInputs(Collections.singletonList(listInput));
+        //ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        final String NONEXIST_INPUT_NAME = "myInput";
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, NONEXIST_INPUT_NAME);
+        assertEquals(true, result.isRight());
+        verify(toscaOperationFacadeMock, times(1)).getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class));
+    }
+
+
+    @Test
+    public void test_deleteInput_listInput_fail_lockComponent() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        service.setInputs(Collections.singletonList(listInput));
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        //when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.NOT_FOUND);
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
+        assertEquals(true, result.isRight());
+        verify(toscaOperationFacadeMock, times(1)).getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class));
+        verify(graphLockOperation, times(1)).lockComponent(COMPONENT_ID, NodeTypeEnum.Service);
+    }
+
+
+    @Test
+    public void test_deleteInput_listInput_fail_deleteInput() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        service.setInputs(Collections.singletonList(listInput));
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.deleteInputOfResource(service, listInput.getName())).thenReturn(StorageOperationStatus.BAD_REQUEST);
+        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
+        assertEquals(true, result.isRight());
+        verify(toscaOperationFacadeMock, times(1)).getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class));
+        verify(graphLockOperation, times(1)).lockComponent(COMPONENT_ID, NodeTypeEnum.Service);
+        verify(toscaOperationFacadeMock, times(1)).deleteInputOfResource(service, listInput.getName());
+    }
+
+
+    @Test
+    public void test_deleteInput_listInput_success() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        listInput.setIsDeclaredListInput(true);
+        service.setInputs(Collections.singletonList(listInput));
+        ArgumentCaptor<String> schemaTypeCaptor = ArgumentCaptor.forClass(String.class);
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.deleteInputOfResource(service, listInput.getName())).thenReturn(StorageOperationStatus.OK);
+        //when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(propertyDeclarationOrchestrator.unDeclarePropertiesAsListInputs(service, listInput)).thenReturn(StorageOperationStatus.OK);
+        when(dataTypeBusinessLogic.deletePrivateDataType(eq(service), schemaTypeCaptor.capture()))
+                .thenReturn(Either.left(new DataTypeDefinition())); // TODO: replace to return proper datatype
+        //when(propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(service, listInput)).thenReturn(StorageOperationStatus.OK);
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
+        assertEquals(true, result.isLeft());
+        verify(propertyDeclarationOrchestrator, times(1)).unDeclarePropertiesAsListInputs(service, listInput);
+        verify(dataTypeBusinessLogic, times(1)).deletePrivateDataType(service, listInput.getSchemaType());
+        assertEquals(listInput.getSchemaType(), schemaTypeCaptor.getValue());
+    }
+
+
+    @Test
+    public void test_deleteInput_input_fail_unDeclare() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        listInput.setIsDeclaredListInput(false);
+        service.setInputs(Collections.singletonList(listInput));
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.deleteInputOfResource(service, listInput.getName())).thenReturn(StorageOperationStatus.OK);
+        //when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(service, listInput)).thenReturn(StorageOperationStatus.BAD_REQUEST);
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
+        assertEquals(true, result.isRight());
+        verify(propertyDeclarationOrchestrator, times(1)).unDeclarePropertiesAsInputs(service, listInput);
+    }
+
+
+    @Test
+    public void test_deleteInput_input_success() throws Exception {
+        InputDefinition listInput = setUpListInput();
+        String inputId = COMPONENT_ID + "." + listInput.getName();
+        listInput.setUniqueId(inputId);
+        listInput.setIsDeclaredListInput(false);
+        service.setInputs(Collections.singletonList(listInput));
+
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.deleteInputOfResource(service, listInput.getName())).thenReturn(StorageOperationStatus.OK);
+        //when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(service, listInput)).thenReturn(StorageOperationStatus.OK);
+
+        Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
+        assertEquals(true, result.isLeft());
+        verify(propertyDeclarationOrchestrator, times(1)).unDeclarePropertiesAsInputs(service, listInput);
+    }
+
 }

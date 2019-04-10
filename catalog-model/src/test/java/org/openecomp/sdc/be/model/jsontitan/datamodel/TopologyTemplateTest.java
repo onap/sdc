@@ -5,6 +5,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 
 public class TopologyTemplateTest {
@@ -366,9 +367,28 @@ public class TopologyTemplateTest {
 	}
 
 	
+	@Test
+	public void testGetDataTypes() throws Exception {
+		TopologyTemplate testSubject;
+		Map<String, DataTypeDataDefinition> result;
 
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getDataTypes();
+	}
 
 	
+	@Test
+	public void testSetDataTypes() throws Exception {
+		TopologyTemplate testSubject;
+		Map<String, DataTypeDataDefinition> dataTypes = null;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setDataTypes(dataTypes);
+	}
+
+
 	@Test
 	public void testGetComponentInstances() throws Exception {
 		TopologyTemplate testSubject;

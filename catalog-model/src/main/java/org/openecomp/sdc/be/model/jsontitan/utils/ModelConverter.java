@@ -23,9 +23,11 @@ package org.openecomp.sdc.be.model.jsontitan.utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.*;
@@ -152,6 +154,8 @@ public class ModelConverter {
 
         convertServiceInterfaces(topologyTemplate, service);
 
+        convertDataTypes(topologyTemplate, service);
+
         convertNodeFiltersComponents(topologyTemplate, service);
         setCapabilitiesToComponent(topologyTemplate, service);
         setRequirementsToComponent(topologyTemplate, service);
@@ -205,6 +209,7 @@ public class ModelConverter {
             convertProperties(topologyTemplate, resource);
             setCapabilitiesToComponent(topologyTemplate, resource);
             setRequirementsToComponent(topologyTemplate, resource);
+            convertDataTypes(topologyTemplate, resource);
         }
         convertArtifacts(toscaElement, resource);
         convertAdditionalInformation(toscaElement, resource);
@@ -1106,6 +1111,26 @@ public class ModelConverter {
 		}
 	}
 
+    private static void convertDataTypes(TopologyTemplate topologyTemplate, Component component) {
+        Map<String, DataTypeDataDefinition> dataTypeDataMap = topologyTemplate.getDataTypes();
+        if (MapUtils.isNotEmpty(dataTypeDataMap)) {
+            List<DataTypeDefinition> dataTypeMap = dataTypeDataMap.values().stream().map(e -> {
+                DataTypeDefinition dataType = new DataTypeDefinition(e);
+
+                if(CollectionUtils.isNotEmpty(e.getPropertiesData())) {
+                    log.debug("#convertDataTypes - propertiesData is not null. {}",
+                            ReflectionToStringBuilder.toString(e.getPropertiesData()));
+                    dataType.setProperties(e.getPropertiesData().stream()
+                            .map(PropertyDefinition::new).collect(Collectors.toList()));
+                } else {
+                    log.debug("#convertDataTypes - propertiesData is null. ignore.");
+                }
+                return dataType;
+            }).collect(Collectors.toList());
+            component.setDataTypes(dataTypeMap);
+        }
+    }
+
 
     private static void convertCommonToscaData(Component component, ToscaElement toscaElement) {
         toscaElement.setUUID(component.getUUID());
@@ -1165,6 +1190,7 @@ public class ModelConverter {
         toscaElement.setMetadataValue(JsonPresentationFields.INVARIANT_UUID, component.getInvariantUUID());
         toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
     }
+
 
 
 
