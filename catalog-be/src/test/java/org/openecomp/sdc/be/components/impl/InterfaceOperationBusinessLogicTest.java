@@ -19,7 +19,6 @@ package org.openecomp.sdc.be.components.impl;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -49,10 +48,12 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
@@ -93,6 +94,8 @@ public class InterfaceOperationBusinessLogicTest {
     private InterfaceOperation interfaceOperation;
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
+    @Mock
+    protected ArtifactsOperations artifactToscaOperation;
     private User user;
     private Resource resource;
 
@@ -110,10 +113,10 @@ public class InterfaceOperationBusinessLogicTest {
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
                 .thenReturn(StorageOperationStatus.OK);
         when(interfaceOperationValidation
-                     .validateInterfaceOperations(anyObject(), anyObject(), any(), anyMap(), anyBoolean()))
+                     .validateInterfaceOperations(any(), any(), any(), anyMap(), anyBoolean()))
                 .thenReturn(Either.left(true));
         when(interfaceOperationValidation
-                .validateDeleteOperationContainsNoMappedOutput(anyObject(), anyObject(), any()))
+                .validateDeleteOperationContainsNoMappedOutput(any(), any(), any()))
                 .thenReturn(Either.left(true));
         when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
     }
@@ -189,7 +192,9 @@ public class InterfaceOperationBusinessLogicTest {
     public void updateInterfaceOperationTestWithArtifactSuccess() {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
-        when(artifactCassandraDao.getCountOfArtifactById(any(String.class))).thenReturn(Either.left(new Long(1)));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
                 Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
@@ -205,8 +210,9 @@ public class InterfaceOperationBusinessLogicTest {
     public void updateInterfaceOperationTestWithArtifactFailure() {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
-        when(artifactCassandraDao.getCountOfArtifactById(any(String.class))).thenReturn(Either.left(new Long(1)));
-        when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.GENERAL_ERROR);
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
                         Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
@@ -219,8 +225,7 @@ public class InterfaceOperationBusinessLogicTest {
     public void updateInterfaceOperationTestWithoutArtifact() {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
-        when(artifactCassandraDao.getCountOfArtifactById(any(String.class)))
-                .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
                 Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
@@ -273,7 +278,7 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperationValidation
-                     .validateInterfaceOperations(anyObject(), anyObject(), any(), anyMap(), anyBoolean()))
+                     .validateInterfaceOperations(any(), any(), any(), anyMap(), anyBoolean()))
                 .thenReturn(Either.right(new ResponseFormat()));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
@@ -299,6 +304,9 @@ public class InterfaceOperationBusinessLogicTest {
     public void deleteInterfaceOperationTestSuccess() {
         resource.getInterfaces().get(interfaceId).getOperations()
                 .putAll(InterfaceOperationTestUtils.createMockOperationMap(operationId1, operationName));
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(Collections.emptyList()));
         Assert.assertTrue(interfaceOperationBusinessLogic.deleteInterfaceOperation(resourceId, interfaceId,
@@ -307,6 +315,9 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void shouldFailWhenDeleteInterfaceOperationFailedTest() {
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
@@ -316,6 +327,9 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void deleteInterfaceOperationTestFailOnArtifactDeletion() {
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.GENERAL_ERROR);
         Assert.assertTrue(interfaceOperationBusinessLogic.deleteInterfaceOperation(resourceId, interfaceId,
                 Collections.singletonList(operationId), user, true).isRight());
@@ -323,6 +337,9 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void deleteInterfaceOperationTestFailOnException() {
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenThrow(new RuntimeException());
         Assert.assertTrue(interfaceOperationBusinessLogic.deleteInterfaceOperation(resourceId, interfaceId,
                 Collections.singletonList(operationId), user, true).isRight());
@@ -330,6 +347,9 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void deleteInterfaceTestSuccess() {
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(Collections.emptyList()));
         when(interfaceOperation.deleteInterface(any(), any())).thenReturn(Either.left(interfaceId));
@@ -339,6 +359,9 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void deleteInterfaceTestFailure() {
+        when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
+        when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
+                .thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(Collections.emptyList()));
         when(interfaceOperation.deleteInterface(any(), any()))

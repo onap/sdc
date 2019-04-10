@@ -2324,7 +2324,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     @Override
     public void setDeploymentArtifactsPlaceHolder(Component component, User user) {
-
+        Service service = (Service) component;
+        Map<String, ArtifactDefinition> artifactMap = service.getDeploymentArtifacts();
+        if (artifactMap == null) {
+            artifactMap = new HashMap<>();
+        }
+        service.setDeploymentArtifacts(artifactMap);
     }
 
     @Override

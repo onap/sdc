@@ -102,7 +102,7 @@ public class OperationArtifactUtil {
                 .flatMap(interfaceDefinition -> interfaceDefinition.getOperationsMap().values().stream())
                 .map(Operation::getImplementationArtifact).filter(Objects::nonNull)
                 .collect(Collectors.toMap(ArtifactDataDefinition::getUniqueId,
-                        artifactDefinition -> artifactDefinition));
+                        artifactDefinition -> artifactDefinition, (a1, a2) -> a1));
         if (MapUtils.isNotEmpty(interfaceArtifacts)) {
             Set<String> artifactNameSet = new HashSet<>();
             for (Map.Entry<String, ArtifactDefinition> interfaceArtifactEntry : interfaceArtifacts.entrySet()) {

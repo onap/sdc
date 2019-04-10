@@ -900,6 +900,11 @@ public class CsarUtils {
 			for (ArtifactTypeEnum artifactTypeEnum : artifactTypeEnumKeySet) {
 				List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactTypeEnum);
 				String artifactTypeFolder = groupTypeFolder + artifactTypeEnum.toString() + File.separator;
+
+				if(artifactTypeEnum == ArtifactTypeEnum.WORKFLOW && path.contains(ARTIFACTS_PATH + RESOURCES_PATH)){
+					// Ignore this packaging as BPMN artifacts needs to be packaged in different manner
+					continue;
+				}
 				if (artifactTypeEnum == ArtifactTypeEnum.WORKFLOW) {
 					artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
 				}

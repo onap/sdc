@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -179,5 +179,12 @@ public class InterfaceOperationUtils {
         return fullOutputIdentifier.contains(".")
                 ? fullOutputIdentifier.substring(fullOutputIdentifier.lastIndexOf('.') + 1)
                 : fullOutputIdentifier;
+    }
+
+    public static boolean isArtifactInUse(Component component, String operationId, String artifactUniqueId) {
+        return MapUtils.emptyIfNull(component.getInterfaces()).values().stream()
+                       .filter(o -> MapUtils.isNotEmpty(o.getOperations()) && !o.getOperations().containsKey(operationId))
+                       .flatMap(o -> o.getOperations().values().stream()).collect(Collectors.toList()).stream()
+                       .anyMatch(op -> op.getImplementation().getUniqueId().equals(artifactUniqueId));
     }
 }

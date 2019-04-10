@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import fj.data.Either;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -122,14 +123,34 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 if (validateDeleteOperationContainsNoMappedOutputResponse.isRight()) {
                     return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
                 }
-                String artifactUuId = storedOperation.getImplementation().getArtifactUUID();
-                CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUuId);
-                if (cassandraStatus != CassandraOperationStatus.OK) {
-                    ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
-                            componentsUtils.convertFromStorageResponse(
-                                    componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
-                            storedOperation.getImplementation().getArtifactDisplayName());
-                    return Either.right(responseFormatByArtifactId);
+
+                String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
+                if(!InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)){
+                    Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither =
+                            artifactToscaOperation.getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
+                    if(getArtifactEither.isLeft()){
+                        Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent =
+                                artifactToscaOperation.removeArifactFromResource(componentId, artifactUniqueId,
+                                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()),
+                                        true);
+                        if(removeArifactFromComponent.isRight()){
+                            titanDao.rollback();
+                            ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                    componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
+                                    storedOperation.getImplementation().getArtifactDisplayName());
+                            return Either.right(responseFormatByArtifactId);
+                        }
+
+                        CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
+                        if (cassandraStatus != CassandraOperationStatus.OK) {
+                            titanDao.rollback();
+                            ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                    componentsUtils.convertFromStorageResponse(
+                                            componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
+                                    storedOperation.getImplementation().getArtifactDisplayName());
+                            return Either.right(responseFormatByArtifactId);
+                        }
+                    }
                 }
 
                 operationsCollection.put(operationId, interfaceDefinition.getOperationsMap().get(operationId));
@@ -317,20 +338,35 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
                         Operation storedOperation = optionalOperation.get().getValue();
                         String artifactUuId = storedOperation.getImplementation().getArtifactUUID();
-                        Either<Long, CassandraOperationStatus> artifactCount =
-                                artifactCassandraDao.getCountOfArtifactById(artifactUuId);
-                        if (artifactCount.isLeft()) {
-                            CassandraOperationStatus cassandraStatus =
-                                    artifactCassandraDao.deleteArtifact(artifactUuId);
-                            if (cassandraStatus != CassandraOperationStatus.OK) {
-                                titanDao.rollback();
-                                ResponseFormat responseFormatByArtifactId =
-                                        componentsUtils.getResponseFormatByArtifactId(
-                                                componentsUtils.convertFromStorageResponse(
-                                                        componentsUtils.convertToStorageOperationStatus(
-                                                                cassandraStatus)),
-                                                storedOperation.getImplementation().getArtifactDisplayName());
-                                return Either.right(responseFormatByArtifactId);
+                        String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
+
+                        if(!InterfaceOperationUtils.isArtifactInUse(storedComponent, storedOperation.getUniqueId(), artifactUniqueId)){
+                            Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither =
+                                    artifactToscaOperation.getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
+                            if(getArtifactEither.isLeft()){
+                                Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent =
+                                        artifactToscaOperation.removeArifactFromResource(componentId, artifactUniqueId,
+                                                NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()),
+                                                true);
+                                if(removeArifactFromComponent.isRight()){
+                                    titanDao.rollback();
+                                    ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                            componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
+                                            storedOperation.getImplementation().getArtifactDisplayName());
+                                    return Either.right(responseFormatByArtifactId);
+                                }
+
+                                CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
+                                if (cassandraStatus != CassandraOperationStatus.OK) {
+                                    titanDao.rollback();
+                                    ResponseFormat responseFormatByArtifactId =
+                                            componentsUtils.getResponseFormatByArtifactId(
+                                                    componentsUtils.convertFromStorageResponse(
+                                                            componentsUtils.convertToStorageOperationStatus(
+                                                                    cassandraStatus)),
+                                                    storedOperation.getImplementation().getArtifactDisplayName());
+                                    return Either.right(responseFormatByArtifactId);
+                                }
                             }
                         }
                         updateOperationOnInterface(interfaceDef, operation, artifactUuId);

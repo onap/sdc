@@ -58,9 +58,9 @@ public class ArtifactResolverImpl implements ArtifactsResolver {
         if (MapUtils.isNotEmpty(interfaces)) {
             interfaceArtifacts = interfaces.values().stream()
                     .flatMap(inte -> inte.getOperationsMap().values().stream())
-                    .map(operation -> operation.getImplementationArtifact())
+                    .map(operation -> operation.getImplementationArtifact()).filter(Objects::nonNull)
                     .collect(Collectors.toMap(artifactDefinition -> artifactDefinition.getUniqueId(),
-                            artifactDefinition -> artifactDefinition));
+                            artifactDefinition -> artifactDefinition, (a1, a2) -> a1));
         }
 
         Map<String, ArtifactDefinition> serviceApiArtifacts = Collections.emptyMap();

@@ -123,4 +123,10 @@ public class InterfaceOperationUtilsTest {
                                    .isPresent());
     }
 
+    @Test
+    public void testIsArtifactInUse() {
+        Assert.assertTrue(InterfaceOperationUtils.isArtifactInUse(resource, operationId1, "uniqId"));
+        Assert.assertFalse(InterfaceOperationUtils.isArtifactInUse(resource, operationId1, "uniqId1"));
+    }
+
 }
