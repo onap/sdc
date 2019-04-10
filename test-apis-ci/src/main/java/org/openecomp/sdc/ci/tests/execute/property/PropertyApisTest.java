@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,19 @@
  */
 
 package org.openecomp.sdc.ci.tests.execute.property;
+
+import static org.testng.AssertJUnit.assertTrue;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -47,19 +60,12 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.*;
-
-import static org.testng.AssertJUnit.assertTrue;
-
 public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	protected static final String RESOURCE_CATEGORY = "Generic/Databases";
 	protected Config config = Config.instance();
 	protected String contentTypeHeaderData = "application/json";
 	protected String acceptHeaderDate = "application/json";;
-
-	// protected User sdncDesignerDetails;
-	// protected ResourceReqDetails resourceDetails;
 	protected PropertyReqDetails property;
 	protected String body;
 
@@ -75,30 +81,8 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@BeforeMethod
 	public void init() throws Exception {
-		//
-		// //Delete resource
-		//
-		// resourceDetails = new ResourceReqDetails();
-		// resourceDetails.setResourceName("testresourceDetails");
-		//
-		// resourceUtils.deleteResource_allVersions(resourceDetails,
-		// sdncDesignerDetails);
-		//
-		// //Create resource
-		// resourceDetails = createResource(sdncDesignerDetails,
-		// "testresourceDetails");
-
-		// Create property
-		// property.setPropertyName("test");
-		// property.setPropertyType("integer");
-		// property.setPropertySource("A&AI");
-		// property.setPropertyDescription("test property");
-
-		// body = gson.toJson(property);
 		property = ElementFactory.getDefaultProperty();
 		body = property.propertyToJsonString();
-		// System.out.println(body);
-		// HTTP (for negative tests)
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncDesignerDetails.getUserId());
@@ -106,10 +90,75 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 	}
 
 	@Test
-	public void testPropertyApis() throws Exception {
-		// Create property
-		// System.out.println ("---- Create Property (POST) ----");
+	public void validateValidValueConstraintFailTest() throws Exception {
+		body = "{\"SubnetProp\": {\"schema\": {\"property\": {\"type\": \"\"}},\"type\": \"org.openecomp.datatypes.heat.network.neutron.Subnet\",\"name\": \"SubnetProp\"}}";
+		RestResponse createPropertyResponse = PropertyRestUtils.createProperty(getResourceId(resourceDetails), body,
+				sdncDesignerDetails);
+		AssertJUnit.assertEquals("Expected result code - 200, received - " + createPropertyResponse.getErrorCode(), 200,
+				(int) createPropertyResponse.getErrorCode());
 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		try {
+			PropertyReqDetails propertyResponseObject = mapper.readValue(createPropertyResponse.getResponse(),
+					PropertyReqDetails.class);
+
+			PropertyReqDetails propertyReqDetails = new PropertyReqDetails();
+			propertyReqDetails.setPropertyType("org.openecomp.datatypes.heat.network.neutron.Subnet");
+			propertyReqDetails.setName(propertyResponseObject.getName());
+			propertyReqDetails.setValue(mapper.writeValueAsString(Collections.singletonMap("ipv6_address_mode", "Fail")));
+			propertyReqDetails.setParentUniqueId(propertyResponseObject.getParentUniqueId());
+			propertyReqDetails.setUniqueId(propertyResponseObject.getUniqueId());
+
+			body = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(Collections.singletonList(propertyReqDetails));
+			body = body.replace("propertyType", "type");
+			RestResponse addValueToPropertyResponse =
+					PropertyRestUtils.addValueToProperty(getResourceId(resourceDetails), body, sdncDesignerDetails);
+
+			AssertJUnit.assertEquals("Expected result code - 400, received - " + addValueToPropertyResponse.getErrorCode(),
+					400, (int) addValueToPropertyResponse.getErrorCode());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void validateValidValueConstraintSuccessTest() throws Exception {
+		body = "{\"SubnetProp\": {\"schema\": {\"property\": {\"type\": \"\"}},\"type\": \"org.openecomp.datatypes.heat.network.neutron.Subnet\",\"name\": \"SubnetProp\"}}";
+		RestResponse createPropertyResponse = PropertyRestUtils.createProperty(getResourceId(resourceDetails), body,
+				sdncDesignerDetails);
+		AssertJUnit.assertEquals("Expected result code - 201, received - " + createPropertyResponse.getErrorCode(), 200,
+				(int) createPropertyResponse.getErrorCode());
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		try {
+			PropertyReqDetails propertyResponseObject = mapper.readValue(createPropertyResponse.getResponse(),
+					PropertyReqDetails.class);
+
+			PropertyReqDetails propertyReqDetails = new PropertyReqDetails();
+			propertyReqDetails.setPropertyType("org.openecomp.datatypes.heat.network.neutron.Subnet");
+			propertyReqDetails.setName(propertyResponseObject.getName());
+			propertyReqDetails.setValue(mapper.writeValueAsString(Collections.singletonMap("ipv6_address_mode", "slaac")));
+			propertyReqDetails.setParentUniqueId(propertyResponseObject.getParentUniqueId());
+			propertyReqDetails.setUniqueId(propertyResponseObject.getUniqueId());
+
+			body = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(Collections.singletonList(propertyReqDetails));
+			body = body.replace("propertyType", "type");
+			RestResponse addValueToPropertyResponse =
+					PropertyRestUtils.addValueToProperty(getResourceId(resourceDetails), body, sdncDesignerDetails);
+
+			AssertJUnit.assertEquals("Expected result code - 200, received - " + addValueToPropertyResponse.getErrorCode(),
+					200, (int) addValueToPropertyResponse.getErrorCode());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testPropertyApis() throws Exception {
 		String propertyId = UniqueIdBuilder.buildComponentPropertyUniqueId(getResourceId(resourceDetails), property.getName());
 
 		PropertyRestUtils.deleteProperty(getResourceId(resourceDetails), propertyId, sdncDesignerDetails);
@@ -119,7 +168,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 				createPropertyResponse.getErrorCode() == 201);
 
 		// Get property
-		// System.out.println ("---- Get Property (GET) ----");
 		RestResponse getPropertyResponse = PropertyRestUtils.getProperty(getResourceId(resourceDetails), propertyId,
 				sdncDesignerDetails);
 		AssertJUnit.assertTrue("Expected result code - 200, received - " + getPropertyResponse.getErrorCode(),
@@ -127,19 +175,8 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 		JSONObject jsonResp = (JSONObject) JSONValue.parse(getPropertyResponse.getResponse());
 
-		// assertTrue("Wrong 'type' in the
-		// response",jsonResp.get("type").equals(property.getPropertyType()));
-		// assertTrue("Wrong 'source' in the
-		// response",jsonResp.get("name").equals(property.getPropertyName()));
-		// assertTrue("Wrong 'name' in the
-		// response",jsonResp.get("source").equals(property.getPropertySource()));
-		// assertTrue("Wrong 'description' in the
-		// response",jsonResp.get("description").equals(property.getPropertyDescription()));
-
 		// Update property
-		// System.out.println ("---- Update Property (UPDATE) ----");
 		property.setPropertyDescription("Updated description");
-		// body = gson.toJson(property);
 		body = property.propertyToJsonString();
 
 		RestResponse updatePropertyResponse = PropertyRestUtils.updateProperty(getResourceId(resourceDetails),
@@ -148,7 +185,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 				updatePropertyResponse.getErrorCode() == 200);
 
 		// Get property
-		// System.out.println ("---- Get Property (GET) ----");
 		getPropertyResponse = PropertyRestUtils.getProperty(getResourceId(resourceDetails), propertyId,
 				sdncDesignerDetails);
 		AssertJUnit.assertTrue("Expected result code - 200, received - " + getPropertyResponse.getErrorCode(),
@@ -156,24 +192,13 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 		jsonResp = (JSONObject) JSONValue.parse(getPropertyResponse.getResponse());
 
-		// assertTrue("Wrong 'type' in the
-		// response",jsonResp.get("type").equals(property.getPropertyType()));
-		// assertTrue("Wrong 'source' in the
-		// response",jsonResp.get("name").equals(property.getPropertyName()));
-		// assertTrue("Wrong 'name' in the
-		// response",jsonResp.get("source").equals(property.getPropertySource()));
-		// assertTrue("Wrong 'description' in the
-		// response",jsonResp.get("description").equals(property.getPropertyDescription()));
-
 		// Delete property
-		// System.out.println ("---- Delete Property (DELETE) ----");
 		RestResponse deletePropertyResponse = PropertyRestUtils.deleteProperty(getResourceId(resourceDetails),
 				propertyId, sdncDesignerDetails);
 		AssertJUnit.assertTrue("Expected result code - 204, received - " + deletePropertyResponse.getErrorCode(),
 				deletePropertyResponse.getErrorCode() == 204);
 
 		// Get property - verify that the property doesn't exist.
-		// System.out.println("---- GET - Property Not Found ----");
 		getPropertyResponse = PropertyRestUtils.getProperty(getResourceId(resourceDetails), propertyId,
 				sdncDesignerDetails);
 		List<String> variables = Arrays.asList("");
@@ -185,16 +210,10 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 	// --------------------------------------------------------------------------------------
 
 	protected String getPropertyId(ResourceReqDetails resource, PropertyReqDetails property) {
-		// return
-		// resource.getResourceName().toLowerCase()+".0.1."+property.getPropertyName();
 		return UniqueIdBuilder.buildComponentPropertyUniqueId(resource.getUniqueId(), property.getName());
 	}
 
 	protected String getResourceId(ResourceReqDetails resource) {
-		// String resourceUid =
-		// UniqueIdBuilder.buildResourceUniqueId(resource.getResourceName(),
-		// "0.1");
-
 		return resource.getUniqueId();
 	}
 
@@ -212,7 +231,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 		String description = "description";
 		ArrayList<String> resourceTags = new ArrayList<String>();
 		resourceTags.add(resourceName);
-		// String category = ResourceCategoryEnum.DATABASE.getValue();
 		ArrayList<String> derivedFrom = new ArrayList<String>();
 		derivedFrom.add("tosca.nodes.Root");
 		String vendorName = "Oracle";
@@ -224,7 +242,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 				derivedFrom, vendorName, vendorRelease, contactId, icon);
 		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(),
 				ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
-		// deleteResource(resourceName.toLowerCase()+".0.1",sdncUserDetails.getUserId());
 		// TODO delete by name
 		// deleteResource(UniqueIdBuilder.buildResourceUniqueId(resourceName,
 		// "0.1"), sdncUserDetails.getUserId());
@@ -239,8 +256,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void putReqToCreateUriNotAllowed() throws Exception {
-		// System.out.println("---- PUT request to Create uri - Not Allowed
-		// ----");
 		String url = String.format(Urls.CREATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails));
 		RestResponse propertyErrorResponse = httpRequest.httpSendByMethod(url, "PUT", body, headersMap);
@@ -251,8 +266,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void getReqToCreateUriNotAllowed() throws Exception {
-		// System.out.println("---- GET request to Create uri - Not Allowed
-		// ----");
 		String url = String.format(Urls.CREATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails));
 		RestResponse propertyErrorResponse = httpRequest.httpSendGet(url, headersMap);
@@ -263,8 +276,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void deleteReqToCreateUriNotAllowed() throws Exception {
-		// System.out.println("---- DELETE request to Create uri - Not Allowed
-		// ----");
 		String url = String.format(Urls.CREATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails));
 		RestResponse propertyErrorResponse = httpRequest.httpSendDelete(url, headersMap);
@@ -275,8 +286,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void postReqToUpdateUriNotAllowed() throws Exception {
-		// System.out.println("---- POST request to Update uri - Not Allowed
-		// ----");
 		String url = String.format(Urls.UPDATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), getPropertyId(resourceDetails, property));
 		RestResponse propertyErrorResponse = httpRequest.httpSendPost(url, body, headersMap);
@@ -287,7 +296,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void deleteReqPropertyNotFound() throws Exception {
-		// System.out.println("---- DELETE - Property Not Found ----");
 		String unknownPropertyId = getPropertyId(resourceDetails, property) + "111";
 		String url = String.format(Urls.DELETE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), unknownPropertyId);
@@ -299,7 +307,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void updateReqPropertyNotFound() throws Exception {
-		// System.out.println("---- PUT - Property Not Found ----");
 		String unknownPropertyId = getPropertyId(resourceDetails, property) + "111";
 		String url = String.format(Urls.UPDATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), unknownPropertyId);
@@ -311,12 +318,10 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void modifierNotTheStateOwner() throws Exception {
-		// System.out.println("---- The modifier is not the state owner -
 		// Operation Not Allowed ----");
 		User sdncUserDetails2 = createUser("tu5555", "Test", "User", "tu5555@intl.sdc.com", "DESIGNER");
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncUserDetails2.getUserId());
 		property.setPropertyDescription("new description");
-		// body = gson.toJson(property);
 		body = property.propertyToJsonString();
 		String url = String.format(Urls.UPDATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), getPropertyId(resourceDetails, property));
@@ -329,14 +334,10 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@Test
 	public void postReqInvalidContent() throws Exception {
-		// System.out.println("---- POST - Invalid Content ----");
 		body = "invalid";
 		String url = String.format(Urls.CREATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), getPropertyId(resourceDetails, property));
 		RestResponse propertyErrorResponse = httpRequest.httpSendPost(url, body, headersMap);
-
-		// System.out.println(propertyErrorResponse.getResponse()+" "+
-		// propertyErrorResponse.getErrorCode());
 
 		List<String> variables = Arrays.asList();
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_CONTENT.name(), variables,
@@ -347,30 +348,20 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 	public void putReqInvalidContent() throws Exception {
 
 		// Create property
-		// System.out.println ("---- Create Property (POST) ----");
 		RestResponse createPropertyResponse = PropertyRestUtils.createProperty(getResourceId(resourceDetails), body,
 				sdncDesignerDetails);
 		assertTrue("Expected result code - 201, received - " + createPropertyResponse.getErrorCode(),
 				createPropertyResponse.getErrorCode() == 201);
 
-		// System.out.println("---- PUT - Invalid Content ----");
 		body = "invalid";
 
 		String url = String.format(Urls.UPDATE_PROPERTY, config.getCatalogBeHost(), config.getCatalogBePort(),
 				getResourceId(resourceDetails), getPropertyId(resourceDetails, property));
 
-		// System.out.println(url + "\n" + body);
-
 		RestResponse propertyErrorResponse = httpRequest.httpSendByMethod(url, "PUT", body, headersMap);
-
-		// System.out.println(propertyErrorResponse.getResponse()+" "+
-		// propertyErrorResponse.getErrorCode());
 
 		List<String> variables = Arrays.asList();
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_CONTENT.name(), variables,
 				propertyErrorResponse.getResponse());
 	}
-
-	// --------------------------------------------------------------------------------------
-
 }

@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
@@ -45,5 +46,10 @@ public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstrai
         if (getComparable().compareTo(propertyValue) > 0) {
             throw new ConstraintViolationException(propertyValue + " <= " + greaterOrEqual);
         }
+    }
+
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%f property value must be >= %f", greaterOrEqual);
     }
 }

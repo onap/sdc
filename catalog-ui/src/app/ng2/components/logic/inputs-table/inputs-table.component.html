@@ -57,6 +57,7 @@
                                      pattern="validationUtils.getValidationPattern(input.type)"
                                      [value]="input.defaultValueObj"
                                      [type]="input.type"
+                                     [constraints]="input.constraints"
                                      [name]="input.name"
                                      (elementChanged)="onInputChanged(input, $event)"
                                      [readonly]="readonly"

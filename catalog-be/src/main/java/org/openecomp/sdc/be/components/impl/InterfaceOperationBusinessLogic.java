@@ -450,6 +450,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             operationInput.setToscaDefaultValue(getInputToscaDefaultValue(operationInput, component));
             operationInput.setValue(componentInput.getValue());
             operationInput.setSchema(componentInput.getSchema());
+			operationInput.setParentPropertyType(componentInput.getParentPropertyType());
+			operationInput.setSubPropertyInputPath(componentInput.getSubPropertyInputPath());
         }
         //Set the tosca default value for inputs mapped to component inputs as well as other outputs
         operationInput.setToscaDefaultValue(getInputToscaDefaultValue(operationInput, component));
@@ -460,6 +462,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         Map<String, List<String>> defaultInputValue;
         if (isOperationInputMappedToComponentInput(input, component.getInputs())) {
             String propertyName = input.getInputId().substring(input.getInputId().indexOf('.') + 1);
+			setParentPropertyTypeAndInputPath(input, component);
             defaultInputValue = createMappedInputPropertyDefaultValue(propertyName);
         } else {
             //Currently inputs can only be mapped to a declared input or an other operation outputs
@@ -467,6 +470,24 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         return new Gson().toJson(defaultInputValue);
     }
+
+	private void setParentPropertyTypeAndInputPath(OperationInputDefinition input,
+												   org.openecomp.sdc.be.model.Component component) {
+		if (CollectionUtils.isEmpty(component.getInputs())) {
+			return;
+		}
+
+		component.getInputs()
+				.stream()
+				.filter(inp -> inp.getUniqueId().equals(
+						input.getInputId().substring(0, input.getInputId().lastIndexOf('.'))))
+				.forEach(inp -> {
+					input.setParentPropertyType(inp.getParentPropertyType());
+					if (Objects.nonNull(input.getName())) {
+						input.setSubPropertyInputPath(input.getName().replaceAll("\\.", "#"));
+					}
+				});
+	}
 
     private void addOperationToInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation) {
         interfaceOperation.setUniqueId(UUID.randomUUID().toString());

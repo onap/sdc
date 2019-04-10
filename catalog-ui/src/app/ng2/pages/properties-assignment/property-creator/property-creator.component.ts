@@ -46,7 +46,8 @@ export class PropertyCreatorComponent {
         let nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
             (type: string) => new DropdownValue(type,
                     type.replace("org.openecomp.datatypes.heat.",""))
-        );
+        )
+        .sort((a, b) => a.label.localeCompare(b.label));
         this.typesProperties = _.concat(this.typesProperties,nonPrimitiveTypesValues);
         this.typesSchemaProperties = _.concat(typesSimpleProperties,nonPrimitiveTypesValues);
         this.typesProperties.unshift(new DropdownValue('','Select Type...'));

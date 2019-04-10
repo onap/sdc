@@ -126,7 +126,7 @@ export class PropertiesAssignmentComponent {
         this.loadingInstances = true;
         this.loadingProperties = true;
         this.componentServiceNg2
-            .getComponentInputs(this.component)
+            .getComponentInputsWithProperties(this.component)
             .subscribe(response => {
                 _.forEach(response.inputs, (input: InputBEModel) => {
                     const newInput: InputFEModel = new InputFEModel(input);
@@ -468,7 +468,10 @@ export class PropertiesAssignmentComponent {
                         };
                     } else {
                         if (this.isSelf()) {
-                            request = this.componentServiceNg2.updateServiceProperties(this.component, changedProperties);
+                            request = this.componentServiceNg2.updateServiceProperties(this.component, _.map(changedProperties, cp => {
+                                delete cp.constraints;
+                                return cp;
+                            }));
                         } else {
                             request = this.componentInstanceServiceNg2
                                 .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties);
