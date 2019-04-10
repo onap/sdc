@@ -156,6 +156,24 @@
       "revId": "6e530168aefc14f53988251d360cf86cf362312b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "883aa1a2_ff89afb8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/DistributionStatusOfServiceInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:01:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27ccca61_db095c8c",
+      "revId": "6e530168aefc14f53988251d360cf86cf362312b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
