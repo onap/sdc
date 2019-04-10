@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8175fd7_60ac63d4",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-04-10T11:37:46Z",
+      "side": 1,
+      "message": "This is instance level",
+      "revId": "dbfed54319f5895f12f59043a8eaf6e6454b5601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
