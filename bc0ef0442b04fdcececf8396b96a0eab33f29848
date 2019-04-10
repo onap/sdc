@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e56b6b89_cdd21900",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T11:00:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ccde99da_0a9bfba0",
+      "range": {
+        "startLine": 34,
+        "startChar": 30,
+        "endLine": 34,
+        "endChar": 66
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f6f8d7ea_da1222cd",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "04f86c01_4985810a",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T11:00:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6f8d7ea_da1222cd",
+      "range": {
+        "startLine": 42,
+        "startChar": 27,
+        "endLine": 42,
+        "endChar": 37
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "190450b7_c1ad5b76",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2019-04-10T09:48:06Z",
       "side": 1,
       "message": "Is an !important rule necessary here? Maybe try giving a parent an ID and using specificity to override the ngx-table defaults instead.",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 36
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16336c53_4e47b461",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T11:00:54Z",
+      "side": 1,
+      "message": "Removed completely as it doesnt change the whole look\u0026feel. Next review will introduce another input with different styling inside the ngx-datatable header so additional styles here could broke those mentioned.",
+      "parentUuid": "190450b7_c1ad5b76",
       "range": {
         "startLine": 58,
         "startChar": 0,
