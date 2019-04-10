@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f97c44b7_6404ea19",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-10T08:31:48Z",
+      "side": 1,
+      "message": "should be in try block too.",
+      "revId": "fa2b2399246534e5328826fe27ba8d5573c92a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e29ee89_24e5c69e",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-10T08:31:48Z",
+      "side": 1,
+      "message": "should be in try block too",
+      "revId": "fa2b2399246534e5328826fe27ba8d5573c92a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baf64678_082e8b60",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 894,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-10T08:31:48Z",
+      "side": 1,
+      "message": "ByteArrayInputStream should be in try block too.",
+      "revId": "fa2b2399246534e5328826fe27ba8d5573c92a60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
