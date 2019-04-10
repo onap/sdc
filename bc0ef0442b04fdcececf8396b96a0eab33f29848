@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ccde99da_0a9bfba0",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-10T09:48:06Z",
+      "side": 1,
+      "message": "Re: prop, is there a reason not bind it using bracket notation? eg: [prop]\u003d\"col.prop\"\nAlso for minWidth, looks like the brackets need to be removed (or add single-quote marks instead).",
+      "range": {
+        "startLine": 34,
+        "startChar": 30,
+        "endLine": 34,
+        "endChar": 66
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6f8d7ea_da1222cd",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-10T09:48:06Z",
+      "side": 1,
+      "message": "Typo?",
+      "range": {
+        "startLine": 42,
+        "startChar": 27,
+        "endLine": 42,
+        "endChar": 37
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "190450b7_c1ad5b76",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.less",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5237
+      },
+      "writtenOn": "2019-04-10T09:48:06Z",
+      "side": 1,
+      "message": "Is an !important rule necessary here? Maybe try giving a parent an ID and using specificity to override the ngx-table defaults instead.",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 36
+      },
+      "revId": "bc0ef0442b04fdcececf8396b96a0eab33f29848",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
