@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
@@ -31,4 +32,6 @@ public interface PropertyConstraint {
     void validate(Object propertyValue) throws ConstraintViolationException;
 
     void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException;
+
+	String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException exception, String propertyName);
 }

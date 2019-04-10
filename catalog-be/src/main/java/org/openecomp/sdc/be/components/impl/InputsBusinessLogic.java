@@ -24,15 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import fj.data.Either;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -44,12 +49,15 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -71,7 +79,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     @Inject
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
     /**
      * associate inputs to a given component with paging
      *
@@ -124,7 +131,13 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             log.debug("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
-        Map<String, List<ComponentInstanceInput>> ciInputs = Optional.ofNullable(component.getComponentInstancesInputs()).orElse(Collections.emptyMap());
+		Map<String, List<ComponentInstanceInput>> ciInputs =
+				Optional.ofNullable(component.getComponentInstancesInputs()).orElse(Collections.emptyMap());
+
+		// Set Constraints on Input
+		MapUtils.emptyIfNull(ciInputs).values()
+				.forEach(inputs -> ListUtils.emptyIfNull(inputs)
+						.forEach(input -> input.setConstraints(setInputConstraint(input))));
         return Either.left(ciInputs.getOrDefault(componentInstanceId, Collections.emptyList()));
     }
 
@@ -140,7 +153,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     public Either<List<ComponentInstanceProperty>, ResponseFormat> getComponentInstancePropertiesByInputId(String userId, String componentId, String instanceId, String inputId) {
         validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
         String parentId = componentId;
-        org.openecomp.sdc.be.model.Component component = null;
+        org.openecomp.sdc.be.model.Component component;
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreComponentInstances(false);
@@ -246,6 +259,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             componentParametersView.disableAll();
             componentParametersView.setIgnoreInputs(false);
             componentParametersView.setIgnoreUsers(false);
+			componentParametersView.setIgnoreProperties(false);
+			componentParametersView.setIgnoreComponentInstancesProperties(false);
+			componentParametersView.setIgnoreComponentInstances(false);
 
             Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
 
@@ -268,6 +284,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 result = Either.right(canWork.right().value());
                 return result;
             }
+
+			//Validate value and Constraint of input
+			Either<Boolean, ResponseFormat> constraintValidatorResponse = validateInputValueConstraint(component, inputs);
+			if (constraintValidatorResponse.isRight()) {
+				log.error("Failed validation value and constraint of property: {}",
+						constraintValidatorResponse.right().value());
+				return Either.right(constraintValidatorResponse.right().value());
+			}
 
             Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
             if (allDataTypes.isRight()) {
@@ -320,6 +344,29 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 }
             }
     }
+
+	private Either<Boolean, ResponseFormat> validateInputValueConstraint(
+			org.openecomp.sdc.be.model.Component component, List<InputDefinition> inputs) {
+		PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil =
+				PropertyValueConstraintValidationUtil.getInstance();
+		List<InputDefinition> inputDefinitions = new ArrayList<>();
+		for (InputDefinition inputDefinition : inputs) {
+			InputDefinition inputDef = new InputDefinition();
+			inputDefinition.setDefaultValue(inputDefinition.getDefaultValue());
+			inputDefinition.setInputPath(inputDefinition.getSubPropertyInputPath());
+			inputDefinition.setType(inputDefinition.getType());
+			if (Objects.nonNull(inputDefinition.getParentPropertyType())) {
+				ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
+				propertyDefinition.setType(inputDefinition.getParentPropertyType());
+
+				inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+			}
+
+			inputDefinitions.add(inputDef);
+		}
+
+		return propertyValueConstraintValidationUtil.validatePropertyConstraints(inputDefinitions, applicationDataTypeCache);
+	}
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getInputsForComponentInput(String userId, String componentId, String inputId) {
         validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
@@ -396,7 +443,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     .left()
                     .bind(inputsToCreate -> prepareInputsForCreation(userId, componentId, inputsToCreate))
                     .right()
-                    .map(err -> componentsUtils.getResponseFormat(err));
+					.map(componentsUtils::getResponseFormat);
 
             return result;
 
@@ -422,6 +469,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private  Either<List<InputDefinition>, StorageOperationStatus> prepareInputsForCreation(String userId, String cmptId, List<InputDefinition> inputsToCreate) {
         Map<String, InputDefinition> inputsToPersist = MapUtil.toMap(inputsToCreate, InputDefinition::getName);
         assignOwnerIdToInputs(userId, inputsToPersist);
+		inputsToPersist.values()
+				.forEach(input -> input.setConstraints(componentInstanceBusinessLogic.setInputConstraint(input)));
+
         return toscaOperationFacade.addInputsToComponent(inputsToPersist, cmptId)
                 .left()
                 .map(persistedInputs -> inputsToCreate);

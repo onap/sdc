@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OperationInput;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -158,8 +159,7 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
       }
 
       List<OperationInputDefinition> inputs = inputsEither.left().value();
-      updateOperationInputListForUi(inputs);
-      return buildOkResponse(inputs);
+		return buildOkResponse(updateOperationInputListForUi(inputs, interfaceOperationBL));
     }
     catch (Exception e) {
       BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Operation Inputs");
@@ -169,43 +169,52 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
     }
   }
 
-  private void updateOperationInputListForUi(List<OperationInputDefinition> inputsList) {
-    for(OperationInputDefinition input : inputsList) {
+	private List<OperationInput> updateOperationInputListForUi(List<OperationInputDefinition> inputsList,
+															   InterfaceOperationBusinessLogic interfaceOperationBL) {
+		List<OperationInput> operationInputs = new ArrayList<>();
+		for(OperationInputDefinition input : inputsList) {
 
-      String value = input.getValue();
-      // No Additional UI mapping needed for STATIC source
-      if(StringUtils.isEmpty(value)
-              || ServiceConsumptionSource.STATIC.getSource().equals(input.getSource())) {
-        continue;
-      }
+			String value = input.getValue();
 
+			// Additional UI mapping needed for other sources
+			if (StringUtils.isNotBlank(value)
+					&& !ServiceConsumptionSource.STATIC.getSource().equals(input.getSource())) {
+				uiMappingForOtherSources(value, input);
+			}
 
-      // Additional UI mapping needed for other sources
-      try {
-        Map<String, Object> valueAsMap = (new Gson()).fromJson(value, Map.class);
-        String toscaFunction = valueAsMap.keySet().iterator().next();
-        Object consumptionValueName = valueAsMap.values().iterator().next();
-        if(consumptionValueName instanceof List) {
-          List<Object> toscaFunctionList = (List<Object>) consumptionValueName;
-          String consumptionInputValue = null;
-          if (ToscaFunctions.GET_PROPERTY.getFunctionName().equals(toscaFunction)) {
-            consumptionInputValue = String.valueOf(toscaFunctionList.get(1));
-          } else if (ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName().equals(toscaFunction)) {
-            //Return full output name
-            consumptionInputValue =
-                    toscaFunctionList.get(1) + "." + toscaFunctionList.get(2) + "." +toscaFunctionList.get(3);
-          }
-          input.setValue(consumptionInputValue);
-        } else {
-          input.setValue(String.valueOf(consumptionValueName));
-        }
-      }
-      catch(JsonParseException ex){
-        log.info("This means it is static value for which no changes are needed");
-      }
-    }
-  }
+			// Add Constraint for UI
+			OperationInput operationInput = new OperationInput(input);
+			operationInput.setConstraints(interfaceOperationBL.setInputConstraint(input));
+			operationInputs.add(operationInput);
+		}
 
+		return operationInputs;
+	}
+
+	private void uiMappingForOtherSources(String value, OperationInputDefinition input) {
+		try {
+			Map<String, Object> valueAsMap = (new Gson()).fromJson(value, Map.class);
+			String toscaFunction = valueAsMap.keySet().iterator().next();
+			Object consumptionValueName = valueAsMap.values().iterator().next();
+			if(consumptionValueName instanceof List) {
+				List<Object> toscaFunctionList = (List<Object>) consumptionValueName;
+				String consumptionInputValue = null;
+				if (ToscaFunctions.GET_PROPERTY.getFunctionName().equals(toscaFunction)) {
+					consumptionInputValue = String.valueOf(toscaFunctionList.get(1));
+				} else if (ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName().equals(toscaFunction)) {
+					//Return full output name
+					consumptionInputValue =
+							toscaFunctionList.get(1) + "." + toscaFunctionList.get(2) + "." +toscaFunctionList.get(3);
+				}
+				input.setValue(consumptionInputValue);
+			} else {
+				input.setValue(String.valueOf(consumptionValueName));
+			}
+		}
+		catch(JsonParseException ex){
+			log.info("This means it is static value for which no changes are needed");
+		}
+	}
 
   private Either<Map<String, List<ServiceConsumptionData>>, ResponseFormat> getServiceConsumptionData(String data,
                                                                                                       User user) {

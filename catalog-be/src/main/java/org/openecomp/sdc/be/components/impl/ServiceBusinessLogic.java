@@ -20,13 +20,39 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
+import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
@@ -46,6 +72,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -54,6 +81,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -62,7 +90,24 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.DistributionTransitionEnum;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
@@ -77,7 +122,11 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
-import org.openecomp.sdc.be.resources.data.auditing.*;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
@@ -100,20 +149,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
-import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
@@ -365,7 +400,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         OperationInputDefinition operationInputDefinition = inputCandidate.get();
-
         // add data to operation
 
         if(Objects.nonNull(serviceConsumptionData.getValue()))  {
@@ -441,6 +475,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         ServiceConsumptionSource sourceValue = ServiceConsumptionSource.getSourceValue(source);
 
         if(STATIC.equals(sourceValue)) {
+			// Validate constraint on input value
+			/*Either<Boolean, ResponseFormat> constraintValidationResult =
+					validateOperationInputConstraint(operationInputDefinition, serviceConsumptionData);
+
+			if (constraintValidationResult.isRight()) {
+				return Either.right(constraintValidationResult.right().value());
+			}*/
+
             return handleConsumptionStaticValue(consumptionValue, type, operation,
                     operationInputDefinition);
         }
@@ -612,12 +654,37 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(
                     ActionStatus.INVALID_CONSUMPTION_TYPE, type));
         }
+
+		//Validate Constraint and Value
+		Either<Boolean, ResponseFormat> constraintValidationResponse =
+				validateOperationInputConstraint(operationInputDefinition, value, type);
+		if(constraintValidationResponse.isRight()) {
+			return Either.right(constraintValidationResponse.right().value());
+		}
+
         addStaticValueToInputOperation(value, operation, operationInputDefinition);
 
         return Either.left(operation);
     }
 
-    private void addStaticValueToInputOperation(String value, Operation operation,
+	private Either<Boolean, ResponseFormat> validateOperationInputConstraint(
+			OperationInputDefinition operationInputDefinition, String value, String type) {
+		ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
+		propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
+
+		InputDefinition inputDefinition = new InputDefinition();
+		inputDefinition.setDefaultValue(value);
+		inputDefinition.setInputPath(operationInputDefinition.getSubPropertyInputPath());
+		inputDefinition.setType(type);
+		if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
+			inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+		}
+
+		return PropertyValueConstraintValidationUtil.getInstance()
+				.validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
+	}
+
+	private void addStaticValueToInputOperation(String value, Operation operation,
                                                 OperationInputDefinition operationInputDefinition) {
         operation.getInputs().delete(operationInputDefinition);
         operationInputDefinition.setSource(STATIC.getSource());
@@ -2571,6 +2638,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         Service service = serviceResultEither.left().value();
+		if (dataParamsToReturn.contains(ComponentFieldsEnum.INPUTS.getValue())) {
+			ListUtils.emptyIfNull(service.getInputs())
+					.forEach(input -> input.setConstraints(setInputConstraint(input)));
+		}
+
         UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
     }

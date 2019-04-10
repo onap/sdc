@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ package org.openecomp.sdc.ci.tests.datatypes;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 
 public class PropertyReqDetails {
+
 	String name;
 	String type;
 	Boolean required = false;
@@ -32,14 +33,18 @@ public class PropertyReqDetails {
 	String propertyRangeMax;
 	Boolean isPassword = false;
 	SchemaDefinition schema;
+	String uniqueId;
+	String parentUniqueId;
+	String value;
 
 	public PropertyReqDetails() {
 		super();
 	}
 
 	public PropertyReqDetails(String propertyName, String propertyType, Boolean propertyRequired,
-			String propertyDefaultValue, String propertyDescription, String propertyRangeMin, String propertyRangeMax,
-			Boolean propertyPassword) {
+							  String propertyDefaultValue, String propertyDescription, String propertyRangeMin,
+							  String propertyRangeMax,
+							  Boolean propertyPassword) {
 		super();
 		this.name = propertyName;
 		this.type = propertyType;
@@ -52,7 +57,7 @@ public class PropertyReqDetails {
 	}
 
 	public PropertyReqDetails(String propertyName, String propertyType, String propertyDefaultValue,
-			String propertyDescription, SchemaDefinition schema) {
+							  String propertyDescription, SchemaDefinition schema) {
 		super();
 		this.name = propertyName;
 		this.type = propertyType;
@@ -133,14 +138,42 @@ public class PropertyReqDetails {
 		this.isPassword = propertyPassword;
 	}
 
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
+	public String getParentUniqueId() {
+		return parentUniqueId;
+	}
+
+	public void setParentUniqueId(String parentUniqueId) {
+		this.parentUniqueId = parentUniqueId;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 	public String propertyToJsonString() {
 		String jsonString;
 		jsonString =
-                "{\"" + this.getName() + "\":{" + "\"name\":\"" + this.getName() + "\"," + "\"type\":\"" + this.getPropertyType() + "\"," + "\"required\":"
-				+ this.getPropertyRequired() + "," + "\"defaultValue\":\"" + this.getPropertyDefaultValue() + "\","
-				+ "\"description\":\"" + this.getPropertyDescription() + "\"," + "\"constraints\":[{\"inRange\":[\""
-				+ this.getPropertyRangeMin() + "\",\"" + this.getPropertyRangeMax() + "\"]}]," + "\"isPassword\":"
-				+ this.getPropertyPassword() + "}}";
+				"{\"" + this.getName() + "\":{" + "\"name\":\"" + this.getName() + "\"," + "\"type\":\"" + this
+						.getPropertyType() + "\"," + "\"required\":"
+						+ this.getPropertyRequired() + "," + "\"defaultValue\":\"" + this.getPropertyDefaultValue()
+						+ "\","
+						+ "\"description\":\"" + this.getPropertyDescription() + "\","
+						+ "\"constraints\":[{\"inRange\":[\""
+						+ this.getPropertyRangeMin() + "\",\"" + this.getPropertyRangeMax() + "\"]}],"
+						+ "\"isPassword\":"
+						+ this.getPropertyPassword() + "}}";
 		return jsonString;
 	}
 }

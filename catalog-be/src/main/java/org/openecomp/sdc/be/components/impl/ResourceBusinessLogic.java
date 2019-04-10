@@ -8,7 +8,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0getUiComponentDataTransferByComponentId
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,10 +21,37 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
@@ -53,6 +80,7 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -130,31 +158,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
-import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
@@ -5207,28 +5210,36 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Override
-    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId, List<String> dataParamsToReturn) {
+	public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
+																								   List<String> dataParamsToReturn) {
 
-        ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
-        Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId,
-                paramsToRetuen);
+		ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
+		Either<Resource, StorageOperationStatus> resourceResultEither =
+				toscaOperationFacade.getToscaElement(resourceId,
+						paramsToRetuen);
 
-        if (resourceResultEither.isRight()) {
-            if (resourceResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                log.debug("Failed to found resource with id {} ", resourceId);
-                Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
-            }
+		if (resourceResultEither.isRight()) {
+			if (resourceResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+				log.debug("Failed to found resource with id {} ", resourceId);
+				Either
+						.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
+			}
 
-            log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn);
-            return Either.right(componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(resourceResultEither.right().value()), ""));
-        }
+			log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn);
+			return Either.right(componentsUtils.getResponseFormatByResource(
+					componentsUtils.convertFromStorageResponse(resourceResultEither.right().value()), ""));
+		}
 
-        Resource resource = resourceResultEither.left().value();
-        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
-                dataParamsToReturn);
-        return Either.left(dataTransfer);
-    }
+		Resource resource = resourceResultEither.left().value();
+		if (dataParamsToReturn.contains(ComponentFieldsEnum.INPUTS.getValue())) {
+			ListUtils.emptyIfNull(resource.getInputs())
+					.forEach(input -> input.setConstraints(setInputConstraint(input)));
+		}
+
+		UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+				dataParamsToReturn);
+		return Either.left(dataTransfer);
+	}
 
     @Override
     public Either<Component, ActionStatus> shouldUpgradeToLatestDerived(Component clonedComponent) {

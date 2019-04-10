@@ -21,7 +21,17 @@
 package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import fj.data.Either;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -37,19 +47,33 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.IPropertyInputCommon;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
@@ -60,11 +84,6 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 public abstract class BaseBusinessLogic {
 
@@ -374,7 +393,6 @@ public abstract class BaseBusinessLogic {
     ComponentTypeEnum getComponentTypeByParentComponentType(ComponentTypeEnum parentComponentType) {
         switch (parentComponentType) {
             case SERVICE:
-                return ComponentTypeEnum.RESOURCE;
             case RESOURCE:
                 return ComponentTypeEnum.RESOURCE;
             case PRODUCT:
@@ -666,8 +684,63 @@ public abstract class BaseBusinessLogic {
         return jsonElement.toString();
     }
     
-    protected void rollbackWithException(ActionStatus actionStatus, String... params) {
+    void rollbackWithException(ActionStatus actionStatus, String... params) {
         titanDao.rollback();
         throw new ComponentException(actionStatus, params);
     }
+
+	public <T extends PropertyDataDefinition> List<PropertyConstraint> setInputConstraint(T inputDefinition) {
+		if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType())
+				&& StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
+			return setConstraint(inputDefinition);
+		}
+
+		return Collections.emptyList();
+	}
+
+	private <T extends PropertyDataDefinition> List<PropertyConstraint> setConstraint(T inputDefinition) {
+		List<PropertyConstraint> constraints = new ArrayList<>();
+		String[] inputPathArr = inputDefinition.getSubPropertyInputPath().split("#");
+		if (inputPathArr.length > 1) {
+			inputPathArr = ArrayUtils.remove(inputPathArr, 0);
+		}
+
+		Map<String, DataTypeDefinition> dataTypeDefinitionMap =
+				applicationDataTypeCache.getAll().left().value();
+
+		String propertyType = inputDefinition.getParentPropertyType();
+
+		for (String anInputPathArr : inputPathArr) {
+			if (ToscaType.isPrimitiveType(propertyType)) {
+				constraints.addAll(
+						dataTypeDefinitionMap.get(propertyType).getConstraints());
+			} else if (!ToscaType.isCollectionType(propertyType)) {
+				propertyType = setConstraintForComplexType(dataTypeDefinitionMap, propertyType, anInputPathArr,
+						constraints);
+			}
+		}
+
+		return constraints;
+	}
+
+	private String setConstraintForComplexType(Map<String, DataTypeDefinition> dataTypeDefinitionMap,
+											   String propertyType,
+											   String anInputPathArr,
+											   List<PropertyConstraint> constraints) {
+		String type = null;
+		List<PropertyDefinition> propertyDefinitions =
+				dataTypeDefinitionMap.get(propertyType).getProperties();
+		for (PropertyDefinition propertyDefinition : propertyDefinitions) {
+			if (propertyDefinition.getName().equals(anInputPathArr)) {
+				if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
+					constraints.addAll(propertyDefinition.getConstraints());
+				} else {
+					type = propertyDefinition.getType();
+				}
+				break;
+			}
+		}
+
+		return type;
+	}
 }

@@ -136,7 +136,7 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
-        this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
+        this.workflowIsOnline = false;//!_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         const workflowSubscription = this.enableWorkflowAssociation && this.workflowIsOnline ? this.WorkflowServiceNg2.getWorkflows() : Promise.resolve();
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaces(this.component),

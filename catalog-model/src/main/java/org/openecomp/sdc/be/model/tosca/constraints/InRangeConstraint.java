@@ -21,12 +21,15 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.google.common.collect.Lists;
+
+import java.util.List;
+
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public class InRangeConstraint extends AbstractPropertyConstraint {
 
@@ -109,6 +112,12 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         } else {
             inRange.set(1, maxValue);
         }
+    }
+
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%f property value must be between >= [%s] and <= [%s]",
+                String.valueOf(min), String.valueOf(max));
     }
 
 }

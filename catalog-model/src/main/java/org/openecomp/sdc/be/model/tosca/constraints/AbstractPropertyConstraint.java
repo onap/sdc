@@ -20,12 +20,19 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import java.util.Arrays;
+
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.version.ApplicationVersionException;
 
 public abstract class AbstractPropertyConstraint implements PropertyConstraint {
+
+    private static final String INVALID_VALUE_ERROR_MESSAGE =
+            "Unsupported value provided for %s property supported value type is %s.";
 
     @Override
     public void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {
@@ -35,5 +42,22 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
             throw new ConstraintViolationException(
                     "String value [" + propertyTextValue + "] is not valid for type [" + toscaType + "]", e);
         }
+    }
+
+    public String getErrorMessage(ToscaType toscaType,
+								  ConstraintFunctionalException e,
+								  String propertyName,
+								  String errorMessage,
+								  String... propertyValue) {
+        if (e instanceof ConstraintViolationException) {
+            return String.format(errorMessage, propertyName, Arrays.toString(propertyValue));
+        }
+
+        return String.format(INVALID_VALUE_ERROR_MESSAGE, propertyName, toscaType.getType());
+    }
+
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        //Initialization not needed for few constraints for now might be needed in future
     }
 }

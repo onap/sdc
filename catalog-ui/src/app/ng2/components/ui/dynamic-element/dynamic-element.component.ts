@@ -22,7 +22,7 @@
 
 import * as _ from "lodash";
 import { Component, Compiler, EventEmitter, ViewContainerRef, ViewChild, Input, Output, ElementRef, ComponentRef, ComponentFactoryResolver } from '@angular/core'
-import {ValidationConfiguration} from "app/models";
+import {ValidationConfiguration, PropertyFEModel} from "app/models";
 import {IUiElementChangeEvent} from "../form-components/ui-element-base.component";
 import {UiElementInputComponent} from "../form-components/input/ui-element-input.component";
 import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";
@@ -36,6 +36,7 @@ enum DynamicElementComponentCreatorIdentifier {
     FLOAT,
     BOOLEAN,
     SUBNETPOOLID,
+    ENUM,
     DEFAULT
 }
 
@@ -58,6 +59,7 @@ export class DynamicElementComponent {
     @Input() name: string;
     @Input() testId: string;
     @Input() readonly:boolean;
+    @Input() constraints: Array<any>;
     @Input() path:string;//optional param. used only for for subnetpoolid type
 
     @Input() value: any;
@@ -85,6 +87,9 @@ export class DynamicElementComponent {
         switch(true) {
             case this.path && this.path.toUpperCase().indexOf("SUBNETPOOLID") !== -1:
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.SUBNETPOOLID;
+                break;
+            case this.getValidValues() !== undefined && this.getValidValues() !== null:
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.ENUM;
                 break;
             case this.type === 'integer':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
@@ -153,6 +158,19 @@ export class DynamicElementComponent {
                 this.createComponent(UiElementPopoverInputComponent);
                 break;
 
+            case DynamicElementComponentCreatorIdentifier.ENUM:
+                this.createComponent(UiElementDropDownComponent);
+                let validVals:Array<DropdownValue> = [...this.getValidValues()].map(val => new DropdownValue(val, val));
+                if (this.type === 'float' || this.type === 'integer') {
+                    this.value = this.value && Number(this.value);
+                    validVals = _.map(
+                        validVals,
+                        val => new DropdownValue(Number(val.value), val.value)
+                    );
+                }
+                this.cmpRef.instance.values = validVals;
+                break;
+
             case DynamicElementComponentCreatorIdentifier.INTEGER:
                 this.createComponent(UiElementIntegerInputComponent);
                 this.cmpRef.instance.pattern = this.validation.validationPatterns.integer;
@@ -193,6 +211,14 @@ export class DynamicElementComponent {
         // Subscribe to change event of of ui-models-element-basic and fire event to change the value
         this.cmpRef.instance.baseEmitter.subscribe((event) => { this.emitter.emit(event); });
         this.cmpRef.instance.valueChange.subscribe((event) => { this.valueChange.emit(event); });
+    }
+
+    getValidValues(): Array<string> {
+        let validVals;
+        _.forEach(this.constraints, constraint => {
+            validVals = validVals || constraint.validValues;
+        });
+        return validVals;
     }
 
     createComponent(ComponentToCreate:any):void {

@@ -1,0 +1,405 @@
+{
+  "string": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "name": "string",
+    "uniqueId": "string.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1550136564103,
+    "modificationTime": 1550136564103,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.heat.network.neutron.Subnet": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.tenant_id",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "The ID of the tenant who owns the network",
+        "password": false,
+        "name": "tenant_id",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.enable_dhcp",
+        "type": "boolean",
+        "required": false,
+        "definition": false,
+        "defaultValue": "true",
+        "description": "Set to true if DHCP is enabled and false if DHCP is disabled",
+        "password": false,
+        "name": "enable_dhcp",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "dhcpv6-stateful",
+              "dhcpv6-stateless",
+              "slaac"
+            ]
+          }
+        ],
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.ipv6_address_mode",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "IPv6 address mode",
+        "password": false,
+        "name": "ipv6_address_mode",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "dhcpv6-stateful",
+              "dhcpv6-stateless",
+              "slaac"
+            ]
+          }
+        ],
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.ipv6_ra_mode",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "IPv6 RA (Router Advertisement) mode",
+        "password": false,
+        "name": "ipv6_ra_mode",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.value_specs",
+        "type": "map",
+        "required": false,
+        "definition": false,
+        "defaultValue": "{}",
+        "description": "Extra parameters to include in the request",
+        "schema": {
+          "property": {
+            "constraints": [
+              {
+                "validValues": [
+                  "dhcpv6-stateful",
+                  "dhcpv6-stateless",
+                  "slaac"
+                ]
+              }
+            ],
+            "type": "string",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "value_specs",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.allocation_pools",
+        "type": "list",
+        "required": false,
+        "definition": false,
+        "description": "The start and end addresses for the allocation pools",
+        "schema": {
+          "property": {
+            "type": "string",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "allocation_pools",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.subnetpool",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "The name or ID of the subnet pool",
+        "password": false,
+        "name": "subnetpool",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.dns_nameservers",
+        "type": "list",
+        "required": false,
+        "definition": false,
+        "defaultValue": "[]",
+        "description": "A specified set of DNS name servers to be used",
+        "schema": {
+          "property": {
+            "type": "string",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "dns_nameservers",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.host_routes",
+        "type": "list",
+        "required": false,
+        "definition": false,
+        "description": "The gateway IP address",
+        "schema": {
+          "property": {
+            "type": "org.openecomp.datatypes.heat.network.subnet.HostRoute",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "host_routes",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "4",
+              "6"
+            ]
+          }
+        ],
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.ip_version",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "defaultValue": "4",
+        "description": "The gateway IP address",
+        "password": false,
+        "name": "ip_version",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.name",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "The name of the subnet",
+        "password": false,
+        "name": "name",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "greaterOrEqual": "0"
+          },
+          {
+            "validValues": [
+              "4",
+              "6"
+            ]
+          }
+        ],
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.prefixlen",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "description": "Prefix length for subnet allocation from subnet pool",
+        "password": false,
+        "name": "prefixlen",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.cidr",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "The CIDR",
+        "password": false,
+        "name": "cidr",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.gateway_ip",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "The gateway IP address",
+        "password": false,
+        "name": "gateway_ip",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.heat.network.neutron.Subnet",
+    "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "description": "A subnet represents an IP address block that can be used for assigning IP addresses to virtual instances",
+    "creationTime": 1550136564412,
+    "modificationTime": 1550136564464,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress.datatype.mac_address",
+        "type": "list",
+        "required": false,
+        "definition": false,
+        "description": "Mac Addresses List.",
+        "schema": {
+          "property": {
+            "type": "string",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "mac_address",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress",
+    "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "description": "Virtual Machine Sub Interface Mac Address.",
+    "creationTime": 1550136565026,
+    "modificationTime": 1550136565030,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList.datatype.network_policy_entries_policy_rule",
+        "type": "list",
+        "required": false,
+        "definition": false,
+        "description": "Contrail network rule",
+        "schema": {
+          "property": {
+            "type": "org.openecomp.datatypes.heat.contrailV2.network.rule.Rule",
+            "required": true,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "network_policy_entries_policy_rule",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList",
+    "uniqueId": "org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "description": "list of policy rules",
+    "creationTime": 1550136564716,
+    "modificationTime": 1550136564720,
+    "toscaPresentation": {}
+  },
+  "integer": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "name": "integer",
+    "uniqueId": "integer.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1550136564094,
+    "modificationTime": 1550136564094,
+    "toscaPresentation": {}
+  }
+}

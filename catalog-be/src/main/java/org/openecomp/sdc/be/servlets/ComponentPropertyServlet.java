@@ -17,34 +17,54 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
+
+import java.util.List;
+import java.util.Map;
+
 import fj.data.Either;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Api(value = "Component Property Servlet", description = "Property Servlet - used to create properties in Service and Resource")
 @Singleton
 public class ComponentPropertyServlet extends BeGenericServlet {
+
+	@Autowired
+	ApplicationDataTypeCache applicationDataTypeCache;
 
   private static final Logger log = LoggerFactory.getLogger(ComponentPropertyServlet.class);
   private static final String CREATE_PROPERTY = "Create Property";
@@ -263,6 +283,16 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
         return buildErrorResponse(responseFormat);
       }
+
+		//Validate value and Constraint of property
+		Either<Boolean, ResponseFormat> constraintValidatorResponse =
+				PropertyValueConstraintValidationUtil.getInstance().
+						validatePropertyConstraints(properties.values(), applicationDataTypeCache);
+		if (constraintValidatorResponse.isRight()) {
+			log.error("Failed validation value and constraint of property: {}",
+					constraintValidatorResponse.right().value());
+			return buildErrorResponse(constraintValidatorResponse.right().value());
+		}
 
       // update property
 

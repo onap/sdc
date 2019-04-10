@@ -51,6 +51,7 @@
                 [childType]="property.schema.property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
+                [constraints]="property.constraints"
                 (elementChanged)="onElementChanged($event)"
                 [readonly]="readonly || property.isDeclared || property.isDisabled"
                 [testId]="'prop-' + propertyTestsId"

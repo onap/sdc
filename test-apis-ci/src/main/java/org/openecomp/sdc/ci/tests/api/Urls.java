@@ -361,6 +361,7 @@ public interface Urls {
 	final String GET_MODULE_BY_ID = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/resources/%s/groups/%s";
 
 	// inputs
+	final String UPDATE_INPUTS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/update/inputs";
 	final String ADD_INPUTS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/create/inputs"; //{componentType}/{componentId}/create/inputs
 	final String DELETE_INPUT_BY_ID = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/delete/%s/input"; //{componentType}/{componentId}/delete/{inputId}/input
 	final String GET_COMPONENT_INPUTS = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/%s/inputs"; //services/{componentId}/inputs

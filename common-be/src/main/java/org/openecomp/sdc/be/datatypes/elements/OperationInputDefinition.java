@@ -38,6 +38,13 @@ public class OperationInputDefinition extends InputDataDefinition {
         setSourceProperty(sourceProperty);
     }
 
+	public OperationInputDefinition(OperationInputDefinition oid) {
+		super(oid);
+		setName(oid.getName());
+		setSource(oid.getSource());
+		setSourceProperty(oid.getSourceProperty());
+	}
+
     public OperationInputDefinition(String name, String property, Boolean mandatory, String type) {
         super();
         setName(name);
