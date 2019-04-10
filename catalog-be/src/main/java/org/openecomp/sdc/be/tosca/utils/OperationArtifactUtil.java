@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
@@ -52,22 +54,31 @@ public class OperationArtifactUtil {
      * @param operation     the specific operation name
      * @return the full path including file name for operation's artifacts
      */
-    static String createOperationArtifactPath(Component component, OperationDataDefinition operation,
-                                                     boolean isAssociatedResourceComponent) {
+    static String createOperationArtifactPath(Component component, ComponentInstance componentInstance,
+                                              OperationDataDefinition operation, boolean isAssociatedComponent) {
         if (!(component instanceof Resource || component instanceof Service)) {
             return null;
         }
-        if (isAssociatedResourceComponent) {
-            ResourceMetadataDataDefinition resourceMetadataDataDefinition = (ResourceMetadataDataDefinition)
-                    component.getComponentMetadataDefinition().getMetadataDataDefinition();
-            return createOperationArtifactPathInService(resourceMetadataDataDefinition.getToscaResourceName() +
-                    "_v" + component.getVersion(), operation);
+
+        if (isAssociatedComponent) {
+            // Service Proxy is only in Node Template interface
+            if(componentInstance != null) {
+                return createOperationArtifactPathInService(componentInstance.getToscaComponentName()
+                                                                    + "_v" + component.getVersion(), operation);
+            }
+            // Resource Instance is part of Node Type interface
+            else {
+                ResourceMetadataDataDefinition resourceMetadataDataDefinition =
+                        (ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition();
+                return createOperationArtifactPathInService(resourceMetadataDataDefinition.getToscaResourceName()
+                                                                    + "_v" + component.getVersion(), operation);
+            }
         }
-        return createOperationArtifactPathInResource(operation);
+        return createOperationArtifactPathInComponent(operation);
     }
 
 
-    private static String createOperationArtifactPathInResource(OperationDataDefinition operation) {
+    private static String createOperationArtifactPathInComponent(OperationDataDefinition operation) {
         return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
                 + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
                 + File.separator + operation.getImplementation().getArtifactName();
@@ -89,7 +100,7 @@ public class OperationArtifactUtil {
         }
         Map<String, ArtifactDefinition> interfaceArtifacts = interfaces.values().stream()
                 .flatMap(interfaceDefinition -> interfaceDefinition.getOperationsMap().values().stream())
-                .map(Operation::getImplementationArtifact)
+                .map(Operation::getImplementationArtifact).filter(Objects::nonNull)
                 .collect(Collectors.toMap(ArtifactDataDefinition::getUniqueId,
                         artifactDefinition -> artifactDefinition));
         if (MapUtils.isNotEmpty(interfaceArtifacts)) {

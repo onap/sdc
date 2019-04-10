@@ -589,7 +589,7 @@ public class InterfaceOperationValidation {
                 ListDataDefinition<OperationInputDefinition> inputs = operationEntry.getValue().getInputs();
                 String expectedOperationIdentifier =
                         interfaceDefinitionEntry.getValue().getType() + "." + operationEntry.getValue().getName();
-                if (!currentOperationIdentifier.equals(expectedOperationIdentifier) && !inputs.isEmpty()) {
+                if (!currentOperationIdentifier.equals(expectedOperationIdentifier) && Objects.nonNull(inputs) && !inputs.isEmpty()) {
                     otherOperationInputs.addAll(inputs.getListToscaDataDefinition());
                 }
             }

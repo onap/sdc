@@ -379,17 +379,17 @@ public class NodeTemplateOperation extends BaseOperation {
     private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstanceInterfacesToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
         Map<String, Object> interfaces = componentInstance.getInterfaces();
 
-        if(interfaces != null && !interfaces.isEmpty()) {
+        if(MapUtils.isNotEmpty(interfaces)){
             Map<String, InterfaceDataDefinition> interfacesMap = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (InterfaceDataDefinition) e.getValue()));
-            MapInterfaceDataDefinition instIntrefaces = new MapInterfaceDataDefinition(interfacesMap);
+            MapInterfaceDataDefinition instInterfaces = new MapInterfaceDataDefinition(interfacesMap);
 
             Map<String, MapInterfaceDataDefinition> instInterfacesMap = new HashMap<>();
-            instInterfacesMap.put(componentInstance.getUniqueId(), instIntrefaces);
+            instInterfacesMap.put(componentInstance.getUniqueId(), instInterfaces);
             updatedContainer.setComponentInstInterfaces(instInterfacesMap);
 
             StorageOperationStatus status =
                     addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
-                            EdgeLabelEnum.INST_INTERFACES, VertexTypeEnum.INST_INTERFACES, instIntrefaces,
+                            EdgeLabelEnum.INST_INTERFACES, VertexTypeEnum.INST_INTERFACES, instInterfaces,
                             componentInstance.getUniqueId());
 
             if(status != StorageOperationStatus.OK) {

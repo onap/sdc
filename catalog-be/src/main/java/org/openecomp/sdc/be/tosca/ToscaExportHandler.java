@@ -135,7 +135,7 @@ public class ToscaExportHandler {
     }
 
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component,
-            boolean isAssociatedResourceComponent) {
+            boolean isAssociatedComponent) {
         if (null == DEFAULT_IMPORTS) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -145,7 +145,7 @@ public class ToscaExportHandler {
         toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component,
-                toscaTemplate, nodeTypes, isAssociatedResourceComponent);
+                toscaTemplate, nodeTypes, isAssociatedComponent);
         if (toscaTemplateRes.isRight()) {
             return Either.right(toscaTemplateRes.right().value());
         }
@@ -517,7 +517,7 @@ public class ToscaExportHandler {
     private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache,
             Component component, ToscaTemplate toscaNode,
             Map<String, ToscaNodeType> nodeTypes,
-            boolean isAssociatedResourceComponent) {
+            boolean isAssociatedComponent) {
         log.debug("start convert node type for {}", component.getUniqueId());
         ToscaNodeType toscaNodeType = createNodeType(component);
 
@@ -544,7 +544,7 @@ public class ToscaExportHandler {
 
         List<InputDefinition> inputDef = component.getInputs();
         Map<String, ToscaProperty> mergedProperties = new HashMap<>();
-        addInterfaceDefinitionElement(component, toscaNodeType, dataTypes, isAssociatedResourceComponent);
+        addInterfaceDefinitionElement(component, toscaNodeType, dataTypes, isAssociatedComponent);
         if (inputDef != null) {
             addInputsToProperties(dataTypes, inputDef, mergedProperties);
         }
@@ -780,7 +780,7 @@ public class ToscaExportHandler {
                     .getUniqueId(), instInterface));
 
                 interfaces = InterfacesOperationsToscaUtil
-                        .getInterfacesMap(parentComponent, tmpInterfaces, dataTypes, true, true);
+                                     .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, true, true);
             }
         } else {
             interfaces =

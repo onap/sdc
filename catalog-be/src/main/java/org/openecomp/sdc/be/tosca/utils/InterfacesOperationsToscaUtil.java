@@ -29,6 +29,7 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
@@ -104,7 +105,7 @@ public class InterfacesOperationsToscaUtil {
      */
     public static void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType,
                                                      Map<String, DataTypeDefinition> dataTypes,
-                                                     boolean isAssociatedResourceComponent) {
+                                                     boolean isAssociatedComponent) {
         if (component instanceof Product) {
             return;
         }
@@ -113,7 +114,7 @@ public class InterfacesOperationsToscaUtil {
             return;
         }
         Map<String, Object> toscaInterfaceDefinitions = getInterfacesMap(component, dataTypes,
-                isAssociatedResourceComponent);
+                isAssociatedComponent);
         if (MapUtils.isNotEmpty(toscaInterfaceDefinitions)) {
             nodeType.setInterfaces(toscaInterfaceDefinitions);
         }
@@ -121,14 +122,15 @@ public class InterfacesOperationsToscaUtil {
 
     private static Map<String, Object> getInterfacesMap(Component component,
                                                         Map<String, DataTypeDefinition> dataTypes,
-                                                        boolean isAssociatedResourceComponent) {
-        return getInterfacesMap(component, component.getInterfaces(), dataTypes, isAssociatedResourceComponent, false);
+                                                        boolean isAssociatedComponent) {
+        return getInterfacesMap(component, null, component.getInterfaces(), dataTypes, isAssociatedComponent, false);
     }
 
     public static Map<String, Object> getInterfacesMap(Component component,
+                                                       ComponentInstance componentInstance,
                                                        Map<String, InterfaceDefinition> interfaces,
                                                        Map<String, DataTypeDefinition> dataTypes,
-                                                       boolean isAssociatedResourceComponent,
+                                                       boolean isAssociatedComponent,
                                                        boolean isServiceProxyInterface) {
         if(MapUtils.isEmpty(interfaces)) {
             return null;
@@ -147,8 +149,8 @@ public class InterfacesOperationsToscaUtil {
                 ToscaLifecycleOperationDefinition toscaOperation = new ToscaLifecycleOperationDefinition();
                 if (isArtifactPresent(operationEntry)) {
                     operationArtifactPath = OperationArtifactUtil
-                            .createOperationArtifactPath(component, operationEntry.getValue(),
-                                    isAssociatedResourceComponent);
+                            .createOperationArtifactPath(component, componentInstance, operationEntry.getValue(),
+                                    isAssociatedComponent);
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());

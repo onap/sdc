@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -431,10 +432,10 @@ public class CsarUtils {
 	}
 
 	private Either<ZipOutputStream, ResponseFormat> writeComponentInterface(Component component, ZipOutputStream zip,
-			String fileName, boolean isAssociatedResourceComponent) {
+			String fileName, boolean isAssociatedComponent) {
 		try {
 			Either<ToscaRepresentation, ToscaError> componentInterface = toscaExportUtils
-					.exportComponentInterface(component, isAssociatedResourceComponent);
+					.exportComponentInterface(component, isAssociatedComponent);
 			ToscaRepresentation componentInterfaceYaml = componentInterface.left().value();
 			String mainYaml = componentInterfaceYaml.getMainYaml();
 			String interfaceFileName = DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName);
@@ -872,11 +873,11 @@ public class CsarUtils {
 			ComponentTypeArtifacts componentInstanceArtifacts = componentTypeArtifacts.get(keyAssetName);
 			ArtifactsInfo componentArtifacts2 = componentInstanceArtifacts.getComponentArtifacts();
 			String pathWithAssetName = currentPath + keyAssetName + "/";
-			Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath = writeArtifactsInfoToSpecifiedPath(
+			Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(
 					mainComponent, componentArtifacts2, zipstream, pathWithAssetName, isInCertificationRequest);
 
-			if (writeArtifactsInfoToSpecifiedtPath.isRight()) {
-				return writeArtifactsInfoToSpecifiedtPath;
+			if (writeArtifactsInfoToSpecifiedPath.isRight()) {
+				return writeArtifactsInfoToSpecifiedPath;
 			}
 		}
 
@@ -1188,7 +1189,7 @@ public class CsarUtils {
 	}
 
 	private ComponentTypeArtifacts collectComponentTypeArtifacts(Map<String, ComponentTypeArtifacts> resourcesArtifacts,
-			ComponentInstance componentInstance, Resource fetchedComponent) {
+			ComponentInstance componentInstance, Component fetchedComponent) {
 		String toscaComponentName = componentInstance.getToscaComponentName() + "_v"
 				+ componentInstance.getComponentVersion();
 
@@ -1210,15 +1211,21 @@ public class CsarUtils {
 			ComponentInstance componentInstance, Map<String, ComponentTypeArtifacts> resourcesTypeArtifacts,
 			ComponentTypeArtifacts instanceArtifactsLocation) {
 		// 1. get the component instance component
-		String componentUid = componentInstance.getComponentUid();
-		Either<Resource, StorageOperationStatus> resource = toscaOperationFacade.getToscaElement(componentUid);
-		if (resource.isRight()) {
+        String componentUid;
+        if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
+			componentUid = componentInstance.getSourceModelUid();
+		}
+		else {
+			componentUid = componentInstance.getComponentUid();
+		}
+        Either<Component, StorageOperationStatus> component = toscaOperationFacade.getToscaElement(componentUid);
+		if (component.isRight()) {
 			log.error("Failed to fetch resource with id {} for instance {}", componentUid, parentComponent.getUUID());
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ASSET_NOT_FOUND_DURING_CSAR_CREATION,
 					parentComponent.getComponentType().getValue(), parentComponent.getUUID(),
 					componentInstance.getOriginType().getComponentType().getValue(), componentUid));
 		}
-		Resource fetchedComponent = resource.left().value();
+		Component fetchedComponent = component.left().value();
 
 		// 2. fill the artifacts for the current component parent type
 		ComponentTypeArtifacts componentParentArtifacts = collectComponentTypeArtifacts(resourcesTypeArtifacts,

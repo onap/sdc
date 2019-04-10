@@ -192,7 +192,7 @@ public class InterfacesOperationsToscaUtilTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
         Map<String, Object> interfacesMap = InterfacesOperationsToscaUtil
-                .getInterfacesMap(component, component.getInterfaces(), null, false, true);
+                .getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
         ToscaNodeType nodeType = new ToscaNodeType();
         nodeType.setInterfaces(interfacesMap);
         ToscaExportHandler handler = new ToscaExportHandler();

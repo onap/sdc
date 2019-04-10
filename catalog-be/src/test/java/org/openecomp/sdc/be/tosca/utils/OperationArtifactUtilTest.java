@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -58,7 +59,7 @@ public class OperationArtifactUtilTest {
         final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
         implementation.setArtifactName("createBPMN.bpmn");
         op.setImplementation(implementation);
-        final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, op, false);
+        final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, null, op, false);
         String expectedArtifactPath = CsarUtils.ARTIFACTS + File.separator +
                 WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
                 ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
@@ -70,17 +71,15 @@ public class OperationArtifactUtilTest {
 
     @Test
     public void testCorrectPathForOperationArtifactsInService() {
-        ResourceMetadataDataDefinition componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
-        componentMetadataDataDefinition.setToscaResourceName("org.openecomp.resource.vf.TestResource");
-        final ComponentMetadataDefinition componentMetadataDefinition =
-                new ComponentMetadataDefinition(componentMetadataDataDefinition);
-        Component component = new Resource(componentMetadataDefinition);
+        Component component = new Resource();
         component.setVersion("1.0");
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setToscaComponentName("org.openecomp.resource.vf.TestResource");
         final OperationDataDefinition op = new OperationDataDefinition();
         final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
         implementation.setArtifactName("createBPMN.bpmn");
         op.setImplementation(implementation);
-        final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, op, true);
+        final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, componentInstance, op, true);
         String expectedArtifactPath = CsarUtils.ARTIFACTS + File.separator +
                 "org.openecomp.resource.vf.TestResource_v1.0" + File.separator +
                 WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
