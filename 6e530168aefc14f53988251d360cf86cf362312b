@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "29b18f55_7d182a72",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/DistributionStatusOfServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:01:41Z",
+      "side": 1,
+      "message": "I dont see any empty lines - probably its gerrit formatting",
+      "parentUuid": "9cc335b2_29cd5274",
+      "revId": "6e530168aefc14f53988251d360cf86cf362312b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ee61740_178b9b17",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/CreateAndAssotiateInfoTest.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-10T05:59:37Z",
       "side": 1,
       "message": "Please consider renaming to a test flow describing name",
+      "revId": "6e530168aefc14f53988251d360cf86cf362312b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65877e01_6bd46c73",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/CreateAndAssotiateInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:01:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ee61740_178b9b17",
       "revId": "6e530168aefc14f53988251d360cf86cf362312b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "279f512f_4b7c1e4a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/CreateAndAssotiateInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:01:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3c256ce_875c72d6",
+      "revId": "6e530168aefc14f53988251d360cf86cf362312b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0f5112f4_739ee034",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/DistributionStatusInfoTest.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2019-04-10T05:59:37Z",
       "side": 1,
       "message": "Please consider renaming to a test flow describing name",
+      "revId": "6e530168aefc14f53988251d360cf86cf362312b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "685cc551_4036c5f7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/info/DistributionStatusInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-10T14:01:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0f5112f4_739ee034",
       "revId": "6e530168aefc14f53988251d360cf86cf362312b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
