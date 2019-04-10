@@ -449,6 +449,28 @@ public class ComponentParametersViewTest {
 
 	
 	@Test
+	public void testIsIgnoreNodeFilter() throws Exception {
+		ComponentParametersView testSubject;
+		boolean result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.isIgnoreNodeFilter();
+	}
+
+	
+	@Test
+	public void testSetIgnoreNodeFilter() throws Exception {
+		ComponentParametersView testSubject;
+		boolean ignoreNodeFilter = false;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setIgnoreNodeFilter(ignoreNodeFilter);
+	}
+
+
+	@Test
 	public void testDetectParseFlag() throws Exception {
 		ComponentParametersView testSubject;
 		JsonParseFlagEnum result;

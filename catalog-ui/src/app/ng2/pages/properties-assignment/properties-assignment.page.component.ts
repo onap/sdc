@@ -39,11 +39,16 @@ import {ModalService} from "../../services/modal.service";
 import {Tabs, Tab} from "../../components/ui/tabs/tabs.component";
 import {InputsUtils} from "./services/inputs.utils";
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
+import {DeclareListComponent} from "./declare-list/declare-list.component";
 import { InstanceFeDetails } from "../../../models/instance-fe-details";
 import { SdcUiComponents } from "sdc-ui/lib/angular";
 //import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
 import { IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
 import { UnsavedChangesComponent } from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
+import { DataTypeService } from "app/ng2/services/data-type.service";
+import { DataTypeModel } from "app/models";
+import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils";
+import { PropertyDeclareAPIModel} from "app/models";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -68,6 +73,7 @@ export class PropertiesAssignmentComponent {
     selectedFlatProperty: SimpleFlatProperty = new SimpleFlatProperty();
     selectedInstanceData: ComponentInstance|GroupInstance|PolicyInstance = null;
     checkedPropertiesCount: number = 0;
+    checkedChildPropertiesCount: number = 0;
 
     hierarchyPropertiesDisplayOptions:HierarchyDisplayOptions = new HierarchyDisplayOptions('path', 'name', 'childrens');
     hierarchyInstancesDisplayOptions:HierarchyDisplayOptions = new HierarchyDisplayOptions('uniqueId', 'name', 'archived', null, 'iconClass');
@@ -286,6 +292,7 @@ export class PropertiesAssignmentComponent {
     processInstancePropertiesResponse = (instanceBePropertiesMap: InstanceBePropertiesMap, originTypeIsVF: boolean) => {
         this.instanceFePropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(instanceBePropertiesMap, originTypeIsVF, this.inputs); //create flattened children, disable declared props, and init values
         this.checkedPropertiesCount = 0;
+        this.checkedChildPropertiesCount = 0;
     };
 
 
@@ -405,6 +412,7 @@ export class PropertiesAssignmentComponent {
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             if (selectedInstanceData instanceof ComponentInstance) {
                 if (!this.isInput(selectedInstanceData.originType)) {
+                    // convert Property FE model -> Property BE model, extract only checked
                     selectedComponentInstancesProperties[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
                 } else {
                     selectedComponentInstancesInputs[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
@@ -423,6 +431,7 @@ export class PropertiesAssignmentComponent {
             .subscribe(response => {
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
+                this.checkedChildPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
                     let newInput: InputFEModel = new InputFEModel(input);
                     this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
@@ -430,6 +439,123 @@ export class PropertiesAssignmentComponent {
                     this.updatePropertyValueAfterDeclare(newInput);
                 });
             }, error => {}); //ignore error
+    };
+
+    declareListProperties = (): void => {
+        console.log('declareListProperties() - enter');
+
+        // get selected properties
+        let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let selectedGroupInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let selectedPolicyInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let selectedComponentInstancesInputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
+        let propertyNameList: Array<string> = [];
+        let insId :string;
+
+        angular.forEach(instancesIds, (instanceId: string): void => {
+            console.log("instanceId="+instanceId);
+            insId = instanceId;
+            let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
+            let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+
+            if (selectedInstanceData instanceof ComponentInstance) {
+                if (!this.isInput(selectedInstanceData.originType)) {
+                    // convert Property FE model -> Property BE model, extract only checked
+                    selectedComponentInstancesProperties[instanceId] = checkedProperties;
+                } else {
+                    selectedComponentInstancesInputs[instanceId] = checkedProperties;
+                }
+            } else if (selectedInstanceData instanceof GroupInstance) {
+                selectedGroupInstancesProperties[instanceId] = checkedProperties;
+            } else if (selectedInstanceData instanceof PolicyInstance) {
+                selectedPolicyInstancesProperties[instanceId] = checkedProperties;
+            }
+
+            angular.forEach(checkedProperties, (property: PropertyBEModel) => {
+                propertyNameList.push(property.name);
+            });
+        });
+
+        let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
+
+        let modalTitle = 'Declare Properties as List Input';
+        const modal = this.ModalService.createCustomModal(new ModalModel(
+            'sm', /* size */
+            modalTitle, /* title */
+            null, /* content */
+            [ /* buttons */
+                new ButtonModel(
+                    'Save', /* text */
+                    'blue', /* css class */
+                    () => { /* callback */
+                        let content:any = modal.instance.dynamicContent.instance;
+
+                        /* listInput */
+                        let reglistInput: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+                        let typelist: any = PROPERTY_TYPES.LIST;
+                        let uniID: any = insId;
+                        let boolfalse: any = false;
+                        let schem :any = {
+                            "empty": boolfalse,
+                            "property": {
+                                "type": content.propertyModel.simpleType,
+                                "required": boolfalse
+                            }
+                        }
+                        let schemaProp :any = {
+                            "type": content.propertyModel.simpleType,
+                            "required": boolfalse
+                        }
+
+                        reglistInput.description = content.propertyModel.description;
+                        reglistInput.name = content.propertyModel.name;
+                        reglistInput.type = typelist;
+                        reglistInput.schemaType = content.propertyModel.simpleType;
+                        reglistInput.instanceUniqueId = uniID;
+                        reglistInput.uniqueId = uniID;
+                        reglistInput.required =boolfalse;
+                        reglistInput.schema = schem;
+                        reglistInput.schemaProperty = schemaProp;
+
+                        let input = {
+                            componentInstInputsMap: content.inputsToCreate,
+                            listInput: reglistInput
+                        };
+                        console.log("save button clicked. input=", input);
+
+                        this.componentServiceNg2
+                        .createListInput(this.component, input, this.isSelf())
+                        .subscribe(response => {
+                            this.setInputTabIndication(response.length);
+                            this.checkedPropertiesCount = 0;
+                            this.checkedChildPropertiesCount = 0;
+                            _.forEach(response, (input: InputBEModel) => {
+                                let newInput: InputFEModel = new InputFEModel(input);
+                                this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
+                                this.inputs.push(newInput);
+                                // create list input does not return updated properties info, so need to reload
+                                //this.updatePropertyValueAfterDeclare(newInput);
+                                // Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning properties within the response, use commented code below instead!
+                                this.changeSelectedInstance(this.selectedInstanceData);
+
+                                modal.instance.close();
+                            });
+                        }, error => {}); //ignore error
+            
+                    }
+                    /*, getDisabled: function */
+                ),
+                new ButtonModel('Cancel', 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null /* type */
+        ));
+        // 3rd arg is passed to DeclareListComponent instance
+        this.ModalService.addDynamicContentToModal(modal, DeclareListComponent, {properties: inputsToCreate, propertyNameList: propertyNameList});
+        modal.instance.open();
+        console.log('declareListProperties() - leave');
     };
 
     saveChangedData = ():Promise<(PropertyBEModel|InputBEModel)[]> => {
@@ -555,6 +681,8 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <PropertyFEModel>changedItem;
                 this.propertiesUtils.resetPropertyValue(changedItem, changedItem.value);
+                this.checkedPropertiesCount = 0;
+                this.checkedChildPropertiesCount = 0;
             };
         } else if (this.isInputsTabSelected) {
             handleReverseItem = (changedItem) => {
@@ -589,6 +717,10 @@ export class PropertiesAssignmentComponent {
                     title: 'Saved'
                 });
                 if(onSuccessFunction) onSuccessFunction();
+                if(this.isPropertiesTabSelected){
+                    this.checkedPropertiesCount = 0;
+                    this.checkedChildPropertiesCount = 0;
+                }
             },
             () => {
                 this.Notification.error({
@@ -642,6 +774,10 @@ export class PropertiesAssignmentComponent {
     updateCheckedPropertyCount = (increment: boolean): void => {
         this.checkedPropertiesCount += (increment) ? 1 : -1;
         console.log("CheckedProperties count is now.... " + this.checkedPropertiesCount);
+    };
+
+    updateCheckedChildPropertyCount = (increment: boolean): void => {
+        this.checkedChildPropertiesCount += (increment) ? 1 : -1;
     };
 
     setInputTabIndication = (numInputs: number): void => {

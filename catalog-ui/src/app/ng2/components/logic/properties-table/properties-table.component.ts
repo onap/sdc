@@ -45,7 +45,8 @@ export class PropertiesTableComponent {
     
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
-    @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption
+    @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption and hasDeclareListOption
+    @Output() updateCheckedChildPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareListOption
     @Output() deleteProperty: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     private selectedPropertyToDelete: PropertyFEModel;
 
@@ -94,6 +95,11 @@ export class PropertiesTableComponent {
             this.propertiesService.disableRelatedProperties(prop, childPropName);
         }
         this.updateCheckedPropertyCount.emit(isChecked);
+
+        if (childPropName) {
+            let isCount: boolean = (isChecked)? true : false ;
+            this.updateCheckedChildPropertyCount.emit(isCount);
+        }
     }
 
     onDeleteProperty = () => {

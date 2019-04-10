@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import fj.data.Either;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -42,17 +37,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -61,6 +49,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
@@ -79,6 +69,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     @Inject
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    @Inject
+    private DataTypeBusinessLogic dataTypeBusinessLogic;
+
     /**
      * associate inputs to a given component with paging
      *
@@ -466,6 +459,151 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
+    /**
+     * Creates a list input with a data type which has properties specified.
+     *
+     * @param userId             User ID
+     * @param componentId        Component ID
+     * @param componentType      Component type
+     * @param componentListInput Properties to be declared and input to be created
+     * @param shouldLockComp     true if the component should be locked
+     * @param inTransaction      true if already in transaction
+     * @return
+     */
+    public Either<List<InputDefinition>, ResponseFormat> createListInput(String userId, String componentId, ComponentTypeEnum componentType, ComponentInstListInput componentListInput, boolean shouldLockComp, boolean inTransaction) {
+
+        Either<List<InputDefinition>, ResponseFormat> result = null;
+        org.openecomp.sdc.be.model.Component component = null;
+
+        log.trace("createListInput: enter");
+
+        try {
+            /* check if user exists */
+            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+
+            ComponentParametersView componentParametersView = new ComponentParametersView();
+            componentParametersView.disableAll();
+            componentParametersView.setIgnoreInputs(false);
+            componentParametersView.setIgnoreComponentInstancesInputs(false);
+            componentParametersView.setIgnoreComponentInstances(false);
+            componentParametersView.setIgnoreComponentInstancesProperties(false);
+            componentParametersView.setIgnorePolicies(false);
+            componentParametersView.setIgnoreGroups(false);
+            componentParametersView.setIgnoreUsers(false);
+
+            // get Component Object
+            Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
+
+            if (validateComponent.isRight()) {
+                // not exists
+                result = Either.right(validateComponent.right().value());
+                return result;
+            }
+            component = validateComponent.left().value();
+            log.trace("createListInput: component get ok");
+
+            if (shouldLockComp) {
+                // lock the component
+                Either<Boolean, ResponseFormat> lockComponent = lockComponent(component, CREATE_INPUT);
+                if (lockComponent.isRight()) {
+                    result = Either.right(lockComponent.right().value());
+                    return result;
+                }
+                log.trace("createListInput: component lock ok");
+            }
+
+            Either<Boolean, ResponseFormat> canWork = validateCanWorkOnComponent(component, userId);
+            if (canWork.isRight()) {
+                result = Either.right(canWork.right().value());
+                return result;
+            }
+            log.trace("createListInput: validateCanWork ok");
+
+            InputDefinition listInput = componentListInput.getListInput();
+            // Confirm if type is list
+            if (StringUtils.isEmpty(listInput.getType())
+                    || !listInput.getType().equals(ToscaPropertyType.LIST.getType())) {
+                log.debug("Type of list input is not list !");
+                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE));
+                return result;
+            }
+            // Confirm schema type is not empty
+            String desiredTypeName = listInput.getSchemaType();
+            if (StringUtils.isEmpty(desiredTypeName)) {
+                log.debug("Schema type of list input is empty!");
+                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE));
+                return result;
+            }
+            DataTypeDefinition dataType = preparePrivateDataTypeForListInput(
+                    componentListInput.getComponentInstInputsMap(), desiredTypeName);
+            Map<String,DataTypeDefinition> dataTypesMap = new HashMap<>();
+            dataTypesMap.put(dataType.getName(), dataType);
+            log.trace("createListInput: dataTypesMap={}", ReflectionToStringBuilder.toString(dataTypesMap));
+
+            Either<List<DataTypeDefinition>, StorageOperationStatus> dataTypeResult = toscaOperationFacade.addDataTypesToComponent(dataTypesMap, componentId);
+            if (dataTypeResult.isRight()) {
+                result = Either.right(componentsUtils.getResponseFormat(dataTypeResult.right().value()));
+            } else {
+                result = Either.left(new ArrayList<>());
+            }
+            log.trace("createListInput: addDataTypesToComponent ok");
+
+            // create list input
+            listInput.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, listInput.getName()));
+            log.trace("createListInput: componentListInput={}", componentListInput.getComponentInstInputsMap());
+            listInput.setInstanceUniqueId(propertyDeclarationOrchestrator.getPropOwnerId(componentListInput.getComponentInstInputsMap()));
+            listInput.setIsDeclaredListInput(true);
+            Map<String,InputDefinition> listInputMap = new HashMap<String,InputDefinition>();
+            listInputMap.put(listInput.getName(), listInput);
+            result =  createListInputsInGraph(listInputMap, dataTypesMap, component);
+            if (result.isRight()) {
+                log.debug("createListInput: createListInputsInGraph ng");
+                return Either.right(result.right().value());
+            }
+            log.trace("createListInput: createListInputsInGraph ok");
+
+            // update properties
+            Either<InputDefinition, ResponseFormat> declareResult =
+                    propertyDeclarationOrchestrator.declarePropertiesToListInput(component, componentListInput.getComponentInstInputsMap(), listInput)
+                            .right().map(err -> componentsUtils.getResponseFormat(err));
+            if (declareResult.isRight()) {
+                result = Either.right(declareResult.right().value());
+            } else {
+                result = Either.left(Arrays.asList(declareResult.left().value()));
+            }
+
+            log.trace("createListInput: leave");
+
+            return result;
+
+        } finally {
+
+            if (!inTransaction) {
+                if (result == null || result.isRight()) {
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                    titanDao.rollback();
+                } else {
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    titanDao.commit();
+                }
+            }
+            // unlock resource
+            if (shouldLockComp && component != null) {
+                graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
+            }
+
+        }
+    }
+
+    private DataTypeDefinition preparePrivateDataTypeForListInput(ComponentInstInputsMap inputsMap, String dataTypeName) {
+        DataTypeDefinition dataType = new DataTypeDefinition();
+        List<ComponentInstancePropInput> propInputs = inputsMap.resolvePropertiesToDeclare().getRight();
+        dataType.setName(dataTypeName);
+        dataType.setDerivedFromName(ToscaPropertyType.Root.getType());
+        dataType.setProperties(propInputs.stream().map(PropertyDefinition::new).collect(Collectors.toList()));
+        return dataType;
+    }
+
     private  Either<List<InputDefinition>, StorageOperationStatus> prepareInputsForCreation(String userId, String cmptId, List<InputDefinition> inputsToCreate) {
         Map<String, InputDefinition> inputsToPersist = MapUtil.toMap(inputsToCreate, InputDefinition::getName);
         assignOwnerIdToInputs(userId, inputsToPersist);
@@ -518,6 +656,38 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         return Either.left(associateInputsEither.left().value());
     }
 
+    private Either<List<InputDefinition>, ResponseFormat> createListInputsInGraph(Map<String, InputDefinition> inputs, Map<String,DataTypeDefinition> privateDataTypes, org.openecomp.sdc.be.model.Component component) {
+
+        log.trace("createListInputsInGraph: enter");
+        Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
+        if (allDataTypes.isRight()) {
+            return Either.right(allDataTypes.right().value());
+        }
+        log.trace("createListInputsInGraph: getAllDataTypes (OK)");
+
+        Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
+        dataTypes.putAll(privateDataTypes);
+
+        for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
+            String inputName = inputDefinition.getKey();
+            inputDefinition.getValue().setName(inputName);
+
+            Either<InputDefinition, ResponseFormat> preparedInputEither = prepareAndValidateInputBeforeCreate(inputDefinition.getValue(), dataTypes);
+            if(preparedInputEither.isRight()){
+                return Either.right(preparedInputEither.right().value());
+            }
+
+        }
+
+        Either<List<InputDefinition>, StorageOperationStatus> addInputsEither = toscaOperationFacade.addInputsToComponent(inputs, component.getUniqueId());
+        if(addInputsEither.isRight()){
+            log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), addInputsEither.right().value());
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addInputsEither.right().value())));
+        }
+        log.trace("createListInputsInGraph: leave (OK)");
+        return Either.left(addInputsEither.left().value());
+    }
+
     /**
      * Delete input from service
      *
@@ -544,6 +714,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnorePolicies(false);
         componentParametersView.setIgnoreGroups(false);
         componentParametersView.setIgnoreUsers(false);
+        componentParametersView.setIgnoreDataType(false);
+        componentParametersView.setIgnoreProperties(false);
 
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade.getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
@@ -580,12 +752,34 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
                 return deleteEither;
             }
+
+            if (BooleanUtils.isTrue(inputForDelete.getIsDeclaredListInput())){
+                // the input is created by 'Declare List'.
+                // need to 1. undeclare properties, 2. delete input, 3. delete private data type
+                StorageOperationStatus storageOperationStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsListInputs(component, inputForDelete);
+                if (storageOperationStatus != StorageOperationStatus.OK) {
+                    log.debug("Component id: {} update properties declared as input for input id: {} failed", componentId, inputId);
+                    deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
+                    return deleteEither;
+                }
+                Either<DataTypeDefinition, StorageOperationStatus> deleteResult = dataTypeBusinessLogic.deletePrivateDataType(component, inputForDelete.getSchemaType());
+                if (deleteResult.isRight()) {
+                    log.debug("Component id: {} delete datatype name: {} failed", componentId, inputForDelete.getSchemaType());
+                    deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteResult.right().value()), component.getName()));
+                    return deleteEither;
+                }
+                log.trace("deleteInput: deletePrivateDataType (OK)");
+                deleteEither = Either.left(inputForDelete);
+                return deleteEither;
+            }
+
             StorageOperationStatus storageOperationStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(component, inputForDelete);
             if (storageOperationStatus != StorageOperationStatus.OK) {
                 log.debug("Component id: {} update properties declared as input for input id: {} failed", componentId, inputId);
                 deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
                 return deleteEither;
             }
+
             deleteEither = Either.left(inputForDelete);
             return deleteEither;
         } finally {

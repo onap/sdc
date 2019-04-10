@@ -50,6 +50,7 @@ public class ComponentParametersView {
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
     private boolean ignoreNodeFilter = false;
+    private boolean ignoreDataType = false;
 
     public ComponentParametersView() {
     }
@@ -152,6 +153,9 @@ public class ComponentParametersView {
                     this.setIgnoreComponentInstances(false);
                     this.setIgnoreComponentInstancesInterfaces(false);
                     break;
+                case DATA_TYPES:
+                    this.setIgnoreDataType(false);
+                    break;
                 default:
                     break;
             }
@@ -229,6 +233,9 @@ public class ComponentParametersView {
         if (ignoreNodeFilter){
             component.setNodeFilterComponents(null);
         }
+        if (ignoreDataType) {
+            component.setDataTypes(null);
+        }
         return component;
     }
 
@@ -254,6 +261,7 @@ public class ComponentParametersView {
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
         ignoreNodeFilter = true;
+        ignoreDataType = true;
     }
 
     public boolean isIgnoreGroups() {
@@ -434,6 +442,14 @@ public class ComponentParametersView {
 
     public void setIgnoreNodeFilter(boolean ignoreNodeFilter) {
         this.ignoreNodeFilter = ignoreNodeFilter;
+    }
+
+    public boolean isIgnoreDataType() {
+        return ignoreDataType;
+    }
+
+    public void setIgnoreDataType(boolean ignoreDataType) {
+        this.ignoreDataType = ignoreDataType;
     }
 
     public JsonParseFlagEnum detectParseFlag() {

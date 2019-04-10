@@ -65,7 +65,8 @@ public enum EdgeLabelEnum {
 	INTERFACE,
 	INTERFACE_OPERATION,
 	INST_INTERFACES,
-	NODE_FILTER_TEMPLATE;
+	NODE_FILTER_TEMPLATE,
+	DATA_TYPES;
 
     /**
 	 * Returns EdgeLabelEnum according received name
