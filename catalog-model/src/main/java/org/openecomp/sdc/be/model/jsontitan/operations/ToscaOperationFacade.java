@@ -955,7 +955,7 @@ public class ToscaOperationFacade {
         }
 
         GraphVertex vertex = getVertexEither.left().value();
-        Map<String, PropertyDataDefinition> inputsMap = inputs.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new PropertyDataDefinition(e.getValue())));
+		Map<String, PropertyDefinition> inputsMap = inputs.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new PropertyDefinition(e.getValue())));
 
         StorageOperationStatus status = topologyTemplateOperation.addToscaDataToToscaElement(vertex, EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, inputsMap, JsonPresentationFields.NAME);
 

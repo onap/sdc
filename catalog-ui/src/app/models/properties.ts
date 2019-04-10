@@ -40,7 +40,6 @@ export class PropertiesGroup {
 export interface IPropertyModel extends InputPropertyBase {
 
     //server data
-    constraints:Array<Object>;
     source:string;
 
     //instance properties
@@ -60,7 +59,6 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     //server data
     uniqueId:string;
     name:string;
-    constraints:Array<Object>;
     defaultValue:string;
     description:string;
     password:boolean;
@@ -93,7 +91,6 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     constructor(property?:PropertyModel) {
         super(property);
         if (property) {
-            this.constraints = property.constraints;
             this.source = property.source;
             this.valueUniqueUid = property.valueUniqueUid;
             this.path = property.path;

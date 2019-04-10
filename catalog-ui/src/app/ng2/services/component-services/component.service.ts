@@ -108,6 +108,10 @@ export class ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INPUTS]);
     }
 
+    getComponentInputsWithProperties(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+    }
+
     getComponentDeploymentArtifacts(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_DEPLOYMENT_ARTIFACTS]);
     }

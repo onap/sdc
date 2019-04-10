@@ -20,18 +20,25 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import org.openecomp.sdc.be.model.tosca.ToscaType;
-import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
-
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to validate constraints types.
  */
 public final class ConstraintUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConstraintUtil.class);
 
     private ConstraintUtil() {
     }
@@ -46,7 +53,7 @@ public final class ConstraintUtil {
      *             In case the type is not {@link ToscaType#STRING}.
      */
     public static void checkStringType(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        if (!ToscaType.STRING.equals(propertyType)) {
+        if (ToscaType.STRING != propertyType) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                     "Invalid property type <" + propertyType.toString() + ">");
         }
@@ -95,8 +102,7 @@ public final class ConstraintUtil {
      *             if the converted value is not a comparable
      */
     @SuppressWarnings("rawtypes")
-    public static Comparable convertToComparable(ToscaType propertyType, String value)
-            throws ConstraintValueDoNotMatchPropertyTypeException {
+    public static Comparable convertToComparable(ToscaType propertyType, String value) {
         Object comparableObj = propertyType.convert(value);
         if (!(comparableObj instanceof Comparable)) {
             throw new IllegalArgumentException(
@@ -141,5 +147,19 @@ public final class ConstraintUtil {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new IntrospectionException("Cannot retrieve constraint reference " + e.getMessage());
         }
+    }
+
+    public static <T> T parseToCollection(String value, TypeReference<T> typeReference)
+            throws ConstraintValueDoNotMatchPropertyTypeException {
+        T objectMap;
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMap = objectMapper.readValue(value, typeReference);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ConstraintValueDoNotMatchPropertyTypeException("The value [" + value + "] is not valid");
+        }
+
+        return objectMap;
     }
 }

@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
@@ -30,7 +31,6 @@ public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint 
 
     @NotNull
     private String lessOrEqual;
-
     public LessOrEqualConstraint(String lessOrEqual) {
         this.lessOrEqual = lessOrEqual;
     }
@@ -55,4 +55,8 @@ public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint 
         this.lessOrEqual = lessOrEqual;
     }
 
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be <= %s", lessOrEqual);
+    }
 }

@@ -156,6 +156,14 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         input.setInputPath(propertiesName);
         input.setInstanceUniqueId(propertiesOwner.getUniqueId());
         input.setPropertyId(propInput.getUniqueId());
+		if (Objects.isNull(input.getSubPropertyInputPath())
+				|| (Objects.nonNull(propertiesName)
+				&& input.getSubPropertyInputPath().substring(input.getSubPropertyInputPath().lastIndexOf('#'))
+				.equals(propertiesName.substring(propertiesName.lastIndexOf('#'))))) {
+			input.setParentPropertyType(propInput.getType());
+			input.setSubPropertyInputPath(propertiesName);
+		}
+
         changePropertyValueToGetInputValue(inputName, parsedPropNames, input, prop, complexProperty);
 
         if(prop instanceof IComponentInstanceConnectedElement) {
@@ -169,7 +177,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     private void changePropertyValueToGetInputValue(String inputName, String[] parsedPropNames, InputDefinition input, PropertyDataDefinition prop, boolean complexProperty) {
         JSONObject jobject = new JSONObject();
-        String value = (String) prop.getValue();
+        String value = prop.getValue();
         if(value == null || value.isEmpty()){
             if(complexProperty){
 
@@ -185,7 +193,6 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
         }else{
 
-            //String value = value;
             Object objValue =  new Yaml().load(value);
             if( objValue instanceof Map || objValue  instanceof List){
                 if(!complexProperty){

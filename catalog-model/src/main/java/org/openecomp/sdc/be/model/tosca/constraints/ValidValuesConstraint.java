@@ -21,13 +21,16 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.google.common.collect.Sets;
+
+import java.util.List;
+import java.util.Set;
+
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Set;
 
 public class ValidValuesConstraint extends AbstractPropertyConstraint {
 
@@ -77,4 +80,9 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
         this.validValues = validValues;
     }
 
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s valid value must be one of the following: [%s]",
+                String.join(",", validValues));
+    }
 }

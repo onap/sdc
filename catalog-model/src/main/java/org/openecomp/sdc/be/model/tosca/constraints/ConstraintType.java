@@ -25,9 +25,9 @@ import java.util.List;
 
 public enum ConstraintType {
 
-    EQUAL("equal", "equal"),
+	EQUAL("equal", "equal"),
 
-    IN_RANGE("inRange"),
+	IN_RANGE("inRange","in_range"),
 
     GREATER_THAN("greaterThan", "greater_than"),
 
@@ -35,11 +35,17 @@ public enum ConstraintType {
 
     LESS_OR_EQUAL("lessOrEqual", "less_or_equal"),
 
+    LENGTH("length", "length"),
+
     MIN_LENGTH("minLength", "min_length"),
+
+    MAX_LENGTH("maxLength", "max_length"),
 
     VALID_VALUES("validValues", "valid_values"),
 
-    LESS_THAN("lessThan", "less_than");
+    LESS_THAN("lessThan", "less_than"),
+
+    SCHEMA("schema", "schema");
 
     List<String> types;
 

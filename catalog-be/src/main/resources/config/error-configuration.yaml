@@ -2263,3 +2263,9 @@ errors:
         message: "Error: Given value is different than input type. Needs to be %1",
         messageId: "SVC4725"
     }
+#---------SVC4726-----------------------------
+    INVALID_PROPERTY_VALUES: {
+        code: 400,
+        message: "Error: Invalid property values provided:\n %1",
+        messageId: "SVC4735"
+    }

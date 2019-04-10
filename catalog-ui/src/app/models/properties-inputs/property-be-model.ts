@@ -28,12 +28,12 @@ export enum DerivedPropertyType {
 }
 
 export class PropertyBEModel {
-
+    constraints: Array<any>;
     defaultValue: string;
     definition: boolean;
     description: string;
     fromDerived: boolean;
-    getInputValues: Array<PropertyInputDetail>
+    getInputValues: Array<PropertyInputDetail>;
     name: string;
     parentUniqueId: string;
     password: boolean;
@@ -43,9 +43,12 @@ export class PropertyBEModel {
     type: string;
     uniqueId: string;
     value: string;
+    parentPropertyType: string;
+    subPropertyInputPath: string;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
+            this.constraints = property.constraints;
             this.defaultValue = property.defaultValue;
             this.description = property.description;
             this.fromDerived = property.fromDerived;
@@ -60,6 +63,8 @@ export class PropertyBEModel {
             this.value = property.value;
             this.definition = property.definition;
             this.getInputValues = property.getInputValues;
+            this.parentPropertyType = property.parentPropertyType;
+            this.subPropertyInputPath = property.subPropertyInputPath;
         }
 
         if (!this.schema || !this.schema.property) {

@@ -59,6 +59,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 	private String inputId;
 	private String instanceUniqueId;
 	private String propertyId;
+	private String parentPropertyType;
+	private String subPropertyInputPath;
 
 	private List<Annotation> annotations;
 	/**
@@ -100,9 +102,27 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		this.setInputId(p.getInputId());
 		this.setInstanceUniqueId(p.getInstanceUniqueId());
 		this.setPropertyId(p.getPropertyId());
+		this.setParentPropertyType(p.getParentPropertyType());
+		this.setSubPropertyInputPath(p.getSubPropertyInputPath());
 		if(isNotEmpty(p.annotations)){
 		    this.setAnnotations(p.annotations);
         }
+	}
+
+	public String getParentPropertyType() {
+		return parentPropertyType;
+	}
+
+	public void setParentPropertyType(String parentPropertyType) {
+		this.parentPropertyType = parentPropertyType;
+	}
+
+	public String getSubPropertyInputPath() {
+		return subPropertyInputPath;
+	}
+
+	public void setSubPropertyInputPath(String subPropertyInputPath) {
+		this.subPropertyInputPath = subPropertyInputPath;
 	}
 
 	public String getInputPath() {
@@ -285,7 +305,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 	public String toString() {
 		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
 				+ password + ", name=" + name + ", value=" + value + ", label=" + label + ", hidden=" + hidden + ", immutable=" + immutable + ", inputPath=" + inputPath + ", status=" + status + ", inputId=" + inputId + ", instanceUniqueId="
-				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues + "]";
+				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues
+				+  "parentPropertyType" + parentPropertyType
+				+  "subPropertyInputPath" + subPropertyInputPath +"]";
 	}
 
 	@Override

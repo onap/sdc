@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
@@ -28,12 +29,12 @@ import javax.validation.constraints.NotNull;
 
 public class GreaterThanConstraint extends AbstractComparablePropertyConstraint {
 
+    @NotNull
+    private String greaterThan;
+
     public GreaterThanConstraint(String greaterThan) {
         this.greaterThan = greaterThan;
     }
-
-    @NotNull
-    private String greaterThan;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
@@ -55,4 +56,8 @@ public class GreaterThanConstraint extends AbstractComparablePropertyConstraint 
         this.greaterThan = greaterThan;
     }
 
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%f property value must be > %f", greaterThan);
+    }
 }

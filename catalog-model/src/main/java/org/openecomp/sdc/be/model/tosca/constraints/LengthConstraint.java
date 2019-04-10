@@ -20,20 +20,40 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import java.util.List;
+import java.util.Map;
+
+import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
 
-public class LengthConstraint extends AbstractStringPropertyConstraint {
+public class LengthConstraint extends AbstractPropertyConstraint {
 
     @NotNull
     private Integer length;
 
-    @Override
-    protected void doValidate(String propertyValue) throws ConstraintViolationException {
-        if (propertyValue.length() != length) {
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue instanceof String && String.valueOf(propertyValue).length() != length) {
             throw new ConstraintViolationException("The length of the value is not equals to [" + length + "]");
+        } else if (propertyValue instanceof List && ((List) propertyValue).size()  != length) {
+            throw new ConstraintViolationException("The size of the list is not equals to [" + length + "]");
+        } else if (propertyValue instanceof Map && ((Map) propertyValue).size()  != length) {
+            throw new ConstraintViolationException("The size of the map is not equals to [" + length + "]");
         }
+    }
+
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            throw new ConstraintViolationException("Value to validate is null");
+        }
+
+        if(!(propertyValue instanceof String || propertyValue instanceof List || propertyValue instanceof Map)) {
+            throw new ConstraintViolationException("This constraint can only be applied on String/List/Map value");
+        }
+
+        doValidate(propertyValue);
     }
 
     public Integer getLength() {
@@ -42,6 +62,11 @@ public class LengthConstraint extends AbstractStringPropertyConstraint {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s length must be %s", String.valueOf(length));
     }
 
 }

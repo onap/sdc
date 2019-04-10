@@ -39,6 +39,7 @@ export class ConsumptionInput extends PropertyFEModel{
     type: string;
     source: string;
     value: any;
+    constraints: Array<any>;
 
     constructor(input?: any) {
         super(input);
@@ -47,6 +48,7 @@ export class ConsumptionInput extends PropertyFEModel{
             this.type = input.type;
             this.source = input.source;
             this.value = input.value || "";
+            this.constraints = input.constraints;
         }
     }
 }

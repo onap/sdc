@@ -52,6 +52,7 @@
                                 *ngIf="consumptionInput.isSimpleType && (consumptionInput.source === SOURCE_TYPES.STATIC ||  consumptionInput.source === '')"
                                 data-tests-id="inputValue"
                                 [(value)]="consumptionInput.value"
+                                [constraints]="consumptionInput.constraints"
                                 (elementChanged)="onChange($event.value, $event.isValid, consumptionInput)"
                                 [type]="consumptionInput.type">
                         </dynamic-element>
