@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "422a5478_fca4dcde",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5bdb0962_dd0f48d0",
+      "range": {
+        "startLine": 25,
+        "startChar": 9,
+        "endLine": 25,
+        "endChar": 19
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e429054_295e2207",
         "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2019-04-08T12:58:54Z",
       "side": 1,
       "message": "please unify indentations with another .erb file",
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d672f7a3_9f5ee954",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e429054_295e2207",
       "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "87989477_6aca8866",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03a1a6cf_5a23c813",
+      "range": {
+        "startLine": 722,
+        "startChar": 0,
+        "endLine": 736,
+        "endChar": 24
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "871ae6a4_4df92ad9",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/deployment-artifacts/deployment-artifacts-view-model.ts",
         "patchSetId": 1
@@ -76,6 +142,24 @@
       "writtenOn": "2019-04-08T13:33:56Z",
       "side": 1,
       "message": "I suppose we should check whether the gabConfig was defined here and if not make some defaults or print an error on console. What do you think?",
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0b8cbba_85bbe82d",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/deployment-artifacts/deployment-artifacts-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "I added console log that prints a warning in case config is missing.",
+      "parentUuid": "871ae6a4_4df92ad9",
       "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -117,6 +201,54 @@
       "side": 1,
       "message": "personally I dont see a difference. This way or another, its there.",
       "parentUuid": "b47a3654_d3437dbb",
+      "range": {
+        "startLine": 1636,
+        "startChar": 0,
+        "endLine": 1637,
+        "endChar": 9
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b29c9314_858032a3",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/Configuration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1637,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b47a3654_d3437dbb",
+      "range": {
+        "startLine": 1636,
+        "startChar": 0,
+        "endLine": 1637,
+        "endChar": 9
+      },
+      "revId": "2e18476bf54dfbe6d3c2bdd9b7b8f16eddc67c64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "66d61995_9adec01c",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/Configuration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1637,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-04-10T11:05:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "347b8303_f31c3f39",
       "range": {
         "startLine": 1636,
         "startChar": 0,
