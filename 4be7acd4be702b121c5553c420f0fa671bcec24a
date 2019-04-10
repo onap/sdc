@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5ff102e_b43e8930",
+        "filename": "catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/templates/default/consumers.py.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-04-10T14:05:36Z",
+      "side": 1,
+      "message": "don\u0027t need sdc here, as it\u0027s already within sdc - hence redundant ;)",
+      "range": {
+        "startLine": 58,
+        "startChar": 150,
+        "endLine": 58,
+        "endChar": 154
+      },
+      "revId": "4be7acd4be702b121c5553c420f0fa671bcec24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
