@@ -301,7 +301,7 @@ export class DeploymentArtifactsViewModel {
             let pathsandnames: PathsAndNamesDefinition[] = [];
 
             if(typeof uiConfiguration.gab === 'undefined') {
-                noConfig = true
+                noConfig = true;
             } else {
                 const gabConfig: GabConfig = uiConfiguration.gab
                     .find(config => config.artifactType === artifact.artifactType);
