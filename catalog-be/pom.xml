@@ -12,6 +12,7 @@
     </parent>
 
     <properties>
+        <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
     </properties>
 
     <dependencies>
@@ -588,6 +589,13 @@
             <groupId>com.google.code.bean-matchers</groupId>
             <artifactId>bean-matchers</artifactId>
             <version>0.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <version>${java-hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 

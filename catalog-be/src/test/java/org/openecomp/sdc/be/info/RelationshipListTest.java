@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,38 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.info;
 
-public class GroupTemplateInfo {
-    String groupName;
-    boolean isBase;
-    ArtifactTemplateInfo artifactTemplateInfo;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-    public GroupTemplateInfo() {}
+import org.junit.Test;
 
-    public String getGroupName() {
-        return groupName;
+public class RelationshipListTest {
+
+    @Test
+    public void shouldHaveValidDefaultConstructor() {
+        assertThat(RelationshipList.class, hasValidBeanConstructor());
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public boolean isBase() {
-        return isBase;
-    }
-
-    public void setBase(boolean isBase) {
-        this.isBase = isBase;
-    }
-
-    public ArtifactTemplateInfo getArtifactTemplateInfo() {
-        return artifactTemplateInfo;
-    }
-
-    public void setArtifactTemplateInfo(ArtifactTemplateInfo artifactTemplateInfo) {
-        this.artifactTemplateInfo = artifactTemplateInfo;
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(RelationshipList.class, hasValidGettersAndSetters());
     }
 
 }
