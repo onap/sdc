@@ -38,6 +38,7 @@
             </span>
         <br/>
         <input
+            *ngIf="isSearchable(col.name)"
             type='text'
             class="datattable-input-filter"
             placeholder='Filter column...'

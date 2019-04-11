@@ -105,6 +105,13 @@ export class GenericArtifactBrowserComponent {
     this.addNewColumn = true;
   }
 
+  isSearchable(columnName){
+    let selectedPathAndName = this.pathsandnames.filter(function(pathandname){
+      return pathandname.friendlyName === columnName;
+    })[0];
+    return selectedPathAndName.searchable;
+  }
+
   updateColumnFilter(event, column) {
     const val = event.target.value.toLowerCase();
     this.columnsFilters.set(column, val);
