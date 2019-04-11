@@ -102,6 +102,9 @@ Modifications copyright (c) 2018 Nokia
         <cucumber.version>2.4.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
         <hamcrest-all.version>1.3</hamcrest-all.version>
+        <junit-jupiter.version>5.1.0</junit-jupiter.version>
+        <junit-vintage.version>5.1.0</junit-vintage.version>
+        <junit-platform.version>1.1.0</junit-platform.version>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.3.5</sdc-tosca-parser.version>
