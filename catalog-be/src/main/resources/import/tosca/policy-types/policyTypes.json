@@ -87,14 +87,6 @@
     "displayName": "NFV VirtualLinkBitrate InitialDelta",
     "icon": "policy-nfv-vlbitrate-initialdelta"
   },
-  "tosca.policies.nfv.AffinityRule": {
-    "displayName": "NFV AffinityRule",
-    "icon": "policy-nfv-affinityrule"
-  },
-  "tosca.policies.nfv.AntiAffinityRule": {
-    "displayName": "NFV AntiAffinityRule",
-    "icon": "policy-nfv-anti-affinityrule"
-  },
   "tosca.policies.nfv.SecurityGroupRule": {
     "displayName": "NFV SecurityGroupRule",
     "icon": "policy-nfv-securitygrouprule"
