@@ -107,7 +107,158 @@ public class OnboardingFlowsUI extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPValidationsSanityFlow(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(OnboardingUiUtils.getVspValidationCongiguration()){
+            goToVspScreen(true, vspName);
 
+            //check links are available
+            checkVspValidationLinksVisibility();
+
+            VspValidationPage.navigateToVspValidationPageUsingNavbar();
+            assertTrue("Next Button is enabled, it should have been disabled", VspValidationPage.checkNextButtonDisabled());
+            VspValidationResultsPage.navigateToVspValidationResultsPageUsingNavbar();
+            GeneralUIUtils.ultimateWait();
+            assertNotNull(GeneralUIUtils.findByText("No Validation Checks Performed"));
+        }
+        else {
+            goToVspScreen(true, vspName);
+
+            //check links are not available
+            checkVspValidationLinksInvisibility();
+        }
+    }
+
+
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPValidationsConfigurationChangeCheck(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(OnboardingUiUtils.getVspValidationCongiguration()){
+            goToVspScreen(true, vspName);
+            //check links are available
+            checkVspValidationLinksVisibility();
+
+            //change config
+            changeVspValidationConfig(false, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+
+            //check links are not available
+            checkVspValidationLinksInvisibility();
+        }
+        else {
+            goToVspScreen(true, vspName);
+            //check links are not available
+            checkVspValidationLinksInvisibility();
+
+            changeVspValidationConfig(false, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+
+            //check links are available
+            checkVspValidationLinksVisibility();
+        }
+    }
+
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPCertificationQueryFlow(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(!OnboardingUiUtils.getVspValidationCongiguration()){
+            //change config to true to test the feature
+            changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+        }
+        else {
+            goToVspScreen(true, vspName);
+        }
+        VspValidationPage.navigateToVspValidationPageUsingNavbar();
+        assertTrue("Next Button is enabled, it should have been disabled", VspValidationPage.checkNextButtonDisabled());
+
+        if(VspValidationPage.checkCertificationQueryExists()){
+            VspValidationPage.clickCertificationQueryAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("Next Button is disabled, it should have been enabled", !VspValidationPage.checkNextButtonDisabled());
+            VspValidationPage.clickOnNextButton();
+            GeneralUIUtils.ultimateWait();
+            VspValidationPage.clickOnSubmitButton();
+            GeneralUIUtils.waitForLoader();
+            assertTrue("Results are not available", VspValidationResultsPage.checkResultsExist());
+        }
+        else {
+            assertNotNull(GeneralUIUtils.findByText("No Certifications Query are Available"));
+        }
+
+    }
+
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPComplianceCheckFlow(String filePath, String vnfFile) throws Exception, Throwable {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(!OnboardingUiUtils.getVspValidationCongiguration()){
+            //change config to true to test the feature
+            changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+        }
+        else {
+            goToVspScreen(true, vspName);
+        }
+
+        VspValidationPage.navigateToVspValidationPageUsingNavbar();
+        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        if(VspValidationPage.checkComplianceCheckExists()){
+            VspValidationPage.clickComplianceChecksAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("Next Button is disabled, it should have been enabled", !VspValidationPage.checkNextButtonDisabled());
+            VspValidationPage.clickOnNextButton();
+            GeneralUIUtils.ultimateWait();
+            VspValidationPage.clickOnSubmitButton();
+            GeneralUIUtils.waitForLoader();
+            assertTrue("Results are not available", VspValidationResultsPage.checkResultsExist());
+        }
+        else {
+            assertNotNull(GeneralUIUtils.findByText("No Compliance Checks are Available"));
+        }
+
+    }
+
+    private void checkVspValidationLinksVisibility(){
+        //check links are available
+        assertTrue("Validation Link is not available", GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_NAVBAR.getValue()));
+        assertTrue("Validation Results Link is not available", GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_NAVBAR.getValue()));
+    }
+
+    private void checkVspValidationLinksInvisibility(){
+        //check links not available
+        assertTrue("Validation Link is still available", GeneralUIUtils.isElementInvisibleByTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_NAVBAR.getValue()));
+        assertTrue("Validation Results Link is still available", GeneralUIUtils.isElementInvisibleByTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_NAVBAR.getValue()));
+    }
+
+    private void changeVspValidationConfig(boolean isCurrentScreenCatalogPage, String vspName, boolean vspConfig) throws Exception{
+        //change config
+        OnboardingUiUtils.putVspValidationCongiguration(!vspConfig);
+        assertTrue(String.format("Failed to set Congiguration to %s", !vspConfig), OnboardingUiUtils.getVspValidationCongiguration() != vspConfig);
+
+        if(!isCurrentScreenCatalogPage){
+            GeneralUIUtils.refreshWebpage();
+            GeneralUIUtils.ultimateWait();
+        }
+
+        goToVspScreen(isCurrentScreenCatalogPage, vspName);
+
+        //revert the config
+        OnboardingUiUtils.putVspValidationCongiguration(vspConfig);
+        assertTrue(String.format("Failed to revert Congiguration to %s", vspConfig), OnboardingUiUtils.getVspValidationCongiguration() == vspConfig);
+    }
+
+    private void goToVspScreen(boolean isCurrentScreenCatalogPage, String vspName) throws Exception{
+        if(isCurrentScreenCatalogPage)
+            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
+        GeneralUIUtils.clickOnElementByText(vspName);
+        GeneralUIUtils.waitForLoader();
+    }
+
+    private String createNewVSP(String filePath, String vnfFile) throws Exception {
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        return OnboardingUiUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser()).getName();
+    }
     public void runOnboardToDistributionFlow(ResourceReqDetails resourceReqDetails, ServiceReqDetails serviceMetadata, String filePath, String vnfFile) throws Exception {
         getExtendTest().log(Status.INFO, "Going to create resource with category: " + resourceReqDetails.getCategories().get(0).getName()
                 + " subCategory: " + resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName()

@@ -1033,4 +1033,42 @@ public final class DataTestIdEnum {
 		}
 	}
 
+	public enum VspValidationPage {
+
+		VSP_VALIDATION_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION"),
+		VSP_VALIDATION_PAGE_BREADCRUMBS("sub-menu-button-validation"),
+		VSP_VALIDATION_PAGE_PROCEED_TO_INPUTS_BUTTON("go-to-vsp-validation-inputs"),
+		VSP_VALIDATION_PAGE_PROCEED_TO_SETUP_BUTTON("go-to-vsp-validation-setup"),
+		VSP_VALIDATION_PAGE_INPUT("%s_%s_input"),
+		VSP_VALIDATION_PAGE_PROCEED_TO_RESULTS_BUTTON("proceed-to-validation-results-btn"),
+		VSP_VALIDATION_PAGE_COMPLIANCE_CHECKBOX_TREE("vsp-validation-compliance-checks-checkbox-tree"),
+		VSP_VALIDATION_PAGE_CERTIFICATION_CHECKBOX_TREE("vsp-validation-certifications-query-checkbox-tree");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private VspValidationPage(String value) {
+			this.value = value;
+		}
+	}
+
+	public enum VspValidationResultsPage {
+
+		VSP_VALIDATION_RESULTS_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION_RESULTS"),
+		VSP_VALIDATION_RESULTS_PAGE_BREADCRUMBS("sub-menu-button-validation results");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private VspValidationResultsPage(String value) {
+			this.value = value;
+		}
+	}
+
 }

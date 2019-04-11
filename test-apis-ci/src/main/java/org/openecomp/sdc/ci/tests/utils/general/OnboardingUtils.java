@@ -27,6 +27,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 
 import java.util.*;
 
@@ -136,6 +137,36 @@ public class OnboardingUtils {
 		HttpRequest http = new HttpRequest();
 		RestResponse response = http.httpSendPut(url, body, headersMap);
 		return response;
+	}
+
+	public static String getVspValidationConfiguration() throws Exception {
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.VSP_VALIDATION_CONFIGURATION, config.getOnboardingBeHost(), config.getOnboardingBePort());
+		Map<String, String> headersMap = prepareHeadersMap("cs0008");
+
+		HttpRequest http = new HttpRequest();
+		RestResponse response = http.httpSendGet(url, headersMap);
+		if(response.getErrorCode().intValue() == 200){
+			return ResponseParser.getValueFromJsonResponse(response.getResponse(), "enabled");
+		}
+		throw new Exception("Cannot get configuration file");
+		//return response;
+	}
+
+	public static String putVspValidationConfiguration(boolean value) throws Exception {
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.VSP_VALIDATION_CONFIGURATION, config.getOnboardingBeHost(), config.getOnboardingBePort());
+		Map<String, String> headersMap = prepareHeadersMap("cs0008");
+
+		String body = String.format("{\"enabled\": \"%s\"}", value);
+
+		HttpRequest http = new HttpRequest();
+		RestResponse response = http.httpSendPut(url, body, headersMap);
+		if(response.getErrorCode().intValue() == 200){
+			return ResponseParser.getValueFromJsonResponse(response.getResponse(), "enabled");
+		}
+		throw new Exception("Cannot set configuration file");
+		//return response;
 	}
 
 	protected static Map<String, String> prepareHeadersMap(String userId) {

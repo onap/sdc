@@ -23,6 +23,7 @@
         <class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
             <methods>
                 <include name="onapOnboardVNFflow"/>
+                <include name="onapOnboardVSPValidationsSanityFlow"/>
             </methods>
         </class>
 
