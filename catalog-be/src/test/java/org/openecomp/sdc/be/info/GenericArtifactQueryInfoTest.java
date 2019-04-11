@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
- * ================================================================================
  */
 package org.openecomp.sdc.be.info;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 
-public class NodeTypeInfoToUpdateArtifactsTest {
+public class GenericArtifactQueryInfoTest {
 
-	private static final String NAME = "NAME";
-	private static final Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> NODE_TYPES_ARTIFACTS_TO_HANDLE = Collections
-		.emptyMap();
+    private static final String ARTIFACT_UNIQUE_ID = "artifactId";
+    private static final String PARENT_ID = "parentId";
+    private static final Set<String> FIELDS = Collections.emptySet();
 
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(NodeTypeInfoToUpdateArtifacts.class, hasValidGettersAndSetters());
-	}
+    @Test
+    public void shouldHaveValidDefaultConstructor() {
+        assertThat(GenericArtifactQueryInfo.class, hasValidBeanConstructor());
+    }
 
-	@Test
-	public void shouldConstructCorrectObject() {
-		NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(NAME,
-			NODE_TYPES_ARTIFACTS_TO_HANDLE);
-		assertThat(nodeTypeInfoToUpdateArtifacts.getNodeName(), is(NAME));
-		assertThat(nodeTypeInfoToUpdateArtifacts.getNodeTypesArtifactsToHandle(), is(NODE_TYPES_ARTIFACTS_TO_HANDLE));
-	}
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(GenericArtifactQueryInfo.class, hasValidGettersAndSetters());
+    }
+
+    @Test
+    public void shouldTestConstructorCorrectlySetFields(){
+        GenericArtifactQueryInfo genericArtifactQueryInfo = new GenericArtifactQueryInfo(FIELDS, PARENT_ID,
+            ARTIFACT_UNIQUE_ID);
+        assertThat(genericArtifactQueryInfo.getArtifactUniqueId(), is(ARTIFACT_UNIQUE_ID));
+        assertThat(genericArtifactQueryInfo.getFields(), is(FIELDS));
+        assertThat(genericArtifactQueryInfo.getParentId(), is(PARENT_ID));
+    }
 }
