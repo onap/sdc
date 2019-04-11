@@ -669,19 +669,30 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
 	private Either<Boolean, ResponseFormat> validateOperationInputConstraint(
 			OperationInputDefinition operationInputDefinition, String value, String type) {
-		ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
-		propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
 
-		InputDefinition inputDefinition = new InputDefinition();
-		inputDefinition.setDefaultValue(value);
-		inputDefinition.setInputPath(operationInputDefinition.getSubPropertyInputPath());
-		inputDefinition.setType(type);
-		if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
+		if (Objects.nonNull(operationInputDefinition.getParentPropertyType())
+				&& !operationInputDefinition.getParentPropertyType().equals(operationInputDefinition.getType())) {
+			InputDefinition inputDefinition = new InputDefinition();
+			inputDefinition.setDefaultValue(value);
+			inputDefinition.setInputPath(operationInputDefinition.getSubPropertyInputPath());
+			inputDefinition.setName(operationInputDefinition.getName());
+			inputDefinition.setType(type);
+
+			ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
+			propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
 			inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
-		}
 
-		return PropertyValueConstraintValidationUtil.getInstance()
-				.validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
+			return PropertyValueConstraintValidationUtil.getInstance()
+					.validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
+		} else {
+			PropertyDefinition propertyDefinition = new PropertyDefinition();
+			propertyDefinition.setType(operationInputDefinition.getType());
+			propertyDefinition.setValue(value);
+			propertyDefinition.setName(operationInputDefinition.getName());
+
+			return PropertyValueConstraintValidationUtil.getInstance()
+					.validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+		}
 	}
 
 	private void addStaticValueToInputOperation(String value, Operation operation,
