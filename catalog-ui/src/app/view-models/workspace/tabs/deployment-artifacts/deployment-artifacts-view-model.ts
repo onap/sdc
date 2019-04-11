@@ -23,7 +23,7 @@
 'use strict';
 import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-import {ArtifactModel, ArtifactGroupModel, Resource} from "app/models";
+import {ArtifactModel, Resource} from "app/models";
 import {ArtifactsUtils, ModalsHandler, ValidationUtils} from "app/utils";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
@@ -283,19 +283,19 @@ export class DeploymentArtifactsViewModel {
                 title: 'Generic Artifact Browser',
                 type: 'custom',
                 buttons: [{
-                        id: 'okButton',
-                        text: 'OK',
+                        id: 'closeGABButton',
+                        text: 'Close',
                         size: "'x-small'",
                         closeModal: true
-                    },
-                    {text: "Cancel", size: "'x-small'", closeModal: true}]
+                    }]
             };
 
             let pathsandnames: PathsAndNamesDefinition[] = [
-                {friendlyName: 'Action', path: 'event.action[2]'},
-                {friendlyName: 'Comment', path: 'event.comment'},
+                {friendlyName: 'Action', path: 'event.action[2]', searchable: true},
+                {friendlyName: 'Comment', path: 'event.comment', searchable: true},
                 {friendlyName: 'Alarm Additional Information',
-                    path: 'event.structure.faultFields.structure.alarmAdditionalInformation.comment'}];
+                 path: 'event.structure.faultFields.structure.alarmAdditionalInformation.comment',
+                 searchable: true}];
 
             let modalInputs = {
                 pathsandnames: pathsandnames,
