@@ -229,29 +229,29 @@ tosca.policies.nfv.VirtualLinkBitrateInitialDelta:
       required: true
   targets: [ tosca.nodes.nfv.VnfVirtualLink ]
 
-tosca.policies.nfv.AffinityRule:
-  derived_from: tosca.policies.Placement
-  description: The AffinityRule describes the affinity rules applicable for the defined targets
-  properties:
-    scope:
-      type: string
-      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
-      required: true
-      constraints:
-        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
-  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
-
-tosca.policies.nfv.AntiAffinityRule:
-  derived_from: tosca.policies.Placement
-  description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
-  properties:
-    scope:
-      type: string
-      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
-      required: true
-      constraints:
-        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
-  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+# tosca.policies.nfv.AffinityRule:
+#   derived_from: tosca.policies.Placement
+#   description: The AffinityRule describes the affinity rules applicable for the defined targets
+#   properties:
+#     scope:
+#       type: string
+#       description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+#       required: true
+#       constraints:
+#         - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+#   targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+#
+# tosca.policies.nfv.AntiAffinityRule:
+#   derived_from: tosca.policies.Placement
+#   description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
+#   properties:
+#     scope:
+#       type: string
+#       description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+#       required: true
+#       constraints:
+#         - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+#   targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
 
 tosca.policies.nfv.SecurityGroupRule:
   derived_from: tosca.policies.Root
