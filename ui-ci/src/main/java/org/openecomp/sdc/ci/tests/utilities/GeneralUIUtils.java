@@ -49,7 +49,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 public final class GeneralUIUtils {
 
-    private static final String DATA_TESTS_ID = "//*[@data-tests-id='";
+    private static final String DATA_TESTS_ID = "//*[@data-tests-id='%1$s' or @data-test-id='%1$s']";
     private static final String COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW = "color: yellow; border: 4px solid yellow;";
 
     private static int timeOut = (int) (60 * 1.5);
@@ -105,11 +105,11 @@ public final class GeneralUIUtils {
 
     public static WebElement getWebElementByTestID(String dataTestId, int timeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DATA_TESTS_ID + dataTestId + "']")));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
     }
 
     public static boolean isWebElementExistByTestId(String dataTestId) {
-        return getDriver().findElements(By.xpath(DATA_TESTS_ID + dataTestId + "']")).size() != 0;
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId))).size() != 0;
     }
 
     public static boolean isWebElementExistByClass(String className) {
@@ -119,7 +119,7 @@ public final class GeneralUIUtils {
     public static WebElement getInputElement(String dataTestId) {
         try {
             ultimateWait();
-            return getDriver().findElement(By.xpath(DATA_TESTS_ID + dataTestId + "']"));
+            return getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID,dataTestId)));
         } catch (Exception e) {
             return null;
         }
@@ -127,7 +127,7 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getInputElements(String dataTestId) {
         ultimateWait();
-        return getDriver().findElements(By.xpath(DATA_TESTS_ID + dataTestId + "']"));
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId)));
 
     }
 
@@ -165,7 +165,7 @@ public final class GeneralUIUtils {
     public static List<WebElement> getWebElementsListByContainTestID(String dataTestId) {
         try {
             WebDriverWait wait = new WebDriverWait(getDriver(), 10);
-            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(@data-tests-id, '" + dataTestId + "')]")));
+            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(String.format("//*[contains(@data-tests-id, '%1$s') or contains(@data-test-id, '%1$s')]",dataTestId))));
         } catch (Exception e) {
             return new ArrayList<WebElement>();
         }
@@ -187,7 +187,7 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getWebElementsListByTestID(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(DATA_TESTS_ID + dataTestId + "']")));
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
     }
 
     public static List<WebElement> getWebElementsListByClassName(String className) {
@@ -199,13 +199,13 @@ public final class GeneralUIUtils {
     public static Boolean isElementInvisibleByTestId(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
         return wait.until(
-                ExpectedConditions.invisibilityOfElementLocated(By.xpath(DATA_TESTS_ID + dataTestId + "']")));
+                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
     }
 
     public static Boolean isElementVisibleByTestId(String dataTestId) {
         try {
             WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(DATA_TESTS_ID + dataTestId + "']")))).isDisplayed();
+            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(String.format(DATA_TESTS_ID,dataTestId))))).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -218,22 +218,22 @@ public final class GeneralUIUtils {
 
     public static void clickOnElementByTestIdWithoutWait(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(DATA_TESTS_ID + dataTestId + "']"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).click();
     }
 
     public static void clickOnElementByInputTestIdWithoutWait(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(DATA_TESTS_ID + dataTestId + "']//*"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId) + "//*"))).click();
     }
 
     public static void clickOnElementByTestId(String dataTestId, int customTimeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), customTimeout);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(DATA_TESTS_ID + dataTestId + "']"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).click();
     }
 
     public static WebElement waitForElementVisibilityByTestId(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DATA_TESTS_ID + dataTestId + "']")));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
     }
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId) {
@@ -242,9 +242,9 @@ public final class GeneralUIUtils {
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId, int timeOut) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        boolean displayed = getDriver().findElements(By.xpath(DATA_TESTS_ID + dataTestId + "']")).isEmpty();
+        boolean displayed = getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId))).isEmpty();
         if (!displayed) {
-            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(DATA_TESTS_ID + dataTestId + "'])")));
+            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
             ultimateWait();
             return until;
         }
@@ -385,7 +385,7 @@ public final class GeneralUIUtils {
 
     public static WebElement getSelectedElementFromDropDown(String dataTestId) {
         GeneralUIUtils.ultimateWait();
-        return new Select(getDriver().findElement(By.xpath(DATA_TESTS_ID + dataTestId + "']"))).getFirstSelectedOption();
+        return new Select(getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).getFirstSelectedOption();
     }
 
     public static boolean checkElementsCountInTable(int expectedElementsCount, Supplier<List<WebElement>> func) {
@@ -492,7 +492,7 @@ public final class GeneralUIUtils {
 
     public static boolean isElementDisabled(WebElement element) {
         return HighlightMyElement(element).getAttribute("class").contains("view-mode") ||
-                element.getAttribute("class").contains("disabled");
+                element.getAttribute("class").contains("disabled") || element.getAttribute("disabled") != null;
     }
 
     public static boolean isElementDisabled(String dataTestId) {
@@ -613,7 +613,7 @@ public final class GeneralUIUtils {
 
     public static void selectByValueTextContained(String dataTestsId, String value) {
 
-        List<WebElement> options = GeneralUIUtils.getWebElementsListBy(By.xpath(String.format("//select[@data-tests-id='%s']//option[contains(@value,'%s')]", dataTestsId, value)));
+        List<WebElement> options = GeneralUIUtils.getWebElementsListBy(By.xpath(String.format("//select[@data-tests-id='%1$s' or @data-test-id='%1$s']//option[contains(@value,'%2$s')]", dataTestsId, value)));
 
         boolean matched = false;
         for (WebElement option : options) {
@@ -666,6 +666,12 @@ public final class GeneralUIUtils {
     public static void navigateToURL(String url) throws Exception {
         SetupCDTest.getExtendTest().log(Status.INFO, "Navigating to URL " + url);
         getDriver().navigate().to(url);
+    }
+
+    public static void refreshWebpage() throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Refreshing Webpage");
+        getDriver().navigate().refresh();
+        ultimateWait();
     }
 
     public static Object getElementPositionOnCanvas(String elementName) {

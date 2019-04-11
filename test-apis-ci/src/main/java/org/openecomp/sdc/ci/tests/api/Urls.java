@@ -421,4 +421,6 @@ public interface Urls {
 	String DELETE_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities/%s";
 	String GET_CAPABILITY = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/capabilities/%s";
 
+	//VSP Validation Operation
+	final String VSP_VALIDATION_CONFIGURATION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/externaltesting/config";
 }

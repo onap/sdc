@@ -35,6 +35,7 @@ import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -78,6 +79,14 @@ public class OnboardingUiUtils {
         } else {
             VfVerificator.verifyOnboardedVnfMetadata(vsp.getName(), vsp);
         }
+    }
+
+    public static boolean getVspValidationCongiguration() throws Exception{
+        return Boolean.parseBoolean(OnboardingUtils.getVspValidationConfiguration());
+    }
+
+    public static boolean putVspValidationCongiguration(boolean value) throws Exception{
+        return Boolean.parseBoolean(OnboardingUtils.putVspValidationConfiguration(value));
     }
 
     public static void doCheckOut() {
@@ -128,6 +137,14 @@ public class OnboardingUiUtils {
         updateVSP(vsp);
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
         DeploymentArtifactPage.verifyArtifactsExistInTable(filePath, updatedVnfFile);
+    }
+
+    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String vnfFile, String filepath, User user) throws Exception {
+        ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
+        System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
+
+        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
+        return VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
     }
 
 
