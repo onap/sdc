@@ -10,7 +10,7 @@ public final class RelationshipData {
     @JsonProperty("relationship-value")
     private String relationshipValue;
 
-    public void setRelationshipkey(String relationshipKey) {
+    public void setRelationshipKey(String relationshipKey) {
         this.relationshipKey = relationshipKey;
     }
 

@@ -25,6 +25,8 @@ public class ServiceVersionInfo {
     private String version;
     private String url;
 
+    ServiceVersionInfo() {}
+
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();
         this.version = serviceVersion;

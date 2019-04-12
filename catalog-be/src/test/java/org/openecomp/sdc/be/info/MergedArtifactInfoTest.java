@@ -1,130 +1,137 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.info;
 
-import mockit.Deencapsulation;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 
 public class MergedArtifactInfoTest {
 
-	private MergedArtifactInfo createTestSubject() {
-		MergedArtifactInfo testSubject = new MergedArtifactInfo();
-		testSubject.setJsonArtifactTemplate(new ArtifactTemplateInfo());
-		LinkedList<ArtifactDefinition> createdArtifact = new LinkedList<>();
-		ArtifactDefinition e = new ArtifactDefinition();
-		e.setArtifactName("mock");
-		createdArtifact.add(e);
-		testSubject.setCreatedArtifact(createdArtifact);
-		return testSubject;
+	private static final String NAME = "NAME";
+	private static final String FILE = "FILE";
+	private static final String ENV = "ENV";
+	private static final String URL = "URL";
+	private static final String CHECKSUM = "CHECKSUM";
+	private static final String CREATOR = "CREATOR";
+	private static final String DISPLAY_NAME = "DISPLAY_NAME";
+	private static final String LABEL = "LABEL";
+	private static final String REF = "REF";
+	private static final String REPOSITORY = "REPOSITORY";
+	private static final String TYPE = "TYPE";
+	private static final String UUID = "UUID";
+	private static final String ES_ID = "ES_ID";
+	private static final String UNIQUE_ID = "UNIQUE_ID";
+	private static final String GENERATED_FROM = "GENERATED_FROM";
+
+	@Test
+	public void shouldHaveValidDefaultConstructor() {
+		assertThat(MergedArtifactInfo.class, hasValidBeanConstructor());
 	}
 
 	@Test
-	public void testGetCreatedArtifact() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCreatedArtifact();
+	public void shouldCorrectlySetCreatedArtifact() {
+		MergedArtifactInfo mergedArtifactInfo = createMergedArtifactInfo();
+		assertJsonArtifactTemplate(mergedArtifactInfo.getJsonArtifactTemplate());
+		assertCreatedArtifact(mergedArtifactInfo.getCreatedArtifact());
 	}
 
 	@Test
-	public void testSetCreatedArtifact() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactDefinition> createdArtifact = new LinkedList<>();
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCreatedArtifact(createdArtifact);
+	public void shouldReturnListToDisassociateArtifactFromGroup() {
+		MergedArtifactInfo mergedArtifactInfo = createMergedArtifactInfo();
+		mergedArtifactInfo.getCreatedArtifact().get(0).setToscaPresentationValue(JsonPresentationFields.GENERATED_FROM_ID,
+			GENERATED_FROM);
+		List<ArtifactDefinition> listToDissotiateArtifactFromGroup = mergedArtifactInfo
+			.getListToDissotiateArtifactFromGroup(Collections.emptyList());
+		assertThat(listToDissotiateArtifactFromGroup.size(), is(1));
+		assertThat(listToDissotiateArtifactFromGroup.get(0).getUniqueId(), is(UNIQUE_ID));
 	}
 
 	@Test
-	public void testGetJsonArtifactTemplate() throws Exception {
-		MergedArtifactInfo testSubject;
-		ArtifactTemplateInfo result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJsonArtifactTemplate();
+	public void shouldReturnEmptyListToDisassociateArtifactFromGroupWhenGeneratedFormIdIsEmpty() {
+		MergedArtifactInfo mergedArtifactInfo = createMergedArtifactInfo();
+		List<ArtifactDefinition> artifactDefinitions = new ArrayList<>();
+		artifactDefinitions.add(new ArtifactDefinition(createArtifactDataDefinition()));
+		List<ArtifactDefinition> listToDissotiateArtifactFromGroup = mergedArtifactInfo
+			.getListToDissotiateArtifactFromGroup(artifactDefinitions);
+		assertThat(listToDissotiateArtifactFromGroup.isEmpty(), is(true));
 	}
 
-	@Test
-	public void testSetJsonArtifactTemplate() throws Exception {
-		MergedArtifactInfo testSubject;
-		ArtifactTemplateInfo jsonArtifactTemplate = new ArtifactTemplateInfo();
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJsonArtifactTemplate(jsonArtifactTemplate);
+	private MergedArtifactInfo createMergedArtifactInfo() {
+		MergedArtifactInfo mergedArtifactInfo = new MergedArtifactInfo();
+		List<ArtifactTemplateInfo> relatedArtifactsInfo = new ArrayList<>();
+		relatedArtifactsInfo.add(new ArtifactTemplateInfo(TYPE, FILE, ENV, Collections.emptyList()));
+		mergedArtifactInfo.setJsonArtifactTemplate(new ArtifactTemplateInfo(NAME, FILE, ENV, relatedArtifactsInfo));
+		List<ArtifactDefinition> createdArtifact = new ArrayList<>();
+		createdArtifact.add(new ArtifactDefinition(createArtifactDataDefinition()));
+		mergedArtifactInfo.setCreatedArtifact(createdArtifact);
+		return mergedArtifactInfo;
 	}
 
-	@Test
-	public void testGetListToAssociateArtifactToGroup() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactTemplateInfo> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getListToAssociateArtifactToGroup();
+	private ArtifactDataDefinition createArtifactDataDefinition() {
+		ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+		artifactDataDefinition.setApiUrl(URL);
+		artifactDataDefinition.setUniqueId(UNIQUE_ID);
+		artifactDataDefinition.setArtifactChecksum(CHECKSUM);
+		artifactDataDefinition.setArtifactCreator(CREATOR);
+		artifactDataDefinition.setArtifactDisplayName(DISPLAY_NAME);
+		artifactDataDefinition.setArtifactLabel(LABEL);
+		artifactDataDefinition.setArtifactName(NAME);
+		artifactDataDefinition.setArtifactRef(REF);
+		artifactDataDefinition.setArtifactRepository(REPOSITORY);
+		artifactDataDefinition.setArtifactType(TYPE);
+		artifactDataDefinition.setArtifactUUID(UUID);
+		artifactDataDefinition.setEsId(ES_ID);
+		return artifactDataDefinition;
 	}
 
-	@Test
-	public void testGetListToDissotiateArtifactFromGroup() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactDefinition> deletedArtifacts = new LinkedList<>();
-		List<ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getListToDissotiateArtifactFromGroup(deletedArtifacts);
+	private void assertCreatedArtifact(List<ArtifactDefinition> artifactDefinitions){
+		assertThat(artifactDefinitions.size(), is(1));
+		ArtifactDefinition artifactDefinition = artifactDefinitions.get(0);
+		assertThat(artifactDefinition.getArtifactType(), is(TYPE));
+		assertThat(artifactDefinition.getArtifactRef(), is(REF));
+		assertThat(artifactDefinition.getArtifactName(), is(NAME));
+		assertThat(artifactDefinition.getArtifactRepository(), is(REPOSITORY));
+		assertThat(artifactDefinition.getArtifactChecksum(), is(CHECKSUM));
+		assertThat(artifactDefinition.getEsId(), is(ES_ID));
+		assertThat(artifactDefinition.getArtifactLabel(), is(LABEL));
+		assertThat(artifactDefinition.getArtifactCreator(), is(CREATOR));
+		assertThat(artifactDefinition.getArtifactDisplayName(), is(DISPLAY_NAME));
+		assertThat(artifactDefinition.getApiUrl(), is(URL));
+		assertThat(artifactDefinition.getServiceApi(), is(false));
+		assertThat(artifactDefinition.getArtifactUUID(), is(UUID));
 	}
 
-	@Test
-	public void testGetListToUpdateArtifactInGroup() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		
-		result = testSubject.getListToUpdateArtifactInGroup();
-	}
-
-	@Test
-	public void testGetUpdateArtifactsInGroup() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList = new LinkedList<>();
-		List<ArtifactTemplateInfo> jsonArtifacts = new LinkedList<>();
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "getUpdateArtifactsInGroup", resList, resList);
-	}
-
-	@Test
-	public void testGetNewArtifactsInGroup() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactTemplateInfo> resList = new LinkedList<>();
-		List<ArtifactTemplateInfo> jsonArtifacts = new LinkedList<>();
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "getNewArtifactsInGroup", resList, resList);
-	}
-
-	@Test
-	public void testCreateArtifactsGroupSet() throws Exception {
-		MergedArtifactInfo testSubject;
-		List<ArtifactTemplateInfo> parsedGroupTemplateList = new LinkedList<>();
-		Set<String> parsedArtifactsName = new HashSet<>();
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "createArtifactsGroupSet", parsedGroupTemplateList, parsedArtifactsName);
+	private void assertJsonArtifactTemplate(ArtifactTemplateInfo artifactTemplateInfo){
+		assertThat(artifactTemplateInfo.getType(), is(NAME));
+		assertThat(artifactTemplateInfo.getFileName(), is(FILE));
+		assertThat(artifactTemplateInfo.getEnv(), is(ENV));
 	}
 }

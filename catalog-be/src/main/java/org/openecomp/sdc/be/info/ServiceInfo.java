@@ -27,6 +27,9 @@ public class ServiceInfo {
     private String name;
     private List<ServiceVersionInfo> versions;
 
+    ServiceInfo() {
+    }
+
     public ServiceInfo(String serviceName, List<ServiceVersionInfo> list) {
         this.name = serviceName;
         this.versions = list;
