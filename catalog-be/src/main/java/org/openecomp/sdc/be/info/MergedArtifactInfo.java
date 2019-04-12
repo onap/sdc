@@ -43,7 +43,6 @@ public class MergedArtifactInfo {
         if (relatedGroupTemplateList != null && !relatedGroupTemplateList.isEmpty()) {
             this.createArtifactsGroupSet(relatedGroupTemplateList, parsetArtifactsNames);
         }
-
     }
 
     public ArtifactTemplateInfo getJsonArtifactTemplate() {

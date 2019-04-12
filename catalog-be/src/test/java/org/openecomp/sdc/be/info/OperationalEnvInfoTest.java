@@ -1,189 +1,65 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.info;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
 public class OperationalEnvInfoTest {
 
-	private OperationalEnvInfo createTestSubject() {
-		return new OperationalEnvInfo();
+	private static final String ID = "ID";
+	private static final String NAME = "NAME";
+	private static final String STATUS = "STATUS";
+	private static final String TYPE = "TYPE";
+	private static final String VERSION = "VERSION";
+	private static final String TENANT = "TENANT";
+	private static final String WORKLOAD = "WORKLOAD";
+	private static final String TO_STRING_RESPONSE = "{\"operational-environment-id\":\"ID\",\"operational-environment-name\":\"NAME\",\"operational-environment-type\":\"TYPE\",\"operational-environment-status\":\"STATUS\",\"tenant-context\":\"TENANT\",\"workload-context\":\"WORKLOAD\",\"resource-version\":\"VERSION\",\"relationship-list\":null}";
+
+	@Test
+	public void shouldHaveValidGettersAndSetters() {
+		assertThat(OperationalEnvInfo.class, hasValidGettersAndSetters());
 	}
 
 	@Test
-	public void testGetOperationalEnvId() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOperationalEnvId();
+	public void shouldHaveValidDefaultConstructor() {
+		assertThat(OperationalEnvInfo.class, hasValidBeanConstructor());
 	}
 
 	@Test
-	public void testSetOperationalEnvId() throws Exception {
-		OperationalEnvInfo testSubject;
-		String operationalEnvId = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOperationalEnvId(operationalEnvId);
+	public void testToStringShouldReturnCorrectFormat() {
+		OperationalEnvInfo operationalEnvInfo = new OperationalEnvInfo();
+		operationalEnvInfo.setOperationalEnvId(ID);
+		operationalEnvInfo.setOperationalEnvName(NAME);
+		operationalEnvInfo.setOperationalEnvStatus(STATUS);
+		operationalEnvInfo.setOperationalEnvType(TYPE);
+		operationalEnvInfo.setResourceVersion(VERSION);
+		operationalEnvInfo.setTenantContext(TENANT);
+		operationalEnvInfo.setWorkloadContext(WORKLOAD);
+		assertThat(operationalEnvInfo.toString(), is(TO_STRING_RESPONSE));
 	}
 
-	@Test
-	public void testGetOperationalEnvName() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOperationalEnvName();
-	}
-
-	@Test
-	public void testSetOperationalEnvName() throws Exception {
-		OperationalEnvInfo testSubject;
-		String operationalEnvName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOperationalEnvName(operationalEnvName);
-	}
-
-	@Test
-	public void testGetOperationalEnvType() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOperationalEnvType();
-	}
-
-	@Test
-	public void testSetOperationalEnvType() throws Exception {
-		OperationalEnvInfo testSubject;
-		String operationalEnvType = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOperationalEnvType(operationalEnvType);
-	}
-
-	@Test
-	public void testGetOperationalEnvStatus() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOperationalEnvStatus();
-	}
-
-	@Test
-	public void testSetOperationalEnvStatus() throws Exception {
-		OperationalEnvInfo testSubject;
-		String operationalEnvStatus = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOperationalEnvStatus(operationalEnvStatus);
-	}
-
-	@Test
-	public void testGetTenantContext() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getTenantContext();
-	}
-
-	@Test
-	public void testSetTenantContext() throws Exception {
-		OperationalEnvInfo testSubject;
-		String tenantContext = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setTenantContext(tenantContext);
-	}
-
-	@Test
-	public void testGetWorkloadContext() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getWorkloadContext();
-	}
-
-	@Test
-	public void testSetWorkloadContext() throws Exception {
-		OperationalEnvInfo testSubject;
-		String workloadContext = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setWorkloadContext(workloadContext);
-	}
-
-	@Test
-	public void testGetResourceVersion() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getResourceVersion();
-	}
-
-	@Test
-	public void testSetResourceVersion() throws Exception {
-		OperationalEnvInfo testSubject;
-		String resourceVersion = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setResourceVersion(resourceVersion);
-	}
-
-	@Test
-	public void testGetRelationships() throws Exception {
-		OperationalEnvInfo testSubject;
-		RelationshipList result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelationships();
-	}
-
-	@Test
-	public void testSetRelationships() throws Exception {
-		OperationalEnvInfo testSubject;
-		RelationshipList relationships = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelationships(relationships);
-	}
-
-	@Test
-	public void testToString() throws Exception {
-		OperationalEnvInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
-
-	@Test
-	public void testCreateFromJson() throws Exception {
-		String json = "{}";
-		OperationalEnvInfo result;
-
-		// default test
-		result = OperationalEnvInfo.createFromJson(json);
-	}
 }

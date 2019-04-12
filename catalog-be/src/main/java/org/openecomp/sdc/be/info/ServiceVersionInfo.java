@@ -20,10 +20,15 @@
 
 package org.openecomp.sdc.be.info;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class ServiceVersionInfo {
 
     private String version;
     private String url;
+
+    @VisibleForTesting
+    ServiceVersionInfo() {}
 
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();
