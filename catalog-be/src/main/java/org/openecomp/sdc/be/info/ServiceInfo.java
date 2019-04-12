@@ -20,12 +20,17 @@
 
 package org.openecomp.sdc.be.info;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 
 public class ServiceInfo {
 
     private String name;
     private List<ServiceVersionInfo> versions;
+
+    @VisibleForTesting
+    ServiceInfo() {
+    }
 
     public ServiceInfo(String serviceName, List<ServiceVersionInfo> list) {
         this.name = serviceName;

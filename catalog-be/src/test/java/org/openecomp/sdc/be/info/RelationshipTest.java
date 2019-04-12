@@ -1,112 +1,42 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.info;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
-import java.util.List;
-
 public class RelationshipTest {
 
-	private Relationship createTestSubject() {
-		return new Relationship();
+	@Test
+	public void shouldHaveValidGettersAndSetters() {
+		assertThat(Relationship.class, hasValidGettersAndSetters());
 	}
 
 	@Test
-	public void testGetRelatedTo() throws Exception {
-		Relationship testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelatedTo();
+	public void shouldHaveValidDefaultConstructor() {
+		assertThat(Relationship.class, hasValidBeanConstructor());
 	}
 
-	@Test
-	public void testSetRelatedTo() throws Exception {
-		Relationship testSubject;
-		String relatedTo = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelatedTo(relatedTo);
-	}
-
-	@Test
-	public void testGetRelatedLink() throws Exception {
-		Relationship testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelatedLink();
-	}
-
-	@Test
-	public void testSetRelatedLink() throws Exception {
-		Relationship testSubject;
-		String relatedLink = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelatedLink(relatedLink);
-	}
-
-	@Test
-	public void testGetRelationshipData() throws Exception {
-		Relationship testSubject;
-		List<RelationshipData> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelationshipData();
-	}
-
-	@Test
-	public void testSetRelationshipData() throws Exception {
-		Relationship testSubject;
-		List<RelationshipData> relationshipData = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelationshipData(relationshipData);
-	}
-
-	@Test
-	public void testGetRelationshipLabel() throws Exception {
-		Relationship testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelationshipLabel();
-	}
-
-	@Test
-	public void testSetRelationshipLabel() throws Exception {
-		Relationship testSubject;
-		String relationshipLabel = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelationshipLabel(relationshipLabel);
-	}
-
-	@Test
-	public void testGetRelatedToProperty() throws Exception {
-		Relationship testSubject;
-		List<RelatedToProperty> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelatedToProperty();
-	}
-
-	@Test
-	public void testSetRelatedToProperty() throws Exception {
-		Relationship testSubject;
-		List<RelatedToProperty> relatedToProperty = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelatedToProperty(relatedToProperty);
-	}
 }
