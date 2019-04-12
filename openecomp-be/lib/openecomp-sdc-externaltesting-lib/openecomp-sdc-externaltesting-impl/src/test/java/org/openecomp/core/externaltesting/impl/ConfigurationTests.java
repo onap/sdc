@@ -42,7 +42,7 @@ public class ConfigurationTests {
 
   @Test
   public void testConfig() throws Exception {
-    try (InputStream fileInput = new FileInputStream(new File("src/test/data/config-externaltesting.yaml"))) {
+    try (InputStream fileInput = new FileInputStream(new File("src/test/data/externaltesting-configuration.yaml"))) {
       YamlUtil yamlUtil = new YamlUtil();
       Object raw = yamlUtil.yamlToMap(fileInput);
       TestingAccessConfig accessConfig = new ObjectMapper().convertValue(raw, TestingAccessConfig.class);

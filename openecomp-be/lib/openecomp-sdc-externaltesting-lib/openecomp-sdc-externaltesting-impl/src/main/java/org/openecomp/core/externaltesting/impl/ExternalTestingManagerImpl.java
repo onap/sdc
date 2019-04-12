@@ -113,8 +113,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
   }
 
   ExternalTestingManagerImpl(VersioningManager versioningManager,
-                               VendorSoftwareProductManager vendorSoftwareProductManager,
-                               OrchestrationTemplateCandidateManager candidateManager) {
+                             VendorSoftwareProductManager vendorSoftwareProductManager,
+                             OrchestrationTemplateCandidateManager candidateManager) {
     this();
     this.versioningManager = versioningManager;
     this.vendorSoftwareProductManager = vendorSoftwareProductManager;
@@ -133,11 +133,11 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
     if (vendorSoftwareProductManager == null) {
       vendorSoftwareProductManager =
-          VspManagerFactory.getInstance().createInterface();
+              VspManagerFactory.getInstance().createInterface();
     }
     if (candidateManager == null) {
       candidateManager =
-          OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
+              OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
     }
 
     loadConfig();
@@ -183,8 +183,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       }
 
       endpoints = accessConfig.getEndpoints().stream()
-          .flatMap(this::mapEndpointString)
-          .collect(Collectors.toList());
+              .flatMap(this::mapEndpointString)
+              .collect(Collectors.toList());
 
       if (logger.isInfoEnabled()) {
         String s = new ObjectMapper().writeValueAsString(endpoints);
@@ -267,21 +267,21 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     try {
       logger.debug("process endpoint {}", ep.getId());
       getScenarios(ep.getId()).stream().filter(s ->
-          ((ep.getScenarioFilter() == null) || ep.getScenarioFilterPattern().matcher(s.getName()).matches()))
-          .forEach(s -> {
-            addScenarioToTree(root, s);
-            getTestSuites(ep.getId(), s.getName()).forEach(suite -> addSuiteToTree(root, s, suite));
-            getTestCases(ep.getId(), s.getName()).forEach(tc -> {
-              try {
-                VtpTestCase details = getTestCase(ep.getId(), s.getName(), tc.getTestSuiteName(), tc.getTestCaseName());
-                addTestCaseToTree(root, ep.getId(), s.getName(), tc.getTestSuiteName(), details);
-              }
-              catch (@SuppressWarnings("squid:S1166") ExternalTestingException ex) {
-                // Not logging stack trace on purpose.  VTP was throwing exceptions for certain test cases.
-                logger.warn("failed to load test case {}", tc.getTestCaseName());
-              }
-            });
-          });
+              ((ep.getScenarioFilter() == null) || ep.getScenarioFilterPattern().matcher(s.getName()).matches()))
+              .forEach(s -> {
+                addScenarioToTree(root, s);
+                getTestSuites(ep.getId(), s.getName()).forEach(suite -> addSuiteToTree(root, s, suite));
+                getTestCases(ep.getId(), s.getName()).forEach(tc -> {
+                  try {
+                    VtpTestCase details = getTestCase(ep.getId(), s.getName(), tc.getTestSuiteName(), tc.getTestCaseName());
+                    addTestCaseToTree(root, ep.getId(), s.getName(), tc.getTestSuiteName(), details);
+                  }
+                  catch (@SuppressWarnings("squid:S1166") ExternalTestingException ex) {
+                    // Not logging stack trace on purpose.  VTP was throwing exceptions for certain test cases.
+                    logger.warn("failed to load test case {}", tc.getTestCaseName());
+                  }
+                });
+              });
     }
     catch (ExternalTestingException ex) {
       logger.error("unable to contact testing endpoint {}", ep.getId(), ex);
@@ -309,14 +309,14 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       return;
     }
     findNamedChild(root, scenarioName)
-        .ifPresent(scenarioNode -> findNamedChild(scenarioNode, testSuiteName)
-            .ifPresent(suiteNode -> {
-              massageTestCaseForUI(tc, endpointName, scenarioName);
-              if (suiteNode.getTests() == null) {
-                suiteNode.setTests(new ArrayList<>());
-              }
-              suiteNode.getTests().add(tc);
-            }));
+            .ifPresent(scenarioNode -> findNamedChild(scenarioNode, testSuiteName)
+                    .ifPresent(suiteNode -> {
+                      massageTestCaseForUI(tc, endpointName, scenarioName);
+                      if (suiteNode.getTests() == null) {
+                        suiteNode.setTests(new ArrayList<>());
+                      }
+                      suiteNode.getTests().add(tc);
+                    }));
   }
 
   private void massageTestCaseForUI(VtpTestCase testcase, String endpoint, String scenario) {
@@ -367,8 +367,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
   public List<RemoteTestingEndpointDefinition> getEndpoints() {
     if (endpoints != null) {
       return endpoints.stream()
-          .filter(RemoteTestingEndpointDefinition::isEnabled)
-          .collect(Collectors.toList());
+              .filter(RemoteTestingEndpointDefinition::isEnabled)
+              .collect(Collectors.toList());
     }
     else {
       return new ArrayList<>();
@@ -453,9 +453,9 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     RemoteTestingEndpointDefinition endpoint = endpoints.stream()
-        .filter(e -> StringUtils.equals(endpointName, e.getId()))
-        .findFirst()
-        .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 400, "No endpoint named " + endpointName + " is defined"));
+            .filter(e -> StringUtils.equals(endpointName, e.getId()))
+            .findFirst()
+            .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 400, "No endpoint named " + endpointName + " is defined"));
 
     // if the endpoint requires an API key, specify it in the headers.
     HttpHeaders headers = new HttpHeaders();
@@ -469,7 +469,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
     for(VtpTestExecutionRequest test: testsToRun) {
       if ((test.getParameters() != null) &&
-          (test.getParameters().containsKey(SDC_CSAR) || test.getParameters().containsKey(SDC_HEAT))) {
+              (test.getParameters().containsKey(SDC_CSAR) || test.getParameters().containsKey(SDC_HEAT))) {
         attachArchiveContent(test, body);
       }
     }
@@ -524,12 +524,12 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
     // partition the requests by endpoint.
     Map<String, List<VtpTestExecutionRequest>> partitions =
-        testsToRun.stream().collect(Collectors.groupingBy(VtpTestExecutionRequest::getEndpoint));
+            testsToRun.stream().collect(Collectors.groupingBy(VtpTestExecutionRequest::getEndpoint));
 
     // process each group and collect the results.
     return partitions.entrySet().stream()
-        .flatMap(e -> execute(e.getKey(), e.getValue(), requestId).stream())
-        .collect(Collectors.toList());
+            .flatMap(e -> execute(e.getKey(), e.getValue(), requestId).stream())
+            .collect(Collectors.toList());
   }
 
   /**
@@ -542,10 +542,10 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
   private String buildEndpointUrl(String format, String endpointName, String[] args) {
     if (endpoints != null) {
       RemoteTestingEndpointDefinition ep = endpoints.stream()
-          .filter(e -> e.isEnabled() && e.getId().equals(endpointName))
-          .findFirst()
-          .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 500, "No endpoint named " + endpointName + " is defined")
-          );
+              .filter(e -> e.isEnabled() && e.getId().equals(endpointName))
+              .findFirst()
+              .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 500, "No endpoint named " + endpointName + " is defined")
+              );
 
       Object[] newArgs = ArrayUtils.add(args, 0, ep.getUrl());
       return String.format(format, newArgs);
@@ -580,7 +580,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       logger.debug("GET request to {} for {}", url, responseType.getType().getTypeName());
     }
     SimpleClientHttpRequestFactory rf =
-        (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
+            (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
     if (rf != null) {
       rf.setReadTimeout(10000);
       rf.setConnectTimeout(10000);
@@ -597,8 +597,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       // make my own exception out of this.
       logger.warn("Unexpected HTTP Status from endpoint {}", ex.getRawStatusCode());
       if ((ex.getResponseHeaders().getContentType() != null) &&
-          ((ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_JSON)) ||
-              (ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
+              ((ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_JSON)) ||
+                      (ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
         String s = ex.getResponseBodyAsString();
         logger.warn("endpoint body content is {}", s);
         try {
@@ -703,12 +703,12 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     if (!ozip.isPresent()) {
       List<Version> versions = versioningManager.list(vspId);
       String knownVersions = versions
-          .stream()
-          .map(v -> String.format("%d.%d: %s (%s)", v.getMajor(), v.getMinor(), v.getStatus(), v.getId()))
-          .collect(Collectors.joining("\n"));
+              .stream()
+              .map(v -> String.format("%d.%d: %s (%s)", v.getMajor(), v.getMinor(), v.getStatus(), v.getId()))
+              .collect(Collectors.joining("\n"));
 
       String detail = String.format("Archive processing failed.  Unable to find archive for VSP ID %s and Version %s.  Known versions are:\n%s",
-          vspId, version, knownVersions);
+              vspId, version, knownVersions);
 
       throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, detail);
     }
@@ -759,13 +759,14 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     byte[] manifestBytes = content.get(MANIFEST_JSON);
     ManifestContent manifest = JsonUtil.json2Object(new String(manifestBytes), ManifestContent.class);
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try(ZipOutputStream zipOutput = new ZipOutputStream(baos)) {
-      for(FileData item : manifest.getData()) {
-        processManifestItem(item, zipOutput, content);
-      }
+    try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      try(ZipOutputStream zipOutput = new ZipOutputStream(baos)) {
+        for (FileData item : manifest.getData()) {
+          processManifestItem(item, zipOutput, content);
+        }
 
-      return baos.toByteArray();
+        return baos.toByteArray();
+      }
     } catch (IOException ex) {
       logger.error("IO Exception parsing zip", ex);
       throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, ex.getMessage());
@@ -815,10 +816,11 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       return ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try(ZipOutputStream zipOutput = new ZipOutputStream(baos)) {
-      processCsarArchiveEntry(fileToGet, zipOutput, content);
-      return baos.toByteArray();
+    try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      try(ZipOutputStream zipOutput = new ZipOutputStream(baos)) {
+        processCsarArchiveEntry(fileToGet, zipOutput, content);
+        return baos.toByteArray();
+      }
     } catch (IOException ex) {
       logger.error("IO Exception parsing zip", ex);
       throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, ex.getMessage());
@@ -891,18 +893,16 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
    */
   private Map<String, byte[]> extractRelevantContent(final byte[] zip, final List<String> extensions) {
     final Map<String, byte[]> rv = new HashMap<>();  // FYI, rv = return value.
-    try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zip))) {
-      ZipEntry entry;
-      while ((entry = zipStream.getNextEntry()) != null) {
-        final String entryName = entry.getName();
+    try (ByteArrayInputStream is = new ByteArrayInputStream(zip)) {
+      try (ZipInputStream zipStream = new ZipInputStream(is)) {
+        ZipEntry entry;
+        while ((entry = zipStream.getNextEntry()) != null) {
+          final String entryName = entry.getName();
 
-        // NOTE: leaving this debugging in for dublin...
-        logger.debug("archive contains entry {}", entryName);
+          // NOTE: leaving this debugging in for dublin...
+          logger.debug("archive contains entry {}", entryName);
 
-        int idx = entryName.lastIndexOf('.');
-        if ((idx >= 0) && (extensions.contains(entryName.substring(idx)))) {
-          byte[] content = IOUtils.toByteArray(zipStream);
-          rv.put(entryName, content);
+          extractIfMatching(extensions, rv, zipStream, entryName);
         }
       }
     }
@@ -911,6 +911,14 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
       throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, ex.getMessage());
     }
     return rv;
+  }
+
+  private void extractIfMatching(List<String> extensions, Map<String, byte[]> rv, ZipInputStream zipStream, String entryName) throws IOException {
+    int idx = entryName.lastIndexOf('.');
+    if ((idx >= 0) && (extensions.contains(entryName.substring(idx)))) {
+      byte[] content = IOUtils.toByteArray(zipStream);
+      rv.put(entryName, content);
+    }
   }
 
   /**
