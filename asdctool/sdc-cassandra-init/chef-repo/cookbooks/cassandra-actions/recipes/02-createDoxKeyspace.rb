@@ -5,7 +5,7 @@ template "/tmp/create_dox_keyspace.sh" do
     variables({
       :cassandra_ip     => node['Nodes']['CS'].first,
       :cassandra_port   => node['cassandra']['cassandra_port'],
-      :DC_NAME          => node['cassandra']['datacenter_name'],
+      :DC_NAME          => node['cassandra']['datacenter_name']+node.chef_environment,
       :cassandra_pwd    => node['cassandra'][:cassandra_password],
       :cassandra_usr    => node['cassandra'][:cassandra_user]
     })
