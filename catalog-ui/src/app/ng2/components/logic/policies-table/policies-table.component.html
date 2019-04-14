@@ -1,0 +1,48 @@
+
+<div class="properties-table">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+    <div class="table-header">
+        <div class="table-cell col1" (click)="sort('name')">Property Name
+            <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col3" (click)="sort('instanceUniqueId')">From Instance
+            <span *ngIf="sortBy === 'instanceUniqueId'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col2" (click)="sort('type')">Type
+            <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+    </div>
+    <div class="table-body">
+        <div class="no-data" *ngIf="!policies || !policies.length">No data to display</div>
+        <div>
+            <div class="table-row" *ngFor="let policy of policies">
+                <div class="table-cell col1">
+                    <div class="inner-cell-div" tooltips tooltip="{{policy.name}}">
+                        <span class="property-name">{{policy.name}}</span>
+                    </div>
+                </div>
+                <div class="table-cell col3">
+                    <div class="inner-cell-div" tooltips tooltip="{{instanceNamesMap[policy.instanceUniqueId]?.name}}">
+                        <span>{{instanceNamesMap[policy.instanceUniqueId]?.name}}</span>
+                    </div>
+                </div>
+                <div class="table-cell col2">
+                    <div class="inner-cell-div" tooltips tooltip="{{policy.type | contentAfterLastDot}}">
+                        <span>{{policy.type | contentAfterLastDot}}</span>
+                    </div>
+                </div>
+                <div class="table-cell valueCol policy-value-col">
+                    <div class="delete-button-container">
+                        <span *ngIf="policy.uniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(policy)" data-tests-id="delete-policy-button"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -20,17 +20,26 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.io.StringReader;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class ToscaMapValueConverter extends ToscaValueBaseConverter implements ToscaValueConverter {
     private static ToscaMapValueConverter mapConverter = new ToscaMapValueConverter();
@@ -230,7 +239,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     convValue = handleComplexJsonValue(elementValue);
                 }
             }
-            if(preserveEmptyValue || !isEmptyObjectValue(convValue)){
+            if(preserveEmptyValue || !isEmptyObjectValue(convValue) || isGetPolicyValue(propName)){
                 toscaObjectPresentation.put(propName, convValue);
             }
         }
@@ -238,4 +247,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
         return convertedValue;
     }
 
+    private boolean isGetPolicyValue(String key) {
+        return key.equals(ToscaFunctions.GET_POLICY.getFunctionName());
+    }
 }

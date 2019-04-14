@@ -23,28 +23,42 @@ package org.openecomp.sdc.be.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import java.util.Arrays;
+import java.util.List;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Api(value = "Input Catalog", description = "Input Servlet")
@@ -242,10 +256,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String serviceJson, User user) {
-        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(serviceJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-    }
-
     @POST
     @Path("/{componentType}/{componentId}/create/inputs")
     @ApiOperation(value = "Create inputs on service", httpMethod = "POST", notes = "Return inputs list", response = Resource.class)
@@ -253,43 +263,8 @@ public class InputsServlet extends AbstractValidationsServlet {
     public Response createMultipleInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "ComponentIns Inputs Object to be created", required = true) String componentInstInputsMapObj) {
 
-        ServletContext context = request.getSession().getServletContext();
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
-        Response response = null;
-
-        try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
-            // get modifier id
-            User modifier = new User();
-            modifier.setUserId(userId);
-            log.debug("modifier id is {}", userId);
-
-            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier);
-            if (componentInstInputsMapRes.isRight()) {
-                log.debug("failed to parse componentInstInputsMap");
-                response = buildErrorResponse(componentInstInputsMapRes.right().value());
-                return response;
-            }
-
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentInstInputsMap componentInstInputsMap = componentInstInputsMapRes.left().value();
-
-            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = businessLogic.createMultipleInputs(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
-            if (inputPropertiesRes.isRight()) {
-                log.debug("failed to create inputs  for service: {}", componentId);
-                return buildErrorResponse(inputPropertiesRes.right().value());
-            }
-            Object properties = RepresentationUtils.toRepresentation(inputPropertiesRes.left().value());
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
-            log.debug("createMultipleInputs failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-        }
+        return super.declareProperties(userId, componentId, componentType, componentInstInputsMapObj,
+                DeclarationTypeEnum.INPUT, request);
     }
 
 
@@ -327,12 +302,6 @@ public class InputsServlet extends AbstractValidationsServlet {
             return response;
 
         }
-    }
-
-    private InputsBusinessLogic getInputBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(InputsBusinessLogic.class);
     }
 
 }

@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
+import java.util.List;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.List;
 
 public interface PropertyDeclarator {
 
@@ -26,5 +26,22 @@ public interface PropertyDeclarator {
      * @param input the input to be deleted
      */
     StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition input);
+
+    /**
+     * creates a list of policies from the given list of properties and updates the properties accordingly
+     * @param component the container
+     * @param propertiesOwnerId the id of the owner of the properties to declare (e.g ComponentInstance, Policy, Group etc)
+     * @param propsToDeclare the list of properties that are being declared as inputs
+     * @return the list of policies that were created from the given properties
+     */
+    Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesAsPolicies(Component component, String propertiesOwnerId, List<ComponentInstancePropInput> propsToDeclare);
+
+    /**
+     * returns the values of declared properties to each original state before it was declared as an policy.
+     * this function is to be called when an policy, that was created by declaring a property, is deleted.
+     * @param component the container of the input to be deleted
+     * @param policy the policy to be deleted
+     */
+    StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policy);
 
 }

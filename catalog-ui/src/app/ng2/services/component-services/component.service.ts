@@ -25,7 +25,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement} from "app/models";
+    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement, PolicyInstance} from "app/models";
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {downgradeInjectable} from '@angular/upgrade/static';
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -283,6 +283,30 @@ export class ComponentServiceNg2 {
             .map(res => {
                 return res.json();
             })
+    }
+
+    createPolicy(component:Component, policiesToCreate:InstancePropertiesAPIMap, isSelf:boolean):Observable<any> {
+        const policiesList =
+            isSelf ?
+                {'componentPropertiesToPolicies': {
+                        ...policiesToCreate.componentInstanceProperties
+                    }
+                } :
+                {'componentInstancePropertiesToPolicies': {
+                        ...policiesToCreate.componentInstanceProperties
+                    }
+                };
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/policies', policiesList)
+            .map(res => {
+                return res.json();
+            });
+    }
+
+    deletePolicy(component:Component, policy: PolicyInstance) {
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policy.uniqueId + '/undeclare', policy)
+            .map(res => {
+                return res.json();
+            });
     }
 
     restoreComponent(componentType:string, componentId:string){

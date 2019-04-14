@@ -1,8 +1,24 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
@@ -24,7 +41,15 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -35,14 +60,6 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.*;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyBusinessLogicTest {
@@ -65,6 +82,8 @@ public class PolicyBusinessLogicTest {
     private ApplicationDataTypeCache dataTypeCache;
     @Mock
     private PropertyOperation propertyOperation;
+    @Mock
+    PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
 
     private final static String COMPONENT_ID = "componentId";
     private final static String COMPONENT_NAME = "componentName";
@@ -97,6 +116,20 @@ public class PolicyBusinessLogicTest {
         createResponses();
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir));
     }
+
+    @Before
+    public void initBl() {
+        businessLogic.setComponentsUtils(componentsUtils);
+        businessLogic.setToscaOperationFacade(toscaOperationFacade);
+        businessLogic.setTitanGenericDao(titanDao);
+        businessLogic.setUserValidations(userValidations);
+        businessLogic.setGraphLockOperation(graphLockOperation);
+        businessLogic.setPolicyTypeOperation(policyTypeOperation);
+        businessLogic.setDataTypeCache(dataTypeCache);
+        businessLogic.setPropertyOperation(propertyOperation);
+        businessLogic.setPropertyDeclarationOrchestrator(propertyDeclarationOrchestrator);
+    }
+
 
     private static void createResponses() {
         componentSuccessEither = Either.left(resource);
@@ -213,6 +246,7 @@ public class PolicyBusinessLogicTest {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubCommit();
         when(toscaOperationFacade.removePolicyFromComponent(eq(COMPONENT_ID),eq(POLICY_ID))).thenReturn(StorageOperationStatus.OK);
+        when(propertyDeclarationOrchestrator.unDeclarePropertiesAsPolicies(any(), any())).thenReturn(StorageOperationStatus.OK);
         Either<PolicyDefinition, ResponseFormat>  response = businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID, true);
         assertTrue(response.isLeft());
     }

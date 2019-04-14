@@ -475,14 +475,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         ServiceConsumptionSource sourceValue = ServiceConsumptionSource.getSourceValue(source);
 
         if(STATIC.equals(sourceValue)) {
-			// Validate constraint on input value
-			/*Either<Boolean, ResponseFormat> constraintValidationResult =
-					validateOperationInputConstraint(operationInputDefinition, serviceConsumptionData);
-
-			if (constraintValidationResult.isRight()) {
-				return Either.right(constraintValidationResult.right().value());
-			}*/
-
             return handleConsumptionStaticValue(consumptionValue, type, operation,
                     operationInputDefinition);
         }
@@ -958,10 +950,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         service.setInvariantUUID(invariantUUID);
 
         return Either.left(service);
-    }    
-    
-    
-   
+    }
+
+
+
     private Either<Boolean, ResponseFormat> validateServiceFieldsBeforeCreate(User user, Service service, AuditingActionEnum actionEnum) {
         try {
             validateComponentFieldsBeforeCreate(user, service, actionEnum);
@@ -1547,7 +1539,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     		}
     		return Either.left(true);
     }
-    
+
     private Either<Boolean, ResponseFormat> validateServiceRole(String serviceRole) {
         if (serviceRole.equals("")){
             return Either.left(true);
@@ -2636,6 +2628,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String serviceId, List<String> dataParamsToReturn) {
 
         ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsToReturn);
+        paramsToReturn.setIgnoreComponentInstancesProperties(false);
         Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(serviceId, paramsToReturn);
 
         if (serviceResultEither.isRight()) {
