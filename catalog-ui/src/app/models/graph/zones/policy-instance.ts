@@ -62,6 +62,7 @@ export class PolicyInstance implements IZoneInstanceMethod {
     iconSprite:string;
     icon:string;
     originArchived:boolean;
+    instanceUniqueId: string;
 
 
     constructor(policy?:PolicyInstance) {
@@ -81,6 +82,7 @@ export class PolicyInstance implements IZoneInstanceMethod {
         this.targets = policy.targets;
         this.uniqueId = policy.uniqueId;
         this.version = policy.version;
+        this.instanceUniqueId = policy.instanceUniqueId;
 
         this.iconSprite = '';
         this.icon = 'icon-policy';

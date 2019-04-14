@@ -1,12 +1,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static java.util.Collections.emptyList;
 
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyList;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 /**
  * public class representing the component policy,
@@ -27,13 +25,17 @@ import static java.util.Collections.emptyList;
  * targets
  * isFromCsar
  */
-public class PolicyDataDefinition extends ToscaDataDefinition {
+public class PolicyDataDefinition extends PropertyDataDefinition {
 
     /**
      * public constructor by default
      */
     public PolicyDataDefinition() {
         super();
+    }
+
+    public PolicyDataDefinition(PropertyDataDefinition propertyDataDefinition) {
+        super(propertyDataDefinition);
     }
 
     /**
@@ -51,6 +53,7 @@ public class PolicyDataDefinition extends ToscaDataDefinition {
      * @param other
      */
     public PolicyDataDefinition(PolicyDataDefinition other) {
+        super(other);
         this.setName(other.getName());
         this.setUniqueId(other.getUniqueId());
         this.setPolicyTypeName(other.getPolicyTypeName());
@@ -63,6 +66,11 @@ public class PolicyDataDefinition extends ToscaDataDefinition {
         this.setInvariantName(other.getInvariantName());
         this.setComponentName(other.getComponentName());
         this.setIsFromCsar(other.getIsFromCsar());
+        this.setValue(other.getValue());
+        this.setOwnerId(other.getOwnerId());
+        this.setType(other.getType());
+        this.setInstanceUniqueId(other.getInstanceUniqueId());
+        this.setInputPath(other.getInputPath());
         if (other.getProperties() != null) {
             this.setProperties(other.getProperties());
         }
@@ -98,22 +106,6 @@ public class PolicyDataDefinition extends ToscaDataDefinition {
 
     public void setInvariantName(Object invariantName) {
         setToscaPresentationValue(JsonPresentationFields.CI_INVARIANT_NAME, invariantName);
-    }
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
-    }
-
-    public String getUniqueId() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
-    }
-
-    public void setUniqueId(String uniqueId) {
-        setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
     }
 
     public String getPolicyTypeName() {

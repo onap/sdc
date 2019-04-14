@@ -27,20 +27,53 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.openecomp.sdc.be.components.impl.*;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
+import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
@@ -55,19 +88,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Supplier;
 
 public class BeGenericServlet extends BasicServlet {
 
@@ -432,5 +452,71 @@ public class BeGenericServlet extends BasicServlet {
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
         return propertytBl;
+    }
+
+    protected InputsBusinessLogic getInputBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(InputsBusinessLogic.class);
+    }
+
+    protected PolicyBusinessLogic getPolicyBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(PolicyBusinessLogic.class);
+    }
+
+    protected Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String componentJson, User user, ComponentTypeEnum componentType) {
+        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(componentJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, componentType);
+    }
+
+    protected Response declareProperties(String userId, String componentId, String componentType,
+            String componentInstInputsMapObj, DeclarationTypeEnum typeEnum, HttpServletRequest request) {
+        ServletContext context = request.getSession().getServletContext();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(get) Start handle request of {}", url);
+        Response response = null;
+
+        try {
+            BaseBusinessLogic businessLogic = getBlForPropertyDeclaration(typeEnum, context);
+
+            // get modifier id
+            User modifier = new User();
+            modifier.setUserId(userId);
+            log.debug("modifier id is {}", userId);
+            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
+            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier, componentTypeEnum);
+            if (componentInstInputsMapRes.isRight()) {
+                log.debug("failed to parse componentInstInputsMap");
+                response = buildErrorResponse(componentInstInputsMapRes.right().value());
+                return response;
+            }
+
+            Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = businessLogic
+                                                                               .declareProperties(userId, componentId,
+                                                                                       componentTypeEnum,
+                                                                                       componentInstInputsMapRes.left().value());
+            if (propertiesAfterDeclaration.isRight()) {
+                log.debug("failed to create inputs  for service: {}", componentId);
+                return buildErrorResponse(propertiesAfterDeclaration.right().value());
+            }
+            Object properties = RepresentationUtils.toRepresentation(propertiesAfterDeclaration.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
+
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
+            log.debug("Properties declaration failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
+    public BaseBusinessLogic getBlForPropertyDeclaration(DeclarationTypeEnum typeEnum,
+                                                          ServletContext context) {
+        if(typeEnum.equals(DeclarationTypeEnum.POLICY)) {
+            return getPolicyBL(context);
+        }
+
+        return getInputBL(context);
     }
 }

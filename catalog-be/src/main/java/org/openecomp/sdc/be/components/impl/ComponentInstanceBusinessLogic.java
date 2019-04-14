@@ -62,6 +62,7 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
@@ -93,7 +94,23 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -134,9 +151,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     public static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
     public static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
 
-	@Autowired
-	private ApplicationDataTypeCache applicationDataTypeCache;
-
     @Autowired
     private IComponentInstanceOperation componentInstanceOperation;
 
@@ -158,9 +172,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     public ComponentInstanceBusinessLogic() {
     }
 
-    public Either<ComponentInstance, ResponseFormat> createComponentInstance(
-            String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
-        return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false, true);
+    public Either<ComponentInstance, ResponseFormat> createComponentInstance(String containerComponentParam,
+                                                                             String containerComponentId, String userId, ComponentInstance resourceInstance) {
+        return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false,
+                true);
     }
 
     public List<ComponentInstanceProperty> getComponentInstancePropertiesByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
@@ -196,7 +211,69 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resList;
     }
 
-    public List<ComponentInstanceInput> getComponentInstanceInputsByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
+    public Optional<ComponentInstanceProperty> getComponentInstancePropertyByPolicyId(Component component,
+                                                                                      PolicyDefinition policy) {
+
+        Optional<ComponentInstanceProperty> propertyCandidate = getComponentInstancePropertyByPolicy(component, policy);
+
+        if(propertyCandidate.isPresent()) {
+            ComponentInstanceProperty componentInstanceProperty = propertyCandidate.get();
+            Optional<GetPolicyValueDataDefinition> getPolicyCandidate =
+                    getGetPolicyValueDataDefinition(policy, componentInstanceProperty);
+
+            getPolicyCandidate.ifPresent(getPolicyValue ->
+                updateComponentInstancePropertyAfterUndeclaration(componentInstanceProperty, getPolicyValue, policy));
+            return Optional.of(componentInstanceProperty);
+        }
+
+        return Optional.empty();
+
+    }
+
+    private void updateComponentInstancePropertyAfterUndeclaration(ComponentInstanceProperty componentInstanceProperty,
+            GetPolicyValueDataDefinition getPolicyValue, PolicyDefinition policyDefinition) {
+        componentInstanceProperty.setValue(getPolicyValue.getOrigPropertyValue());
+        List<GetPolicyValueDataDefinition> getPolicyValues = componentInstanceProperty.getGetPolicyValues();
+        if(CollectionUtils.isNotEmpty(getPolicyValues)) {
+            getPolicyValues.remove(getPolicyValue);
+            componentInstanceProperty.setGetPolicyValues(getPolicyValues);
+            policyDefinition.setGetPolicyValues(getPolicyValues);
+        }
+    }
+
+    private Optional<GetPolicyValueDataDefinition> getGetPolicyValueDataDefinition(PolicyDefinition policy,
+            ComponentInstanceProperty componentInstanceProperty) {
+        List<GetPolicyValueDataDefinition> getPolicyValues = policy.getGetPolicyValues();
+        return getPolicyValues.stream()
+                                                                            .filter(getPolicyValue -> getPolicyValue
+                                                                                                              .getPropertyName()
+                                                                                                              .equals(componentInstanceProperty
+                                                                                                                              .getName()))
+                                                                            .findAny();
+    }
+
+    private Optional<ComponentInstanceProperty> getComponentInstancePropertyByPolicy(Component component,
+            PolicyDefinition policy) {
+        Map<String, List<ComponentInstanceProperty>> componentInstancesProperties =
+                component.getComponentInstancesProperties();
+
+        if(MapUtils.isEmpty(componentInstancesProperties)) {
+            return Optional.empty();
+        }
+
+        String instanceUniqueId = policy.getInstanceUniqueId();
+
+        List<ComponentInstanceProperty> componentInstanceProperties =
+                componentInstancesProperties.containsKey(instanceUniqueId)
+                        ? componentInstancesProperties.get(instanceUniqueId)
+                        : new ArrayList<>();
+
+        return componentInstanceProperties
+                       .stream().filter(property -> property.getName().equals(policy.getName())).findAny();
+    }
+
+    public List<ComponentInstanceInput> getComponentInstanceInputsByInputId(
+            org.openecomp.sdc.be.model.Component component, String inputId) {
         List<ComponentInstanceInput> resList = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> ciInputsMap = component.getComponentInstancesInputs();
         if(ciInputsMap != null && !ciInputsMap.isEmpty()){

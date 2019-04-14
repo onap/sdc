@@ -39,27 +39,17 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
 
 public abstract class Component implements PropertiesOwner {
 
@@ -83,9 +73,11 @@ public abstract class Component implements PropertiesOwner {
 	private String derivedFromGenericVersion;
 	private String toscaType;
 	protected List<AdditionalInformationDefinition> additionalInformation;
+	private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+	private Map<String, List<UploadNodeFilterInfo>> nodeFilters;
+	private Map<String, List<UploadNodeFilterInfo>> serviceFilters;
 	protected List<PropertyDefinition> properties;
 	private Map<String, InterfaceDefinition> interfaces;
-    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
 
 	public Map<String, InterfaceDefinition> getInterfaces() {
 		return interfaces;
@@ -567,6 +559,42 @@ public abstract class Component implements PropertiesOwner {
         this.policies = policies;
     }
 
+    public void addPolicy(PolicyDefinition policyDefinition) {
+	    if(MapUtils.isEmpty(this.policies)) {
+	        this.policies = new HashMap<>();
+        }
+
+        this.policies.put(policyDefinition.getUniqueId(), policyDefinition);
+    }
+
+	public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
+		return nodeFilterComponents;
+	}
+
+	public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilter) {
+		this.nodeFilterComponents = nodeFilter;
+	}
+
+
+
+	public Map<String, List<UploadNodeFilterInfo>> getNodeFilters() {
+		return nodeFilters;
+	}
+
+	public void setNodeFilters(
+			Map<String, List<UploadNodeFilterInfo>> nodeFilters) {
+		this.nodeFilters = nodeFilters;
+	}
+
+	public Map<String, List<UploadNodeFilterInfo>> getServiceFilters() {
+		return serviceFilters;
+	}
+
+	public void setServiceFilters(
+			Map<String, List<UploadNodeFilterInfo>> serviceFilters) {
+		this.serviceFilters = serviceFilters;
+	}
+
 	public List<PropertyDefinition> getProperties() {
 		return properties;
 	}
@@ -575,6 +603,14 @@ public abstract class Component implements PropertiesOwner {
 		this.properties = properties;
 	}
 
+	public void addProperty(PropertyDefinition propertyDefinition) {
+	    if(org.apache.commons.collections.CollectionUtils.isEmpty(this.properties)) {
+	        this.properties = new ArrayList<>();
+        }
+
+        this.properties.add(propertyDefinition);;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -582,11 +618,7 @@ public abstract class Component implements PropertiesOwner {
 		result = prime * result + ((artifacts == null) ? 0 : artifacts.hashCode());
 		result = prime * result + ((categories == null) ? 0 : categories.hashCode());
 		result = prime * result + ((componentMetadataDefinition == null) ? 0 : componentMetadataDefinition.hashCode());
-//		result = prime * result + ((creatorUserId == null) ? 0 : creatorUserId.hashCode());
-//		result = prime * result + ((creatorFullName == null) ? 0 : creatorFullName.hashCode());
 		result = prime * result + ((deploymentArtifacts == null) ? 0 : deploymentArtifacts.hashCode());
-//		result = prime * result + ((lastUpdaterUserId == null) ? 0 : lastUpdaterUserId.hashCode());
-//		result = prime * result + ((lastUpdaterFullName == null) ? 0 : lastUpdaterFullName.hashCode());
 		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
 		result = prime * result + ((requirements == null) ? 0 : requirements.hashCode());
 		result = prime * result + ((componentInstances == null) ? 0 : componentInstances.hashCode());
@@ -603,14 +635,6 @@ public abstract class Component implements PropertiesOwner {
 		result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
 		return result;
 	}
-
-    public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
-        return nodeFilterComponents;
-    }
-
-    public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilterComponents) {
-        this.nodeFilterComponents = nodeFilterComponents;
-    }
 
     @Override
     public boolean equals(Object obj) {
