@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29665b4f_9568924b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/BaseBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "Useless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck\n \nThe imports part of a file should be handled by the Integrated Development Environment (IDE), not manually by the developer.\nUnused and useless imports should not occur if that is the case.\nLeaving them in reduces the code\u0027s readability, since their presence can be confusing.\nNoncompliant Code Example\n  package my.company;    import java.lang.String; // Noncompliant; java.lang classes are always implicitly imported  import my.company.SomeClass; // Noncompliant; same-package files are always implicitly imported  import java.io.File; // Noncompliant; File is not used    import my.company2.SomeType;  import my.company2.SomeType; // Noncompliant; \u0027SomeType\u0027 is already imported    class ExampleClass {      public String someString;    public SomeType something;    }  \nExceptions\nImports for types mentioned in comments, such as Javadocs, are ignored.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fd03a26_0cd32576",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "Useless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck\n \nThe imports part of a file should be handled by the Integrated Development Environment (IDE), not manually by the developer.\nUnused and useless imports should not occur if that is the case.\nLeaving them in reduces the code\u0027s readability, since their presence can be confusing.\nNoncompliant Code Example\n  package my.company;    import java.lang.String; // Noncompliant; java.lang classes are always implicitly imported  import my.company.SomeClass; // Noncompliant; same-package files are always implicitly imported  import java.io.File; // Noncompliant; File is not used    import my.company2.SomeType;  import my.company2.SomeType; // Noncompliant; \u0027SomeType\u0027 is already imported    class ExampleClass {      public String someString;    public SomeType something;    }  \nExceptions\nImports for types mentioned in comments, such as Javadocs, are ignored.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "430f36fc_c9abf001",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "Useless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck\n \nThe imports part of a file should be handled by the Integrated Development Environment (IDE), not manually by the developer.\nUnused and useless imports should not occur if that is the case.\nLeaving them in reduces the code\u0027s readability, since their presence can be confusing.\nNoncompliant Code Example\n  package my.company;    import java.lang.String; // Noncompliant; java.lang classes are always implicitly imported  import my.company.SomeClass; // Noncompliant; same-package files are always implicitly imported  import java.io.File; // Noncompliant; File is not used    import my.company2.SomeType;  import my.company2.SomeType; // Noncompliant; \u0027SomeType\u0027 is already imported    class ExampleClass {      public String someString;    public SomeType something;    }  \nExceptions\nImports for types mentioned in comments, such as Javadocs, are ignored.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "156b2f02_00939844",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "Please make an effort to reduce complexity\n\nMethods should not be too complex\n \nCode smell\n \nCritical\nsquid:MethodCyclomaticComplexity\n \nThe cyclomatic complexity of methods should not exceed a defined threshold.\nComplex code can perform poorly and will in any case be difficult to understand and therefore to maintain.\nExceptions\nWhile having a large number of fields in a class may indicate that it should be split, this rule nonetheless ignores high complexity in equals and hashCode methods.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c37ac896_a6779596",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "Overriding methods should do more than simply call the same method in the super class\n \nCode smell\n \nMinor\nsquid:S1185\n \nOverriding a method just to call the same method from the super class without performing any other actions is useless and misleading. The only time this is justified is in final overriding methods, where the effect is to lock in the parent class behavior. This rule ignores such overrides of equals, hashCode and toString.\nNoncompliant Code Example\n  public void doSomething() {    super.doSomething();  }    @Override  public boolean isLegal(Action action) {    return super.isLegal(action);  }  \nCompliant Solution\n  @Override  public boolean isLegal(Action action) { // Compliant - not simply forwarding the call    return super.isLegal(new Action(/* ... */));  }    @Id  @Override  public int getId() { // Compliant - there is annotation different from @Override    return super.getId();  }  ",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70aaf9aa_47d1c2af",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestrator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "should be policyToDelete\n\nLocal variable and method parameter names should comply with a naming convention\n \nCode smell\n \nMinor\nsquid:S00117\n \nShared naming conventions allow teams to collaborate effectively. This rule raises an issue when a local variable or function parameter name does not match the provided regular expression.\nNoncompliant Code Example\nWith the default regular expression ^[a-z][a-zA-Z0-9]*$:\n  public void doSomething(int my_param) {    int LOCAL;    ...  }  \nCompliant Solution\n  public void doSomething(int myParam) {    int local;    ...  }  \nExceptions\nLoop counters are ignored by this rule.\n  for (int i_1 \u003d 0; i_1 \u003c limit; i_1++) { // Compliant    // ...  }  \nas well as one-character catch variables:\n  try {  //...  } catch (Exception e) { // Compliant  }  ",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "851e1c1a_2dd24bb2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/UiComponentDataConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "delete mark and unused code.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77cb6b09_c2937e87",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "only one project lombok should be imported.",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70a71269_babe76a3",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "please use properties for versions id",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f85f7e44_c8fa8448",
+        "filename": "common-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "use propery",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e18cb1dd_fa6d1562",
+        "filename": "common-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-14T13:01:28Z",
+      "side": 1,
+      "message": "add lombok only once. use property for version",
+      "revId": "77bcfef5edf53e6fdda61a6f95f6e52df056a865",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
