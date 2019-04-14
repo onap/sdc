@@ -86,7 +86,7 @@ public class PropertyDecelerationOrchestratorTest {
 		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
+		componentInstInputsMap.setComponentInstanceProperties(componentInstanceProperties);
 		PropertyDeclarator result;
 
 		// default test

@@ -67,6 +67,10 @@ export class PropertiesUtils {
                             this.propertiesService.disableRelatedProperties(newFEProp, inputPath);
                         });
                     }
+                    if (newFEProp.getPolicyValues && newFEProp.getPolicyValues.length) {
+                        newFEProp.setAsDeclared(newFEProp.inputPath); //if a path is sent, its a child prop. this param is optional
+                        this.propertiesService.disableRelatedProperties(newFEProp, newFEProp.inputPath);
+                    }
                 }
             });
             instanceFePropertiesMap[instanceId] = propertyFeArray;

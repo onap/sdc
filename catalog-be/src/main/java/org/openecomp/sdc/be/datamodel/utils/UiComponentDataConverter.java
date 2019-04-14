@@ -26,12 +26,17 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.validation.PolicyUtils;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
@@ -39,6 +44,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -94,7 +100,7 @@ public class UiComponentDataConverter {
                 setCapabilities(dataTransfer, component);
                 break;
             case POLICIES:
-                dataTransfer.setPolicies(component.resolvePoliciesList());
+                setPolicies(dataTransfer, component);
                 break;
             case NON_EXCLUDED_POLICIES:
                 setNonExcludedPolicies(dataTransfer, component);
@@ -138,6 +144,33 @@ public class UiComponentDataConverter {
                 break;
         }
     }
+
+    private void setPolicies(UiComponentDataTransfer dataTransfer, Component component) {
+        Map<String, PolicyDefinition> policies = component.getPolicies();
+        Set<PolicyDefinition> policyDefinitions =
+                MapUtils.isEmpty(policies) ? new HashSet<>() : new HashSet<>(policies.values());
+
+        policyDefinitions.addAll(getDeclaredPolicies(component.getComponentInstancesProperties()));
+
+        dataTransfer.setPolicies(new ArrayList<>(policyDefinitions));
+    }
+
+    private Set<PolicyDefinition> getDeclaredPolicies(Map<String, List<ComponentInstanceProperty>> componentInstanceProperties) {
+        if(MapUtils.isEmpty(componentInstanceProperties)) {
+            return new HashSet<>();
+        }
+
+        Set<PolicyDefinition> declaredPolicies = new HashSet<>();
+        for(Map.Entry<String, List<ComponentInstanceProperty>> instancePropertyEntry : componentInstanceProperties.entrySet()) {
+            declaredPolicies.addAll(instancePropertyEntry.getValue().stream()
+                    .filter(property -> CollectionUtils.isNotEmpty(property.getGetPolicyValues()))
+                    .map(instanceProperty -> PolicyUtils.getDeclaredPolicyDefinition(instancePropertyEntry.getKey(), instanceProperty))
+                    .collect(Collectors.toSet()));
+        }
+
+        return declaredPolicies;
+    }
+
 
     private void setComponentInstanceRelation(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getComponentInstancesRelations() == null) {
@@ -366,6 +399,15 @@ public class UiComponentDataConverter {
                 case METADATA:
                     UiServiceMetadata metadata = new UiServiceMetadata(service.getCategories(), (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
+                    break;
+                case NODE_FILTER:
+                    if(service.getNodeFilterComponents() == null) {
+                        dataTransfer.setNodeFilterData(null);
+                    } else {
+                        NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
+                        dataTransfer.setNodeFilterData(nodeFilterConverter.convertToUI(service.getNodeFilterComponents()));
+                    }
+
                     break;
                 default:
                     setUiTranferDataByFieldName(dataTransfer, service, fieldName);

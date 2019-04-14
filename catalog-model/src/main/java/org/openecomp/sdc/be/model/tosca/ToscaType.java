@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model.tosca;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,8 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 

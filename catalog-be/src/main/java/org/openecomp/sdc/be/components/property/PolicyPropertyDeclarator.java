@@ -19,7 +19,15 @@
  */
 package org.openecomp.sdc.be.components.property;
 
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -31,11 +39,6 @@ import org.openecomp.sdc.be.model.jsontitan.operations.PolicyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 @org.springframework.stereotype.Component
 public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDefinition, PropertyDataDefinition> {
@@ -49,25 +52,25 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
     }
 
     @Override
-    PropertyDataDefinition createDeclaredProperty(PropertyDataDefinition prop) {
+    public PropertyDataDefinition createDeclaredProperty(PropertyDataDefinition prop) {
         return new PropertyDataDefinition(prop);
     }
 
     @Override
-    Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String policyId, List<PropertyDataDefinition> properties) {
+    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String policyId, List<PropertyDataDefinition> properties) {
         log.debug("#updatePropertiesValues - updating policies properties for policy {} on component {}", policyId, component.getUniqueId());
         StorageOperationStatus updateStatus = policyOperation.updatePolicyProperties(component, policyId, properties);
         return updateStatus == StorageOperationStatus.OK ? Either.left(updateStatus) : Either.right(updateStatus);
     }
 
     @Override
-    Optional<PolicyDefinition> resolvePropertiesOwner(Component component, String policyId) {
+    public Optional<PolicyDefinition> resolvePropertiesOwner(Component component, String policyId) {
         log.debug("#resolvePropertiesOwner - fetching policy {} of component {}", policyId, component.getUniqueId());
         return Optional.ofNullable(component.getPolicyById(policyId));
     }
 
     @Override
-    void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
+    public void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
         List<ComponentInstanceProperty> propertiesList = input.getProperties();
         if(propertiesList == null) {
             propertiesList = new ArrayList<>(); // adding the property with the new value for UI

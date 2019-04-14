@@ -26,14 +26,26 @@ export enum DerivedPropertyType {
     MAP,
     COMPLEX
 }
+export class PropertyPolicyDetail {
+    policyId: string;
+    propertyName: string;
+    constructor(propertyPolicy?:PropertyPolicyDetail) {
+        if(propertyPolicy) {
+            this.policyId = propertyPolicy.policyId;
+            this.propertyName = propertyPolicy.propertyName;
+        }
+    }
+}
 
 export class PropertyBEModel {
+
     constraints: Array<any>;
     defaultValue: string;
     definition: boolean;
     description: string;
     fromDerived: boolean;
     getInputValues: Array<PropertyInputDetail>;
+    getPolicyValues: Array<PropertyPolicyDetail>;
     name: string;
     parentUniqueId: string;
     password: boolean;
@@ -45,6 +57,7 @@ export class PropertyBEModel {
     value: string;
     parentPropertyType: string;
     subPropertyInputPath: string;
+    inputPath: string;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -65,6 +78,8 @@ export class PropertyBEModel {
             this.getInputValues = property.getInputValues;
             this.parentPropertyType = property.parentPropertyType;
             this.subPropertyInputPath = property.subPropertyInputPath;
+            this.getPolicyValues = property.getPolicyValues;
+            this.inputPath = property.inputPath;
         }
 
         if (!this.schema || !this.schema.property) {

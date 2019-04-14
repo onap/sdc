@@ -1,27 +1,28 @@
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.ValidationUtils;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import static org.apache.commons.collections.MapUtils.isEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.openecomp.sdc.common.api.Constants.GROUP_POLICY_NAME_DELIMETER;
+
+import fj.data.Either;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
 /**
  * Provides specific functionality for policy
@@ -92,6 +93,14 @@ public class PolicyUtils {
                                    .getConfiguration()
                                    .getExcludedPolicyTypesMapping()
                                    .get(((Resource) component).getResourceType().getValue());
+    }
+
+    public static PolicyDefinition getDeclaredPolicyDefinition(String componentInstanceId, ComponentInstanceProperty property) {
+        PolicyDefinition policyDefinition = new PolicyDefinition(property);
+        policyDefinition.setUniqueId(UniqueIdBuilder.buildPolicyUniqueId(componentInstanceId, property.getName()));
+        policyDefinition.setInstanceUniqueId(componentInstanceId);
+
+        return policyDefinition;
     }
 
     private static int extractNextPolicyCounterFromUniqueId(String uniqueId) {

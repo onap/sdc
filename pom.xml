@@ -31,6 +31,8 @@ Modifications copyright (c) 2018 Nokia
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <tosca.datatype.version>1.3.2-SNAPSHOT</tosca.datatype.version>
+
         <!-- 3rd parties versions -->
         <bean-matcher.version>0.11</bean-matcher.version>
         <lang3.version>3.3.2</lang3.version>
@@ -46,6 +48,7 @@ Modifications copyright (c) 2018 Nokia
         <wire-mock.version>2.18.0</wire-mock.version>
         <ecomp.version>2.4.0</ecomp.version>
         <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
+        <lombok.version>1.18.2</lombok.version>
 
         <commons.collections.version>4.1</commons.collections.version>
 
@@ -58,6 +61,7 @@ Modifications copyright (c) 2018 Nokia
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.8.10</jackson.version>
         <jackson-annotations.version>2.8.0</jackson-annotations.version>
+        <jackson.mapper.version>1.9.13</jackson.mapper.version>
 
         <!-- Yaml for properties -->
         <snakeyaml.version>1.14</snakeyaml.version>
@@ -128,6 +132,8 @@ Modifications copyright (c) 2018 Nokia
         <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
         <!--docker tags-->
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+
+        <joda.time.version>2.9.9</joda.time.version>
 
 
     </properties>
