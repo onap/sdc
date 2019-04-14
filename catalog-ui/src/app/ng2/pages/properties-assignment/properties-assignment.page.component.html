@@ -49,6 +49,15 @@
                                       (inputChanged)="dataChanged($event)">
                         </inputs-table>
                     </tab>
+                    <tab tabTitle="Policies">
+                        <policies-table class="properties-table"
+                                      [readonly]="isReadonly"
+                                      [policies]="policies | searchFilter:'name':searchQuery"
+                                      [instanceNamesMap]="componentInstanceNamesMap"
+                                      [isLoading]="loadingPolicies"
+                                      (deletePolicy)="deletePolicy($event)">
+                        </policies-table>
+                    </tab>
                 </tabs>
                 <div class="main-tabs-section-buttons">
                     <button class="tlv-btn outline blue" [disabled]="!hasChangedData || savingChangedData" (click)="reverseChangedData()" data-tests-id="properties-reverse-button">Discard</button>
@@ -56,13 +65,14 @@
                 </div>
             </div>
             <div class="header">
-                <div class="search-filter-container" [class.without-filter]="isInputsTabSelected">
+                <div class="search-filter-container" [class.without-filter]="isInputsTabSelected || isPoliciesTabSelected">
                     <span *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</span>
                     <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
                     <span class="sprite search-icon" data-tests-id="search-button"></span>
                     <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button declare-input">Declare Input</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
             </div>
         </div>
         <div class="right-column">
@@ -75,10 +85,10 @@
                         <div class="hierarchy-header white-sub-header">
                             <span tooltip="{{component.name}}">{{component.name}}</span>
                         </div>
-                        <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInputsTabSelected">No data to display</div>
+                        <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInputsTabSelected || isPoliciesTabSelected">No data to display</div>
                         <hierarchy-navigation class="hierarchy-nav"
                                 (updateSelected)="onInstanceSelectedUpdate($event)"
-                                [displayData]="isInputsTabSelected ? []: instancesNavigationData"
+                                [displayData]="isInputsTabSelected || isPoliciesTabSelected ? []: instancesNavigationData"
                                 [selectedItem]="selectedInstanceData?.uniqueId"
                                 [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
                     </div>
@@ -88,10 +98,10 @@
                     <div class="hierarchy-header white-sub-header" [class.selected]="selectedFlatProperty.path == propertyStructureHeader">
                         <span tooltip="{{isPropertiesTabSelected ? propertyStructureHeader : ''}}">{{isPropertiesTabSelected ? (propertyStructureHeader || "No Property Selected") : "No Property Selected"}}</span>
                     </div>
-                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInputsTabSelected">No data to display</div>
+                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInputsTabSelected || isPoliciesTabSelected">No data to display</div>
                     <hierarchy-navigation class="hierarchy-nav"
                             (updateSelected)="onPropertySelectedUpdate($event)"
-                            [displayData]="isInputsTabSelected ? [] : propertiesNavigationData"
+                            [displayData]="isInputsTabSelected || isPoliciesTabSelected ? [] : propertiesNavigationData"
                             [selectedItem]="selectedFlatProperty.path"
                             [displayOptions]="hierarchyPropertiesDisplayOptions"></hierarchy-navigation>
                     </div>

@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-
-import java.util.List;
 
 public class ComponentParametersView {
 
@@ -40,6 +39,7 @@ public class ComponentParametersView {
     private boolean ignoreAdditionalInformation = false;
     private boolean ignoreArtifacts = false;
     private boolean ignoreInterfaces = false;
+    private boolean ignoreInterfaceInstances = false;
     private boolean ignoreComponentInstancesInterfaces = false;
     private boolean ignoreDerivedFrom = false;
     private boolean ignoreAttributesFrom = false;
@@ -49,6 +49,7 @@ public class ComponentParametersView {
     private boolean ignoreCapabiltyProperties = true;
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
+    private boolean ignoreNodeFilterRequirements = false;
     private boolean ignoreNodeFilter = false;
 
     public ComponentParametersView() {
@@ -146,6 +147,7 @@ public class ComponentParametersView {
                     this.setIgnorePolicies(false);
                     break;
                 case NODE_FILTER:
+                    this.setIgnoreNodeFilterRequirements(false);
                     this.setIgnoreNodeFilter(false);
                     break;
                 case COMPONENT_INSTANCES_INTERFACES:
@@ -165,96 +167,120 @@ public class ComponentParametersView {
 
     public Component filter(Component component, ComponentTypeEnum componentType) {
 
-        if (ignoreUsers) {
-            component.setCreatorUserId(null);
-            component.setCreatorFullName(null);
-            component.setLastUpdaterUserId(null);
-            component.setLastUpdaterFullName(null);
-        }
-        if (ignoreGroups) {
-            component.setGroups(null);
-        }
-        if (ignoreComponentInstances) {
-            component.setComponentInstances(null);
-            component.setComponentInstancesRelations(null);
-        }
-        if (ignoreComponentInstancesProperties) {
-            component.setComponentInstancesProperties(null);
-        }
-        if (ignoreProperties && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setProperties(null);
-        }
-        if (ignoreCapabilities) {
-            component.setCapabilities(null);
-        }
-        if (ignoreRequirements) {
-            component.setRequirements(null);
-        }
-        if (ignoreCategories) {
-            component.setCategories(null);
-        }
-        if (ignoreAllVersions) {
-            component.setAllVersions(null);
-        }
-        if (ignoreAdditionalInformation && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setAdditionalInformation(null);
-        }
-        if (ignoreArtifacts) {
-            component.setArtifacts(null);
-            component.setSpecificComponetTypeArtifacts(null);
-            component.setDeploymentArtifacts(null);
-            component.setToscaArtifacts(null);
-        }
-        if (ignoreInterfaces && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setInterfaces(null);
-        }
-        if (ignoreDerivedFrom && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setDerivedFrom(null);
-        }
-        if (ignoreAttributesFrom && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setAttributes(null);
-        }
-        if (ignoreComponentInstancesAttributesFrom) {
-            component.setComponentInstancesAttributes(null);
-        }
-        if (ignoreInputs) {
-            component.setInputs(null);
-        }
-        if (ignoreComponentInstancesInputs) {
-            component.setComponentInstancesInputs(null);
-        }
-        if (ignoreServicePath && componentType == ComponentTypeEnum.SERVICE) {
-            ((Service) component).setForwardingPaths(null);
-        }
-        if (ignoreNodeFilter){
-            component.setNodeFilterComponents(null);
-        }
-        return component;
+		if (ignoreUsers) {
+			component.setCreatorUserId(null);
+			component.setCreatorFullName(null);
+			component.setLastUpdaterUserId(null);
+			component.setLastUpdaterFullName(null);
+		}
+
+		if (ignoreGroups) {
+			component.setGroups(null);
+		}
+
+		if (ignoreComponentInstances) {
+			component.setComponentInstances(null);
+			component.setComponentInstancesRelations(null);
+		}
+
+		if (ignoreComponentInstancesProperties) {
+			component.setComponentInstancesProperties(null);
+		}
+
+    if (ignoreProperties && componentType == ComponentTypeEnum.RESOURCE) {
+      ((Resource) component).setProperties(null);
     }
 
-    public void disableAll() {
-        ignoreUsers = true;
-        ignoreGroups = true;
-        ignorePolicies = true;
-        ignoreComponentInstances = true;
-        ignoreComponentInstancesProperties = true;
-        ignoreProperties = true;
-        ignoreCapabilities = true;
-        ignoreRequirements = true;
-        ignoreCategories = true;
-        ignoreAllVersions = true;
-        ignoreAdditionalInformation = true;
-        ignoreArtifacts = true;
-        ignoreInterfaces = true;
-        ignoreDerivedFrom = true;
-        ignoreAttributesFrom = true;
-        ignoreInputs = true;
-        ignoreComponentInstancesAttributesFrom = true;
-        ignoreComponentInstancesInputs = true;
-        ignoreCapabiltyProperties = true;
-        ignoreServicePath = true;
-        ignoreNodeFilter = true;
+		if (ignoreCapabilities) {
+			component.setCapabilities(null);
+		}
+
+		if (ignoreRequirements) {
+			component.setRequirements(null);
+		}
+
+		if (ignoreCategories) {
+			component.setCategories(null);
+		}
+
+		if (ignoreAllVersions) {
+			component.setAllVersions(null);
+		}
+    if (ignoreAdditionalInformation && componentType == ComponentTypeEnum.RESOURCE) {
+      ((Resource) component).setAdditionalInformation(null);
     }
+
+		if (ignoreArtifacts) {
+			component.setArtifacts(null);
+			component.setSpecificComponetTypeArtifacts(null);
+			component.setDeploymentArtifacts(null);
+			component.setToscaArtifacts(null);
+		}
+    if (ignoreNodeFilterRequirements){
+      component.setNodeFilterComponents(null);
+    }
+    if (ignoreInterfaces && ignoreInterfaceInstances &&
+        componentType == ComponentTypeEnum.RESOURCE) {
+        component.setInterfaces(null);
+    }
+    if (ignoreDerivedFrom && componentType == ComponentTypeEnum.RESOURCE) {
+      ((Resource) component).setDerivedFrom(null);
+    }
+    if (ignoreAttributesFrom && componentType == ComponentTypeEnum.RESOURCE) {
+      ((Resource) component).setAttributes(null);
+    }
+		if (ignoreComponentInstancesAttributesFrom) {
+			component.setComponentInstancesAttributes(null);
+		}
+		if (ignoreInputs) {
+			component.setInputs(null);
+		}
+		if (ignoreComponentInstancesInputs) {
+			component.setComponentInstancesInputs(null);
+		}
+    if (ignoreServicePath && componentType == ComponentTypeEnum.SERVICE) {
+      ((Service) component).setForwardingPaths(null);
+    }
+    if (ignoreNodeFilter){
+      component.setNodeFilterComponents(null);
+    }
+    return component;
+
+	}
+
+	public boolean isIgnoreNodeFilterRequirements() {
+		return ignoreNodeFilterRequirements;
+	}
+
+	public void setIgnoreNodeFilterRequirements(boolean ignoreNodeFilter) {
+		this.ignoreNodeFilterRequirements = ignoreNodeFilter;
+	}
+
+	public void disableAll() {
+		ignoreUsers = true;
+		ignoreGroups = true;
+    ignorePolicies = true;
+		ignoreComponentInstances = true;
+		ignoreComponentInstancesProperties = true;
+		ignoreProperties = true;
+		ignoreCapabilities = true;
+		ignoreRequirements = true;
+		ignoreCategories = true;
+		ignoreAllVersions = true;
+		ignoreAdditionalInformation = true;
+		ignoreArtifacts = true;
+		ignoreInterfaces = true;
+		ignoreInterfaceInstances = true;
+		ignoreDerivedFrom = true;
+		ignoreAttributesFrom = true;
+		ignoreInputs = true;
+		ignoreComponentInstancesAttributesFrom = true;
+		ignoreComponentInstancesInputs = true;
+		ignoreCapabiltyProperties = true;
+		ignoreServicePath = true;
+		ignoreNodeFilterRequirements = true;
+        ignoreNodeFilter = true;
+	}
 
     public boolean isIgnoreGroups() {
         return ignoreGroups;

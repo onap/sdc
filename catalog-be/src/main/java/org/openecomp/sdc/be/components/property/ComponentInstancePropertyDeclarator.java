@@ -1,6 +1,11 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -13,8 +18,6 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.*;
 
 @org.springframework.stereotype.Component
 public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarator<ComponentInstance, ComponentInstanceProperty> {
@@ -30,25 +33,25 @@ public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarat
     }
 
     @Override
-    ComponentInstanceProperty createDeclaredProperty(PropertyDataDefinition prop) {
+    public ComponentInstanceProperty createDeclaredProperty(PropertyDataDefinition prop) {
         return new ComponentInstanceProperty(prop);
     }
 
     @Override
-    Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String cmptInstanceId, List<ComponentInstanceProperty> properties) {
+    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String cmptInstanceId, List<ComponentInstanceProperty> properties) {
         log.debug("#updatePropertiesValues - updating component instance properties for instance {} on component {}", cmptInstanceId, component.getUniqueId());
         Map<String, List<ComponentInstanceProperty>> instProperties = Collections.singletonMap(cmptInstanceId, properties);
         return toscaOperationFacade.addComponentInstancePropertiesToComponent(component, instProperties);
     }
 
     @Override
-    Optional<ComponentInstance> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
+    public Optional<ComponentInstance> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
         log.debug("#resolvePropertiesOwner - fetching component instance {} of component {}", propertiesOwnerId, component.getUniqueId());
         return component.getComponentInstanceById(propertiesOwnerId);
     }
 
     @Override
-    void addPropertiesListToInput(ComponentInstanceProperty declaredProp, InputDefinition input) {
+    public void addPropertiesListToInput(ComponentInstanceProperty declaredProp, InputDefinition input) {
         List<ComponentInstanceProperty> propertiesList = input.getProperties();
         if(propertiesList == null) {
             propertiesList = new ArrayList<>(); // adding the property with the new value for UI

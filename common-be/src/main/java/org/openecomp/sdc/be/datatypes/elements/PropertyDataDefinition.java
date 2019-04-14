@@ -20,12 +20,17 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.util.*;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class PropertyDataDefinition extends ToscaDataDefinition {
 
@@ -59,8 +64,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 	private String inputId;
 	private String instanceUniqueId;
 	private String propertyId;
-	private String parentPropertyType;
-	private String subPropertyInputPath;
+    private String parentPropertyType;
+    private String subPropertyInputPath;
 
 	private List<Annotation> annotations;
 	/**
@@ -69,6 +74,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 	private String parentUniqueId;
 
 	private List<GetInputValueDataDefinition> getInputValues;
+
+	private List<GetPolicyValueDataDefinition> getPolicyValues;
 
 	public PropertyDataDefinition() {
 		super();
@@ -97,32 +104,33 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		this.setParentUniqueId(p.getParentUniqueId());
 		this.setOwnerId(p.getOwnerId());
 		this.setGetInputValues(p.getGetInputValues());
+		this.setGetPolicyValues(p.getGetPolicyValues());
 		this.setInputPath(p.getInputPath());
 		this.setStatus(p.getStatus());
 		this.setInputId(p.getInputId());
 		this.setInstanceUniqueId(p.getInstanceUniqueId());
 		this.setPropertyId(p.getPropertyId());
-		this.setParentPropertyType(p.getParentPropertyType());
-		this.setSubPropertyInputPath(p.getSubPropertyInputPath());
+		this.parentPropertyType = p.getParentPropertyType();
+		this.subPropertyInputPath = p.getSubPropertyInputPath();
 		if(isNotEmpty(p.annotations)){
 		    this.setAnnotations(p.annotations);
         }
 	}
 
 	public String getParentPropertyType() {
-		return parentPropertyType;
+	    return parentPropertyType;
 	}
 
 	public void setParentPropertyType(String parentPropertyType) {
-		this.parentPropertyType = parentPropertyType;
+	    this.parentPropertyType = parentPropertyType;
 	}
 
 	public String getSubPropertyInputPath() {
-		return subPropertyInputPath;
+	    return subPropertyInputPath;
 	}
 
 	public void setSubPropertyInputPath(String subPropertyInputPath) {
-		this.subPropertyInputPath = subPropertyInputPath;
+	    this.subPropertyInputPath = subPropertyInputPath;
 	}
 
 	public String getInputPath() {
@@ -267,6 +275,18 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
 	public void setGetInputValues(List<GetInputValueDataDefinition> getInputValues) {
 		this.getInputValues = getInputValues;
+	}
+
+	public List<GetPolicyValueDataDefinition> safeGetGetPolicyValues() {
+		return CollectionUtils.isEmpty(getPolicyValues) ? new ArrayList<>() : getPolicyValues;
+	}
+
+	public List<GetPolicyValueDataDefinition> getGetPolicyValues() {
+		return getPolicyValues;
+	}
+
+	public void setGetPolicyValues(List<GetPolicyValueDataDefinition> getPolicyValues) {
+		this.getPolicyValues = getPolicyValues;
 	}
 
 	public String getStatus() {

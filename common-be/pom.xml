@@ -60,8 +60,18 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${tosca.datatype.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>
