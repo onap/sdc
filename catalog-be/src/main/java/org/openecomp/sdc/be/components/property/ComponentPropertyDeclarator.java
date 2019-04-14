@@ -18,6 +18,10 @@ package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -29,11 +33,6 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @org.springframework.stereotype.Component
 public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Component, PropertyDataDefinition> {
@@ -52,12 +51,12 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
   }
 
   @Override
-  PropertyDataDefinition createDeclaredProperty(PropertyDataDefinition prop) {
+  public PropertyDataDefinition createDeclaredProperty(PropertyDataDefinition prop) {
     return new PropertyDataDefinition(prop);
   }
 
   @Override
-  Either<?, StorageOperationStatus> updatePropertiesValues(Component component,
+  public Either<?, StorageOperationStatus> updatePropertiesValues(Component component,
                                                            String propertiesOwnerId,
                                                            List<PropertyDataDefinition> properties) {
     if(CollectionUtils.isNotEmpty(properties)) {
@@ -74,12 +73,12 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
   }
 
   @Override
-  Optional<Component> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
-    return Optional.of( component);
+  public Optional<Component> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
+    return Optional.of(component);
   }
 
   @Override
-  void addPropertiesListToInput(PropertyDataDefinition declaredProp,
+  public void addPropertiesListToInput(PropertyDataDefinition declaredProp,
                                 InputDefinition input) {
 
     List<ComponentInstanceProperty> propertiesList = input.getProperties();

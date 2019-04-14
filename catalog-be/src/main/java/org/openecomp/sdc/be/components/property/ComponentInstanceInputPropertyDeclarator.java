@@ -1,21 +1,29 @@
 package org.openecomp.sdc.be.components.property;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getInputAnnotations;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.*;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getInputAnnotations;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDeclarator<ComponentInstance, ComponentInstanceInput> {
@@ -33,25 +41,25 @@ public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDec
     }
 
     @Override
-    ComponentInstanceInput createDeclaredProperty(PropertyDataDefinition prop) {
+    public ComponentInstanceInput createDeclaredProperty(PropertyDataDefinition prop) {
         return new ComponentInstanceInput(prop);
     }
 
     @Override
-    Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String cmptInstanceId, List<ComponentInstanceInput> properties) {
+    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String cmptInstanceId, List<ComponentInstanceInput> properties) {
         log.debug("#updatePropertiesValues - updating component instance inputs for instance {} on component {}", cmptInstanceId, component.getUniqueId());
         Map<String, List<ComponentInstanceInput>> instProperties = Collections.singletonMap(cmptInstanceId, properties);
         return toscaOperationFacade.addComponentInstanceInputsToComponent(component, instProperties);
     }
 
     @Override
-    Optional<ComponentInstance> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
+    public Optional<ComponentInstance> resolvePropertiesOwner(Component component, String propertiesOwnerId) {
         log.debug("#resolvePropertiesOwner - fetching component instance {} of component {}", propertiesOwnerId, component.getUniqueId());
         return component.getComponentInstanceById(propertiesOwnerId);
     }
 
     @Override
-    void addPropertiesListToInput(ComponentInstanceInput declaredProp, InputDefinition input) {
+    public void addPropertiesListToInput(ComponentInstanceInput declaredProp, InputDefinition input) {
         List<ComponentInstanceInput> inputsValueList = input.getInputs();
         if(inputsValueList == null) {
             inputsValueList = new ArrayList<>(); // adding the property with the new value for UI

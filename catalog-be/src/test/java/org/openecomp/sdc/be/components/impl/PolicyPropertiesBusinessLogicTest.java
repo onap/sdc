@@ -1,6 +1,14 @@
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.List;
+import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,19 +27,15 @@ import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyPropertiesBusinessLogicTest {
@@ -63,6 +67,11 @@ public class PolicyPropertiesBusinessLogicTest {
 
     @Before
     public void setUp() throws Exception {
+        testInstance.setUserValidations(userValidations);
+        testInstance.setTitanGenericDao(titanDao);
+        testInstance.setToscaOperationFacade(toscaOperationFacade);
+        testInstance.setComponentsUtils(componentsUtils);
+
         componentFilter = new ComponentParametersView(true);
         componentFilter.setIgnorePolicies(false);
         componentFilter.setIgnoreUsers(false);

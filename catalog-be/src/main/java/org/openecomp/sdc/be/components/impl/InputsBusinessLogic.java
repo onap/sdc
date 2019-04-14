@@ -27,7 +27,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import javax.inject.Inject;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import fj.data.Either;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -59,8 +62,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
@@ -399,6 +400,13 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     }
 
+    @Override
+    public Either<List<InputDefinition>, ResponseFormat> declareProperties(String userId, String componentId,
+            ComponentTypeEnum componentTypeEnum, ComponentInstInputsMap componentInstInputsMap) {
+
+        return createMultipleInputs(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
+    }
+
     public Either<List<InputDefinition>, ResponseFormat> createMultipleInputs(String userId, String componentId, ComponentTypeEnum componentType, ComponentInstInputsMap componentInstInputsMapUi, boolean shouldLockComp, boolean inTransaction) {
 
         Either<List<InputDefinition>, ResponseFormat> result = null;
@@ -544,6 +552,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnorePolicies(false);
         componentParametersView.setIgnoreGroups(false);
         componentParametersView.setIgnoreUsers(false);
+        componentParametersView.setIgnoreInterfaces(false);
+        componentParametersView.setIgnoreProperties(false);
 
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade.getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
@@ -614,17 +624,19 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             PropertyValueConverter converter = type.getConverter();
             // get inner type
             String innerType = null;
-            SchemaDefinition schema = newInputDefinition.getSchema();
-            if (schema != null) {
-                PropertyDataDefinition prop = schema.getProperty();
-                if (prop != null) {
-                    innerType = prop.getType();
+            if (newInputDefinition != null) {
+                SchemaDefinition schema = newInputDefinition.getSchema();
+                if (schema != null) {
+                    PropertyDataDefinition prop = schema.getProperty();
+                    if (prop != null) {
+                        innerType = prop.getType();
+                    }
                 }
-            }
-            String convertedValue;
-            if (newInputDefinition.getDefaultValue() != null) {
-                convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
-                newInputDefinition.setDefaultValue(convertedValue);
+                String convertedValue;
+                if (newInputDefinition.getDefaultValue() != null) {
+                    convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
+                    newInputDefinition.setDefaultValue(convertedValue);
+                }
             }
         }
         return Either.left(newInputDefinition);

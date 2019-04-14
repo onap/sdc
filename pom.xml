@@ -58,6 +58,7 @@ Modifications copyright (c) 2018 Nokia
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.8.10</jackson.version>
         <jackson-annotations.version>2.8.0</jackson-annotations.version>
+        <jackson.mapper.version>1.9.13</jackson.mapper.version>
 
         <!-- Yaml for properties -->
         <snakeyaml.version>1.14</snakeyaml.version>

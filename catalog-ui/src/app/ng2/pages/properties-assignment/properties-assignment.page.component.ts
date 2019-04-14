@@ -61,6 +61,7 @@ export class PropertiesAssignmentComponent {
 
     instanceFePropertiesMap:InstanceFePropertiesMap;
     inputs: Array<InputFEModel> = [];
+    policies: Array<PolicyInstance> = [];
     instances: Array<ComponentInstance|GroupInstance|PolicyInstance> = [];
     searchQuery: string;
     propertyStructureHeader: string;
@@ -76,10 +77,12 @@ export class PropertiesAssignmentComponent {
     currentMainTab:Tab;
     isInputsTabSelected:boolean;
     isPropertiesTabSelected:boolean;
+    isPoliciesTabSelected:boolean;
     isReadonly:boolean;
     resourceIsReadonly:boolean;
     loadingInstances:boolean = false;
     loadingInputs:boolean = false;
+    loadingPolicies:boolean = false;
     loadingProperties:boolean = false;
     changedData:Array<PropertyFEModel|InputFEModel>;
     hasChangedData:boolean;
@@ -123,6 +126,7 @@ export class PropertiesAssignmentComponent {
     ngOnInit() {
         console.log("==>" + this.constructor.name + ": ngOnInit");
         this.loadingInputs = true;
+        this.loadingPolicies = true;
         this.loadingInstances = true;
         this.loadingProperties = true;
         this.componentServiceNg2
@@ -139,10 +143,16 @@ export class PropertiesAssignmentComponent {
         this.componentServiceNg2
             .getComponentResourcePropertiesData(this.component)
             .subscribe(response => {
+                this.loadingPolicies = false;
                 this.instances = [];
                 this.instances.push(...response.componentInstances);
                 this.instances.push(...response.groupInstances);
-                this.instances.push(...response.policies);
+
+                _.forEach(response.policies, (policy: any) => {
+                    const newPolicy: InputFEModel = new InputFEModel(policy);
+                    this.inputsUtils.resetInputDefaultValue(newPolicy, policy.defaultValue);
+                    this.policies.push(policy);
+                });
 
                 // add the service self instance to the top of the list.
                 const serviceInstance = new ComponentInstance();
@@ -296,6 +306,8 @@ export class PropertiesAssignmentComponent {
             itemHasChanged = item.hasValueObjChanged();
         } else if (this.isInputsTabSelected && item instanceof InputFEModel) {
             itemHasChanged = item.hasDefaultValueChanged();
+        } else if (this.isPoliciesTabSelected && item instanceof InputFEModel) {
+            itemHasChanged = item.hasDefaultValueChanged();
         }
 
         const dataChangedIdx = this.changedData.findIndex((changedItem) => changedItem === item);
@@ -311,7 +323,7 @@ export class PropertiesAssignmentComponent {
 
         if (this.isPropertiesTabSelected) {
             this.isValidChangedData = this.changedData.every((changedItem) => (<PropertyFEModel>changedItem).valueObjIsValid);
-        } else if (this.isInputsTabSelected) {
+        } else if (this.isInputsTabSelected || this.isPoliciesTabSelected) {
             this.isValidChangedData = this.changedData.every((changedItem) => (<InputFEModel>changedItem).defaultValueObjIsValid);
         }
         this.updateHasChangedData();
@@ -385,6 +397,7 @@ export class PropertiesAssignmentComponent {
         this.currentMainTab = this.propertyInputTabs.tabs.find((tab) => tab.title === event.title);
         this.isPropertiesTabSelected = this.currentMainTab.title === "Properties";
         this.isInputsTabSelected = this.currentMainTab.title === "Inputs";
+        this.isPoliciesTabSelected = this.currentMainTab.title === "Policies";
         this.propertyStructureHeader = null;
         this.searchQuery = '';
     };
@@ -431,6 +444,46 @@ export class PropertiesAssignmentComponent {
                 });
             }, error => {}); //ignore error
     };
+
+    /*** DECLARE PROPERTIES/POLICIES ***/
+    declarePropertiesToPolicies = (): void => {
+        let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
+
+        angular.forEach(instancesIds, (instanceId: string): void => {
+            let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
+            if (selectedInstanceData instanceof ComponentInstance) {
+                if (!this.isInput(selectedInstanceData.originType)) {
+                    selectedComponentInstancesProperties[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+                }
+            }
+        });
+
+        let policiesToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(null, selectedComponentInstancesProperties, null, null);
+        this.loadingPolicies = true;
+
+        this.componentServiceNg2
+            .createPolicy(this.component, policiesToCreate, this.isSelf())
+            .subscribe(response => {
+                this.setPolicyTabIndication(response.length);
+                this.checkedPropertiesCount = 0;
+                this.displayPoliciesAsDeclared(response);
+                this.loadingPolicies = false;
+            }); //ignore error
+
+    };
+
+    displayPoliciesAsDeclared = (policies) => {
+        _.forEach(policies, (policy: any) => {
+            let newPolicy: InputFEModel = new InputFEModel(policy);
+            this.inputsUtils.resetInputDefaultValue(newPolicy, policy.defaultValue);
+            newPolicy.relatedPropertyName = policy.name;
+            newPolicy.relatedPropertyValue = policy.value;
+            this.updatePropertyValueAfterDeclare(newPolicy);
+            this.policies.push(policy);
+        });
+    };
+
 
     saveChangedData = ():Promise<(PropertyBEModel|InputBEModel)[]> => {
         return new Promise((resolve, reject) => {
@@ -648,6 +701,10 @@ export class PropertiesAssignmentComponent {
         this.propertyInputTabs.setTabIndication('Inputs', numInputs);
     };
 
+    setPolicyTabIndication = (numPolicies: number): void => {
+        this.propertyInputTabs.setTabIndication('Policies', numPolicies);
+    };
+
     resetUnsavedChangesForInput = (input:InputFEModel) => {
         this.inputsUtils.resetInputDefaultValue(input, input.defaultValue);
         this.changedData = this.changedData.filter((changedItem) => changedItem.uniqueId !== input.uniqueId);
@@ -683,6 +740,18 @@ export class PropertiesAssignmentComponent {
                 //     }
                 // }
             }, error => {}); //ignore error
+    };
+
+    deletePolicy = (policy: PolicyInstance) => {
+        this.loadingPolicies = true;
+        this.componentServiceNg2
+            .deletePolicy(this.component, policy)
+            .subscribe(response => {
+                this.policies = this.policies.filter(policy => policy.uniqueId !== response.uniqueId);
+                //Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning properties within the response, use commented code below instead!
+                this.changeSelectedInstance(this.selectedInstanceData);
+                this.loadingPolicies = false;
+            });
     };
 
     deleteProperty = (property: PropertyFEModel) => {

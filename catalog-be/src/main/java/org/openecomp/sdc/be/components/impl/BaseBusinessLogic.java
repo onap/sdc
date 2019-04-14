@@ -21,15 +21,15 @@
 package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
-
+import fj.data.Either;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import fj.data.Either;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -46,8 +46,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
@@ -95,6 +97,7 @@ public abstract class BaseBusinessLogic {
     private static final String SCHEMA_DOESN_T_EXISTS_FOR_PROPERTY_OF_TYPE = "Schema doesn't exists for property of type {}";
     private static final String PROPERTY_IN_SCHEMA_DEFINITION_INSIDE_PROPERTY_OF_TYPE_DOESN_T_EXIST = "Property in Schema Definition inside property of type {} doesn't exist";
     private static final String ADD_PROPERTY_VALUE = "Add property value";
+    private static final String THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID = "The value {} of property from type {} is invalid";
     @Autowired
     protected ComponentsUtils componentsUtils;
 
@@ -147,6 +150,9 @@ public abstract class BaseBusinessLogic {
     protected InterfaceOperation interfaceOperation;
 
     @Autowired
+    protected InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+
+    @Autowired
     protected InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
 
     @javax.annotation.Resource
@@ -175,6 +181,10 @@ public abstract class BaseBusinessLogic {
         this.toscaOperationFacade = toscaOperationFacade;
     }
 
+    public void setPolicyTypeOperation(PolicyTypeOperation policyTypeOperation) {
+        this.policyTypeOperation = policyTypeOperation;
+    }
+
     public void setDataTypeCache(ApplicationDataTypeCache dataTypeCache) {
         this.dataTypeCache = dataTypeCache;
     }
@@ -182,6 +192,14 @@ public abstract class BaseBusinessLogic {
     public void setPropertyOperation(PropertyOperation propertyOperation) {
         this.propertyOperation = propertyOperation;
     }
+
+    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
+        this.interfaceOperation = interfaceOperation;
+    }
+    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
+    }
+
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {
         return userValidations.validateUserNotEmpty(user, ecompErrorContext);
@@ -191,9 +209,14 @@ public abstract class BaseBusinessLogic {
         return userValidations.validateUserExists(user.getUserId(), ecompErrorContext, inTransaction);
     }
 
-    void validateUserExist(String userId, String ecompErrorContext) {
-        userValidations.validateUserExist(userId, ecompErrorContext);
+    protected void validateUserExist(String userId, String ecompErrorContext) {
+      userValidations.validateUserExist(userId, ecompErrorContext);
     }
+
+    public void setGroupTypeOperation(IGroupTypeOperation groupTypeOperation) {
+        this.groupTypeOperation = groupTypeOperation;
+    }
+
 
     Either<User, ActionStatus> validateUserExistsActionStatus(String userId, String ecompErrorContext) {
         return userValidations.validateUserExistsActionStatus(userId, ecompErrorContext);
@@ -326,7 +349,9 @@ public abstract class BaseBusinessLogic {
         String propertyType = property.getType();
         String innerType = getInnerType(property);
         // Specific Update Logic
-        Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes);
+        Either<Object, Boolean> isValid =
+            propertyOperation.validateAndUpdatePropertyValue(propertyType, (String) property.getValue(), true,
+                innerType, allDataTypes);
         String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
@@ -436,7 +461,7 @@ public abstract class BaseBusinessLogic {
             ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
             innerType = propertyInnerTypeValid.getLeft();
             if (!propertyInnerTypeValid.getRight()) {
-                log.info("Invalid inner type for property {} type {}", property.getName(), property.getType());
+                log.info("Invalid inner type for property {} type {}, dataTypeCount {}", property.getName(), property.getType(), dataTypes.size());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
                 return Either.right(responseFormat);
             }
@@ -445,9 +470,11 @@ public abstract class BaseBusinessLogic {
             log.info("Invalid default value for property {} type {}", property.getName(), property.getType());
             ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType, property.getDefaultValue());
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
+                    property.getDefaultValue());
             } else {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type, property.getDefaultValue());
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type,
+                    property.getDefaultValue());
             }
             return Either.right(responseFormat);
 
@@ -611,7 +638,7 @@ public abstract class BaseBusinessLogic {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
                 ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
                 if (Boolean.FALSE.equals(validateResult.right)) {
-                    log.debug("The value {} of property from type {} is invalid", value, propertyType);
+                    log.debug(THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID, value, propertyType);
                     return Either.right(false);
                 }
                 JsonElement jsonElement = validateResult.left;
@@ -621,7 +648,7 @@ public abstract class BaseBusinessLogic {
             log.trace("before validating property type {}", propertyType);
             boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
             if (!isValidProperty) {
-                log.debug("The value {} of property from type {} is invalid", value, type);
+                log.debug(THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID, value, type);
                 return Either.right(false);
             }
         }
@@ -683,64 +710,70 @@ public abstract class BaseBusinessLogic {
         }
         return jsonElement.toString();
     }
-    
-    void rollbackWithException(ActionStatus actionStatus, String... params) {
+
+    protected void rollbackWithException(ActionStatus actionStatus, String... params) {
         titanDao.rollback();
         throw new ComponentException(actionStatus, params);
     }
 
-	public <T extends PropertyDataDefinition> List<PropertyConstraint> setInputConstraint(T inputDefinition) {
-		if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType())
-				&& StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
-			return setConstraint(inputDefinition);
-		}
+    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(String userId, String componentId,
+            ComponentTypeEnum componentTypeEnum, ComponentInstInputsMap componentInstInputsMap) {
 
-		return Collections.emptyList();
-	}
+        return Either.left(new ArrayList<>());
+    }
 
-	private <T extends PropertyDataDefinition> List<PropertyConstraint> setConstraint(T inputDefinition) {
-		List<PropertyConstraint> constraints = new ArrayList<>();
-		String[] inputPathArr = inputDefinition.getSubPropertyInputPath().split("#");
-		if (inputPathArr.length > 1) {
-			inputPathArr = ArrayUtils.remove(inputPathArr, 0);
-		}
+    public <T extends PropertyDataDefinition> List<PropertyConstraint> setInputConstraint(T inputDefinition) {
+        if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType())
+                && StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
+                return setConstraint(inputDefinition);
+        }
 
-		Map<String, DataTypeDefinition> dataTypeDefinitionMap =
-				applicationDataTypeCache.getAll().left().value();
+        return Collections.emptyList();
+    }
 
-		String propertyType = inputDefinition.getParentPropertyType();
+    private <T extends PropertyDataDefinition> List<PropertyConstraint> setConstraint(T inputDefinition) {
+        List<PropertyConstraint> constraints = new ArrayList<>();
+        String[] inputPathArr = inputDefinition.getSubPropertyInputPath().split("#");
+        if (inputPathArr.length > 1) {
+            inputPathArr = ArrayUtils.remove(inputPathArr, 0);
+        }
 
-		for (String anInputPathArr : inputPathArr) {
-			if (ToscaType.isPrimitiveType(propertyType)) {
-				constraints.addAll(
-						dataTypeDefinitionMap.get(propertyType).getConstraints());
-			} else if (!ToscaType.isCollectionType(propertyType)) {
-				propertyType = setConstraintForComplexType(dataTypeDefinitionMap, propertyType, anInputPathArr,
-						constraints);
-			}
-		}
+        Map<String, DataTypeDefinition> dataTypeDefinitionMap =
+                applicationDataTypeCache.getAll().left().value();
 
-		return constraints;
-	}
+        String propertyType = inputDefinition.getParentPropertyType();
 
-	private String setConstraintForComplexType(Map<String, DataTypeDefinition> dataTypeDefinitionMap,
-											   String propertyType,
-											   String anInputPathArr,
-											   List<PropertyConstraint> constraints) {
-		String type = null;
-		List<PropertyDefinition> propertyDefinitions =
-				dataTypeDefinitionMap.get(propertyType).getProperties();
-		for (PropertyDefinition propertyDefinition : propertyDefinitions) {
-			if (propertyDefinition.getName().equals(anInputPathArr)) {
-				if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
-					constraints.addAll(propertyDefinition.getConstraints());
-				} else {
-					type = propertyDefinition.getType();
-				}
-				break;
-			}
-		}
+        for (String anInputPathArr : inputPathArr) {
+            if (ToscaType.isPrimitiveType(propertyType)) {
+                constraints.addAll(
+                        dataTypeDefinitionMap.get(propertyType).getConstraints());
+            } else if (!ToscaType.isCollectionType(propertyType)) {
+                propertyType = setConstraintForComplexType(dataTypeDefinitionMap, propertyType, anInputPathArr,
+                        constraints);
+            }
+        }
 
-		return type;
-	}
+        return constraints;
+    }
+
+    private String setConstraintForComplexType(Map<String, DataTypeDefinition> dataTypeDefinitionMap,
+                                               String propertyType,
+                                               String anInputPathArr,
+                                               List<PropertyConstraint> constraints) {
+        String type = null;
+        List<PropertyDefinition> propertyDefinitions =
+                dataTypeDefinitionMap.get(propertyType).getProperties();
+        for (PropertyDefinition propertyDefinition : propertyDefinitions) {
+            if (propertyDefinition.getName().equals(anInputPathArr)) {
+                if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
+                    constraints.addAll(propertyDefinition.getConstraints());
+                } else {
+                    type = propertyDefinition.getType();
+                }
+                break;
+            }
+        }
+
+        return type;
+    }
 }

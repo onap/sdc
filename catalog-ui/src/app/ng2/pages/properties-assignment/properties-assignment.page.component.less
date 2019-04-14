@@ -59,11 +59,10 @@
             position:absolute;
             top:0;
             right:0;
+            display: flex;
         }
 
         .search-filter-container{
-            position: absolute;
-            right: 100px;
             display:flex;
             flex-direction:row;
 
@@ -87,7 +86,7 @@
                 width: 14px;
                 height: 14px;
                 position: absolute;
-                right:42px;
+                left:170px;
                 top: 8px;
             }
 
@@ -110,9 +109,9 @@
         }
 
         .declare-button{
-            position: absolute;
-            top: 0;
-            right: 0;
+            &:first-of-type {
+                margin-right: 10px;
+            }
         }
 
         .main-tabs-section {

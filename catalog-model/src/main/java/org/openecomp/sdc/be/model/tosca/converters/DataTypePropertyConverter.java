@@ -5,14 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.common.util.JsonUtils;
-
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.common.util.JsonUtils;
 
 public class DataTypePropertyConverter {
 
@@ -52,7 +51,7 @@ public class DataTypePropertyConverter {
     }
 
     private void mergeDefaultValuesRec(JsonObject defaultValue, JsonObject value) {
-        if (ToscaConverterUtils.isGetInputValue(value)) {
+        if (ToscaConverterUtils.isGetInputValue(value) || ToscaConverterUtils.isGetPolicyValue(value)) {
             return;
         }
         for (Map.Entry<String, JsonElement> defVal : defaultValue.entrySet()) {

@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -27,6 +29,8 @@ import java.util.Map;
 
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
+@Getter
+@Setter
 public class ComponentInstInputsMap {
 
     private Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap;
@@ -34,6 +38,8 @@ public class ComponentInstInputsMap {
     private Map<String, List<ComponentInstancePropInput>> serviceProperties;
     private Map<String, List<ComponentInstancePropInput>> policyProperties;
     private Map<String, List<ComponentInstancePropInput>> groupProperties;
+    private Map<String, List<ComponentInstancePropInput>> componentPropertiesToPolicies;
+    private Map<String, List<ComponentInstancePropInput>> componentInstancePropertiesToPolicies;
 
     public Pair<String, List<ComponentInstancePropInput>> resolvePropertiesToDeclare() {
         if (isNotEmpty(componentInstanceInputsMap)) {
@@ -51,6 +57,12 @@ public class ComponentInstInputsMap {
         if (isNotEmpty(groupProperties)) {
             return singleMapEntry(groupProperties);
         }
+        if(isNotEmpty(componentPropertiesToPolicies)) {
+            return singleMapEntry(componentPropertiesToPolicies);
+        }
+        if (isNotEmpty(componentInstancePropertiesToPolicies)) {
+            return singleMapEntry(componentInstancePropertiesToPolicies);
+        }
         throw new IllegalStateException("there are no properties selected for declaration");
     }
 
@@ -58,48 +70,4 @@ public class ComponentInstInputsMap {
         Map.Entry<String, List<ComponentInstancePropInput>> singleEntry = propertiesMap.entrySet().iterator().next();
         return Pair.of(singleEntry.getKey(), singleEntry.getValue());
     }
-
-    public Map<String, List<ComponentInstancePropInput>> getComponentInstanceInputsMap() {
-        return componentInstanceInputsMap;
-    }
-
-    public void setComponentInstanceInputsMap(Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap) {
-        this.componentInstanceInputsMap = componentInstanceInputsMap;
-    }
-
-    public Map<String, List<ComponentInstancePropInput>> getComponentInstanceProperties() {
-        return componentInstanceProperties;
-    }
-
-    public void setComponentInstancePropInput(Map<String, List<ComponentInstancePropInput>> componentInstanceProperties) {
-        this.componentInstanceProperties = componentInstanceProperties;
-    }
-
-    public Map<String, List<ComponentInstancePropInput>> getPolicyProperties() {
-        return policyProperties;
-    }
-
-    public void setPolicyProperties(Map<String, List<ComponentInstancePropInput>> policyProperties) {
-        this.policyProperties = policyProperties;
-    }
-
-    public Map<String, List<ComponentInstancePropInput>> getServiceProperties() {
-        return serviceProperties;
-    }
-
-    public void setServiceProperties(
-        Map<String, List<ComponentInstancePropInput>> serviceProperties) {
-        this.serviceProperties = serviceProperties;
-    }
-
-    public Map<String, List<ComponentInstancePropInput>> getGroupProperties() {
-        return groupProperties;
-    }
-
-    public void setGroupProperties(Map<String, List<ComponentInstancePropInput>> groupProperties) {
-        this.groupProperties = groupProperties;
-    }
-
-
-
 }
