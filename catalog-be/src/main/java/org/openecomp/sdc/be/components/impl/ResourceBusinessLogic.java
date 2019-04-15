@@ -80,6 +80,7 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
@@ -112,6 +113,7 @@ import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadInfo;
@@ -3108,6 +3110,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     uploadComponentInstanceInfo.getCapabilities());
             componentInstance.setCapabilities(validComponentInstanceCapabilities);
         }
+
+        if (isNotEmpty(uploadComponentInstanceInfo.getArtifacts())) {
+            Map<String, Map<String, UploadArtifactInfo>> artifacts = uploadComponentInstanceInfo.getArtifacts();
+            Map<String, ToscaArtifactDataDefinition> toscaArtifacts = new HashMap<>();
+            Map<String, Map<String, UploadArtifactInfo>> arts = artifacts.entrySet().stream()
+                                	.filter(e -> e.getKey().contains(TypeUtils.ToscaTagNamesEnum.ARTIFACTS.getElementName()))
+                                        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+            Map<String, UploadArtifactInfo> artifact = arts.get(TypeUtils.ToscaTagNamesEnum.ARTIFACTS.getElementName());
+            for (String key : artifact.keySet()) {
+                ToscaArtifactDataDefinition to = new ToscaArtifactDataDefinition();
+                to.setFile(artifact.get(key).getFile());
+                to.setType(artifact.get(key).getType());
+                toscaArtifacts.put(key, to);
+            }
+            componentInstance.setToscaArtifacts(toscaArtifacts);
+        }
+
         if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
             log.debug(
                     "createResourceInstances - not found lates version for resource instance with name {} and type ",
