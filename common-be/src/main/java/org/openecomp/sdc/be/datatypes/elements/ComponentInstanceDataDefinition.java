@@ -20,15 +20,16 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
@@ -64,6 +65,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setIsProxy(dataDefinition.getIsProxy());
         setDirectives(dataDefinition.getDirectives());
         setOriginArchived(dataDefinition.isOriginArchived());
+        setToscaArtifacts(dataDefinition.getToscaArtifacts());
     }
 
     public String getIcon() {
@@ -291,6 +293,17 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
             directives = new ArrayList<>();
         }
         setToscaPresentationValue(JsonPresentationFields.CI_DIRECTIVES, directives);
+    }
+
+    public  Map<String, ToscaArtifactDataDefinition> getToscaArtifacts() {
+        return ( Map<String, ToscaArtifactDataDefinition>) getToscaPresentationValue(JsonPresentationFields.CI_ARTIFACTS);
+    }
+
+    public  void setToscaArtifacts(Map<String, ToscaArtifactDataDefinition> artifacts) {
+        if (artifacts == null){
+            artifacts = new HashMap<>();
+        }
+        setToscaPresentationValue(JsonPresentationFields.CI_ARTIFACTS, artifacts);
     }
 
     public Boolean isOriginArchived() {
