@@ -134,7 +134,6 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 
     @Override
     public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
-
         log.debug("start performing certification request for resource {}", component.getUniqueId());
 
         ActionStatus actionStatus;

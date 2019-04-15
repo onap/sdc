@@ -130,7 +130,6 @@ public class ResourceImportManager {
             boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty();
             setConstantMetaData(resource, shouldBeCertified);
             setMetaDataFromJson(resourceMetaData, resource);
-
             Either<Boolean, ResponseFormat> validateResourceFromYaml = populateResourceFromYaml(resourceYml, resource);
             if (validateResourceFromYaml.isRight()) {
                 ResponseFormat validationErrorResponse = validateResourceFromYaml.right().value();

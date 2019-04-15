@@ -204,7 +204,6 @@ public class CsarUtils {
 	}
 
     private Either<ZipOutputStream, ResponseFormat> populateZip(Component component, boolean getFromCS, ZipOutputStream zip, boolean isInCertificationRequest) throws IOException {
-
 		LifecycleStateEnum lifecycleState = component.getLifecycleState();
 		String componentYaml;
 		Either<ToscaRepresentation, ToscaError> exportComponent;

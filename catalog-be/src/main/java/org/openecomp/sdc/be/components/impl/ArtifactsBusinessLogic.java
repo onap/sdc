@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -98,6 +99,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
+import org.openecomp.sdc.common.util.ZipUtil;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -290,7 +292,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             return Either.right(validateWorkOnResource.right().value());
         }
         // step 8
-
         return validateAndHandleArtifact(componentId, componentType, operation, artifactId, artifactInfo, origMd5, originData, interfaceUuid, operationUuid, user, component,
                 shouldLock, inTransaction, true);
     }
@@ -385,7 +386,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generateAndSaveToscaArtifact(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest,
                                                                                                       boolean shouldLock, boolean inTransaction, boolean fetchTemplatesFromDB) {
-
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generated = generateToscaArtifact(component, artifactDefinition, isInCertificationRequest, fetchTemplatesFromDB);
         if (generated.isRight()) {
             return generated;
@@ -412,7 +412,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
             byte[] value = generated.left().value();
             artifactInfo.setPayload(value);
-
         }
         else {
             Either<ToscaRepresentation, ToscaError> exportComponent = toscaExportUtils.exportComponent(parent);
@@ -425,6 +424,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
             log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
             String payload = exportComponent.left().value().getMainYaml();
+
             artifactInfo.setPayloadData(payload);
         }
         return Either.left(Either.left(artifactInfo));
@@ -861,7 +861,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleCreate(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction, User user, ComponentTypeEnum componentType,
                                                                                        org.openecomp.sdc.be.model.Component parent, String origMd5, String originData, String interfaceType, String operationName, boolean shouldLock, boolean inTransaction) {
-
         String artifactId = null;
 
         // step 11
@@ -1141,7 +1140,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<ArtifactDefinition, ResponseFormat> validateInput(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, String artifactId, User user, String interfaceName, String operationName,
                                                                      ComponentTypeEnum componentType, Component parentComponent) {
-
         Either<ArtifactDefinition, ResponseFormat> artifactById = findArtifactOnParentComponent(parentComponent, componentType, componentId, operation, artifactId);
         if (artifactById.isRight()) {
             return Either.right(artifactById.right().value());
@@ -3147,7 +3145,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         log.trace("Starting payload handling");
         byte[] payload = artifactInfo.getPayloadData();
         byte[] decodedPayload = null;
-
         if (payload != null && payload.length != 0) {
             // the generated artifacts were already decoded by the handler
             decodedPayload = artifactInfo.getGenerated() ? payload : Base64.decodeBase64(payload);

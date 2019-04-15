@@ -1217,6 +1217,7 @@ public class NodeTemplateOperation extends BaseOperation {
         if (dataDefinition.getOriginType() == OriginTypeEnum.ServiceProxy)
             dataDefinition.setIsProxy(true);
 
+
         return dataDefinition;
     }
 

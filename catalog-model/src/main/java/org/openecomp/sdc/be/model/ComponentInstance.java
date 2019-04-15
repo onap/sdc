@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+//import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private Map<String, List<RequirementDefinition>> requirements;
     private Map<String, ArtifactDefinition> deploymentArtifacts;
     private Map<String, ArtifactDefinition> artifacts;
+//    private Map<String, org.onap.sdc.tosca.datatypes.model.ArtifactDefinition> toscaArtifacts;
     private List<GroupInstance> groupInstances;
     private Map<String, Object> interfaces;
     private List<PropertyDefinition> properties;
@@ -93,6 +95,8 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 
     public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
         this.artifacts = artifacts;
+//        super.setArtifacts(artifacts);
+
     }
 
     public List<GroupInstance> getGroupInstances() {

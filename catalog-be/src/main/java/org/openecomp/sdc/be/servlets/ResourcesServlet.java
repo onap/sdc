@@ -96,7 +96,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             }
             // UI Create
             else {
-
                 ResourceBusinessLogic businessLogic = getResourceBL(context);
 
                 Either<Resource, ResponseFormat> convertResponse = parseToResource(data, modifier);
@@ -108,6 +107,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
                 Resource resource = convertResponse.left().value();
                 Resource createdResource = businessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
+
                 Object representation = RepresentationUtils.toRepresentation(createdResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
@@ -135,7 +135,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     }
 
     private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId, String resourceUniqueId) throws FileNotFoundException {
-
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
         Wrapper<String> yamlStringWrapper = new Wrapper<>();

@@ -526,7 +526,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
             @ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName,
             @ApiParam( hidden = true) String data) {
-
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
         String requestURI = request.getRequestURI();

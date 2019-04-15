@@ -787,7 +787,6 @@ public class ToscaOperationFacade {
     }
 
     public StorageOperationStatus associateComponentInstancesToComponent(Component containerComponent, Map<ComponentInstance, Resource> resourcesInstancesMap, boolean allowDeleted) {
-
         StorageOperationStatus result = null;
         CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Going to add component instances to component {}", containerComponent.getUniqueId());
 

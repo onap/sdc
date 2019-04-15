@@ -50,6 +50,7 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.MDC;
 
 import java.util.*;
@@ -264,7 +265,6 @@ public class ArtifactsOperations extends BaseOperation {
         foundArtifact = getArtifactByLabel(parentId, null, EdgeLabelEnum.TOSCA_ARTIFACTS);
         if (foundArtifact.isLeft()) {
             resMap.putAll(foundArtifact.left().value());
-
         }
 
         return Either.left(resMap);

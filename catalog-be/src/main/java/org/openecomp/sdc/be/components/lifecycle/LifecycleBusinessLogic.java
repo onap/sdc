@@ -199,7 +199,6 @@ public class LifecycleBusinessLogic {
         component = eitherResourceResponse.left().value();
         String resourceCurrVersion = component.getVersion();
         LifecycleStateEnum resourceCurrState = component.getLifecycleState();
-
         // lock resource
         if (!inTransaction && needLock) {
             log.debug("lock component {}", componentId);
