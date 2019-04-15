@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -383,8 +384,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 .equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) && StringUtils.isEmpty(artifactInfo.getArtifactChecksum());
     }
 
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generateAndSaveToscaArtifact(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest,
-                                                                                                      boolean shouldLock, boolean inTransaction, boolean fetchTemplatesFromDB) {
+    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generateAndSaveToscaArtifact(
+        ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component,
+        User user, boolean isInCertificationRequest, boolean shouldLock, boolean inTransaction,
+        boolean fetchTemplatesFromDB) {
 
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generated = generateToscaArtifact(component, artifactDefinition, isInCertificationRequest, fetchTemplatesFromDB);
         if (generated.isRight()) {
