@@ -691,6 +691,9 @@ public class ToscaExportHandler {
         Map<String, ToscaGroupTemplate> groupsMap = null;
         for (ComponentInstance componentInstance : componentInstances) {
             ToscaNodeTemplate nodeTemplate = new ToscaNodeTemplate();
+            if (componentInstance.getToscaArtifacts() != null && !(componentInstance.getToscaArtifacts()).isEmpty()) {
+                nodeTemplate.setArtifacts(convertToNodeTemplateArtifacts(componentInstance.getToscaArtifacts()));
+            }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
@@ -1216,6 +1219,19 @@ public class ToscaExportHandler {
         return Either.left(nodeType);
     }
 
+    protected Map<String, ToscaTemplateArtifact> convertToNodeTemplateArtifacts(Map<String, ToscaArtifactDataDefinition> artifacts) {
+        if (artifacts == null) {
+            return null;
+        }
+        Map<String, ToscaTemplateArtifact> arts = new HashMap<>();
+        for (Map.Entry<String, ToscaArtifactDataDefinition> entry : artifacts.entrySet()) {
+           ToscaTemplateArtifact artifact = new ToscaTemplateArtifact();
+           artifact.setFile(entry.getValue().getFile());
+           artifact.setType(entry.getValue().getType());
+           arts.put(entry.getKey(), artifact);
+        }
+        return arts;
+    }
 
     protected NodeFilter convertToNodeTemplateNodeFilterComponent(CINodeFilterDataDefinition inNodeFilter) {
         if (inNodeFilter == null){

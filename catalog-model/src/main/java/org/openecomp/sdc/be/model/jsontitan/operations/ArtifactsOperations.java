@@ -264,9 +264,7 @@ public class ArtifactsOperations extends BaseOperation {
         foundArtifact = getArtifactByLabel(parentId, null, EdgeLabelEnum.TOSCA_ARTIFACTS);
         if (foundArtifact.isLeft()) {
             resMap.putAll(foundArtifact.left().value());
-
         }
-
         return Either.left(resMap);
 
     }
