@@ -32,14 +32,16 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.elasticsearch.common.Strings;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactTypeToPayloadTypeSelector;
+import org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
+import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -52,11 +54,28 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
-import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
@@ -82,9 +101,12 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.exception.ResponseFormat;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.servlet.http.HttpServletRequest;
@@ -94,8 +116,17 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -2406,18 +2437,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isValidJson(byte[] jsonToParse) {
-        String parsed = new String(jsonToParse);
-        try {
-            gson.fromJson(parsed, Object.class);
-        }
-        catch (Exception e) {
-            log.debug("Json is invalid : {}", e.getMessage(), e);
-            return false;
-        }
-        return true;
-    }
-
     private void validateSingleDeploymentArtifactName(Wrapper<ResponseFormat> errorWrapper, String artifactName, Component parentComponent, NodeTypeEnum parentType) {
         boolean artifactNameFound = false;
         Iterator<ArtifactDefinition> parentDeploymentArtifactsItr = getDeploymentArtifacts(parentComponent, parentType, null)
@@ -3143,65 +3162,25 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             log.trace("Calculated checksum, base64 payload: {},  checksum: {}", payload, checkSum);
 
             // Specific payload validations of different types
-            Either<Boolean, ResponseFormat> isValidPayload = Either.left(true);
+            Either<Boolean, ResponseFormat> result = Either.left(true);
             if (isDeploymentArtifact(artifactInfo)) {
                 log.trace("Starting deployment artifacts payload validation");
                 String artifactType = artifactInfo.getArtifactType();
-                if (ArtifactTypeEnum.HEAT.getType()
-                                         .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.HEAT_VOL.getType()
-                                                                                                     .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.HEAT_NET
-                        .getType()
-                        .equalsIgnoreCase(artifactType)
-                        || ArtifactTypeEnum.HEAT_ENV.getType().equalsIgnoreCase(artifactType)) {
-                    isValidPayload = validateDeploymentHeatPayload(decodedPayload, artifactType);
-                    if (isValidPayload.isLeft()) {
-                        isValidPayload = extractHeatParameters(artifactInfo);
-                    }
+                String fileExtension = GeneralUtility.getFilenameExtension(artifactInfo.getArtifactName());
+                PayloadTypeEnum payloadType = ArtifactTypeToPayloadTypeSelector.getPayloadType(artifactType, fileExtension);
+                Either<Boolean, ActionStatus> isPayloadValid = payloadType.isValid(decodedPayload);
+                if (isPayloadValid.isRight()) {
+                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(isPayloadValid.right().value(), artifactType);
+                    return Either.right(responseFormat);
                 }
-                else if (ArtifactTypeEnum.YANG_XML.getType()
-                                                  .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.VNF_CATALOG.getType()
-                                                                                                                 .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.VF_LICENSE
-                        .getType()
-                        .equalsIgnoreCase(artifactType)
-                        || ArtifactTypeEnum.VENDOR_LICENSE.getType()
-                                                          .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.MODEL_INVENTORY_PROFILE
-                        .getType()
-                        .equalsIgnoreCase(artifactType)
-                        || ArtifactTypeEnum.MODEL_QUERY_SPEC.getType()
-                                                            .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.UCPE_LAYER_2_CONFIGURATION
-                        .getType()
-                        .equalsIgnoreCase(artifactType)) {
-                    isValidPayload = validateXmlPayload(decodedPayload, artifactType);
-                }
-                else if (ArtifactTypeEnum.DCAE_INVENTORY_JSON.getType()
-                                                             .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.DCAE_INVENTORY_TOSCA
-                        .getType()
-                        .equalsIgnoreCase(artifactType)
-                        || ArtifactTypeEnum.VES_EVENTS.getType()
-                                                      .equalsIgnoreCase(artifactType) || ArtifactTypeEnum.LIFECYCLE_OPERATIONS
-                        .getType()
-                        .equalsIgnoreCase(artifactType)) {
-                    String artifactFileName = artifactInfo.getArtifactName();
-                    String fileExtension = GeneralUtility.getFilenameExtension(artifactFileName).toLowerCase();
-                    switch (fileExtension) {
-                        case "xml":
-                            isValidPayload = validateXmlPayload(decodedPayload, artifactType);
-                            break;
-                        case "json":
-                            isValidPayload = validateJsonPayload(decodedPayload, artifactType);
-                            break;
-                        case "yml":
-                        case "yaml":
-                            isValidPayload = validateYmlPayload(decodedPayload, artifactType);
-                            break;
-                        default:
-                            break;
-                    }
+
+                if (payloadType.isHeatRelated()) {
+                    log.trace("Payload is heat related so going to extract heat parameters for artifact type {}", artifactType);
+                    result = extractHeatParameters(artifactInfo);
                 }
             }
-            if (isValidPayload.isRight()) {
-                ResponseFormat responseFormat = isValidPayload.right().value();
-                return Either.right(responseFormat);
+            if (result.isRight()) {
+                return Either.right(result.right().value());
             }
 
         } // null/empty payload is normal if called from metadata update ONLY.
@@ -3216,61 +3195,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         log.trace("Ended payload handling");
         return Either.left(decodedPayload);
-    }
-
-    private Either<Boolean, ResponseFormat> validateDeploymentHeatPayload(byte[] decodedPayload, String artifactType) {
-        // Basic YAML validation
-        YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
-        if (!yamlToObjectConverter.isValidYaml(decodedPayload)) {
-            log.debug("Invalid YAML format");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML, artifactType);
-            return Either.right(responseFormat);
-        }
-        if (!ArtifactTypeEnum.HEAT_ENV.getType().equalsIgnoreCase(artifactType)) {
-            // HEAT specific YAML validation
-            DeploymentArtifactHeatConfiguration heatConfiguration = yamlToObjectConverter.convert(decodedPayload, DeploymentArtifactHeatConfiguration.class);
-            if (heatConfiguration == null || heatConfiguration.getHeat_template_version() == null) {
-                log.debug("HEAT doesn't contain required \"heat_template_version\" section.");
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT, artifactType);
-                return Either.right(responseFormat);
-            }
-        }
-
-        return Either.left(true);
-    }
-
-    private Either<Boolean, ResponseFormat> validateYmlPayload(byte[] decodedPayload, String artifactType) {
-        Either<Boolean, ResponseFormat> res = Either.left(true);
-        YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
-        if (!yamlToObjectConverter.isValidYaml(decodedPayload)) {
-            log.debug("Invalid YAML format");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML, artifactType);
-            res = Either.right(responseFormat);
-        }
-
-        return res;
-    }
-
-    private Either<Boolean, ResponseFormat> validateXmlPayload(byte[] payload, String artifactType) {
-        boolean isXmlValid = isValidXml(payload);
-        if (!isXmlValid) {
-            ResponseFormat responseFormat = ResponseFormatManager.getInstance()
-                                                                 .getResponseFormat(ActionStatus.INVALID_XML, artifactType);
-            log.debug("Invalid XML content");
-            return Either.right(responseFormat);
-        }
-        return Either.left(true);
-    }
-
-    private Either<Boolean, ResponseFormat> validateJsonPayload(byte[] payload, String type) {
-        boolean isJsonValid = isValidJson(payload);
-        if (!isJsonValid) {
-            ResponseFormat responseFormat = ResponseFormatManager.getInstance()
-                                                                 .getResponseFormat(ActionStatus.INVALID_JSON, type);
-            log.debug("Invalid JSON content");
-            return Either.right(responseFormat);
-        }
-        return Either.left(true);
     }
 
     public Either<Operation, ResponseFormat> deleteArtifactByInterface(String resourceId, String userUserId, String artifactId,

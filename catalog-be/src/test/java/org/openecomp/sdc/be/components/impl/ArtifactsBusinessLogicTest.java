@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
 import mockit.Deencapsulation;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,13 +56,29 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -72,22 +89,28 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
@@ -981,21 +1004,6 @@ public class ArtifactsBusinessLogicTest {
 	}
 
 	
-
-
-	
-	@Test
-	public void testIsValidJson() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		byte[] jsonToParse = new byte[] { ' ' };
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidJson", new Object[] { jsonToParse });
-	}
-
-	
 	@Test
 	public void testValidateSingleDeploymentArtifactName() throws Exception {
 	ArtifactsBusinessLogic testSubject;Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
@@ -1160,71 +1168,96 @@ public class ArtifactsBusinessLogicTest {
 	}
 
 
-
-
-
-	
 	@Test
-	public void testHandlePayload() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		ArtifactDefinition artifactInfo =  buildArtifactPayload();
-		boolean isArtifactMetadataUpdate = false;
-		Either<byte[], ResponseFormat> result;
+	public void testGivenValidVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsDecodedPayload() {
+		final byte[] payload = "validYaml: yes".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "handlePayload",
+		final boolean isArtifactMetadataUpdate = false;
+		ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+
+		Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
 				new Object[] { artifactInfo, isArtifactMetadataUpdate });
+		assertArrayEquals(payload, result.left().value());
 	}
 
-	
-
-
-	
 	@Test
-	public void testValidateYmlPayload() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		byte[] decodedPayload = new byte[] { ' ' };
-		String artifactType = "";
-		Either<Boolean, ResponseFormat> result;
+	public void testGivenInValidVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
+		final int expectedStatus = 100;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_YAML), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "invalidYaml".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "validateYmlPayload",
-				new Object[] { decodedPayload, artifactType });
+		final boolean isArtifactMetadataUpdate = false;
+		ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+		testSubject.setComponentsUtils(componentsUtils);
+
+		Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
+				new Object[] { artifactInfo, isArtifactMetadataUpdate });
+
+		int status = result.right().value().getStatus();
+		assertEquals(expectedStatus, status);
 	}
 
-	
 	@Test
-	public void testValidateXmlPayload() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		byte[] payload = new byte[] { ' ' };
-		String artifactType = "";
-		Either<Boolean, ResponseFormat> result;
+	public void testGivenEmptyVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsMissingData() {
+		final int expectedStatus = 101;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_DATA), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "validateXmlPayload", new Object[] { payload, artifactType });
+		final boolean isArtifactMetadataUpdate = false;
+		ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+		testSubject.setComponentsUtils(componentsUtils);
+
+		Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
+				new Object[] { artifactInfo, isArtifactMetadataUpdate });
+
+		int status = result.right().value().getStatus();
+		assertEquals(expectedStatus, status);
 	}
 
-	
 	@Test
-	public void testValidateJsonPayload() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		byte[] payload = new byte[] { ' ' };
-		String type = "";
-		Either<Boolean, ResponseFormat> result;
+	public void testGivenValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsDecodedPayload() {
+		final byte[] payload = "heat_template_version: 1.0".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
 
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "validateJsonPayload", new Object[] { payload, type });
+		final boolean isArtifactMetadataUpdate = false;
+		ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+
+		Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
+				new Object[] { artifactInfo, isArtifactMetadataUpdate });
+		assertArrayEquals(payload, result.left().value());
 	}
-	
+
+	@Test
+	public void testGivenInValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
+		final int expectedStatus = 1000;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "validYaml: butNoHeatTemplateVersion".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
+
+		final boolean isArtifactMetadataUpdate = false;
+		ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+		testSubject.setComponentsUtils(componentsUtils);
+
+		Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
+				new Object[] { artifactInfo, isArtifactMetadataUpdate });
+
+		int status = result.right().value().getStatus();
+		assertEquals(expectedStatus, status);
+	}
+
+	private ArtifactDefinition createArtifactInfo(byte[] payload, String artifactName, ArtifactTypeEnum artifactType) {
+		ArtifactDefinition artifactInfo = new ArtifactDefinition();
+		artifactInfo.setArtifactName(artifactName);
+		artifactInfo.setArtifactType(artifactType.getType());
+		artifactInfo.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+		artifactInfo.setPayload(Base64.encodeBase64(payload));
+		return artifactInfo;
+	}
 
 
-
-
-	
 	@Test
 	public void testValidateUserRole() throws Exception {
 		ArtifactsBusinessLogic testSubject;
