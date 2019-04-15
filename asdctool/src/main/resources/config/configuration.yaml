@@ -153,6 +153,7 @@ artifactTypes:
    - SNMP_POLL
    - SNMP_TRAP
    - GUIDE
+   - CONTROLLER_BLUEPRINT_ARCHIVE
 
 licenseTypes:
    - User
@@ -174,6 +175,11 @@ resourceTypes: &allResourceTypes
 #        - VF
 #        - VL
 deploymentResourceArtifacts:
+  cdsBlueprint:
+      displayName: "CDS Blueprint"
+      type: CONTROLLER_BLUEPRINT_ARCHIVE
+      description: "CDS deployment artifact"
+      fileExtension: "zip"
 #  heat:
 #      displayName: "Base HEAT Template"
 #      type: HEAT
@@ -314,6 +320,9 @@ systemMonitoring:
 defaultHeatArtifactTimeoutMinutes: 60
 
 serviceDeploymentArtifacts:
+    CONTROLLER_BLUEPRINT_ARCHIVE:
+        acceptedTypes:
+            - zip
     YANG_XML:
         acceptedTypes:
             - xml
@@ -496,6 +505,12 @@ resourceDeploymentArtifacts:
     ONBOARDED_PACKAGE:
         acceptedTypes:
             - csar
+        validForResourceTypes:
+            - VF
+            - PNF
+    CONTROLLER_BLUEPRINT_ARCHIVE:
+        acceptedTypes:
+            - zip
         validForResourceTypes:
             - VF
             - PNF
