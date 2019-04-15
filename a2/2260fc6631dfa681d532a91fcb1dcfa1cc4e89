@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Damian Nowak <damain.nowak@nokia.com>
+Code-Review+1: Piotr Darosz <piotr.darosz@nokia.com>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Mon, 15 Apr 2019 15:49:57 +0000
+Reviewed-on: https://gerrit.onap.org/r/83683
+Project: sdc
+Branch: refs/heads/master
