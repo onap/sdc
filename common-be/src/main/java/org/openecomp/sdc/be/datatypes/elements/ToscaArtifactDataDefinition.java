@@ -18,27 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.model;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UploadComponentInstanceInfo {
-    private String name;
-    private String type;
-    private Map<String, List<UploadCapInfo>> capabilities;
-    private Map<String, List<UploadReqInfo>> requirements;
-    private Map<String, Map<String, UploadArtifactInfo>> artifacts;
-    private Map<String, List<UploadPropInfo>> properties;
-    private Map<String, String> capabilitiesNamesToUpdate;
-    private Map<String, String> requirementsNamesToUpdate;
-    private Collection<String> directives;
-    private UploadNodeFilterInfo uploadNodeFilterInfo;
+public class ToscaArtifactDataDefinition {
 
+    private String file;
+    private String type;
 }
