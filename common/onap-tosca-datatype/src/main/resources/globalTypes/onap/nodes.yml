@@ -181,7 +181,7 @@ node_types:
           occurences:
           - 0
           - UNBOUNDED
-    #artifacts: artifacts should be defined in template file instead of node type
+    #artifacts: # artifacts should be defined in template file instead of node type
     #  sw_image:
     #    file:
     #    type: tosca.artifacts.nfv.SwImage

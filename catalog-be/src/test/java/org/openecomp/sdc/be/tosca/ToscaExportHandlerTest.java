@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import mockit.Deencapsulation;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Assert;
@@ -27,6 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefiniti
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -61,6 +63,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.model.ToscaTemplateArtifact;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
@@ -1330,4 +1333,18 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		// default test
 		result = Deencapsulation.invoke(testSubject, "convertCapabilities", component, nodeType, dataTypes);
 	}
+
+        @Test
+        public void testConvertToNodeTemplateArtifacts() throws Exception {
+                Map<String, ToscaArtifactDataDefinition> container = new HashMap<>();
+                ToscaArtifactDataDefinition art = new ToscaArtifactDataDefinition();
+                art.setFile("test_file");
+                art.setType("test_type");
+                Map<String, ToscaTemplateArtifact> result;
+                container.put("test_art", art);
+                result = Deencapsulation.invoke(testSubject, "convertToNodeTemplateArtifacts", container);
+                Assert.assertTrue(MapUtils.isNotEmpty(result));
+                Assert.assertTrue(result.get("test_art").getFile().equals("test_file"));
+                Assert.assertTrue(result.get("test_art").getType().equals("test_type"));
+        }
 }

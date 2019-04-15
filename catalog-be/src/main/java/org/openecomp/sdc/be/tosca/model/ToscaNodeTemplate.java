@@ -36,6 +36,7 @@ public class ToscaNodeTemplate {
     private Map<String, Object> properties;
     private List<Map<String, ToscaTemplateRequirement>> requirements;
     private Map<String, ToscaTemplateCapability> capabilities;
+    private Map<String, ToscaTemplateArtifact> artifacts;
     private NodeFilter node_filter;
     private Map<String, Object> interfaces;
 
@@ -69,6 +70,14 @@ public class ToscaNodeTemplate {
 
     public void setCapabilities(Map<String, ToscaTemplateCapability> capabilities) {
         this.capabilities = capabilities;
+    }
+
+    public Map<String, ToscaTemplateArtifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(Map<String, ToscaTemplateArtifact> artifacts) {
+        this.artifacts = artifacts;
     }
 
     public ToscaMetadata getMetadata() {
