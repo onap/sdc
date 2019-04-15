@@ -68,3 +68,7 @@ node_types:
             capability: tosca.capabilities.nfv.VirtualStorage
             relationship: tosca.relationships.nfv.AttachesTo
             occurrences: [ 0, UNBOUNDED ]
+      artifacts: #artifacts should be defined in template file instead of node type
+        sw_image:
+            file:
+            type: tosca.artifacts.nfv.SwImage

@@ -446,6 +446,7 @@ public class YamlTemplateParsingHandler {
                 setToscaResourceType(createdNodesToscaResourceNames, nodeTemplateInfo, nodeTemplateJsonMap);
                 setRequirements(nodeTemplateInfo, nodeTemplateJsonMap);
                 setCapabilities(nodeTemplateInfo, nodeTemplateJsonMap);
+                setArtifacts(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateProperties(nodeTemplateInfo, nodeTemplateJsonMap);
                 setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
                 setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
@@ -490,6 +491,15 @@ public class YamlTemplateParsingHandler {
             Map<String, List<UploadCapInfo>> eitherCapRes = createCapModuleFromYaml(nodeTemplateJsonMap);
             if (!eitherCapRes.isEmpty()) {
                 nodeTemplateInfo.setCapabilities(eitherCapRes);
+            }
+        }
+    }
+
+    private void setArtifacts(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+        if (nodeTemplateJsonMap.containsKey(ARTIFACTS.getElementName())) {
+            Map<String, Map<String, UploadArtifactInfo>> eitherArtifactsRes = createArtifactsModuleFromYaml(nodeTemplateJsonMap);
+            if (!eitherArtifactsRes.isEmpty()) {
+                nodeTemplateInfo.setArtifacts(eitherArtifactsRes);
             }
         }
     }
@@ -568,6 +578,63 @@ public class YamlTemplateParsingHandler {
             moduleRequirements.put(requirementName, list);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Map<String, UploadArtifactInfo>> createArtifactsModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+        Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts = new HashMap<>();
+        Either<List<Object>, ResultStatusEnum> ArtifactsListRes =
+                findFirstToscaListElement(nodeTemplateJsonMap, ARTIFACTS);
+        if (ArtifactsListRes.isLeft()) {
+            for (Object jsonArtifactObj : ArtifactsListRes.left().value()) {
+                String key = ((Map<String, Object>) jsonArtifactObj).keySet().iterator().next();
+                Object artifactJson = ((Map<String, Object>) jsonArtifactObj).get(key);
+                addModuleNodeTemplateArtifacts(moduleArtifacts, artifactJson, key);
+            }
+        } else {
+            Either<Map<String, Map<String, Object>>, ResultStatusEnum> ArtifactsMapRes =
+                    findFirstToscaMapElement(nodeTemplateJsonMap, ARTIFACTS);
+            if (ArtifactsMapRes.isLeft()) {
+                for (Map.Entry<String, Map<String, Object>> entry : ArtifactsMapRes.left().value().entrySet()) {
+                    String artifactName = entry.getKey();
+                    Object artifactJson = entry.getValue();
+                    addModuleNodeTemplateArtifacts(moduleArtifacts, artifactJson, artifactName);
+                }
+            }
+        }
+        return moduleArtifacts;
+    }
+
+    private void addModuleNodeTemplateArtifacts(Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts, Object artifactJson, String artifactName) {
+
+        UploadArtifactInfo artifact = buildModuleNodeTemplateArtifact(artifactJson);
+        artifact.setName(artifactName);
+        if (moduleArtifacts.containsKey(ARTIFACTS.getElementName())) {
+            moduleArtifacts.get(ARTIFACTS.getElementName()).put(artifactName, artifact);
+        } else {
+            Map<String, UploadArtifactInfo> map = new HashMap<>();
+            map.put(artifactName, artifact);
+            moduleArtifacts.put(ARTIFACTS.getElementName(), map);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private UploadArtifactInfo buildModuleNodeTemplateArtifact(Object artifactObject) {
+        UploadArtifactInfo artifactTemplateInfo = new UploadArtifactInfo();
+        if (artifactObject instanceof Map) {
+            fillArtifact(artifactTemplateInfo, (Map<String, Object>) artifactObject);
+        }
+        return artifactTemplateInfo;
+    }
+
+    private void fillArtifact(UploadArtifactInfo artifactTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+        if (nodeTemplateJsonMap.containsKey(TYPE.getElementName())) {
+            artifactTemplateInfo.setType((String) nodeTemplateJsonMap.get(TYPE.getElementName()));
+        }
+        if (nodeTemplateJsonMap.containsKey(FILE.getElementName())) {
+            artifactTemplateInfo.setFile((String) nodeTemplateJsonMap.get(FILE.getElementName()));
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     private Map<String, List<UploadCapInfo>> createCapModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {

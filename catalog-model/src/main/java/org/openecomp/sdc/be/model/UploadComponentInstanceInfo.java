@@ -29,6 +29,7 @@ public class UploadComponentInstanceInfo {
     private String type;
     private Map<String, List<UploadCapInfo>> capabilities;
     private Map<String, List<UploadReqInfo>> requirements;
+    private Map<String, Map<String, UploadArtifactInfo>> artifacts;
     private Map<String, List<UploadPropInfo>> properties;
     private Map<String, String> capabilitiesNamesToUpdate;
     private Map<String, String> requirementsNamesToUpdate;
@@ -73,6 +74,14 @@ public class UploadComponentInstanceInfo {
 
     public void setRequirements(Map<String, List<UploadReqInfo>> requirements) {
         this.requirements = requirements;
+    }
+
+    public Map<String, Map<String, UploadArtifactInfo>> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(Map<String, Map<String, UploadArtifactInfo>> artifacts) {
+        this.artifacts = artifacts;
     }
 
     public Map<String, String> getCapabilitiesNamesToUpdate() {
