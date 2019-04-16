@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "194367c6_bd425c5f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/HandleArtifactRequestDataObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-04-16T12:21:54Z",
+      "side": 1,
+      "message": "use lombok",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 110,
+        "endChar": 5
+      },
+      "revId": "ade116811b65341d2320e2fb7ddaba120b5e8e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
