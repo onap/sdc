@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: David Perez Caparros <david.perezcaparros@swisscom.com>
+Code-Review+1: Stavros Kanarakis <stavros.kanarakis@nokia.com>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Tue, 16 Apr 2019 10:14:18 +0000
+Reviewed-on: https://gerrit.onap.org/r/84632
+Project: sdc
+Branch: refs/heads/master
