@@ -296,7 +296,17 @@ public class ArtifactServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         try {
-            return handleArtifactRequest(data, request, resourceId, interfaceType, operation, null, ComponentTypeEnum.RESOURCE, ArtifactOperationEnum.CREATE, null, null);
+            return handleArtifactRequest(new HandleArtifactRequestDataObject()
+                    .setData(data)
+                    .setRequest(request)
+                    .setComponentId(resourceId)
+                    .setInterfaceName(interfaceType)
+                    .setOperationName(operation)
+                    .setArtifactId(null)
+                    .setComponentType(ComponentTypeEnum.RESOURCE)
+                    .setOperationEnum(ArtifactOperationEnum.CREATE)
+                    .setParentId(null)
+                    .setContainerComponentType(null));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("loadArtifactToInterface");
             log.debug("loadArtifactToInterface unexpected exception", e);
@@ -340,7 +350,17 @@ public class ArtifactServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         try {
-            return handleArtifactRequest(data, request, resourceId, interfaceType, operation, artifactId, ComponentTypeEnum.RESOURCE, ArtifactOperationEnum.UPDATE, null, null);
+            return handleArtifactRequest(new HandleArtifactRequestDataObject()
+                    .setData(data)
+                    .setRequest(request)
+                    .setComponentId(resourceId)
+                    .setInterfaceName(interfaceType)
+                    .setOperationName(operation)
+                    .setArtifactId(artifactId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE)
+                    .setOperationEnum(ArtifactOperationEnum.DELETE)
+                    .setParentId(null)
+                    .setContainerComponentType(null));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateArtifactToInterface");
             log.debug("updateArtifactToInterface unexpected exception", e);
@@ -362,7 +382,17 @@ public class ArtifactServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         try {
-            return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.UPDATE, componentId, containerComponentType);
+            return handleArtifactRequest(new HandleArtifactRequestDataObject()
+                    .setData(data)
+                    .setRequest(request)
+                    .setComponentId(componentInstanceId)
+                    .setInterfaceName(null)
+                    .setOperationName(null)
+                    .setArtifactId(artifactId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperationEnum(ArtifactOperationEnum.UPDATE)
+                    .setParentId(componentId)
+                    .setContainerComponentType(containerComponentType));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateRIArtifact");
             log.debug("updateRIArtifact unexpected exception", e);
@@ -384,7 +414,17 @@ public class ArtifactServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         try {
-            return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.UPDATE, componentId, containerComponentType);
+            return handleArtifactRequest(new HandleArtifactRequestDataObject()
+                    .setData(data)
+                    .setRequest(request)
+                    .setComponentId(componentInstanceId)
+                    .setInterfaceName(null)
+                    .setOperationName(null)
+                    .setArtifactId(artifactId)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperationEnum(ArtifactOperationEnum.UPDATE)
+                    .setParentId(componentId)
+                    .setContainerComponentType(containerComponentType));
         } catch (Exception e) {
             log.debug("loadResourceInstanceHeatEnvArtifact unexpected exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -405,7 +445,17 @@ public class ArtifactServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         try {
-            return handleArtifactRequest(data, request, componentInstanceId, null, null, null, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.CREATE, componentId, containerComponentType);
+            return handleArtifactRequest(new HandleArtifactRequestDataObject()
+                    .setData(data)
+                    .setRequest(request)
+                    .setComponentId(componentInstanceId)
+                    .setInterfaceName(null)
+                    .setOperationName(null)
+                    .setArtifactId(null)
+                    .setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE)
+                    .setOperationEnum(ArtifactOperationEnum.CREATE)
+                    .setParentId(componentId)
+                    .setContainerComponentType(containerComponentType));
         } catch (Exception e) {
             log.debug("loadResourceInstanceHeatEnvArtifact unexpected exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -606,18 +656,17 @@ public class ArtifactServlet extends BeGenericServlet {
 
     }
 
-    private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String interfaceName, String operationName, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operationEnum, String parentId,
-            String containerComponentType) {
-        ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
-        String origMd5 = request.getHeader(Constants.MD5_HEADER);
+    private Response handleArtifactRequest(HandleArtifactRequestDataObject dataObject) {
+        ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(dataObject.getData(), ArtifactDefinition.class);
+        String origMd5 = dataObject.getRequest().getHeader(Constants.MD5_HEADER);
 
-        String userId = request.getHeader(Constants.USER_ID_HEADER);
+        String userId = dataObject.getRequest().getHeader(Constants.USER_ID_HEADER);
 
-        ServletContext context = request.getSession().getServletContext();
+        ServletContext context = dataObject.getRequest().getSession().getServletContext();
         ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType,
-                artifactsLogic.new ArtifactOperationInfo (false, false,operationEnum), artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
-                containerComponentType);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(dataObject.getComponentId(), userId, dataObject.getComponentType(),
+                artifactsLogic.new ArtifactOperationInfo (false, false,dataObject.getOperationEnum()), dataObject.getArtifactId(), artifactInfo, origMd5, dataObject.getData(), dataObject.getInterfaceName(), dataObject.getOperationName(), dataObject.getParentId(),
+                dataObject.getContainerComponentType());
         Response response;
         if (actionResult.isRight()) {
             response = buildErrorResponse(actionResult.right().value());
@@ -634,7 +683,17 @@ public class ArtifactServlet extends BeGenericServlet {
     }
 
     private Response handleArtifactRequest(String data, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operation) {
-        return handleArtifactRequest(data, servletRequest, componentId, null, null, artifactId, componentType, operation, null, null);
+        return handleArtifactRequest(  new HandleArtifactRequestDataObject()
+                .setData(data)
+                .setRequest(servletRequest)
+                .setComponentId(componentId)
+                .setInterfaceName(null)
+                .setOperationName(null)
+                .setArtifactId(artifactId)
+                .setComponentType(componentType)
+                .setOperationEnum(operation)
+                .setParentId(null)
+                .setContainerComponentType(null));
     }
 
 }
