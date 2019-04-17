@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "33631964_2ac40e78",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-17T06:39:12Z",
+      "side": 1,
+      "message": "Please use onap code style\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "b5c32a95ff00aa8a9de6c49fad832b816464928a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
