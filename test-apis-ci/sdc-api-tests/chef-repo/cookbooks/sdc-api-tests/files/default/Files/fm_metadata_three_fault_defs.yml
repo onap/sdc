@@ -1,0 +1,370 @@
+---
+event: {
+  presence: required,
+  action: [ any, any, baseStationSynchronizationProblem,
+            RECO-contact Nokia technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_gnb-Nokia_baseStationSynchronizationProblem'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Equipment Alarm'
+        },
+        alarmCondition: {
+          presence: required,
+          value: alarm003
+        },
+        eventSeverity: {
+          presence: required,
+          value: MAJOR
+        },
+        eventSourceType: {
+          presence: required,
+          value: virtualNetworkFunction
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 2.0
+        },
+        specificProblem: {
+          presence: required,
+          value: "Configuration file was corrupt or not present"
+        },
+        vfStatus: {
+          presence: required,
+          value: "Requesting Termination"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "FAULT ID: 9,
+                    FAULT NAME: 'BTS time not corrected',
+                    FAULT DESCRIPTION: 'The reference frequency that the BTS master clock receives has changed by about 200 ppb or more (which equals the change magnitude of 204 DAC steps or more (with 12bit DAC)) during the measurement period, compared to the BTS master clock frequency.
+                                  Causes can be:
+                                     1. The reference frequency …..
+                                     2. The reference frequency fluctuates …',
+                    FAULT EFFECT: 'This fault does not immediately affect the operations of the BTS, but it is a notification …',
+                    PROPOSED REPAIR ACTION: 'access the ….follow the instructions below:
+                                     1. In case of a fault in the transmission network synchronization, …
+                                     2. If the basic accuracy of the signal used for synch is correct…
+                                     3. In case of a BTS equipment fault, the location might be:
+                                     4. After the fault situation has been cleared, ….',
+
+                    FAULT ID: 1818,
+                    FAULT NAME: 'BTS master clock tuning failure',
+                    FAULT DESCRIPTON: 'Master clock frequency is tuned to within 5% of its minimum or maximum tuning limit.',
+                    FAULT EFFECT: 'The BTS can operate properly for months …'
+                                  Effects in Frequency Synchronization mode:  …
+                                  Effects in Phase Synchronization mode:  ….',
+                    PROPOSED REPAIR ACTION: 'Perform the steps below in the listed order until the fault disappears.
+                                  Not tracking satellites:
+                                     1. The most common reason ….
+                                     2. There might be a malfunction in the GPS receiver. Perform a (remote) power reset for the GPS receiver.
+                                     3. There might be a HW fault in the GPS receiver. Check the operation and change the GPS module, if needed.'"
+        }
+      }
+    }
+  },
+  comment: "ALARM NAME: baseStationSynchronizationProblem
+            ALARM ID: 7108
+            ALARM DESCRIPTION = 'A fault has occurred in the base station synchronization. For example: the base station reference clock signal is lost or is unstable or inaccurate.'
+            ALARM EFFECT = 'The effect of the fault on the functioning of the network element depends on the fault id raised.  See FAULT EFFECT below.'
+            MANAGED OBJECT CLASSES: NRBTS
+            EVENT TYPE: 'Equipment Alarm'
+            PROBABLE CAUSE: 'Timing Problem'
+            PROBABLE CAUSE NUMBER: 66
+            PROPOSED REPAIR ACTIONS: 'See PROPOSED REPAIR ACTIONS for the underlying fault under alarmAdditionalInformation.'
+            ASSOCIATED FAULTS: 9, 1818
+            CLEARING TYPE: Automatic"
+}
+
+---
+
+event: {
+  presence: required,
+  action: [ any, any, baseStationConnectivityLost,
+            RECO-contact Nokia technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_gnb-Nokia_baseStationConnectivityLost'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Communications Alarm'
+        },
+        alarmCondition: {
+          presence: required,
+          value: 'baseStationConnectivityLost'
+        },
+        eventSeverity: {
+          presence: required
+        },
+        eventSourceType: {
+          presence: required,
+          value: 'virtualNetworkFunction'
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 2.0
+        },
+        specificProblem: {
+          presence: required
+        },
+        vfStatus: {
+          presence: required,
+          value: "Active"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "FAULT ID: 75,
+          FAULT NAME: 'S1 connection lost',
+          FAULT DESCRIPTION: 'There is no S1 connectivity to peer MME. This alarm is raised if the S1 interface could not be recovered after maxS1SetRetry attempts.',
+          FAULT EFFECT: 'The S1 interface is unavailable and the BTS is not available for call setup.',
+          PROPOSED REPAIR ACTIONS: 'Trigger S1 Reset procedure on impacted S1 interface from peer MME.  If S1 link is not recovered, call Nokia technical support.',
+
+          FAULT ID: 76,
+          FAULT NAME: 'X2 connection lost',
+          FAULT DESCRIPTON: 'There is no X2 connectivity to adjacent BTS.  This alarm is raised if the X2 interface could not be recovered after maxX2SetRetry attempts.',
+          FAULT EFFECT: 'Handovers from or to cells of the impacted adjacent BTS are not possible.',
+          PROPOSED REPAIR ACTIONS: 'Trigger X2 Reset procedure on impacted X2 interface from adjacent BTS.  If X2 link is not recovered, call Nokia technical support.'
+          "
+        }
+      }
+    }
+  },
+  comment: "
+  ALARM NAME: baseStationConnectivityLost
+  ALARM ID: 7107
+         ALARM DESCRIPTION = 'A fault has occurred in the base station connection to the core network elements or neighbor elements.'
+         ALARM EFFECT = 'The effect of the fault on the functioning of the network element depends on the fault id raised.  See FAULT EFFECT below.'
+  MANAGED OBJECT CLASSES: NRBTS
+  EVENT TYPE: 'Communications Alarm'
+  PROBABLE CAUSE: 'Loss of Signal'
+  PROBABLE CAUSE NUMBER: 8
+  PROPOSED REPAIR ACTIONS: 'See PROPOSED REPAIR ACTIONS for the underlying fault under alarmAdditionalInformation.'
+  ASSOCIATED FAULTS: 75, 76
+  CLEARING TYPE: Automatic
+  ",
+}
+
+---
+event: {
+  presence: required,
+  action: [ any, any, baseStationSoftwareManagementProblem,
+            RECO-contact Nokia technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_gnb-Nokia_baseStationSoftwareManagementProblem'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Processing Error'
+        },
+        alarmCondition: {
+          presence: required,
+          value: 'baseStationsoftwareManagementProblem'
+        },
+        eventSeverity: {
+          presence: required
+        },
+        eventSourceType: {
+          presence: required
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 3.0
+        },
+        specificProblem: {
+          presence: required
+        },
+        vfStatus: {
+          presence: required,
+          value: "Active"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "FAULT ID: 23,
+                     FAULT NAME: 'Incompatible software version',
+                     FAULT DESCRIPTION: 'A request to download an incompatible software version has been detected.',
+                     FAULT EFFECT: 'Software download is aborted.  Basestation continues to run on the current software version.',
+                     PROPOSED REPAIR ACTIONS: 'Retry software download with a compatible software version.  If unable to determine a compatible software version, call Nokia technical support.',
+
+                     FAULT ID: 24,
+                     FAULT NAME: 'Software download has failed',
+                     FAULT DESCRIPTON: 'A software download in progress has failed.  The error can be caused by connectivity issues or file transfer errors.',
+                     FAULT EFFECT: 'Software download is aborted.  Incomplete software version is deleted from basestation.  Basestation continues to run on the current software version.',
+                     PROPOSED REPAIR ACTIONS: 'Verify that the software version is available on the file server, the file transfer parameters are correct and the connectivity to the file server is up, then retry the software download.  If failure occurs again and unable to determine the failure reason, call Nokia technical support.'
+
+                     FAULT ID: 29,
+                     FAULT NAME: 'Software upgrade has failed',
+                     FAULT DESCRIPTON: 'A software upgrade has failed to activate on the basestation.  The error can be caused by a module reset during the SW update, a hardware problem in the module, or a corrupted flash file system.',
+                     FAULT EFFECT: 'Basestation continues to run on the current software version.',
+                     PROPOSED REPAIR ACTIONS: 'Verify that the correct software version is available on the basestation.  If software version is available and correct, retry software upgrade.  If software version is corrupted, retry software download, then retry software upgrade.  If failure occurs again and unable to determine the failure reason, call Nokia technical support.
+                     "
+        }
+      }
+    }
+  },
+  comment: "FAULT ID: 23,
+  FAULT NAME: 'Incompatible software version',
+  FAULT DESCRIPTION: 'A request to download an incompatible software version has been detected.',
+  FAULT EFFECT: 'Software download is aborted.  Basestation continues to run on the current software version.',
+  PROPOSED REPAIR ACTIONS: 'Retry software download with a compatible software version.  If unable to determine a compatible software version, call Nokia technical support.',
+
+  FAULT ID: 24,
+  FAULT NAME: 'Software download has failed',
+  FAULT DESCRIPTON: 'A software download in progress has failed.  The error can be caused by connectivity issues or file transfer errors.',
+  FAULT EFFECT: 'Software download is aborted.  Incomplete software version is deleted from basestation.  Basestation continues to run on the current software version.',
+  PROPOSED REPAIR ACTIONS: 'Verify that the software version is available on the file server, the file transfer parameters are correct and the connectivity to the file server is up, then retry the software download.  If failure occurs again and unable to determine the failure reason, call Nokia technical support.'
+
+  FAULT ID: 29,
+  FAULT NAME: 'Software upgrade has failed',
+  FAULT DESCRIPTON: 'A software upgrade has failed to activate on the basestation.  The error can be caused by a module reset during the SW update, a hardware problem in the module, or a corrupted flash file system.',
+  FAULT EFFECT: 'Basestation continues to run on the current software version.',
+  PROPOSED REPAIR ACTIONS: 'Verify that the correct software version is available on the basestation.  If software version is available and correct, retry software upgrade.  If software version is corrupted, retry software download, then retry software upgrade.  If failure occurs again and unable to determine the failure reason, call Nokia technical support.
+"
+}
