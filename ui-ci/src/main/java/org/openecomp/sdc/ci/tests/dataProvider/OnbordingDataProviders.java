@@ -1,5 +1,6 @@
 package org.openecomp.sdc.ci.tests.dataProvider;
 
+import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.testng.annotations.DataProvider;
@@ -25,7 +26,7 @@ public class OnbordingDataProviders {
 	@DataProvider(name = "VNF_List" , parallel = true)
 	private static final Object[][] VnfList() throws Exception {
 		
-		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileList();
+		List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
 
 		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
 		return provideData(fileNamesFromFolder, filepath);

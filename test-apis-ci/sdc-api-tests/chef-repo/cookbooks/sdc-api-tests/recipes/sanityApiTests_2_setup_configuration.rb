@@ -41,3 +41,12 @@ template "titan.properties" do
       :DC_NAME      => node['cassandra']['datacenter_name']+node.chef_environment
    })
 end
+
+bash "Make root cert file available" do
+cwd "#{tests_base}"
+code <<-EOH
+   cp /root/chef-solo/cookbooks/sdc-api-tests/files/default/cert/root.cert /var/lib/tests/cert/root.cert
+   echo "root.cert file made available for tests."
+EOH
+end
+

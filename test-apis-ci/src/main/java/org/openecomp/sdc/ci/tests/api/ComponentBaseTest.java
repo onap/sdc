@@ -107,7 +107,8 @@ public abstract class ComponentBaseTest {
     public void setupBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
 
         System.out.println(" method.getName() " + method.getName());
-        if (!method.getName().equals("onboardVNFShotFlow")) {
+        if (!method.getName().equals("onboardVNFShotFlow") &&
+            !method.getName().equals("onboardPNFFlow") ) {
             logger.info("ExtentReport instance started from BeforeMethod...");
             ExtentTestManager.startTest(method.getName());
             ExtentTestManager.assignCategory(this.getClass());
