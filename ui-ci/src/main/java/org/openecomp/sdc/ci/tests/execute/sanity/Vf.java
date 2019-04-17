@@ -21,11 +21,14 @@
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import com.aventstack.extentreports.Status;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ArtifactPageEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.InformationalArtifactsPlaceholders;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ResourceMetadataEnum;
@@ -33,6 +36,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.utilities.*;
@@ -494,6 +498,33 @@ public class Vf extends SetupCDTest {
 				
 		canvasManager.linkElements(computeElement.getElementNameOnCanvas(), portElement.getElementNameOnCanvas());
 				
+	}
+
+	@Test
+	public void addVesEventsDeploymentArtifactToVfAndCheckMagnifierTest() throws Exception {
+		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
+
+		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
+
+		List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
+		ArtifactInfo art1 = new ArtifactInfo(filePath, "fm_metadata_three_fault_defs.yml", "desc", "artifactfault", "VES_EVENTS");
+		deploymentArtifactList.add(art1);
+		for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
+			DeploymentArtifactPage.clickAddNewArtifact();
+			ArtifactUIUtils.fillAndAddNewArtifactParameters(deploymentArtifact);
+		}
+		AssertJUnit.assertTrue(DeploymentArtifactPage.checkElementsCountInTable(deploymentArtifactList.size()));
+
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on magnifier button %s", art1.getArtifactLabel()));
+		WebElement magnifierButtonElement =  GeneralUIUtils.getWebElementByTestID(ArtifactPageEnum.BROWSE_ARTIFACT.getValue() + art1.getArtifactLabel());
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Found magnifier button: %s", magnifierButtonElement.getText()));
+		magnifierButtonElement.click();
+		List<WebElement> headers =  GeneralUIUtils.getWebElementsListByClassName("datatable-header-cell");
+		AssertJUnit.assertEquals(3, headers.size());
+		headers.get(0).getText();
+		List<WebElement> rows =  GeneralUIUtils.getWebElementsListByContainsClassName("datatable-body-row");
+		AssertJUnit.assertEquals(3, rows.size());
 	}
 
 
