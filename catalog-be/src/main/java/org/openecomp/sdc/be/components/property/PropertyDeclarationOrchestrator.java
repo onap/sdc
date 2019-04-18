@@ -58,6 +58,20 @@ public class PropertyDeclarationOrchestrator {
         return propertyDeclarator.declarePropertiesAsPolicies(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
     }
 
+    /**
+     *
+     * @param component
+     * @param componentInstInputsMap
+     * @param input
+     * @return
+     */
+    public Either<InputDefinition, StorageOperationStatus> declarePropertiesToListInput(Component component, ComponentInstInputsMap componentInstInputsMap, InputDefinition input) {
+        PropertyDeclarator propertyDeclarator = getPropertyDeclarator(componentInstInputsMap);
+        Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
+        log.debug("#declarePropertiesToInputs: componentId={}, propOwnerId={}", component.getUniqueId(), propsToDeclare.getLeft());
+        return propertyDeclarator.declarePropertiesAsListInput(component, propsToDeclare.getLeft(), propsToDeclare.getRight(), input);
+    }
+
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition inputToDelete) {
         log.debug("#unDeclarePropertiesAsInputs - removing input declaration for input {} on component {}", inputToDelete.getName(), component.getUniqueId());
         for (PropertyDeclarator propertyDeclarator : propertyDeclaratorsToInput) {
@@ -69,6 +83,36 @@ public class PropertyDeclarationOrchestrator {
         }
         return StorageOperationStatus.OK;
 
+    }
+    /**
+     * Un declare properties declared as list type input
+     *
+     * @param component
+     * @param inputToDelete
+     * @return
+     */
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputToDelete) {
+        log.debug("#unDeclarePropertiesAsListInputs - removing input declaration for input {} on component {}", inputToDelete.getName(), component.getUniqueId());
+        for (PropertyDeclarator propertyDeclarator : propertyDeclaratorsToInput) {
+            StorageOperationStatus storageOperationStatus = propertyDeclarator.unDeclarePropertiesAsListInputs(component, inputToDelete);
+            if (StorageOperationStatus.OK != storageOperationStatus) {
+                log.debug("#unDeclarePropertiesAsListInputs - failed to remove input declaration for input {} on component {}. reason {}", inputToDelete.getName(), component.getUniqueId(), storageOperationStatus);
+                return storageOperationStatus;
+            }
+        }
+        return StorageOperationStatus.OK;
+
+    }
+
+    /**
+     * Get properties owner id
+     *
+     * @param componentInstInputsMap
+     * @return
+     */
+    public String getPropOwnerId(ComponentInstInputsMap componentInstInputsMap) {
+        Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
+        return propsToDeclare.getLeft();
     }
 
     public StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policyToDelete) {

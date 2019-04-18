@@ -35,6 +35,7 @@
                             (selectPropertyRow)="selectPropertyRow($event)"
                             (selectChildProperty)="selectChildProperty($event)"
                             (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
+                            (updateCheckedChildPropertyCount)="updateCheckedChildPropertyCount($event)"
                             (selectInstanceRow)="selectInstanceRow($event)"
                             (deleteProperty)="deleteProperty($event)">
                         </properties-table>
@@ -73,6 +74,7 @@
                 </div>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button declare-input">Declare Input</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()" data-tests-id="declare-button declare-list-input">Create List Input</button>
             </div>
         </div>
         <div class="right-column">

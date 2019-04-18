@@ -1,10 +1,12 @@
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
 
 public class ToscaTemplateTest {
 
@@ -122,9 +124,24 @@ public class ToscaTemplateTest {
 		testSubject.setTopology_template(topology_template);
 	}
 
-	
+
+	@Test
+	public void testGetSetData_types() throws Exception {
+		ToscaTemplate testSubject = createTestSubject();
+		Map<String, ToscaDataType> dataTypes = new HashMap<>();
+		dataTypes.put("datatype", new ToscaDataType());
+		testSubject.setData_types(dataTypes);
+		assertEquals(dataTypes, testSubject.getData_types());
+	}
 
 
-	
+	@Test
+	public void testGetSetInterface_types() throws Exception {
+		ToscaTemplate testSubject = createTestSubject();
+		Map<String, Object> interfaceTypes = new HashMap<>();
+		interfaceTypes.put("id", new Object());
+		testSubject.setInterface_types(interfaceTypes);
+		assertEquals(interfaceTypes, testSubject.getInterface_types());
+	}
 
 }

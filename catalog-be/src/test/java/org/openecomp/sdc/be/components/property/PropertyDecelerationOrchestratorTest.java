@@ -4,23 +4,32 @@ import fj.data.Either;
 import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class PropertyDecelerationOrchestratorTest {
 
 	@InjectMocks
 	PropertyDeclarationOrchestrator testSubject;
 
-	@Mock
+	@Mock(answer = Answers.CALLS_REAL_METHODS)
 	List<PropertyDeclarator> propertyDeceleratorsMock;
-	
+
 	@Mock
 	private ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDecelerator;
 	@Mock
@@ -45,6 +54,21 @@ public class PropertyDecelerationOrchestratorTest {
 	}
 
 	@Test
+	public void testDeclarePropertiesToListInputs() throws Exception {
+		Component component = new Resource();
+		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = new HashMap<>();
+		List<ComponentInstancePropInput> value = new LinkedList<>();
+		componentInstanceInputsMap.put("mock", value);
+		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
+		InputDefinition input = new InputDefinition();
+		Either<InputDefinition, StorageOperationStatus> result;
+
+		// default test
+		result = testSubject.declarePropertiesToListInput(component, componentInstInputsMap, input);
+	}
+
+	@Test
 	public void testUnDeclarePropertiesAsInputs() throws Exception {
 		Component component = new Resource();
 		InputDefinition inputToDelete = new InputDefinition();
@@ -56,6 +80,33 @@ public class PropertyDecelerationOrchestratorTest {
 		
 		// default test
 		result = testSubject.unDeclarePropertiesAsInputs(component, inputToDelete);
+	}
+
+	@Test
+	public void testUnDeclarePropertiesAsListInputs() throws Exception {
+		Component component = new Resource();
+		InputDefinition inputToDelete = new InputDefinition();
+		StorageOperationStatus result;
+
+		Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
+		Mockito.when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
+		Mockito.when(mockIter.hasNext()).thenReturn(false);
+
+		// default test
+		result = testSubject.unDeclarePropertiesAsListInputs(component, inputToDelete);
+	}
+
+	@Test
+	public void testGetPropOwnerId() throws Exception {
+		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = new HashMap<>();
+		List<ComponentInstancePropInput> value = new LinkedList<>();
+		componentInstanceInputsMap.put("mock", value);
+		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
+		String result;
+
+		// default test
+		result = Deencapsulation.invoke(testSubject, "getPropOwnerId", componentInstInputsMap);
 	}
 
 	@Test(expected = IllegalStateException.class)

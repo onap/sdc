@@ -1,0 +1,83 @@
+<!--
+* ============LICENSE_START=======================================================
+* SDC
+* ================================================================================
+* Copyright (C) 2019 Fujitsu Limited. All rights reserved.
+* ================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
+-->
+
+<div class="declare-list">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+    <form class="w-sdc-form">
+
+        <div class="side-by-side">
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Name</label>
+                <input class="i-sdc-form-input"
+                       type="text"
+                       name="propertyName"
+                       data-tests-id="property-name"
+                       [(ngModel)]="propertyModel.name"
+                       [ngModelOptions]="{ debounce: 200 }"
+                       autofocus/>
+            </div>
+            <!-- Type -->
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label">Type</label>
+                <input class="i-sdc-form-input"
+                       type="text"
+                       data-tests-id="property-type"
+                       value="list"
+                       disabled
+                       autofocus/>
+            </div>
+        </div>
+
+        <!-- Schema Type -->
+        <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label required">New Schema Type for List</label>
+            <input class="i-sdc-form-input"
+                    type="text"
+                    name="typeName"
+                    [(ngModel)]="propertyModel.simpleType"
+                    [ngModelOptions]="{ debounce: 200 }">
+        </div>
+        
+        <!-- Properties -->
+        <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label">Properties</label>
+            <input class="i-sdc-form-input"
+                   type="text"
+                   name="properties"
+                   data-tests-id="properties"
+                   value="{{propertiesListString}}"
+                   disabled>
+        </div>
+
+        <!-- Description -->
+        <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label">Description</label>
+            <textarea  class="i-sdc-form-textarea"
+                       [pattern]="commentValidationPattern"
+                       name="propertyDescription"
+                       [(ngModel)]="propertyModel.description"
+                       [ngModelOptions]="{ debounce: 200 }"
+                       data-tests-id="property-description"
+            ></textarea>
+        </div>
+
+    </form>
+</div>
