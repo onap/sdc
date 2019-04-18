@@ -11,12 +11,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
@@ -45,6 +47,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     private final Gson gson = new Gson();
     private ComponentsUtils componentsUtils;
     private PropertyOperation propertyOperation;
+    private static final String GET_INPUT_INDEX = "INDEX";
 
     public DefaultPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
         this.componentsUtils = componentsUtils;
@@ -75,7 +78,14 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         return resolvePropertiesOwner(component, propertiesOwnerId)
                        .map(propertyOwner -> declarePropertiesAsPolicies(component, propertyOwner, propsToDeclare))
                        .orElse(Either.right(onPropertiesOwnerNotFound(component.getUniqueId(), propertiesOwnerId)));
+    }
 
+    @Override
+    public Either<InputDefinition, StorageOperationStatus> declarePropertiesAsListInput(Component component, String propertiesOwnerId, List<ComponentInstancePropInput> propsToDeclare, InputDefinition input) {
+        log.debug("#declarePropertiesAsListInput - declaring properties as inputs for component {} from properties owner {}", component.getUniqueId(), propertiesOwnerId);
+        return resolvePropertiesOwner(component, propertiesOwnerId)
+                .map(propertyOwner -> declarePropertiesAsListInput(component, propertyOwner, propsToDeclare, input))
+                .orElse(Either.right(onPropertiesOwnerNotFound(component.getUniqueId(), propertiesOwnerId)));
     }
 
     public StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policy) {
@@ -154,6 +164,37 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     }
 
+    private Either<InputDefinition, StorageOperationStatus> declarePropertiesAsListInput(Component component, PROPERTYOWNER propertiesOwner, List<ComponentInstancePropInput> propsToDeclare, InputDefinition input) {
+        List<PROPERTYTYPE> declaredProperties = new ArrayList<>();
+        for (ComponentInstancePropInput propInput : propsToDeclare) {
+            if (StringUtils.isNotEmpty(propInput.getPropertiesName()) && propInput.getInput() != null) {
+                // sub-property in complex type is checked on UI. currently not supported.
+                log.debug("skip propInput (propertiesName={}) currently not supported.", propInput.getPropertiesName());
+                continue;
+            }
+            PROPERTYTYPE declaredProperty = createDeclaredProperty(propInput);
+
+            JSONObject jobject = new JSONObject();
+            jobject.put(GET_INPUT, Arrays.asList(input.getName(), GET_INPUT_INDEX, propInput.getName()));
+            declaredProperty.setValue(jobject.toJSONString());
+
+            GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+            getInputValueDataDefinition.setInputId(input.getUniqueId());
+            getInputValueDataDefinition.setInputName(input.getName());
+            List<GetInputValueDataDefinition> getInputValues = declaredProperty.getGetInputValues();
+            if (getInputValues == null) {
+                getInputValues = new ArrayList<>();
+                declaredProperty.setGetInputValues(getInputValues);
+            }
+            getInputValues.add(getInputValueDataDefinition);
+
+            if (!declaredProperties.contains(declaredProperty)) { // declaredPropertiesにない新規のものであればリストに追加
+                declaredProperties.add(declaredProperty);
+            }
+        }
+        return updatePropertiesValues(component, propertiesOwner.getUniqueId(), declaredProperties)
+                .left().map(x -> input);
+    }
 
     private PropertiesDeclarationData createInputsAndOverridePropertiesValues(String componentId, PROPERTYOWNER propertiesOwner, List<ComponentInstancePropInput> propsToDeclare) {
         List<PROPERTYTYPE> declaredProperties = new ArrayList<>();
@@ -182,6 +223,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             generatedInputPrefix = null;
         }
         String generatedInputName = generateInputName(generatedInputPrefix, propInput);
+        log.debug("createInput: propOwner.uniqueId={}, propInput.parentUniqueId={}", propertiesOwner.getUniqueId(), propInput.getParentUniqueId());
         return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
     }
 
@@ -306,7 +348,6 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             }
 
         }
-
 
         if(CollectionUtils.isEmpty(prop.getGetInputValues())){
             prop.setGetInputValues(new ArrayList<>());
@@ -453,6 +494,9 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             } else if (value instanceof Map) {
                 Map<String, Object> subMap = (Map<String, Object>)value;
                 resetInputName(subMap, inputName);
+            } else if (value instanceof List && ((List) value).contains(inputName) && key.equals(GET_INPUT)) {
+                value = "";
+                lhm1.remove(key);
             } else {
                 continue;
             }

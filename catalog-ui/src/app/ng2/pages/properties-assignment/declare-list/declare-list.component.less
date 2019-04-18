@@ -1,0 +1,35 @@
+@import '../../../../../assets/styles/variables.less';
+
+.declare-list {
+    font-family: @font-opensans-regular;
+    user-select: none;
+    padding-top: 12px;
+    padding-bottom: 20px;
+
+    .i-sdc-form-label {
+        font-size: 12px;
+    }
+
+    .w-sdc-form .i-sdc-form-item {
+        margin-bottom: 15px;
+    }
+
+    .side-by-side {
+        display: flex;
+
+        .i-sdc-form-item {
+            flex-basis: 100%;
+
+            &:first-child {
+                flex-basis: 50%;
+                margin-right: 10px;
+            }
+
+        }
+        .propertySchemaType{
+            margin-left: 10px;
+        }
+    }
+
+
+}

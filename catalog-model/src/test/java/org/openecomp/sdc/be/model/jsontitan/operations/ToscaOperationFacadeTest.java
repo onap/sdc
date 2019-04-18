@@ -61,6 +61,9 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,6 +76,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Collections;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -81,11 +86,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
-
     @InjectMocks
     private ToscaOperationFacade testInstance;
 
@@ -480,6 +485,103 @@ public class ToscaOperationFacadeTest {
         ToscaElement toscaElement = new TopologyTemplate();
         toscaElement.setComponentType(ComponentTypeEnum.RESOURCE);
         return toscaElement;
+    }
+
+    @Test
+    public void addDataTypesToComponentSuccessTest(){
+        Either<List<DataTypeDefinition>, StorageOperationStatus> result = addDataTypesToComponentWithStatus(StorageOperationStatus.OK);
+        assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void addDataTypesToComponentFailureTest_BadRequest(){
+        Either<List<DataTypeDefinition>, StorageOperationStatus> result = addDataTypesToComponentWithStatus(StorageOperationStatus.BAD_REQUEST);
+        assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.BAD_REQUEST);
+    }
+
+    private Either<List<DataTypeDefinition>, StorageOperationStatus> addDataTypesToComponentWithStatus(StorageOperationStatus status) {
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        String componentId = "componentid";
+        String Id = "id";
+
+        PropertyDefinition noDefaultProp = new PropertyDefinition();
+        noDefaultProp.setName("noDefaultProp");
+        PropertyDefinition prop1 = new PropertyDefinition();
+        prop1.setDefaultValue("def1");
+        prop1.setName("prop1");
+        PropertyDefinition prop2 = new PropertyDefinition();
+        prop2.setType("dataType1");
+        prop2.setName("prop2");
+        PropertyDefinition prop3 = new PropertyDefinition();
+        prop3.setDefaultValue("def3");
+        prop3.setName("prop3");
+
+        DataTypeDefinition noDefaultValue = new DataTypeDefinition();
+        noDefaultValue.setProperties(Collections.singletonList(noDefaultProp));
+        noDefaultValue.setDerivedFromName("name0");
+
+        DataTypeDefinition dataType1 = new DataTypeDefinition();
+        dataType1.setProperties(Arrays.asList(prop1, prop3));
+        dataType1.setName("name1");
+        dataType1.setDerivedFromName("derivedfromname1");
+
+        DataTypeDefinition dataType2 = new DataTypeDefinition();
+        dataType2.setDerivedFrom(dataType1);
+        dataType2.setName("name2");
+        dataType2.setDerivedFromName("derivedfromname2");
+
+        DataTypeDefinition dataType3 = new DataTypeDefinition();
+        dataType3.setProperties(Collections.singletonList(prop2));
+        dataType3.setDerivedFrom(noDefaultValue);
+        dataType3.setName("name3");
+        dataType3.setDerivedFromName("derivedfromname3");
+
+        dataTypes.put("noDefault", noDefaultValue);
+        dataTypes.put("dataType1", dataType1);
+        dataTypes.put("dataType2", dataType2);
+        dataTypes.put("dataType3", dataType3);
+
+        GraphVertex vertex;
+        if(status == StorageOperationStatus.OK){
+            vertex = getTopologyTemplateVertex();
+        } else {
+            vertex = getNodeTypeVertex();
+        }
+        Either<GraphVertex, TitanOperationStatus> getVertexEither = Either.left(vertex);
+        when(titanDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.addToscaDataToToscaElement(eq(vertex),
+                eq(EdgeLabelEnum.DATA_TYPES), eq(VertexTypeEnum.DATA_TYPES), anyMap(), eq(JsonPresentationFields.NAME))).thenReturn(status);
+        return testInstance.addDataTypesToComponent(dataTypes, componentId);
+    }
+
+    @Test
+    public void testDataTypesToComponentFailureTest_NotFound() {
+        Either<List<DataTypeDefinition>, StorageOperationStatus> result;
+        String componentId = "componentId";
+        GraphVertex vertex = getNodeTypeVertex();
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        when(titanDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        result = testInstance.addDataTypesToComponent(dataTypes, componentId);
+        assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void testDeleteDataTypeOfComponent() {
+        StorageOperationStatus result;
+        Component component = new Resource();
+        String id = "id";
+        component.setUniqueId(id);
+        String datatype = null;
+
+        DataTypeDefinition dataType1 = new DataTypeDefinition();
+        dataType1.setName("name1");
+        Map<String, DataTypeDataDefinition> dataTypeDataMap = new HashMap<>();
+        dataTypeDataMap.put("datatype1", dataType1);
+        List<DataTypeDefinition> dataTypeMap = dataTypeDataMap.values().stream().map(e -> { DataTypeDefinition dataType = new DataTypeDefinition(e);return dataType; }).collect(Collectors.toList());
+        component.setDataTypes(dataTypeMap);
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        result = testInstance.deleteDataTypeOfComponent(component, "datatype1");
+        assertEquals(datatype, result);
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
