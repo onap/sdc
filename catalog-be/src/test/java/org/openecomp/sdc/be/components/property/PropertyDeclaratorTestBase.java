@@ -77,6 +77,10 @@ public class PropertyDeclaratorTestBase {
         return String.format("{\"%s\":\"%s\"}", GET_INPUT, value);
     }
 
+    String generateGetInputValueAsListInput(String inputName, String inputProperty) {
+        return String.format("{\"%s\":[\"%s\",\"INDEX\",\"%s\"]}", GET_INPUT, inputName, inputProperty);
+    }
+
     private void verifyInputPropertiesList(PropertyDataDefinition updatedProperty, InputDefinition input) {
         assertThat(input.getProperties()).hasSize(1);
         assertThat(new ComponentInstanceProperty(updatedProperty)).isEqualTo(input.getProperties().get(0));

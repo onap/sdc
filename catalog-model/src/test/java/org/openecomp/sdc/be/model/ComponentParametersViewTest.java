@@ -7,6 +7,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 import java.util.LinkedList;
 
+import static org.junit.Assert.assertSame;
+
 public class ComponentParametersViewTest {
 
 	private ComponentParametersView createTestSubject() {
@@ -448,6 +450,30 @@ public class ComponentParametersViewTest {
 	}
 
 	
+	@Test
+	public void testIsIgnoreNodeFilterWithTrue() throws Exception {
+		ComponentParametersView testSubject;
+		boolean result;
+
+		testSubject = createTestSubject();
+		testSubject.setIgnoreNodeFilter(true);
+		result = testSubject.isIgnoreNodeFilter();
+		assertSame(result, true);
+	}
+
+	
+	@Test
+	public void testIsIgnoreNodeFilterWithFalse() throws Exception {
+		ComponentParametersView testSubject;
+		boolean result;
+
+		testSubject = createTestSubject();
+		testSubject.setIgnoreNodeFilter(false);
+		result = testSubject.isIgnoreNodeFilter();
+		assertSame(result, false);
+	}
+
+
 	@Test
 	public void testDetectParseFlag() throws Exception {
 		ComponentParametersView testSubject;

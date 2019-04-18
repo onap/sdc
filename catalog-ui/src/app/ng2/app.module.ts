@@ -81,6 +81,7 @@ import {RequirementsEditorModule} from "./pages/req-and-capabilities-editor/requ
 import {CapabilitiesEditorModule} from "./pages/req-and-capabilities-editor/capabilities-editor/capabilities-editor.module"
 import {GenericArtifactBrowserModule} from "./components/logic/generic-artifact-browser/generic-artifact-browser.module";
 import {GabService} from "./services/gab.service";
+import {DeclareListModule} from "./pages/properties-assignment/declare-list/declare-list.module"
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -114,6 +115,7 @@ export function configServiceFactory(config: ConfigService) {
         ConnectionWizardModule,
         PropertiesAssignmentModule,
         PropertyCreatorModule,
+        DeclareListModule,
         PluginFrameModule,
         InterfaceOperationModule,
         OperationCreatorModule,

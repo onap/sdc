@@ -1,12 +1,14 @@
 package org.openecomp.sdc.be.tosca;
 
+import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
-
+import java.util.stream.Collectors;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Before;
@@ -17,10 +19,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -56,9 +60,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
@@ -98,6 +99,20 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		CategoryDefinition category = new CategoryDefinition();
 		List<SubCategoryDefinition> subcategories = new ArrayList<>();
 		SubCategoryDefinition subcategory = new SubCategoryDefinition();
+		List<DataTypeDefinition> dataTypes = new ArrayList<>();
+		DataTypeDefinition dataType = new DataTypeDefinition();
+		dataType.setName("dataTypeName");
+		dataType.setDerivedFromName("tosca.datatypes.Root");
+		PropertyDataDefinition propData = new PropertyDataDefinitionBuilder()
+				.setName("property")
+				.setType("type")
+				.build();
+		List<PropertyDataDefinition> propDataList = Arrays.asList(propData);
+		dataType.setPropertiesData(propDataList);
+		List<PropertyDefinition> propList = propDataList.stream().map(PropertyDefinition::new)
+				.collect(Collectors.toList());
+		dataType.setProperties(propList);
+		dataTypes.add(dataType);
 
 		subcategory.setName("name");
 		subcategories.add(subcategory);
@@ -110,6 +125,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		resource.setVendorName("vendorName");
 		resource.setVendorRelease("vendorRelease");
 		resource.setResourceVendorModelNumber("resourceVendorModelNumber");
+		resource.setDataTypes(dataTypes);
 
 		return resource;
 	}
