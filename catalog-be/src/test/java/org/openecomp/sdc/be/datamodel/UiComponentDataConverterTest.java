@@ -218,14 +218,16 @@ public class UiComponentDataConverterTest {
     public void getUiDataTransferFromResourceByParams_policies() {
         Resource resourceWithPolicies = buildResourceWithPolicies();
         UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithPolicies, Collections.singletonList("policies"));
-        assertThat(componentDTO.getPolicies()).isEqualTo(resourceWithPolicies.resolvePoliciesList());
+        List<PolicyDefinition> expectedPolicies = resourceWithPolicies.resolvePoliciesList();
+        assertThat(componentDTO.getPolicies()).containsExactlyInAnyOrder((PolicyDefinition[]) expectedPolicies.toArray(new PolicyDefinition[expectedPolicies.size()]));
     }
 
     @Test
     public void getUiDataTransferFromServiceByParams_policies() {
         Service resourceWithPolicies = buildServiceWithPolicies();
         UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromServiceByParams(resourceWithPolicies, Collections.singletonList("policies"));
-        assertThat(componentDTO.getPolicies()).isEqualTo(resourceWithPolicies.resolvePoliciesList());
+        List<PolicyDefinition> expectedPolicies = resourceWithPolicies.resolvePoliciesList();
+        assertThat(componentDTO.getPolicies()).containsExactlyInAnyOrder((PolicyDefinition[]) expectedPolicies.toArray(new PolicyDefinition[expectedPolicies.size()]));
     }
 
     @Test

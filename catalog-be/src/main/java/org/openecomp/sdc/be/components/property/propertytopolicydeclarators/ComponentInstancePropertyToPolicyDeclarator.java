@@ -65,6 +65,11 @@ public class ComponentInstancePropertyToPolicyDeclarator extends
     }
 
     @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input) {
+        return StorageOperationStatus.OK;
+    }
+
+    @Override
     public StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policy) {
 
         Optional<ComponentInstanceProperty> propertyCandidate =

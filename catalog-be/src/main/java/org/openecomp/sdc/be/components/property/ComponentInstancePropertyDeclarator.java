@@ -70,4 +70,13 @@ public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarat
         return toscaOperationFacade.updateComponentInstanceProperties(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(), componentInstancePropertiesDeclaredAsInput);
     }
 
+    @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input) {
+        List<ComponentInstanceProperty> componentInstancePropertiesDeclaredAsInput = componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(component, input.getUniqueId());
+        if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
+            return StorageOperationStatus.OK;
+        }
+        componentInstancePropertiesDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDelete(input, cmptInstanceProperty, cmptInstanceProperty.getPath()));
+        return toscaOperationFacade.updateComponentInstanceProperties(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(), componentInstancePropertiesDeclaredAsInput);
+    }
 }
