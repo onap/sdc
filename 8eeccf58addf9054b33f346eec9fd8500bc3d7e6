@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67a5dbd7_66ca9636",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-04-18T13:01:41Z",
+      "side": 1,
+      "message": "Have you tried changing the main pom Jupiter\u0027s version and run tests? If not, can you please try to? It would be great to upgrade it for the whole project.",
+      "revId": "8eeccf58addf9054b33f346eec9fd8500bc3d7e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
