@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "655a894c_0f71f29d",
+        "filename": "catalog-ui/src/app/models/paths-and-names.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T09:42:00Z",
+      "side": 1,
+      "message": "Did you intentionally omit the \u0027public\u0027 access modifier for searchable variable?\nPlease note that you will not be able to access the var with the \u0027this\u0027 keyword unless you add an explicit declaration for the var outside the constructor.",
+      "revId": "f9962b7bd20df5492489f6919e2e6f79665e7d0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c590076_d9002fcc",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/deployment-artifacts/deployment-artifacts-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T09:42:00Z",
+      "side": 1,
+      "message": "1.This condition should be moved up because you are already accessing uiConfiguration.gab.find in line 300 and might fail there.\n\n2. Use \u003d\u003d\u003d when comparing gabConfig to \u0027undefined\u0027\n \n3. remove console log printing\n\n4. use consts instead of let whenever value is not changed",
+      "revId": "f9962b7bd20df5492489f6919e2e6f79665e7d0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
