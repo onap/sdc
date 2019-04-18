@@ -1,5 +1,5 @@
 cluster_name = ''
-cluster_name = node['cassandra'][:cluster_name]+node.chef_environment
+cluster_name = node['cassandra'][:cluster_name]
 
 cas_ips=''
 cas_ips=node['Nodes'][:CS]
@@ -45,7 +45,7 @@ template "cassandra-rackdc.properties" do
     group "cassandra"
     mode "0755"
     variables ({
-        :dc => cluster_name,
-        :rack => "Rack"+"#{rackNum}-"+node.chef_environment
+        :dc => node['cassandra']['datacenter_name'],
+        :rack => "Rack"+"#{rackNum}"
     })
 end
