@@ -307,6 +307,25 @@ export class ComponentServiceNg2 {
             })
     }
 
+    createListInput(component:Component, input:any, isSelf:boolean):Observable<any> {
+        let inputs: any;
+        if(isSelf) {
+            // change componentInstanceProperties -> serviceProperties
+            inputs = {
+                componentInstInputsMap: {
+                    serviceProperties: input.componentInstInputsMap.componentInstanceProperties
+                },
+                listInput: input.listInput
+            };
+        } else {
+            inputs = input;
+        }
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/listInput', inputs)
+            .map(res => {
+                return res.json();
+            })
+    }
+
     createPolicy(component:Component, policiesToCreate:InstancePropertiesAPIMap, isSelf:boolean):Observable<any> {
         const policiesList =
             isSelf ?

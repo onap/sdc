@@ -75,6 +75,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
 	private List<GetInputValueDataDefinition> getInputValues;
 
+	private Boolean isDeclaredListInput = Boolean.FALSE;
+
 	private List<GetPolicyValueDataDefinition> getPolicyValues;
 
 	public PropertyDataDefinition() {
@@ -86,35 +88,36 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
 	}
 
-	public PropertyDataDefinition(PropertyDataDefinition p) {
+	public PropertyDataDefinition(PropertyDataDefinition propertyDataDefinition) {
 		super();
-		this.setUniqueId(p.getUniqueId());
-		this.setRequired(p.isRequired());
-		this.setDefaultValue(p.getDefaultValue());
-		this.setDescription(p.getDescription());
-		this.setSchema(p.getSchema());
-		this.setPassword(p.isPassword());
-		this.setType(p.getType());
-		this.setName(p.getName());
-		this.setValue(p.getValue());
-		this.setRequired(p.isRequired());
-		this.setHidden(p.isHidden());
-		this.setLabel(p.getLabel());
-		this.setImmutable(p.isImmutable());
-		this.setParentUniqueId(p.getParentUniqueId());
-		this.setOwnerId(p.getOwnerId());
-		this.setGetInputValues(p.getGetInputValues());
-		this.setGetPolicyValues(p.getGetPolicyValues());
-		this.setInputPath(p.getInputPath());
-		this.setStatus(p.getStatus());
-		this.setInputId(p.getInputId());
-		this.setInstanceUniqueId(p.getInstanceUniqueId());
-		this.setPropertyId(p.getPropertyId());
-		this.parentPropertyType = p.getParentPropertyType();
-		this.subPropertyInputPath = p.getSubPropertyInputPath();
-		if(isNotEmpty(p.annotations)){
-		    this.setAnnotations(p.annotations);
+		this.setUniqueId(propertyDataDefinition.getUniqueId());
+		this.setRequired(propertyDataDefinition.isRequired());
+		this.setDefaultValue(propertyDataDefinition.getDefaultValue());
+		this.setDescription(propertyDataDefinition.getDescription());
+		this.setSchema(propertyDataDefinition.getSchema());
+		this.setPassword(propertyDataDefinition.isPassword());
+		this.setType(propertyDataDefinition.getType());
+		this.setName(propertyDataDefinition.getName());
+		this.setValue(propertyDataDefinition.getValue());
+		this.setRequired(propertyDataDefinition.isRequired());
+		this.setHidden(propertyDataDefinition.isHidden());
+		this.setLabel(propertyDataDefinition.getLabel());
+		this.setImmutable(propertyDataDefinition.isImmutable());
+		this.setParentUniqueId(propertyDataDefinition.getParentUniqueId());
+		this.setOwnerId(propertyDataDefinition.getOwnerId());
+		this.setGetInputValues(propertyDataDefinition.getGetInputValues());
+		this.setGetPolicyValues(propertyDataDefinition.getGetPolicyValues());
+		this.setInputPath(propertyDataDefinition.getInputPath());
+		this.setStatus(propertyDataDefinition.getStatus());
+		this.setInputId(propertyDataDefinition.getInputId());
+		this.setInstanceUniqueId(propertyDataDefinition.getInstanceUniqueId());
+		this.setPropertyId(propertyDataDefinition.getPropertyId());
+		this.parentPropertyType = propertyDataDefinition.getParentPropertyType();
+		this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
+		if(isNotEmpty(propertyDataDefinition.annotations)){
+		    this.setAnnotations(propertyDataDefinition.annotations);
         }
+		this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
 	}
 
 	public String getParentPropertyType() {
@@ -321,13 +324,21 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		this.propertyId = propertyId;
 	}
 
+	public Boolean getIsDeclaredListInput() {
+		return isDeclaredListInput;
+	}
+
+	public void setIsDeclaredListInput(Boolean isDeclaredListInput) {
+		this.isDeclaredListInput = isDeclaredListInput;
+	}
+
 	@Override
 	public String toString() {
 		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
 				+ password + ", name=" + name + ", value=" + value + ", label=" + label + ", hidden=" + hidden + ", immutable=" + immutable + ", inputPath=" + inputPath + ", status=" + status + ", inputId=" + inputId + ", instanceUniqueId="
-				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues
-				+  "parentPropertyType" + parentPropertyType
-				+  "subPropertyInputPath" + subPropertyInputPath +"]";
+				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues + ", isDeclaredListInput=" + isDeclaredListInput
+				+  ", parentPropertyType=" + parentPropertyType
+				+  ", subPropertyInputPath=" + subPropertyInputPath +"]";
 	}
 
 	@Override
@@ -344,6 +355,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
 		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((isDeclaredListInput == null) ? 0 : isDeclaredListInput.hashCode());
 		return result;
 	}
 
@@ -446,6 +458,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		} else if (!status.equals(other.status)) {
             return false;
         }
+		if (isDeclaredListInput == null) {
+			if (other.isDeclaredListInput != null) {
+				return false;
+			}
+		} else if (!isDeclaredListInput.equals(other.isDeclaredListInput)) {
+			return false;
+		}
 		return true;
 	}
 

@@ -44,4 +44,21 @@ public interface PropertyDeclarator {
      */
     StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policy);
 
+    /**
+     * Updates given list of properties to get values from the specified "list input" with get_input function.
+     * This function does NOT create "list input", it needs to be created separately.
+     * @param component the container
+     * @param propertiesOwnerId the id of the owner of the properties to declare (e.g ComponentInstance, Policy, Group etc)
+     * @param propsToDeclare the list of properties that are being declared as inputs
+     * @param input the input from which properties get values
+     * @return the input same as passed one at 4th argument
+     */
+    Either<InputDefinition, StorageOperationStatus> declarePropertiesAsListInput(Component component, String propertiesOwnerId, List<ComponentInstancePropInput> propsToDeclare, InputDefinition input);
+
+    /**
+     * Un declare properties declared as list type input
+     * @param component the container of the input to be deleted
+     * @param input the input to be deleted
+     */
+    StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input);
 }

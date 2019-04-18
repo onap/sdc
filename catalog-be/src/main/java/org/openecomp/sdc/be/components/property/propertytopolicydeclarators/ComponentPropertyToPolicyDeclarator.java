@@ -65,9 +65,14 @@ public class ComponentPropertyToPolicyDeclarator extends DefaultPropertyDeclarat
     }
 
     @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input) {
+        // no need for implementation since we are in a policy scenario
+        return StorageOperationStatus.OK;
+    }
+
+    @Override
     public void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
         // no need for implementation since we are in a policy scenario
-        return;
     }
 
     @Override

@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
 import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.resources.data.DataTypeData;
 
 
 public enum VertexTypeEnum {
@@ -62,7 +63,8 @@ public enum VertexTypeEnum {
 	INTERFACE		            ("interface",			        InterfaceDataDefinition.class),
 	INTERFACE_OPERATION			("interfaceOperation",			OperationDataDefinition.class),
 	NODE_FILTER_TEMPLATE		("NodeTemplateFilter",          CINodeFilterDataDefinition.class),
-	INST_INTERFACES             ("InstInterfaces",              MapInterfaceDataDefinition.class);
+	INST_INTERFACES             ("InstInterfaces",              MapInterfaceDataDefinition.class),
+	DATA_TYPES					("data_types", 					DataTypeDataDefinition.class);
 
 	private String name;
 	private Class classOfJson;
