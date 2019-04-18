@@ -26,7 +26,6 @@ template "sdc-yaml-config" do
     })
 end
 
-replication_factor=1
 template "titan.properties" do
    path "/#{tests_base}/conf/titan.properties"
    source "BE-titan.properties.erb"
@@ -37,8 +36,8 @@ template "titan.properties" do
       :CASSANDRA_IP => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
       :CASSANDRA_PWD => node['cassandra'][:cassandra_password],
       :CASSANDRA_USR => node['cassandra'][:cassandra_user],
-      :rep_factor => replication_factor,
-      :DC_NAME      => node['cassandra']['datacenter_name']+node.chef_environment
+      :rep_factor => node['cassandra']['replication_factor'],
+      :DC_NAME      => node['cassandra']['datacenter_name']
    })
 end
 
