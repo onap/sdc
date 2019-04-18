@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c59ec59_a0c618b3",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "extract style to css",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc936999_ae9bdf36",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "This remark is for all html files.\nYou should use sdc-ui component such as sdc-input, sdc-button etc.",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "caee47a5_a5b1d105",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "usually camelCase should be used to name variables.",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e270d055_1838ed0f",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "Use const instead of let whenever possible.\nTry turning on tslint on your IDE to detect such issues",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "868a6f9c_c493834b",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "extract style to css",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d8bf6bf_b052f333",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "use camelCase naming (i.e. gabService)",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7c08b74_26901e65",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "I think that casting using \u0027as\u0027 keyword is preferable over \u003c\u003e",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "692f42cf_194fb9fb",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2019-04-18T12:14:01Z",
+      "side": 1,
+      "message": "Remove console log",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
