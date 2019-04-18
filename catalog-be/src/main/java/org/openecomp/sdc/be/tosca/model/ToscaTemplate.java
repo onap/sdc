@@ -32,6 +32,7 @@ public class ToscaTemplate {
     private ToscaMetadata metadata;
     private List<Map<String, Map<String, String>>> imports;
     private Map<String, Object> interface_types;
+    private Map<String, ToscaDataType> data_types;
     private Map<String, ToscaNodeType> node_types;
     private ToscaTopolgyTemplate topology_template;
 
@@ -101,6 +102,22 @@ public class ToscaTemplate {
     public void setInterface_types(Map<String, Object> interface_types) {
         this.interface_types = interface_types;
 
+    }
+
+    /**
+     * Gets data_types map.
+     * @return Current data_types map.
+     */
+    public Map<String, ToscaDataType> getData_types() {
+        return data_types;
+    }
+
+    /**
+     * Sets data_types map.
+     * @param data_types New data_types map.
+     */
+    public void setData_types(Map<String, ToscaDataType> data_types) {
+        this.data_types = data_types;
     }
 }
 

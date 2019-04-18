@@ -26,11 +26,10 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -104,6 +103,23 @@ public class TopologyTemplateOperationTest {
         addPolicyToToscaElementWithStatus(TitanOperationStatus.OK);
         result = topologyTemplateOperation.associateOrAddCalcCapReqToComponent(graphVertex, calcRequirements, calcCapabilty, calCapabilitiesProps);
         assertEquals(StorageOperationStatus.OK, result);
+    }
+
+    @Test
+    public void testSetDataTypesFromGraph() {
+        GraphVertex containerVertex = new GraphVertex();
+        ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreComponentInstancesInterfaces(true);
+        filter.setIgnoreDataType(false);
+        String componentName = "componentName";
+        String componentId = UniqueIdBuilder.buildResourceUniqueId();
+        containerVertex.setVertex(Mockito.mock(TitanVertex.class));
+        containerVertex.setJsonMetadataField(JsonPresentationFields.NAME, componentName);
+        containerVertex.setUniqueId(componentId);
+        containerVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        when(titanDao.getChildVertex(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class))).thenReturn(Either.right(TitanOperationStatus.GENERAL_ERROR));
+        Either<ToscaElement, StorageOperationStatus> storageOperationStatus = topologyTemplateOperation.getToscaElement(containerVertex, filter);
+        assertThat(storageOperationStatus).isEqualTo(Either.right(StorageOperationStatus.GENERAL_ERROR));
     }
 
     @Test

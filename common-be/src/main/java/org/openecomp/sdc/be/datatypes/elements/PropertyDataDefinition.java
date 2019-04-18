@@ -75,6 +75,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
 	private List<GetInputValueDataDefinition> getInputValues;
 
+	private Boolean isDeclaredListInput = Boolean.FALSE;
+
 	private List<GetPolicyValueDataDefinition> getPolicyValues;
 
 	public PropertyDataDefinition() {
@@ -115,6 +117,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		if(isNotEmpty(p.annotations)){
 		    this.setAnnotations(p.annotations);
         }
+		this.setIsDeclaredListInput(p.getIsDeclaredListInput());
 	}
 
 	public String getParentPropertyType() {
@@ -321,13 +324,21 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		this.propertyId = propertyId;
 	}
 
+	public Boolean getIsDeclaredListInput() {
+		return isDeclaredListInput;
+	}
+
+	public void setIsDeclaredListInput(Boolean isDeclaredListInput) {
+		this.isDeclaredListInput = isDeclaredListInput;
+	}
+
 	@Override
 	public String toString() {
 		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
 				+ password + ", name=" + name + ", value=" + value + ", label=" + label + ", hidden=" + hidden + ", immutable=" + immutable + ", inputPath=" + inputPath + ", status=" + status + ", inputId=" + inputId + ", instanceUniqueId="
-				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues
-				+  "parentPropertyType" + parentPropertyType
-				+  "subPropertyInputPath" + subPropertyInputPath +"]";
+				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues + ", isDeclaredListInput=" + isDeclaredListInput
+				+  ", parentPropertyType=" + parentPropertyType
+				+  ", subPropertyInputPath=" + subPropertyInputPath +"]";
 	}
 
 	@Override
@@ -344,6 +355,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
 		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((isDeclaredListInput == null) ? 0 : isDeclaredListInput.hashCode());
 		return result;
 	}
 
@@ -446,6 +458,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		} else if (!status.equals(other.status)) {
             return false;
         }
+		if (isDeclaredListInput == null) {
+			if (other.isDeclaredListInput != null) {
+				return false;
+			}
+		} else if (!isDeclaredListInput.equals(other.isDeclaredListInput)) {
+			return false;
+		}
 		return true;
 	}
 

@@ -87,6 +87,13 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
                 .orElse(StorageOperationStatus.OK);
     }
 
+    @Override
+    public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputForDelete) {
+        return getPolicyPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
+                .map(policyProperties -> unDeclarePolicyProperties(component, inputForDelete, policyProperties))
+                .orElse(StorageOperationStatus.OK);
+    }
+
     private StorageOperationStatus unDeclarePolicyProperties(Component container, InputDefinition input, PolicyProperties policyProperties) {
         String policyId = policyProperties.getPolicyId();
         List<PropertyDataDefinition> propsDeclaredAsInput = policyProperties.getProperties();

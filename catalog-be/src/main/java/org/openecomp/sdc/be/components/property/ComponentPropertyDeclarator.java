@@ -110,6 +110,40 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
     return StorageOperationStatus.OK;
   }
 
+  @Override
+  public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component,
+                                                            InputDefinition input) {
+    PropertyDefinition propertyDefinition = new PropertyDefinition(input);
+
+    if(propertyBL.isPropertyUsedByOperation(component, propertyDefinition)) {
+      return StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION;
+    }
+
+    Optional<List <PropertyDefinition>> propertyToUpdateCandidate =
+            getDeclaredPropertiesByInputId(component, input.getUniqueId());
+
+    if(propertyToUpdateCandidate.isPresent()) {
+      List<PropertyDefinition> propertiesToUpdate = propertyToUpdateCandidate.get();
+      if (!propertiesToUpdate.isEmpty()) {
+        return unDeclareInputs(component, input, propertiesToUpdate);
+      }
+    }
+
+    return StorageOperationStatus.OK;
+  }
+
+  private StorageOperationStatus unDeclareInputs(Component component,
+                                                 InputDefinition input,
+                                                 List <PropertyDefinition> propertiesToUpdate) {
+    for (PropertyDefinition propertyToUpdate : propertiesToUpdate) {
+      StorageOperationStatus storageOperationStatus = unDeclareInput(component, input, propertyToUpdate);
+      if (StorageOperationStatus.OK != storageOperationStatus) {
+        return storageOperationStatus;
+      }
+    }
+    return StorageOperationStatus.OK;
+  }
+
   private StorageOperationStatus unDeclareInput(Component component,
                                                 InputDefinition input,
                                                 PropertyDefinition propertyToUpdate) {
@@ -124,9 +158,34 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
     return StorageOperationStatus.OK;
   }
 
-  private Optional<PropertyDefinition> getDeclaredPropertyByInputId(Component component,
+  private Optional<PropertyDefinition> getDeclaredPropertyByInputId(Component component, String inputId) {
+    List<PropertyDefinition> properties = component.getProperties();
+
+    if (CollectionUtils.isEmpty(properties)) {
+      return Optional.empty();
+    }
+
+    for (PropertyDefinition propertyDefinition : properties) {
+      List<GetInputValueDataDefinition> getInputValues = propertyDefinition.getGetInputValues();
+      if (CollectionUtils.isEmpty(getInputValues)) {
+        continue;
+      }
+
+      Optional<GetInputValueDataDefinition> getInputCandidate =
+              getInputValues.stream().filter(getInput -> getInput.getInputId().equals(inputId)).findAny();
+
+      if (getInputCandidate.isPresent()) {
+        return Optional.of(propertyDefinition);
+      }
+    }
+
+    return Optional.empty();
+  }
+
+  private Optional<List <PropertyDefinition>> getDeclaredPropertiesByInputId(Component component,
                                                                     String inputId) {
     List<PropertyDefinition> properties = component.getProperties();
+    List<PropertyDefinition> propertiesToUpdate = new ArrayList<>();
 
     if(CollectionUtils.isEmpty(properties)) {
       return Optional.empty();
@@ -139,14 +198,14 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
       }
 
       Optional<GetInputValueDataDefinition> getInputCandidate =
-          getInputValues.stream().filter(getInput -> getInput.getInputId().equals(inputId))
-              .findAny();
+              getInputValues.stream().filter(getInput -> getInput.getInputId().equals(inputId))
+                      .findAny();
 
       if(getInputCandidate.isPresent()) {
-        return Optional.of(propertyDefinition);
+        propertiesToUpdate.add(propertyDefinition);
       }
     }
 
-    return Optional.empty();
+    return Optional.of(propertiesToUpdate);
   }
 }
