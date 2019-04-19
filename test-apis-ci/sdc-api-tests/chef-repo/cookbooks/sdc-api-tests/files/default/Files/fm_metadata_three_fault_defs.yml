@@ -1,0 +1,282 @@
+---
+event: {
+  presence: required,
+  action: [ any, any, baseStationSynchronizationProblem,
+            contact technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_1'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Equipment Alarm'
+        },
+        alarmCondition: {
+          presence: required,
+          value: alarm003
+        },
+        eventSeverity: {
+          presence: required,
+          value: MAJOR
+        },
+        eventSourceType: {
+          presence: required,
+          value: virtualNetworkFunction
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 2.0
+        },
+        specificProblem: {
+          presence: required,
+          value: "Configuration file was corrupt or not present"
+        },
+        vfStatus: {
+          presence: required,
+          value: "Requesting Termination"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "Comment"
+        }
+      }
+    }
+  },
+  comment: "comment2"
+}
+
+---
+
+event: {
+  presence: required,
+  action: [ any, any, baseStationConnectivityLost,
+            contact technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_2'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Communications Alarm'
+        },
+        alarmCondition: {
+          presence: required,
+          value: 'baseStationConnectivityLost'
+        },
+        eventSeverity: {
+          presence: required
+        },
+        eventSourceType: {
+          presence: required,
+          value: 'virtualNetworkFunction'
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 2.0
+        },
+        specificProblem: {
+          presence: required
+        },
+        vfStatus: {
+          presence: required,
+          value: "Active"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "comment'
+          "
+        }
+      }
+    }
+  },
+  comment: "comment2
+  ",
+}
+
+---
+event: {
+  presence: required,
+  action: [ any, any, baseStationSoftwareManagementProblem,
+            contact technical support ],
+  structure: {
+    commonEventHeader: {
+      presence: required,
+      structure: {
+        domain: {
+          presence: required,
+          value: fault
+        },
+        eventName: {
+          presence: required,
+          value: 'Fault_3'
+        },
+        eventId: {
+          presence: required
+        },
+        nfNamingCode: {
+          value: mrfx
+        },
+        priority: {
+          presence: required,
+          value: 'Medium'
+        },
+        reportingEntityId: {
+          presence: required
+        },
+        reportingEntityName: {
+          presence: required
+        },
+        sequence: {
+          presence: required
+        },
+        sourceId: {
+          presence: required
+        },
+        sourceName: {
+          presence: required
+        },
+        startEpochMicrosec: {
+          presence: required
+        },
+        lastEpochMicrosec: {
+          presence: required
+        },
+        version: {
+          presence: required,
+          value: 3.0
+        }
+      }
+    },
+    faultFields: {
+      presence: required,
+      structure: {
+        eventCategory: {
+          presence: optional,
+          comment: 'Processing Error'
+        },
+        alarmCondition: {
+          presence: required,
+          value: 'baseStationsoftwareManagementProblem'
+        },
+        eventSeverity: {
+          presence: required
+        },
+        eventSourceType: {
+          presence: required
+        },
+        faultFieldsVersion: {
+          presence: required,
+          value: 3.0
+        },
+        specificProblem: {
+          presence: required
+        },
+        vfStatus: {
+          presence: required,
+          value: "Active"
+        },
+        alarmAdditionalInformation: {
+          required: true,
+          comment: "comment"
+        }
+      }
+    }
+  },
+  comment: "comment2"
+}
