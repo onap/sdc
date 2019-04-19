@@ -91,7 +91,7 @@ function dir_perms {
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
 	mkdir -p ${WORKSPACE}/data/logs/WS
 	echo "create dir"
-	echo "${WORKSPACE}data/${SDC_CERT_DIR}"
+	echo "${WORKSPACE}/data/${SDC_CERT_DIR}"
 	mkdir -p ${WORKSPACE}/data/${SDC_CERT_DIR}
     chmod -R 777 ${WORKSPACE}/data/logs
 }
