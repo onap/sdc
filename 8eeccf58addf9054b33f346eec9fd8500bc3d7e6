@@ -16,6 +16,24 @@
       "revId": "8eeccf58addf9054b33f346eec9fd8500bc3d7e6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce1304d0_18108370",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T14:55:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67a5dbd7_66ca9636",
+      "revId": "8eeccf58addf9054b33f346eec9fd8500bc3d7e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
