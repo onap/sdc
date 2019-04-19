@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e7d7007a_3a79db03",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c59ec59_a0c618b3",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc936999_ae9bdf36",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.html",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-18T12:14:01Z",
       "side": 1,
       "message": "This remark is for all html files.\nYou should use sdc-ui component such as sdc-input, sdc-button etc.",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f16eab42_65da3e71",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Those components are so much specific styled that changing them to sdc-input, sdc-buttons could only broke the design of them. Also in this case I need to have form validation which is hard to achieve using existing components. Another reason not to use them is that those components takes to much place on the page and there is no place for that in the dialog.",
+      "parentUuid": "cc936999_ae9bdf36",
       "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7650f308_5cbb2306",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "caee47a5_a5b1d105",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e270d055_1838ed0f",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.ts",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2019-04-18T12:14:01Z",
       "side": 1,
       "message": "Use const instead of let whenever possible.\nTry turning on tslint on your IDE to detect such issues",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a998926_0f20ba1c",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser-column-provider.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e270d055_1838ed0f",
       "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "cc3be005_ca0f09d9",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "868a6f9c_c493834b",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d8bf6bf_b052f333",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2019-04-18T12:14:01Z",
       "side": 1,
       "message": "use camelCase naming (i.e. gabService)",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4954038d_7b1731d8",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d8bf6bf_b052f333",
       "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "3f0794e0_a23fe605",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7c08b74_26901e65",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "692f42cf_194fb9fb",
         "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2019-04-18T12:14:01Z",
       "side": 1,
       "message": "Remove console log",
+      "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7f541d7_cafb48bc",
+        "filename": "catalog-ui/src/app/ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-04-19T17:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "692f42cf_194fb9fb",
       "revId": "c71721e7a1a6bee29adb05891ebcb06ea8016fc3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
