@@ -261,7 +261,8 @@ public final class DataTestIdEnum {
 		ADD_ANOTHER_ARTIFACT("add-another-artifact-button"), 
 		EDIT_ARTIFACT("edit_"), //upload env file by its label(via deployment artifact view)/displayName(via Canvas)
 		DELETE_ARTIFACT("delete_"),
-		DOWNLOAD_ARTIFACT("download_"), 
+		DOWNLOAD_ARTIFACT("download_"),
+		BROWSE_ARTIFACT("gab-"),
 		GET_DEPLOYMENT_ARTIFACT_DESCRIPTION("description"), 
 		GET_INFORMATIONAL_ARTIFACT_DESCRIPTION("Description"), 
 		OK("OK"),
