@@ -39,7 +39,7 @@
 
 <div class="cell field-property" *ngIf="isInputParam">
     <select
-        *ngIf="filteredInputProps.length || !isAssociateWorkflow"
+        *ngIf="filteredInputProps.length || operationOutputCats.length || !isAssociateWorkflow"
         [(ngModel)]="param.inputId"
         (change)="onChangeProperty($event)"
         [ngClass]="{'disabled': readonly}"
@@ -60,7 +60,7 @@
         </optgroup>
     </select>
     <span
-        *ngIf="!filteredInputProps.length && isAssociateWorkflow"
+        *ngIf="!filteredInputProps.length && !operationOutputCats.length && isAssociateWorkflow"
         class="no-properties-error">
         {{ 'PARAM_NONE_OF_TYPE' | translate }}
     </span>

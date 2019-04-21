@@ -102,11 +102,11 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             this.propertyTooltipText = this.translateService.translate("OPERATION_PROPERTY_TOOLTIP_TEXT");
 
             this.associationOptions = [
-                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.NONE, this.translateService.translate("NO_WORKFLOW_ASSOCIATION")),
-                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION"))
+                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate("EXTERNAL_WORKFLOW_ASSOCIATION")),
+                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION")),
             ];
 
-            this.workflowAssociationType = this.operation.workflowAssociationType || WORKFLOW_ASSOCIATION_OPTIONS.NONE;
+            this.workflowAssociationType = this.operation.workflowAssociationType || WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL;
         });
 
         this.currentTab = this.TYPE_INPUT;
@@ -167,7 +167,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
                     (workflow: any) => new DropdownValue(workflow.id, workflow.name)
                 );
             } else {
-                this.workflows = [new DropdownValue(this.operation.workflowId, this.operation.workflowId)];
+                this.workflows = [];
             }
         }
         this.reconstructOperation();
@@ -223,7 +223,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             _.forEach(
                 [...this.inputOperation.outputs.listToscaDataDefinition].sort((a, b) => a.name.localeCompare(b.name)),
                 (output: OperationParameter) => {
-                    this.addParam(output);
+                    this.addParam({...output, required: Boolean(output.required)});
                 }
             );
         }
@@ -234,7 +234,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             _.forEach(
                 [...this.inputOperation.inputs.listToscaDataDefinition].sort((a, b) => a.name.localeCompare(b.name)),
                 (input: OperationParameter) => {
-                    this.addParam(input);
+                    this.addParam({...input, required: Boolean(input.required)});
                 }
             );
         }
@@ -286,7 +286,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     }
 
     set descriptionValue(v) {
-        this.operation.description = v;
+        this.operation.description = v || null;
         this.validityChanged();
     }
 
@@ -295,6 +295,11 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         if (_.isUndefined(workflowId) || !this.workflowIsOnline) {
             return;
         }
+
+        if (this.operation.workflowId === workflowId.value && !selectedVersionId) {
+            return;
+        }
+
         this.operation.workflowId = workflowId.value;
         if (!this.assignInputParameters[this.operation.workflowId]) {
             this.assignInputParameters[this.operation.workflowId] = {};
@@ -313,12 +318,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
                 (version: any) => {
                     if (!this.assignInputParameters[this.operation.workflowId][version.id] && version.id !== selectedVersionId) {
                         this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: OperationParameter) => {
-                            return new OperationParameter({...input, type: input.type.toLowerCase()});
+                            return new OperationParameter({...input, type: input.type.toLowerCase(), required: Boolean(input.required)});
                         })
                         .sort((a, b) => a.name.localeCompare(b.name));
 
                         this.assignOutputParameters[this.operation.workflowId][version.id] = _.map(version.outputs, (output: OperationParameter) => {
-                            return new OperationParameter({...output, type: output.type.toLowerCase()});
+                            return new OperationParameter({...output, type: output.type.toLowerCase(), required: Boolean(output.required)});
                         })
                         .sort((a, b) => a.name.localeCompare(b.name));
                     }
@@ -376,6 +381,28 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
     }
 
+    onChangeArtifactFile(e: any) {
+        const file = e.target.files && e.target.files[0];
+        this.operation.artifactFile = file;
+
+        if (!this.operation.artifactFile) {
+            this.operation.artifactData = null;
+            this.validityChanged();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            this.isLoading = false;
+            const result = <String>reader.result;
+            this.operation.artifactData = result.substring(result.indexOf(',') + 1);
+            this.validityChanged();
+        }
+
+        this.isLoading = true;
+        reader.readAsDataURL(file);
+    }
+
     tabChanged = (event) => {
 
         this.currentTab = event.title;
@@ -397,8 +424,8 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     }
 
     addParam(param?: OperationParameter): void {
+        this.tableParameters.push(new OperationParameter(param || {required: false}));
         this.validityChanged();
-        this.tableParameters.push(new OperationParameter(param));
     }
 
     canAdd = (): boolean => {
@@ -456,6 +483,11 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         return operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
     }
 
+    isUsingExternalWF = (operation?: OperationModel): boolean => {
+        operation = operation || this.operation;
+        return operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL;
+    }
+
     shouldCreateWF = (operation?: OperationModel): boolean => {
         operation = operation || this.operation;
         return operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW;
@@ -463,7 +495,9 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
     checkFormValidForSubmit = (): boolean => {
         return this.operation.name &&
-            (!this.isUsingExistingWF() || this.operation.workflowVersionId) &&
+            (this.isUsingExternalWF() ?
+                (this.operation.artifactFile && this.operation.artifactFile.name) :
+                (!this.isUsingExistingWF() || this.operation.workflowVersionId)) &&
             this.isParamsValid();
     }
 
