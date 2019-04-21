@@ -22,6 +22,13 @@ package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -53,10 +60,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import java.util.*;
-import java.util.function.Supplier;
 
 @org.springframework.stereotype.Component("propertyBusinessLogic")
 public class PropertyBusinessLogic extends BaseBusinessLogic {
@@ -465,31 +468,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                 .findAny();
 
         return propertyCandidate.isPresent();
-    }
-
-    private boolean isPropertyExist(List<PropertyDefinition> properties, String resourceUid, String propertyName, String propertyType) {
-        boolean result = false;
-        if (!CollectionUtils.isEmpty(properties)) {
-            for (PropertyDefinition propertyDefinition : properties) {
-
-                if ( propertyDefinition.getName().equals(propertyName) &&
-                    (propertyDefinition.getParentUniqueId().equals(resourceUid) || !propertyDefinition.getType().equals(propertyType)) ) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    private Either<PropertyDefinition, StorageOperationStatus> handleProperty(PropertyDefinition newPropertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
-
-        StorageOperationStatus validateAndUpdateProperty = validateAndUpdateProperty(newPropertyDefinition, dataTypes);
-        if (validateAndUpdateProperty != StorageOperationStatus.OK) {
-            return Either.right(validateAndUpdateProperty);
-        }
-
-        return Either.left(newPropertyDefinition);
     }
 
     private StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
