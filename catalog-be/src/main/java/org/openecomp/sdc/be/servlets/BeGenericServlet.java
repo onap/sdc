@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.servlet.ServletContext;
@@ -95,6 +96,8 @@ public class BeGenericServlet extends BasicServlet {
     protected HttpServletRequest servletRequest;
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);
+
+    private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_]+";
 
     /******************** New error response mechanism
      * @param requestErrorWrapper **************/
@@ -315,12 +318,11 @@ public class BeGenericServlet extends BasicServlet {
         }
     }
 
-    protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String componentId,
-                                                                                     String data) {
+    protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String componentId, String data) {
         JSONParser parser = new JSONParser();
         JSONObject root;
         try {
-            Map<String, PropertyDefinition> properties = new HashMap<String, PropertyDefinition>();
+            Map<String, PropertyDefinition> properties = new HashMap<>();
             root = (JSONObject) parser.parse(data);
 
             Set entrySet = root.entrySet();
@@ -328,16 +330,20 @@ public class BeGenericServlet extends BasicServlet {
             while (iterator.hasNext()) {
                 Entry next = (Entry) iterator.next();
                 String propertyName = (String) next.getKey();
-                JSONObject value = (JSONObject) next.getValue();
-                String jsonString = value.toJSONString();
-                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
-                if (convertJsonToObject.isRight()) {
-                    return Either.right(convertJsonToObject.right().value());
+
+                if(!isPropertyNameValid(propertyName)) {
+                    return Either.right(ActionStatus.INVALID_PROPERTY_NAME);
                 }
-                PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
-                String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, (String) propertyName);
-                propertyDefinition.setUniqueId(uniqueId);
-                properties.put(propertyName, propertyDefinition);
+
+                JSONObject value = (JSONObject) next.getValue();
+                Either<PropertyDefinition, ActionStatus> propertyDefinitionEither =
+                        getPropertyDefinitionFromJson(componentId, propertyName, value);
+
+                if(propertyDefinitionEither.isRight()) {
+                    return Either.right(propertyDefinitionEither.right().value());
+                }
+
+                properties.put(propertyName, propertyDefinitionEither.left().value());
             }
 
             return Either.left(properties);
@@ -345,6 +351,25 @@ public class BeGenericServlet extends BasicServlet {
             log.info("Property conetnt is invalid - {}", data);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
+    }
+
+    protected boolean isPropertyNameValid(String propertyName) {
+        return Objects.nonNull(propertyName)
+                       && propertyName.matches(PROPERTY_NAME_REGEX);
+
+    }
+
+    private Either<PropertyDefinition, ActionStatus> getPropertyDefinitionFromJson(String componentId, String propertyName, JSONObject value) {
+        String jsonString = value.toJSONString();
+        Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
+        if (convertJsonToObject.isRight()) {
+            return Either.right(convertJsonToObject.right().value());
+        }
+        PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
+        String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, propertyName);
+        propertyDefinition.setUniqueId(uniqueId);
+
+        return Either.left(propertyDefinition);
     }
 
     protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertiesListForUpdate(String data) {
