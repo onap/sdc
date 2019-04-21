@@ -21,7 +21,7 @@
         class="top-add-btn add-btn"
         *ngIf="!isListEmpty()"
         [ngClass]="{'disabled': readonly}"
-        data-tests-id="addInterfaceOperation"
+        data-tests-id="add-operation"
         (click)="onEditOperation()">
         {{ 'INTERFACE_ADD_OPERATION' | translate }}
     </div>
@@ -33,6 +33,7 @@
             *ngIf="isListEmpty() && !isLoading">
             <div
                 class="empty-list-add-btn"
+                data-tests-id="add-operation"
                 [ngClass]="{'disabled': readonly}"
                 (click)="onEditOperation()">
                 <svg-icon
@@ -50,12 +51,14 @@
             <div class="expand-collapse">
                 <a
                     class="link"
+                    data-tests-id="expand-all"
                     [ngClass]="{'disabled': isAllExpanded()}"
                     (click)="collapseAll(false)">
                     {{ 'INTERFACE_EXPAND_ALL' | translate }}
                 </a> |
                 <a
                     class="link"
+                    data-tests-id="collapse-all"
                     [ngClass]="{'disabled': isAllCollapsed()}"
                     (click)="collapseAll()">
                     {{ 'INTERFACE_COLLAPSE_ALL' | translate }}
@@ -64,10 +67,12 @@
 
             <div
                 class="interface-row"
-                *ngFor="let interface of interfaces">
+                *ngFor="let interface of interfaces"
+                [attr.data-tests-id]="'interface-' + interface.displayType()">
 
                 <div
                     class="interface-accordion"
+                    [attr.data-tests-id]="'interface-' + interface.displayType() + '-toggle'"
                     (click)="interface.toggleCollapse()">
                     <span
                         class="chevron-container"
@@ -102,25 +107,29 @@
                     <div
                         class="data-row"
                         *ngFor="let operation of interface.operations"
+                        [attr.data-tests-id]="'operation-' + operation.name"
                         (click)="onEditOperation(operation)">
                         <span
-                            class="cell field-name">
+                            class="cell field-name"
+                            [attr.data-tests-id]="'operation-' + operation.name + '-name'">
                             {{operation.name}}
                         </span>
                         <span
                             class="cell field-description"
-                            [ngClass]="{'collapsed': operation.isCollapsed}">
+                            [ngClass]="{'collapsed': operation.isCollapsed}"
+                            [attr.data-tests-id]="'operation-' + operation.name + '-description'">
                             {{operation.getDescriptionEllipsis()}}
                             <span
                                 class="more-or-less link"
-                                (click)="operation.toggleCollapsed($event)">
+                                (click)="operation.toggleCollapsed($event)"
+                                [attr.data-tests-id]="'operation-' + operation.name + '-ellipsis'">
                                 {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
                             </span>
                         </span>
                         <span class="cell field-actions">
                             <span
                                 class="delete-action"
-                                data-tests-id="deleteOperation"
+                                [attr.data-tests-id]="'remove-operation-' + operation.name"
                                 (click)="onRemoveOperation($event, operation)">
                                 <svg-icon
                                     *ngIf="!readonly"

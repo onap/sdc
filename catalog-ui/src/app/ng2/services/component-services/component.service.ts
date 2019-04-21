@@ -23,7 +23,7 @@ import {Injectable, Inject} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {Response, URLSearchParams} from '@angular/http';
+import {Response, URLSearchParams, Headers} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
     PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement, PolicyInstance} from "app/models";
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
@@ -204,6 +204,28 @@ export class ComponentServiceNg2 {
                     interfaceMap[interf.toscaPresentation.type] = _.keys(interf.toscaPresentation.operations);
                 });
                 return interfaceMap;
+            });
+    }
+
+    uploadInterfaceOperationArtifact(component:Component, response:OperationModel, UIOperation:OperationModel) {
+        const payload = {
+            artifactType: "WORKFLOW",
+            artifactName: UIOperation.artifactFile.name,
+            description: "Workflow Artifact Description",
+            payloadData: UIOperation.artifactData
+        };
+
+        const headers = new Headers();
+        JSON.stringify(payload);
+        const payloadString = JSON.stringify(payload, null, '  ');
+        const md5Result = md5(payloadString).toLowerCase();
+        headers.append('Content-MD5', btoa(md5Result));
+
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + response.interfaceId + '/operations/' + response.uniqueId + '/artifacts/' + response.implementation.artifactUUID,
+                payload,
+                {headers}
+            ).map((res: Response) => {
+                return res.json();
             });
     }
 
