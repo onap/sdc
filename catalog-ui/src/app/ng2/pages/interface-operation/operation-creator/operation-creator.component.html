@@ -50,7 +50,8 @@
                     label="{{ 'OPERATION_NAME' | translate }}"
                     [(value)]="operation.name"
                     testId="operationName"
-                    (valueChange)="onChangeName()">
+                    (valueChange)="onChangeName()"
+                    [disabled]="readonly">
                 </sdc-input>
             </div>
 
@@ -80,7 +81,37 @@
                 </sdc-dropdown>
             </div>
 
-            <div class="form-item" *ngIf="!isUsingExistingWF()"></div>
+            <div class="form-item" *ngIf="!isUsingExistingWF() && !isUsingExternalWF()"></div>
+
+            <div
+                *ngIf="isUsingExternalWF()"
+                class="form-item sdc-input">
+                <label class="sdc-input__label required">{{ 'OPERATION_ARTIFACT' | translate }}</label>
+                <div class="i-sdc-form-item i-sdc-form-file-upload">
+                    <span
+                        class="i-sdc-form-file-name"
+                        data-tests-id="artifactFilename">
+                        {{ operation.artifactFile && operation.artifactFile.name }}
+                    </span>
+                    <div
+                        *ngIf="operation.artifactFile && operation.artifactFile.name"
+                        class="i-sdc-form-file-upload-x-btn"
+                        data-tests-id="clearArtifact"
+                        (click)="onChangeArtifactFile({ target: {} })"></div>
+                    <label
+                        class="i-sdc-form-file-upload-label"
+                        [ngClass]="{'disabled': readonly}">
+                        <input
+                            type="file"
+                            base-sixty-four-input
+                            maxsize="10240"
+                            data-tests-id="artifactUpload"
+                            (change)="onChangeArtifactFile($event)"
+                        />
+                        <div class="file-upload-browse-btn">Browse</div>
+                    </label>
+                </div>
+            </div>
 
             <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
                 <label class="sdc-input__label required">{{ 'OPERATION_WORKFLOW' | translate }}
