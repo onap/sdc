@@ -6,7 +6,7 @@ export class OperationParameter {
     inputId: string;
     required: boolean;
 
-    constructor(param?: OperationParameter) {
+    constructor(param?: any) {
         if (param) {
             this.name = param.name;
             this.type = param.type;
@@ -24,6 +24,7 @@ export class WORKFLOW_ASSOCIATION_OPTIONS {
     static NONE = 'NONE';
     static NEW = 'NEW';
     static EXISTING = 'EXISTING';
+    static EXTERNAL = 'EXTERNAL';
 }
 
 export class BEOperationModel {
@@ -75,6 +76,8 @@ export class BEOperationModel {
 export class OperationModel extends BEOperationModel {
     interfaceType: string;
     interfaceId: string;
+    artifactFile: any;
+    artifactData: any;
 
     constructor(operation?: any) {
         super(operation);

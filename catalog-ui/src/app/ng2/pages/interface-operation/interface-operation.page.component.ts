@@ -136,20 +136,32 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
-        this.workflowIsOnline = false;//!_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
-        const workflowSubscription = this.enableWorkflowAssociation && this.workflowIsOnline ? this.WorkflowServiceNg2.getWorkflows() : Promise.resolve();
+        this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
+
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaces(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
-            this.ComponentServiceNg2.getInterfaceTypes(this.component),
-            workflowSubscription
+            this.ComponentServiceNg2.getInterfaceTypes(this.component)
         ).subscribe((response: Array<any>) => {
-            this.isLoading = false;
-            this.initInterfaces(response[0].interfaces);
-            this.sortInterfaces();
-            this.inputs = response[1].inputs;
-            this.interfaceTypes = response[2];
-            this.workflows = response[3];
+            const callback = (workflows) => {
+                this.isLoading = false;
+                this.initInterfaces(response[0].interfaces);
+                this.sortInterfaces();
+                this.inputs = response[1].inputs;
+                this.interfaceTypes = response[2];
+                this.workflows = workflows;
+            };
+            if (this.enableWorkflowAssociation && this.workflowIsOnline) {
+                this.WorkflowServiceNg2.getWorkflows().subscribe(
+                    callback,
+                    (err) => {
+                        this.workflowIsOnline = false;
+                        callback([]);
+                    }
+                );
+            } else {
+                callback([]);
+            }
         });
     }
 
@@ -306,7 +318,7 @@ export class InterfaceOperationComponent {
             let curInterf = _.find(
                 this.interfaces,
                 interf => interf.type === operation.interfaceType
-            )
+            );
             if (!curInterf) {
                 curInterf = new UIInterfaceModel({
                     type: response.interfaceType,
@@ -318,7 +330,9 @@ export class InterfaceOperationComponent {
             curInterf.operations.push(new UIOperationModel(response));
             this.sortInterfaces();
 
-            if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
+            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL) {
+                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, response, operation).subscribe();
+            } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
                 this.$state.go('workspace.plugins', { path: 'workflowDesigner' });
@@ -330,20 +344,24 @@ export class InterfaceOperationComponent {
         this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe(newOperation => {
             this.openOperation = null;
 
+            let oldOpIndex, oldInterf;
             _.forEach(this.interfaces, interf => {
                 _.forEach(interf.operations, op => {
                     if (op.uniqueId === newOperation.uniqueId) {
-                        const oldIndex = _.findIndex(interf.operations, el => el.uniqueId === op.uniqueId);
-                        interf.operations.splice(oldIndex, 1);
+                        oldInterf = interf;
+                        oldOpIndex = _.findIndex(interf.operations, el => el.uniqueId === op.uniqueId);
                     }
                 })
             });
+            oldInterf.operations.splice(oldOpIndex, 1);
 
             const newInterf = _.find(this.interfaces, interf => interf.type === operation.interfaceType);
             newInterf.operations.push(new UIOperationModel(newOperation));
             this.sortInterfaces();
 
-            if (newOperation.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
+            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL) {
+                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOperation, operation).subscribe();
+            } else if (newOperation.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, newOperation).subscribe();
             }
         });

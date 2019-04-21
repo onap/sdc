@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {DataTypeService} from "app/ng2/services/data-type.service";
-import {OperationModel, OperationParameter, InputBEModel} from 'app/models';
+import {OperationModel, OperationParameter, InputBEModel, DataTypeModel} from 'app/models';
 import {DropDownOption} from "../operation-creator.component";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 
@@ -38,12 +38,38 @@ export class ParamRowComponent {
     constructor(private dataTypeService: DataTypeService) {}
 
     ngOnInit() {
-        this.propTypeEnum = _.uniq(
-            _.map(
-                this.getPrimitiveSubtypes(),
-                prop => prop.type
-            )
-        );
+        if (this.isInputParam) {
+            this.propTypeEnum = _.uniq(
+                _.map(
+                    _.concat(
+                        this.getPrimitiveSubtypes(),
+                        _.reduce(
+                            this.operationOutputs,
+                            (acc, op) => [...acc, ...op.outputs.listToscaDataDefinition],
+                        [])
+                    ),
+                    prop => prop.type
+                )
+            );
+        } else {
+            const dataTypes: Array<DataTypeModel> = _.toArray(this.dataTypeService.getAllDataTypes());
+            this.propTypeEnum = _.concat(
+                _.map(
+                    _.filter(
+                        dataTypes,
+                        type => this.isTypePrimitive(type.name)
+                    ),
+                    type => type.name
+                ).sort(),
+                _.map(
+                    _.filter(
+                        dataTypes,
+                        type => !this.isTypePrimitive(type.name)
+                    ),
+                    type => type.name
+                ).sort()
+            );
+        }
 
         this.onChangeType();
         this.validityChanged();
@@ -54,6 +80,11 @@ export class ParamRowComponent {
     }
 
     onChangeType() {
+        if (!this.isInputParam) {
+            this.validityChanged();
+            return;
+        }
+
         this.filteredInputProps = _.map(
             _.filter(
                 this.getPrimitiveSubtypes(),
@@ -115,21 +146,25 @@ export class ParamRowComponent {
         const dataTypes = this.dataTypeService.getAllDataTypes();
 
         _.forEach(this.inputProps, prop => {
-            const type = _.find(
+            const type:DataTypeModel = _.find(
                 _.toArray(dataTypes),
-                (type: any) => type.name === prop.type
+                (type: DataTypeModel) => type.name === prop.type
             );
             flattenedProps.push(prop);
-            if (type.properties) {
-                _.forEach(type.properties, subType => {
-                    if (this.isTypePrimitive(subType.type)) {
-                        flattenedProps.push({
-                            type: subType.type,
-                            name: `${prop.name}.${subType.name}`,
-                            uniqueId: `${prop.uniqueId}.${subType.name}`
-                        });
-                    }
-                });
+            if (!type) {
+                console.error('Could not find prop in dataTypes: ', prop);
+            } else {
+                if (type.properties) {
+                    _.forEach(type.properties, subType => {
+                        if (this.isTypePrimitive(subType.type)) {
+                            flattenedProps.push({
+                                type: subType.type,
+                                name: `${prop.name}.${subType.name}`,
+                                uniqueId: `${prop.uniqueId}.${subType.name}`
+                            });
+                        }
+                    });
+                }
             }
         });
 
@@ -149,7 +184,7 @@ export class ParamRowComponent {
         );
     }
 
-    isTypePrimitive(type): boolean {
+    isTypePrimitive(type: string): boolean {
         return (
             type === 'string' ||
             type === 'integer' ||
