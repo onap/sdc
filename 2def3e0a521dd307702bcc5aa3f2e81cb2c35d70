@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39051c45_875f28ae",
+        "filename": "catalog-be/src/main/resources/config/error-configuration.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2272,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-21T11:34:19Z",
+      "side": 1,
+      "message": "Next number is 4727",
+      "revId": "2def3e0a521dd307702bcc5aa3f2e81cb2c35d70",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
