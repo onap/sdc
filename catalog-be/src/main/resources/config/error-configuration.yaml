@@ -2267,7 +2267,7 @@ errors:
     INVALID_PROPERTY_VALUES: {
         code: 400,
         message: "Error: Invalid property values provided:\n %1",
-        messageId: "SVC4735"
+        messageId: "SVC4726"
     }
 #---------SVC4727------------------------------
     INVALID_PROPERTY_NAME: {
