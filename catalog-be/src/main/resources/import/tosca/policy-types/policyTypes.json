@@ -94,6 +94,13 @@
   "tosca.policies.nfv.SupportedVnfInterface": {
     "displayName": "NFV Supported VnfInterface",
     "icon": "policy-nfv-supported-vnfinterface"
+  },
+  "tosca.policies.nfv.AffinityRule": {
+  "displayName": "NFV AffinityRule",
+  "icon": "policy-nfv-affinityrule"
+  },
+  "tosca.policies.nfv.AntiAffinityRule": {
+    "displayName": "NFV AntiAffinityRule",
+    "icon": "policy-nfv-anti-affinityrule"
   }
-
 }
