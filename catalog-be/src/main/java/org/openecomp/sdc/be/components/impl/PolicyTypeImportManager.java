@@ -97,14 +97,15 @@ public class PolicyTypeImportManager {
             if (result.isLeft()) {
                 for (String targetId : policyType.getTargets()) {
                         boolean isValid = toscaOperationFacade.getLatestByToscaResourceName(targetId).isLeft();
-                        if (!isValid) {
-                            isValid = groupOperation.isGroupExist(targetId, false);
-                        }
 
                         if (!isValid) { // check if it is a groupType
                             final Either<GroupTypeDefinition, StorageOperationStatus> groupTypeFound = groupTypeOperation
                                 .getLatestGroupTypeByType(targetId, false);
                             isValid = groupTypeFound.isLeft() && !groupTypeFound.left().value().isEmpty();
+                        }
+
+                        if (!isValid) {
+                            isValid = groupOperation.isGroupExist(targetId, false);
                         }
 
                         if (!isValid) {

@@ -229,30 +229,6 @@ tosca.policies.nfv.VirtualLinkBitrateInitialDelta:
       required: true
   targets: [ tosca.nodes.nfv.VnfVirtualLink ]
 
-# tosca.policies.nfv.AffinityRule:
-#   derived_from: tosca.policies.Placement
-#   description: The AffinityRule describes the affinity rules applicable for the defined targets
-#   properties:
-#     scope:
-#       type: string
-#       description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
-#       required: true
-#       constraints:
-#         - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
-#   targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
-#
-# tosca.policies.nfv.AntiAffinityRule:
-#   derived_from: tosca.policies.Placement
-#   description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
-#   properties:
-#     scope:
-#       type: string
-#       description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
-#       required: true
-#       constraints:
-#         - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
-#   targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
-
 tosca.policies.nfv.SecurityGroupRule:
   derived_from: tosca.policies.Root
   description: The SecurityGroupRule type is a policy type specified the matching criteria for the ingress and/or egress traffic to/from visited connection points as defined in ETSI GS NFV-IFA 011 [1].
@@ -315,3 +291,27 @@ tosca.policies.nfv.SupportedVnfInterface:
       description: Provide additional data to access the interface endpoint
       required: false
   targets: [ tosca.nodes.nfv.VnfExtCp, tosca.nodes.nfv.VduCp ]
+
+tosca.policies.nfv.AffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The AffinityRule describes the affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+
+tosca.policies.nfv.AntiAffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
+  targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
