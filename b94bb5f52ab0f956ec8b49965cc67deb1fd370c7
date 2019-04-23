@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "d354e255_98c54e04",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done, I have used Sonar and confirm there is no issue.",
+      "parentUuid": "da6ecdac_c80b14ad",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7ef87d36_a2533586",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
         "patchSetId": 4
@@ -106,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "7aee416e_c60d9a4e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ef87d36_a2533586",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "916ac7d9_d248fc6b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 4
@@ -117,6 +153,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "Please use remarks in English :-)",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "330dd759_e67a7ab0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "916ac7d9_d248fc6b",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -280,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "b78e0c5c_86d9c977",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstanceInputPropertyDeclaratorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1c03c4f_19506ec2",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "055ddfcc_30ab049d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
         "patchSetId": 4
@@ -291,6 +363,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "Use onap code style",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ff44293_bf78d923",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "055ddfcc_30ab049d",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -314,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "062c9598_e394bae4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDecelerationOrchestratorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7274b912_b0a2d874",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72defc36_062a8595",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDecelerationOrchestratorTest.java",
         "patchSetId": 4
@@ -325,6 +433,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "remove ()",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d57ad8cb_d512821e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDecelerationOrchestratorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72defc36_062a8595",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -383,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "ce884280_1605fff3",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentParametersViewTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done. I agree and add assert result.",
+      "parentUuid": "cdc3c447_9f8b771c",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4da02b98_1c4aec04",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/DataTypeDataDefinition.java",
         "patchSetId": 4
@@ -429,6 +573,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "should the new boolean property effect the hashCode and Equals?",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "119f25ba_ba5a39f4",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-23T09:13:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1b26158_67c38087",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
