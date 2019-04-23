@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "298f25f1_02c00614",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/api/ComponentBaseTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-23T06:11:08Z",
+      "side": 1,
+      "message": "Sonar remark\n\nStrings literals should be placed on the left side when checking for equality\n \nCode smell\n \nMinor\nsquid:S1132\n \nIt is preferable to place string literals on the left-hand side of an equals() or equalsIgnoreCase() method call.\nThis prevents null pointer exceptions from being raised, as a string literal can never be null by definition.\nNoncompliant Code Example\n  String myString \u003d null;    System.out.println(\"Equal? \" + myString.equals(\"foo\")); // Noncompliant; will raise a NPE  System.out.println(\"Equal? \" + (myString !\u003d null \u0026\u0026 myString.equals(\"foo\"))); // Noncompliant; null check could be removed  \nCompliant Solution\n  System.out.println(\"Equal?\" + \"foo\".equals(myString)); // properly deals with the null case  ",
+      "revId": "20f62aed9576a1c108d81bf5001c7e2fbe3bcd4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c566a1ff_a86e2294",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/datatypes/enums/XnfTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-23T06:11:08Z",
+      "side": 1,
+      "message": "Sonar remark\nThe members of an interface or class declaration should appear in a pre-defined order\n \nCode smell\n \nMinor\nsquid:S1213\n \nAccording to the Java Code Conventions as defined by Oracle, the members of a class or interface declaration should appear in the following order in the source files:\nClass and instance variables\nConstructors\nMethods\nNoncompliant Code Example\n  public class Foo{     private int field \u003d 0;     public boolean isTrue() {...}     public Foo() {...} // Noncompliant, constructor defined after methods     public static final int OPEN \u003d 4; //Noncompliant, variable defined after constructors and methods  }  \nCompliant Solution\n  public class Foo{     public static final int OPEN \u003d 4;     private int field \u003d 0;     public Foo() {...}     public boolean isTrue() {...}  }  ",
+      "revId": "20f62aed9576a1c108d81bf5001c7e2fbe3bcd4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
