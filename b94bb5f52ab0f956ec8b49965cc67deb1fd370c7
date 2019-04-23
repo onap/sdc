@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6635713f_b5e5be69",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "23fc8108_b0f93c42",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65fc0d40_be13ca95",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "Question. \nIs ReflectionToStringBuilder a performance consuming task?\nIf the perfromance is bad we should consider:\n1. Maybe remove this call.\n2. Protect the log call with log.isTraceEnabled()",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ccb21a12_bbcd6e6b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "I\u0027m not sure if it is a performance consuming,\nanyway I\u0027ll change here to protect the log call (option 2).",
+      "parentUuid": "65fc0d40_be13ca95",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -104,6 +140,24 @@
     },
     {
       "key": {
+        "uuid": "540c5eb1_2f2dec2b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/InputsServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a26e2a13_51f3073d",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7fd5a03_b36f2cba",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
         "patchSetId": 4
@@ -115,6 +169,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "Sonar issue \n\nControl flow statements \"if\", \"for\", \"while\", \"switch\" and \"try\" should not be nested too deeply\n \nCode smell\n \nCritical\nsquid:S134\n \nNested if, for, while, switch, and try statements are key ingredients for making what\u0027s known as \"Spaghetti code\".\nSuch code is hard to read, refactor and therefore maintain.\nNoncompliant Code Example\nWith the default threshold of 3:\n  if (condition1) { // Compliant - depth \u003d 1    /* ... */    if (condition2) { // Compliant - depth \u003d 2      /* ... */      for(int i \u003d 0; i \u003c 10; i++) { // Compliant - depth \u003d 3, not exceeding the limit        /* ... */        if (condition4) { // Noncompliant - depth \u003d 4          if (condition5) { // Depth \u003d 5, exceeding the limit, but issues are only reported on depth \u003d 4            /* ... */          }          return;        }      }    }  }  ",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b35b059_669a7a91",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done. I have refactored code around here to reduce nested conditionals.",
+      "parentUuid": "f7fd5a03_b36f2cba",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -138,6 +210,24 @@
     },
     {
       "key": {
+        "uuid": "d44fdc34_d642fd3f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "I agree. I will add log.debug() for it.",
+      "parentUuid": "b5ad4936_5b967970",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5d77ede5_e5ae8725",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
         "patchSetId": 4
@@ -149,6 +239,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "Onap Code style was not used here",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba214d03_5bd0befb",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d77ede5_e5ae8725",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -240,6 +348,24 @@
     },
     {
       "key": {
+        "uuid": "e15ff8cf_2f516b18",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/ToscaExportHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d9581d8_cdc48a52",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cdc3c447_9f8b771c",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentParametersViewTest.java",
         "patchSetId": 4
@@ -268,6 +394,24 @@
       "writtenOn": "2019-04-22T11:48:40Z",
       "side": 1,
       "message": "propertiesData should be added to the toString.",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2690d9e_a1e153ee",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/DataTypeDataDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-04-23T08:15:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4da02b98_1c4aec04",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
