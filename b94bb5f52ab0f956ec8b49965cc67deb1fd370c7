@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "86761a1d_001b3bd8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-23T12:57:53Z",
+      "side": 1,
+      "message": "I do not see any change here. \n\nSo please protect this call , and change it to debug level. Reflection usually degrades performance.\nif (log.isDebugEnabled()){\n   log.debug(....);\n}",
+      "parentUuid": "ccb21a12_bbcd6e6b",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6ecdac_c80b14ad",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
         "patchSetId": 4
@@ -136,6 +154,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "7ef87d36_a2533586",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d84f7c9_b99b51af",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-23T12:57:53Z",
+      "side": 1,
+      "message": "I do not see any change here",
+      "parentUuid": "7aee416e_c60d9a4e",
       "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
