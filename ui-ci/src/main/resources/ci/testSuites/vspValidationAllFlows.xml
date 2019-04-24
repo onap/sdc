@@ -10,9 +10,11 @@
         <class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
             <methods>
                 <include name="onapOnboardVSPValidationsSanityFlow"/>
-                <include name="onapOnboardVSPValidationsConfigurationChangeCheck" />
+                <include name="onapOnboardVSPValidationsConfigurationChangeCheck"/>
                 <include name="onapOnboardVSPCertificationQueryFlow"/>
                 <include name="onapOnboardVSPComplianceCheckFlow"/>
+                <include name="onapOnboardVSPComplianceCheckOperations"/>
+                <include name="onapOnboardVSPCertificationQueryOperations"/>
             </methods>
         </class>
 
