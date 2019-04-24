@@ -194,6 +194,7 @@ public class OnboardingFlowsUI extends SetupCDTest {
     public void onapOnboardVSPComplianceCheckFlow(String filePath, String vnfFile) throws Exception, Throwable {
         setLog(vnfFile);
         String vspName = createNewVSP(filePath, vnfFile);
+        final String complianceNotAvailableLabel = "No Compliance Checks are Available";
         if(!OnboardingUiUtils.getVspValidationCongiguration()){
             //change config to true to test the feature
             changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
@@ -211,8 +212,66 @@ public class OnboardingFlowsUI extends SetupCDTest {
             VspValidationPage.clickOnNextButton();
             GeneralUIUtils.ultimateWait();
             VspValidationPage.clickOnSubmitButton();
-            GeneralUIUtils.waitForLoader();
+            GeneralUIUtils.ultimateWait();
             assertTrue("Results are not available", VspValidationResultsPage.checkResultsExist());
+        }
+        else {
+            assertNotNull(GeneralUIUtils.findByText(complianceNotAvailableLabel));
+        }
+
+    }
+
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPComplianceCheckOperations(String filePath, String vnfFile) throws Exception {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(!OnboardingUiUtils.getVspValidationCongiguration()){
+            //change config to true to test the feature
+            changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+        }
+        else {
+            goToVspScreen(true, vspName);
+        }
+
+        VspValidationPage.navigateToVspValidationPageUsingNavbar();
+        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        if(VspValidationPage.checkComplianceCheckExists()){
+            assertTrue("The tests are already selected, the list should initially be empty", !VspValidationPage.checkSelectedComplianceCheckExists());
+            VspValidationPage.clickComplianceChecksAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("The selected tests are not populated in the list", VspValidationPage.checkSelectedComplianceCheckExists());
+            VspValidationPage.clickComplianceChecksAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("The selected tests are not deleted from the list", !VspValidationPage.checkSelectedComplianceCheckExists());
+        }
+        else {
+            assertNotNull(GeneralUIUtils.findByText("No Compliance Checks are Available"));
+        }
+
+    }
+
+    @Test(dataProviderClass = org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders.class, dataProvider = "Single_VNF")
+    public void onapOnboardVSPCertificationQueryOperations(String filePath, String vnfFile) throws Exception {
+        setLog(vnfFile);
+        String vspName = createNewVSP(filePath, vnfFile);
+        if(!OnboardingUiUtils.getVspValidationCongiguration()){
+            //change config to true to test the feature
+            changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
+        }
+        else {
+            goToVspScreen(true, vspName);
+        }
+
+        VspValidationPage.navigateToVspValidationPageUsingNavbar();
+        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        if(VspValidationPage.checkCertificationQueryExists()){
+            assertTrue("The tests are already selected, the list should initially be empty", !VspValidationPage.checkSelectedCertificationQueryExists());
+            VspValidationPage.clickCertificationQueryAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("The selected tests are not populated in the list", VspValidationPage.checkSelectedCertificationQueryExists());
+            VspValidationPage.clickCertificationQueryAll();
+            GeneralUIUtils.ultimateWait();
+            assertTrue("The selected tests are not deleted from the list", !VspValidationPage.checkSelectedCertificationQueryExists());
         }
         else {
             assertNotNull(GeneralUIUtils.findByText("No Compliance Checks are Available"));
@@ -253,7 +312,7 @@ public class OnboardingFlowsUI extends SetupCDTest {
         if(isCurrentScreenCatalogPage)
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
         GeneralUIUtils.clickOnElementByText(vspName);
-        GeneralUIUtils.waitForLoader();
+        GeneralUIUtils.ultimateWait();
     }
 
     private String createNewVSP(String filePath, String vnfFile) throws Exception {
