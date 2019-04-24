@@ -86,13 +86,25 @@ public class VspValidationPage extends GeneralPageElements {
         return (orderedList.size() > 0);
     }
 
+    public static boolean checkSelectedComplianceCheckExists() throws Exception {
+        WebElement selectedTests = GeneralUIUtils.findElementsByXpath("//div[contains(text(),'Selected Compliance Tests')]/..//select[@class='validation-setup-selected-tests']").get(0);
+        List<WebElement> options = getChildElements(selectedTests);
+        return (options.size() > 0);
+    }
+
+    public static boolean checkSelectedCertificationQueryExists() throws Exception {
+        WebElement selectedTests = GeneralUIUtils.findElementsByXpath("//div[contains(text(),'Selected Certifications Query')]/..//select[@class='validation-setup-selected-tests']").get(0);
+        List<WebElement> options = getChildElements(selectedTests);
+        return (options.size() > 0);
+    }
+
     public static void clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage elementTestId) throws Exception {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s", elementTestId.name()));
         GeneralUIUtils.getWebElementByTestID(elementTestId.getValue()).click();
         GeneralUIUtils.ultimateWait();
     }
 
-    public static List<WebElement> getChildElements(WebElement webElement) throws Exception {
+    private static List<WebElement> getChildElements(WebElement webElement) throws Exception {
         return webElement.findElements(By.xpath(".//*"));
     }
 
