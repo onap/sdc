@@ -196,6 +196,24 @@
     },
     {
       "key": {
+        "uuid": "ada8cc37_321a4c47",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclarator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5384
+      },
+      "writtenOn": "2019-04-24T02:39:45Z",
+      "side": 1,
+      "message": "Did you see Patch Set 5? Do you mean refactoring in Patch Set 5 is wrong way? If so, could you teach me how to refactor it.",
+      "parentUuid": "0d84f7c9_b99b51af",
+      "revId": "b94bb5f52ab0f956ec8b49965cc67deb1fd370c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "916ac7d9_d248fc6b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 4
