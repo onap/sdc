@@ -525,7 +525,7 @@ function sdc-api-tests {
                 docker pull ${PREFIX}/sdc-api-tests:${RELEASE}
             fi
 
-            docker run --detach --name sdc-api-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${API_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${API_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/sdc-api-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-api-tests/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-api-tests:${RELEASE} echo "please wait while SDC-API-TESTS is starting....."
+            docker run --detach --name sdc-api-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${API_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${API_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/sdc-api-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-api-tests/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:/var/lib/tests/cert --publish 9560:9560 ${PREFIX}/sdc-api-tests:${RELEASE} echo "please wait while SDC-API-TESTS is starting....."
             monitor_docker sdc-api-tests
         fi
     fi
