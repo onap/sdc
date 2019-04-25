@@ -51,7 +51,7 @@
     "displayName": "Monitoring",
     "icon": "policy-monitoring"
   },
-  "onap.policy.monitoring.cdap.tca.hi.lo.app": {
+  "onap.policies.monitoring.cdap.tca.hi.lo.app": {
     "displayName": "TCA",
     "icon": "policy-tca"
   },
