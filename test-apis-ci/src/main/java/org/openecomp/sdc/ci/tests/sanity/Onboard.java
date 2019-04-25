@@ -80,8 +80,13 @@ public class Onboard extends ComponentBaseTest {
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
-		System.out.println("print - >" + makeDistributionValue);
 		runOnboardToDistributionFlow(filePath, vnfFile);
+	}
+
+	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "PNF_List")
+	public void onboardPNFFlow(String filePath, String pnfFile) throws Exception, Throwable {
+		setLog(pnfFile);
+		runOnboardToDistributionFlow(filePath, pnfFile);
 	}
 	
 	@Test
@@ -99,10 +104,8 @@ public class Onboard extends ComponentBaseTest {
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
      	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
 		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
-//		vendorSoftwareProductObject.setName(vendorSoftwareProductObject.getName());
 
 		//		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
-//		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
 		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		ExtentTestActions.log(Status.INFO, String.format("Create VF %s From VSP", resourceReqDetails.getName()));
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER);
@@ -126,18 +129,11 @@ public class Onboard extends ComponentBaseTest {
 
 		if (makeToscaValidationValue.equals("true")) {
 
-			ExtentTestActions.log(Status.INFO, String.format("Start tosca validation"));
+			ExtentTestActions.log(Status.INFO, "Start tosca validation");
 			AtomicOperationUtils.toscaValidation(service ,vnfFile);
-
-
 		}
 
-
-
-		
 		ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}
-
-
 
 }

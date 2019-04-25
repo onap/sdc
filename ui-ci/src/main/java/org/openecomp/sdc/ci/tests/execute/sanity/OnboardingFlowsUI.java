@@ -24,6 +24,7 @@ import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -91,7 +92,7 @@ public class OnboardingFlowsUI extends SetupCDTest {
 
     @Test
     public void onboardVNFTestSanity() throws Throwable {
-        List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileList();
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
         String vnfFile = fileNamesFromFolder.get(0).toString();
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);

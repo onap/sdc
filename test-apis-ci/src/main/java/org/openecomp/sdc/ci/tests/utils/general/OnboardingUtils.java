@@ -23,6 +23,7 @@ package org.openecomp.sdc.ci.tests.utils.general;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -34,9 +35,9 @@ import java.util.*;
 public class OnboardingUtils {
 
 	/**
-	 * excluded VNF file list
+	 * excluded VNF or PNF file list
 	 */
-	public static List<String> exludeVnfList =
+	public static List<String> excludeXnfList =
 //		new ArrayList<>();
 	Arrays.asList(
 //		DUPLICATE_RESOURCE_ID_IN_DIFFERENT_FILES:
@@ -85,9 +86,9 @@ public class OnboardingUtils {
 	);
 
 	/**
-	 * additional files to exludeVnfList files for tosca parser tests
+	 * additional files to excludeXnfList files for tosca parser tests
 	 */
-	protected static List<String> exludeVnfListForToscaParser = //new ArrayList<String>();
+	protected static List<String> excludeXnfListForToscaParser = //new ArrayList<String>();
 	Arrays.asList(
 		"1-Vvig-062017-(MOBILITY)_v5.1.zip",
 		"1-Mvm-sbc-1710-092017-(MOBILITY)_v7.0.zip",
@@ -177,18 +178,14 @@ public class OnboardingUtils {
 		return headersMap;
 	}
 
-
 	/**
 	 * @return
-	 * The method returns VNF names list from Files directory under sdc-vnfs repository
+	 * The method returns XNF names list from Files directory under sdc repository
 	 */
-	public static List<String> getVnfNamesFileList() {
-		String filepath = FileHandling.getVnfRepositoryPath();
+	public static List<String> getXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
+		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum);
 		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		//Please remove the hardcoded configuration ONAP Tal G!!!!!!
-		fileNamesFromFolder.removeAll(exludeVnfList);
-		//List<String> halfResourceListByDay = divideListByDayOfMonth(fileNamesFromFolder);
-		//System.out.println(halfResourceListByDay.toString());
+		fileNamesFromFolder.removeAll(excludeXnfList);
 		return fileNamesFromFolder;
 	}
 
@@ -213,8 +210,8 @@ public class OnboardingUtils {
 	 * The method returns VNF names list from Files directory under sdc-vnfs repository excluding zip files that known as failed in tosca parser
 	 */
 	public static List<String> getVnfNamesFileListExcludeToscaParserFailure() {
-		List<String> fileNamesFromFolder = getVnfNamesFileList();
-		fileNamesFromFolder.removeAll(exludeVnfListForToscaParser);
+		List<String> fileNamesFromFolder = getXnfNamesFileList(XnfTypeEnum.VNF);
+		fileNamesFromFolder.removeAll(excludeXnfListForToscaParser);
 		return fileNamesFromFolder;
 	}
 
@@ -230,7 +227,7 @@ public class OnboardingUtils {
 			String vnfSourceFile = (String) objectArr[i][0];
 			String vnfUpdateFile = (String) objectArr[i][1];
 
-			if(!exludeVnfList.contains(vnfSourceFile) && !exludeVnfList.contains(vnfUpdateFile))
+			if(!excludeXnfList.contains(vnfSourceFile) && !excludeXnfList.contains(vnfUpdateFile))
 			{
 				filteredArObject[index] = new Object[]{vnfSourceFile , vnfUpdateFile };
 				index++;

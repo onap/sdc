@@ -202,7 +202,7 @@ public class FileHandling {
                     filenames.add(file.getName());
                 }
 
-                filenames.removeAll(OnboardingUtils.exludeVnfList);
+                filenames.removeAll(OnboardingUtils.excludeXnfList);
 
                 return filenames;
             }

@@ -25,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
@@ -138,6 +139,10 @@ public class FileHandling {
 	
 	public static String getVnfRepositoryPath() {
 		return getFilePath("VNFs");
+	}
+
+	public static String getXnfRepositoryPath(XnfTypeEnum xnfTypeEnum) {
+		return xnfTypeEnum.getValue().equals(XnfTypeEnum.PNF.name()) ? getFilePath("PNFs") : getFilePath("VNFs");
 	}
 
 	public static String getPortMirroringRepositoryPath() {
