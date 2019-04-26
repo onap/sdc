@@ -551,10 +551,13 @@ public class ToscaExportHandler {
 
         if(CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
-            mergedProperties = properties.stream().collect(Collectors.toMap(
+            Map<String, ToscaProperty> convertedProperties;
+            convertedProperties = properties.stream().collect(Collectors.toMap(
                     PropertyDataDefinition::getName,
                     property -> propertyConvertor.convertProperty(dataTypes, property,
                             PropertyConvertor.PropertyType.PROPERTY)));
+            // merge component properties and inputs properties
+            mergedProperties.putAll(convertedProperties);
         }
         if (MapUtils.isNotEmpty(mergedProperties) && Objects.nonNull(inputDef)) {
             resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);

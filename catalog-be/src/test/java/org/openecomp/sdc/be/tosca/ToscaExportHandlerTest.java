@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -57,12 +58,23 @@ import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaMetadata;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
+import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
+import org.yaml.snakeyaml.Yaml;
+
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
+	private static final String COMPONENT_PROPERTY_NAME = "prop1";
+	private static final String COMPONENT_PROPERTY_TYPE = "string";
+	private static final String COMPONENT_INPUT_NAME = "input1";
+	private static final String COMPONENT_INPUT_TYPE = "integer";
+	private static final String RESOURCE_NAME = "resource";
+	private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
 
 	@InjectMocks
 	ToscaExportHandler testSubject;
@@ -194,6 +206,45 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		// default test when convertInterfaceNodeType is left
 		result = testSubject.exportComponentInterface(component, false);
 
+	}
+
+	@Test
+	public void testConvertInterfaceNodeTypeProperties() throws Exception {
+
+		Resource component = getNewResource();
+
+		component.setInterfaces(new HashMap<>());
+		InputDefinition input = new InputDefinition();
+		input.setName(COMPONENT_INPUT_NAME);
+		input.setType(COMPONENT_INPUT_TYPE);
+		component.setInputs(Collections.singletonList(input));
+		PropertyDefinition property = new PropertyDefinition();
+		property.setName(COMPONENT_PROPERTY_NAME);
+		property.setType(COMPONENT_PROPERTY_TYPE);
+		component.setProperties(Collections.singletonList(property));
+		component.setName(RESOURCE_NAME);
+		component.setToscaResourceName(RESOURCE_NAME);
+
+		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+			.thenReturn(Either.left(Collections.emptyMap()));
+		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+		// when convertRequirements is called, make it return the same value as 3rd (index=2) argument.
+		Mockito
+			.when(capabiltyRequirementConvertor.convertRequirements(Mockito.any(Map.class), Mockito.any(Resource.class),
+				Mockito.any(ToscaNodeType.class))).thenAnswer(i -> Either.left(i.getArgument(2)));
+
+		Either<ToscaTemplate, ToscaError> result = (Either<ToscaTemplate, ToscaError>) Deencapsulation
+			.invoke(testSubject, "convertInterfaceNodeType", new HashMap<String, Component>(), component,
+				new ToscaTemplate(TOSCA_VERSION), new HashMap<String, ToscaNodeType>(), false);
+		assertThat(result.isLeft(), is(true));
+		Map<String, ToscaNodeType> nodeTypeMap = result.left().value().getNode_types();
+		assertThat(nodeTypeMap.size(), is(1));
+		ToscaNodeType toscaNodeType = nodeTypeMap.values().iterator().next();
+		Map<String, ToscaProperty> propertyMap = toscaNodeType.getProperties();
+		// Check if inputs and properties in component are merged properly
+		assertThat(propertyMap.size(), is(2));
+		assertThat(propertyMap.containsKey(COMPONENT_INPUT_NAME), is(true));
+		assertThat(propertyMap.containsKey(COMPONENT_PROPERTY_NAME), is(true));
 	}
 
 	@Test
