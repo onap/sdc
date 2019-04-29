@@ -97,8 +97,8 @@ public class SecurityManagerTest {
         File newFile = new File("/tmp/cert/root.cert");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv3.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv3.csar").toURI()));
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
         assertTrue(securityManager.verifySignedData(signature, null, archive));
     }
 
@@ -108,8 +108,8 @@ public class SecurityManagerTest {
         File newFile = new File("/tmp/cert/root.cert");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv3.csar").toURI()));
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
         securityManager.verifySignedData(signature, null, archive);
     }
 
@@ -119,9 +119,9 @@ public class SecurityManagerTest {
         File newFile = new File("/tmp/cert/root.cert");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.csar").toURI()));
-        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.cert").toURI()));
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cert").toURI()));
         assertTrue(securityManager.verifySignedData(signature, cert, archive));
     }
 
@@ -131,9 +131,9 @@ public class SecurityManagerTest {
         File newFile = new File("/tmp/cert/root-certificate.cert");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.csar").toURI()));
-        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv3.cert").toURI()));
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cert").toURI()));
         securityManager.verifySignedData(signature, cert, archive);
     }
 
@@ -143,8 +143,8 @@ public class SecurityManagerTest {
         File newFile = new File("/tmp/cert/root.cert");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv3.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv3.csar").toURI()));
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv4.csar").toURI()));
         securityManager.verifySignedData(signature, null, archive);
     }
 }
