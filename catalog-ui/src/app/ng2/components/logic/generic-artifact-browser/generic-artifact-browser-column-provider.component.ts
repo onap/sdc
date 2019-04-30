@@ -76,7 +76,7 @@ export class GenericArtifactBrowserColumnProviderComponent {
   }
 
   private updateColumnFilter = (name: string, prop: string): void => {
-    this.pathsAndNames.push(new PathsAndNamesDefinition(prop, name));
+    this.pathsAndNames.push(new PathsAndNamesDefinition(prop, name, true));
     this.generalForm.form.controls['name'].setValue("");
     this.generalForm.form.controls['path'].setValue("");
   }
