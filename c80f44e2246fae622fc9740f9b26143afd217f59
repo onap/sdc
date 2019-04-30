@@ -16,6 +16,24 @@
       "revId": "c80f44e2246fae622fc9740f9b26143afd217f59",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb25b2db_bfb6b033",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyTypeImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5286
+      },
+      "writtenOn": "2019-04-30T15:02:07Z",
+      "side": 1,
+      "message": "groupOperation.isGroupExist this method when executes and after it when it enters to find  groupType then Titan Cache does not have tosca.policies.Placement, though it is defined and fetched before, so i changed the order, first it will search the groupType if not found then go for group.",
+      "parentUuid": "63a68bd8_0fd4299a",
+      "revId": "c80f44e2246fae622fc9740f9b26143afd217f59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
