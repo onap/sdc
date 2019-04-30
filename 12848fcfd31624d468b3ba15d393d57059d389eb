@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "027d4306_8e5cf908",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ConsumerBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-30T13:31:17Z",
+      "side": 1,
+      "message": "Code style - annotation will not be on same line",
+      "revId": "12848fcfd31624d468b3ba15d393d57059d389eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52234a75_6f682b15",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/MonitoringBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-04-30T13:31:17Z",
+      "side": 1,
+      "message": "Please use onap code style \nhttps://wiki.onap.org/display/DW/Java+code+style\n\nThis file is not formatted with it",
+      "revId": "12848fcfd31624d468b3ba15d393d57059d389eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
