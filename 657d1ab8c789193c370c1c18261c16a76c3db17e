@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31a1ec84_c37c160e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 4445
+      },
+      "writtenOn": "2019-04-30T11:36:36Z",
+      "side": 1,
+      "message": "If this constructor is intended for unitests, please add \"@VisibleForTesting\" annotation to make it more readable",
+      "revId": "657d1ab8c789193c370c1c18261c16a76c3db17e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "176b5712_84c875a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ServiceVersionInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 4445
+      },
+      "writtenOn": "2019-04-30T11:36:36Z",
+      "side": 1,
+      "message": "If this constructor is intended for unitests, please add \"@VisibleForTesting\" annotation to make it more readable",
+      "revId": "657d1ab8c789193c370c1c18261c16a76c3db17e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
