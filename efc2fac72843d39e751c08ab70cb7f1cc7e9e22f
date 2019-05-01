@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62533843_777402fe",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/test/java/org/openecomp/sdcrests/externaltesting/rest/services/ApiTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-01T13:51:48Z",
+      "side": 1,
+      "message": "this is a bad practice. each test should test only one scenarion.\nthis test can be splitted easil to several tests.\nplease use @Test(expectedExceptions \u003d \u003cExpetedException\u003e.class) instead of catching exception and ignore it( see example at class PermissionsManagerImplTest)",
+      "range": {
+        "startLine": 156,
+        "startChar": 4,
+        "endLine": 170,
+        "endChar": 9
+      },
+      "revId": "efc2fac72843d39e751c08ab70cb7f1cc7e9e22f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43c1e3ab_f5ee7d8d",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/test/java/org/openecomp/core/externaltesting/api/ExecutionRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-01T13:51:48Z",
+      "side": 1,
+      "message": "split to different test",
+      "range": {
+        "startLine": 107,
+        "startChar": 4,
+        "endLine": 110,
+        "endChar": 55
+      },
+      "revId": "efc2fac72843d39e751c08ab70cb7f1cc7e9e22f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
