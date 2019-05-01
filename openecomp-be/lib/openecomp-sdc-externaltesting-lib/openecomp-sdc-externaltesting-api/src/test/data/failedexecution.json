@@ -1,0 +1,6 @@
+{
+  "code": "F-1131",
+  "message": "Failure reason",
+  "httpStatus": 500,
+  "status": "FAILED"
+}

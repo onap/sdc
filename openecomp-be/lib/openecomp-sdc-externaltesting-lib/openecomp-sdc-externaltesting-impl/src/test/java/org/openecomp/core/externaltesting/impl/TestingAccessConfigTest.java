@@ -27,18 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-public class ConfigurationTests {
-
-  @Test
-  public void testClientConfig() {
-    // a brain dead test of the setter and getter.
-    // future tests for more complex config to come.
-    ClientConfiguration cc = new ClientConfiguration();
-    cc.setEnabled(true);
-    Assert.assertTrue("client configuration setter", cc.isEnabled());
-    cc.setEnabled(false);
-    Assert.assertFalse("client configuration setter", cc.isEnabled());
-  }
+public class TestingAccessConfigTest {
 
   @Test
   public void testConfig() throws Exception {
@@ -50,31 +39,4 @@ public class ConfigurationTests {
     }
   }
 
-  @Test
-  public void testEndpointDefinition() {
-    RemoteTestingEndpointDefinition def = new RemoteTestingEndpointDefinition();
-    def.setId("vtp");
-    def.setEnabled(true);
-    def.setTitle("VTP");
-    def.setApiKey("FOOBARBAZ");
-    def.setUrl("http://example.com/vtptesting");
-    def.setScenarioFilter("c.*");
-
-    RemoteTestingEndpointDefinition def2 = new RemoteTestingEndpointDefinition();
-    def2.setId("vtp");
-    def2.setEnabled(true);
-    def2.setTitle("VTP");
-    def2.setUrl("http://example.com/vtptesting");
-    def2.setApiKey("FOOBARBAZ");
-    def2.setScenarioFilter("c.*");
-
-    Assert.assertEquals("code", "VTP", def.getTitle());
-    Assert.assertEquals("API keys equals", def.getApiKey(), def2.getApiKey());
-    Assert.assertEquals("code equals", def.getTitle(), def2.getTitle());
-    Assert.assertEquals("url equals", def.getUrl(), def2.getUrl());
-
-    boolean matches = def.getScenarioFilterPattern().matcher("certification").matches();
-    Assert.assertTrue("pattern", matches);
-
-  }
 }

@@ -23,10 +23,12 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.core.externaltesting.api.*;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
 
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ApiTests {
+public class ApiTest {
 
   private static final String EP = "ep";
   private static final String EXEC = "exec";
@@ -60,6 +62,13 @@ public class ApiTests {
     List<VtpTestExecutionRequest> requests =
         Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
     Assert.assertNotNull(testing.execute(requests, "requestId"));
+
+
+    ClientConfiguration cc = new ClientConfiguration();
+    Assert.assertNotNull(testing.setConfig(cc));
+
+    ArrayList<RemoteTestingEndpointDefinition> lst = new ArrayList<>();
+    Assert.assertNotNull(testing.setEndpoints(lst));
   }
 
   class ApiTestExternalTestingManager implements ExternalTestingManager {
@@ -120,88 +129,132 @@ public class ApiTests {
   }
 
   /**
-   * Test the exception handler logic for the cases when the
-   * testing manager throws an exception.
+   * Test the exception handler logic for configuration get/set.
    */
-  @Test
-  public void testExceptions() {
+  @Test()
+  public void testConfigExceptions() {
     MockitoAnnotations.initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
 
-    try {
-      testingF.getConfig();
-    }
-    catch (Exception ex) {
-      // expected.
-    }
+    Response getResponse = testingF.getConfig();
+    Assert.assertEquals(500, getResponse.getStatus());
 
+    Response setResponse = testingF.setConfig(new ClientConfiguration());
+    Assert.assertEquals(500, setResponse.getStatus());
+  }
 
-    try {
-      testingF.getEndpoints();
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+  /**
+   * Test the exception handler logic for endpoint get/set.
+   */
+  @Test()
+  public void testEndpointExceptions() {
+    MockitoAnnotations.initMocks(this);
 
-    try {
-      testingF.getExecution(EP, EXEC);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
-    try {
-      testingF.getScenarios(EP);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
 
-    try {
-      testingF.getTestcase(EP, SC, TS, TC);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+    Response getResponse = testingF.getEndpoints();
+    Assert.assertEquals(500, getResponse.getStatus());
 
-    try {
-      testingF.getTestcases(EP, SC);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+    Response setResponse = testingF.setEndpoints(new ArrayList<>());
+    Assert.assertEquals(500, setResponse.getStatus());
+  }
 
-    try {
-      testingF.getTestsuites(EP, SC);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+  /**
+   * Test the exception handler logic for executions (invocation and query).
+   */
+  @Test()
+  public void testExecutionExceptions() {
+    MockitoAnnotations.initMocks(this);
 
-    try {
-      testingF.getTestCasesAsTree();
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
 
-    List<VtpTestExecutionRequest> requestsF =
+    List<VtpTestExecutionRequest> requests =
         Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
 
-    try {
-      testingF.execute(requestsF, null);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+    Response invokeResponse = testingF.execute(requests, null);
+    Assert.assertEquals(500, invokeResponse.getStatus());
+
+    Response getResponse = testingF.getExecution(EP, EXEC);
+    Assert.assertEquals(500, getResponse.getStatus());
+  }
 
 
-    try {
-      testingF.execute(requestsF, null);
-    }
-    catch (ExternalTestingException e) {
-      // expected.
-    }
+  /**
+   * Test the exception handler logic for the cases when the
+   * testing manager throws an accessing the scenarios.
+   */
+  @Test()
+  public void testScenarioExceptions() {
+    MockitoAnnotations.initMocks(this);
+
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+
+    Response response = testingF.getScenarios(EP);
+    Assert.assertEquals(500, response.getStatus());
+  }
+
+  /**
+   * Test the exception handler logic for the cases when the
+   * testing manager throws an accessing a test case.
+   */
+  @Test()
+  public void testTestCaseExceptions() {
+    MockitoAnnotations.initMocks(this);
+
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+
+    Response response = testingF.getTestcase(EP, SC, TS, TC);
+    Assert.assertEquals(500, response.getStatus());
+  }
+
+  /**
+   * Test the exception handler logic for the cases when the
+   * testing manager throws an accessing the test cases.
+   */
+  @Test()
+  public void testTestCasesExceptions() {
+    MockitoAnnotations.initMocks(this);
+
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+
+    Response response = testingF.getTestcases(EP, SC);
+    Assert.assertEquals(500, response.getStatus());
+  }
+
+  /**
+   * Test the exception handler logic for the cases when the
+   * testing manager throws an accessing the test suites.
+   */
+  @Test()
+  public void testTestSuitesExceptions() {
+    MockitoAnnotations.initMocks(this);
+
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+
+    Response response = testingF.getTestsuites(EP, SC);
+    Assert.assertEquals(500, response.getStatus());
+  }
+
+  /**
+   * Test the exception handler logic for the cases when the
+   * testing manager throws an accessing the test tree.
+   */
+  @Test()
+  public void testTreeExceptions() {
+    MockitoAnnotations.initMocks(this);
+
+    ExternalTestingManager m = new ApiTestExternalTestingManager();
+    ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+
+    Response response = testingF.getTestCasesAsTree();
+    Assert.assertEquals(500, response.getStatus());
   }
 }
