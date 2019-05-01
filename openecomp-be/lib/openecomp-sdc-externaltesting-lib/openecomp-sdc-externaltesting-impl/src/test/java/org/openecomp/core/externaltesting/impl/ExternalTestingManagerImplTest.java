@@ -48,7 +48,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExternalTestingManagerImplTests {
+public class ExternalTestingManagerImplTest {
 
   @Mock
   private RestTemplate restTemplate;

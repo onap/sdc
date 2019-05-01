@@ -21,8 +21,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ExecutionRequestTests.class,
-    ErrorBodyTests.class
+    ConfigurationTest.class,
+    ExecutionRequestTest.class,
+    ErrorBodyTest.class
 })
 public class ExternalTestingApiTests {
   // nothing to do - just a placeholder.

@@ -23,10 +23,11 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.core.externaltesting.api.*;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ApiTests {
+public class ApiTest {
 
   private static final String EP = "ep";
   private static final String EXEC = "exec";
@@ -60,6 +61,13 @@ public class ApiTests {
     List<VtpTestExecutionRequest> requests =
         Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
     Assert.assertNotNull(testing.execute(requests, "requestId"));
+
+
+    ClientConfiguration cc = new ClientConfiguration();
+    Assert.assertNotNull(testing.setConfig(cc));
+
+    ArrayList<RemoteTestingEndpointDefinition> lst = new ArrayList<>();
+    Assert.assertNotNull(testing.setEndpoints(lst));
   }
 
   class ApiTestExternalTestingManager implements ExternalTestingManager {
@@ -140,6 +148,20 @@ public class ApiTests {
 
     try {
       testingF.getEndpoints();
+    }
+    catch (ExternalTestingException e) {
+      // expected.
+    }
+
+    try {
+      testingF.setConfig(null);
+    }
+    catch (ExternalTestingException e) {
+      // expected.
+    }
+
+    try {
+      testingF.setEndpoints(null);
     }
     catch (ExternalTestingException e) {
       // expected.
