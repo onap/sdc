@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-public class ExecutionRequestTests {
+public class ExecutionRequestTest {
 
   @Test
   public void testTestCase() throws Exception {
@@ -89,6 +89,19 @@ public class ExecutionRequestTests {
     Assert.assertEquals("COMPLETED", rsp.getStatus());
     Assert.assertNotNull(rsp.getStartTime());
     Assert.assertNotNull(rsp.getEndTime());
+
+    rsp = mapper.readValue(new File("src/test/data/failedexecution.json"), VtpTestExecutionResponse.class);
+    Assert.assertEquals("F-1131", rsp.getCode());
+    Assert.assertEquals("Failure reason", rsp.getMessage());
+    Assert.assertEquals(500, rsp.getHttpStatus().intValue());
+  }
+
+  @Test
+  public void testTreeConstructor() {
+    // test constructor.
+    TestTreeNode tree = new TestTreeNode("root", "Root");
+    Assert.assertEquals("root", tree.getName());
+    Assert.assertEquals("Root", tree.getDescription());
   }
 
   @Test

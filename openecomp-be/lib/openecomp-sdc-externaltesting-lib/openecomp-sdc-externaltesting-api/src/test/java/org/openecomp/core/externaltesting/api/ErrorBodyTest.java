@@ -19,7 +19,7 @@ package org.openecomp.core.externaltesting.api;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ErrorBodyTests {
+public class ErrorBodyTest {
 
   @Test
   public void testErrorBody() {

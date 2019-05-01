@@ -21,8 +21,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ExternalTestingManagerImplTests.class,
-    ConfigurationTests.class
+    ExternalTestingManagerImplTest.class,
+    TestingAccessConfigTest.class
 })
 public class ExternalTestingTestSuite {
   // nothing to do - just a placeholder.
