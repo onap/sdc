@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "321b785c_af1d973c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/test/java/org/openecomp/sdcrests/externaltesting/rest/services/ApiTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-02T06:48:19Z",
+      "side": 1,
+      "message": "Capital C",
+      "range": {
+        "startLine": 204,
+        "startChar": 49,
+        "endLine": 204,
+        "endChar": 50
+      },
+      "revId": "933276f7fcf9f873b5fa5193382569c17f20fa65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87755899_6fcc44ba",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/test/java/org/openecomp/sdcrests/externaltesting/rest/services/ApiTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-02T06:48:19Z",
+      "side": 1,
+      "message": "Capital S",
+      "range": {
+        "startLine": 207,
+        "startChar": 50,
+        "endLine": 207,
+        "endChar": 51
+      },
+      "revId": "933276f7fcf9f873b5fa5193382569c17f20fa65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97698900_4c66f093",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/test/java/org/openecomp/sdcrests/externaltesting/rest/services/ApiTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-02T06:48:19Z",
+      "side": 1,
+      "message": "As I said. bad practice. you need to split it to several tests with meaningful names. the reason for this is that if the test is failing you don\u0027t wan\u0027t to see in which assertion\\request it is failing, you want to understand it by the test name alone.\n\nI also don\u0027t understand how in your previous commit you were expecting exception and now you don\u0027t",
+      "range": {
+        "startLine": 195,
+        "startChar": 4,
+        "endLine": 211,
+        "endChar": 55
+      },
+      "revId": "933276f7fcf9f873b5fa5193382569c17f20fa65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
