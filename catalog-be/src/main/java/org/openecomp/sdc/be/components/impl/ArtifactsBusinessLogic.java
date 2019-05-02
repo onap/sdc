@@ -5018,7 +5018,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     NodeTypeEnum parentType = convertParentType(componentType);
                     List<ArtifactDefinition> existingDeploymentArtifacts = getDeploymentArtifacts(toscaComponentEither.left().value(), parentType,null);
                     for (ArtifactDefinition artifactDefinition: existingDeploymentArtifacts){
-                        if(artifactDefinition.getArtifactName().equalsIgnoreCase(artifactInfo.getArtifactName())){
+                        if(artifactInfo.getArtifactName().equalsIgnoreCase(artifactDefinition.getArtifactName())){
                             existingArtifactInfo = artifactDefinition;
                             break;
                         }
