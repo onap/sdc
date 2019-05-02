@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09e1cfe1_9cc6f968",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Please avoid using Either, SDC is making an effort to remove all uses.",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "01646fe3_f08f34e4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Please break this 100+ lines method into smaller chunks :)\nPlease run Sonar and fix issues, fast scan shows new issues in this new code.",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "295fe758_47d90b32",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Redundent code, used in other method in this file, please refactor",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0bc7d7d9_bd6974f1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "SDC is putting an effort to remove all Either in code, please modify and use regular exceptions.",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "01b3d56e_492c8a3d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "break a part this logic to add readability, return should be simple(in contrary to the old convention of callbacks in JS for example).",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "963bf2f7_493f44b5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Please rename to lowerCamelCase",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "58983944_79269823",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/propertytopolicydeclarators/ComponentPropertyToPolicyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "return type is void, no need for \u0027return;\u0027",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56af69fa_f724a9fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "What if it\u0027s indeed JsonObject with entrySet larger than 1?",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21af8153_a4d6b447",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Consider modifying the code and unite the logical if and else, they result with the same action: mergedPropertyEntry.getKey(), getInputValue);",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ec7111c_f31dd43b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "This line can be extracted and reused.",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7e9f40d_a67a5c96",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "add Open source text",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1ed4b1e_10794843",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "remove commented lines",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b92d970_9ad1af52",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "please use ENUM (for 500 \u0026 200)",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca150cc8_1ccf2681",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "remove commented lines",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87ffad2b_6329a078",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentParametersViewTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Consider asserting with testSubject.isIgnoreNodeFilter() instead of result as a var?\n(same for previous tests)",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae6ca1b2_7dc2a909",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2331
+      },
+      "writtenOn": "2019-05-02T14:04:20Z",
+      "side": 1,
+      "message": "Please change the name of the var to one with context",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
