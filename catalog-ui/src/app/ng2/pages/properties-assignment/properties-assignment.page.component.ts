@@ -532,7 +532,8 @@ export class PropertiesAssignmentComponent {
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resProp) => {
-                                const changedProp = <PropertyFEModel>this.changedData.shift();
+                                const changedProp = <PropertyFEModel>_.find(this.changedData, changedDataObject => changedDataObject.uniqueId === resProp.uniqueId);
+                                this.changedData = _.filter(this.changedData, changedDataObject => changedDataObject.uniqueId !== resProp.uniqueId);
                                 this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                             });
                             resolve(response);
