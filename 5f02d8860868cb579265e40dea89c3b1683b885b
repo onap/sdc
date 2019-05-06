@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a9b2f44_d4710d8a",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-06T05:59:57Z",
+      "side": 1,
+      "message": "Sonar remark \n\nString literals should not be duplicated\n \nCode smell\n \nCritical\nsquid:S1192\n \nDuplicated string literals make the process of refactoring error-prone, since you must be sure to update all occurrences.\nOn the other hand, constants can be referenced from many places, but only need to be updated in a single place.\nNoncompliant Code Example\nWith the default threshold of 3:\n  public void run() {    prepare(\"action1\"); // Noncompliant - \"action1\" is duplicated 3 times    execute(\"action1\");    release(\"action1\");  }    @SuppressWarning(\"all\") // Compliant - annotations are excluded  private void method1() { /* ... */ }  @SuppressWarning(\"all\")  private void method2() { /* ... */ }    public String method3(String a) {    System.out.println(\"\u0027\" + a + \"\u0027\"); // Compliant - literal \"\u0027\" has less than 5 characters and is excluded    return \"\"; // Compliant - literal \"\" has less than 5 characters and is excluded  }  \nCompliant Solution\n  private static final String ACTION_1 \u003d \"action1\"; // Compliant    public void run() {    prepare(ACTION_1); // Compliant    execute(ACTION_1);    release(ACTION_1);  }  \nExceptions\nTo prevent generating some false-positives, literals having less than 5 characters are excluded.",
+      "revId": "5f02d8860868cb579265e40dea89c3b1683b885b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d114b48_0827e291",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-06T05:59:57Z",
+      "side": 1,
+      "message": "Sonar remark\n\n\"throws\" declarations should not be superfluous\n \nCode smell\n \nMinor\nsquid:RedundantThrowsDeclarationCheck\n \nAn exception in a throws declaration in Java is superfluous if it is:\nlisted multiple times\na subclass of another listed exception\na RuntimeException, or one of its descendants\ncompletely unnecessary because the declared exception type cannot actually be thrown\nNoncompliant Code Example\n  void foo() throws MyException, MyException {} // Noncompliant; should be listed once  void bar() throws Throwable, Exception {} // Noncompliant; Exception is a subclass of Throwable  void baz() throws RuntimeException {} // Noncompliant; RuntimeException can always be thrown  \nCompliant Solution\n  void foo() throws MyException {}  void bar() throws Throwable {}  void baz() {}  \nExceptions\nThe rule will not raise any issue for exceptions that cannot be thrown from the method body:\nin overriding and implementation methods\nin interface default methods\nin non-private methods that only throw, have empty bodies, or a single return statement .\nin overridable methods (non-final, or not member of a final class, non-static, non-private), if the exception is documented with a proper javadoc.\n  class A extends B {    @Override    void doSomething() throws IOException {      compute(a);    }      public void foo() throws IOException {}      protected void bar() throws IOException {      throw new UnsupportedOperationException(\"This method should be implemented in subclasses\");    }      Object foobar(String s) throws IOException {      return null;    }      /**     * @throws IOException Overriding classes may throw this exception if they print values into a file     */    protected void print() throws IOException { // no issue, method is overridable and the exception has proper javadoc      System.out.println(\"foo\");    }  }  ",
+      "revId": "5f02d8860868cb579265e40dea89c3b1683b885b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9485290a_8e7422d7",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-06T05:59:57Z",
+      "side": 1,
+      "message": "\"throws\" declarations should not be superfluous\n \nCode smell\n \nMinor\nsquid:RedundantThrowsDeclarationCheck\n \nAn exception in a throws declaration in Java is superfluous if it is:\nlisted multiple times\na subclass of another listed exception\na RuntimeException, or one of its descendants\ncompletely unnecessary because the declared exception type cannot actually be thrown\nNoncompliant Code Example\n  void foo() throws MyException, MyException {} // Noncompliant; should be listed once  void bar() throws Throwable, Exception {} // Noncompliant; Exception is a subclass of Throwable  void baz() throws RuntimeException {} // Noncompliant; RuntimeException can always be thrown  \nCompliant Solution\n  void foo() throws MyException {}  void bar() throws Throwable {}  void baz() {}  \nExceptions\nThe rule will not raise any issue for exceptions that cannot be thrown from the method body:\nin overriding and implementation methods\nin interface default methods\nin non-private methods that only throw, have empty bodies, or a single return statement .\nin overridable methods (non-final, or not member of a final class, non-static, non-private), if the exception is documented with a proper javadoc.\n  class A extends B {    @Override    void doSomething() throws IOException {      compute(a);    }      public void foo() throws IOException {}      protected void bar() throws IOException {      throw new UnsupportedOperationException(\"This method should be implemented in subclasses\");    }      Object foobar(String s) throws IOException {      return null;    }      /**     * @throws IOException Overriding classes may throw this exception if they print values into a file     */    protected void print() throws IOException { // no issue, method is overridable and the exception has proper javadoc      System.out.println(\"foo\");    }  }  ",
+      "revId": "5f02d8860868cb579265e40dea89c3b1683b885b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d81794ce_05fb873d",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-06T05:59:57Z",
+      "side": 1,
+      "message": "Collection.isEmpty() should be used to test for emptiness\n \nCode smell\n \nMinor\nsquid:S1155\n \nUsing Collection.size() to test for emptiness works, but using Collection.isEmpty() makes the code more readable and can be more performant. The time complexity of any isEmpty() method implementation should be O(1) whereas some implementations of size() can be O(n).\nNoncompliant Code Example\n  if (myCollection.size() \u003d\u003d 0) { // Noncompliant    /* ... */  }  \nCompliant Solution\n  if (myCollection.isEmpty()) {    /* ... */  }  ",
+      "revId": "5f02d8860868cb579265e40dea89c3b1683b885b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "53aae3a8_53dc0071",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-06T05:59:57Z",
+      "side": 1,
+      "message": "Collection.isEmpty() should be used to test for emptiness\n \nCode smell\n \nMinor\nsquid:S1155\n \nUsing Collection.size() to test for emptiness works, but using Collection.isEmpty() makes the code more readable and can be more performant. The time complexity of any isEmpty() method implementation should be O(1) whereas some implementations of size() can be O(n).\nNoncompliant Code Example\n  if (myCollection.size() \u003d\u003d 0) { // Noncompliant    /* ... */  }  \nCompliant Solution\n  if (myCollection.isEmpty()) {    /* ... */  }  ",
+      "revId": "5f02d8860868cb579265e40dea89c3b1683b885b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
