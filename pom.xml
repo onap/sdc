@@ -139,6 +139,8 @@ Modifications copyright (c) 2018 Nokia
 
         <joda.time.version>2.9.9</joda.time.version>
 
+        <!--jacoco-->
+        <jacoco.version>0.8.1</jacoco.version>
 
     </properties>
 
@@ -231,6 +233,17 @@ Modifications copyright (c) 2018 Nokia
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <!-- must be on the classpath -->
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <classifier>runtime</classifier>
+            <version>${jacoco.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <reporting>
         <plugins>
@@ -389,9 +402,15 @@ Modifications copyright (c) 2018 Nokia
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>default-prepare-agent</id>
+                        <id>default-instrument</id>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-restore-instrumented-classes</id>
+                        <goals>
+                            <goal>restore-instrumented-classes</goal>
                         </goals>
                     </execution>
                     <execution>
@@ -399,6 +418,9 @@ Modifications copyright (c) 2018 Nokia
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -454,6 +476,9 @@ Modifications copyright (c) 2018 Nokia
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <printSummary>false</printSummary>
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>${project.build.directory}/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
