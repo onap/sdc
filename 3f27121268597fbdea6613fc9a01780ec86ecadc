@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e91d9e1d_14f2abb3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-07T10:46:29Z",
+      "side": 1,
+      "message": "Should be log.error",
+      "revId": "3f27121268597fbdea6613fc9a01780ec86ecadc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "007f6ef4_8a5035fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-07T10:46:29Z",
+      "side": 1,
+      "message": "should be log.error",
+      "revId": "3f27121268597fbdea6613fc9a01780ec86ecadc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
