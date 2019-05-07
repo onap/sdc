@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "4a885127_f003f4c3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01646fe3_f08f34e4",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "295fe758_47d90b32",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 6
@@ -65,6 +83,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "Redundent code, used in other method in this file, please refactor",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4f7b9efd_99988a0c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done. Extracted common code into \u0027getBaseComponentParametersView\u0027.",
+      "parentUuid": "295fe758_47d90b32",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -106,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "8bdad7f5_78e56617",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "I changed the code partially to use exception for error handling. Because current code highly depends on Either, so I have not changed much and have tried not to cause another issue.",
+      "parentUuid": "99c052c2_74890a34",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01b3d56e_492c8a3d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 6
@@ -117,6 +171,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "break a part this logic to add readability, return should be simple(in contrary to the old convention of callbacks in JS for example).",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f79e5d1a_03f32fa6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01b3d56e_492c8a3d",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -140,6 +212,24 @@
     },
     {
       "key": {
+        "uuid": "325a6ba5_ead18db2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "963bf2f7_493f44b5",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58983944_79269823",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/propertytopolicydeclarators/ComponentPropertyToPolicyDeclarator.java",
         "patchSetId": 6
@@ -151,6 +241,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "return type is void, no need for \u0027return;\u0027",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "093dd2f9_bbd3d284",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/propertytopolicydeclarators/ComponentPropertyToPolicyDeclarator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58983944_79269823",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -174,6 +282,24 @@
     },
     {
       "key": {
+        "uuid": "14b88d4d_080debbe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "When property value has get_input function, size of entrySet is exactly 1 here because get_input cannot be used together with another function. Other cases such as JsonObject with entrySet larger than 1 will be handled in succeeding code.",
+      "parentUuid": "56af69fa_f724a9fa",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21af8153_a4d6b447",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 6
@@ -185,6 +311,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "Consider modifying the code and unite the logical if and else, they result with the same action: mergedPropertyEntry.getKey(), getInputValue);",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6f9d8fd_1539b509",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Because causes/log messages are slightly different, I separated to two blocks.",
+      "parentUuid": "21af8153_a4d6b447",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -208,6 +352,24 @@
     },
     {
       "key": {
+        "uuid": "7a7bb464_e0606f9d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ec7111c_f31dd43b",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7e9f40d_a67a5c96",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
         "patchSetId": 6
@@ -219,6 +381,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "add Open source text",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a5e5726_669abe1e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7e9f40d_a67a5c96",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -242,6 +422,24 @@
     },
     {
       "key": {
+        "uuid": "44771282_47d5677e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1ed4b1e_10794843",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b92d970_9ad1af52",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
         "patchSetId": 6
@@ -253,6 +451,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "please use ENUM (for 500 \u0026 200)",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b837d053_f099c440",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b92d970_9ad1af52",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -276,6 +492,24 @@
     },
     {
       "key": {
+        "uuid": "8ba578d9_d304d818",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/InputsServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca150cc8_1ccf2681",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87ffad2b_6329a078",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentParametersViewTest.java",
         "patchSetId": 6
@@ -287,6 +521,24 @@
       "writtenOn": "2019-05-02T14:04:20Z",
       "side": 1,
       "message": "Consider asserting with testSubject.isIgnoreNodeFilter() instead of result as a var?\n(same for previous tests)",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c783089_6c2ebaeb",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentParametersViewTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87ffad2b_6329a078",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -322,6 +574,24 @@
       "side": 1,
       "message": "The name of the var is not not assigned by this commit.",
       "parentUuid": "ae6ca1b2_7dc2a909",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb66a8d2_2810c5bc",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-05-07T11:38:48Z",
+      "side": 1,
+      "message": "anyway changed as Amir commented",
+      "parentUuid": "99a8b1bf_265024f8",
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
