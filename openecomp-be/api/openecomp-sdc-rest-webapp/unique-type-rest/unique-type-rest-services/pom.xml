@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>unique-type-rest</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>unique-type-rest-services</artifactId>
