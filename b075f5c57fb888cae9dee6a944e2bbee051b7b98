@@ -307,6 +307,24 @@
       "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99a8b1bf_265024f8",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-07T10:46:29Z",
+      "side": 1,
+      "message": "The name of the var is not not assigned by this commit.",
+      "parentUuid": "ae6ca1b2_7dc2a909",
+      "revId": "b075f5c57fb888cae9dee6a944e2bbee051b7b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
