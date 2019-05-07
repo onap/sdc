@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>externaltesting-rest</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>

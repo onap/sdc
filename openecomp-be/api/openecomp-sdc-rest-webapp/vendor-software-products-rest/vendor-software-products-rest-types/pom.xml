@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>vendor-software-products-rest</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 
