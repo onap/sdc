@@ -171,7 +171,6 @@ resourceTypes: &allResourceTypes
   - VFCMT
   - Abstract
   - CVFC
-  - PNF
 
 # validForResourceTypes usage
 #     validForResourceTypes:
