@@ -559,8 +559,10 @@ public class ToscaExportHandler {
             // merge component properties and inputs properties
             mergedProperties.putAll(convertedProperties);
         }
-        if (MapUtils.isNotEmpty(mergedProperties) && Objects.nonNull(inputDef)) {
-            resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
+        if (MapUtils.isNotEmpty(mergedProperties)) {
+            if (Objects.nonNull(inputDef)) {
+                resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
+            }
             toscaNodeType.setProperties(mergedProperties);
         }
 
