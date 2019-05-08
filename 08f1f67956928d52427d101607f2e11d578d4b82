@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6dadcb22_177df598",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-08T08:22:10Z",
+      "side": 1,
+      "message": "why did you do it? it is the same result and the previous version is more understandable.",
+      "range": {
+        "startLine": 559,
+        "startChar": 8,
+        "endLine": 560,
+        "endChar": 44
+      },
+      "revId": "08f1f67956928d52427d101607f2e11d578d4b82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
