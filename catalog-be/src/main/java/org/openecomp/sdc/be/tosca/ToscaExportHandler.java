@@ -556,8 +556,10 @@ public class ToscaExportHandler {
                     property -> propertyConvertor.convertProperty(dataTypes, property,
                             PropertyConvertor.PropertyType.PROPERTY)));
         }
-        if (MapUtils.isNotEmpty(mergedProperties) && Objects.nonNull(inputDef)) {
-            resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
+        if (MapUtils.isNotEmpty(mergedProperties)) {
+            if (Objects.nonNull(inputDef)) {
+                resolveDefaultPropertyValue(inputDef, mergedProperties, dataTypes);
+            }
             toscaNodeType.setProperties(mergedProperties);
         }
         // Extracted to method for code reuse
