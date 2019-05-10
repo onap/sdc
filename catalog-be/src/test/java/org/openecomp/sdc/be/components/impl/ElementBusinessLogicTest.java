@@ -1,353 +1,277 @@
 package org.openecomp.sdc.be.components.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import com.att.aft.dme2.internal.apache.commons.lang.ObjectUtils;
+import java.util.Set;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PropertyScope;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.ui.model.UiCategories;
+import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
-
 import fj.data.Either;
 
-import javax.validation.constraints.Null;
-
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ElementBusinessLogicTest {
 
-	private ElementBusinessLogic createTestSubject() {
-		return new ElementBusinessLogic();
-	}
+	private User user;
+
+	@Mock
+	private ComponentsUtils componentsUtils;
+
+	@Mock
+	private UserBusinessLogic userAdminManager;
 
     @Mock
-    ComponentsUtils componentsUtils;
+	private TitanDao titanDao;
 
     @Mock
-    UserBusinessLogic userAdminManager;
+	private UserValidations userValidations;
+
+    @Mock
+	private ToscaOperationFacade toscaOperationFacade;
+
+    @Mock
+	private IElementOperation elementOperation;
 
     @InjectMocks
     ElementBusinessLogic elementBusinessLogic;
-	
-	@Test
-	public void testGetFollowed() throws Exception {
-		ElementBusinessLogic testSubject;
-		User user = null;
-		Either<Map<String, List<? extends Component>>, ResponseFormat> result;
 
-		// default test
-		testSubject = createTestSubject();
+    @Before
+	public void setUp() {
+
+    	elementBusinessLogic = new ElementBusinessLogic();
+    	MockitoAnnotations.initMocks(this);
+		user = new User();
+		user.setUserId("admin");
 	}
 
-	
-	
-	
-	@Test
-	public void testGetAllResourceCategories() throws Exception {
-		ElementBusinessLogic testSubject;
-		Either<List<CategoryDefinition>, ActionStatus> result;
+    @Test
+	public void testGetFollowed_givenUserWithDesignerRole_thenReturnsSuccessful() {
+    	user.setUserId("designer1");
+    	user.setRole(Role.DESIGNER.name());
 
-		// default test
-		testSubject = createTestSubject();
+    	Set<Component> resources = new HashSet<>();
+    	Set<Component> services = new HashSet<>();
+
+    	Resource resource = new Resource();
+    	Service service = new Service();
+
+    	resources.add(resource);
+    	services.add(service);
+
+    	Mockito.when(toscaOperationFacade.getFollowed(eq(user.getUserId()), Mockito.anySet(), Mockito.anySet(), Mockito.eq(ComponentTypeEnum.RESOURCE)))
+				.thenReturn(Either.left(resources));
+    	Mockito.when(toscaOperationFacade.getFollowed(eq(user.getUserId()), anySet(), anySet(), eq(ComponentTypeEnum.SERVICE)))
+				.thenReturn(Either.left(services));
+
+    	Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
+    	Assert.assertTrue(result.get("services").size() == 1);
+    	Assert.assertTrue(result.get("resources").size() == 1);
 	}
 
-	
 	@Test
-	public void testGetAllServiceCategories() throws Exception {
-		ElementBusinessLogic testSubject;
-		Either<List<CategoryDefinition>, ActionStatus> result;
+	public void testGetFollowed_givenUserWithTesterRoleErrorOccursGettingService_thenReturnsError () {
+		user.setUserId("tester1");
+		user.setRole(Role.TESTER.name());
 
-		// default test
-		testSubject = createTestSubject();
+		Set<Component> resources = new HashSet<>();
+
+		Resource resource = new Resource();
+		resources.add(resource);
+
+		Mockito.when(toscaOperationFacade.getFollowed(any(), Mockito.anySet(), any(), Mockito.eq(ComponentTypeEnum.RESOURCE)))
+				.thenReturn(Either.left(resources));
+		Mockito.when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.SERVICE)))
+				.thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
 	}
 
-	
 	@Test
-	public void testCreateCategory() throws Exception {
-		ElementBusinessLogic testSubject;
-		CategoryDefinition category = null;
-		String componentTypeParamName = "";
-		String userId = "";
-		Either<CategoryDefinition, ResponseFormat> result;
+	public void testGetFollowed_givenUserWithGovernorRole_thenReturnsSuccessful(){
+		user.setUserId("governor1");
+    	user.setRole(Role.GOVERNOR.name());
 
-		// test 1
-		testSubject = createTestSubject();
-		category = null;
+    	List<Service> services = new ArrayList<>();
+    	services.add(new Service());
+
+    	when(toscaOperationFacade.getCertifiedServicesWithDistStatus(any()))
+				.thenReturn(Either.left(services));
+		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isLeft());
 	}
 
-	
 	@Test
-	public void testCreateSubCategory() throws Exception {
-		ElementBusinessLogic testSubject;
-		SubCategoryDefinition subCategory = null;
-		String componentTypeParamName = "";
-		String parentCategoryId = "";
-		String userId = "";
-		Either<SubCategoryDefinition, ResponseFormat> result;
+	public void testGetFollowed_givenUserWithOPSRoleErrorOccursGettingServices_thenReturnsError(){
+		user.setUserId("ops1");
+    	user.setRole(Role.OPS.name());
 
-		// test 1
-		testSubject = createTestSubject();
-		subCategory = null;
+		when(toscaOperationFacade.getCertifiedServicesWithDistStatus(any()))
+				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
+
 	}
 
-	
 	@Test
-	public void testCreateGrouping() throws Exception {
-		ElementBusinessLogic testSubject;
-		GroupingDefinition grouping = null;
-		String componentTypeParamName = "";
-		String grandParentCategoryId = "";
-		String parentSubCategoryId = "";
-		String userId = "";
-		Either<GroupingDefinition, ResponseFormat> result;
+	public void testGetFollowed_givenUserWithProductStrategistRole_thenReturnsEmptyList(){
+		user.setUserId("pstra1");
+    	user.setRole(Role.PRODUCT_STRATEGIST.name());
 
-		// test 1
-		testSubject = createTestSubject();
-		grouping = null;
+    	Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
+    	Assert.assertEquals("products list should be empty", 0, result.get("products").size());
+
 	}
 
-	
 	@Test
-	public void testGetAllCategories() throws Exception {
-		ElementBusinessLogic testSubject;
-		String componentType = "";
-		String userId = "";
-		Either<List<CategoryDefinition>, ResponseFormat> result;
+	public void testGetFollowed_givenUserWithProductManagerRole_thenReturnsProducts(){
+    	user.setUserId("pmanager1");
+    	user.setRole(Role.PRODUCT_MANAGER.name());
 
-		// test 1
-		testSubject = createTestSubject();
-		userId = null;
+    	Set<Component> products = new HashSet<>();
+    	products.add(new Product());
 
-		// test 2
-		testSubject = createTestSubject();
-		userId = "";
+    	when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.PRODUCT)))
+				.thenReturn(Either.left(products));
+
+    	Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
+    	Assert.assertEquals("1 product should exist", 1, result.get("products").size());
+
 	}
 
-	
 	@Test
-	public void testGetAllCategories_1() throws Exception {
-		ElementBusinessLogic testSubject;
-		String userId = "";
-		Either<UiCategories, ResponseFormat> result;
+	public void testGetFollowed_givenUserWithRoleAdminErrorOccursGettingResources_thenReturnsError() {
+    	user.setUserId("admin1");
+    	user.setRole(Role.ADMIN.name());
 
-		// default test
-		testSubject = createTestSubject();
+    	when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.RESOURCE)))
+				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+    	Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
 	}
 
-	
 	@Test
-	public void testDeleteCategory() throws Exception {
-		ElementBusinessLogic testSubject;
-		String categoryId = "";
-		String componentTypeParamName = "";
-		String userId = "";
-		Either<CategoryDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
+	public void testGetAllCategories_givenUserIsNull_thenReturnsError() {
+    	Assert.assertTrue(elementBusinessLogic.getAllCategories(null, null).isRight());
 	}
 
-	
-	@Test
-	public void testDeleteSubCategory() throws Exception {
-		ElementBusinessLogic testSubject;
-		String grandParentCategoryId = "";
-		String parentSubCategoryId = "";
-		String componentTypeParamName = "";
-		String userId = "";
-		Either<SubCategoryDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
+	@Test(expected = ComponentException.class)
+	public void testGetAllCategories_givenValidationOfUserFails_thenReturnsError() {
+    	doThrow(new ComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()),
+				anyString(), anyBoolean());
+  		elementBusinessLogic.getAllCategories(null, user.getUserId());
 	}
 
-	
 	@Test
-	public void testDeleteGrouping() throws Exception {
-		ElementBusinessLogic testSubject;
-		String grandParentCategoryId = "";
-		String parentSubCategoryId = "";
-		String groupingId = "";
-		String componentTypeParamName = "";
-		String userId = "";
-		Either<GroupingDefinition, ResponseFormat> result;
+	public void testGetAllCategories_givenInvalidComponentType_thenReturnsError() {
+    	when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean())).thenReturn(user);
 
-		// default test
-		testSubject = createTestSubject();
+    	Assert.assertTrue(elementBusinessLogic.getAllCategories("NONE", user.getUserId()).isRight());
+
 	}
 
-	
-
-	
 	@Test
-	public void testGetAllPropertyScopes() throws Exception {
-		ElementBusinessLogic testSubject;
-		String userId = "";
-		Either<List<PropertyScope>, ActionStatus> result;
+	public void testGetAllCategories_givenValidUserAndComponentType_thenReturnsSuccessful() {
 
-		// default test
-		testSubject = createTestSubject();
+    	List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
+    	categoryDefinitionList.add(new CategoryDefinition());
+
+		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean())).thenReturn(user);
+		when(elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+				.thenReturn(Either.left(categoryDefinitionList));
+		Assert.assertTrue(elementBusinessLogic.getAllCategories(ComponentTypeEnum.RESOURCE_PARAM_NAME, user.getUserId())
+		.isLeft());
 	}
 
-	
 	@Test
-	public void testGetAllArtifactTypes() throws Exception {
-		ElementBusinessLogic testSubject;
-		String userId = "";
-		Either<List<ArtifactType>, ActionStatus> result;
+	public void testGetAllCategories_givenValidUserId_thenReturnsSuccessful() {
 
-		// default test
-		testSubject = createTestSubject();
+    	List<CategoryDefinition> dummyCategoryDefinitionList = new ArrayList<>();
+    	dummyCategoryDefinitionList.add(new CategoryDefinition());
+
+    	when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
+				.thenReturn(user);
+    	when(elementOperation.getAllCategories(any(NodeTypeEnum.class), anyBoolean()))
+				.thenReturn(Either.left(dummyCategoryDefinitionList));
+
+    	Assert.assertTrue(elementBusinessLogic.getAllCategories(user.getUserId()).isLeft());
 	}
 
-	
 	@Test
-	public void testGetAllDeploymentArtifactTypes() throws Exception {
-		ElementBusinessLogic testSubject;
-		Either<Map<String, Object>, ActionStatus> result;
+	public void testDeleteCategory_givenValidComponentTypeAndCategoryId_thenReturnsSuccessful() {
 
-		// default test
-		testSubject = createTestSubject();
+    	when(elementOperation.deleteCategory(any(NodeTypeEnum.class), anyString()))
+				.thenReturn(Either.left(new CategoryDefinition()));
+
+    	Assert.assertTrue(elementBusinessLogic.deleteCategory("cat1", "resources", user.getUserId()).isLeft());
 	}
 
-	
 	@Test
-	public void testGetDefaultHeatTimeout() throws Exception {
-		ElementBusinessLogic testSubject;
-		Either<Integer, ActionStatus> result;
+	public void testCreateSubCategory_givenValidSubCategory_thenReturnsSuccessful() {
+    	user.setRole(Role.ADMIN.name());
+		SubCategoryDefinition subCatDef = new SubCategoryDefinition();
+		subCatDef.setName("subCat1");
 
-		// default test
-		testSubject = createTestSubject();
+		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
+				.thenReturn(user);
+		when(elementOperation.getCategory(any(NodeTypeEnum.class), anyString()))
+				.thenReturn(Either.left(new CategoryDefinition()));
+		when(elementOperation.isSubCategoryUniqueForCategory(any(NodeTypeEnum.class), anyString(), anyString()))
+				.thenReturn(Either.left(Boolean.TRUE));
+		when(elementOperation.getSubCategoryUniqueForType(any(NodeTypeEnum.class), anyString()))
+				.thenReturn(Either.left(subCatDef));
+		when(elementOperation.createSubCategory(anyString(), any(SubCategoryDefinition.class), any(NodeTypeEnum.class)))
+				.thenReturn(Either.left(subCatDef));
+
+		Assert.assertTrue(elementBusinessLogic.createSubCategory(subCatDef, "resources",
+				"cat1", user.getUserId()).isLeft());
 	}
 
-	
 	@Test
-	public void testGetCatalogComponents() throws Exception {
-		ElementBusinessLogic testSubject;
-		String userId = "";
-		List<OriginTypeEnum> excludeTypes = null;
-		Either<Map<String, List<? extends Component>>, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
+	public void testCreateSubCategory_givenNullSubCategory_thenReturnsError() {
+    	Assert.assertTrue(elementBusinessLogic.createSubCategory(null, "resources",
+				"cat1", user.getUserId()).isRight());
 	}
 
-	
-	@Test
-	public void testGetFilteredCatalogComponents() throws Exception {
-		ElementBusinessLogic testSubject;
-		String assetType = "";
-		Map<FilterKeyEnum, String> filters = null;
-		String query = "";
-		Either<List<? extends Component>, ResponseFormat> result;
-
-		// test 1
-		testSubject = createTestSubject();
-		query = null;
-
-		// test 2
-		testSubject = createTestSubject();
-		query = "";
-
-		// test 3
-		testSubject = createTestSubject();
-		filters = null;
+	@Test(expected = ComponentException.class)
+	public void testCreateSubCategory_givenUserValidationFails_thenReturnsException() {
+    	SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
+    	doThrow(new ComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()),
+				anyString(), anyBoolean());
+    	elementBusinessLogic.createSubCategory(subCategoryDefinition, "resources", "cat1", user.getUserId());
 	}
-
-	
-	
-	
-	@Test
-	public void testGetCatalogComponentsByUuidAndAssetType() throws Exception {
-		ElementBusinessLogic testSubject;
-		String assetType = "";
-		String uuid = "";
-		Either<List<? extends Component>, ResponseFormat> result;
-
-		// test 1
-		testSubject = createTestSubject();
-		assetType = null;
-
-		// test 2
-		testSubject = createTestSubject();
-		assetType = "";
-
-		// test 3
-		testSubject = createTestSubject();
-		assetType = null;
-
-		// test 4
-		testSubject = createTestSubject();
-		assetType = "";
-	}
-
-	
-	@Test
-	public void testGetAllComponentTypesParamNames() throws Exception {
-		ElementBusinessLogic testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllComponentTypesParamNames();
-	}
-
-	
-	@Test
-	public void testGetAllSupportedRoles() throws Exception {
-		ElementBusinessLogic testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllSupportedRoles();
-	}
-
-	
-	@Test
-	public void testGetResourceTypesMap() throws Exception {
-		ElementBusinessLogic testSubject;
-		Either<Map<String, String>, ActionStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	
-	
-
-	
-	@Test
-	public void testGetFilteredResouces() throws Exception {
-		ElementBusinessLogic testSubject;
-		Map<FilterKeyEnum, String> filters = null;
-		boolean inTransaction = false;
-		Either<List<Component>, StorageOperationStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
 
 	@Test
     public void testcreateCategory_VALIDATION_OF_USER_FAILED() throws Exception {
@@ -417,5 +341,4 @@ public class ElementBusinessLogicTest {
         Assert.assertEquals(true,response.isRight());
         Assert.assertEquals((Integer) 9, response.right().value().getStatus());
     }
-
 }
