@@ -513,7 +513,16 @@ resourceDeploymentArtifacts:
             - VFC
     WORKFLOW:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes:
+            - VFC
+            - CP
+            - VL
+            - VF
+            - CR
+            - VFCMT
+            - Abstract
+            - CVFC
+            - PNF
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
