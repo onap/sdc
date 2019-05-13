@@ -129,4 +129,10 @@ public class InterfaceOperationUtilsTest {
         Assert.assertFalse(InterfaceOperationUtils.isArtifactInUse(resource, operationId1, "uniqId1"));
     }
 
+    @Test
+    public void testCreateMappedCapabilityPropertyDefaultValue() {
+        Assert.assertTrue(!InterfaceOperationUtils
+                .createMappedCapabilityPropertyDefaultValue("capName", "propName").isEmpty());
+    }
+
 }

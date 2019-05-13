@@ -30,11 +30,14 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -111,17 +114,17 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(StorageOperationStatus.OK);
 
         //CapabilityOperation
-        when(capabilitiesValidation.validateCapabilities(anyCollection(), anyObject(), anyBoolean())
-        ).thenReturn(Either.left(true));
+        when(capabilitiesValidation.validateCapabilities(anyCollection(), anyObject(), anyBoolean()))
+                .thenReturn(Either.left(true));
         when(capabilitiesOperation.addCapabilities(anyString(), anyObject()))
                 .thenReturn(Either.left(createMockCapabilityListToReturn(
                         createCapability("capName", "capDesc", "capType", "source1",
-                "0", "10"))));
+                                "0", "10"))));
 
         when(capabilitiesOperation.updateCapabilities(anyString(), anyObject()))
                 .thenReturn(Either.left(createMockCapabilityListToReturn(
                         createCapability("capName", "capDesc", "capType", "source1",
-                "0", "10"))));
+                                "0", "10"))));
         when(capabilitiesOperation.deleteCapabilities( anyObject(), anyString()))
                 .thenReturn(StorageOperationStatus.OK);
         when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
@@ -141,7 +144,7 @@ public class CapabilitiesBusinessLogicTest {
     public void shouldPassCreateCapabilitiesFirstTimeInComponentForHappyScenario(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName", "capDesc", "capType", "source1",
-                "0", "10"));
+                        "0", "10"));
         Resource resource = createComponent(false);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -149,7 +152,7 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(Either.left(resource));
         Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
                 .createCapabilities(componentId, capabilityDefinitions, user,
-                         "createCapabilities", true);
+                        "createCapabilities", true);
         Assert.assertTrue(capabilities.isLeft());
         Assert.assertTrue(capabilities.left().value().stream().anyMatch(capabilityDefinition ->
                 capabilityDefinition.getName().equals("capName")));
@@ -159,7 +162,7 @@ public class CapabilitiesBusinessLogicTest {
     public void shouldPassCreateCapabilitiesForHappyScenario(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName2", "capDesc", "capType", "source1",
-                "0", "10"));
+                        "0", "10"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -178,7 +181,7 @@ public class CapabilitiesBusinessLogicTest {
     public void shouldFailCreateCapabilitiesWhenOperationFailedInTitan(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName2", "capDesc", "capType", "source1",
-                "0", "10"));
+                        "0", "10"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -190,7 +193,7 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(Either.left(resource));
         Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
                 .createCapabilities(componentId, capabilityDefinitions, user,
-                         "createCapabilities", true);
+                        "createCapabilities", true);
 
         Assert.assertTrue(capabilities.isRight());
     }
@@ -199,7 +202,7 @@ public class CapabilitiesBusinessLogicTest {
 
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName", "capDesc updated", "capType", "source1",
-                "6", "11"));
+                        "6", "11"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -220,7 +223,7 @@ public class CapabilitiesBusinessLogicTest {
 
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName", "capDesc updated", "capTypeUpdate", "source1",
-                "6", "11"));
+                        "6", "11"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -228,6 +231,8 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(Either.left(resource));
         when(toscaOperationFacade.getParentComponents(anyString()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when((capabilitiesOperation.deleteCapabilityProperties(any(Component.class), anyString())))
+                .thenReturn(StorageOperationStatus.OK);
         Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
                 .updateCapabilities(componentId, capabilityDefinitions, user,
                         "updateCapabilities",true);
@@ -241,7 +246,7 @@ public class CapabilitiesBusinessLogicTest {
 
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName", "capDesc updated", "capTypeUpdate1", "source1",
-                "6", "11"));
+                        "6", "11"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
 
@@ -258,6 +263,8 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(Either.left(resource));
         when(toscaOperationFacade.getParentComponents(anyString()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when((capabilitiesOperation.deleteCapabilityProperties(any(Component.class), anyString())))
+                .thenReturn(StorageOperationStatus.OK);
         Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
                 .updateCapabilities(componentId, capabilityDefinitions, user,
                         "updateCapabilities",true);
@@ -267,10 +274,10 @@ public class CapabilitiesBusinessLogicTest {
     }
 
     @Test
-    public void shouldFailUpdateCapabilitiesWhenOperaitonFailedInTitan(){
+    public void shouldFailUpdateCapabilitiesWhenOperationFailedInTitan(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName2", "capDesc", "capType", "source1",
-                "0", "10"));
+                        "0", "10"));
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
@@ -296,6 +303,8 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(Either.left(resource));
         when(toscaOperationFacade.getParentComponents(anyString()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when((capabilitiesOperation.deleteCapabilityProperties(any(Component.class), anyString())))
+                .thenReturn(StorageOperationStatus.OK);
         Either<CapabilityDefinition, ResponseFormat> deleteCapabilityEither =
                 capabilitiesBusinessLogicMock.deleteCapability(componentId, capabilityId, user, true);
         Assert.assertTrue(deleteCapabilityEither.isLeft());
@@ -362,6 +371,38 @@ public class CapabilitiesBusinessLogicTest {
 
     }
 
+    private ComponentInstanceProperty createCIP(String type, String name) {
+        ComponentInstanceProperty instanceProperty = new ComponentInstanceProperty();
+        instanceProperty.setType(type);
+        instanceProperty.setName(name);
+        instanceProperty.setDescription("prop_description");
+        instanceProperty.setParentUniqueId(capabilityId);
+        instanceProperty.setSchema(new SchemaDefinition());
+        return instanceProperty;
+    }
+
+    @Test
+    public void shouldPassCreateCapabilitiesWithPropertiesForHappyScenario(){
+        CapabilityDefinition capability = createCapability("capName", "capDesc", "capType", "source1",
+                "0", "10");
+        capability.setProperties(Collections.singletonList(createCIP("name", "type")));
+        List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(capability);
+        Resource resource = createComponent(false);
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(resource));
+        when(capabilitiesOperation.createOrUpdateCapabilityProperties(anyString(), any())).thenReturn(StorageOperationStatus.OK);
+        Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
+                .createCapabilities(componentId, capabilityDefinitions, user,
+                        "createCapabilities", true);
+        Assert.assertTrue(capabilities.isLeft());
+        Assert.assertTrue(capabilities.left().value().stream().anyMatch(capabilityDefinition ->
+                capabilityDefinition.getName().equals("capName")));
+        Assert.assertTrue(capabilities.left().value().stream().anyMatch(capabilityDefinition ->
+                capabilityDefinition.getProperties().size() == 1));
+    }
+
     private Resource createComponent(boolean needCapability) {
         Resource resource = new Resource();
         resource.setName("Resource1");
@@ -375,17 +416,17 @@ public class CapabilitiesBusinessLogicTest {
         if(needCapability) {
             List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                     createCapability("capName", "capDesc", "capType", "source1",
-                    "0", "10"));
+                            "0", "10"));
             Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
             capabilityMap.put("capType", capabilityDefinitions);
             resource.setCapabilities(capabilityMap);
         }
-            resource.setName(resource.getName());
-            resource.setVersion("0.1");
-            resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
-            resource.setCreatorUserId(user.getUserId());
-            resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
-            resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        resource.setName(resource.getName());
+        resource.setVersion("0.1");
+        resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
+        resource.setCreatorUserId(user.getUserId());
+        resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
+        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         return resource;
     }
 
@@ -410,7 +451,6 @@ public class CapabilitiesBusinessLogicTest {
         capabilityDefinition.setMaxOccurrences(maxOccurrences);
         capabilityDefinition.setMinOccurrences(minOccurrences);
         capabilityDefinition.setUniqueId(capabilityId);
-
         return capabilityDefinition;
     }
 

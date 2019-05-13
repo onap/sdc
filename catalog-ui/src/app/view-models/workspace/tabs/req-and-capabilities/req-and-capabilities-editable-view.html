@@ -96,8 +96,8 @@
                         <div class="flex-container data-row" data-ng-class="{'editable-row': req.isCreatedManually}"
                              data-ng-click="req.isCreatedManually && onEditRequirement(req)">
                             <div class="table-col-general flex-item text ellipsis-text" tooltips
-                                 tooltip-content="{{req.name}}">
-                                <span data-tests-id="{{req.name}}">{{req.name}}</span>
+                                 tooltip-content="{{(!req.isCreatedManually ? req.ownerName + '.' : '') + req.name}}">
+                                <span data-tests-id="{{(!req.isCreatedManually ? req.ownerName + '.' : '') + req.name}}">{{(!req.isCreatedManually ? req.ownerName + '.' : '') + req.name}}</span>
                             </div>
                             <div class="table-col-general flex-item text ellipsis-text" tooltips
                                  tooltip-content="{{req.capability}}">
@@ -148,17 +148,22 @@
                     <div data-ng-if="filteredCapabilitiesList.length === 0" class="no-row-text"
                          data-tests-id="no-rows-in-table">
                         There are no capabilities to display
-
                     </div>
-                    <div data-ng-repeat="capability in filteredCapabilitiesList | orderBy:capabilitiesSortTableDefined.sortByField:capabilitiesSortTableDefined.reverse  track by $index"
+                    <div data-ng-repeat-start="capability in filteredCapabilitiesList | orderBy:capabilitiesSortTableDefined.sortByField:capabilitiesSortTableDefined.reverse  track by $index"
                          class="flex-container data-row"
                          data-ng-class="{'selected': capability.selected, 'editable-row': capability.isCreatedManually}"
                          data-ng-click="capability.isCreatedManually && onEditCapability(capability)"
                          data-tests-id="capabilities-table-row">
 
                         <div class="table-col-general flex-item text ellipsis-text" tooltips
-                             tooltip-content="{{capability.name}}">
-                            <span data-tests-id="{{capability.name}}">{{capability.name}}</span>
+                             tooltip-content="{{(!capability.isCreatedManually ? capability.ownerName + '.' : '') + capability.name}}">
+                            <span class="sprite-new arrow-up-small hand"
+                                  data-ng-class="{'hideme': !capability.properties.length, 'opened': capability.selected}"
+                                  data-ng-click="capability.selected = !capability.selected; $event.stopPropagation();"></span>
+                            <span data-tests-id="{{(!capability.isCreatedManually ? capability.ownerName + '.' : '') + capability.name}}"
+                                  class="name-col" data-ng-class="{'opened': capability.selected}">
+                                {{(!capability.isCreatedManually ? capability.ownerName + '.' : '') + capability.name}}
+                            </span>
                         </div>
                         <div class="table-col-general flex-item text ellipsis-text" tooltips
                              tooltip-content="{{capability.type}}">
@@ -186,6 +191,51 @@
                             <svg-icon name="trash-o" class="trash-icon" size="small"
                                       data-ng-if="capability.isCreatedManually && !isReadonly()"
                                       data-ng-click="onDeleteCap($event, capability)"></svg-icon>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end data-ng-if="capability.selected" class="item-opened properties-section">
+                        <p class="properties-title">Properties</p>
+                        <div class="table-container-flex properties-table">
+                            <div class="table" data-ng-class="{'view-mode': true}">
+                                <div class="head flex-container">
+                                    <div class="table-header head-row hand flex-item"
+                                         data-ng-repeat="header in capabilityPropertiesTableHeadersList track by $index"
+                                         data-ng-click="sort(header.property, propertiesSortTableDefined)">
+                                        {{header.title}}
+                                        <span data-ng-if="propertiesSortTableDefined.sortByField === header.property"
+                                              class="table-header-sort-arrow"
+                                              data-ng-class="{'down': propertiesSortTableDefined.reverse, 'up':!propertiesSortTableDefined.reverse}"> </span>
+                                    </div>
+                                </div>
+
+                                <div class="body">
+                                    <div data-ng-repeat="property in capability.properties | orderBy:propertiesSortTableDefined.sortByField:propertiesSortTableDefined.reverse track by $index"
+                                         data-tests-id="propertyRow"
+                                         class="flex-container data-row">
+                                        <div class="table-col-general flex-item text"
+                                             data-tests-id="{{property.name}}"
+                                             tooltips tooltip-content="{{property.name}}">
+                                            {{property.name}}
+                                        </div>
+                                        <div class="table-col-general flex-item text"
+                                             data-tests-id="{{property.type}}"
+                                             tooltips tooltip-content="{{property.type}}">
+                                            {{property.type}}
+                                        </div>
+                                        <div class="table-col-general flex-item text"
+                                             data-tests-id="{{property.schema.property.type}}"
+                                             tooltips tooltip-content="{{property.schema.property.type}}">
+                                            {{property.schema.property.type}}
+                                        </div>
+                                        <div class="table-col-general flex-item text"
+                                             tooltips tooltip-content="{{property.description}}"
+                                             data-tests-id="{{property.description}}">
+                                            {{property.description}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </perfect-scrollbar>

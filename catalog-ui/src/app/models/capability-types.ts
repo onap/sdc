@@ -15,6 +15,7 @@
  */
 
 import {ToscaPresentationData} from "./tosca-presentation";
+import {PropertyModel} from "./properties";
 
 export class CapabilityTypesMap {
     capabilityTypesMap: CapabilityTypesMapData;
@@ -30,12 +31,14 @@ export class CapabilityTypesMapData {
 
 export class CapabilityTypeModel {
     derivedFrom: string;
+    properties: Array<PropertyModel>;
     toscaPresentation: ToscaPresentationData;
 
     constructor(capabilityType?: CapabilityTypeModel) {
         if (capabilityType) {
             this.derivedFrom = capabilityType.derivedFrom;
             this.toscaPresentation = capabilityType.toscaPresentation;
+            this.properties = capabilityType.properties;
         }
     }
 }

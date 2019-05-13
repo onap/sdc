@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import { PropertyInputDetail, SchemaPropertyGroupModel, SchemaProperty } from "app/models";
+import {PropertyInputDetail, SchemaPropertyGroupModel, SchemaProperty, ToscaPresentationData} from "app/models";
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 export enum DerivedPropertyType {
     SIMPLE,
@@ -47,6 +47,7 @@ export class PropertyBEModel {
     getInputValues: Array<PropertyInputDetail>;
     getPolicyValues: Array<PropertyPolicyDetail>;
     name: string;
+    origName: string;
     parentUniqueId: string;
     password: boolean;
     required: boolean;
@@ -58,6 +59,7 @@ export class PropertyBEModel {
     parentPropertyType: string;
     subPropertyInputPath: string;
     inputPath: string;
+    toscaPresentation: ToscaPresentationData;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -66,6 +68,7 @@ export class PropertyBEModel {
             this.description = property.description;
             this.fromDerived = property.fromDerived;
             this.name = property.name;
+            this.origName = property.origName;
             this.parentUniqueId = property.parentUniqueId;
             this.password = property.password;
             this.required = property.required;
@@ -78,6 +81,7 @@ export class PropertyBEModel {
             this.getInputValues = property.getInputValues;
             this.parentPropertyType = property.parentPropertyType;
             this.subPropertyInputPath = property.subPropertyInputPath;
+            this.toscaPresentation = property.toscaPresentation;
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
         }

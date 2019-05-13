@@ -12,6 +12,7 @@ import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -25,9 +26,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createCapabilityDefinition;
+import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,6 +62,64 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<ComponentInstanceProperty> capturedInstanceProperties = instancePropertiesCaptor.getValue().get(INSTANCE_ID);
         verifyCreatedInputs(properties, capturedInstanceProperties, inputs);
         verifyUpdatedProperties(properties, capturedInstanceProperties, inputs);
+    }
+
+    @Test
+    public void declareCapabilitiesPropertiesAsInputs() {
+        prop1.setParentUniqueId("capUniqueId");
+        List<PropertyDataDefinition> properties = Collections.singletonList(prop1);
+        List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
+        when(toscaOperationFacade.addComponentInstancePropertiesToComponent(eq(resource), instancePropertiesCaptor
+                .capture())).thenReturn(Either.left(Collections.emptyMap()));
+
+        CapabilityDefinition capabilityDefinition = createCapabilityDefinition();
+
+        List<ComponentInstanceProperty> capPropList = new ArrayList<>();
+        ComponentInstanceProperty instanceProperty = createProperties();
+        capPropList.add(instanceProperty);
+        capabilityDefinition.setProperties(capPropList);
+
+        capabilityDefinition.setPath(Collections.singletonList("path"));
+        Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
+        capabilityMap.put(capabilityDefinition.getType(), Collections.singletonList(capabilityDefinition));
+        resource.setCapabilities(capabilityMap);
+
+        Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance
+                .declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
+        Assert.assertTrue(createdInputs.isLeft());
+    }
+
+    @Test
+    public void testUnDeclarePropertiesAsInputs() throws Exception {
+        Component component = new ResourceBuilder().setComponentType(ComponentTypeEnum.RESOURCE).setUniqueId("resourceId")
+                .setName("resourceName").build();
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId("ComponentInput1_uniqueId");
+        input.setPropertyId("ComponentInput1_uniqueId");
+
+        CapabilityDefinition capabilityDefinition = createCapabilityDefinition();
+
+        List<ComponentInstanceProperty> properties = new ArrayList<>();
+        ComponentInstanceProperty instanceProperty = createProperties();
+
+        List<GetInputValueDataDefinition> valueDataDefinitionList = new ArrayList<>();
+        GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+        getInputValueDataDefinition.setInputId("ComponentInput1_uniqueId");
+        getInputValueDataDefinition.setPropName("prop_name");
+        valueDataDefinitionList.add(getInputValueDataDefinition);
+
+        instanceProperty.setGetInputValues(valueDataDefinitionList);
+        properties.add(instanceProperty);
+        capabilityDefinition.setProperties(properties);
+        Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
+        capabilityMap.put(capabilityDefinition.getType(), Collections.singletonList(capabilityDefinition));
+        component.setCapabilities(capabilityMap);
+        component.setInputs(Collections.singletonList(input));
+        when(toscaOperationFacade.updateInstanceCapabilityProperty(any(Resource.class), any(),
+                any(ComponentInstanceProperty.class), any(CapabilityDefinition.class))).thenReturn(StorageOperationStatus.OK);
+
+        StorageOperationStatus result = testInstance.unDeclarePropertiesAsInputs(component, input);
+        Assert.assertEquals(StorageOperationStatus.OK, result);
     }
 
     @Test

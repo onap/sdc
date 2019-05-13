@@ -319,62 +319,99 @@
       }
     }
   }
-  .table-container-flex .table .head .head-row {
-    text-align: left;
-    &.description {
-      flex: 2;
+  .table-container-flex .table {
+    .head .head-row {
+      text-align: left;
+      &.description {
+        flex: 2;
+      }
+      &.other {
+        flex: 0.25;
+        text-align: center;
+      }
+      &.occurrences {
+        flex: 0.75;
+      }
     }
-    &.other {
-      flex: 0.25;
-      text-align: center;
-    }
-    &.occurrences {
-      flex: 0.75;
+    .body .data-row {
+      border-bottom: none;
+      border-top: @main_color_o solid 1px;
+      .ellipsis-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      &:not(.editable-row) {
+        background-color: @tlv_color_t;
+        cursor: default;
+        color: @main_color_n;
+      }
+      &.editable-row {
+        cursor: pointer;
+        .table-col-general:hover {
+          color: @main_color_b;
+        }
+      }
+      &.selected {
+        background-color: @tlv_color_v;
+        .name-col {
+          color: @main_color_a;
+        }
+        .sprite-new.arrow-up-small {
+          background-position: -858px -137px;
+          margin-bottom: 2px;
+        }
+      }
+      .description-col {
+        flex: 2;
+      }
+      .occurrences-col {
+        flex: 0.75;
+      }
+      .other-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 0.25;
+        .trash-icon {
+          visibility: hidden;
+        }
+      }
+      &:hover {
+        .trash-icon {
+          visibility: visible;
+        }
+      }
+      .multiline-ellipsis {
+        line-height: 1.5em;
+        padding: 1px 0 1px 0;
+        /deep/ .ellipsis-directive-more-less {
+          float: none;
+          margin-left: 5px;
+          color: @main_color_a;
+        }
+      }
     }
   }
-  .data-row {
-    .ellipsis-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+  .item-opened.properties-section {
+    border: 4px solid @tlv_color_v !important;
+    max-height: 263px;
+    overflow: auto;
+    .properties-title {
+      .s_10;
+      margin-top: 10px;
     }
-    &:not(.editable-row) {
-      background: @tlv_color_t;
-      cursor: default;
-      color: @main_color_n;
-    }
-    &.editable-row {
-      cursor: pointer;
-      .table-col-general:hover {
-        color: @main_color_b;
+    .properties-table {
+      &.table-container-flex {
+        margin-top: 18px;
       }
-    }
-    .description-col {
-      flex: 2;
-    }
-    .occurrences-col {
-      flex: 0.75;
-    }
-    .other-col {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex: 0.25;
-      .trash-icon {
-        visibility: hidden;
-      }
-    }
-    &:hover {
-      .trash-icon {
-        visibility: visible;
-      }
-    }
-    .multiline-ellipsis {
-      line-height: 1.5em;
-      padding: 1px 0 1px 0;
-      /deep/ .ellipsis-directive-more-less {
-        float: none;
-        margin-left: 5px;
-        color: @main_color_a;
+      .table {
+        .head {
+          border-bottom: 1px solid @main_color_o;
+        }
+        .head, .table-col-general {
+          background-color: @main_color_p;
+        }
       }
     }
   }

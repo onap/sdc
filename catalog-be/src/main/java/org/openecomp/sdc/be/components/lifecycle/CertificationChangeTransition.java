@@ -194,7 +194,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
                 }
             }
             updateCalculatedCapabilitiesRequirements(componentAfterCertification);
-            updateCapReqOwnerId(componentAfterCertification);
+            updateCapReqPropertiesOwnerId(componentAfterCertification);
             result = Either.left(componentAfterCertification);
             return result;
         } finally {
@@ -214,9 +214,9 @@ public class CertificationChangeTransition extends LifeCycleTransition {
 
     }
 
-    private void updateCapReqOwnerId(Component component) {
+    private void updateCapReqPropertiesOwnerId(Component component) {
         if(component.isTopologyTemplate() && ToscaUtils.isNotComplexVfc(component)) {
-            toscaOperationFacade.updateCapReqOwnerId(component.getUniqueId());
+            toscaOperationFacade.updateCapReqPropertiesOwnerId(component.getUniqueId());
         }
     }
 

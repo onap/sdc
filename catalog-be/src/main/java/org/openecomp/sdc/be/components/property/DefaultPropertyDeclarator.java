@@ -18,12 +18,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.json.simple.JSONObject;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
@@ -42,6 +44,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     private static final Logger log = Logger.getLogger(DefaultPropertyDeclarator.class);
     private static final short LOOP_PROTECTION_LEVEL = 10;
+    private static final String UNDERSCORE = "_";
     private final Gson gson = new Gson();
     private ComponentsUtils componentsUtils;
     private PropertyOperation propertyOperation;
@@ -95,7 +98,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     }
 
     private Either<List<InputDefinition>, StorageOperationStatus> declarePropertiesAsInputs(Component component, PROPERTYOWNER propertiesOwner, List<ComponentInstancePropInput> propsToDeclare) {
-        PropertiesDeclarationData inputsProperties = createInputsAndOverridePropertiesValues(component.getUniqueId(), propertiesOwner, propsToDeclare);
+        PropertiesDeclarationData inputsProperties = createInputsAndOverridePropertiesValues(component, propertiesOwner, propsToDeclare);
         return updatePropertiesValues(component, propertiesOwner.getUniqueId(), inputsProperties.getPropertiesToUpdate())
                 .left()
                 .map(updatePropsRes -> inputsProperties.getInputsToCreate());
@@ -155,17 +158,17 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     }
 
 
-    private PropertiesDeclarationData createInputsAndOverridePropertiesValues(String componentId, PROPERTYOWNER propertiesOwner, List<ComponentInstancePropInput> propsToDeclare) {
+    private PropertiesDeclarationData createInputsAndOverridePropertiesValues(Component component, PROPERTYOWNER propertiesOwner, List<ComponentInstancePropInput> propsToDeclare) {
         List<PROPERTYTYPE> declaredProperties = new ArrayList<>();
         List<InputDefinition> createdInputs = propsToDeclare.stream()
-                .map(propInput -> declarePropertyInput(componentId, propertiesOwner, declaredProperties, propInput))
+                .map(propInput -> declarePropertyInput(component, propertiesOwner, declaredProperties, propInput))
                 .collect(Collectors.toList());
         return new PropertiesDeclarationData(createdInputs, null, declaredProperties);
     }
 
-    private InputDefinition declarePropertyInput(String componentId, PROPERTYOWNER propertiesOwner, List<PROPERTYTYPE> declaredProperties, ComponentInstancePropInput propInput) {
+    private InputDefinition declarePropertyInput(Component component, PROPERTYOWNER propertiesOwner, List<PROPERTYTYPE> declaredProperties, ComponentInstancePropInput propInput) {
         PropertyDataDefinition prop = resolveProperty(declaredProperties, propInput);
-        InputDefinition inputDefinition = createInput(componentId, propertiesOwner, propInput, prop);
+        InputDefinition inputDefinition = createInput(component, propertiesOwner, propInput, prop);
         PROPERTYTYPE declaredProperty = createDeclaredProperty(prop);
         if(!declaredProperties.contains(declaredProperty)){
             declaredProperties.add(declaredProperty);
@@ -174,15 +177,27 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         return inputDefinition;
     }
 
-    private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner,
+    private InputDefinition createInput(Component component, PROPERTYOWNER propertiesOwner,
                                         ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
         String generatedInputPrefix = propertiesOwner.getNormalizedName();
         if (propertiesOwner.getUniqueId().equals(propInput.getParentUniqueId())) {
             //Creating input from property create on self using add property..Do not add the prefix
             generatedInputPrefix = null;
         }
+
+        Optional<CapabilityDefinition> propertyCapability = PropertiesUtils.getPropertyCapabilityOfChildInstance(propInput
+                .getParentUniqueId(), component.getCapabilities());
+        if (propertyCapability.isPresent()) {
+            String capName = propertyCapability.get().getName();
+            if(capName.contains(".")) {
+                capName = capName.replaceAll("\\.", UNDERSCORE);
+            }
+            generatedInputPrefix = generatedInputPrefix ==  null || generatedInputPrefix.isEmpty()?
+                    capName : generatedInputPrefix + UNDERSCORE + capName;
+        }
+
         String generatedInputName = generateInputName(generatedInputPrefix, propInput);
-        return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
+        return createInputFromProperty(component.getUniqueId(), propertiesOwner, generatedInputName, propInput, prop);
     }
 
     private String generateInputName(String inputName, ComponentInstancePropInput propInput) {
@@ -212,7 +227,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         }
 
         while(startingIndex < parsedPropNames.length){
-            prefix.append("_");
+            prefix.append(UNDERSCORE);
             prefix.append(parsedPropNames[startingIndex]);
             startingIndex ++;
         }
@@ -403,35 +418,10 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     }
 
     Either<InputDefinition, ResponseFormat>  prepareValueBeforeDelete(InputDefinition inputForDelete, PropertyDataDefinition inputValue, List<String> pathOfComponentInstances) {
-        Either<InputDefinition, ResponseFormat> deleteEither = Either.left(inputForDelete);
-        String value = inputValue.getValue();
-        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
+        Either<InputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
 
-        resetInputName(mappedToscaTemplate, inputForDelete.getName());
-
-        value = "";
-        if(!mappedToscaTemplate.isEmpty()){
-            Either result = cleanNestedMap(mappedToscaTemplate , true);
-            Map modifiedMappedToscaTemplate = mappedToscaTemplate;
-            if (result.isLeft())
-                modifiedMappedToscaTemplate = (Map)result.left().value();
-            else
-                log.warn("Map cleanup failed -> " +result.right().value().toString());    //continue, don't break operation
-            value = gson.toJson(modifiedMappedToscaTemplate);
-        }
-        inputValue.setValue(value);
-
-
-        List<GetInputValueDataDefinition> getInputsValues = inputValue.getGetInputValues();
-        if(getInputsValues != null && !getInputsValues.isEmpty()){
-            Optional<GetInputValueDataDefinition> op = getInputsValues.stream().filter(gi -> gi.getInputId().equals(inputForDelete.getUniqueId())).findAny();
-            if(op.isPresent()){
-                getInputsValues.remove(op.get());
-            }
-        }
-        inputValue.setGetInputValues(getInputsValues);
-
-        Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(), inputValue.getDefaultValue());
+        Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
+                (String) inputValue.getDefaultValue());
         if (findDefaultValue.isRight()) {
             deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()))));
             return deleteEither;
@@ -440,6 +430,48 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         String defaultValue = findDefaultValue.left().value();
         inputValue.setDefaultValue(defaultValue);
         log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
+        return deleteEither;
+    }
+
+    Either<InputDefinition, ResponseFormat>  prepareValueBeforeDeleteOfCapProp(InputDefinition inputForDelete,
+                                                                               PropertyDataDefinition inputValue) {
+        Either<InputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
+        inputValue.setDefaultValue(inputForDelete.getDefaultValue());
+        log.debug("The returned default value in ResourceInstanceProperty is {}", inputForDelete.getDefaultValue());
+        return deleteEither;
+    }
+
+    private Either<InputDefinition, ResponseFormat> prepareValueBeforeDelete(InputDefinition inputForDelete,
+                                                                             PropertyDataDefinition inputValue) {
+        Either<InputDefinition, ResponseFormat> deleteEither = Either.left(inputForDelete);
+        String value = inputValue.getValue();
+        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
+
+        resetInputName(mappedToscaTemplate, inputForDelete.getName());
+
+        value = "";
+        if (!mappedToscaTemplate.isEmpty()) {
+            Either result = cleanNestedMap(mappedToscaTemplate, true);
+            Map modifiedMappedToscaTemplate = mappedToscaTemplate;
+            if (result.isLeft()) {
+                modifiedMappedToscaTemplate = (Map) result.left().value();
+            } else {
+                log.warn("Map cleanup failed -> " + result.right().value()
+                        .toString());    //continue, don't break operation
+            }
+            value = gson.toJson(modifiedMappedToscaTemplate);
+        }
+        inputValue.setValue(value);
+
+
+        List<GetInputValueDataDefinition> getInputsValues = inputValue.getGetInputValues();
+        if (getInputsValues != null && !getInputsValues.isEmpty()) {
+            Optional<GetInputValueDataDefinition> op =
+                    getInputsValues.stream().filter(gi -> gi.getInputId().equals(inputForDelete.getUniqueId()))
+                            .findAny();
+            op.ifPresent(getInputsValues::remove);
+        }
+        inputValue.setGetInputValues(getInputsValues);
         return deleteEither;
     }
 

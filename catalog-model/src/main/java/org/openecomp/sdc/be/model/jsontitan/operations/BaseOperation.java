@@ -1485,7 +1485,7 @@ public abstract class BaseOperation {
         return titanOperationStatus;
     }
 
-    private GraphVertex throwStorageException(TitanOperationStatus status) {
+    protected GraphVertex throwStorageException(TitanOperationStatus status) {
         throw new StorageException(status);
     }
 

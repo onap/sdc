@@ -46,8 +46,8 @@ public class CapabilitiesValidation {
             org.openecomp.sdc.be.model.Component component, boolean isUpdate) {
 
         for(CapabilityDefinition capabilityDefinition : capabilities) {
-            Either<Boolean, ResponseFormat> validateCapabilityResponse = validateCapability(
-                    capabilityDefinition, component, isUpdate);
+            Either<Boolean, ResponseFormat> validateCapabilityResponse = validateCapability(capabilityDefinition,
+                    component, isUpdate);
             if (validateCapabilityResponse.isRight()) {
                 return validateCapabilityResponse;
             }
@@ -77,13 +77,11 @@ public class CapabilitiesValidation {
         if (capabilityTypeEmptyEither.isRight()) {
             return Either.right(capabilityTypeEmptyEither.right().value());
         }
-
         Either<Boolean, ResponseFormat> capabilityOccurrencesValidationEither =
                 validateOccurrences(capabilityDefinition, responseFormatManager);
         if (capabilityOccurrencesValidationEither.isRight()) {
             return Either.right(capabilityOccurrencesValidationEither.right().value());
         }
-
         return Either.left(Boolean.FALSE);
     }
 
@@ -93,8 +91,7 @@ public class CapabilitiesValidation {
         String minOccurrences = capabilityDefinition.getMinOccurrences();
         if(maxOccurrences != null && minOccurrences != null) {
             Either<Boolean, ResponseFormat> capabilityOccurrencesValidationEither =
-                    validateOccurrences(responseFormatManager, minOccurrences,
-                            maxOccurrences);
+                    validateOccurrences(responseFormatManager, minOccurrences, maxOccurrences);
             if (capabilityOccurrencesValidationEither.isRight()) {
                 return Either.right(capabilityOccurrencesValidationEither.right().value());
             }
@@ -163,32 +160,28 @@ public class CapabilitiesValidation {
         return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> isCapabilityNameEmpty(
-            ResponseFormatManager responseFormatManager, String capabilityName) {
+    private Either<Boolean, ResponseFormat> isCapabilityNameEmpty(ResponseFormatManager responseFormatManager,
+                                                                  String capabilityName) {
         if (StringUtils.isEmpty(capabilityName)) {
             LOGGER.error("Capability Name is mandatory");
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .CAPABILITY_NAME_MANDATORY);
+            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus.CAPABILITY_NAME_MANDATORY);
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> isCapabilityTypeEmpty(
-            ResponseFormatManager responseFormatManager, String capabilityType) {
+    private Either<Boolean, ResponseFormat> isCapabilityTypeEmpty(ResponseFormatManager responseFormatManager,
+                                                                  String capabilityType) {
         if (StringUtils.isEmpty(capabilityType)) {
             LOGGER.error("Capability type is mandatory");
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .CAPABILITY_TYPE_MANDATORY);
+            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus.CAPABILITY_TYPE_MANDATORY);
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
     }
 
-
-    private Either<Boolean, ResponseFormat> validateOccurrences	(
-            ResponseFormatManager responseFormatManager,
-            String minOccurrences, String maxOccurrences ) {
+    private Either<Boolean, ResponseFormat> validateOccurrences	(ResponseFormatManager responseFormatManager,
+                                                                    String minOccurrences, String maxOccurrences ) {
         try {
             if (StringUtils.isNotEmpty(maxOccurrences) && "UNBOUNDED".equalsIgnoreCase(maxOccurrences)
                     && Integer.parseInt(minOccurrences) >= 0) {
@@ -211,38 +204,29 @@ public class CapabilitiesValidation {
         return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateCapabilityNameUnique(
-            CapabilityDefinition capabilityDefinition,
-            org.openecomp.sdc.be.model.Component component,
-            boolean isUpdate) {
+    private Either<Boolean, ResponseFormat> validateCapabilityNameUnique(CapabilityDefinition capabilityDefinition,
+                                                                         org.openecomp.sdc.be.model.Component component,
+                                                                         boolean isUpdate) {
         boolean isCapabilityNameUnique = false;
-
         Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
         if(MapUtils.isEmpty(componentCapabilities)){
             return Either.left(true);
         }
-
         List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values()
                 .stream().flatMap(Collection::stream).collect(Collectors.toList());
-
         if(CollectionUtils.isEmpty(capabilityDefinitionList)){
             return Either.left(true);
         }
-
         Map<String, String> capabilityNameMap = new HashMap<>();
-        capabilityDefinitionList.forEach(capability -> capabilityNameMap
-                .put(capability.getUniqueId(), capability.getName()));
+        capabilityDefinitionList.forEach(capability -> capabilityNameMap.put(capability.getUniqueId(), capability.getName()));
 
         if (!capabilityNameMap.values().contains(capabilityDefinition.getName())){
             isCapabilityNameUnique = true;
         }
         if (!isCapabilityNameUnique && isUpdate){
-            List<Map.Entry<String, String>> capNamesEntries = capabilityNameMap.entrySet()
-                    .stream().filter(entry -> entry.getValue()
-                            .equalsIgnoreCase(capabilityDefinition.getName()))
-                    .collect(Collectors.toList());
-            if(capNamesEntries.size() == 1 && capNamesEntries.get(0).getKey()
-                    .equals(capabilityDefinition.getUniqueId())) {
+            List<Map.Entry<String, String>> capNamesEntries = capabilityNameMap.entrySet().stream().filter(entry ->
+                    entry.getValue().equalsIgnoreCase(capabilityDefinition.getName())).collect(Collectors.toList());
+            if(capNamesEntries.size() == 1 && capNamesEntries.get(0).getKey().equals(capabilityDefinition.getUniqueId())) {
                 isCapabilityNameUnique = true;
             }
         }
@@ -252,8 +236,7 @@ public class CapabilitiesValidation {
     private Either<Boolean, ResponseFormat> isCapabilityNameRegexValid(ResponseFormatManager responseFormatManager,
                                                                        String capabilityName) {
         if (!isValidCapabilityName(capabilityName)) {
-            LOGGER.error("Capability name {} is invalid, Only alphanumeric chars, underscore and dot allowed",
-                    capabilityName);
+            LOGGER.error("Capability name {} is invalid, Only alphanumeric chars, underscore and dot allowed", capabilityName);
             ResponseFormat errorResponse = responseFormatManager
                     .getResponseFormat(ActionStatus.INVALID_CAPABILITY_NAME, capabilityName);
             return Either.right(errorResponse);

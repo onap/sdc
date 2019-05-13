@@ -87,14 +87,18 @@ public class InterfaceOperationUtils {
     }
 
     public static boolean isOperationInputMappedToComponentInput(OperationInputDefinition input,
-                                                                 List<InputDefinition> inputs) {
+                                                                                    List<InputDefinition> inputs) {
         if (CollectionUtils.isEmpty(inputs)) {
             return false;
         }
-        return inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()))
-                || (input.getInputId().contains(".")
-                && inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(
-                input.getInputId().substring(0, input.getInputId().lastIndexOf('.'))))) ;
+
+        boolean matchedInput = inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()));
+        if (!matchedInput && input.getInputId().contains(".")) {
+            return inputs.stream()
+                    .anyMatch(inp -> inp.getUniqueId()
+                            .equals(input.getInputId().substring(0, input.getInputId().lastIndexOf('.'))));
+        }
+        return matchedInput;
     }
 
     public static boolean isOperationInputMappedToOtherOperationOutput(String outputName,
@@ -112,6 +116,20 @@ public class InterfaceOperationUtils {
         Map<String, List<String>> getPropertyMap = new HashMap<>();
         List<String> values = new ArrayList<>();
         values.add(InterfacesOperationsToscaUtil.SELF);
+        if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
+            values.addAll(Arrays.asList(propertyName.split("\\.")));
+        }
+        getPropertyMap.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), values);
+        return getPropertyMap;
+    }
+
+    public static Map<String, List<String>> createMappedCapabilityPropertyDefaultValue(String capabilityName,
+                                                                                       String propertyName) {
+        Map<String, List<String>> getPropertyMap = new HashMap<>();
+        List<String> values = new ArrayList<>();
+        values.add(InterfacesOperationsToscaUtil.SELF);
+        values.add(capabilityName);
+
         if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
             values.addAll(Arrays.asList(propertyName.split("\\.")));
         }

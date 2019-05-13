@@ -16,7 +16,17 @@
 
 
 import {ICompositionViewModelScope} from "../../composition-view-model";
-import {Service, PropertiesGroup, InputsGroup, ServiceInstanceObject, InterfaceModel, InputBEModel} from 'app/models';
+import {
+    Service,
+    PropertiesGroup,
+    InputsGroup,
+    ServiceInstanceObject,
+    InterfaceModel,
+    InputBEModel,
+    CapabilitiesGroup,
+    Capability,
+    ComponentInstance
+} from 'app/models';
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
 import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
 
@@ -27,6 +37,8 @@ interface IServiceConsumptionViewModelScope extends ICompositionViewModelScope {
     componentInstancesInputs: InputsGroup;
     componentInstancesInterfaces: Map<string, Array<InterfaceModel>>;
     componentInputs: Array<InputBEModel>;
+    componentCapabilities: Array<Capability>;
+    instancesCapabilitiesMap: Map<string, Array<Capability>>;
 }
 
 
@@ -49,7 +61,17 @@ export class ServiceConsumptionViewModel {
             this.$scope.componentInstancesInputs = genericResponse.componentInstancesInputs;
             this.$scope.componentInstancesInterfaces = genericResponse.componentInstancesInterfaces;
             this.$scope.componentInputs = genericResponse.inputs;
+            this.buildInstancesCapabilitiesMap(genericResponse.componentInstances);
             this.updateInstanceAttributes();
+        });
+    }
+
+    buildInstancesCapabilitiesMap = (componentInstances: Array<ComponentInstance>): void => {
+        this.$scope.instancesCapabilitiesMap = new Map();
+        let flattenCapabilities = [];
+        _.forEach(componentInstances, componentInstance => {
+            flattenCapabilities = CapabilitiesGroup.getFlattenedCapabilities(componentInstance.capabilities);
+            this.$scope.instancesCapabilitiesMap[componentInstance.uniqueId] = _.filter(flattenCapabilities, cap => cap.properties && cap.ownerId === componentInstance.uniqueId);
         });
     }
 

@@ -249,7 +249,7 @@ directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
 
 directiveModule.directive('ng2ServiceConsumption', downgradeComponent({
     component: ServiceConsumptionComponent,
-    inputs: ['parentService', 'selectedService', 'selectedServiceInstanceId', 'instancesMappedList','parentServiceInputs', 'readonly'],
+    inputs: ['parentService', 'selectedService', 'selectedServiceInstanceId', 'instancesMappedList', 'parentServiceInputs', 'instancesCapabilitiesMap', 'readonly'],
     outputs: []
 }) as angular.IDirectiveFactory);
 

@@ -58,6 +58,15 @@
                 {{output.label}}
             </option>
         </optgroup>
+        <optgroup
+                *ngFor="let cap of filteredCapabilitiesProps"
+                label="{{cap.capabilityName}}">
+            <option
+                    *ngFor="let prop of cap.properties"
+                    [ngValue]="prop.value">
+                {{prop.label}}
+            </option>
+        </optgroup>
     </select>
     <span
         *ngIf="!filteredInputProps.length && !operationOutputCats.length && isAssociateWorkflow"

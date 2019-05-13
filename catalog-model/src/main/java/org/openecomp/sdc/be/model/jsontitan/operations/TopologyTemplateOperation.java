@@ -251,11 +251,24 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private StorageOperationStatus associateCapPropertiesToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
-        Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate.getCalculatedCapabilitiesProperties();
-        if (calculatedCapProperties != null && !calculatedCapProperties.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, calculatedCapProperties);
-            if (assosiateElementToData.isRight()) {
-                return assosiateElementToData.right().value();
+        Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate
+                .getCalculatedCapabilitiesProperties();
+        if (MapUtils.isNotEmpty(calculatedCapProperties)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData
+                    (topologyTemplateVertex, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
+                            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, calculatedCapProperties);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
+
+        Map<String, MapPropertiesDataDefinition> capabilitiesProperties = topologyTemplate.getCapabilitiesProperties();
+        if (MapUtils.isNotEmpty(capabilitiesProperties)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData =
+                    associateElementToData(topologyTemplateVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES,
+                            EdgeLabelEnum.CAPABILITIES_PROPERTIES, capabilitiesProperties);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
             }
         }
         return StorageOperationStatus.OK;
@@ -866,6 +879,16 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
+        Either<Map<String, MapPropertiesDataDefinition>, TitanOperationStatus> capPropResult =
+                getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        if (capPropResult.isLeft()) {
+            topologyTemplate.setCapabilitiesProperties(capPropResult.left().value());
+        } else {
+            if (capPropResult.right().value() != TitanOperationStatus.NOT_FOUND) {
+                return capPropResult.right().value();
+            }
+        }
+
         return TitanOperationStatus.OK;
     }
 
@@ -1150,6 +1173,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (status != TitanOperationStatus.OK) {
             log.debug("Failed to disassociate instance inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
+        status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        if (status != TitanOperationStatus.OK) {
+            log.debug("Failed to disassociate capabilities properties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
@@ -1499,10 +1527,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
     }
 
-    private GraphVertex throwStorageException(TitanOperationStatus status) {
-        throw new StorageException(status);
-    }
-
     private ToscaElement getOriginToscaElement(ComponentInstanceDataDefinition instance) {
         log.debug("#getOriginToscaElement - origin name: {}", instance.getComponentName());
         ToscaElementTypeEnum elementType = detectToscaType(instance.getOriginType());
@@ -1536,11 +1560,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         filter.setIgnoreRequirements(false);
         return filter;
     }
-    public void updateCapReqOwnerId(String componentId, TopologyTemplate toscaElement) {
+    public void updateCapReqPropertiesOwnerId(String componentId, TopologyTemplate toscaElement) {
         GraphVertex toscaElementV = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse)
                 .left().on(this::throwStorageException);
         updateCapOwnerId(toscaElement, componentId);
         updateReqOwnerId(toscaElement, componentId);
+        updatePropertiesOwnerId(toscaElement, componentId);
         topologyTemplateOperation
 
                 .updateFullToscaData(toscaElementV, EdgeLabelEnum.CAPABILITIES,
@@ -1548,6 +1573,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         topologyTemplateOperation
                 .updateFullToscaData(toscaElementV, EdgeLabelEnum.REQUIREMENTS,
                         VertexTypeEnum.REQUIREMENTS, toscaElement.getRequirements());
+        topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.PROPERTIES,
+                        VertexTypeEnum.PROPERTIES, toscaElement.getProperties());
     }
 
     private void updateCapOwnerId(ToscaElement toscaElement, String ownerId) {
@@ -1561,6 +1589,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if(MapUtils.isNotEmpty(toscaElement.getRequirements())) {
             toscaElement.getRequirements().values().stream().flatMap(listReqDef -> listReqDef.getListToscaDataDefinition().stream())
                     .forEach(requirementDefinition -> requirementDefinition.setOwnerId(ownerId));
+        }
+    }
+
+    private void updatePropertiesOwnerId(ToscaElement toscaElement, String ownerId) {
+        Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
+        if(MapUtils.isNotEmpty(properties)) {
+            properties.values().forEach(propertyDataDefinition -> propertyDataDefinition.setParentUniqueId(ownerId));
         }
     }
 
