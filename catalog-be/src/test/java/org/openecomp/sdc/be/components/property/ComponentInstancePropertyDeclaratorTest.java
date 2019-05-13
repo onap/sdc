@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
+import java.util.LinkedList;
+import java.util.Objects;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,13 +11,23 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.components.utils.ServiceBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -45,8 +57,15 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     private ComponentInstancePropertyDeclarator testInstance;
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
+    @Mock
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     @Captor
     private ArgumentCaptor<Map<String, List<ComponentInstanceProperty>>> instancePropertiesCaptor;
+
+    private static final String PROPERTY_ID = "propertyUid";
+    private static final String PROEPRTY_NAME = "propertyName";
+    private static final String SERVICE_ID = "serviceUid";
+    private static final String SERVICE_NAME = "serviceName";
 
     @Test
     public void declarePropertiesAsInputs_componentInstanceNotExist() {
@@ -162,6 +181,60 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
         verifyCreatedInputsFromComplexProperty(propsToDeclare, capturedInstanceProperties, inputs);
         verifyUpdatedComplexProperty(capturedInstanceProperties, inputs);
+    }
+
+    @Test
+    public void testCreateDeclaredProperty() {
+        PropertyDefinition propertyDefinition = getPropertyForDeclaration();
+        ComponentInstanceProperty declaredProperty = testInstance.createDeclaredProperty(propertyDefinition);
+
+        assertThat(Objects.nonNull(declaredProperty));
+        assertThat(declaredProperty.getUniqueId().equals(propertyDefinition.getUniqueId()));
+    }
+
+    @Test
+    public void testUndeclareProperty() {
+        Service service = new ServiceBuilder()
+                                  .setUniqueId(SERVICE_ID)
+                                  .setName(SERVICE_NAME)
+                                  .build();
+
+
+
+        InputDefinition inputToDelete = InputsBuilder
+                                                .create()
+                                                .setPropertyId(PROPERTY_ID)
+                                                .setName(PROEPRTY_NAME)
+                                                .build();
+
+        inputToDelete.setGetInputValues(getGetInputListForDeclaration());
+
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty(getPropertyForDeclaration());
+        List<ComponentInstanceProperty> componentInstanceProperties = new ArrayList<>();
+        componentInstanceProperties.add(componentInstanceProperty);
+
+        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(), any())).thenReturn(new LinkedList<>());
+
+        StorageOperationStatus undeclareStatus =
+                testInstance.unDeclarePropertiesAsInputs(service, inputToDelete);
+
+        assertThat(undeclareStatus.equals(StorageOperationStatus.OK));
+    }
+
+    private List<GetInputValueDataDefinition> getGetInputListForDeclaration() {
+        GetInputValueDataDefinition getInput = new GetInputValueDataDefinition();
+        getInput.setInputId(PROPERTY_ID);
+        getInput.setInputName(PROEPRTY_NAME);
+        getInput.setPropName(PROEPRTY_NAME);
+        List<GetInputValueDataDefinition> getInputList = new ArrayList<>();
+        getInputList.add(getInput);
+        return getInputList;
+    }
+
+    private PropertyDefinition getPropertyForDeclaration() {
+        return new PropertyDataDefinitionBuilder()
+                       .setUniqueId(PROPERTY_ID)
+                       .build();
     }
 
     private void verifyUpdatedProperties(List<PropertyDataDefinition> properties, List<ComponentInstanceProperty> capturedInstanceProperties, List<InputDefinition> inputs) {

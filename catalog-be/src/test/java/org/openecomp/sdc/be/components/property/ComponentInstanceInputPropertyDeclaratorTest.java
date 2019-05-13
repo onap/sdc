@@ -1,6 +1,9 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,10 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.utils.AnnotationBuilder;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -45,6 +51,8 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
     private ArgumentCaptor<ComponentParametersView> inputsFilterCaptor;
 
     private Annotation annotation1, annotation2;
+
+    private static final String PROPERTY_UID = "propertyUid";
 
     @Override
     @Before
@@ -86,6 +94,38 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         when(toscaOperationFacade.getToscaElement(eq(ORIGIN_INSTANCE_ID), inputsFilterCaptor.capture())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         assertThatExceptionOfType(StorageException.class).isThrownBy(() -> testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare));
+    }
+
+    @Test
+    public void testCreateDeclaredProperty() {
+        ComponentInstanceInput declaredProperty = testInstance.createDeclaredProperty(prop1);
+        assertThat(declaredProperty.getUniqueId()).isEqualTo(prop1.getUniqueId());
+    }
+
+    @Test
+    public void testUpdateDeclaredProperties() {
+        List<ComponentInstanceInput> expectedProperties = Collections.singletonList(new ComponentInstanceInput(prop1));
+        Map<String, List<ComponentInstanceInput>> expectedMap = new HashMap<>();
+        expectedMap.put(prop1.getName(), expectedProperties);
+
+        when(toscaOperationFacade.addComponentInstanceInputsToComponent(eq(resource), anyMap()))
+                .thenReturn(Either.left(expectedMap));
+
+        Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> updateEither =
+                (Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus>) testInstance.updatePropertiesValues(resource, resource.getUniqueId(), expectedProperties);
+
+        assertThat(updateEither.isLeft());
+        Map<String, List<ComponentInstanceInput>> actualProperties = updateEither.left().value();
+        assertThat(actualProperties.values().size()).isEqualTo(expectedProperties.size());
+        assertThat(actualProperties.values().iterator().next()).isEqualTo(expectedProperties);
+    }
+
+    @Test
+    public void testResolvePropertiesOwner() {
+        Optional<ComponentInstance> componentInstance = testInstance.resolvePropertiesOwner(resource, INSTANCE_ID);
+
+        assertThat(componentInstance.isPresent());
+        assertThat(componentInstance.get().getUniqueId()).isEqualTo(INSTANCE_ID);
     }
 
     private void verifyInputAnnotations(InputDefinition inputDefinition) {
