@@ -19,6 +19,7 @@ package org.openecomp.sdc.be.components.validation;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOtherOperationOutputsOfComponent;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.isCapabilityProperty;
 
 import com.google.common.collect.Sets;
 
@@ -523,7 +524,8 @@ public class InterfaceOperationValidation {
         List<OperationInputDefinition> inputListToscaDataDefinition =
                 operation.getInputs().getListToscaDataDefinition();
         for (OperationInputDefinition inputDefinition : inputListToscaDataDefinition) {
-            if (isOperationInputMappedToComponentInput(inputDefinition, component.getInputs())) {
+            if (isOperationInputMappedToComponentInput(inputDefinition, component.getInputs())
+                    || isCapabilityProperty(inputDefinition.getInputId(), component).isPresent()) {
                 isOperationInputToInputPropertyMappingValid = true;
             } else {
                 mappingName = inputDefinition.getInputId().contains(".")
@@ -553,7 +555,7 @@ public class InterfaceOperationValidation {
 
         if (!isOperationInputToOtherOperationOutputMappingValid) {
             LOGGER.error("Interface operation input parameter property {} not found in component input properties or"
-                    + " outputs of other operations.", mappingName);
+                   + "capability properties or  outputs of other operations.", mappingName);
             ResponseFormat inputResponse = responseFormatManager
                     .getResponseFormat(ActionStatus.INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT,
                             mappingName, component.getComponentType().getValue());

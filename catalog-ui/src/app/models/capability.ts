@@ -45,6 +45,13 @@ export class CapabilitiesGroup {
         });
         return this[key];
     }
+
+    public static getFlattenedCapabilities(capabilitiesGroup: CapabilitiesGroup): Array<Capability> {
+        return _.reduce(
+            _.toArray(capabilitiesGroup),
+            (allCaps, capArr) => allCaps.concat(capArr),
+            []);
+    }
 }
 
 export class Capability implements RequirementCapabilityModel{

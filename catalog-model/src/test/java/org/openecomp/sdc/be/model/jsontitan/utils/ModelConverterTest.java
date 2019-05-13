@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -42,6 +43,9 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
+
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -73,6 +77,21 @@ public class ModelConverterTest {
     public void testConvertFromToscaElementService()
     {
         TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
+        Component component = test.convertFromToscaElement(topologyTemplate);
+        assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+    }
+
+    @Test
+    public void testConvertFromToscaElementServiceWithSelfCapabilities()
+    {
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+
+        Map<String, MapPropertiesDataDefinition> capabilitiesProperties = CapabilityTestUtils
+                .createCapPropsForTopologyTemplate(topologyTemplate);
+
+        topologyTemplate.setCapabilitiesProperties(capabilitiesProperties);
+
         topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
         Component component = test.convertFromToscaElement(topologyTemplate);
         assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());

@@ -183,16 +183,17 @@
             </div>
 
             <param-row
-                *ngFor="let param of tableParameters"
-                class="data-row"
-                [isInputParam]="currentTab === TYPE_INPUT"
-                [isAssociateWorkflow]="isUsingExistingWF()"
-                [param]="param"
-                [inputProps]="inputProperties"
-                [operationOutputs]="operationOutputs"
-                [onRemoveParam]="onRemoveParam"
-                [readonly]="readonly"
-                [validityChanged]="validityChanged">
+                    *ngFor="let param of tableParameters"
+                    class="data-row"
+                    [isInputParam]="currentTab === TYPE_INPUT"
+                    [isAssociateWorkflow]="isUsingExistingWF()"
+                    [param]="param"
+                    [inputProps]="inputProperties"
+                    [capabilitiesProps]="componentCapabilities"
+                    [operationOutputs]="operationOutputs"
+                    [onRemoveParam]="onRemoveParam"
+                    [readonly]="readonly"
+                    [validityChanged]="validityChanged">
             </param-row>
         </div>
 

@@ -21,11 +21,32 @@
 import * as _ from "lodash";
 import {Component, ViewChild, Inject, TemplateRef} from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
-import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData, ModalModel, ButtonModel } from "app/models";
+import {
+    PropertyFEModel,
+    InstanceFePropertiesMap,
+    InstanceBePropertiesMap,
+    InstancePropertiesAPIMap,
+    Component as ComponentData,
+    FilterPropertiesAssignmentData,
+    ModalModel,
+    ButtonModel,
+    Capability,
+    ToscaPresentationData
+} from "app/models";
 import { ResourceType } from "app/utils";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
-import { InputBEModel, InputFEModel, ComponentInstance, GroupInstance, PolicyInstance, PropertyBEModel, DerivedFEProperty, SimpleFlatProperty } from "app/models";
+import {
+    InputBEModel,
+    InputFEModel,
+    ComponentInstance,
+    GroupInstance,
+    PolicyInstance,
+    PropertyBEModel,
+    DerivedFEProperty,
+    SimpleFlatProperty,
+    CapabilitiesGroup
+} from "app/models";
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import {WorkspaceMode, EVENTS} from "../../../utils/constants";
 import {EventListenerService} from "app/services/event-listener-service"
@@ -44,6 +65,7 @@ import { SdcUiComponents } from "sdc-ui/lib/angular";
 //import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
 import { IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
 import { UnsavedChangesComponent } from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
+import {Observable} from "rxjs";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -90,6 +112,8 @@ export class PropertiesAssignmentComponent {
     savingChangedData:boolean;
     stateChangeStartUnregister:Function;
     serviceBePropertiesMap: InstanceBePropertiesMap;
+    serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
+    selectedInstance_FlattenCapabilitiesList: Array<Capability>;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -237,12 +261,14 @@ export class PropertiesAssignmentComponent {
         this.loadingProperties = true;
         if (instance instanceof ComponentInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+            this.selectedInstance_FlattenCapabilitiesList = instance.capabilities ? CapabilitiesGroup.getFlattenedCapabilities(instance.capabilities) : [];
             if (this.isInput(instance.originType)) {
                 this.componentInstanceServiceNg2
                     .getComponentInstanceInputs(this.component, instance)
                     .subscribe(response => {
                         instanceBePropertiesMap[instance.uniqueId] = response;
                         this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
+                        this.processInstanceCapabilitiesPropertiesResponse(false);
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
@@ -254,6 +280,7 @@ export class PropertiesAssignmentComponent {
                     .subscribe(response => {
                         instanceBePropertiesMap[instance.uniqueId] = response;
                         this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
+                        this.processInstanceCapabilitiesPropertiesResponse(false);
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
@@ -298,6 +325,40 @@ export class PropertiesAssignmentComponent {
         this.checkedPropertiesCount = 0;
     };
 
+    processInstanceCapabilitiesPropertiesResponse = (originTypeIsVF: boolean) => {
+        let selectedComponentInstanceData = <ComponentInstance>(this.selectedInstanceData);
+        let currentUniqueId = this.selectedInstanceData.uniqueId;
+        this.serviceBeCapabilitiesPropertiesMap = new InstanceBePropertiesMap();
+        let isCapabilityOwnedByInstance: boolean;
+        this.serviceBeCapabilitiesPropertiesMap[currentUniqueId] = _.reduce(
+            this.selectedInstance_FlattenCapabilitiesList,
+            (result, cap: Capability) => {
+                isCapabilityOwnedByInstance = cap.ownerId === currentUniqueId ||
+                    selectedComponentInstanceData.isServiceProxy() && cap.ownerId === selectedComponentInstanceData.sourceModelUid;
+                if (cap.properties && isCapabilityOwnedByInstance) {
+                    _.forEach(cap.properties, prop => {
+                        if (!prop.origName) {
+                            prop.origName = prop.name;
+                            prop.name = cap.name + '_' + prop.name;//for display. (before save - the name returns to its orig value: prop.name)
+                        }
+                    });
+                    return result.concat(cap.properties);
+                }
+                return result;
+            }, []);
+        let instanceFECapabilitiesPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(this.serviceBeCapabilitiesPropertiesMap, originTypeIsVF, this.inputs); //create flattened children, disable declared props, and init values
+        //update FECapabilitiesProperties with their origName according to BeCapabilitiesProperties
+        _.forEach(instanceFECapabilitiesPropertiesMap[currentUniqueId], prop => {
+            prop.origName = _.find(this.serviceBeCapabilitiesPropertiesMap[currentUniqueId], p => p.uniqueId === prop.uniqueId).origName;
+        });
+        //concatenate capabilitiesProps to all props list
+        this.instanceFePropertiesMap[currentUniqueId] = (this.instanceFePropertiesMap[currentUniqueId] || []).concat(instanceFECapabilitiesPropertiesMap[currentUniqueId]);
+        this.checkedPropertiesCount = 0;
+    };
+
+    isCapabilityProperty = (prop: PropertyBEModel) => {
+        return _.find(this.selectedInstance_FlattenCapabilitiesList, cap => cap.uniqueId === prop.parentUniqueId);
+    };
 
     /*** VALUE CHANGE EVENTS ***/
     dataChanged = (item:PropertyFEModel|InputFEModel) => {
@@ -431,6 +492,33 @@ export class PropertiesAssignmentComponent {
 
         let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
+        //move changed capabilities properties from componentInstanceInputsMap obj to componentInstanceProperties
+        inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] =
+            (inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] || []).concat(
+                _.filter(
+                    inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
+                    (prop: PropertyBEModel) => this.isCapabilityProperty(prop)
+                )
+            );
+        inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId] = _.filter(
+            inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
+            prop => !this.isCapabilityProperty(prop)
+        );
+        if (inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId].length === 0) {
+            delete inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId];
+        }
+
+        let isCapabilityPropertyChanged = false;
+        _.forEach(
+            inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId],
+            (prop: PropertyBEModel) => {
+                prop.name = prop.origName || prop.name;
+                if (this.isCapabilityProperty(prop)) {
+                    isCapabilityPropertyChanged = true;
+                }
+            }
+        );
+
         this.componentServiceNg2
             .createInput(this.component, inputsToCreate, this.isSelf())
             .subscribe(response => {
@@ -442,6 +530,9 @@ export class PropertiesAssignmentComponent {
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
                 });
+                if (isCapabilityPropertyChanged) {
+                    this.reloadInstanceCapabilities();
+                }
             }, error => {}); //ignore error
     };
 
@@ -499,18 +590,37 @@ export class PropertiesAssignmentComponent {
             // make request and its handlers
             let request;
             let handleSuccess, handleError;
+            let changedInputsProperties = [], changedCapabilitiesProperties = [];
             if (this.isPropertiesTabSelected) {
                 const changedProperties: PropertyBEModel[] = this.changedData.map((changedProp) => {
                     changedProp = <PropertyFEModel>changedProp;
                     const propBE = new PropertyBEModel(changedProp);
+                    propBE.toscaPresentation = new ToscaPresentationData();
+                    propBE.toscaPresentation.ownerId = changedProp.parentUniqueId;
                     propBE.value = changedProp.getJSONValue();
+                    propBE.name = changedProp.origName || changedProp.name;
+                    delete propBE.origName;
                     return propBE;
                 });
+                changedCapabilitiesProperties = _.filter(changedProperties, prop => this.isCapabilityProperty(prop));
 
                 if (this.selectedInstanceData instanceof ComponentInstance) {
                     if (this.isInput(this.selectedInstanceData.originType)) {
-                        request = this.componentInstanceServiceNg2
-                            .updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                        changedInputsProperties = _.filter(changedProperties, prop => !this.isCapabilityProperty(prop));
+                        if (changedInputsProperties.length && changedCapabilitiesProperties.length) {
+                            request = Observable.forkJoin(
+                                this.componentInstanceServiceNg2.updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties),
+                                this.componentInstanceServiceNg2.updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties)
+                            );
+                        }
+                        else if (changedInputsProperties.length) {
+                            request = this.componentInstanceServiceNg2
+                                .updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties);
+                        }
+                        else if (changedCapabilitiesProperties.length) {
+                            request = this.componentInstanceServiceNg2
+                                .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties);
+                        }
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resInput) => {
@@ -588,6 +698,9 @@ export class PropertiesAssignmentComponent {
             request.subscribe(
                 (response) => {
                     this.savingChangedData = false;
+                    if (changedCapabilitiesProperties.length) {
+                        this.reloadInstanceCapabilities();
+                    }
                     handleSuccess && handleSuccess(response);
                     this.updateHasChangedData();
                     resolve(response);
@@ -599,6 +712,19 @@ export class PropertiesAssignmentComponent {
                     reject(error);
                 }
             );
+        });
+    };
+
+    reloadInstanceCapabilities = (): void => {
+        let currentInstanceIndex = _.findIndex(this.instances, instance => instance.uniqueId == this.selectedInstanceData.uniqueId);
+        this.componentServiceNg2.getComponentResourceInstances(this.component).subscribe(result => {
+            let instanceCapabilitiesData: CapabilitiesGroup = _.reduce(result.componentInstances, (res, instance) => {
+                if (instance.uniqueId === this.selectedInstanceData.uniqueId) {
+                    return instance.capabilities;
+                }
+                return res;
+            }, new CapabilitiesGroup());
+            (<ComponentInstance>this.instances[currentInstanceIndex]).capabilities = instanceCapabilitiesData;
         });
     };
 
@@ -682,8 +808,10 @@ export class PropertiesAssignmentComponent {
 
     updatePropertyValueAfterDeclare = (input: InputFEModel) => {
         if (this.instanceFePropertiesMap[input.instanceUniqueId]) {
+            let instanceName = input.instanceUniqueId.slice(input.instanceUniqueId.lastIndexOf('.') + 1);
             let propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[input.instanceUniqueId], (feProperty: PropertyFEModel) => {
-                return feProperty.name == input.relatedPropertyName;
+                return feProperty.uniqueId === input.propertyId &&
+                    (feProperty.name == input.relatedPropertyName || input.name === instanceName.concat('_').concat(feProperty.name.replace(/[.]/g, '_')));
             });
             let inputPath = (input.inputPath && input.inputPath != propertyForUpdatindVal.name) ? input.inputPath : undefined;
             propertyForUpdatindVal.setAsDeclared(inputPath); //set prop as declared before assigning value

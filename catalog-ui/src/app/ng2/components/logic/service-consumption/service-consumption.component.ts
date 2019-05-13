@@ -29,7 +29,9 @@ import {
     PropertyFEModel,
     PropertyBEModel,
     InputBEModel,
-    InterfaceModel
+    InterfaceModel,
+    CapabilitiesGroup,
+    Capability
 } from 'app/models';
 import {ServiceConsumptionCreatorComponent} from 'app/ng2/pages/service-consumption-editor/service-consumption-editor.component';
 
@@ -59,6 +61,7 @@ export class ConsumptionInputDetails extends ConsumptionInput {
     assignValueLabel: string;
     associatedProps: Array<string>;
     associatedInterfaces: Array<any>;
+    associatedCapabilities: Array<Capability>;
     origVal: string;
     isValid: boolean;
 
@@ -70,6 +73,7 @@ export class ConsumptionInputDetails extends ConsumptionInput {
             this.assignValueLabel = input.assignValueLabel;
             this.associatedProps = input.associatedProps;
             this.associatedInterfaces = input.associatedInterfaces;
+            this.associatedCapabilities = input.associatedCapabilities;
             this.origVal = input.value || "";
             this.isValid = input.isValid;
         }
@@ -128,15 +132,18 @@ export class ServiceConsumptionComponent {
     @Input() selectedService: Service;
     @Input() selectedServiceInstanceId: string;
     @Input() instancesMappedList: Array<ServiceInstanceObject>;
+    @Input() instancesCapabilitiesMap: Map<string, Array<Capability>>;
     @Input() readonly: boolean;
 
     selectedInstanceSiblings: Array<ServiceInstanceObject>;
     selectedInstancePropertiesList: Array<PropertyBEModel> = [];
+    selectedInstanceCapabilitisList: Array<Capability> = [];
 
     constructor(private ModalServiceNg2: ModalService, private serviceServiceNg2: ServiceServiceNg2, private componentServiceNg2: ComponentServiceNg2, private componentInstanceServiceNg2:ComponentInstanceServiceNg2) {}
 
     ngOnInit() {
         this.updateSelectedInstancePropertiesAndSiblings();
+        this.updateSelectedServiceCapabilities();
     }
 
     ngOnChanges(changes) {
@@ -146,9 +153,11 @@ export class ServiceConsumptionComponent {
                 this.selectedService = changes.selectedService.currentValue;
             }
             this.updateSelectedInstancePropertiesAndSiblings();
+            this.updateSelectedServiceCapabilities();
         }
         if(changes.instancesMappedList && !_.isEqual(changes.instancesMappedList.currentValue, changes.instancesMappedList.previousValue)) {
             this.updateSelectedInstancePropertiesAndSiblings();
+            this.updateSelectedServiceCapabilities();
         }
     }
 
@@ -164,6 +173,13 @@ export class ServiceConsumptionComponent {
 
         this.selectedInstancePropertiesList = selectedInstanceMetadata && selectedInstanceMetadata.properties;
         this.selectedInstanceSiblings = _.filter(this.instancesMappedList, coInstance => coInstance.id !== this.selectedServiceInstanceId);
+    }
+
+    updateSelectedServiceCapabilities() {
+        this.selectedInstanceCapabilitisList = _.filter(
+            CapabilitiesGroup.getFlattenedCapabilities(this.selectedService.capabilities),
+            cap => cap.properties && cap.ownerId === this.selectedService.uniqueId
+        );
     }
 
     expandCollapseInterfaceGroup(currInterface) {
@@ -190,7 +206,9 @@ export class ServiceConsumptionComponent {
                     parentServiceInputs: this.parentServiceInputs,
                     selectedServiceProperties: this.selectedInstancePropertiesList,
                     selectedServiceInstanceId: this.selectedServiceInstanceId,
-                    selectedInstanceSiblings: this.selectedInstanceSiblings
+                    selectedInstanceSiblings: this.selectedInstanceSiblings,
+                    selectedInstanceCapabilitisList: this.selectedInstanceCapabilitisList,
+                    siblingsCapabilitiesList: this.instancesCapabilitiesMap
                 }
             );
             this.modalInstance.instance.open();

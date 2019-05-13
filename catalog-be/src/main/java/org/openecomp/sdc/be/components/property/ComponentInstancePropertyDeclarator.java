@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -62,12 +64,35 @@ public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarat
 
     @Override
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition input) {
-        List<ComponentInstanceProperty> componentInstancePropertiesDeclaredAsInput = componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(component, input.getUniqueId());
-        if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
-            return StorageOperationStatus.OK;
+
+        Optional<ComponentInstanceProperty> propertyByInputId = PropertiesUtils.getPropertyByInputId(component,
+                input.getUniqueId());
+        if(propertyByInputId.isPresent()) {
+            List<ComponentInstanceProperty> capabilityPropertyDeclaredAsInput =
+                   PropertiesUtils.getCapabilityProperty(propertyByInputId.get(), input.getUniqueId());
+            capabilityPropertyDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDeleteOfCapProp(input,
+                    cmptInstanceProperty));
+
+            Optional<CapabilityDefinition> propertyCapabilityOptional = PropertiesUtils.getPropertyCapabilityOfChildInstance(
+                    capabilityPropertyDeclaredAsInput.get(0).getParentUniqueId(), component.getCapabilities());
+            if(!propertyCapabilityOptional.isPresent()) {
+                return StorageOperationStatus.OK;
+            }
+
+            return toscaOperationFacade.updateInstanceCapabilityProperty(component, input.getInstanceUniqueId(),
+                    capabilityPropertyDeclaredAsInput.get(0), propertyCapabilityOptional.get() );
+        } else {
+            List<ComponentInstanceProperty> componentInstancePropertiesDeclaredAsInput = componentInstanceBusinessLogic
+                    .getComponentInstancePropertiesByInputId(component, input.getUniqueId());
+            if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
+                return StorageOperationStatus.OK;
+            }
+            componentInstancePropertiesDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDelete(input,
+                    cmptInstanceProperty, cmptInstanceProperty.getPath()));
+            return toscaOperationFacade.updateComponentInstanceProperties(component,
+                    componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(),
+                    componentInstancePropertiesDeclaredAsInput);
         }
-        componentInstancePropertiesDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDelete(input, cmptInstanceProperty, cmptInstanceProperty.getPath()));
-        return toscaOperationFacade.updateComponentInstanceProperties(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(), componentInstancePropertiesDeclaredAsInput);
     }
 
 }

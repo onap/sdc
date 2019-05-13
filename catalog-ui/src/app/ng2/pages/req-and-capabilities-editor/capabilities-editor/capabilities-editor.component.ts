@@ -62,6 +62,10 @@ export class CapabilitiesEditorComponent {
             let selectedCapabilityTypeObj: CapabilityTypeModel = this.input.capabilityTypesList.find(capType => capType.toscaPresentation.type === selectedCapType.value);
             this.capabilityData.description = selectedCapabilityTypeObj.toscaPresentation.description;
             this.capabilityData.validSourceTypes = selectedCapabilityTypeObj.toscaPresentation.validTargetTypes;
+            this.capabilityData.properties = _.forEach(
+                _.toArray(selectedCapabilityTypeObj.properties),
+                prop => prop.uniqueId = null //a requirement for the BE
+            );
         }
         this.validityChanged();
     }

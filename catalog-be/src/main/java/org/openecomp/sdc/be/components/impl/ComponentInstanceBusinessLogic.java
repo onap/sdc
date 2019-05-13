@@ -20,26 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
-
 import com.google.common.collect.Sets;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -49,7 +30,7 @@ import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOper
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
-import org.openecomp.sdc.be.components.utils.ProxyServicePropertiesUtils;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -86,6 +67,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -94,23 +76,6 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.ComponentInstancePropInput;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -132,6 +97,25 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityOfChildInstance;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
@@ -417,7 +401,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
 
 
-        resourceInstance.setProperties(ProxyServicePropertiesUtils.getProperties(service));
+        resourceInstance.setProperties(PropertiesUtils.getProperties(service));
 
         List<InputDefinition> serviceInputs = service.getInputs();
         resourceInstance.setInputs(serviceInputs);
@@ -1789,9 +1773,20 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         try {
             for (ComponentInstanceProperty property: properties) {
+                String propertyParentUniqueId = property.getParentUniqueId();
                 Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, false);
-                updatedPropertyValue.bimap(updatedValue -> updatePropertyOnContainerComponent(property,updatedValue, containerComponent, foundResourceInstance),
-                        responseFormat -> Either.right(responseFormat));
+                Optional<CapabilityDefinition>
+                        capPropDefinition = getPropertyCapabilityOfChildInstance(propertyParentUniqueId, foundResourceInstance.getCapabilities());
+                if(capPropDefinition.isPresent()) {
+                    updatedPropertyValue
+                            .bimap(updatedValue -> updateCapabilityPropFromUpdateInstProp(property, updatedValue,
+                                    containerComponent, foundResourceInstance, capPropDefinition.get().getType(),
+                                    capPropDefinition.get().getName()), Either::right);
+                }
+                else {
+                    updatedPropertyValue.bimap(updatedValue -> updatePropertyOnContainerComponent(property, updatedValue,
+                            containerComponent, foundResourceInstance), Either::right);
+                }
             }
 
             Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
@@ -1814,21 +1809,71 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property, String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
+    private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
+                                                                        String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
                                                                         String capabilityType, String capabilityName) {
         String componentInstanceUniqueId = foundResourceInstance.getUniqueId();
-        StringBuilder sb = new StringBuilder(componentInstanceUniqueId);
-        sb.append(ModelConverter.CAP_PROP_DELIM).append(property.getOwnerId()).append(ModelConverter.CAP_PROP_DELIM).append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
+        StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+        sb.append(ModelConverter.CAP_PROP_DELIM).append(property.getOwnerId()).append(ModelConverter.CAP_PROP_DELIM)
+                .append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
         String capKey = sb.toString();
 
-        Map<String, List<CapabilityDefinition>> capabilities = Optional.ofNullable(foundResourceInstance.getCapabilities())
-                .orElse(Collections.emptyMap());
-        List<CapabilityDefinition> capPerType = Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.emptyList());
-        Optional<CapabilityDefinition> cap = capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
+        ResponseFormat actionStatus = updateCapPropOnContainerComponent(property, newValue, containerComponent,
+                foundResourceInstance, capabilityType, capabilityName, componentInstanceUniqueId, capKey);
+        if (actionStatus != null) {
+            return actionStatus;
+        }
+
+        return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    private ResponseFormat updateCapabilityPropFromUpdateInstProp(ComponentInstanceProperty property,
+                                                                  String newValue, Component containerComponent,
+                                                                  ComponentInstance foundResourceInstance,
+                                                                  String capabilityType, String capabilityName) {
+        String componentInstanceUniqueId = foundResourceInstance.getUniqueId();
+        Either<Component, StorageOperationStatus> getComponentRes =
+                toscaOperationFacade.getToscaFullElement(foundResourceInstance.getComponentUid());
+        if(getComponentRes.isRight()) {
+            return componentsUtils.getResponseFormat(getComponentRes.right().value());
+        }
+        String propOwner;
+        if(!PropertiesUtils.isNodeServiceProxy(getComponentRes.left().value())) {
+            propOwner = componentInstanceUniqueId;
+        } else {
+            propOwner = foundResourceInstance.getSourceModelUid();
+        }
+        StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+
+        sb.append(ModelConverter.CAP_PROP_DELIM).append(propOwner).append(ModelConverter.CAP_PROP_DELIM)
+                .append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
+        String capKey = sb.toString();
+
+        ResponseFormat actionStatus = updateCapPropOnContainerComponent(property, newValue, containerComponent,
+                foundResourceInstance, capabilityType, capabilityName, componentInstanceUniqueId, capKey);
+        if (actionStatus != null) {
+            return actionStatus;
+        }
+
+        return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    private ResponseFormat updateCapPropOnContainerComponent(ComponentInstanceProperty property, String newValue,
+                                                             Component containerComponent,
+                                                             ComponentInstance foundResourceInstance,
+                                                             String capabilityType, String capabilityName,
+                                                             String componentInstanceUniqueId, String capKey) {
+        Map<String, List<CapabilityDefinition>> capabilities =
+                Optional.ofNullable(foundResourceInstance.getCapabilities()).orElse(Collections.emptyMap());
+        List<CapabilityDefinition> capPerType =
+                Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.EMPTY_LIST);
+        Optional<CapabilityDefinition> cap =
+                capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
         if (cap.isPresent()) {
             List<ComponentInstanceProperty> capProperties = cap.get().getProperties();
             if (capProperties != null) {
-                Optional<ComponentInstanceProperty> instanceProperty = capProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+                Optional<ComponentInstanceProperty> instanceProperty =
+                        capProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
                 StorageOperationStatus status;
                 if (instanceProperty.isPresent()) {
                     instanceProperty.get().setValue(newValue);
@@ -1836,9 +1881,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     path.add(componentInstanceUniqueId);
                     path.add(capKey);
                     instanceProperty.get().setPath(path);
-                    status = toscaOperationFacade.updateComponentInstanceCapabiltyProperty(containerComponent, componentInstanceUniqueId, capKey, instanceProperty.get());
+                    status = toscaOperationFacade.updateComponentInstanceCapabiltyProperty(containerComponent,
+                            componentInstanceUniqueId, capKey, instanceProperty.get());
                     if (status != StorageOperationStatus.OK) {
-                        ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
+                        ActionStatus actionStatus =
+                                componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
                         return componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, "");
 
                     }
@@ -1846,20 +1893,25 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-
-
-        return componentsUtils.getResponseFormat(ActionStatus.OK);
+        return null;
     }
 
-    private ResponseFormat updatePropertyOnContainerComponent(ComponentInstanceProperty property, String newValue, Component containerComponent, ComponentInstance foundResourceInstance) {
-        List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(foundResourceInstance.getUniqueId());
-        Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+    private ResponseFormat updatePropertyOnContainerComponent(ComponentInstanceProperty property, String newValue,
+                                                              Component containerComponent, ComponentInstance foundResourceInstance) {
+        List<ComponentInstanceProperty> instanceProperties =
+                containerComponent.getComponentInstancesProperties().get(foundResourceInstance.getUniqueId());
+        Optional<ComponentInstanceProperty> instanceProperty =
+                instanceProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
         StorageOperationStatus status;
         instanceProperty.get().setValue(newValue);
         if (instanceProperty.isPresent()) {
-            status = toscaOperationFacade.updateComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(), property);
+            status = toscaOperationFacade
+                    .updateComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(),
+                            property);
         } else {
-            status = toscaOperationFacade.addComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(), property);
+            status = toscaOperationFacade
+                    .addComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(),
+                            property);
         }
         if (status != StorageOperationStatus.OK) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);

@@ -459,7 +459,9 @@ public class ModelConverter {
             if (CollectionUtils.isNotEmpty(capPrps)) {
                 MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition();
                 for (ComponentInstanceProperty cip : capPrps) {
-                    dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
+                    PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition(cip);
+                    propertyDataDefinition.setParentUniqueId(cap.getUniqueId());
+                    dataToCreate.put(cip.getName(), propertyDataDefinition);
                 }
                 toscaCapPropMap.put(s + CAP_PROP_DELIM + cap.getName(), dataToCreate);
             }
@@ -1358,16 +1360,51 @@ public class ModelConverter {
 
     private static void setCapabilitiesToComponent(TopologyTemplate topologyTemplate, Component component) {
         Map<String, ListCapabilityDataDefinition> capabilities = topologyTemplate.getCapabilities();
-        Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
+        Map<String, MapPropertiesDataDefinition> capabilitiesProperties = topologyTemplate.getCapabilitiesProperties();
+        Map<String, List<CapabilityDefinition>> allCapabilities = new HashMap<>();
+
         if(MapUtils.isNotEmpty(capabilities)) {
-            if(componentCapabilities == null) {
-                componentCapabilities = new HashMap<>();
-            }
-            componentCapabilities.putAll(groupCapabilityByType(capabilities));
-            component.setCapabilities(componentCapabilities);
+            allCapabilities.putAll(groupCapabilityByType(capabilities));
         }
 
+        if(MapUtils.isNotEmpty(capabilitiesProperties)) {
+            capabilitiesProperties.forEach((s, capProp)-> {
+                        String[] result = s.split(CAP_PROP_DELIM);
+                        if (capProp != null) {
+                            Map<String, PropertyDataDefinition> capMap = capProp.getMapToscaDataDefinition();
+
+                            if (MapUtils.isNotEmpty(capMap)) {
+                                List<ComponentInstanceProperty> capPropsList = capMap.values().stream()
+                                        .map(ComponentInstanceProperty::new).collect(Collectors.toList());
+
+                                List<CapabilityDefinition> cap = allCapabilities.get(result[0]);
+                                if (cap !=null) {
+                                    Optional<CapabilityDefinition> op = cap.stream().filter(c -> c.getName()
+                                            .equals(result[1])).findFirst();
+                                    op.ifPresent(capabilityDefinition -> capabilityDefinition.setProperties(capPropsList));
+                                }
+                            }
+                        }
+                    }
+            );
+        }
+        Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
+        if(MapUtils.isNotEmpty(componentCapabilities)) {
+            mergeCapabilityMap(allCapabilities, componentCapabilities);
+        }
+        component.setCapabilities(allCapabilities);
     }
+
+    private static void mergeCapabilityMap(Map<String, List<CapabilityDefinition>> map1,
+                                           Map<String, List<CapabilityDefinition>> map2) {
+        map1.forEach((key1, val1) -> map2.forEach((key2, val2) -> {
+            if(key1.equals(key2)) {
+                val2.addAll(val1);
+            }
+        }));
+        map1.putAll(map2);
+    }
+
     private static Map<String, List<CapabilityDefinition>> groupCapabilityByType(Map<String,
             ListCapabilityDataDefinition> capabilities) {
         Map<String, List<CapabilityDefinition>>  groupedCapabilities = new HashMap<>();
