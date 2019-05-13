@@ -54,7 +54,6 @@ export class TranslatePipe implements PipeTransform {
         if (this.shouldUpdate(curParams)) {
             this.lastParams = curParams;
             this.translated = this.translateService.translate(phrase, args, language);
-            console.log('*updated:', this.translated);
         }
 
         return this.translated;
