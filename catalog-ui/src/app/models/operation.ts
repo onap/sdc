@@ -39,7 +39,10 @@ export class BEOperationModel {
     workflowId: string;
     workflowVersionId: string;
 
-    implementation?: { artifactUUID: string; };
+    implementation?: {
+        artifactName: string;
+        artifactUUID: string;
+    };
 
     constructor(operation?: any) {
         if (operation) {
@@ -53,7 +56,7 @@ export class BEOperationModel {
             this.workflowAssociationType = operation.workflowAssociationType;
             this.workflowId = operation.workflowId;
             this.workflowVersionId = operation.workflowVersionId;
-            this.implementation = operation.implementation;
+            this.implementation = operation.implementation || {};
         }
     }
 
@@ -76,7 +79,7 @@ export class BEOperationModel {
 export class OperationModel extends BEOperationModel {
     interfaceType: string;
     interfaceId: string;
-    artifactFile: any;
+    artifactFileName: string;
     artifactData: any;
 
     constructor(operation?: any) {
@@ -84,12 +87,13 @@ export class OperationModel extends BEOperationModel {
         if (operation) {
             this.interfaceId = operation.interfaceId;
             this.interfaceType = operation.interfaceType;
+            this.artifactFileName = operation.artifactFileName;
+            this.artifactData = operation.artifactData;
         }
     }
 
     public displayType(): string {
-        const lastDot = this.interfaceType ? this.interfaceType.lastIndexOf('.') : -1;
-        return lastDot === -1 ? this.interfaceType : this.interfaceType.substr(lastDot + 1);
+        return displayType(this.interfaceType);
     }
 }
 
@@ -107,7 +111,8 @@ export class InterfaceModel {
     }
 
     public displayType(): string {
-        const lastDot = this.type ? this.type.lastIndexOf('.') : -1;
-        return lastDot === -1 ? this.type : this.type.substr(lastDot + 1);
+        return displayType(this.type);
     }
 }
+
+const displayType = (type:string) => type && type.substr(type.lastIndexOf('.') + 1);
