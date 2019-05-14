@@ -1,0 +1,378 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1da8136d_1d297d4d",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "version should be a parameter.\nWhy use beta version?",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e348dfd2_0cefc0a1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstanceInputPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "license",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5f698e8_47bb82fe",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstanceInputPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "unused import",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32ecbe5e_ce30ebdf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstanceInputPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "Multiple variables should not be declared on the same line\n \nCode smell\n \nMinor\nsquid:S1659\n \nDeclaring multiple variable on one line is difficult to read.\nNoncompliant Code Example\n  class MyClass {      private int a, b;      public void method(){      int c; int d;    }  }  \nCompliant Solution\n  class MyClass {      private int a;    private int b;      public void method(){      int c;      int d;    }  }  \nSee\nMISRA C++:2008, 8-0-1 - An init-declarator-list or a member-declarator-list shall consist of a single init-declarator or member-declarator respectively\nCERT, DCL52-J. - Do not declare more than one variable per declaration\nCERT, DCL04-C. - Do not declare more than one variable per declaration",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ebfb4b60_7b3e55aa",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstanceInputPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "it is not used \nWhy was it added?",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "768d425e_367319be",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentInstancePropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "License",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "69781b3d_bbe9633f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "license",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa42cbfb_94bea7fd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "clean import . There are few unused imports.",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e7513e6_645a22ac",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "Remove this test",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cff739fa_407377cd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/GetInputUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "license",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bb7b516_56f5f41f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/GetInputUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "onap code style \nhttps://wiki.onap.org/display/DW/Configure+Onap+Code+Style+for+Idea+IDE",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cbdd2f1f_23247832",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/GetInputUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "Useless imports should be removed\n \nCode smell\n \nMinor\nsquid:UselessImportCheck\n \nThe imports part of a file should be handled by the Integrated Development Environment (IDE), not manually by the developer.\nUnused and useless imports should not occur if that is the case.\nLeaving them in reduces the code\u0027s readability, since their presence can be confusing.\nNoncompliant Code Example\n  package my.company;    import java.lang.String; // Noncompliant; java.lang classes are always implicitly imported  import my.company.SomeClass; // Noncompliant; same-package files are always implicitly imported  import java.io.File; // Noncompliant; File is not used    import my.company2.SomeType;  import my.company2.SomeType; // Noncompliant; \u0027SomeType\u0027 is already imported    class ExampleClass {      public String someString;    public SomeType something;    }  \nExceptions\nImports for types mentioned in comments, such as Javadocs, are ignored.",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4f3b347_41988287",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "Please use sonar and clear its remarks.",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "55b4a541_92b5281c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "license",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47c2716f_610b03f6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "follow onap code formatting\nhttps://wiki.onap.org/display/DW/Java+code+style\nhttps://wiki.onap.org/display/DW/Configure+Onap+Code+Style+for+Idea+IDE",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3547fc4c_5e6a0a93",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something.",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c90267b3_27050605",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17e0459f_7b275e7e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c37bd6ea_4e27c6df",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30f5a8c2_c7b6cb78",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45cb4d86_7f9cd00f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyDeclarationOrchestratorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "test should assert something",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e07caaf8_55d8d931",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/PolicyUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-14T06:52:57Z",
+      "side": 1,
+      "message": "Please use sonar to clean its remarks.",
+      "revId": "b654aa88ddaf624e9cfbcde3b9a1ce8391944b7c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
