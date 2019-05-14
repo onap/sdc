@@ -1,29 +1,5 @@
 package org.openecomp.sdc.be.components.property;
 
-import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.utils.InputsBuilder;
-import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
-import org.openecomp.sdc.be.components.utils.ResourceBuilder;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,6 +7,46 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createCapabilityDefinition;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
+
+import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.utils.InputsBuilder;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.components.utils.ResourceBuilder;
+import org.openecomp.sdc.be.components.utils.ServiceBuilder;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,6 +63,11 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
     @Captor
     private ArgumentCaptor<Map<String, List<ComponentInstanceProperty>>> instancePropertiesCaptor;
+
+    private static final String PROPERTY_ID = "propertyUid";
+    private static final String PROEPRTY_NAME = "propertyName";
+    private static final String SERVICE_ID = "serviceUid";
+    private static final String SERVICE_NAME = "serviceName";
 
     @Test
     public void declarePropertiesAsInputs_componentInstanceNotExist() {
@@ -165,6 +186,60 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     }
 
     @Test
+    public void testCreateDeclaredProperty() {
+        PropertyDefinition propertyDefinition = getPropertyForDeclaration();
+        ComponentInstanceProperty declaredProperty = testInstance.createDeclaredProperty(propertyDefinition);
+
+        assertThat(declaredProperty).isNotNull();
+        assertThat(declaredProperty.getUniqueId()).isEqualTo(propertyDefinition.getUniqueId());
+    }
+
+    @Test
+    public void testUndeclareProperty() {
+        Service service = new ServiceBuilder()
+                                  .setUniqueId(SERVICE_ID)
+                                  .setName(SERVICE_NAME)
+                                  .build();
+
+
+
+        InputDefinition inputToDelete = InputsBuilder
+                                                .create()
+                                                .setPropertyId(PROPERTY_ID)
+                                                .setName(PROEPRTY_NAME)
+                                                .build();
+
+        inputToDelete.setGetInputValues(getGetInputListForDeclaration());
+
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty(getPropertyForDeclaration());
+        List<ComponentInstanceProperty> componentInstanceProperties = new ArrayList<>();
+        componentInstanceProperties.add(componentInstanceProperty);
+
+        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(), any())).thenReturn(new LinkedList<>());
+
+        StorageOperationStatus undeclareStatus =
+                testInstance.unDeclarePropertiesAsInputs(service, inputToDelete);
+
+        assertThat(undeclareStatus).isEqualTo(StorageOperationStatus.OK);
+    }
+
+    private List<GetInputValueDataDefinition> getGetInputListForDeclaration() {
+        GetInputValueDataDefinition getInput = new GetInputValueDataDefinition();
+        getInput.setInputId(PROPERTY_ID);
+        getInput.setInputName(PROEPRTY_NAME);
+        getInput.setPropName(PROEPRTY_NAME);
+        List<GetInputValueDataDefinition> getInputList = new ArrayList<>();
+        getInputList.add(getInput);
+        return getInputList;
+    }
+
+    private PropertyDefinition getPropertyForDeclaration() {
+        return new PropertyDataDefinitionBuilder()
+                       .setUniqueId(PROPERTY_ID)
+                       .build();
+    }
+
+    @Test
     public void declarePropertiesAsListInput() {
         // construct arguments
         List<PropertyDataDefinition> properties = Arrays.asList(prop1, prop2);
@@ -257,7 +332,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
         Assert.assertEquals(status, StorageOperationStatus.OK);
     }
-    
+
     private void verifyUpdatedProperties(List<PropertyDataDefinition> properties, List<ComponentInstanceProperty> capturedInstanceProperties, List<InputDefinition> inputs) {
         assertThat(capturedInstanceProperties).hasSize(properties.size());
         Map<String, ComponentInstanceProperty> updatedPropertiesByName = MapUtil.toMap(capturedInstanceProperties, ComponentInstanceProperty::getName);
