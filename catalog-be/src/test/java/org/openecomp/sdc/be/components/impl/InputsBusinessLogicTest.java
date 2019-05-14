@@ -20,30 +20,50 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class InputsBusinessLogicTest {
 
@@ -67,11 +87,21 @@ public class InputsBusinessLogicTest {
     @Mock
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
+    @Mock
+    private PropertyDeclarationOrchestrator orchestrator;
+
+    @Mock
+    private TitanDao titanDaoMock;
+
+    @Mock
+    GraphLockOperation graphLockOperation;
+
     @InjectMocks
     private InputsBusinessLogic testInstance;
 
     private Service service;
-
+    private Map<String, List<ComponentInstanceInput>> instanceInputMap;
+    private List<ComponentInstanceInput> inputsList;
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -81,10 +111,12 @@ public class InputsBusinessLogicTest {
         componentInstance.setUniqueId(COMPONENT_INSTANCE_ID);
         service.setComponentInstances(Collections.singletonList(componentInstance));
 
-        Map<String, List<ComponentInstanceInput>> instanceInputMap = new HashMap<>();
+        instanceInputMap = new HashMap<>();
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
         componentInstanceInput.setInputId(INSTANCE_INPUT_ID);
-        instanceInputMap.put(COMPONENT_INSTANCE_ID, Collections.singletonList(componentInstanceInput));
+        componentInstanceInput.setName(INSTANCE_INPUT_ID);
+        inputsList = Collections.singletonList(componentInstanceInput);
+        instanceInputMap.put(COMPONENT_INSTANCE_ID, inputsList);
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
         when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
@@ -148,6 +180,41 @@ public class InputsBusinessLogicTest {
         when(toscaOperationFacadeMock.getToscaElement(Mockito.any(String.class), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
         result = testInstance.getComponentInstancePropertiesByInputId(userId, componentId, componentId, componentId);
         assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testDeclareProperties() {
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        service.setLastUpdaterUserId(USER_ID);
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> propertiesForDeclaration = new HashMap<>();
+        propertiesForDeclaration.put(COMPONENT_ID, getPropertiesListForDeclaration());
+        componentInstInputsMap.setServiceProperties(propertiesForDeclaration);
+
+        List<InputDefinition> declaredPropertiesToInputs = getDeclaredProperties();
+        initMockitoStubbings(declaredPropertiesToInputs);
+
+        Either<List<InputDefinition>, ResponseFormat> declaredPropertiesEither =
+                testInstance.declareProperties(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, componentInstInputsMap);
+
+        assertTrue(declaredPropertiesEither.isLeft());
+
+        List<InputDefinition> declaredProperties = declaredPropertiesEither.left().value();
+        assertTrue(CollectionUtils.isNotEmpty(declaredProperties));
+        assertEquals(1, declaredProperties.size());
+        assertEquals(declaredProperties, declaredPropertiesToInputs);
+    }
+
+    private void initMockitoStubbings(List<InputDefinition> declaredPropertiesToInputs) {
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(
+                Either.left(service));
+        when(orchestrator.declarePropertiesToInputs(Mockito.any(), Mockito.any())).thenReturn(Either.left(
+                declaredPropertiesToInputs));
+        when(toscaOperationFacadeMock.addInputsToComponent(Mockito.any(), Mockito.any())).thenReturn(Either.left(declaredPropertiesToInputs));
+        when(titanDaoMock.commit()).thenReturn(TitanOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.OK);
+        when(componentInstanceBusinessLogic.setInputConstraint(Mockito.any())).thenReturn(Collections.emptyList());
     }
 
     private void getComponents_emptyInputs(Service service) {
@@ -262,5 +329,21 @@ public class InputsBusinessLogicTest {
         when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(Mockito.any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
         assertEquals(true,result.isLeft());
+    }
+
+    private List<ComponentInstancePropInput> getPropertiesListForDeclaration() {
+        return inputsList.stream().map(this::getPropertyForDeclaration).collect(Collectors.toList());
+    }
+
+    private ComponentInstancePropInput getPropertyForDeclaration(ComponentInstanceInput componentInstanceInput) {
+        ComponentInstancePropInput propInput = new ComponentInstancePropInput();
+        propInput.setInput(componentInstanceInput);
+        propInput.setPropertiesName(componentInstanceInput.getName());
+
+        return propInput;
+    }
+
+    private List<InputDefinition> getDeclaredProperties() {
+        return inputsList.stream().map(InputDefinition::new).collect(Collectors.toList());
     }
 }
