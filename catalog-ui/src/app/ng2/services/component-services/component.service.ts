@@ -25,7 +25,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams, Headers} from '@angular/http';
 import { Component, ComponentInstance, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
-    PropertyBEModel, OperationModel, BEOperationModel, Capability, Requirement, PolicyInstance} from "app/models";
+    PropertyBEModel, InterfaceModel, OperationModel, BEOperationModel, Capability, Requirement, PolicyInstance} from "app/models";
 import {COMPONENT_FIELDS, CommonUtils, SERVICE_FIELDS} from "app/utils";
 import {downgradeInjectable} from '@angular/upgrade/static';
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -156,12 +156,13 @@ export class ComponentServiceNg2 {
         };
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
             .map((res:Response) => {
-                const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
-                const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
+                const interf:InterfaceModel = _.find(res.json().interfaces, interf => interf.type === operation.interfaceType);
+                const newOperation:OperationModel = _.find(interf.operations, op => op.name === operation.name);
                 return new OperationModel({
                     ...newOperation,
                     interfaceType: interf.type,
-                    interfaceId: interf.uniqueId
+                    interfaceId: interf.uniqueId,
+                    artifactFileName: operation.artifactFileName
                 });
             });
     }
@@ -179,12 +180,13 @@ export class ComponentServiceNg2 {
         };
         return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
             .map((res:Response) => {
-                const interf = _.find(res.json().interfaces, (interf: any) => interf.type === operation.interfaceType);
-                const newOperation = _.find(interf.operations, (op:OperationModel) => op.name === operation.name);
+                const interf:InterfaceModel = _.find(res.json().interfaces, interf => interf.type === operation.interfaceType);
+                const newOperation:OperationModel = _.find(interf.operations, op => op.name === operation.name);
                 return new OperationModel({
                     ...newOperation,
                     interfaceType: interf.type,
-                    interfaceId: interf.uniqueId
+                    interfaceId: interf.uniqueId,
+                    artifactFileName: operation.artifactFileName
                 });
             });
     }
@@ -207,12 +209,12 @@ export class ComponentServiceNg2 {
             });
     }
 
-    uploadInterfaceOperationArtifact(component:Component, response:OperationModel, UIOperation:OperationModel) {
+    uploadInterfaceOperationArtifact(component:Component, newOperation:OperationModel, oldOperation:OperationModel) {
         const payload = {
             artifactType: "WORKFLOW",
-            artifactName: UIOperation.artifactFile.name,
+            artifactName: oldOperation.artifactFileName,
             description: "Workflow Artifact Description",
-            payloadData: UIOperation.artifactData
+            payloadData: oldOperation.artifactData
         };
 
         const headers = new Headers();
@@ -221,10 +223,12 @@ export class ComponentServiceNg2 {
         const md5Result = md5(payloadString).toLowerCase();
         headers.append('Content-MD5', btoa(md5Result));
 
-        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + response.interfaceId + '/operations/' + response.uniqueId + '/artifacts/' + response.implementation.artifactUUID,
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + newOperation.interfaceId + '/operations/' + newOperation.uniqueId + '/artifacts/' + newOperation.implementation.artifactUUID,
                 payload,
                 {headers}
             ).map((res: Response) => {
+                const fileName = res.json().artifactDisplayName || res.json().artifactName;
+                newOperation.artifactFileName = fileName;
                 return res.json();
             });
     }

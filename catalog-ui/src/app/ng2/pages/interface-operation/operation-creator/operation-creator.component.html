@@ -86,15 +86,15 @@
             <div
                 *ngIf="isUsingExternalWF()"
                 class="form-item sdc-input">
-                <label class="sdc-input__label required">{{ 'OPERATION_ARTIFACT' | translate }}</label>
+                <label class="sdc-input__label">{{ 'OPERATION_ARTIFACT' | translate }}</label>
                 <div class="i-sdc-form-item i-sdc-form-file-upload">
                     <span
                         class="i-sdc-form-file-name"
                         data-tests-id="artifactFilename">
-                        {{ operation.artifactFile && operation.artifactFile.name }}
+                        {{ operation.artifactFileName }}
                     </span>
                     <div
-                        *ngIf="operation.artifactFile && operation.artifactFile.name"
+                        *ngIf="operation.artifactFileName"
                         class="i-sdc-form-file-upload-x-btn"
                         data-tests-id="clearArtifact"
                         (click)="onChangeArtifactFile({ target: {} })"></div>
@@ -107,6 +107,7 @@
                             maxsize="10240"
                             data-tests-id="artifactUpload"
                             (change)="onChangeArtifactFile($event)"
+                            (click)="$event.target.value = ''"
                         />
                         <div class="file-upload-browse-btn">Browse</div>
                     </label>
