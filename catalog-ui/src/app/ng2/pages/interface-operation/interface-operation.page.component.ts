@@ -325,10 +325,12 @@ export class InterfaceOperationComponent {
     private createOperation = (operation: OperationModel): void => {
         this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
             this.openOperation = null;
+
             let curInterf = _.find(
                 this.interfaces,
                 interf => interf.type === operation.interfaceType
             );
+
             if (!curInterf) {
                 curInterf = new UIInterfaceModel({
                     type: response.interfaceType,
@@ -337,11 +339,13 @@ export class InterfaceOperationComponent {
                 });
                 this.interfaces.push(curInterf);
             }
-            curInterf.operations.push(new UIOperationModel(response));
+
+            const newOpModel = new UIOperationModel(response);
+            curInterf.operations.push(newOpModel);
             this.sortInterfaces();
 
-            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL) {
-                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, response, operation).subscribe();
+            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
+                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
@@ -351,7 +355,7 @@ export class InterfaceOperationComponent {
     }
 
     private updateOperation = (operation: OperationModel): void => {
-        this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe(newOperation => {
+        this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe((newOperation: OperationModel) => {
             this.openOperation = null;
 
             let oldOpIndex, oldInterf;
@@ -366,11 +370,12 @@ export class InterfaceOperationComponent {
             oldInterf.operations.splice(oldOpIndex, 1);
 
             const newInterf = _.find(this.interfaces, interf => interf.type === operation.interfaceType);
-            newInterf.operations.push(new UIOperationModel(newOperation));
+            const newOpModel = new UIOperationModel(newOperation);
+            newInterf.operations.push(newOpModel);
             this.sortInterfaces();
 
-            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL) {
-                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOperation, operation).subscribe();
+            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
+                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
             } else if (newOperation.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, newOperation).subscribe();
             }
