@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
@@ -42,12 +44,15 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -86,6 +91,7 @@ public class PolicyBusinessLogicTest {
     PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
 
     private final static String COMPONENT_ID = "componentId";
+    private final static String NON_EXIST_COMPONENT_ID = "nonExistComponentId";
     private final static String COMPONENT_NAME = "componentName";
     private final static String POLICY_TYPE_NAME = "policyTypeName";
     private final static String POLICY_ID = "policyId";
@@ -96,6 +102,7 @@ public class PolicyBusinessLogicTest {
     private final static String UNIQUE_ID_EXSISTS = "uniqueIdExists";
     private final static String UNIQUE_ID_DOESNT_EXSISTS = "uniqueIdDoesntExists";
     private final static String CREATE_POLICY = "create Policy";
+    private final static String PROPERTY_NAME = "propDefinition";
     private final static User user = buildUser();
     private final static PolicyDefinition policy = buildPolicy(POLICY_NAME);
     private final static PolicyDefinition otherPolicy = buildPolicy(OTHER_POLICY_NAME);
@@ -309,7 +316,7 @@ public class PolicyBusinessLogicTest {
 
         Assert.assertTrue(result.isRight());
         ResponseFormat responseResult = result.right().value();
-        Assert.assertEquals(responseResult.getStatus().longValue(), 400L);
+        Assert.assertEquals(400L, responseResult.getStatus().longValue());
 
     }
 
@@ -348,7 +355,70 @@ public class PolicyBusinessLogicTest {
         Either<List<PropertyDataDefinition>, ResponseFormat>  response = businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, getProperties("Name", "Type") , USER_ID, true);
         assertTrue(response.isRight() && response.right().value().getStatus().equals(404));
     }
-    
+
+    @Test
+    public void testDeclarePropertiesAsPoliciesSuccess() {
+        when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
+        when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
+
+        when(propertyDeclarationOrchestrator.declarePropertiesToPolicies(any(), any())).thenReturn(Either.left(getDeclaredPolicies()));
+
+        Either<List<PolicyDefinition>, ResponseFormat> declaredPoliciesEither = businessLogic
+                                                                                          .declareProperties(USER_ID,
+                                                                                                  resource.getUniqueId(),
+                                                                                                  ComponentTypeEnum.RESOURCE,
+                                                                                                  getInputForPropertyToPolicyDeclaration());
+
+        assertTrue(declaredPoliciesEither.isLeft());
+
+        List<PolicyDefinition> declaredPolicies = declaredPoliciesEither.left().value();
+        assertTrue(CollectionUtils.isNotEmpty(declaredPolicies));
+        assertEquals(1, declaredPolicies.size());
+    }
+
+    @Test
+    public void testDeclarePropertiesAsPoliciesFailure() {
+        when(toscaOperationFacade.getToscaElement(eq(NON_EXIST_COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), eq(NON_EXIST_COMPONENT_ID))).thenReturn(notFoundResponse);
+
+        Either<List<PolicyDefinition>, ResponseFormat> declaredPoliciesEither = businessLogic
+                                                                                        .declareProperties(USER_ID,
+                                                                                                NON_EXIST_COMPONENT_ID,
+                                                                                                ComponentTypeEnum.RESOURCE,
+                                                                                                getInputForPropertyToPolicyDeclaration());
+
+        assertTrue(declaredPoliciesEither.isRight());
+        assertEquals(new Integer(404), declaredPoliciesEither.right().value().getStatus());
+    }
+
+    private ComponentInstInputsMap getInputForPropertyToPolicyDeclaration() {
+        PropertyDefinition propertyDefinition = getPropertyDefinitionForDeclaration();
+
+        ComponentInstancePropInput componentInstancePropInput = new ComponentInstancePropInput();
+        componentInstancePropInput.setInput(propertyDefinition);
+        componentInstancePropInput.setPropertiesName(PROPERTY_NAME);
+
+        Map<String, List<ComponentInstancePropInput>> componentPropertiesToPolicies = new HashMap<>();
+        componentPropertiesToPolicies.put(resource.getUniqueId(), Collections.singletonList(componentInstancePropInput));
+
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        componentInstInputsMap.setComponentInstancePropertiesToPolicies(componentPropertiesToPolicies);
+        return componentInstInputsMap;
+    }
+
+    private List<PolicyDefinition> getDeclaredPolicies() {
+        return Collections.singletonList(new PolicyDefinition(getPropertyDefinitionForDeclaration()));
+    }
+
+    private PropertyDefinition getPropertyDefinitionForDeclaration() {
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setUniqueId(PROPERTY_NAME);
+        propertyDefinition.setName(PROPERTY_NAME);
+        return propertyDefinition;
+    }
+
     private PropertyDataDefinition[] getProperties(String prop1, String prop2) {
         PropertyDataDefinition property1 = new PropertyDataDefinition();
         property1.setName(prop1);
