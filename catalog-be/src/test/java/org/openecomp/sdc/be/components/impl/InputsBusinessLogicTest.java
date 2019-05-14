@@ -20,8 +20,27 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,23 +59,28 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstListInput;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class InputsBusinessLogicTest {
 
@@ -112,6 +136,9 @@ public class InputsBusinessLogicTest {
     @Captor
     ArgumentCaptor<Map<String, DataTypeDefinition>> dataTypesMapCaptor;
 
+    private Map<String, List<ComponentInstanceInput>> instanceInputMap;
+    private List<ComponentInstanceInput> inputsList;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -126,11 +153,12 @@ public class InputsBusinessLogicTest {
         componentInstance.setUniqueId(COMPONENT_INSTANCE_ID);
         service.setComponentInstances(Collections.singletonList(componentInstance));
 
-        // add inputs to the ComponentInstance
-        Map<String, List<ComponentInstanceInput>> instanceInputMap = new HashMap<>();
+        instanceInputMap = new HashMap<>();
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
         componentInstanceInput.setInputId(INSTANCE_INPUT_ID);
-        instanceInputMap.put(COMPONENT_INSTANCE_ID, Collections.singletonList(componentInstanceInput));
+        componentInstanceInput.setName(INSTANCE_INPUT_ID);
+        inputsList = Collections.singletonList(componentInstanceInput);
+        instanceInputMap.put(COMPONENT_INSTANCE_ID, inputsList);
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
 
@@ -140,7 +168,7 @@ public class InputsBusinessLogicTest {
 
     @Test
     public void getComponentInstanceInputs_ComponentInstanceNotExist() throws Exception {
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, "nonExisting");
         assertTrue(componentInstanceInputs.isRight());
         verify(componentsUtilsMock).getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
@@ -166,7 +194,7 @@ public class InputsBusinessLogicTest {
 
     @Test
     public void getComponentInstanceInputs() throws Exception {
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, COMPONENT_INSTANCE_ID);
         assertEquals("inputId", componentInstanceInputs.left().value().get(0).getInputId());
     }
@@ -176,7 +204,7 @@ public class InputsBusinessLogicTest {
         String userId = "userId";
         String componentId = "compId";
         Component component = new Resource();
-        when(toscaOperationFacadeMock.getToscaElement(Mockito.any(String.class), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(toscaOperationFacadeMock.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         testInstance.getInputs(userId, componentId);
         assertEquals(null, component.getInputs());
     }
@@ -192,13 +220,48 @@ public class InputsBusinessLogicTest {
         inputDef.setUniqueId(componentId);
         listDef.add(inputDef);
         component.setInputs(listDef);
-        when(toscaOperationFacadeMock.getToscaElement(Mockito.any(String.class), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(toscaOperationFacadeMock.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         result = testInstance.getComponentInstancePropertiesByInputId(userId, componentId, componentId, componentId);
         assertTrue(result.isLeft());
     }
 
+    @Test
+    public void testDeclareProperties() {
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        service.setLastUpdaterUserId(USER_ID);
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> propertiesForDeclaration = new HashMap<>();
+        propertiesForDeclaration.put(COMPONENT_ID, getPropertiesListForDeclaration());
+        componentInstInputsMap.setServiceProperties(propertiesForDeclaration);
+
+        List<InputDefinition> declaredPropertiesToInputs = getDeclaredProperties();
+        initMockitoStubbings(declaredPropertiesToInputs);
+
+        Either<List<InputDefinition>, ResponseFormat> declaredPropertiesEither =
+                testInstance.declareProperties(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, componentInstInputsMap);
+
+        assertTrue(declaredPropertiesEither.isLeft());
+
+        List<InputDefinition> declaredProperties = declaredPropertiesEither.left().value();
+        assertTrue(CollectionUtils.isNotEmpty(declaredProperties));
+        assertEquals(1, declaredProperties.size());
+        assertEquals(declaredProperties, declaredPropertiesToInputs);
+    }
+
+    private void initMockitoStubbings(List<InputDefinition> declaredPropertiesToInputs) {
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(
+                Either.left(service));
+        when(propertyDeclarationOrchestrator.declarePropertiesToInputs(any(), any())).thenReturn(Either.left(
+                declaredPropertiesToInputs));
+        when(toscaOperationFacadeMock.addInputsToComponent(any(), any())).thenReturn(Either.left(declaredPropertiesToInputs));
+        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(componentInstanceBusinessLogic.setInputConstraint(any())).thenReturn(Collections.emptyList());
+    }
+
     private void getComponents_emptyInputs(Service service) {
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, COMPONENT_INSTANCE_ID);
         assertEquals(Collections.emptyList(), componentInstanceInputs.left().value());
     }
@@ -207,7 +270,7 @@ public class InputsBusinessLogicTest {
     public void testgetInputs_ARTIFACT_NOT_FOUND() throws Exception {
 
         when(componentsUtilsMock.convertFromStorageResponse(StorageOperationStatus.ARTIFACT_NOT_FOUND)).thenReturn(ActionStatus.ARTIFACT_NOT_FOUND);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
        Either<List<InputDefinition>, ResponseFormat> responseFormatEither = testInstance.getInputs("USR01", COMPONENT_ID);
         assertEquals(true,responseFormatEither.isRight());
 
@@ -221,7 +284,7 @@ public class InputsBusinessLogicTest {
         inputlist.add(input);
         component.setInputs(inputlist);
         when(componentsUtilsMock.convertFromStorageResponse(StorageOperationStatus.ARTIFACT_NOT_FOUND)).thenReturn(ActionStatus.ARTIFACT_NOT_FOUND);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         Either<List<InputDefinition>, ResponseFormat> responseFormatEither = testInstance.getInputs("USR01", COMPONENT_ID);
         assertEquals(inputlist,responseFormatEither.left().value());
     }
@@ -234,7 +297,7 @@ public class InputsBusinessLogicTest {
         List inputlist = new ArrayList<>();
         inputlist.add(input);
         component.setInputs(inputlist);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = testInstance.getComponentInstancePropertiesByInputId("USR01", COMPONENT_ID,"INST0.1", "INPO1");
         assertEquals(true,responseFormatEither.isRight());
     }
@@ -253,8 +316,8 @@ public class InputsBusinessLogicTest {
         List compinstancelist = new ArrayList<>();
         compinstancelist.add(componentInstance);
         component.setComponentInstances(compinstancelist);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
-        when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = testInstance.getComponentInstancePropertiesByInputId("USR01", COMPONENT_ID,"INST0.1", "INPO1");
         assertEquals(true,responseFormatEither.isRight());
     }
@@ -274,10 +337,10 @@ public class InputsBusinessLogicTest {
         List compinstancelist = new ArrayList<>();
         compinstancelist.add(componentInstance);
         component.setComponentInstances(compinstancelist);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
-        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(Mockito.any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
         //when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
-        when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = testInstance.getComponentInstancePropertiesByInputId("USR01", COMPONENT_ID,"INST0.1", "INPO1");
         assertEquals(compinstancelist,responseFormatEither.left().value());
     }
@@ -285,7 +348,7 @@ public class InputsBusinessLogicTest {
     @Test
     public void testgetInputsForComponentInput_ARTIFACT_NOT_FOUND() throws Exception
     {
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
         assertEquals(true,result.isRight());
     }
@@ -305,10 +368,26 @@ public class InputsBusinessLogicTest {
         List compinstancelist = new ArrayList<>();
         compinstancelist.add(componentInstance);
         component.setComponentInstances(compinstancelist);
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
-        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(Mockito.any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
+        when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
         assertEquals(true,result.isLeft());
+    }
+
+    private List<ComponentInstancePropInput> getPropertiesListForDeclaration() {
+        return inputsList.stream().map(this::getPropertyForDeclaration).collect(Collectors.toList());
+    }
+
+    private ComponentInstancePropInput getPropertyForDeclaration(ComponentInstanceInput componentInstanceInput) {
+        ComponentInstancePropInput propInput = new ComponentInstancePropInput();
+        propInput.setInput(componentInstanceInput);
+        propInput.setPropertiesName(componentInstanceInput.getName());
+
+        return propInput;
+    }
+
+    private List<InputDefinition> getDeclaredProperties() {
+        return inputsList.stream().map(InputDefinition::new).collect(Collectors.toList());
     }
 
 
@@ -365,7 +444,7 @@ public class InputsBusinessLogicTest {
 
         // set up mock returns
         // for get component object:
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         // for data type creation (use captor):
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
@@ -408,7 +487,7 @@ public class InputsBusinessLogicTest {
     @Test
     public void test_createListInput_fail_getComponent() throws Exception {
         ComponentInstListInput createListInputParams = setUpCreateListInputParams();
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
         assertEquals(true, result.isRight());
@@ -418,7 +497,7 @@ public class InputsBusinessLogicTest {
     @Test
     public void test_createListInput_fail_lockComponent() throws Exception {
         ComponentInstListInput createListInputParams = setUpCreateListInputParams();
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.FAILED_TO_LOCK_ELEMENT);
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
@@ -430,7 +509,7 @@ public class InputsBusinessLogicTest {
         ComponentInstListInput createListInputParams = setUpCreateListInputParams();
         ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
 
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
@@ -450,7 +529,7 @@ public class InputsBusinessLogicTest {
         ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
         InputDefinition listInput = createListInputParams.getListInput();
 
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
@@ -470,7 +549,7 @@ public class InputsBusinessLogicTest {
         ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
         InputDefinition listInput = createListInputParams.getListInput();
 
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
