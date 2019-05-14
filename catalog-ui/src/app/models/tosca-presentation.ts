@@ -21,6 +21,7 @@ export class ToscaPresentationData {
     validTargetTypes: Array<string>;
     modificationTime: number;
     uniqueId: string;
+    ownerId: string;
 
     constructor(toscaPresentation?: ToscaPresentationData) {
         if (toscaPresentation) {
@@ -30,6 +31,7 @@ export class ToscaPresentationData {
             this.validTargetTypes = toscaPresentation.validTargetTypes;
             this.modificationTime = toscaPresentation.modificationTime;
             this.uniqueId = toscaPresentation.uniqueId;
+            this.ownerId = toscaPresentation.ownerId;
         }
     }
 }

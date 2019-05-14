@@ -9,14 +9,20 @@ import {Observable} from "rxjs/Observable";
 
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {ModalModel, ButtonModel, InputBEModel, OperationModel, InterfaceModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
+import {
+    InputBEModel,
+    OperationModel,
+    InterfaceModel,
+    WORKFLOW_ASSOCIATION_OPTIONS,
+    CapabilitiesGroup,
+    Capability
+} from 'app/models';
 
 import {IModalConfig, IModalButtonComponent} from "sdc-ui/lib/angular/modals/models/modal-config";
 import {SdcUiComponents} from "sdc-ui/lib/angular";
 import {ModalButtonComponent} from "sdc-ui/lib/angular/components";
 
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
-import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 import {PluginsService} from "app/ng2/services/plugins.service";
 
@@ -114,6 +120,7 @@ export class InterfaceOperationComponent {
     modalTranslation: ModalTranslation;
     workflowIsOnline: boolean;
     workflows: Array<any>;
+    capabilities: CapabilitiesGroup;
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -141,7 +148,8 @@ export class InterfaceOperationComponent {
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaces(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
-            this.ComponentServiceNg2.getInterfaceTypes(this.component)
+            this.ComponentServiceNg2.getInterfaceTypes(this.component),
+            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
         ).subscribe((response: Array<any>) => {
             const callback = (workflows) => {
                 this.isLoading = false;
@@ -150,6 +158,7 @@ export class InterfaceOperationComponent {
                 this.inputs = response[1].inputs;
                 this.interfaceTypes = response[2];
                 this.workflows = workflows;
+                this.capabilities = response[3].capabilities;
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
                 this.WorkflowServiceNg2.getWorkflows().subscribe(
@@ -267,7 +276,8 @@ export class InterfaceOperationComponent {
             readonly: this.readonly,
             interfaceTypes: this.interfaceTypes,
             validityChangedCallback: this.enableOrDisableSaveButton,
-            workflowIsOnline: this.workflowIsOnline
+            workflowIsOnline: this.workflowIsOnline,
+            capabilities: _.filter(CapabilitiesGroup.getFlattenedCapabilities(this.capabilities), (capability: Capability) => capability.ownerId === this.component.uniqueId)
         };
 
         const modalConfig: IModalConfig = {

@@ -40,6 +40,7 @@ export class PropertyFEModel extends PropertyBEModel {
     valueObjOrig: any; //this is valueObj representation as saved in server
     valueObjIsChanged: boolean;
     derivedDataType: DerivedPropertyType;
+    origName: string;
 
     constructor(property: PropertyBEModel){
         super(property);
@@ -52,6 +53,7 @@ export class PropertyFEModel extends PropertyBEModel {
         this.valueObj = null;
         this.updateValueObjOrig();
         this.resetValueObjValidation();
+        this.origName = this.name;
     }
 
 

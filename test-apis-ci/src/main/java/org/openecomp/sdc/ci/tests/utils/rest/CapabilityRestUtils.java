@@ -17,6 +17,8 @@
 package org.openecomp.sdc.ci.tests.utils.rest;
 
 import com.google.gson.Gson;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -27,14 +29,13 @@ import java.util.List;
 
 public class CapabilityRestUtils extends BaseRestUtils {
     private static Gson gson = new Gson();
-    private static final String COMPONENT_TYPE = "services";
 
-    public static RestResponse createCapability(String componentId,
+    public static RestResponse createCapability(Component component,
                                                  List<CapabilityDetails> capabilityDetailsList,
                                                  User user) throws Exception{
         Config config = Config.instance();
         String url = String.format(Urls.CREATE_CAPABILITY, config.getCatalogBeHost(), config.getCatalogBePort(),
-                COMPONENT_TYPE, componentId);
+                ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId());
 
         String data = "{ \"capabilities\" : {" + "\"" +capabilityDetailsList.get(0).getType()+ "\"" +" : "
                 + gson.toJson(capabilityDetailsList) + "  } }";
@@ -42,12 +43,12 @@ public class CapabilityRestUtils extends BaseRestUtils {
         return sendPost(url, data , user.getUserId(), acceptHeaderData);
     }
 
-    public static RestResponse updateCapability(String componentId,
+    public static RestResponse updateCapability(Component component,
                                                  List<CapabilityDetails> capabilityDetailsList,
                                                  User user) throws Exception{
         Config config = Config.instance();
         String url = String.format(Urls.UPDATE_CAPABILITY, config.getCatalogBeHost(), config.getCatalogBePort(),
-                COMPONENT_TYPE, componentId);
+                ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId());
 
         String data = "{ \"capabilities\" : {" + "\"" +capabilityDetailsList.get(0).getType()+ "\"" +" : "
                 + gson.toJson(capabilityDetailsList) + "  } }";
@@ -55,21 +56,21 @@ public class CapabilityRestUtils extends BaseRestUtils {
         return sendPost(url, data , user.getUserId(), acceptHeaderData);
     }
 
-    public static RestResponse deleteCapability(String componentId,
+    public static RestResponse deleteCapability(Component component,
                                                  String requirementId,
                                                  User user) throws Exception{
         Config config = Config.instance();
         String url = String.format(Urls.DELETE_CAPABILITY, config.getCatalogBeHost(), config.getCatalogBePort(),
-                COMPONENT_TYPE, componentId, requirementId);
+                ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId(), requirementId);
         return sendDelete(url, user.getUserId());
     }
 
-    public static RestResponse getCapability(String componentId,
+    public static RestResponse getCapability(Component component,
                                               String requirementId,
                                               User user) throws Exception{
         Config config = Config.instance();
         String url = String.format(Urls.GET_CAPABILITY, config.getCatalogBeHost(), config.getCatalogBePort(),
-                COMPONENT_TYPE, componentId, requirementId);
+                ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId(), requirementId);
         return sendDelete(url, user.getUserId());
     }
 

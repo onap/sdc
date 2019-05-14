@@ -17,12 +17,15 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedCapabilityPropertyDefaultValue;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedInputPropertyDefaultValue;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedOutputDefaultValue;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceId;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceType;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationFromInterfaceDefinition;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityFromAllCapProps;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.isCapabilityProperty;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
 
 import com.google.gson.Gson;
@@ -51,7 +54,9 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
@@ -459,11 +464,28 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     private String getInputToscaDefaultValue(OperationInputDefinition input,
                                              org.openecomp.sdc.be.model.Component component) {
-        Map<String, List<String>> defaultInputValue;
+        Map<String, List<String>> defaultInputValue = null;
         if (isOperationInputMappedToComponentInput(input, component.getInputs())) {
             String propertyName = input.getInputId().substring(input.getInputId().indexOf('.') + 1);
 			setParentPropertyTypeAndInputPath(input, component);
             defaultInputValue = createMappedInputPropertyDefaultValue(propertyName);
+        } else if (isCapabilityProperty(input.getInputId(), component).isPresent()) {
+            ComponentInstanceProperty instanceProperty = isCapabilityProperty(input.getInputId(), component).get();
+            String parentPropertyId = instanceProperty.getParentUniqueId();
+            Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
+            if(MapUtils.isNotEmpty(componentCapabilities)) {
+                List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values().stream()
+                        .flatMap(Collection::stream).filter(capabilityDefinition -> capabilityDefinition.getOwnerId()
+                                .equals(component.getUniqueId())).collect(Collectors.toList());
+                Optional<CapabilityDefinition> propertyCapability = getPropertyCapabilityFromAllCapProps(parentPropertyId,
+                        capabilityDefinitionList);
+                if (propertyCapability.isPresent()) {
+                    String propertyName = instanceProperty.getName();
+                    defaultInputValue = createMappedCapabilityPropertyDefaultValue(propertyCapability.get().getName(),
+                            propertyName);
+                }
+            }
+
         } else {
             //Currently inputs can only be mapped to a declared input or an other operation outputs
             defaultInputValue = createMappedOutputDefaultValue(SELF, input.getInputId());

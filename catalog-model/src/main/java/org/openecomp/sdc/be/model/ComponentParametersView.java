@@ -46,7 +46,7 @@ public class ComponentParametersView {
     private boolean ignoreComponentInstancesAttributesFrom = false;
     private boolean ignoreInputs = false;
     private boolean ignoreComponentInstancesInputs = false;
-    private boolean ignoreCapabiltyProperties = true;
+    private boolean ignoreCapabiltyProperties = false;
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
     private boolean ignoreNodeFilterRequirements = false;
@@ -95,6 +95,7 @@ public class ComponentParametersView {
                     this.setIgnoreCapabilities(false);
                     this.setIgnoreRequirements(false);
                     this.setIgnoreNodeFilter(false);
+                    this.setIgnoreCapabiltyProperties(false);
                     break;
                 case COMPONENT_INSTANCES_PROPERTIES:
                     this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements
@@ -103,6 +104,7 @@ public class ComponentParametersView {
                 case CAPABILITIES:
                     this.setIgnoreComponentInstances(false);//we need this in order to get the calculate capabilities requirements
                     this.setIgnoreCapabilities(false);
+                    this.setIgnoreCapabiltyProperties(false);
                     break;
                 case REQUIREMENTS:
                     this.setIgnoreComponentInstances(false);

@@ -102,6 +102,36 @@ public class CapabilitiesValidationTest  {
     }
 
     @Test
+    public void shouldPassWhenCapabilityMaxOccurrencesIsUnbounded() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        capabilityDefinitions.add(createCapability("capName1", "capDesc", "capType", "source1",
+                "111", "UNBOUNDED"));
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, component, false);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isLeft());
+    }
+
+    @Test
+    public void shouldFailWhenCapabilityMinOccurrencesIsNegative() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        capabilityDefinitions.add(createCapability("capName1", "capDesc", "capType", "source1",
+                "-1", "3"));
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, component, false);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenMin_MaxOccurrencesIsNotInteger() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        capabilityDefinitions.add(createCapability("capName1", "capDesc", "capType", "source1",
+                "occur", "3"));
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, component, false);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
+    }
+
+    @Test
     public void shouldFailWhenCapabilityNotFoundForUpdate() {
         List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
         CapabilityDefinition capabilityToUpdate = createCapability("capName1", "capDesc", "capType", "source1",
@@ -111,6 +141,47 @@ public class CapabilitiesValidationTest  {
         capabilityDefinitions.add(capabilityToUpdate);
         Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
                 .validateCapabilities(capabilityDefinitions, component, true);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
+    }
+
+    @Test
+    public void shouldFailWhenCapabilityMapIsEmptyInComponentForUpdate() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        CapabilityDefinition capabilityToUpdate = createCapability("capName1", "capDesc", "capType", "source1",
+                "1", "3");
+        capabilityToUpdate.setUniqueId("uniqueId2");
+        capabilityDefinitions.add(capabilityToUpdate);
+        Component resource = new Resource();
+        List<CapabilityDefinition> componentCap = new ArrayList<>();
+        Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
+        capabilityMap.put("capTypeC", componentCap);
+
+        resource.setCapabilities(capabilityMap);
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, resource, true);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
+    }
+
+    @Test
+    public void shouldFailWhenCapabilityMapIsNullInComponentForUpdate() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        CapabilityDefinition capabilityToUpdate = createCapability("capName1", "capDesc", "capType", "source1",
+                "1", "3");
+        capabilityToUpdate.setUniqueId("uniqueId2");
+
+        capabilityDefinitions.add(capabilityToUpdate);
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, new Resource(), true);
+        Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
+    }
+
+    @Test
+    public void shouldFailWhenCapabilityNameContainsSpecialSymbolExceptDot() {
+        List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
+        capabilityDefinitions.add(createCapability("cap@name", "capDesc", "capType", "source1",
+                "0", "10"));
+        Either<Boolean, ResponseFormat> validateCapabilitiesResponseEither = capabilitiesValidationUtilTest
+                .validateCapabilities(capabilityDefinitions, component, false);
         Assert.assertTrue(validateCapabilitiesResponseEither.isRight());
     }
 
@@ -125,7 +196,6 @@ public class CapabilitiesValidationTest  {
         capabilityDefinition.setMaxOccurrences(maxOccurrences);
         capabilityDefinition.setMinOccurrences(minOccurrences);
         capabilityDefinition.setUniqueId("uniqueId");
-
 
         return capabilityDefinition;
     }
@@ -143,9 +213,9 @@ public class CapabilitiesValidationTest  {
         List<CapabilityDefinition> capabilityDefinitions = new ArrayList<>();
         capabilityDefinitions.add(createCapability("capNameC", "capDesc", "capType", "source1",
                 "0", "10"));
-            Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
-            capabilityMap.put("capTypeC", capabilityDefinitions);
-            resource.setCapabilities(capabilityMap);
+        Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
+        capabilityMap.put("capTypeC", capabilityDefinitions);
+        resource.setCapabilities(capabilityMap);
 
         return resource;
     }

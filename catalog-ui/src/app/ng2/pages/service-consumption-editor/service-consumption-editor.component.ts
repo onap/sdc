@@ -17,7 +17,17 @@
 import * as _ from "lodash";
 import { Component } from '@angular/core';
 import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
-import {Service, ServiceInstanceObject, InstanceFePropertiesMap, InstanceBePropertiesMap, PropertyBEModel, InputBEModel, OperationModel, InterfaceModel} from 'app/models';
+import {
+    Service,
+    ServiceInstanceObject,
+    InstanceFePropertiesMap,
+    InstanceBePropertiesMap,
+    PropertyBEModel,
+    InputBEModel,
+    OperationModel,
+    InterfaceModel,
+    Capability
+} from 'app/models';
 import {ConsumptionInput, ConsumptionInputDetails, ServiceOperation} from 'app/ng2/components/logic/service-consumption/service-consumption.component';
 import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";
 import { PROPERTY_DATA } from 'app/utils';
@@ -33,7 +43,7 @@ import { PROPERTY_DATA } from 'app/utils';
 export class ServiceConsumptionCreatorComponent {
 
     input: {
-        interfaceId: string;
+        interfaceId: string,
         serviceOperationIndex: number,
         serviceOperations: Array<ServiceOperation>,
         parentService: Service,
@@ -41,7 +51,9 @@ export class ServiceConsumptionCreatorComponent {
         parentServiceInputs: Array<InputBEModel>,
         selectedServiceProperties: Array<PropertyBEModel>,
         selectedServiceInstanceId: String,
-        selectedInstanceSiblings: Array<ServiceInstanceObject>
+        selectedInstanceSiblings: Array<ServiceInstanceObject>,
+        selectedInstanceCapabilitisList: Array<Capability>,
+        siblingsCapabilitiesList: Map<string, Array<Capability>>
     };
     sourceTypes: Array<any> = [];
     serviceOperationsList: Array<ServiceOperation>;
@@ -80,16 +92,24 @@ export class ServiceConsumptionCreatorComponent {
 
     initSourceTypes() {
         this.sourceTypes = [
-            { label: this.SOURCE_TYPES.STATIC, value: this.SOURCE_TYPES.STATIC, options: [], interfaces: []},
+            {
+                label: this.SOURCE_TYPES.STATIC,
+                value: this.SOURCE_TYPES.STATIC,
+                options: [],
+                interfaces: [],
+                capabilities: []
+            },
             { label: this.SOURCE_TYPES.SELF + ' (' + this.selectedService.name + ')',
                 value: this.selectedServiceInstanceId,
                 options: this.selectedServiceProperties,
-                interfaces: this.selectedService.interfaces
+                interfaces: this.selectedService.interfaces,
+                capabilities: this.input.selectedInstanceCapabilitisList
             },
             { label: this.parentService.name,
                 value: this.parentService.uniqueId,
                 options: this.parentServiceInputs,
-                interfaces: []
+                interfaces: [],
+                capabilities: []
     }
         ];
         _.forEach(this.input.selectedInstanceSiblings, sib =>
@@ -97,7 +117,8 @@ export class ServiceConsumptionCreatorComponent {
                 label: sib.name,
                 value: sib.id,
                 options: _.unionBy(sib.inputs, sib.properties, 'uniqueId'),
-                interfaces: sib.interfaces
+                interfaces: sib.interfaces,
+                capabilities: this.input.siblingsCapabilitiesList[sib.id]
             })
         );
     }
@@ -160,6 +181,7 @@ export class ServiceConsumptionCreatorComponent {
                 consumptionInputDetails.assignValueLabel = this.getAssignValueLabel(sourceVal);
                 consumptionInputDetails.associatedProps = filteredListsObj.associatedPropsList;
                 consumptionInputDetails.associatedInterfaces = filteredListsObj.associatedInterfacesList;
+                consumptionInputDetails.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
                 return new ConsumptionInputDetails(consumptionInputDetails);
             });
         }
@@ -171,6 +193,7 @@ export class ServiceConsumptionCreatorComponent {
         let filteredListsObj = this.getFilteredProps(consumptionInput.source, consumptionInput.type);
         consumptionInput.associatedProps = filteredListsObj.associatedPropsList;
         consumptionInput.associatedInterfaces = filteredListsObj.associatedInterfacesList;
+        consumptionInput.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
         if(consumptionInput.source === this.SOURCE_TYPES.STATIC) {
             if(PROPERTY_DATA.SIMPLE_TYPES.indexOf(consumptionInput.type) !== -1) {
                 consumptionInput.value = consumptionInput.defaultValue || "";
@@ -184,7 +207,7 @@ export class ServiceConsumptionCreatorComponent {
 
     private getFilteredProps(sourceVal, inputType) {
         let currentSourceObj = this.sourceTypes.find(s => s.value === sourceVal);
-        let associatedInterfacesList = [], associatedPropsList = [];
+        let associatedInterfacesList = [], associatedPropsList = [], associatedCapabilitiesPropsList: Array<Capability> = [];
         if(currentSourceObj) {
             if (currentSourceObj.interfaces) {
                 associatedInterfacesList = this.getFilteredInterfaceOutputs(currentSourceObj, inputType);
@@ -195,10 +218,22 @@ export class ServiceConsumptionCreatorComponent {
                 }
                 return result;
             }, []);
+            associatedCapabilitiesPropsList =
+                _.reduce(currentSourceObj.capabilities,
+                    (filteredCapsList, capability: Capability) => {
+                        let filteredProps = _.filter(capability.properties, prop => prop.type === inputType);
+                        if (filteredProps.length) {
+                            let cap = new Capability(capability);
+                            cap.properties = filteredProps;
+                            filteredCapsList.push(cap);
+                        }
+                        return filteredCapsList
+                    }, []);
         }
         return {
             associatedPropsList: associatedPropsList,
-            associatedInterfacesList: associatedInterfacesList
+            associatedInterfacesList: associatedInterfacesList,
+            associatedCapabilitiesList: associatedCapabilitiesPropsList
         }
     }
 

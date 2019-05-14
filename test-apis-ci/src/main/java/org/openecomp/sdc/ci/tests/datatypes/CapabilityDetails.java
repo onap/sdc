@@ -16,11 +16,16 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+
+import java.util.List;
+
 public class CapabilityDetails {
     private String name;
     private String type;
     private String maxOccurrences;
     private String minOccurrences;
+    private List<ComponentInstanceProperty> properties;
 
     public String getName() {
         return name;
@@ -52,5 +57,13 @@ public class CapabilityDetails {
 
     public void setMinOccurrences(String minOccurrences) {
         this.minOccurrences = minOccurrences;
+    }
+
+    public List<ComponentInstanceProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<ComponentInstanceProperty> properties) {
+        this.properties = properties;
     }
 }

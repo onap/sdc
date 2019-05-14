@@ -1236,29 +1236,131 @@ public class ToscaOperationFacade {
 
     public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(Component containerComponent, Map<String, List<ComponentInstanceProperty>> instProperties) {
         requireNonNull(instProperties);
-        StorageOperationStatus status;
+        StorageOperationStatus status = null;
         for (Entry<String, List<ComponentInstanceProperty>> entry : instProperties.entrySet()) {
             List<ComponentInstanceProperty> props = entry.getValue();
             String componentInstanceId = entry.getKey();
-            List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(componentInstanceId);
+
+            Map<String, List<CapabilityDefinition>> containerComponentCapabilities = containerComponent.getCapabilities();
+
             if (!isEmpty(props)) {
                 for (ComponentInstanceProperty property : props) {
-                    Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream()
-                            .filter(p -> p.getUniqueId().equals(property.getUniqueId()))
-                            .findAny();
-                    if (instanceProperty.isPresent()) {
-                        status = updateComponentInstanceProperty(containerComponent, componentInstanceId, property);
-                    } else {
-                        status = addComponentInstanceProperty(containerComponent, componentInstanceId, property);
+                    String propertyParentUniqueId = property.getParentUniqueId();
+                    Optional<CapabilityDefinition>
+                            capPropDefinition = getPropertyCapability(propertyParentUniqueId, containerComponent);
+                    if(capPropDefinition.isPresent() && MapUtils.isNotEmpty(containerComponentCapabilities)) {
+                        status = populateAndUpdateInstanceCapProperty(containerComponent, componentInstanceId,
+                                containerComponentCapabilities, property, capPropDefinition.get());
                     }
-                    if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update instance property {} for instance {} error {} ", property, componentInstanceId, status);
+                    if(status ==  null) {
+                        List<ComponentInstanceProperty> instanceProperties = containerComponent
+                                .getComponentInstancesProperties().get(componentInstanceId);
+                        status = updateInstanceProperty(containerComponent, componentInstanceId, instanceProperties, property);
+                    }
+                    if(status != StorageOperationStatus.OK) {
                         return Either.right(status);
                     }
                 }
             }
         }
         return Either.left(instProperties);
+    }
+
+    private StorageOperationStatus populateAndUpdateInstanceCapProperty(Component containerComponent, String componentInstanceId,
+                                                                        Map<String, List<CapabilityDefinition>> containerComponentCapabilities,
+                                                                        ComponentInstanceProperty property,
+                                                                        CapabilityDefinition capabilityDefinition) {
+        List<CapabilityDefinition> capabilityDefinitions = containerComponentCapabilities.get(capabilityDefinition.getType());
+        if(CollectionUtils.isEmpty(capabilityDefinitions)) {
+            return null;
+        }
+        Optional<CapabilityDefinition> capDefToGetProp = capabilityDefinitions.stream()
+                .filter(cap -> cap.getUniqueId().equals(capabilityDefinition.getUniqueId()) && cap.getPath().size() == 1).findAny();
+        if(capDefToGetProp.isPresent()) {
+            return updateInstanceCapabilityProperty(containerComponent, componentInstanceId, property, capDefToGetProp.get());
+        }
+        return null;
+    }
+
+    private static Optional<CapabilityDefinition> getPropertyCapability(String propertyParentUniqueId,
+                                                                        Component containerComponent) {
+
+        Map<String, List<CapabilityDefinition>> componentCapabilities = containerComponent.getCapabilities();
+        if(MapUtils.isEmpty(componentCapabilities)){
+            return Optional.empty();
+        }
+        List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values()
+                .stream().flatMap(Collection::stream).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(capabilityDefinitionList)){
+            return Optional.empty();
+        }
+        return capabilityDefinitionList.stream()
+                .filter(capabilityDefinition -> capabilityDefinition.getUniqueId().equals(propertyParentUniqueId))
+                .findAny();
+    }
+
+    private StorageOperationStatus updateInstanceProperty(Component containerComponent, String componentInstanceId,
+                                                          List<ComponentInstanceProperty> instanceProperties,
+                                                          ComponentInstanceProperty property) {
+        StorageOperationStatus status;
+        Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream()
+                .filter(p -> p.getUniqueId().equals(property.getUniqueId()))
+                .findAny();
+        if (instanceProperty.isPresent()) {
+            status = updateComponentInstanceProperty(containerComponent, componentInstanceId, property);
+        } else {
+            status = addComponentInstanceProperty(containerComponent, componentInstanceId, property);
+        }
+        if (status != StorageOperationStatus.OK) {
+            log.debug("Failed to update instance property {} for instance {} error {} ", property, componentInstanceId, status);
+            return status;
+        }
+        return StorageOperationStatus.OK;
+    }
+
+    public StorageOperationStatus updateInstanceCapabilityProperty(Component containerComponent, String componentInstanceId,
+                                                                   ComponentInstanceProperty property,
+                                                                   CapabilityDefinition capabilityDefinition) {
+        Optional<ComponentInstance> fetchedCIOptional = containerComponent.getComponentInstanceById(componentInstanceId);
+        if(!fetchedCIOptional.isPresent()) {
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
+        Either<Component, StorageOperationStatus> getComponentRes =
+                getToscaFullElement(fetchedCIOptional.get().getComponentUid());
+        if(getComponentRes.isRight()) {
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
+        Optional<Component> componentOptional = isNodeServiceProxy(getComponentRes.left().value());
+        String propOwner;
+        if(!componentOptional.isPresent()) {
+            propOwner = componentInstanceId;
+        } else {
+            propOwner = fetchedCIOptional.get().getSourceModelUid();
+        }
+        StorageOperationStatus status;
+        StringBuffer sb = new StringBuffer(componentInstanceId);
+        sb.append(ModelConverter.CAP_PROP_DELIM).append(propOwner).append(ModelConverter.CAP_PROP_DELIM)
+                .append(capabilityDefinition.getType()).append(ModelConverter.CAP_PROP_DELIM).append(capabilityDefinition.getName());
+        String capKey = sb.toString();
+        status = updateComponentInstanceCapabiltyProperty(containerComponent, componentInstanceId, capKey, property);
+        if (status != StorageOperationStatus.OK) {
+            log.debug("Failed to update instance capability property {} for instance {} error {} ", property,
+                    componentInstanceId, status);
+            return status;
+        }
+        return StorageOperationStatus.OK;
+    }
+
+    private Optional<Component> isNodeServiceProxy(Component component) {
+        if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
+            return Optional.empty();
+        }
+        Resource resource = (Resource) component;
+        ResourceTypeEnum resType = resource.getResourceType();
+        if(resType.equals(ResourceTypeEnum.ServiceProxy))  {
+            return Optional.of(component);
+        }
+        return Optional.empty();
     }
 
     public StorageOperationStatus associateDeploymentArtifactsToInstances(Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, String componentId, User user) {
@@ -2634,8 +2736,8 @@ public class ToscaOperationFacade {
         }
         return Either.left(parentComponents);
     }
-    public void updateCapReqOwnerId(String componentId) {
+    public void updateCapReqPropertiesOwnerId(String componentId) {
         topologyTemplateOperation
-                .updateCapReqOwnerId(componentId, getTopologyTemplate(componentId));
+                .updateCapReqPropertiesOwnerId(componentId, getTopologyTemplate(componentId));
     }
 }

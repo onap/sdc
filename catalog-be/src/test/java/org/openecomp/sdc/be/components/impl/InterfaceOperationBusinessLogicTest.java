@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,10 +46,13 @@ import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -144,6 +148,44 @@ public class InterfaceOperationBusinessLogicTest {
                         user, true);
         Assert.assertTrue(interfaceOperationEither.isLeft());
     }
+
+    @Test
+    public void createInterfaceOperationTestOnExistingInterfaceInputsFromCapProp() {
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+                .thenReturn(Either.left(Collections.emptyMap()));
+        when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
+                Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
+
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setName("cap" + Math.random());
+        capabilityDefinition.setType("tosca.capabilities.network.Bindable");
+        capabilityDefinition.setOwnerId(resourceId);
+        capabilityDefinition.setUniqueId("capUniqueId");
+
+        List<ComponentInstanceProperty> properties = new ArrayList<>();
+        ComponentInstanceProperty instanceProperty = new ComponentInstanceProperty();
+        instanceProperty.setUniqueId("ComponentInput1_uniqueId");
+        instanceProperty.setType("Integer");
+        instanceProperty.setName("prop_name");
+        instanceProperty.setDescription("prop_description_prop_desc");
+        instanceProperty.setOwnerId("capUniqueId");
+        instanceProperty.setSchema(new SchemaDefinition());
+        properties.add(instanceProperty);
+        capabilityDefinition.setProperties(properties);
+        Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
+        capabilityMap.put(capabilityDefinition.getType(), Collections.singletonList(capabilityDefinition));
+
+        resource.setCapabilities(capabilityMap);
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
+
+        Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
+                interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
+                        Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId,
+                                operationId, operationName)),
+                        user, true);
+        Assert.assertTrue(interfaceOperationEither.isLeft());
+    }
+
 
     @Test
     public void createInterfaceOperationWithoutInterfaceTest() {

@@ -77,6 +77,15 @@
                                     {{output.name}}
                                 </option>
                             </optgroup>
+                            <optgroup
+                                    *ngFor="let cap of consumptionInput.associatedCapabilities"
+                                    label="{{cap.name}}">
+                                <option
+                                        *ngFor="let prop of cap.properties"
+                                        [ngValue]="cap.name + '_' + prop.name">
+                                    {{prop.name}}
+                                </option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>

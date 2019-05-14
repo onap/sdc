@@ -1,7 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {DataTypeService} from "app/ng2/services/data-type.service";
-import {OperationModel, OperationParameter, InputBEModel, DataTypeModel} from 'app/models';
-import {DropDownOption} from "../operation-creator.component";
+import {OperationModel, OperationParameter, InputBEModel, DataTypeModel, Capability} from 'app/models';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 
 class DropdownValueType extends DropdownValue {
@@ -25,6 +24,7 @@ export class ParamRowComponent {
     @Input() param: OperationParameter;
     @Input() inputProps: Array<InputBEModel>;
     @Input() operationOutputs: Array<OperationModel>;
+    @Input() capabilitiesProps: Array<Capability>;
     @Input() onRemoveParam: Function;
     @Input() isAssociateWorkflow: boolean;
     @Input() readonly: boolean;
@@ -34,6 +34,7 @@ export class ParamRowComponent {
     propTypeEnum: Array<string> = [];
     operationOutputCats: Array<{ operationName: string, outputs: Array<DropdownValueType> }> = [];
     filteredInputProps: Array<DropdownValue> = [];
+    filteredCapabilitiesProps: Array<{capabilityName: string, properties: Array<DropdownValueType>}> = [];
 
     constructor(private dataTypeService: DataTypeService) {}
 
@@ -113,6 +114,26 @@ export class ParamRowComponent {
             category => category.outputs.length > 0
         );
 
+        this.filteredCapabilitiesProps = _.filter(
+            _.map(
+                this.capabilitiesProps,
+                cap => {
+                    return {
+                        capabilityName: cap.name,
+                        properties: _.map(
+                            _.filter(cap.properties, prop => !this.param.type || prop.type === this.param.type),
+                            prop => new DropdownValueType(
+                                prop.uniqueId,
+                                prop.name,
+                                prop.type
+                            )
+                        )
+                    };
+                }
+            ),
+            capability => capability.properties.length > 0
+        );
+
         if (this.param.inputId) {
             const selProp = this.getSelectedProp();
             if (selProp && selProp.type === this.param.type) {
@@ -181,6 +202,12 @@ export class ParamRowComponent {
                 (acc, cat) => [...acc, ...cat.outputs],
             []),
             (out: DropdownValueType) => this.param.inputId === out.value
+            ) || _.find(
+                _.reduce(
+                    this.filteredCapabilitiesProps,
+                    (acc, cap) => [...acc, ...cap.properties],
+                    []),
+                (prop: DropdownValueType) => this.param.inputId === prop.value
         );
     }
 

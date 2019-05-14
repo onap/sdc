@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.jcabi.aspects.Loggable;
@@ -26,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import fj.data.Either;
 import io.swagger.annotations.Api;
@@ -200,7 +203,11 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
 				List<Object> toscaFunctionList = (List<Object>) consumptionValueName;
 				String consumptionInputValue = null;
 				if (ToscaFunctions.GET_PROPERTY.getFunctionName().equals(toscaFunction)) {
-					consumptionInputValue = String.valueOf(toscaFunctionList.get(1));
+					String propertyValue = toscaFunctionList.stream()
+							.map(Object::toString)
+							.filter(val -> !val.equals(SELF))
+							.collect(Collectors.joining("_"));
+					consumptionInputValue = String.valueOf(propertyValue);
 				} else if (ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName().equals(toscaFunction)) {
 					//Return full output name
 					consumptionInputValue =

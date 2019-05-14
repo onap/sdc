@@ -5,7 +5,15 @@ import {Subscription} from "rxjs/Subscription";
 
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {InterfaceModel, OperationModel, OperationParameter, InputBEModel, RadioButtonModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
+import {
+    InterfaceModel,
+    OperationModel,
+    OperationParameter,
+    InputBEModel,
+    RadioButtonModel,
+    WORKFLOW_ASSOCIATION_OPTIONS,
+    Capability
+} from 'app/models';
 
 import {IDropDownOption} from "sdc-ui/lib/angular/form-elements/dropdown/dropdown-models";
 import {Tabs, Tab} from "app/ng2/components/ui/tabs/tabs.component";
@@ -39,7 +47,8 @@ export interface OperationCreatorInput {
     readonly: boolean,
     interfaceTypes: { [interfaceType: string]: Array<string> },
     validityChangedCallback: Function,
-    workflowIsOnline: boolean;
+    workflowIsOnline: boolean,
+    capabilities: Array<Capability>
 }
 
 @Component({
@@ -59,6 +68,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     interfaceTypes: { [interfaceType: string]: Array<string> };
     operationNames: Array<TypedDropDownOption> = [];
     validityChangedCallback: Function;
+    capabilities: Array<Capability>;
 
     allWorkflows: Array<any>;
     workflows: Array<DropdownValue> = [];
@@ -73,6 +83,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     outputParameters: Array<OperationParameter> = [];
     noAssignOutputParameters: Array<OperationParameter> = [];
     assignOutputParameters: { [key: string]: { [key: string]: Array<OperationParameter>; }; } = {};
+    componentCapabilities: Array<Capability> = [];
 
     tableParameters: Array<OperationParameter> = [];
     operationOutputs: Array<OperationModel> = [];
@@ -171,6 +182,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             }
         }
         this.reconstructOperation();
+        this.filterCapabilities();
         this.validityChanged();
         this.updateTable();
     }
@@ -215,6 +227,10 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             }
         }
 
+    }
+
+    filterCapabilities() {
+        this.componentCapabilities = _.filter(this.capabilities, (cap: Capability) => cap.properties);
     }
 
     buildParams = () => {

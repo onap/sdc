@@ -2137,7 +2137,7 @@ errors:
 # %1 - Interface Operation input property name, component type
     INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT: {
         code: 404,
-        message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties or outputs of other operations.",
+        message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties, capability properties or outputs of other operations.",
         messageId: "SVC4708"
     }
 #---------SVC4709-----------------------------
@@ -2274,4 +2274,19 @@ errors:
         code: 400,
         message: "Error: Property name contains invalid characters. It should have only letters, numbers and underscores.",
         messageId: "SVC4727"
+    }
+
+#---------SVC4728------------------------------
+    FAILED_TO_CREATE_OR_UPDATE_CAPABILITY_PROPERTIES: {
+        code: 500,
+        message: "Error: Failed to create or update capabilities properties",
+        messageId: "SVC4728"
+    }
+
+#---------SVC4729------------------------------
+     # %1 - resource Id
+    CAPABILITY_PROPERTIES_NOT_FOUND: {
+        code: 400,
+        message: "Error: Capability properties not found in the resource '%1'.",
+        messageId: "SVC4729"
     }

@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.components.impl;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.handleConsumptionInputMappedToCapabilityProperty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedValueFromValidType;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
@@ -64,6 +66,7 @@ import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -91,6 +94,7 @@ import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributi
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
@@ -118,8 +122,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
-import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -475,12 +477,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         ServiceConsumptionSource sourceValue = ServiceConsumptionSource.getSourceValue(source);
 
         if(STATIC.equals(sourceValue)) {
+            // Validate constraint on input value
+            Either<Boolean, ResponseFormat> constraintValidationResult =
+                    validateOperationInputConstraint(operationInputDefinition, consumptionValue, type);
+
+            if (constraintValidationResult.isRight()) {
+                return Either.right(constraintValidationResult.right().value());
+            }
             return handleConsumptionStaticValue(consumptionValue, type, operation,
                     operationInputDefinition);
         }
 
         if (Objects.isNull(sourceValue)) {
             List<PropertyDefinition> propertyDefinitions;
+            Map<String, List<CapabilityDefinition>> capabilities = null;
             String componentName;
             List<OperationOutputDefinition> outputs = null;
             if (source.equals(containerService.getUniqueId())) {
@@ -505,6 +515,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 ComponentInstance componentInstance = getComponentInstance.get();
                 operationInputDefinition.setSource(componentInstance.getUniqueId());
                 propertyDefinitions = componentInstance.getProperties();
+                capabilities = componentInstance.getCapabilities();
                 componentName = source.equals(serviceInstanceId) ? SELF : componentInstance.getName();
                 if (MapUtils.isNotEmpty(componentInstance.getInterfaces())) {
                     Map<String, InterfaceDataDefinition> componentInstanceInterfaces =
@@ -522,7 +533,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                         operationInputDefinition);
             }
             return handleConsumptionPropertyValue(operation, operationInputDefinition,
-                    serviceConsumptionData, propertyDefinitions, outputs, consumptionValue, componentName);
+                    serviceConsumptionData, propertyDefinitions, capabilities, outputs, componentName);
         }
 
         operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
@@ -545,12 +556,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Operation, ResponseFormat> handleConsumptionPropertyValue(
             Operation operation, OperationInputDefinition operationInputDefinition,
-            ServiceConsumptionData serviceConsumptionData, List<PropertyDefinition> properties,
-            List<OperationOutputDefinition> outputs, String consumptionValue, String componentName) {
+            ServiceConsumptionData serviceConsumptionData, List<PropertyDefinition> properties,Map<String,
+            List<CapabilityDefinition>> capabilities,
+            List<OperationOutputDefinition> outputs,  String componentName) {
 
         if (CollectionUtils.isEmpty(properties) && CollectionUtils.isEmpty(outputs)) {
             return Either.left(operation);
         }
+        String consumptionValue = serviceConsumptionData.getValue();
 
         if (CollectionUtils.isNotEmpty(outputs)
                 && isOperationInputMappedToOtherOperationOutput(getOperationOutputName(consumptionValue), outputs)) {
@@ -558,10 +571,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                     consumptionValue, componentName);
         }
 
-        if (CollectionUtils.isNotEmpty(properties)) {
+        if (CollectionUtils.isNotEmpty(properties) && PropertiesUtils.isNodeProperty(consumptionValue, properties)) {
             return handleConsumptionInputMappedToProperty(operation, operationInputDefinition, serviceConsumptionData,
                     properties, componentName);
         }
+
+        if (MapUtils.isNotEmpty(capabilities)) {
+            return handleConsumptionInputMappedToCapabilityProperty(operation, operationInputDefinition,
+                    serviceConsumptionData, capabilities, componentName);
+        }
+
         return Either.left(operation);
     }
 
@@ -672,7 +691,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
 			ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
 			propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
-			inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+            if (operationInputDefinition.getParentPropertyType() != null) {
+                inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+            }
 
 			return PropertyValueConstraintValidationUtil.getInstance()
 					.validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
@@ -717,25 +738,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         return Either.left(operation);
-    }
-
-
-    private boolean isAssignedValueFromValidType(String operationInputType, Object actualValue) {
-        if (actualValue instanceof String) {
-            // validate static value
-            ToscaPropertyType actualType = ToscaPropertyType.isValidType(operationInputType);
-            PropertyTypeValidator validator = actualType.getValidator();
-            return validator.isValid((String)actualValue, operationInputType);
-        } else if (actualValue instanceof PropertyDefinition) {
-            // validate input / property value
-            String actualType = ((PropertyDefinition) actualValue).getType();
-            return actualType.equalsIgnoreCase(operationInputType);
-        } else if (actualValue instanceof OperationOutputDefinition) {
-            // validate input / output value
-            String actualType = ((OperationOutputDefinition) actualValue).getType();
-            return actualType.equalsIgnoreCase(operationInputType);
-        }
-        return false;
     }
 
     private void addGetInputValueToOperationInput(Operation operation,
