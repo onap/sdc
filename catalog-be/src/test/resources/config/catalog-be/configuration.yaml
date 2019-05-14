@@ -678,6 +678,14 @@ dmeConfiguration:
     dme2Search: DME2SEARCH
     dme2Resolve: DME2RESOLVE
 
+excludedPolicyTypesMapping:
+    SERVICE:
+      - a.b.c
+    VF:
+      - c.d.e
+    VFC:
+      - c.d.e
+
 excludedGroupTypesMapping:
     CR:
        - org.openecomp.groups.VfModule
