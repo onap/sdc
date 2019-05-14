@@ -1,35 +1,23 @@
 /*
-
- * Copyright (c) 2018 AT&T Intellectual Property.
-
+ * ============LICENSE_START=============================================================================================================
+ * Copyright (c) 2019 <Company or Individual>.
+ * ===================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
-
- * Licensed under the Apache License, Version 2.0 (the "License");
-
- * you may not use this file except in compliance with the License.
-
- * You may obtain a copy of the License at
-
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
-
- *     http://www.apache.org/licenses/LICENSE-2.0
-
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * ============LICENSE_END===============================================================================================================
  *
-
- * Unless required by applicable law or agreed to in writing, software
-
- * distributed under the License is distributed on an "AS IS" BASIS,
-
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
- * See the License for the specific language governing permissions and
-
- * limitations under the License.
-
  */
 
 package org.openecomp.sdc.be.datamodel;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,6 +30,9 @@ import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.utils.ServiceBuilder;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -76,6 +67,10 @@ public class UiComponentDataConverterTest {
     private static GroupTypeBusinessLogic groupTypeBusinessLogic;
     private static PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private static UiComponentDataConverter uiComponentDataConverter;
+
+    private static final String PROPERTY_UID = "propertyUid";
+    private static final String NODE_FILTER_UID = "nodeFilterUid";
+    private static final String COMPONENT_UID = "componentUid";
 
     @BeforeClass
     public static void initClass() {
@@ -265,6 +260,54 @@ public class UiComponentDataConverterTest {
         assertThat(policies.size()).isZero();
         List<GroupDefinition> groups = componentDTO.getGroups();
         assertThat(groups.size()).isZero();
+    }
+
+    @Test
+    public void testGetDeclaredPolicies() {
+        ComponentInstanceProperty property = new ComponentInstanceProperty();
+        property.setName(PROPERTY_UID);
+
+        GetPolicyValueDataDefinition getPolicy = new GetPolicyValueDataDefinition();
+        getPolicy.setPolicyId(PROPERTY_UID);
+        getPolicy.setPropertyName(PROPERTY_UID);
+        property.setGetPolicyValues(Collections.singletonList(getPolicy));
+
+        Map<String, List<ComponentInstanceProperty>> instanceProperties = new HashMap<>();
+        instanceProperties.put(COMPONENT_UID, Collections.singletonList(property));
+
+        Resource resource = new ResourceBuilder().build();
+        resource.setComponentInstancesProperties(instanceProperties);
+
+        UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+                Collections.singletonList("policies"));
+
+        assertThat(CollectionUtils.isNotEmpty(uiComponentDataTransfer.getPolicies()));
+    }
+
+    @Test
+    public void testGetNodeFilterEmptyList() {
+        Resource resource = new ResourceBuilder().build();
+        UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+                Collections.singletonList("nodeFilter"));
+
+        assertThat(MapUtils.isEmpty(uiComponentDataTransfer.getNodeFilter()));
+    }
+
+    @Test
+    public void testGetNodeFilter() {
+        CINodeFilterDataDefinition nodeFilter = new CINodeFilterDataDefinition();
+        nodeFilter.setID(NODE_FILTER_UID);
+
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put(NODE_FILTER_UID, nodeFilter);
+
+        Resource resource = new ResourceBuilder().build();
+        resource.setNodeFilterComponents(nodeFilterMap);
+
+        UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+                Collections.singletonList("nodeFilter"));
+
+        assertThat(MapUtils.isNotEmpty(uiComponentDataTransfer.getNodeFilter()));
     }
 
     private Resource buildResourceWithGroups() {
