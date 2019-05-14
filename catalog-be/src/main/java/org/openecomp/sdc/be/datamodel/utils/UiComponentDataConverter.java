@@ -124,12 +124,7 @@ public class UiComponentDataConverter {
                 setComponentInstanceInputs(dataTransfer, component);
                 break;
             case NODE_FILTER:
-                if(component.getNodeFilterComponents() == null) {
-                    dataTransfer.setNodeFilterData(null);
-                } else {
-                    NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
-                    dataTransfer.setNodeFilterData(nodeFilterConverter.convertDataMapToUI(component.getNodeFilterComponents()));
-                }
+                setNodeFilter(dataTransfer, component);
                 break;
             case COMPONENT_INSTANCES_INTERFACES:
                 setComponentInstanceInterfaces(dataTransfer, component);
@@ -142,6 +137,14 @@ public class UiComponentDataConverter {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void setNodeFilter(UiComponentDataTransfer dataTransfer, Component component) {
+        if(component.getNodeFilterComponents() == null) {
+          dataTransfer.setNodeFilter(null);
+        } else {
+          dataTransfer.setNodeFilter(component.getNodeFilterComponents());
         }
     }
 
