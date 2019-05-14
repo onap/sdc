@@ -1,6 +1,32 @@
+/*
+ * ============LICENSE_START=============================================================================================================
+ * Copyright (c) 2019 <Company or Individual>.
+ * ===================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * ============LICENSE_END===============================================================================================================
+ *
+ */
 package org.openecomp.sdc.be.components.property;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.MockGenerator.mockComponentUtils;
+import static org.openecomp.sdc.be.MockGenerator.mockExceptionUtils;
+
 import fj.data.Either;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,23 +40,14 @@ import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.MockGenerator.mockComponentUtils;
-import static org.openecomp.sdc.be.MockGenerator.mockExceptionUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
@@ -44,7 +61,9 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
     @Captor
     private ArgumentCaptor<ComponentParametersView> inputsFilterCaptor;
 
-    private Annotation annotation1, annotation2;
+    private Annotation annotation1;
+
+    private Annotation annotation2;
 
     @Override
     @Before
@@ -86,6 +105,38 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         when(toscaOperationFacade.getToscaElement(eq(ORIGIN_INSTANCE_ID), inputsFilterCaptor.capture())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         assertThatExceptionOfType(StorageException.class).isThrownBy(() -> testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare));
+    }
+
+    @Test
+    public void testCreateDeclaredProperty() {
+        ComponentInstanceInput declaredProperty = testInstance.createDeclaredProperty(prop1);
+        assertThat(declaredProperty.getUniqueId()).isEqualTo(prop1.getUniqueId());
+    }
+
+    @Test
+    public void testUpdateDeclaredProperties() {
+        List<ComponentInstanceInput> expectedProperties = Collections.singletonList(new ComponentInstanceInput(prop1));
+        Map<String, List<ComponentInstanceInput>> expectedMap = new HashMap<>();
+        expectedMap.put(prop1.getName(), expectedProperties);
+
+        when(toscaOperationFacade.addComponentInstanceInputsToComponent(eq(resource), anyMap()))
+                .thenReturn(Either.left(expectedMap));
+
+        Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> updateEither =
+                (Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus>) testInstance.updatePropertiesValues(resource, resource.getUniqueId(), expectedProperties);
+
+        assertThat(updateEither.isLeft());
+        Map<String, List<ComponentInstanceInput>> actualProperties = updateEither.left().value();
+        assertThat(actualProperties.values().size()).isEqualTo(expectedProperties.size());
+        assertThat(actualProperties.values().iterator().next()).isEqualTo(expectedProperties);
+    }
+
+    @Test
+    public void testResolvePropertiesOwner() {
+        Optional<ComponentInstance> componentInstance = testInstance.resolvePropertiesOwner(resource, INSTANCE_ID);
+
+        assertThat(componentInstance.isPresent());
+        assertThat(componentInstance.get().getUniqueId()).isEqualTo(INSTANCE_ID);
     }
 
     private void verifyInputAnnotations(InputDefinition inputDefinition) {
