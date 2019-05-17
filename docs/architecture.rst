@@ -20,12 +20,12 @@ The following diagram shows the high-level relationship between the system compo
 The SDC architecture uses the Jetty server as an application server.
 
 - The **Jetty front end**:
-   - supplies the static content of web pages, and all resources that required by the GUI
+   - supplies the static content of the web pages and all the resources that are required by the GUI
    - serves as a proxy for the REST API requests coming from the GUI
    
   Every request originating from the GUI is passed to the Jetty front-end server before it is executed.
 
-- The **Jetty back end** containers all the logic for the SDC.
+- The **Jetty back end** contains all the logic for the SDC.
 
 SDC uses two storage components: Elastic Search(ES) and Cassandra
 

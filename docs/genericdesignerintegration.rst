@@ -5,10 +5,10 @@
 Generic Designer Integration
 ========
 
-plugable Architecture
+Pluggable Architecture
 ================================
 
 SDC has been working on opening the application to allow an easy integration for any designer explanations.
-the current definitions and explanations are located here.
+The current definitions and explanations are located here:
 
 `Generic Designer Support <https://wiki.onap.org/display/DW/Generic+Designer+Support/>`_
