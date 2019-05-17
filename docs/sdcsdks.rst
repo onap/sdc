@@ -9,7 +9,7 @@ SDC SDKs
 SDC SDKs List
 =============
 
-The sdc projects consists of a few additional sub projects listed below:
+The sdc projects consist of a few additional sub projects listed below:
 
 - sdc-tosca
 - sdc-jtosca

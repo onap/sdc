@@ -5,7 +5,7 @@
 Offered APIs
 ============
 
-The list of APIs that SDC has offered could be find in the following table:
+The list of APIs that SDC offers can be found from the following table:
 
 .. |pdf-icon| image:: images/pdf.png
               :width: 40px
