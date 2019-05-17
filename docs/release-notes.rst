@@ -58,7 +58,7 @@ SDC SDKs Versions
 
 Release Purpose
 ----------------
-The Casablanca release was focused on improving platform stability and resiliency and introducing now platform capabilities.
+The Casablanca release was focused on improving platform stability and resiliency and introducing new platform capabilities.
 
 **New Features**
 
@@ -69,7 +69,7 @@ The main goal of the Casablanca release was to:
     - Complete E2E workflow design and distribution.
     - Finalize DCAE-DS and integrate it with OOM
     - Support HPA
-    - Security enchantments
+    - Enhance security
 
 
 Security Notes

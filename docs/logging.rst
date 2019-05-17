@@ -7,9 +7,9 @@ Logging
 
 Where to Access Information
 ---------------------------
-the logs for the application are available in the docker itself at /var/lib/jetty/logs/
-in Heat deployment the dockers are mapped into /data/logs on the vm where the application is running.
-In OOM you can use the logging project to access the logging collected from the applications.
+The logs for the application are available in the docker itself at /var/lib/jetty/logs/
+In Heat deployment the dockers are mapped into /data/logs on the vm where the application is running.
+In OOM you can use the logging project to access the loggings collected from the applications.
 
 In the OOM deployment the log location in the docker is /var/log/onap
 
@@ -22,15 +22,15 @@ In the OOM deployment the log location in the docker is /var/log/onap
 |                               | /data/logs/BE/SDC/SDC-BE/audit.log       | application audit   | An audit record is created for each operation in SDC                                                                                                                                      | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/BE/SDC/SDC-BE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 MB      |
-|                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
+|                               |                                          |                     | The file is located under: config/catalog-be/logback.xml.                                                                                                                                 |                     |
 |                               |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use. will be used in future releases.                                                                                                                                     | rolls at 20 MB      |
+|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use, will be used in future releases.                                                                                                                                     | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 MB      |
-|                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
+|                               |                                          |                     | The file is located under: config/catalog-be/logback.xml.                                                                                                                                 |                     |
 |                               |                                          |                     | To allow this logger, set the value for this property to true This log holds all logging output of the application.                                                                       |                     |
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | FE                            | /data/logs/FE/2017_03_10.stderrout.log   |  Jetty server log   | The log describes info regarding the Jetty startup and execution                                                                                                                          | the log rolls daily |
@@ -49,24 +49,24 @@ In the OOM deployment the log location in the docker is /var/log/onap
 Changing log level
 ---------------------------
 SDC uses logback for logging.
-in order to change the level you will need to acses the docker.
-in it update the logback.xml according to your need, the change does not requir a restart to the docker.
+In order to change the level you will need to access the docker.
+Update the logback.xml inside the docker according to your need - the change does not require a restart of the docker.
 
-to change the level for all logs, change the following value:
+To change the level for all logs, change the following value:
 
 ::
 
     <root level="INFO">
 
 
-to change the level for logs of some specific packages, change the following value:
+To change the level for logs of some specific packages, change the following value:
 
 ::
 
     <logger level="INFO" name="org.openecomp.sdc" />
 
 
-to agregate all the logs level into a single log file called all.log change the foloing property to true:
+To aggregate all the logs from all levels into a single log file called all.log change the following property to true:
 
 ::
 
