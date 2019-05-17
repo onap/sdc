@@ -33,10 +33,10 @@ SDC invokes Compliance Checks via VNF Test Platform (VTP)
    * - /vtp/scenarios
      - retrieve list available test scenarios
    * - /vtp/scenarios/{scenario}/testsuites
-     - retrieve a list of available test suites in given scenario
+     - retrieve a list of available test suites in a given scenario
    * - /vtp/scenarios/{scenario}/testcases
      - retrieve a list of available test cases in a given scenario
    * - /vtp/scenarios/{scenario}/testsuites/{testSuiteName}/testcases/{testCaseName}
-     - retrieve test case parameters such as  inputs and outputs in a given scenario and test suite
+     - retrieve test case parameters such as inputs and outputs in a given scenario and test suite
    * - /vtp/executions
      - execute a list of test cases

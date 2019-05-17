@@ -25,7 +25,7 @@ New and Impacted Code
 =====================
 
 The new code for this feature follows the software design
-of the existing onboarding BE.  New code is isolated into two
+of the existing onboarding BE. New code is isolated into two
 new subprojects contained within openecomp-be within minimal hooks
 elsewhere.
 
@@ -68,8 +68,8 @@ Configuration
 Configuration was added to the onboarding backend yaml in
 order to know the URLs to reach VTP and external testing sources.
 The full configuration is documented in the configuration section
-of this manual.   For details, see the BE-onboarding-configuration.yaml
-section.  Here is an example of the yaml.
+of this manual. For details, see the BE-onboarding-configuration.yaml
+section. Here is an example of the yaml.
 
 ::
 

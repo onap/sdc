@@ -183,7 +183,7 @@ BE-configuration.yaml
     # Titan configuration file location
     titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
 
-    # Does titan holds the persistence data in memory
+    # Does titan hold the persistence data in memory
     titanInMemoryGraph: false
 
     # The timeout for titan to lock on an object in a transaction
@@ -247,7 +247,7 @@ BE-configuration.yaml
         # The amount of time the Cassandra client will wait for a response
         socketConnectTimeout: <%= @socket_connect_timeout %>
 
-        # Should an authentication be used when accessing Cassandra
+        # Should authentication be used when accessing Cassandra
         authenticate: true
 
         # Username for accessing Cassandra
@@ -256,7 +256,7 @@ BE-configuration.yaml
         # Password for accessing Cassandra
         password: {{cassandra_password}}
 
-        # Does an ssl should be used
+        # Should ssl be used
         ssl: false
 
         # Location of .truststore file
@@ -361,7 +361,7 @@ BE-configuration.yaml
             fileExtension: "env"
 
     # Tosca artifacts placeholders
-    # For each artifact there is a template and a scar.
+    # For each artifact there is a template and a csar.
     # For each one the following properties exists:
     #
     # artifactName - The suffix of the artifact file
@@ -910,7 +910,7 @@ BE-configuration.yaml
             forBaseModule: Base
             forNonBaseModule: Expansion
 
-    # For each generic node type defining it's corresponding class
+    # For each generic node type defining its corresponding class
     genericAssetNodeTypes:
         VFC: org.openecomp.resource.abstract.nodes.VFC
         CVFC: org.openecomp.resource.abstract.nodes.VFC
@@ -976,7 +976,7 @@ BE-configuration.yaml
         #  - c.d.e
         #CR:
         #  - x.y.z
-    # defanition for group types that cannot by created by api
+    # definition for group types that cannot by created by api
     excludedGroupTypesMapping:
         CR:
            - org.openecomp.groups.VfModule
@@ -1079,7 +1079,7 @@ BE-distribution-engine-configuration.yaml
     startDistributionEngine: true
 
     #This is false by default, since ONAP Dmaap currently doesn't support https
-    # Does https should be used with Dmaap
+    # Should https be used with Dmaap
     useHttpsWithDmaap: false
     opEnvRecoveryIntervalSec: 180
     allowedTimeBeforeStaleSec: 300
@@ -1129,7 +1129,7 @@ BE-titan.properties
     # Titan storage hostname
     storage.hostname=<%= @CASSANDRA_IP %>
 
-    # Titan storage port]
+    # Titan storage port
     storage.port=9160
 
     # Titan storage username
@@ -1153,7 +1153,7 @@ BE-titan.properties
     # Titan cassandra ssl truststore file password
     storage.cassandra.ssl.truststore.password=Aa123456
 
-    # Does titan should use cache
+    # Should titan use cache
     cache.db-cache = false
 
     # How long in milliseconds should the cache keep entries before flushing them
@@ -1243,11 +1243,11 @@ vnfrepo-configuration.yaml
 
 ::
 
-    # The port on which the vnfsdk is licensing on
+    # The port on which the vnfsdk is licensing
     vnfRepoPort: <port>
     # The ip where vnfdk is deployed
     vnfRepoHost: <ip>
-    # The url used for querying the vnf sdk for available CSARS
+    # The url used for querying the vnf sdk for available CSARs
     getVnfUri: /onapapi/vnfsdk-marketplace/v1/PackageResource/csars
     # The url used for downloading the the CSAR from vnf sdk
     downloadVnfUri: /onapapi/vnfsdk-marketplace/v1/PackageResource/csars/%s/files
@@ -1379,9 +1379,9 @@ FE-plugins-configuration.yaml
 *****************************
 ::
 
-   # defnition of the plugins that exist in sdc
-   # we have a pre defined list of plugins that are conected to the system.
-   # the plugins define where they are shown to who and on what elements
+   # definition of the plugins that exist in sdc
+   # we have a pre-defined list of plugins that are connected to the system.
+   # the plugins define where they are shown, to whom and on what elements
    pluginsList:
         # the DCAE-DS is the SDC monitoring design studio this entry defines there use as part of the service level context
       - pluginId: DCAED
@@ -1420,7 +1420,7 @@ FE-plugins-configuration.yaml
                displayName: "WORKFLOW"
                displayRoles: ["DESIGNER", "TESTER"]
 
-   # how long we will wai for the plugin to respond before cuting it.
+   # how long we will wait for the plugin to respond before cutting it.
    connectionTimeout: 1000
 
 Onboarding configuration
