@@ -21,13 +21,13 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
 import java.util.Map;
 
 public interface ICapabilityOperation {
 
-    Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType);
+    Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType);
 
 }

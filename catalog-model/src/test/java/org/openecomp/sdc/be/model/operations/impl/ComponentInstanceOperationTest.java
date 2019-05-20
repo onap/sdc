@@ -29,7 +29,7 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +37,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -64,12 +63,12 @@ public class ComponentInstanceOperationTest {
 	private ComponentInstanceOperation componentInstanceOperation;
 
 	@Mock
-	protected HealingTitanGenericDao titanGenericDao;
+	protected HealingJanusGraphGenericDao janusGraphGenericDao;
 
 
 	@Test
-	public void testSetTitanGenericDao() {
-		componentInstanceOperation.setTitanGenericDao(titanGenericDao);
+	public void testSetJanusGraphGenericDao() {
+		componentInstanceOperation.setJanusGraphGenericDao(janusGraphGenericDao);
 	}
 
 	@Test
@@ -87,8 +86,8 @@ public class ComponentInstanceOperationTest {
 	public void testUpdateCustomizationUUID() {
 		StorageOperationStatus result;
 		String componentInstanceId = "instanceId";
-		TitanVertex titanVertex = Mockito.mock(TitanVertex.class);
-		when(titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),componentInstanceId)).thenReturn(Either.left(titanVertex));
+		JanusGraphVertex janusGraphVertex = Mockito.mock(JanusGraphVertex.class);
+		when(janusGraphGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),componentInstanceId)).thenReturn(Either.left(janusGraphVertex));
 		result = componentInstanceOperation.updateCustomizationUUID(componentInstanceId);
 		assertEquals(StorageOperationStatus.OK, result);
 	}
@@ -125,7 +124,8 @@ public class ComponentInstanceOperationTest {
         componentInstance.setUniqueId("INST0.1");
         componentInstance.setComponentUid("RES0.1");
         componentInstance.setGroupInstances(gilist);
-        when(titanGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.right(TitanOperationStatus.GENERAL_ERROR));
+        when(janusGraphGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.right(
+            JanusGraphOperationStatus.GENERAL_ERROR));
         Either<ComponentInstanceData, StorageOperationStatus> result = componentInstanceOperation.updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(componentInstance, NodeTypeEnum.Component,234234545L,false);
         assertEquals(StorageOperationStatus.GENERAL_ERROR, result.right().value());
     }
@@ -145,7 +145,7 @@ public class ComponentInstanceOperationTest {
         componentInstance.setComponentUid("RES0.1");
         componentInstance.setGroupInstances(gilist);
         ComponentInstanceData componentInstanceData = new ComponentInstanceData();
-        when(titanGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.left(componentInstanceData));
+        when(janusGraphGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.left(componentInstanceData));
         Either<ComponentInstanceData, StorageOperationStatus> result = componentInstanceOperation.updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(componentInstance, NodeTypeEnum.Component,234234545L,false);
         assertEquals(componentInstanceData, result.left().value());
     }

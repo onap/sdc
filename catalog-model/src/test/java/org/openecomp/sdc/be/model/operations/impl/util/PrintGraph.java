@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.model.operations.impl.util;
 
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -40,12 +40,12 @@ import java.util.Set;
 
 public class PrintGraph {
 
-    public void printGraphVertices(TitanGraph graph) {
+    public void printGraphVertices(JanusGraph graph) {
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
 
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
             }
@@ -55,11 +55,11 @@ public class PrintGraph {
         graph.tx().commit();
     }
 
-    public void printGraphEdges(TitanGraph graph) {
-        Iterable<TitanEdge> vertices = graph.query().edges();
+    public void printGraphEdges(JanusGraph graph) {
+        Iterable<JanusGraphEdge> vertices = graph.query().edges();
 
         if (vertices != null) {
-            Iterator<TitanEdge> iterator = vertices.iterator();
+            Iterator<JanusGraphEdge> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Edge edge = iterator.next();
 
@@ -69,16 +69,16 @@ public class PrintGraph {
         graph.tx().commit();
     }
 
-    public String buildGraphForWebgraphWiz(TitanGraph graph) {
+    public String buildGraphForWebgraphWiz(JanusGraph graph) {
 
         StringBuilder builder = new StringBuilder();
         builder.append("digraph finite_state_machine {\n");
         builder.append("rankdir=LR;\n");
         builder.append("size=\"15,10\" \n");
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
 
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
 
@@ -98,10 +98,10 @@ public class PrintGraph {
 
         }
 
-        Iterable<TitanEdge> edges = graph.query().edges();
+        Iterable<JanusGraphEdge> edges = graph.query().edges();
 
         if (edges != null) {
-            Iterator<TitanEdge> iterator = edges.iterator();
+            Iterator<JanusGraphEdge> iterator = edges.iterator();
             while (iterator.hasNext()) {
                 Edge edge = iterator.next();
 
@@ -309,12 +309,12 @@ public class PrintGraph {
         return key;
     }
 
-    public int getNumberOfVertices(TitanGraph graph) {
+    public int getNumberOfVertices(JanusGraph graph) {
         int counter = 0;
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
 
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
                 counter++;
@@ -323,14 +323,14 @@ public class PrintGraph {
         return counter;
     }
 
-    public Set<String> getVerticesSet(TitanGraph titanGraph) {
+    public Set<String> getVerticesSet(JanusGraph janusGraph) {
 
         Set<String> set = new HashSet<>();
 
-        Iterable<TitanVertex> vertices = titanGraph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = janusGraph.query().vertices();
 
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
 

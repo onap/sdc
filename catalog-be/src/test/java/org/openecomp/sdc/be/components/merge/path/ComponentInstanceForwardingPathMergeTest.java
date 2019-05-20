@@ -13,7 +13,7 @@ import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 

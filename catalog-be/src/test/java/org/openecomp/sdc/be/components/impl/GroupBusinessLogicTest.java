@@ -42,8 +42,8 @@ import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -56,9 +56,9 @@ import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -109,7 +109,7 @@ public class GroupBusinessLogicTest {
     @Mock
     private PropertyOperation propertyOperation;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
 
@@ -125,7 +125,7 @@ public class GroupBusinessLogicTest {
         List<GroupDefinition> groupDefinitions = new ArrayList<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinitions.add(groupDefinition);
-        when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         result = test.createGroups(component, groupDefinitions, true);
         Assert.assertTrue(result.isRight());
     }
@@ -277,7 +277,7 @@ public class GroupBusinessLogicTest {
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
         when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
 
-        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
                 "USR01");
     }

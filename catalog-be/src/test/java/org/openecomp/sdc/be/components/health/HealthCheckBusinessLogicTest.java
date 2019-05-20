@@ -104,14 +104,14 @@ public class HealthCheckBusinessLogicTest extends BeConfDependentTest{
 	}
 
 	@Test
-	public void testGetTitanHealthCheck() throws Exception {
+	public void testGetJanusGraphHealthCheck() throws Exception {
 		HealthCheckBusinessLogic testSubject;
 		List<HealthCheckInfo> healthCheckInfos = new LinkedList<>();
 		List<HealthCheckInfo> result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanHealthCheck(healthCheckInfos);
+		result = testSubject.getJanusGraphHealthCheck(healthCheckInfos);
 	}
 
 	@Test

@@ -7,14 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult.MigrationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 import java.util.ArrayList;
@@ -29,15 +29,16 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SDCInstancesMigrationTest{
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private NodeTemplateOperation nodeTemplateOperation;
 
     
     @Test
     public void testFailedMigration(){
-        SDCInstancesMigration instancesMigration = new SDCInstancesMigration(titanDao, nodeTemplateOperation);
-        when(titanDao.getByCriteria(any(), any(), any(), any() )).thenReturn(Either.right(TitanOperationStatus.GENERAL_ERROR));
+        SDCInstancesMigration instancesMigration = new SDCInstancesMigration(janusGraphDao, nodeTemplateOperation);
+        when(janusGraphDao.getByCriteria(any(), any(), any(), any() )).thenReturn(Either.right(
+            JanusGraphOperationStatus.GENERAL_ERROR));
         
         MigrationResult migrate = instancesMigration.migrate();
         MigrationStatus migrationStatus = migrate.getMigrationStatus();
@@ -45,7 +46,7 @@ public class SDCInstancesMigrationTest{
     }
     @Test
     public void testSuccessMigration(){
-        SDCInstancesMigration instancesMigration = new SDCInstancesMigration(titanDao, nodeTemplateOperation);
+        SDCInstancesMigration instancesMigration = new SDCInstancesMigration(janusGraphDao, nodeTemplateOperation);
         List<GraphVertex> list = new ArrayList<>();
         GraphVertex vertexOrig = new GraphVertex();
         Map<String, CompositionDataDefinition> jsonComposition = new HashMap<>();
@@ -59,7 +60,7 @@ public class SDCInstancesMigrationTest{
         vertexOrig.setType(ComponentTypeEnum.SERVICE);
         list.add(vertexOrig);
         
-        when(titanDao.getByCriteria(any(), any(), any(), any() )).thenReturn(Either.left(list));
+        when(janusGraphDao.getByCriteria(any(), any(), any(), any() )).thenReturn(Either.left(list));
         when(nodeTemplateOperation.createInstanceEdge(vertexOrig, instance)).thenReturn(StorageOperationStatus.OK);
         
         MigrationResult migrate = instancesMigration.migrate();

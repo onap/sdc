@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 
 import java.lang.reflect.Field;
 import java.util.*;

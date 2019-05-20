@@ -10,18 +10,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SdcArchiveMigrationTest {
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     SdcArchiveMigration sdcArchiveMigration = null;
 
     @Before
     public void setUp() throws Exception {
-        sdcArchiveMigration = new SdcArchiveMigration(titanDao);
+        sdcArchiveMigration = new SdcArchiveMigration(janusGraphDao);
     }
 
     @Test

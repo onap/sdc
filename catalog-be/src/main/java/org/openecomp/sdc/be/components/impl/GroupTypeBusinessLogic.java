@@ -26,7 +26,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -43,13 +43,13 @@ import static java.util.Collections.emptySet;
 public class GroupTypeBusinessLogic {
 
     private final GroupTypeOperation groupTypeOperation;
-    private final TitanDao titanDao;
+    private final JanusGraphDao janusGraphDao;
     private final UserValidations userValidations;
     private final ComponentsUtils componentsUtils;
 
-    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, TitanDao titanDao, UserValidations userValidations, ComponentsUtils componentsUtils) {
+    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations, ComponentsUtils componentsUtils) {
         this.groupTypeOperation = groupTypeOperation;
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
         this.userValidations = userValidations;
         this.componentsUtils = componentsUtils;
     }
@@ -61,7 +61,7 @@ public class GroupTypeBusinessLogic {
             Set<String> excludeGroupTypes = getExcludedGroupTypes(internalComponentType);
             return groupTypeOperation.getAllGroupTypes(excludeGroupTypes);
         } finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 
@@ -81,7 +81,7 @@ public class GroupTypeBusinessLogic {
     }
 
     private GroupTypeDefinition failOnGetGroupType(StorageOperationStatus status, String groupType) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         if (status == StorageOperationStatus.NOT_FOUND) {
             throw new ByActionStatusComponentException(ActionStatus.GROUP_TYPE_IS_INVALID, groupType);
         } else {

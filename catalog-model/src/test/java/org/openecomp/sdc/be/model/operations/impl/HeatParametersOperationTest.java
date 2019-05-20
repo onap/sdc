@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -48,11 +48,11 @@ public class HeatParametersOperationTest extends ModelTestBase {
 
     HeatParametersOperation heatParametersOperation = new HeatParametersOperation();
 
-    TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
 
     @Before
     public void setup() {
-        heatParametersOperation.setTitanGenericDao(titanGenericDao);
+        heatParametersOperation.setJanusGraphGenericDao(janusGraphGenericDao);
 
     }
 
@@ -64,15 +64,15 @@ public class HeatParametersOperationTest extends ModelTestBase {
 
         HeatParameterData propertyData = new HeatParameterData(property);
 
-        Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterData, JanusGraphOperationStatus> either = Either.left(propertyData);
 
         GraphRelation graphRelation = new GraphRelation();
-        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
 
-        when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
-        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+        when(janusGraphGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+        when(janusGraphGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
-        Either<HeatParameterData, TitanOperationStatus> result = heatParametersOperation.addPropertyToGraph(propName, property, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
+        Either<HeatParameterData, JanusGraphOperationStatus> result = heatParametersOperation.addPropertyToGraph(propName, property, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
         assertTrue(result.isLeft());
 
@@ -91,13 +91,13 @@ public class HeatParametersOperationTest extends ModelTestBase {
 
         HeatParameterData propertyData = new HeatParameterData(property);
 
-        Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterData, JanusGraphOperationStatus> either = Either.left(propertyData);
 
         GraphRelation graphRelation = new GraphRelation();
-        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
 
-        when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
-        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+        when(janusGraphGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+        when(janusGraphGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
         StorageOperationStatus result = heatParametersOperation.addPropertiesToGraph(parameters, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
@@ -222,16 +222,16 @@ public class HeatParametersOperationTest extends ModelTestBase {
         propertyData.setUniqueId("bla");
         propertyData.setValue("value1");
 
-        Either<HeatParameterValueData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterValueData, JanusGraphOperationStatus> either = Either.left(propertyData);
 
         GraphRelation graphRelation = new GraphRelation();
-        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
 
-        when(titanGenericDao.createNode(any(HeatParameterValueData.class), eq(HeatParameterValueData.class))).thenReturn(either);
-        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
-        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_IMPL), isNull())).thenReturn(relationResult);
+        when(janusGraphGenericDao.createNode(any(HeatParameterValueData.class), eq(HeatParameterValueData.class))).thenReturn(either);
+        when(janusGraphGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
+        when(janusGraphGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_IMPL), isNull())).thenReturn(relationResult);
 
-        Either<HeatParameterValueData, TitanOperationStatus> result = heatParametersOperation.addHeatValueToGraph(property, "artifactLabel", "resourceInstanceId.artifactId", "resourceInstanceId");
+        Either<HeatParameterValueData, JanusGraphOperationStatus> result = heatParametersOperation.addHeatValueToGraph(property, "artifactLabel", "resourceInstanceId.artifactId", "resourceInstanceId");
 
         assertTrue(result.isLeft());
 

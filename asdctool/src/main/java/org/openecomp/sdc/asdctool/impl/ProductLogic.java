@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -39,10 +39,10 @@ public class ProductLogic {
 
 	private static Logger log = Logger.getLogger(ProductLogic.class.getName());
 
-	public boolean deleteAllProducts(String titanFile, String beHost, String bePort, String adminUser) {
+	public boolean deleteAllProducts(String janusGraphFile, String beHost, String bePort, String adminUser) {
 		log.debug("retrieving all products from graph");
 		RestUtils restUtils = null;
-        List<String> productList = getAllProducts(titanFile);
+        List<String> productList = getAllProducts(janusGraphFile);
         restUtils = new RestUtils();
         if (productList != null) {
             for (String productUid : productList) {
@@ -56,15 +56,15 @@ public class ProductLogic {
         }
 	}
 
-	private List<String> getAllProducts(String titanFile) {
-		TitanGraph graph = null;
+	private List<String> getAllProducts(String janusGraphFile) {
+		JanusGraph graph = null;
 		try {
-			graph = openGraph(titanFile);
+			graph = openGraph(janusGraphFile);
 			List<String> productsToDelete = new ArrayList<String>();
 			Iterable vertices = graph.query()
 					.has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Product.getName()).vertices();
 			if (vertices != null) {
-				Iterator<TitanVertex> iter = vertices.iterator();
+				Iterator<JanusGraphVertex> iter = vertices.iterator();
 				while (iter.hasNext()) {
 					Vertex vertex = iter.next();
 					String id = vertex.value(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
@@ -88,9 +88,9 @@ public class ProductLogic {
 		}
 	}
 
-	private TitanGraph openGraph(String titanFileLocation) {
+	private JanusGraph openGraph(String janusGraphFileLocation) {
 
-		return TitanFactory.open(titanFileLocation);
+		return JanusGraphFactory.open(janusGraphFileLocation);
 		
 	}
 

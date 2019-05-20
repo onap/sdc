@@ -68,7 +68,7 @@ public class Config {
 	private String neoDBusername;
 	private String neoDBpassword;
 
-	private String titanPropertiesFile;
+	private String januGraphPropertiesFile;
 	private List<String> packages;
 	private List<String> bugs;
 	private List<String> resourcesNotToDelete;
@@ -498,12 +498,12 @@ public class Config {
 		this.neoDBpassword = neoDBpassword;
 	}
 
-	public String getTitanPropertiesFile() {
-		return titanPropertiesFile;
+	public String getjanuGraphPropertiesFile() {
+		return januGraphPropertiesFile;
 	}
 
-	public void setTitanPropertiesFile(String titanPropertiesFile) {
-		this.titanPropertiesFile = titanPropertiesFile;
+	public void setjanuGraphPropertiesFile(String januGraphPropertiesFile) {
+		this.januGraphPropertiesFile = januGraphPropertiesFile;
 	}
 
 	public List<String> getPackages() {
@@ -640,7 +640,7 @@ public class Config {
 				+ ", importTypesConfigDir=" + importTypesConfigDir + ", testSuites=" + testSuites + ", catalogFeHost="
 				+ catalogFeHost + ", catalogFePort=" + catalogFePort + ", catalogBePort=" + catalogBePort
 				+ ", catalogBeTlsPort=" + catalogBeTlsPort + ", neoDBusername=" + neoDBusername + ", neoDBpassword="
-				+ neoDBpassword + ", titanPropertiesFile=" + titanPropertiesFile + ", packages=" + packages + ", bugs="
+				+ neoDBpassword + ", januGraphPropertiesFile=" + januGraphPropertiesFile + ", packages=" + packages + ", bugs="
 				+ bugs + ", resourcesNotToDelete=" + resourcesNotToDelete + ", resourceCategoriesNotToDelete="
 				+ resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete=" + serviceCategoriesNotToDelete
 				+ ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder=" + outputFolder + ", reportName="

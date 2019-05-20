@@ -1,8 +1,8 @@
 #!/bin/bash
 
-##############################
-# export all users from titan
-##############################
+##################################
+# export all users from JanusGraph
+##################################
 
 CURRENT_DIR=`pwd`
 BASEDIR=$(dirname $0)

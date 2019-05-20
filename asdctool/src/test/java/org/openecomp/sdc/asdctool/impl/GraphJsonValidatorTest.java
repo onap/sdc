@@ -14,33 +14,33 @@ public class GraphJsonValidatorTest {
 	}
 
 	@Test
-	public void testVerifyTitanJson() throws Exception {
+	public void testVerifyJanusGraphJson() throws Exception {
 		GraphJsonValidator testSubject;
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.verifyTitanJson("src/test/resources/graph.json");
+		result = testSubject.verifyJanusGraphJson("src/test/resources/graph.json");
 		assertTrue(result);
 	}
 	
 	@Test
-	public void testVerifyTitanJsonErrorFile() throws Exception {
+	public void testVerifyJanusGraphJsonErrorFile() throws Exception {
 		GraphJsonValidator testSubject;
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.verifyTitanJson("src/test/resources/graphError.json");
+		result = testSubject.verifyJanusGraphJson("src/test/resources/graphError.json");
 		assertFalse(result);
 	}
 	
 	@Test(expected=NoSuchFileException.class)
-	public void testVerifyTitanJsonNoFile() throws Exception {
+	public void testVerifyJanusGraphJsonNoFile() throws Exception {
 		GraphJsonValidator testSubject;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.verifyTitanJson("stam");
+		testSubject.verifyJanusGraphJson("stam");
 	}
 }

@@ -1,6 +1,6 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -70,7 +70,7 @@ public class GraphVertexTest {
 	@Test
 	public void testGetVertex() throws Exception {
 		GraphVertex testSubject;
-		TitanVertex result;
+		JanusGraphVertex result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -81,7 +81,7 @@ public class GraphVertexTest {
 	@Test
 	public void testSetVertex() throws Exception {
 		GraphVertex testSubject;
-		TitanVertex vertex = null;
+		JanusGraphVertex vertex = null;
 
 		// default test
 		testSubject = createTestSubject();

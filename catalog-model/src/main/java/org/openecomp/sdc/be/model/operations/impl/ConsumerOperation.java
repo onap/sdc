@@ -21,9 +21,9 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IConsumerOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -38,23 +38,25 @@ import java.util.List;
 @Component("consumer-operation")
 public class ConsumerOperation implements IConsumerOperation {
 
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     private static final Logger log = Logger.getLogger(ConsumerOperation.class.getName());
 
-    public ConsumerOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
-        this.titanGenericDao = titanGenericDao;
+    public ConsumerOperation(@Qualifier("janusgraph-generic-dao")
+                                 JanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     @Override
     public Either<ConsumerData, StorageOperationStatus> getCredentials(String consumerName) {
         Either<ConsumerData, StorageOperationStatus> result = null;
         log.debug("retriving Credentials for: {}", consumerName);
-        Either<ConsumerData, TitanOperationStatus> getNode = titanGenericDao.getNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
+        Either<ConsumerData, JanusGraphOperationStatus> getNode = janusGraphGenericDao
+            .getNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
         if (getNode.isRight()) {
-            TitanOperationStatus status = getNode.right().value();
+            JanusGraphOperationStatus status = getNode.right().value();
             log.error("Error returned after get Consumer Data node {}. status returned is {}", consumerName, status);
-            result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             return result;
         }
         ConsumerData consumerData = getNode.left().value();
@@ -64,8 +66,9 @@ public class ConsumerOperation implements IConsumerOperation {
     @Override
     public Either<List<ConsumerData>, StorageOperationStatus> getAll() {
         log.debug("retrieving all consumers");
-        return titanGenericDao.getByCriteria(NodeTypeEnum.ConsumerCredentials, Collections.emptyMap(), ConsumerData.class)
-                .right().map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+        return janusGraphGenericDao
+            .getByCriteria(NodeTypeEnum.ConsumerCredentials, Collections.emptyMap(), ConsumerData.class)
+                .right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
@@ -78,11 +81,12 @@ public class ConsumerOperation implements IConsumerOperation {
         Either<ConsumerData, StorageOperationStatus> result = null;
         try {
             log.debug("creating Credentials for: {}", consumerData.getUniqueId());
-            Either<ConsumerData, TitanOperationStatus> createNode = titanGenericDao.createNode(consumerData, ConsumerData.class);
+            Either<ConsumerData, JanusGraphOperationStatus> createNode = janusGraphGenericDao
+                .createNode(consumerData, ConsumerData.class);
             if (createNode.isRight()) {
-                TitanOperationStatus status = createNode.right().value();
+                JanusGraphOperationStatus status = createNode.right().value();
                 log.error("Error returned after creating Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 return result;
             }
             ConsumerData createdConsumerData = createNode.left().value();
@@ -103,11 +107,12 @@ public class ConsumerOperation implements IConsumerOperation {
         Either<ConsumerData, StorageOperationStatus> result = null;
         try {
             log.debug("delete Credentials for: {}", consumerName);
-            Either<ConsumerData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
+            Either<ConsumerData, JanusGraphOperationStatus> deleteNode = janusGraphGenericDao
+                .deleteNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
             if (deleteNode.isRight()) {
-                TitanOperationStatus status = deleteNode.right().value();
+                JanusGraphOperationStatus status = deleteNode.right().value();
                 log.error("Error returned after delete Consumer Data node {}. status returned is {}", consumerName, status);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 return result;
             }
 
@@ -131,11 +136,12 @@ public class ConsumerOperation implements IConsumerOperation {
         Either<ConsumerData, StorageOperationStatus> result = null;
         try {
             log.debug("update Credentials for: {}", consumerData.getUniqueId());
-            Either<ConsumerData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(consumerData, ConsumerData.class);
+            Either<ConsumerData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+                .updateNode(consumerData, ConsumerData.class);
             if (updateNode.isRight()) {
-                TitanOperationStatus status = updateNode.right().value();
+                JanusGraphOperationStatus status = updateNode.right().value();
                 log.error("Error returned after delete Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 return result;
             }
             ConsumerData updatedConsumerData = updateNode.left().value();
@@ -150,10 +156,10 @@ public class ConsumerOperation implements IConsumerOperation {
         if (!inTransaction) {
             if (result == null || result.isRight()) {
                 log.error("Going to execute rollback on graph.");
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             } else {
                 log.debug("Going to execute commit on graph.");
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }

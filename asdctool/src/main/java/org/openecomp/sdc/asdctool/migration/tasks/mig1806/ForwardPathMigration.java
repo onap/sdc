@@ -17,7 +17,7 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1806;
 
 import com.google.common.collect.ImmutableSet;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -38,22 +38,20 @@ import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
@@ -61,14 +59,14 @@ import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 @org.springframework.stereotype.Component
 public class ForwardPathMigration implements Migration {
 
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     private UserAdminOperation userAdminOperation;
     private ToscaOperationFacade toscaOperationFacade;
     private User user = null;
 
-    public ForwardPathMigration(TitanDao titanDao,
+    public ForwardPathMigration(JanusGraphDao janusGraphDao,
         UserAdminOperation userAdminOperation, ToscaOperationFacade toscaOperationFacade) {
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
         this.userAdminOperation = userAdminOperation;
         this.toscaOperationFacade = toscaOperationFacade;
     }
@@ -110,7 +108,7 @@ public class ForwardPathMigration implements Migration {
         hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
         Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
-        status = titanDao
+        status = janusGraphDao
             .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)
             .either(this::cleanServices, this::handleError);
         return status;
@@ -138,10 +136,11 @@ public class ForwardPathMigration implements Migration {
     }
 
 
-    private StorageOperationStatus handleError(TitanOperationStatus err) {
-        titanDao.rollback();
+    private StorageOperationStatus handleError(JanusGraphOperationStatus err) {
+        janusGraphDao.rollback();
         return DaoStatusConverter
-            .convertTitanStatusToStorageStatus(TitanOperationStatus.NOT_FOUND == err ? TitanOperationStatus.OK : err);
+            .convertJanusGraphStatusToStorageStatus(
+                JanusGraphOperationStatus.NOT_FOUND == err ? JanusGraphOperationStatus.OK : err);
     }
 
     private StorageOperationStatus fixDataOnGraph(Component component) {
@@ -149,10 +148,10 @@ public class ForwardPathMigration implements Migration {
             return StorageOperationStatus.OK;
         }
         Service service = (Service) component;
-        Either<GraphVertex, TitanOperationStatus> getResponse = titanDao.getVertexById(service.getUniqueId(),
+        Either<GraphVertex, JanusGraphOperationStatus> getResponse = janusGraphDao.getVertexById(service.getUniqueId(),
             JsonParseFlagEnum.NoParse);
         if (getResponse.isRight()) {
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(getResponse.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getResponse.right().value());
 
         }
         Set<String> ciNames = new HashSet<>();
@@ -163,13 +162,13 @@ public class ForwardPathMigration implements Migration {
         GraphVertex componentVertex = getResponse.left().value();
 
         GraphVertex toscaDataVertex;
-        Either<GraphVertex, TitanOperationStatus> groupVertexEither = titanDao.getChildVertex(componentVertex,
+        Either<GraphVertex, JanusGraphOperationStatus> groupVertexEither = janusGraphDao.getChildVertex(componentVertex,
             EdgeLabelEnum.FORWARDING_PATH, JsonParseFlagEnum.ParseJson);
-        if (groupVertexEither.isRight() && groupVertexEither.right().value() == TitanOperationStatus.NOT_FOUND) {
+        if (groupVertexEither.isRight() && groupVertexEither.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
             return StorageOperationStatus.OK;
         }
         if (groupVertexEither.isRight()) {
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(groupVertexEither.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(groupVertexEither.right().value());
         }
         toscaDataVertex = groupVertexEither.left().value();
         Map<String, ForwardingPathDataDefinition> forwardingPaths = new HashMap<>(
@@ -186,42 +185,44 @@ public class ForwardPathMigration implements Migration {
             }
         }
         if (toBeDeletedFP.isEmpty()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return StorageOperationStatus.OK;
         }
         toBeDeletedFP.stream().forEach(fpKey -> forwardingPaths.remove(fpKey));
         toscaDataVertex.setJson(forwardingPaths);
-        Either<GraphVertex, TitanOperationStatus> updatevertexEither = updateOrCopyOnUpdate(
+        Either<GraphVertex, JanusGraphOperationStatus> updatevertexEither = updateOrCopyOnUpdate(
              toscaDataVertex, componentVertex);
           if (updatevertexEither.isRight()) {
-            titanDao.rollback();
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(updatevertexEither.right().value());
+            janusGraphDao.rollback();
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updatevertexEither.right().value());
         }
-        titanDao.commit();
+        janusGraphDao.commit();
         return StorageOperationStatus.OK;
     }
 
-    private Either<GraphVertex, TitanOperationStatus> cloneDataVertex(GraphVertex dataVertex, GraphVertex toscaElementVertex, Edge edgeToRemove) {
+    private Either<GraphVertex, JanusGraphOperationStatus> cloneDataVertex(GraphVertex dataVertex, GraphVertex toscaElementVertex, Edge edgeToRemove) {
         EdgeLabelEnum label =  EdgeLabelEnum.FORWARDING_PATH;
         GraphVertex newDataVertex = new GraphVertex(dataVertex.getLabel());
         String id = IdBuilderUtils.generateChildId(toscaElementVertex.getUniqueId(), dataVertex.getLabel());
         newDataVertex.cloneData(dataVertex);
         newDataVertex.setUniqueId(id);
 
-        Either<GraphVertex, TitanOperationStatus> createVertex = titanDao.createVertex(newDataVertex);
+        Either<GraphVertex, JanusGraphOperationStatus> createVertex = janusGraphDao.createVertex(newDataVertex);
         if (createVertex.isRight()) {
             return createVertex;
         }
         newDataVertex = createVertex.left().value();
-        TitanOperationStatus createEdge = titanDao.createEdge(toscaElementVertex, newDataVertex, label, titanDao.getEdgeProperties(edgeToRemove));
-        if (createEdge != TitanOperationStatus.OK) {
+        JanusGraphOperationStatus
+            createEdge = janusGraphDao
+            .createEdge(toscaElementVertex, newDataVertex, label, janusGraphDao.getEdgeProperties(edgeToRemove));
+        if (createEdge != JanusGraphOperationStatus.OK) {
                 return Either.right(createEdge);
         }
         edgeToRemove.remove();
         return Either.left(newDataVertex);
     }
 
-    private Either<GraphVertex, TitanOperationStatus> updateOrCopyOnUpdate(GraphVertex dataVertex, GraphVertex toscaElementVertex ) {
+    private Either<GraphVertex, JanusGraphOperationStatus> updateOrCopyOnUpdate(GraphVertex dataVertex, GraphVertex toscaElementVertex ) {
         EdgeLabelEnum label = EdgeLabelEnum.FORWARDING_PATH;
         Iterator<Edge> edges = dataVertex.getVertex().edges(Direction.IN, label.name());
         int edgeCount = 0;
@@ -230,21 +231,22 @@ public class ForwardPathMigration implements Migration {
             Edge edge = edges.next();
             ++edgeCount;
             Vertex outVertex = edge.outVertex();
-            String outId = (String) titanDao.getProperty((TitanVertex) outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+            String outId = (String) janusGraphDao
+                .getProperty((JanusGraphVertex) outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
             if (toscaElementVertex.getUniqueId().equals(outId)) {
                 edgeToRemove = edge;
             }
         }
         if (edgeToRemove == null) {
-            return Either.right(TitanOperationStatus.GENERAL_ERROR);
+            return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
         }
         switch (edgeCount) {
             case 0:
                 // error
-                 return Either.right(TitanOperationStatus.GENERAL_ERROR);
+                 return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
             case 1:
                 // update
-                return titanDao.updateVertex(dataVertex);
+                return janusGraphDao.updateVertex(dataVertex);
             default:
                 // copy on update
                 return cloneDataVertex(dataVertex, toscaElementVertex,  edgeToRemove);

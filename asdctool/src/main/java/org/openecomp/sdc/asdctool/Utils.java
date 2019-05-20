@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.asdctool;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -60,12 +60,12 @@ public class Utils {
 		return responseBuilder.build();
 	}
 
-	public static TitanGraph openGraph(Configuration conf) {
+	public static JanusGraph openGraph(Configuration conf) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		try {
 
-			graph = TitanFactory.open(conf);
+			graph = JanusGraphFactory.open(conf);
 
 		} catch (Exception e) {
 			log.error("Failed to start open graph", e);

@@ -94,7 +94,7 @@ public class HealthCheckInfo {
 	}
 
 	/*public enum HealthCheckComponent {
-		FE, BE, TITAN, DE, ON_BOARDING, CASSANDRA, DCAE,
+		FE, BE, JANUSGRAPH, DE, ON_BOARDING, CASSANDRA, DCAE,
 		CAS, ZU;//Amdocs components
 	}*/
 

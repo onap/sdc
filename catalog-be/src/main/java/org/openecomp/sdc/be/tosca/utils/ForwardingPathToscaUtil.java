@@ -8,7 +8,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;

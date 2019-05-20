@@ -1,7 +1,7 @@
 package org.openecomp.sdc.be.model.cache;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 
 public class DaoInfoTest {

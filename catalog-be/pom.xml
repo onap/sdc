@@ -301,11 +301,10 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- TITAN -->
         <dependency>
-            <groupId>com.thinkaurelius.titan</groupId>
-            <artifactId>titan-core</artifactId>
-            <version>${titan.version}</version>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-core</artifactId>
+            <version>${janusgraph.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -324,9 +323,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-            <artifactId>sdc-titan-cassandra</artifactId>
-            <version>${sdc.titan.version}</version>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra</artifactId>
+            <version>${janusgraph.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -346,7 +345,6 @@
             <version>${lang3.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- TITAN END -->
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -406,25 +404,6 @@
             <artifactId>json</artifactId>
             <version>20131018</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tinkerpop</groupId>
-            <artifactId>tinkergraph-gremlin</artifactId>
-            <version>3.0.1-incubating</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tinkerpop</groupId>
-            <artifactId>gremlin-groovy</artifactId>
-            <version>3.0.1-incubating</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>groovy</artifactId>
-                    <groupId>org.codehaus.groovy</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- CASSANDRA -->

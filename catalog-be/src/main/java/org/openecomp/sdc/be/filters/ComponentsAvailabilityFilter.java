@@ -92,7 +92,7 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
 
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
         HealthCheckBusinessLogic healthCheckBusinessLogic = getHealthCheckBL(servletContext);
-        healthCheckBusinessLogic.getTitanHealthCheck(healthCheckInfos); // Titan
+        healthCheckBusinessLogic.getJanusGraphHealthCheck(healthCheckInfos); // JanusGraph
         return healthCheckInfos;
     }
 

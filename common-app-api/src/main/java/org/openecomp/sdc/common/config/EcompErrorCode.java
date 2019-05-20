@@ -26,16 +26,16 @@ public enum EcompErrorCode {
 			"An Authentication failure occured during access to UEB server. Please check that UEB keys are configured correctly in ASDC BE distribution configuration."), E_199(
 					"Internal authentication problem. Description: %s"),
 
-	E_200("ASDC Backend probably lost connectivity to either one of the following components: Titan DB, Cassandra, Onboarding, UEB Cluster. Please check the logs for more information."), E_201(
-			"ASDC Backend probably lost connectivity to Titan DB. Please check the logs for more information."), E_202(
+	E_200("ASDC Backend probably lost connectivity to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster. Please check the logs for more information."), E_201(
+			"ASDC Backend probably lost connectivity to JanusGraph DB. Please check the logs for more information."), E_202(
 					"ASDC Backend probably lost connectivity to ElasticSearch. Please check the logs for more information."), E_203(
 							"ASDC Backend probably lost connectivity to UEB Cluster. Please check the logs for more information.",
 							"Check connectivity to UEB cluster which is configured under parameter uebServers in distribution-configuration.yaml."), E_204(
 									"Unable to connect to a valid ASDC Backend Server",
 									"Please check connectivity from this FE instance towards BE or BE Load Balancer. Please check that parameters in FE configuration.yaml: beHost,     beHttpPort and beSslPort point to a valid host and port values."),
 
-	E_205("ASDC Backend Recovery to either one of the following components: Titan DB, Cassandra, Onboarding, UEB Cluster."), E_206(
-			"ASDC Backend connection recovery to Titan DB."), E_207(
+	E_205("ASDC Backend Recovery to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster."), E_206(
+			"ASDC Backend connection recovery to JanusGraph DB."), E_207(
 					"ASDC Backend connection recovery to ElasticSearch."), E_208(
 							"ASDC Backend connection recovery to UEB Cluster."), E_209(
 									"Connectivity to ASDC BE Server is recovered."), E_210(
@@ -82,7 +82,7 @@ public enum EcompErrorCode {
 							"System Error occured in ASDC Distribution Engine. Please check ASDC logs for more details."), E_504(
 									"Failed adding node of type %s to graph."), E_505(
 											"Operation towards database failed.",
-											"Please check Titan DB health or look at the logs for more details."), E_506(
+											"Please check JanusGraph DB health or look at the logs for more details."), E_506(
 													"Unexpected error during operation"), E_507(
 															"Going to execute rollback on graph."), E_508(
 																	"Failed to lock object for update. Type = %s, Id = %s"), E_509(

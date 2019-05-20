@@ -8,14 +8,14 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifact
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.be.dao.DAOTitanStrategy;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
+import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
+import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsontitan.operations.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,14 +81,15 @@ public class ValidationToolConfiguration {
         return new CassandraClient();
     }
 
-    @Bean(name = "dao-titan-strategy")
-    public TitanClientStrategy daoStrategy() {
-        return new DAOTitanStrategy();
+    @Bean(name = "dao-janusgraph-strategy")
+    public JanusGraphClientStrategy daoStrategy() {
+        return new DAOJanusGraphStrategy();
     }
 
-    @Bean(name = "migration-titan-client", initMethod = "createGraph")
-    public TitanGraphClient titanMigrationClient(@Qualifier("dao-titan-strategy") TitanClientStrategy titanClientStrategy) {
-        return new TitanGraphClient(titanClientStrategy);
+    @Bean(name = "migration-janusgraph-client", initMethod = "createGraph")
+    public JanusGraphClient janusGraphMigrationClient(@Qualifier("dao-janusgraph-strategy")
+                                                     JanusGraphClientStrategy janusGraphClientStrategy) {
+        return new JanusGraphClient(janusGraphClientStrategy);
     }
 
     @Bean(name = "tosca-operation-facade")
@@ -116,9 +117,9 @@ public class ValidationToolConfiguration {
         return new ByToscaNameDerivedNodeTypeResolver();
     }
 
-    @Bean(name = "titan-dao")
-    public TitanDao titanDao(@Qualifier("migration-titan-client") TitanGraphClient titanGraphClient) {
-        return new TitanDao(titanGraphClient);
+    @Bean(name = "janusgraph-dao")
+    public JanusGraphDao janusGraphDao(@Qualifier("migration-janusgraph-client") JanusGraphClient janusGraphClient) {
+        return new JanusGraphDao(janusGraphClient);
     }
 
     @Bean(name = "category-operation")

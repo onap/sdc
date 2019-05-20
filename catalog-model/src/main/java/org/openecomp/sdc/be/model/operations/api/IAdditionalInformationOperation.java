@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
@@ -32,19 +32,19 @@ import java.util.List;
 
 public interface IAdditionalInformationOperation {
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key, String value);
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key, String value);
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String origKey, String key, String value);
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String origKey, String key, String value);
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key);
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key);
 
-    public Either<AdditionalInfoParameterData, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String resourceUniqueId);
+    public Either<AdditionalInfoParameterData, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String resourceUniqueId);
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters);
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters);
 
-    public TitanOperationStatus findResourceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties);
+    public JanusGraphOperationStatus findResourceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties);
 
-    public TitanOperationStatus findServiceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties);
+    public JanusGraphOperationStatus findServiceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties);
 
     public Either<AdditionalInformationDefinition, StorageOperationStatus> createAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key, String value, boolean inTransaction);
 
@@ -54,20 +54,20 @@ public interface IAdditionalInformationOperation {
 
     public Either<Integer, StorageOperationStatus> getNumberOfAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean inTransaction);
 
-    public Either<Integer, TitanOperationStatus> getNumberOfParameters(NodeTypeEnum nodeType, String resourceId);
+    public Either<Integer, JanusGraphOperationStatus> getNumberOfParameters(NodeTypeEnum nodeType, String resourceId);
 
-    public Either<AdditionalInfoParameterInfo, TitanOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id);
+    public Either<AdditionalInfoParameterInfo, JanusGraphOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id);
 
     public Either<AdditionalInfoParameterInfo, StorageOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id, boolean inTransaction);
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean ignoreVerification);
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean ignoreVerification);
 
     public Either<AdditionalInformationDefinition, StorageOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean ignoreVerification, boolean inTransaction);
 
     public Either<AdditionalInformationDefinition, StorageOperationStatus> deleteAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean inTransaction);
 
-    public Either<TitanVertex, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, TitanVertex matadatVertex);
+    public Either<JanusGraphVertex, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, JanusGraphVertex matadatVertex);
 
-    public TitanOperationStatus addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters, TitanVertex metadataVertex);
+    public JanusGraphOperationStatus addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters, JanusGraphVertex metadataVertex);
 
 }

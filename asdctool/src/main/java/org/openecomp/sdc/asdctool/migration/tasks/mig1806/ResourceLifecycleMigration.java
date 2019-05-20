@@ -8,11 +8,11 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -33,7 +33,7 @@ import java.util.Map;
 @Component  
 public class ResourceLifecycleMigration implements Migration {
 
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     private UserAdminOperation userAdminOperation;
     
@@ -41,8 +41,8 @@ public class ResourceLifecycleMigration implements Migration {
 
     private static final Logger log = Logger.getLogger(ResourceLifecycleMigration.class);
 
-    public ResourceLifecycleMigration(TitanDao titanDao, LifecycleBusinessLogic lifecycleBusinessLogic, UserAdminOperation userAdminOperation) {
-        this.titanDao = titanDao;
+    public ResourceLifecycleMigration(JanusGraphDao janusGraphDao, LifecycleBusinessLogic lifecycleBusinessLogic, UserAdminOperation userAdminOperation) {
+        this.janusGraphDao = janusGraphDao;
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
         this.userAdminOperation = userAdminOperation;
     }
@@ -82,7 +82,7 @@ public class ResourceLifecycleMigration implements Migration {
         if (StorageOperationStatus.OK == status) {
             status = findResourcesAndChangeStatus(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         }
-        titanDao.commit();
+        janusGraphDao.commit();
         return status;
     }
 
@@ -97,12 +97,12 @@ public class ResourceLifecycleMigration implements Migration {
         hasNot.put(GraphPropertyEnum.IS_DELETED, true);
 
         log.info("findResourcesAndChangeStatus for type {} and state {}", type ,LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        status = titanDao.getByCriteria(type, props, hasNot, JsonParseFlagEnum.ParseAll).either(this::changeState, this::handleError);
+        status = janusGraphDao.getByCriteria(type, props, hasNot, JsonParseFlagEnum.ParseAll).either(this::changeState, this::handleError);
         log.info("status {} for type {} and state {}", status, type ,LifecycleStateEnum.READY_FOR_CERTIFICATION);
         
         log.info("findResourcesAndChangeStatus for type {} and state {}", type ,LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name());
-        status = titanDao.getByCriteria(type, props, hasNot, JsonParseFlagEnum.ParseAll).either(this::changeState, this::handleError);
+        status = janusGraphDao.getByCriteria(type, props, hasNot, JsonParseFlagEnum.ParseAll).either(this::changeState, this::handleError);
         log.info("status {} for type {} and state {}", status, type ,LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
         
         
@@ -130,9 +130,10 @@ public class ResourceLifecycleMigration implements Migration {
         return changeComponentState.isLeft() ? StorageOperationStatus.OK : StorageOperationStatus.GENERAL_ERROR;
     }
 
-    private StorageOperationStatus handleError(TitanOperationStatus err) {
-        log.debug("receive titan error {}", err);
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.NOT_FOUND == err ? TitanOperationStatus.OK : err);
+    private StorageOperationStatus handleError(JanusGraphOperationStatus err) {
+        log.debug("receive janusgraph error {}", err);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+            JanusGraphOperationStatus.NOT_FOUND == err ? JanusGraphOperationStatus.OK : err);
     }
 
 }

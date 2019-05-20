@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphQuery;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.asdctool.Utils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -38,21 +38,21 @@ public class UpdatePropertyOnVertex {
 
 	private static Logger log = Logger.getLogger(UpdatePropertyOnVertex.class.getName());
 
-	public Integer updatePropertyOnServiceAtLeastCertified(String titanFile, Map<String, Object> keyValueToSet,
+	public Integer updatePropertyOnServiceAtLeastCertified(String janusGraphFile, Map<String, Object> keyValueToSet,
 			List<Map<String, Object>> orCriteria) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 
 		Integer numberOfUpdatedVertexes = 0;
 
 		try {
-			graph = openGraph(titanFile);
+			graph = openGraph(janusGraphFile);
 
 			if (orCriteria != null && false == orCriteria.isEmpty()) {
 
 				for (Map<String, Object> criteria : orCriteria) {
 
-					TitanGraphQuery<? extends TitanGraphQuery> query = graph.query();
+					JanusGraphQuery<? extends JanusGraphQuery> query = graph.query();
 
 					if (criteria != null && !criteria.isEmpty()) {
 						for (Map.Entry<String, Object> entry : criteria.entrySet()) {
@@ -112,10 +112,10 @@ public class UpdatePropertyOnVertex {
 
 	}
 
-	private Integer updateVertexes(Map<String, Object> keyValueToSet, TitanGraph graph, Map<String, Object> criteria) {
+	private Integer updateVertexes(Map<String, Object> keyValueToSet, JanusGraph graph, Map<String, Object> criteria) {
 		Integer numberOfUpdatedVertexesPerService = 0;
 
-		TitanGraphQuery<? extends TitanGraphQuery> updateQuery = graph.query();
+		JanusGraphQuery<? extends JanusGraphQuery> updateQuery = graph.query();
 
 		if (criteria != null && !criteria.isEmpty()) {
 			for (Map.Entry<String, Object> entry : criteria.entrySet()) {
@@ -159,9 +159,9 @@ public class UpdatePropertyOnVertex {
 		return numberOfUpdatedVertexesPerService;
 	}
 
-	public TitanGraph openGraph(String titanFileLocation) {
+	public JanusGraph openGraph(String janusGraphFileLocation) {
 
-		TitanGraph graph = TitanFactory.open(titanFileLocation);
+		JanusGraph graph = JanusGraphFactory.open(janusGraphFileLocation);
 
 		return graph;
 

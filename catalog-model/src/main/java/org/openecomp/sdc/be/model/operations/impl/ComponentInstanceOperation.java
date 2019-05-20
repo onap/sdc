@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,11 +35,11 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -83,10 +83,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     /**
      * FOR TEST ONLY
      *
-     * @param titanGenericDao
+     * @param janusGraphGenericDao
      */
-    public void setTitanGenericDao(HealingTitanGenericDao titanGenericDao) {
-        this.titanGenericDao = titanGenericDao;
+    public void setJanusGraphGenericDao(HealingJanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     @Override
@@ -95,19 +95,20 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         Either<Integer, StorageOperationStatus> result = null;
         try {
 
-            Either<TitanGraph, TitanOperationStatus> graphResult = titanGenericDao.getGraph();
+            Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphGenericDao.getGraph();
             if (graphResult.isRight()) {
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graphResult.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(graphResult.right().value()));
                 return result;
             }
-            Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId);
+            Either<JanusGraphVertex, JanusGraphOperationStatus> vertexService = janusGraphGenericDao
+                .getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId);
             if (vertexService.isRight()) {
                 log.debug("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
-                TitanOperationStatus status = vertexService.right().value();
-                if (status == TitanOperationStatus.NOT_FOUND) {
-                    status = TitanOperationStatus.INVALID_ID;
+                JanusGraphOperationStatus status = vertexService.right().value();
+                if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                    status = JanusGraphOperationStatus.INVALID_ID;
                 }
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexService.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexService.right().value()));
                 return result;
             }
             Vertex vertex = vertexService.left().value();
@@ -130,34 +131,36 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.error("increaseAndGetResourceInstanceSpecificCounter operation : Going to execute rollback on graph.");
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug("increaseAndGetResourceInstanceSpecificCounter operation : Going to execute commit on graph.");
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }
 
     }
 
-    private void connectAttValueDataToComponentInstanceData(Wrapper<TitanOperationStatus> errorWrapper, ComponentInstanceData compIns, AttributeValueData attValueData) {
+    private void connectAttValueDataToComponentInstanceData(Wrapper<JanusGraphOperationStatus> errorWrapper, ComponentInstanceData compIns, AttributeValueData attValueData) {
 
-        Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(compIns, attValueData, GraphEdgeLabels.ATTRIBUTE_VALUE, null);
+        Either<GraphRelation, JanusGraphOperationStatus> createRelResult = janusGraphGenericDao
+            .createRelation(compIns, attValueData, GraphEdgeLabels.ATTRIBUTE_VALUE, null);
 
         if (createRelResult.isRight()) {
-            TitanOperationStatus operationStatus = createRelResult.right().value();
+            JanusGraphOperationStatus operationStatus = createRelResult.right().value();
             errorWrapper.setInnerElement(operationStatus);
             BeEcompErrorManager.getInstance().logInternalFlowError("connectAttValueDataToComponentInstanceData",
                     "Failed to associate resource instance " + compIns.getUniqueId() + " attribute value " + attValueData.getUniqueId() + " in graph. status is " + operationStatus, ErrorSeverity.ERROR);
         }
     }
 
-    private void connectAttValueDataToAttData(Wrapper<TitanOperationStatus> errorWrapper, AttributeData attData, AttributeValueData attValueData) {
+    private void connectAttValueDataToAttData(Wrapper<JanusGraphOperationStatus> errorWrapper, AttributeData attData, AttributeValueData attValueData) {
 
-        Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(attValueData, attData, GraphEdgeLabels.ATTRIBUTE_IMPL, null);
+        Either<GraphRelation, JanusGraphOperationStatus> createRelResult = janusGraphGenericDao
+            .createRelation(attValueData, attData, GraphEdgeLabels.ATTRIBUTE_IMPL, null);
 
         if (createRelResult.isRight()) {
-            TitanOperationStatus operationStatus = createRelResult.right().value();
+            JanusGraphOperationStatus operationStatus = createRelResult.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("connectAttValueDataToAttData",
                     "Failed to associate attribute value " + attValueData.getUniqueId() + " to attribute " + attData.getUniqueId() + " in graph. status is " + operationStatus, ErrorSeverity.ERROR);
 
@@ -165,8 +168,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         }
     }
 
-    private void createAttributeValueDataNode(ComponentInstanceProperty attributeInstanceProperty, Integer index, Wrapper<TitanOperationStatus> errorWrapper, ComponentInstanceData resourceInstanceData,
-            Wrapper<AttributeValueData> attValueDataWrapper) {
+    private void createAttributeValueDataNode(ComponentInstanceProperty attributeInstanceProperty, Integer index, Wrapper<JanusGraphOperationStatus> errorWrapper, ComponentInstanceData resourceInstanceData,
+                                              Wrapper<AttributeValueData> attValueDataWrapper) {
         String valueUniqueUid = attributeInstanceProperty.getValueUniqueUid();
         if (valueUniqueUid == null) {
 
@@ -174,11 +177,12 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             AttributeValueData attributeValueData = buildAttributeValueDataFromComponentInstanceAttribute(attributeInstanceProperty, attValueDatauniqueId);
 
             log.debug("Before adding attribute value to graph {}", attributeValueData);
-            Either<AttributeValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(attributeValueData, AttributeValueData.class);
+            Either<AttributeValueData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao
+                .createNode(attributeValueData, AttributeValueData.class);
             log.debug("After adding attribute value to graph {}", attributeValueData);
 
             if (createNodeResult.isRight()) {
-                TitanOperationStatus operationStatus = createNodeResult.right().value();
+                JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                 errorWrapper.setInnerElement(operationStatus);
             } else {
                 attValueDataWrapper.setInnerElement(createNodeResult.left().value());
@@ -186,7 +190,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
         } else {
             BeEcompErrorManager.getInstance().logInternalFlowError("CreateAttributeValueDataNode", "attribute value already exists.", ErrorSeverity.ERROR);
-            errorWrapper.setInnerElement(TitanOperationStatus.ALREADY_EXIST);
+            errorWrapper.setInnerElement(JanusGraphOperationStatus.ALREADY_EXIST);
         }
     }
 
@@ -258,10 +262,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
      * @param resourceInstanceId
      * @return
      */
-    private Either<AttributeValueData, TitanOperationStatus> updateAttributeOfResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId) {
+    private Either<AttributeValueData, JanusGraphOperationStatus> updateAttributeOfResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId) {
 
-        Either<AttributeValueData, TitanOperationStatus> result = null;
-        Wrapper<TitanOperationStatus> errorWrapper = new Wrapper<>();
+        Either<AttributeValueData, JanusGraphOperationStatus> result = null;
+        Wrapper<JanusGraphOperationStatus> errorWrapper = new Wrapper<>();
         UpdateDataContainer<AttributeData, AttributeValueData> updateDataContainer = new UpdateDataContainer<>(GraphEdgeLabels.ATTRIBUTE_IMPL, (() -> AttributeData.class), (() -> AttributeValueData.class), NodeTypeEnum.Attribute,
                 NodeTypeEnum.AttributeValue);
         preUpdateElementOfResourceInstanceValidations(updateDataContainer, resourceInstanceAttribute, resourceInstanceId, errorWrapper);
@@ -269,9 +273,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             AttributeValueData attributeValueData = updateDataContainer.getValueDataWrapper().getInnerElement();
             attributeValueData.setHidden(resourceInstanceAttribute.isHidden());
             attributeValueData.setValue(resourceInstanceAttribute.getValue());
-            Either<AttributeValueData, TitanOperationStatus> updateRes = titanGenericDao.updateNode(attributeValueData, AttributeValueData.class);
+            Either<AttributeValueData, JanusGraphOperationStatus> updateRes = janusGraphGenericDao
+                .updateNode(attributeValueData, AttributeValueData.class);
             if (updateRes.isRight()) {
-                TitanOperationStatus status = updateRes.right().value();
+                JanusGraphOperationStatus status = updateRes.right().value();
                 errorWrapper.setInnerElement(status);
             } else {
                 result = Either.left(updateRes.left().value());
@@ -284,8 +289,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
     }
 
-    private Either<AttributeValueData, TitanOperationStatus> addAttributeToResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId, Integer index) {
-        Wrapper<TitanOperationStatus> errorWrapper = new Wrapper<>();
+    private Either<AttributeValueData, JanusGraphOperationStatus> addAttributeToResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId, Integer index) {
+        Wrapper<JanusGraphOperationStatus> errorWrapper = new Wrapper<>();
         Wrapper<ComponentInstanceData> compInsWrapper = new Wrapper<>();
         Wrapper<AttributeData> attDataWrapper = new Wrapper<>();
         Wrapper<AttributeValueData> attValueDataWrapper = new Wrapper<>();
@@ -320,7 +325,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void preUpdateElementOfResourceInstanceValidations(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer, IComponentInstanceConnectedElement resourceInstanceProerty,
-            String resourceInstanceId, Wrapper<TitanOperationStatus> errorWrapper) {
+            String resourceInstanceId, Wrapper<JanusGraphOperationStatus> errorWrapper) {
 
         if (errorWrapper.isEmpty()) {
             // Verify VFC instance Exist
@@ -344,14 +349,15 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void validateElementConnectedToInstance(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer, IComponentInstanceConnectedElement resourceInstanceProerty,
-            Wrapper<TitanOperationStatus> errorWrapper) {
-        Either<ImmutablePair<SomeData, GraphEdge>, TitanOperationStatus> child = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), resourceInstanceProerty.getValueUniqueUid(),
+            Wrapper<JanusGraphOperationStatus> errorWrapper) {
+        Either<ImmutablePair<SomeData, GraphEdge>, JanusGraphOperationStatus> child = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), resourceInstanceProerty.getValueUniqueUid(),
                 updateDataContainer.getGraphEdge(), updateDataContainer.getNodeType(), updateDataContainer.getSomeDataClassGen().get());
 
         if (child.isRight()) {
-            TitanOperationStatus status = child.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = child.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             errorWrapper.setInnerElement(status);
 
@@ -361,16 +367,17 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     }
 
     private <SomeValueData extends GraphNode, SomeData extends GraphNode> void validateElementConnectedToComponentInstanceExist(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer,
-            IComponentInstanceConnectedElement resourceInstanceProerty, Wrapper<TitanOperationStatus> errorWrapper) {
+            IComponentInstanceConnectedElement resourceInstanceProerty, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         String valueUniqueUid = resourceInstanceProerty.getValueUniqueUid();
         if (valueUniqueUid == null) {
-            errorWrapper.setInnerElement(TitanOperationStatus.INVALID_ID);
+            errorWrapper.setInnerElement(JanusGraphOperationStatus.INVALID_ID);
         } else {
-            Either<SomeValueData, TitanOperationStatus> findPropertyValueRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), valueUniqueUid, updateDataContainer.getSomeValueDataClassGen().get());
+            Either<SomeValueData, JanusGraphOperationStatus> findPropertyValueRes = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), valueUniqueUid, updateDataContainer.getSomeValueDataClassGen().get());
             if (findPropertyValueRes.isRight()) {
-                TitanOperationStatus status = findPropertyValueRes.right().value();
-                if (status == TitanOperationStatus.NOT_FOUND) {
-                    status = TitanOperationStatus.INVALID_ID;
+                JanusGraphOperationStatus status = findPropertyValueRes.right().value();
+                if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                    status = JanusGraphOperationStatus.INVALID_ID;
                 }
                 errorWrapper.setInnerElement(status);
             } else {
@@ -380,31 +387,33 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void validateElementConnectedToComponentExist(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer,
-            IComponentInstanceConnectedElement resourceInstanceElementConnected, Wrapper<TitanOperationStatus> errorWrapper) {
+            IComponentInstanceConnectedElement resourceInstanceElementConnected, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         String uniqueId = resourceInstanceElementConnected.getUniqueId();
-        Either<SomeData, TitanOperationStatus> findPropertyDefRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeType()), uniqueId, updateDataContainer.getSomeDataClassGen().get());
+        Either<SomeData, JanusGraphOperationStatus> findPropertyDefRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeType()), uniqueId, updateDataContainer.getSomeDataClassGen().get());
 
         if (findPropertyDefRes.isRight()) {
-            TitanOperationStatus status = findPropertyDefRes.right().value();
+            JanusGraphOperationStatus status = findPropertyDefRes.right().value();
             errorWrapper.setInnerElement(status);
         }
     }
 
-    private void validateRIExist(String resourceInstanceId, Wrapper<TitanOperationStatus> errorWrapper) {
+    private void validateRIExist(String resourceInstanceId, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         validateRIExist(resourceInstanceId, null, errorWrapper);
     }
 
-    private void validateRIExist(String resourceInstanceId, Wrapper<ComponentInstanceData> compInsDataWrapper, Wrapper<TitanOperationStatus> errorWrapper) {
+    private void validateRIExist(String resourceInstanceId, Wrapper<ComponentInstanceData> compInsDataWrapper, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         validateElementExistInGraph(resourceInstanceId, NodeTypeEnum.ResourceInstance, () -> ComponentInstanceData.class, compInsDataWrapper, errorWrapper);
     }
 
     public <ElementData extends GraphNode> void validateElementExistInGraph(String elementUniqueId, NodeTypeEnum elementNodeType, Supplier<Class<ElementData>> elementClassGen, Wrapper<ElementData> elementDataWrapper,
-            Wrapper<TitanOperationStatus> errorWrapper) {
-        Either<ElementData, TitanOperationStatus> findResInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(elementNodeType), elementUniqueId, elementClassGen.get());
+            Wrapper<JanusGraphOperationStatus> errorWrapper) {
+        Either<ElementData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(elementNodeType), elementUniqueId, elementClassGen.get());
         if (findResInstanceRes.isRight()) {
-            TitanOperationStatus status = findResInstanceRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findResInstanceRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             errorWrapper.setInnerElement(status);
         } else {
@@ -421,25 +430,27 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
      * @param index
      * @return
      */
-    private Either<InputValueData, TitanOperationStatus> addInputToResourceInstance(ComponentInstanceInput resourceInstanceInput, String resourceInstanceId, Integer index) {
+    private Either<InputValueData, JanusGraphOperationStatus> addInputToResourceInstance(ComponentInstanceInput resourceInstanceInput, String resourceInstanceId, Integer index) {
 
-        Either<ComponentInstanceData, TitanOperationStatus> findResInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId, ComponentInstanceData.class);
+        Either<ComponentInstanceData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId, ComponentInstanceData.class);
 
         if (findResInstanceRes.isRight()) {
-            TitanOperationStatus status = findResInstanceRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findResInstanceRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return Either.right(status);
         }
 
         String propertyId = resourceInstanceInput.getUniqueId();
-        Either<InputsData, TitanOperationStatus> findPropertyDefRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Input), propertyId, InputsData.class);
+        Either<InputsData, JanusGraphOperationStatus> findPropertyDefRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Input), propertyId, InputsData.class);
 
         if (findPropertyDefRes.isRight()) {
-            TitanOperationStatus status = findPropertyDefRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findPropertyDefRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return Either.right(status);
         }
@@ -451,13 +462,13 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
             ComponentInstanceData resourceInstanceData = findResInstanceRes.left().value();
 
-            ImmutablePair<TitanOperationStatus, String> isInputValueExists = inputOperation.findInputValue(resourceInstanceId, propertyId);
-            if (isInputValueExists.getLeft() == TitanOperationStatus.ALREADY_EXIST) {
+            ImmutablePair<JanusGraphOperationStatus, String> isInputValueExists = inputOperation.findInputValue(resourceInstanceId, propertyId);
+            if (isInputValueExists.getLeft() == JanusGraphOperationStatus.ALREADY_EXIST) {
                 log.debug("The property {} already added to the resource instance {}", propertyId, resourceInstanceId);
                 resourceInstanceInput.setValueUniqueUid(isInputValueExists.getRight());
             }
 
-            if (isInputValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) {
+            if (isInputValueExists.getLeft() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("After finding input value of {} on componenet instance {}", propertyId, resourceInstanceId);
                 return Either.right(isInputValueExists.getLeft());
             }
@@ -473,20 +484,20 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
                 SchemaDefinition def = propDataDef.getSchema();
                 if (def == null) {
                     log.debug("Schema doesn't exists for property of type {}", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 PropertyDataDefinition propDef = def.getProperty();
                 if (propDef == null) {
                     log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 innerType = propDef.getType();
             }
 
             log.debug("Before validateAndUpdatePropertyValue");
-            Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
             if (allDataTypes.isRight()) {
-                TitanOperationStatus status = allDataTypes.right().value();
+                JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
                 return Either.right(status);
             }
@@ -501,21 +512,23 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             log.debug("After validateAndUpdateRules. pair = {} ", pair);
             if (pair.getRight() != null && !pair.getRight()) {
                 BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), resourceInstanceInput.getName(), propertyType);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             log.debug("Before adding property value to graph {}", propertyValueData);
-            Either<InputValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyValueData, InputValueData.class);
+            Either<InputValueData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao
+                .createNode(propertyValueData, InputValueData.class);
             log.debug("After adding property value to graph {}", propertyValueData);
 
             if (createNodeResult.isRight()) {
-                TitanOperationStatus operationStatus = createNodeResult.right().value();
+                JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                 return Either.right(operationStatus);
             }
 
-            Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(propertyValueData, propertyData, GraphEdgeLabels.INPUT_IMPL, null);
+            Either<GraphRelation, JanusGraphOperationStatus> createRelResult = janusGraphGenericDao
+                .createRelation(propertyValueData, propertyData, GraphEdgeLabels.INPUT_IMPL, null);
 
             if (createRelResult.isRight()) {
-                TitanOperationStatus operationStatus = createRelResult.right().value();
+                JanusGraphOperationStatus operationStatus = createRelResult.right().value();
                 log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
                 return Either.right(operationStatus);
             }
@@ -525,10 +538,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             properties1.put(GraphEdgePropertiesDictionary.NAME.getProperty(), resourceInstanceData.getComponentInstDataDefinition().getName());
             properties1.put(GraphEdgePropertiesDictionary.OWNER_ID.getProperty(), resourceInstanceData.getComponentInstDataDefinition().getUniqueId());
 
-            createRelResult = titanGenericDao.createRelation(resourceInstanceData, propertyValueData, GraphEdgeLabels.INPUT_VALUE, properties1);
+            createRelResult = janusGraphGenericDao
+                .createRelation(resourceInstanceData, propertyValueData, GraphEdgeLabels.INPUT_VALUE, properties1);
 
             if (createRelResult.isRight()) {
-                TitanOperationStatus operationStatus = createNodeResult.right().value();
+                JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                 log.error("Failed to associate resource instance {} property value {} in graph. status is {}", resourceInstanceId, uniqueId, operationStatus);
                 return Either.right(operationStatus);
 
@@ -537,7 +551,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             return Either.left(createNodeResult.left().value());
         } else {
             log.error("property value already exists.");
-            return Either.right(TitanOperationStatus.ALREADY_EXIST);
+            return Either.right(JanusGraphOperationStatus.ALREADY_EXIST);
         }
 
     }
@@ -548,11 +562,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
         try {
 
-            Either<AttributeValueData, TitanOperationStatus> eitherStatus = this.addAttributeToResourceInstance(resourceInstanceAttribute, resourceInstanceId, index);
+            Either<AttributeValueData, JanusGraphOperationStatus> eitherStatus = this.addAttributeToResourceInstance(resourceInstanceAttribute, resourceInstanceId, index);
 
             if (eitherStatus.isRight()) {
                 log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}", resourceInstanceAttribute, resourceInstanceId, eitherStatus.right().value().name());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherStatus.right().value()));
                 return result;
             } else {
                 AttributeValueData attributeValueData = eitherStatus.left().value();
@@ -582,11 +596,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
 
         try {
-            Either<AttributeValueData, TitanOperationStatus> eitherAttributeValue = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId);
+            Either<AttributeValueData, JanusGraphOperationStatus> eitherAttributeValue = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId);
 
             if (eitherAttributeValue.isRight()) {
                 log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}", resourceInstanceAttribute, resourceInstanceId, eitherAttributeValue.right().value().name());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherAttributeValue.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherAttributeValue.right().value()));
                 return result;
             } else {
                 AttributeValueData attributeValueData = eitherAttributeValue.left().value();
@@ -618,11 +632,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
         try {
 
-            Either<InputValueData, TitanOperationStatus> eitherStatus = addInputToResourceInstance(resourceInstanceInput, resourceInstanceId, index);
+            Either<InputValueData, JanusGraphOperationStatus> eitherStatus = addInputToResourceInstance(resourceInstanceInput, resourceInstanceId, index);
 
             if (eitherStatus.isRight()) {
                 log.error("Failed to add input value {} to resource instance {} in Graph. status is {}", resourceInstanceInput, resourceInstanceId, eitherStatus.right().value().name());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherStatus.right().value()));
                 return result;
             } else {
                 InputValueData propertyValueData = eitherStatus.left().value();
@@ -630,9 +644,9 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
                 ComponentInstanceInput propertyValueResult = inputOperation.buildResourceInstanceInput(propertyValueData, resourceInstanceInput);
                 log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult);
 
-                Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(resourceInstanceInput.getPath(), resourceInstanceInput.getUniqueId(), resourceInstanceInput.getDefaultValue());
+                Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(resourceInstanceInput.getPath(), resourceInstanceInput.getUniqueId(), resourceInstanceInput.getDefaultValue());
                 if (findDefaultValue.isRight()) {
-                    result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()));
+                    result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()));
                     return result;
                 }
                 String defaultValue = findDefaultValue.left().value();
@@ -648,10 +662,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.error("Going to execute rollback on graph.");
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug("Going to execute commit on graph.");
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }
@@ -665,13 +679,13 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
     @Override
     public StorageOperationStatus updateCustomizationUUID(String componentInstanceId) {
-        Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
+        Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty = janusGraphGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
         if (vertexByProperty.isRight()) {
             log.debug("Failed to fetch component instance by id {} error {}", componentInstanceId, vertexByProperty.right().value());
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexByProperty.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexByProperty.right().value());
         }
         UUID uuid = UUID.randomUUID();
-        TitanVertex ciVertex = vertexByProperty.left().value();
+        JanusGraphVertex ciVertex = vertexByProperty.left().value();
         ciVertex.property(GraphPropertiesDictionary.CUSTOMIZATION_UUID.getProperty(), uuid.toString());
 
         return StorageOperationStatus.OK;
@@ -686,10 +700,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             ComponentInstanceData componentData = new ComponentInstanceData(componentInstance, componentInstance.getGroupInstances().size());
             componentData.getComponentInstDataDefinition().setModificationTime(modificationTime);
             componentData.getComponentInstDataDefinition().setCustomizationUUID(UUID.randomUUID().toString());
-            Either<ComponentInstanceData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentData, ComponentInstanceData.class);
+            Either<ComponentInstanceData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+                .updateNode(componentData, ComponentInstanceData.class);
             if (updateNode.isRight()) {
                 log.error("Failed to update resource {}. status is {}", componentInstance.getUniqueId(), updateNode.right().value());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateNode.right().value()));
             }else{
                 result = Either.left(updateNode.left().value());
             }
@@ -700,10 +715,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             if(!inTransaction){
                 if (result == null || result.isRight()) {
                     log.error("Going to execute rollback on graph.");
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug("Going to execute commit on graph.");
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }

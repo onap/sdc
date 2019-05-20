@@ -45,8 +45,8 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -62,10 +62,10 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
@@ -143,7 +143,7 @@ public class ResourceBusinessLogicTest {
 
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
     IElementOperation mockElementDao;
-    TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+    JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
@@ -242,7 +242,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
-        when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         // BL object
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
@@ -255,7 +255,7 @@ public class ResourceBusinessLogicTest {
         bl.setGraphLockOperation(graphLockOperation);
         bl.setArtifactsManager(artifactManager);
         bl.setPropertyOperation(propertyOperation);
-        bl.setTitanGenericDao(mockTitanDao);
+        bl.setJanusGraphGenericDao(mockJanusGraphDao);
         bl.setApplicationDataTypeCache(applicationDataTypeCache);
         bl.setCacheManagerOperation(cacheManager);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);

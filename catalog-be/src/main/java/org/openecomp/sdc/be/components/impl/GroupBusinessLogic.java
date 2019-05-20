@@ -41,7 +41,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -54,8 +54,8 @@ import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.PropertyDefinition.GroupInstancePropertyValueUpdateBehavior;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
-import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -71,8 +71,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter.extractCapabilitiesFromGroups;
-import static org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter.extractCapabilityPropertiesFromGroups;
+import static org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter.extractCapabilitiesFromGroups;
+import static org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter.extractCapabilityPropertiesFromGroups;
 
 @org.springframework.stereotype.Component("groupBusinessLogic")
 public class GroupBusinessLogic extends BaseBusinessLogic {
@@ -247,9 +247,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (result != null && result.isLeft()) {
-                titanDao.commit();
+                janusGraphDao.commit();
             } else {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             }
             if (shouldLock) {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
@@ -488,10 +488,10 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
                 if (result == null || result.isRight()) {
                     log.debug("Going to execute rollback on create group.");
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
                     log.debug("Going to execute commit on create group.");
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
 
             }
@@ -718,10 +718,10 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
                 if (result == null || result.isRight()) {
                     log.debug("Going to execute rollback on create group.");
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
                     log.debug("Going to execute commit on create group.");
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
 
             }
@@ -1109,12 +1109,12 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     }
 
     private List<GroupDefinition> onFailedGroupDBOperation(ResponseFormat responseFormat) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private GroupDefinition onFailedUpdateGroupDBOperation(ResponseFormat responseFormat) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ByResponseFormatComponentException(responseFormat);
     }
 
@@ -1132,7 +1132,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         log.debug("#updatePolicyTargetReferencingDeletedGroup - removing all component {} policy targets referencing group {}", component.getUniqueId(), groupId);
         ActionStatus actionStatus = policyTargetsUpdateHandler.removePoliciesTargets(component, groupId, PolicyTargetType.GROUPS);
         if (ActionStatus.OK != actionStatus) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             throw new ByActionStatusComponentException(actionStatus, groupId);
         }
     }
@@ -1143,11 +1143,11 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Map<String, GroupDataDefinition> groups = new HashMap<>();
         Either<List<GroupDefinition>, ResponseFormat> result = null;
         Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult = null;
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
+            JanusGraphOperationStatus status = allDataTypes.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToGroup", "Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
 
         }
 
@@ -1213,11 +1213,11 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult = null;
         List<GroupDataDefinition> groups = new ArrayList<>();
 
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
+            JanusGraphOperationStatus status = allDataTypes.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToGroup", "Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
 
         }
 
@@ -1331,18 +1331,18 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (CollectionUtils.isNotEmpty(properties)) {
             if (CollectionUtils.isEmpty(groupTypeProperties)) {
                 BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP, "group type does not have properties", ErrorSeverity.INFO);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.MATCH_NOT_FOUND))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.MATCH_NOT_FOUND))));
             }
 
             Map<String, PropertyDefinition> groupTypePropertiesMap = groupTypeProperties.stream().collect(Collectors.toMap(PropertyDefinition::getName, p -> p));
 
-            Either<GroupProperty, TitanOperationStatus> addPropertyResult;
+            Either<GroupProperty, JanusGraphOperationStatus> addPropertyResult;
             int i = 1;
             for (GroupProperty prop : properties) {
                 addPropertyResult = handleProperty(prop, groupTypePropertiesMap.get(prop.getName()), i, allDAtaTypes, groupType);
                 if (addPropertyResult.isRight()) {
                     BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP, "failed to validate property", ErrorSeverity.INFO);
-                    return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertyResult.right().value()))));
+                    return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertyResult.right().value()))));
                 }
                 updatedGroupTypeProperties.add(addPropertyResult.left().value());
 
@@ -1372,18 +1372,18 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         return found;
     }
 
-    private Either<GroupProperty, TitanOperationStatus> handleProperty(GroupProperty groupProperty, PropertyDefinition prop, Integer index, Map<String, DataTypeDefinition> allDataTypes, String groupType) {
+    private Either<GroupProperty, JanusGraphOperationStatus> handleProperty(GroupProperty groupProperty, PropertyDefinition prop, Integer index, Map<String, DataTypeDefinition> allDataTypes, String groupType) {
 
         if (prop == null) {
-            return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+            return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
         }
 
         String propertyType = prop.getType();
         String value = groupProperty.getValue();
 
-        Either<String, TitanOperationStatus> checkInnerType = propertyOperation.checkInnerType(prop);
+        Either<String, JanusGraphOperationStatus> checkInnerType = propertyOperation.checkInnerType(prop);
         if (checkInnerType.isRight()) {
-            TitanOperationStatus status = checkInnerType.right().value();
+            JanusGraphOperationStatus status = checkInnerType.right().value();
             return Either.right(status);
         }
 
@@ -1397,7 +1397,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (!res) {
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
         } else {
             Object object = isValid.left().value();

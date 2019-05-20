@@ -41,16 +41,16 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
@@ -115,7 +115,7 @@ public class ArtifactBusinessLogicTest {
     @Mock
     private IGraphLockOperation graphLockOperation;
     @Mock
-    TitanDao titanDao;
+    JanusGraphDao janusGraphDao;
     @Mock
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
     @Mock
@@ -560,7 +560,7 @@ public class ArtifactBusinessLogicTest {
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, false);
-        verify(titanDao, times(1)).commit();
+        verify(janusGraphDao, times(1)).commit();
     }
 
     @Test

@@ -13,12 +13,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ElementOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -73,13 +73,13 @@ public class ElementBLTest {
     private Resource notDeletedResource =  new Resource();
 
     @Mock
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Mock
     private UserValidations userValidations;
@@ -109,7 +109,7 @@ public class ElementBLTest {
         initServicesList();
         initResourceslist();
 
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
     }
 
     private void initCategoriesList() {
@@ -158,9 +158,10 @@ public class ElementBLTest {
     public void testFetchElementsByCategoryName_filterDeleted() {
         ArgumentCaptor<Map> criteriaCapture = ArgumentCaptor.forClass(Map.class);
 
-        when(titanGenericDao.getByCriteria(eq(NodeTypeEnum.ServiceNewCategory), criteriaCapture.capture(), eq(CategoryData.class)))
+        when(janusGraphGenericDao
+            .getByCriteria(eq(NodeTypeEnum.ServiceNewCategory), criteriaCapture.capture(), eq(CategoryData.class)))
                 .thenReturn(Either.left(categories));
-        when(titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ServiceNewCategory),
+        when(janusGraphGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ServiceNewCategory),
                 CATEGORY_UNIQUE_ID, GraphEdgeLabels.CATEGORY, NodeTypeEnum.Service, ServiceMetadataData.class))
                 .thenReturn(Either.left(services));
         when(toscaOperationFacade.getToscaElement(SERVICE_NOT_DELETED_ID, JsonParseFlagEnum.ParseMetadata))
@@ -185,7 +186,7 @@ public class ElementBLTest {
     @Test
     public void testFetchResourcesBySubcategoryUid_filterDeleted() {
 
-        when(titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceSubcategory),
+        when(janusGraphGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceSubcategory),
                 CATEGORY_UNIQUE_ID, GraphEdgeLabels.CATEGORY, NodeTypeEnum.Resource, ResourceMetadataData.class))
                 .thenReturn(Either.left(resources));
 

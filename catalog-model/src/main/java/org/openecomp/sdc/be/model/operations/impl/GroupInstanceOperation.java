@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -31,9 +31,9 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -74,37 +74,38 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
         Either<List<GroupInstance>, StorageOperationStatus> result = null;
         List<GroupInstance> groupInstanceRes = new ArrayList<>();
 
-        Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
         if (graph.isRight()) {
             log.debug("Failed to work with graph {}", graph.right().value());
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(graph.right().value()));
         }
-        TitanGraph tGraph = graph.left().value();
+        JanusGraph tGraph = graph.left().value();
         @SuppressWarnings("unchecked")
-        Iterable<TitanVertex> vertices = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(parentType), parentId).vertices();
+        Iterable<JanusGraphVertex> vertices = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(parentType), parentId).vertices();
         if (vertices == null || vertices.iterator() == null || !vertices.iterator().hasNext()) {
             log.debug("No nodes for type {}  for id = {}", parentType, parentId);
             result = Either.right(StorageOperationStatus.NOT_FOUND);
             return result;
         }
 
-        Iterator<TitanVertex> iterator = vertices.iterator();
+        Iterator<JanusGraphVertex> iterator = vertices.iterator();
         Vertex vertex = iterator.next();
 
         Map<String, Object> edgeProperties = null;
 
-        Either<List<ImmutablePair<GroupInstanceData, GraphEdge>>, TitanOperationStatus> childrenByEdgeCriteria = titanGenericDao.getChildrenByEdgeCriteria(vertex, parentId, GraphEdgeLabels.GROUP_INST, NodeTypeEnum.GroupInstance,
+        Either<List<ImmutablePair<GroupInstanceData, GraphEdge>>, JanusGraphOperationStatus> childrenByEdgeCriteria = janusGraphGenericDao
+            .getChildrenByEdgeCriteria(vertex, parentId, GraphEdgeLabels.GROUP_INST, NodeTypeEnum.GroupInstance,
                 GroupInstanceData.class, edgeProperties);
 
         if (childrenByEdgeCriteria.isRight()) {
-            TitanOperationStatus status = childrenByEdgeCriteria.right().value();
+            JanusGraphOperationStatus status = childrenByEdgeCriteria.right().value();
             log.debug("Failed to find group instance {} on graph", childrenByEdgeCriteria.right().value());
 
-            if (status == TitanOperationStatus.NOT_FOUND) {
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
                 return Either.left(groupInstanceRes);
             }
             
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
 
         List<ImmutablePair<GroupInstanceData, GraphEdge>> list = childrenByEdgeCriteria.left().value();
@@ -120,16 +121,16 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             }
             
             GroupDefinition groupDefinition = groupRes.left().value();
-            Either<Map<String, PropertyValueData>, TitanOperationStatus> groupInstancePropertyValuesRes = getAllGroupInstancePropertyValuesData(groupInstData);
+            Either<Map<String, PropertyValueData>, JanusGraphOperationStatus> groupInstancePropertyValuesRes = getAllGroupInstancePropertyValuesData(groupInstData);
             if(groupInstancePropertyValuesRes.isRight()){
-                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(groupInstancePropertyValuesRes.right().value()));
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(groupInstancePropertyValuesRes.right().value()));
             }
             buildGroupInstanceFromGroup(groupInstance, groupDefinition, groupInstancePropertyValuesRes.left().value());
-            Either<List<ImmutablePair<String, String>>, TitanOperationStatus> artifactsRes = getGroupArtifactsPairs(groupInstance.getUniqueId());
+            Either<List<ImmutablePair<String, String>>, JanusGraphOperationStatus> artifactsRes = getGroupArtifactsPairs(groupInstance.getUniqueId());
             if (artifactsRes.isRight()) {
-                TitanOperationStatus status = artifactsRes.right().value();
-                if (status != TitanOperationStatus.OK) {
-                    result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                JanusGraphOperationStatus status = artifactsRes.right().value();
+                if (status != JanusGraphOperationStatus.OK) {
+                    result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                     return result;
                 }
             } else {
@@ -175,11 +176,11 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
         try {
 
-            Either<PropertyValueData, TitanOperationStatus> eitherStatus = addPropertyToGroupInstance(groupInstanceProperty, groupInstanceId, index);
+            Either<PropertyValueData, JanusGraphOperationStatus> eitherStatus = addPropertyToGroupInstance(groupInstanceProperty, groupInstanceId, index);
 
             if (eitherStatus.isRight()) {
                 log.error("Failed to add property value {} to resource instance {} in Graph. status is {}", groupInstanceProperty, groupInstanceId, eitherStatus.right().value().name());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherStatus.right().value()));
                 return result;
             } else {
                 PropertyValueData propertyValueData = eitherStatus.left().value();
@@ -187,9 +188,9 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 ComponentInstanceProperty propertyValueResult = propertyOperation.buildResourceInstanceProperty(propertyValueData, groupInstanceProperty);
                 log.debug("The returned GroupInstanceProperty is {}", propertyValueResult);
 
-                Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(groupInstanceProperty.getPath(), groupInstanceProperty.getUniqueId(), groupInstanceProperty.getDefaultValue());
+                Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(groupInstanceProperty.getPath(), groupInstanceProperty.getUniqueId(), groupInstanceProperty.getDefaultValue());
                 if (findDefaultValue.isRight()) {
-                    result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()));
+                    result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()));
                     return result;
                 }
                 String defaultValue = findDefaultValue.left().value();
@@ -205,10 +206,10 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.error("Going to execute rollback on graph.");
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug("Going to execute commit on graph.");
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }
@@ -233,25 +234,27 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
      * @param index
      * @return
      */
-    public Either<PropertyValueData, TitanOperationStatus> addPropertyToGroupInstance(ComponentInstanceProperty groupInstanceProperty, String groupInstanceId, Integer index) {
+    public Either<PropertyValueData, JanusGraphOperationStatus> addPropertyToGroupInstance(ComponentInstanceProperty groupInstanceProperty, String groupInstanceId, Integer index) {
 
-        Either<GroupInstanceData, TitanOperationStatus> findResInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), groupInstanceId, GroupInstanceData.class);
+        Either<GroupInstanceData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), groupInstanceId, GroupInstanceData.class);
 
         if (findResInstanceRes.isRight()) {
-            TitanOperationStatus status = findResInstanceRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findResInstanceRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return Either.right(status);
         }
 
         String propertyId = groupInstanceProperty.getUniqueId();
-        Either<PropertyData, TitanOperationStatus> findPropertyDefRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyId, PropertyData.class);
+        Either<PropertyData, JanusGraphOperationStatus> findPropertyDefRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyId, PropertyData.class);
 
         if (findPropertyDefRes.isRight()) {
-            TitanOperationStatus status = findPropertyDefRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findPropertyDefRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return Either.right(status);
         }
@@ -262,11 +265,11 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             PropertyData propertyData = findPropertyDefRes.left().value();
             GroupInstanceData resourceInstanceData = findResInstanceRes.left().value();
 
-            ImmutablePair<TitanOperationStatus, String> isPropertyValueExists = propertyOperation.findPropertyValue(groupInstanceId, propertyId);
-            if (isPropertyValueExists.getLeft() == TitanOperationStatus.ALREADY_EXIST) {
+            ImmutablePair<JanusGraphOperationStatus, String> isPropertyValueExists = propertyOperation.findPropertyValue(groupInstanceId, propertyId);
+            if (isPropertyValueExists.getLeft() == JanusGraphOperationStatus.ALREADY_EXIST) {
                 log.debug("The property {} already added to the resource instance {}", propertyId, groupInstanceId);
                 groupInstanceProperty.setValueUniqueUid(isPropertyValueExists.getRight());
-                Either<PropertyValueData, TitanOperationStatus> updatePropertyOfResourceInstance = updatePropertyOfGroupInstance(groupInstanceProperty, groupInstanceId);
+                Either<PropertyValueData, JanusGraphOperationStatus> updatePropertyOfResourceInstance = updatePropertyOfGroupInstance(groupInstanceProperty, groupInstanceId);
                 if (updatePropertyOfResourceInstance.isRight()) {
                     BeEcompErrorManager.getInstance().logInternalFlowError(UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE, FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS + updatePropertyOfResourceInstance.right().value(), ErrorSeverity.ERROR);
                     return Either.right(updatePropertyOfResourceInstance.right().value());
@@ -274,7 +277,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 return Either.left(updatePropertyOfResourceInstance.left().value());
             }
 
-            if (isPropertyValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) {
+            if (isPropertyValueExists.getLeft() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("After finding property value of {} on componenet instance {}", propertyId, groupInstanceId);
                 return Either.right(isPropertyValueExists.getLeft());
             }
@@ -290,20 +293,20 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 SchemaDefinition def = propDataDef.getSchema();
                 if (def == null) {
                     log.debug("Schema doesn't exists for property of type {}", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 PropertyDataDefinition propDef = def.getProperty();
                 if (propDef == null) {
                     log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 innerType = propDef.getType();
             }
 
             log.debug("Before validateAndUpdatePropertyValue");
-            Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
             if (allDataTypes.isRight()) {
-                TitanOperationStatus status = allDataTypes.right().value();
+                JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance().logInternalFlowError(UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE, FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS + status, ErrorSeverity.ERROR);
                 return Either.right(status);
             }
@@ -314,7 +317,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             if (isValid.isRight()) {
                 Boolean res = isValid.right().value();
                 if (!res) {
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
             } else {
                 Object object = isValid.left().value();
@@ -333,32 +336,35 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             log.debug("After validateAndUpdateRules. pair = {}", pair);
             if (pair.getRight() != null && !pair.getRight()) {
                 BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), groupInstanceProperty.getName(), propertyType);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             propertyOperation.addRulesToNewPropertyValue(propertyValueData, groupInstanceProperty, groupInstanceId);
 
             log.debug("Before adding property value to graph {}", propertyValueData);
-            Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyValueData, PropertyValueData.class);
+            Either<PropertyValueData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao
+                .createNode(propertyValueData, PropertyValueData.class);
             log.debug("After adding property value to graph {}", propertyValueData);
 
             if (createNodeResult.isRight()) {
-                TitanOperationStatus operationStatus = createNodeResult.right().value();
+                JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                 return Either.right(operationStatus);
             }
             propertyValueData = createNodeResult.left().value();
 
-            Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(propertyValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
+            Either<GraphRelation, JanusGraphOperationStatus> createRelResult = janusGraphGenericDao
+                .createRelation(propertyValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
 
             if (createRelResult.isRight()) {
-                TitanOperationStatus operationStatus = createRelResult.right().value();
+                JanusGraphOperationStatus operationStatus = createRelResult.right().value();
                 log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
                 return Either.right(operationStatus);
             }
 
-            createRelResult = titanGenericDao.createRelation(resourceInstanceData, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE, null);
+            createRelResult = janusGraphGenericDao
+                .createRelation(resourceInstanceData, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE, null);
 
             if (createRelResult.isRight()) {
-                TitanOperationStatus operationStatus = createRelResult.right().value();
+                JanusGraphOperationStatus operationStatus = createRelResult.right().value();
                 log.error("Failed to associate resource instance {} property value {} in graph. status is {}", groupInstanceId, uniqueId, operationStatus);
                 return Either.right(operationStatus);
             }
@@ -366,7 +372,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             return Either.left(propertyValueData);
         } else {
             log.error("property value already exists.");
-            return Either.right(TitanOperationStatus.ALREADY_EXIST);
+            return Either.right(JanusGraphOperationStatus.ALREADY_EXIST);
         }
 
     }
@@ -376,9 +382,9 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
      *
      * @return
      */
-    public Either<PropertyValueData, TitanOperationStatus> updatePropertyOfGroupInstance(ComponentInstanceProperty groupInstanceProerty, String groupInstanceId) {
+    public Either<PropertyValueData, JanusGraphOperationStatus> updatePropertyOfGroupInstance(ComponentInstanceProperty groupInstanceProerty, String groupInstanceId) {
 
-        Wrapper<TitanOperationStatus> errorWrapper = new Wrapper<>();
+        Wrapper<JanusGraphOperationStatus> errorWrapper = new Wrapper<>();
         UpdateDataContainer<PropertyData, PropertyValueData> updateDataContainer = new UpdateDataContainer<>(GraphEdgeLabels.PROPERTY_IMPL, (() -> PropertyData.class), (() -> PropertyValueData.class), NodeTypeEnum.Property,
                 NodeTypeEnum.PropertyValue);
 
@@ -403,19 +409,19 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 SchemaDefinition def = propDataDef.getSchema();
                 if (def == null) {
                     log.debug("Schema doesn't exists for property of type {}", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 PropertyDataDefinition propDef = def.getProperty();
                 if (propDef == null) {
                     log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
                 innerType = propDef.getType();
             }
             // Specific Update Logic
-            Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
             if (allDataTypes.isRight()) {
-                TitanOperationStatus status = allDataTypes.right().value();
+                JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance().logInternalFlowError(UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE, FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS + status, ErrorSeverity.ERROR);
                 return Either.right(status);
             }
@@ -425,7 +431,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             if (isValid.isRight()) {
                 Boolean res = isValid.right().value();
                 if (!res) {
-                    return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
                 }
             } else {
                 Object object = isValid.left().value();
@@ -440,13 +446,14 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, groupInstanceProerty.getRules(), innerType, allDataTypes.left().value(), true);
             if (pair.getRight() != null && !pair.getRight()) {
                 BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), groupInstanceProerty.getName(), propertyType);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             propertyOperation.updateRulesInPropertyValue(propertyValueData, groupInstanceProerty, groupInstanceId);
 
-            Either<PropertyValueData, TitanOperationStatus> updateRes = titanGenericDao.updateNode(propertyValueData, PropertyValueData.class);
+            Either<PropertyValueData, JanusGraphOperationStatus> updateRes = janusGraphGenericDao
+                .updateNode(propertyValueData, PropertyValueData.class);
             if (updateRes.isRight()) {
-                TitanOperationStatus status = updateRes.right().value();
+                JanusGraphOperationStatus status = updateRes.right().value();
                 return Either.right(status);
             } else {
                 return Either.left(updateRes.left().value());
@@ -505,7 +512,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void preUpdateElementOfResourceInstanceValidations(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer, IComponentInstanceConnectedElement resourceInstanceProerty,
-            String resourceInstanceId, Wrapper<TitanOperationStatus> errorWrapper) {
+            String resourceInstanceId, Wrapper<JanusGraphOperationStatus> errorWrapper) {
 
         if (errorWrapper.isEmpty()) {
             // Verify VFC instance Exist
@@ -529,14 +536,15 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void validateElementConnectedToInstance(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer, IComponentInstanceConnectedElement resourceInstanceProerty,
-            Wrapper<TitanOperationStatus> errorWrapper) {
-        Either<ImmutablePair<SomeData, GraphEdge>, TitanOperationStatus> child = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), resourceInstanceProerty.getValueUniqueUid(),
+            Wrapper<JanusGraphOperationStatus> errorWrapper) {
+        Either<ImmutablePair<SomeData, GraphEdge>, JanusGraphOperationStatus> child = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), resourceInstanceProerty.getValueUniqueUid(),
                 updateDataContainer.getGraphEdge(), updateDataContainer.getNodeType(), updateDataContainer.getSomeDataClassGen().get());
 
         if (child.isRight()) {
-            TitanOperationStatus status = child.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = child.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             errorWrapper.setInnerElement(status);
 
@@ -546,16 +554,17 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     }
 
     private <SomeValueData extends GraphNode, SomeData extends GraphNode> void validateElementConnectedToComponentInstanceExist(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer,
-            IComponentInstanceConnectedElement resourceInstanceProerty, Wrapper<TitanOperationStatus> errorWrapper) {
+            IComponentInstanceConnectedElement resourceInstanceProerty, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         String valueUniqueUid = resourceInstanceProerty.getValueUniqueUid();
         if (valueUniqueUid == null) {
-            errorWrapper.setInnerElement(TitanOperationStatus.INVALID_ID);
+            errorWrapper.setInnerElement(JanusGraphOperationStatus.INVALID_ID);
         } else {
-            Either<SomeValueData, TitanOperationStatus> findPropertyValueRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), valueUniqueUid, updateDataContainer.getSomeValueDataClassGen().get());
+            Either<SomeValueData, JanusGraphOperationStatus> findPropertyValueRes = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeTypeValue()), valueUniqueUid, updateDataContainer.getSomeValueDataClassGen().get());
             if (findPropertyValueRes.isRight()) {
-                TitanOperationStatus status = findPropertyValueRes.right().value();
-                if (status == TitanOperationStatus.NOT_FOUND) {
-                    status = TitanOperationStatus.INVALID_ID;
+                JanusGraphOperationStatus status = findPropertyValueRes.right().value();
+                if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                    status = JanusGraphOperationStatus.INVALID_ID;
                 }
                 errorWrapper.setInnerElement(status);
             } else {
@@ -565,31 +574,33 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     }
 
     private <SomeData extends GraphNode, SomeValueData extends GraphNode> void validateElementConnectedToComponentExist(UpdateDataContainer<SomeData, SomeValueData> updateDataContainer,
-            IComponentInstanceConnectedElement resourceInstanceElementConnected, Wrapper<TitanOperationStatus> errorWrapper) {
+            IComponentInstanceConnectedElement resourceInstanceElementConnected, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         String uniqueId = resourceInstanceElementConnected.getUniqueId();
-        Either<SomeData, TitanOperationStatus> findPropertyDefRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeType()), uniqueId, updateDataContainer.getSomeDataClassGen().get());
+        Either<SomeData, JanusGraphOperationStatus> findPropertyDefRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(updateDataContainer.getNodeType()), uniqueId, updateDataContainer.getSomeDataClassGen().get());
 
         if (findPropertyDefRes.isRight()) {
-            TitanOperationStatus status = findPropertyDefRes.right().value();
+            JanusGraphOperationStatus status = findPropertyDefRes.right().value();
             errorWrapper.setInnerElement(status);
         }
     }
 
-    private void validateGIExist(String resourceInstanceId, Wrapper<TitanOperationStatus> errorWrapper) {
+    private void validateGIExist(String resourceInstanceId, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         validateGIExist(resourceInstanceId, null, errorWrapper);
     }
 
-    private void validateGIExist(String resourceInstanceId, Wrapper<GroupInstanceData> compInsDataWrapper, Wrapper<TitanOperationStatus> errorWrapper) {
+    private void validateGIExist(String resourceInstanceId, Wrapper<GroupInstanceData> compInsDataWrapper, Wrapper<JanusGraphOperationStatus> errorWrapper) {
         validateElementExistInGraph(resourceInstanceId, NodeTypeEnum.GroupInstance, () -> GroupInstanceData.class, compInsDataWrapper, errorWrapper);
     }
 
     public <ElementData extends GraphNode> void validateElementExistInGraph(String elementUniqueId, NodeTypeEnum elementNodeType, Supplier<Class<ElementData>> elementClassGen, Wrapper<ElementData> elementDataWrapper,
-            Wrapper<TitanOperationStatus> errorWrapper) {
-        Either<ElementData, TitanOperationStatus> findResInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(elementNodeType), elementUniqueId, elementClassGen.get());
+            Wrapper<JanusGraphOperationStatus> errorWrapper) {
+        Either<ElementData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(elementNodeType), elementUniqueId, elementClassGen.get());
         if (findResInstanceRes.isRight()) {
-            TitanOperationStatus status = findResInstanceRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findResInstanceRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             errorWrapper.setInnerElement(status);
         } else {
@@ -627,16 +638,17 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
         return updatedProperty;
     }
 
-    private Either<List<ImmutablePair<String, String>>, TitanOperationStatus> getGroupArtifactsPairs(String groupUniqueId) {
+    private Either<List<ImmutablePair<String, String>>, JanusGraphOperationStatus> getGroupArtifactsPairs(String groupUniqueId) {
 
-        Either<List<ImmutablePair<String, String>>, TitanOperationStatus> result = null;
+        Either<List<ImmutablePair<String, String>>, JanusGraphOperationStatus> result = null;
 
-        Either<List<ImmutablePair<ArtifactData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), groupUniqueId, GraphEdgeLabels.GROUP_ARTIFACT_REF,
+        Either<List<ImmutablePair<ArtifactData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), groupUniqueId, GraphEdgeLabels.GROUP_ARTIFACT_REF,
                 NodeTypeEnum.ArtifactRef, ArtifactData.class);
         if (childrenNodes.isRight()) {
-            TitanOperationStatus status = childrenNodes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.OK;
+            JanusGraphOperationStatus status = childrenNodes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.OK;
             }
             result = Either.right(status);
 
@@ -696,24 +708,26 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             for (GroupInstance groupDefinition : associatedGroups) {
                 UniqueIdData groupData = new UniqueIdData(NodeTypeEnum.GroupInstance, groupDefinition.getUniqueId());
 
-                Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData, oldArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
+                Either<GraphRelation, JanusGraphOperationStatus> deleteRelation = janusGraphGenericDao
+                    .deleteRelation(groupData, oldArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
                 log.trace("After dissociate group {} from artifact {}", groupDefinition.getName(), oldArtifactId);
                 if (deleteRelation.isRight()) {
-                    TitanOperationStatus status = deleteRelation.right().value();
-                    if (status == TitanOperationStatus.NOT_FOUND) {
-                        status = TitanOperationStatus.INVALID_ID;
+                    JanusGraphOperationStatus status = deleteRelation.right().value();
+                    if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                        status = JanusGraphOperationStatus.INVALID_ID;
                     }
-                    return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
                 }
 
-                Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupData, newArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
+                Either<GraphRelation, JanusGraphOperationStatus> createRelation = janusGraphGenericDao
+                    .createRelation(groupData, newArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
                 log.trace("After associate group {} to artifact {}", groupDefinition.getName(), newArtifact.getUniqueIdKey());
                 if (createRelation.isRight()) {
-                    TitanOperationStatus status = createRelation.right().value();
-                    if (status == TitanOperationStatus.NOT_FOUND) {
-                        status = TitanOperationStatus.INVALID_ID;
+                    JanusGraphOperationStatus status = createRelation.right().value();
+                    if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                        status = JanusGraphOperationStatus.INVALID_ID;
                     }
-                    return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
                 }
             }
 
@@ -721,17 +735,17 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
         return StorageOperationStatus.OK;
     }
 
-    private Either<Map<String, PropertyValueData>, TitanOperationStatus> getAllGroupInstancePropertyValuesData(GroupInstanceData groupInstData) {
+    private Either<Map<String, PropertyValueData>, JanusGraphOperationStatus> getAllGroupInstancePropertyValuesData(GroupInstanceData groupInstData) {
 
-        Either<Map<String, PropertyValueData>, TitanOperationStatus> result = null;
+        Either<Map<String, PropertyValueData>, JanusGraphOperationStatus> result = null;
         try{
-            Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> getPropertyValueChildrenRes =
-                    titanGenericDao.getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), groupInstData.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE,
+            Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, JanusGraphOperationStatus> getPropertyValueChildrenRes =
+                    janusGraphGenericDao.getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), groupInstData.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE,
                             NodeTypeEnum.PropertyValue, PropertyValueData.class, true);
             if(getPropertyValueChildrenRes.isRight()){
-                TitanOperationStatus status = getPropertyValueChildrenRes.right().value();
+                JanusGraphOperationStatus status = getPropertyValueChildrenRes.right().value();
                 log.debug("Failed to fetch property value nodes for group instance {}. Status is {}. ", groupInstData.getName(), status);
-                if(status == TitanOperationStatus.NOT_FOUND){
+                if(status == JanusGraphOperationStatus.NOT_FOUND){
                     result = Either.left(null);
                 }else{
                     result = Either.right(status);
@@ -743,7 +757,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
         } catch(Exception e){
             log.debug("The Exception occured during fetch group instance () property values. The message is {}. ", groupInstData.getName(), e.getMessage(), e);
             if(result == null){
-                result = Either.right(TitanOperationStatus.GENERAL_ERROR);
+                result = Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
             }
         }
         return result;

@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -33,7 +33,7 @@ public class GraphLockOperation implements IGraphLockOperation {
     private static final Logger log = Logger.getLogger(GraphLockOperation.class.getName());
 
     @javax.annotation.Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     public GraphLockOperation() {
         super();
@@ -47,15 +47,15 @@ public class GraphLockOperation implements IGraphLockOperation {
     @Override
     public StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType) {
         log.info("lock resource with id {}", componentId);
-        TitanOperationStatus lockElementStatus = null;
+        JanusGraphOperationStatus lockElementStatus = null;
         try {
-            lockElementStatus = titanGenericDao.lockElement(componentId, nodeType);
+            lockElementStatus = janusGraphGenericDao.lockElement(componentId, nodeType);
         } catch (Exception e) {
-            lockElementStatus = TitanOperationStatus.ALREADY_LOCKED;
+            lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
 
         }
 
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
 
     }
 
@@ -66,30 +66,32 @@ public class GraphLockOperation implements IGraphLockOperation {
      */
     @Override
     public StorageOperationStatus unlockComponent(String componentId, NodeTypeEnum nodeType) {
-        TitanOperationStatus lockElementStatus = titanGenericDao.releaseElement(componentId, nodeType);
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
+        JanusGraphOperationStatus lockElementStatus = janusGraphGenericDao
+            .releaseElement(componentId, nodeType);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
     }
 
     @Override
     public StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType) {
-        TitanOperationStatus lockElementStatus = titanGenericDao.releaseElement(name, nodeType);
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
+        JanusGraphOperationStatus
+            lockElementStatus = janusGraphGenericDao.releaseElement(name, nodeType);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
     }
 
     @Override
     public StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType) {
         log.info("lock resource with name {}", name);
-        TitanOperationStatus lockElementStatus = null;
+        JanusGraphOperationStatus lockElementStatus = null;
         try {
 
-            lockElementStatus = titanGenericDao.lockElement(name, nodeType);
+            lockElementStatus = janusGraphGenericDao.lockElement(name, nodeType);
 
         } catch (Exception e) {
-            lockElementStatus = TitanOperationStatus.ALREADY_LOCKED;
+            lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
 
         }
 
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
 
     }
 }

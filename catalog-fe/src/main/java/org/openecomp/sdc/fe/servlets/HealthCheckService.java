@@ -282,7 +282,7 @@ public class HealthCheckService {
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_FE, UP,
                     getAppVersion(), "OK"));
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, null));
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, UNKNOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, UNKNOWN, null, null));
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, UNKNOWN, null, null));
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_DISTRIBUTION_ENGINE, UNKNOWN, null, null));
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_ON_BOARDING, UNKNOWN, null, null));

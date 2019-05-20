@@ -402,68 +402,68 @@ public class ConfigurationTest {
 
 	
 	@Test
-	public void testGetTitanCfgFile() throws Exception {
+	public void testGetJanusGraphCfgFile() throws Exception {
 		Configuration testSubject;
 		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanCfgFile();
+		result = testSubject.getJanusGraphCfgFile();
 	}
 
 	
 	@Test
-	public void testSetTitanCfgFile() throws Exception {
+	public void testSetJanusGraphCfgFile() throws Exception {
 		Configuration testSubject;
-		String titanCfgFile = "";
+		String janusGraphCfgFile = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanCfgFile(titanCfgFile);
+		testSubject.setJanusGraphCfgFile(janusGraphCfgFile);
 	}
 
 	
 	@Test
-	public void testGetTitanMigrationKeySpaceCfgFile() throws Exception {
+	public void testGetJanusGraphMigrationKeySpaceCfgFile() throws Exception {
 		Configuration testSubject;
 		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanMigrationKeySpaceCfgFile();
+		result = testSubject.getJanusGraphMigrationKeySpaceCfgFile();
 	}
 
 	
 	@Test
-	public void testSetTitanMigrationKeySpaceCfgFile() throws Exception {
+	public void testSetJanusGraphMigrationKeySpaceCfgFile() throws Exception {
 		Configuration testSubject;
-		String titanMigrationKeySpaceCfgFile = "";
+		String janusGraphMigrationKeySpaceCfgFile = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanMigrationKeySpaceCfgFile(titanMigrationKeySpaceCfgFile);
+		testSubject.setJanusGraphMigrationKeySpaceCfgFile(janusGraphMigrationKeySpaceCfgFile);
 	}
 
 	
 	@Test
-	public void testGetTitanInMemoryGraph() throws Exception {
+	public void testGetJanusGraphInMemoryGraph() throws Exception {
 		Configuration testSubject;
 		Boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanInMemoryGraph();
+		result = testSubject.getJanusGraphInMemoryGraph();
 	}
 
 	
 	@Test
-	public void testSetTitanInMemoryGraph() throws Exception {
+	public void testSetJanusGraphInMemoryGraph() throws Exception {
 		Configuration testSubject;
-		Boolean titanInMemoryGraph = null;
+		Boolean janusGraphInMemoryGraph = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanInMemoryGraph(titanInMemoryGraph);
+		testSubject.setJanusGraphInMemoryGraph(janusGraphInMemoryGraph);
 	}
 
 	
@@ -490,72 +490,72 @@ public class ConfigurationTest {
 
 	
 	@Test
-	public void testGetTitanLockTimeout() throws Exception {
+	public void testGetJanusGraphLockTimeout() throws Exception {
 		Configuration testSubject;
 		Long result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanLockTimeout();
+		result = testSubject.getJanusGraphLockTimeout();
 	}
 
 	
 	@Test
-	public void testSetTitanLockTimeout() throws Exception {
+	public void testSetJanusGraphLockTimeout() throws Exception {
 		Configuration testSubject;
-		Long titanLockTimeout = null;
+		Long janusGraphLockTimeout = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanLockTimeout(titanLockTimeout);
+		testSubject.setJanusGraphLockTimeout(janusGraphLockTimeout);
 	}
 
 	
 	@Test
-	public void testGetTitanHealthCheckReadTimeout() throws Exception {
-		Configuration testSubject;
-		Long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getTitanHealthCheckReadTimeout();
-	}
-
-	
-
-	
-	@Test
-	public void testSetTitanHealthCheckReadTimeout() throws Exception {
-		Configuration testSubject;
-		Long titanHealthCheckReadTimeout = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setTitanHealthCheckReadTimeout(titanHealthCheckReadTimeout);
-	}
-
-	
-	@Test
-	public void testGetTitanReconnectIntervalInSeconds() throws Exception {
+	public void testGetJanusGraphHealthCheckReadTimeout() throws Exception {
 		Configuration testSubject;
 		Long result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanReconnectIntervalInSeconds();
+		result = testSubject.getJanusGraphHealthCheckReadTimeout();
 	}
 
 	
 
 	
 	@Test
-	public void testSetTitanReconnectIntervalInSeconds() throws Exception {
+	public void testSetJanusGraphHealthCheckReadTimeout() throws Exception {
 		Configuration testSubject;
-		Long titanReconnectIntervalInSeconds = null;
+		Long janusGraphHealthCheckReadTimeout = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanReconnectIntervalInSeconds(titanReconnectIntervalInSeconds);
+		testSubject.setJanusGraphHealthCheckReadTimeout(janusGraphHealthCheckReadTimeout);
+	}
+
+	
+	@Test
+	public void testGetJanusGraphReconnectIntervalInSeconds() throws Exception {
+		Configuration testSubject;
+		Long result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getJanusGraphReconnectIntervalInSeconds();
+	}
+
+	
+
+	
+	@Test
+	public void testSetJanusGraphReconnectIntervalInSeconds() throws Exception {
+		Configuration testSubject;
+		Long janusGraphReconnectIntervalInSeconds = null;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setJanusGraphReconnectIntervalInSeconds(janusGraphReconnectIntervalInSeconds);
 	}
 
 	

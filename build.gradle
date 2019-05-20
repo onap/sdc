@@ -292,7 +292,7 @@ def gitLatest(){
 }
 
 def newEcoSystem(){
-    //cleanTitan()
+    //cleanJanusGraph()
     backupDB() //and clean all
     //restoreDB() //restore latest
     createSchema()
@@ -322,11 +322,11 @@ def createSchemaPostStep(){
 def createSchema(){
     createSchemaPreStep()
     //todo- create schema
-    //todo- create titan
+    //todo- create JanusGraph
     createSchemaPostStep()
 }
 
-def cleanTitan(){
+def cleanJanusGraph(){
     execSafe{
         ssh.settings {
             knownHosts = allowAnyHosts
@@ -339,9 +339,9 @@ def cleanTitan(){
         }
     }
 }
-task cleanTitan {
+task cleanJanusGraph {
     doLast{
-        cleanTitan()
+        cleanJanusGraph()
     }
 }
 

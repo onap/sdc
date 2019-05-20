@@ -28,8 +28,8 @@ import org.openecomp.sdc.be.components.validation.RequirementValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -42,8 +42,8 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.RequirementOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.RequirementOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.Role;
@@ -73,7 +73,7 @@ public class RequirementBusinessLogicTest {
     private final String componentId = "resourceId1";
     private final String requirementId = "uniqueId1";
 
-    private final TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+    private final JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     private final UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private final UserValidations userValidations = Mockito.mock(UserValidations.class);
@@ -124,14 +124,14 @@ public class RequirementBusinessLogicTest {
                 "0", "10"))));
         when(requirementOperation.deleteRequirements( anyObject(), anyString()))
                 .thenReturn(StorageOperationStatus.OK);
-        when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         requirementsBusinessLogicMock = new RequirementBusinessLogic();
 
         requirementsBusinessLogicMock.setComponentsUtils(componentsUtils);
         requirementsBusinessLogicMock.setUserAdmin(mockUserAdmin);
         requirementsBusinessLogicMock.setGraphLockOperation(graphLockOperation);
-        requirementsBusinessLogicMock.setTitanGenericDao(mockTitanDao);
+        requirementsBusinessLogicMock.setJanusGraphGenericDao(mockJanusGraphDao);
         requirementsBusinessLogicMock.setToscaOperationFacade(toscaOperationFacade);
         requirementsBusinessLogicMock.setUserValidations(userValidations);
         requirementsBusinessLogicMock.setRequirementOperation(requirementOperation);
@@ -265,7 +265,7 @@ public class RequirementBusinessLogicTest {
     }
 
     @Test
-    public void shouldFailUpdateRequirementWhenOperationFailedInTitan(){
+    public void shouldFailUpdateRequirementWhenOperationFailedInJanusGraph(){
         List<RequirementDefinition> requirementDefinitions = createMockRequirementListToReturn(
                 createRequirement("reqName", "capType", "node", "source1",
                 "6", "11"));
@@ -287,7 +287,7 @@ public class RequirementBusinessLogicTest {
 
     
     @Test
-    public void shouldFailDeleteRequirementWhenOperationFailedInTitan(){
+    public void shouldFailDeleteRequirementWhenOperationFailedInJanusGraph(){
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
