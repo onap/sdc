@@ -6,14 +6,14 @@
 
    "default_attributes": {
         "disableHttp": false,
-        "CS_VIP": "yyy",
-        "BE_VIP": "yyy",
-        "ONBOARDING_BE_VIP": "yyy",
-        "FE_VIP": "yyy",
-        "ES_VIP": "yyy",
-        "KB_VIP": "yyy",
-        "DCAE_BE_VIP": "yyy",
-        "DCAE_FE_VIP": "yyy",
+        "CS_VIP": "10.247.184.3",
+        "BE_VIP": "10.247.184.3",
+        "ONBOARDING_BE_VIP": "10.247.184.3",
+        "FE_VIP": "10.247.184.3",
+        "ES_VIP": "10.247.184.3",
+        "KB_VIP": "10.247.184.3",
+        "DCAE_BE_VIP": "10.247.184.3",
+        "DCAE_FE_VIP": "10.247.184.3",
         "interfaces": {
             "application": "eth0",
             "private": "eth1"
@@ -33,15 +33,15 @@
         },
         "Nodes": {
             "CS": [
-              "yyy"
+              "10.247.184.3"
             ],
-            "BE":            "yyy",
-            "ONBOARDING_BE": "yyy",
-            "FE":            "yyy",
+            "BE":            "10.247.184.3",
+            "ONBOARDING_BE": "10.247.184.3",
+            "FE":            "10.247.184.3",
             "ES": [
-	       "yyy"
+	       "10.247.184.3"
             ],
-	    "KB":            "yyy"
+	    "KB":            "10.247.184.3"
         },
         "VnfRepo": {
              "vnfRepoPort": "8702",

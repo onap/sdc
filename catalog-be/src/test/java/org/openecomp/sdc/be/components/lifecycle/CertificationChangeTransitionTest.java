@@ -49,15 +49,18 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
 
         super.setup();
         // checkout transition object
-        certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+        certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         certifyTransitionObj.setConfigurationManager(configurationManager);
         certifyTransitionObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
-        certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation,  toscaOperationFacade, titanDao);
+        certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation,  toscaOperationFacade,
+            janusGraphDao);
         certificationCancelObj.setConfigurationManager(configurationManager);
         certificationCancelObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
-        certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+        certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         certificationFailObj.setConfigurationManager(configurationManager);
         certificationFailObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
@@ -74,7 +77,8 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
         for (LifeCycleTransitionEnum value : LifeCycleTransitionEnum.values()) {
-        	new CertificationChangeTransition(value, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+        	new CertificationChangeTransition(value, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
+              janusGraphDao);
 		}
         
     }

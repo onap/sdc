@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 import java.util.LinkedList;

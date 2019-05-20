@@ -224,11 +224,10 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- TITAN -->
         <dependency>
-            <groupId>com.thinkaurelius.titan</groupId>
-            <artifactId>titan-core</artifactId>
-            <version>${titan.version}</version>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-core</artifactId>
+            <version>${janusgraph.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -247,9 +246,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-            <artifactId>sdc-titan-cassandra</artifactId>
-            <version>${sdc.titan.version}</version>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra</artifactId>
+            <version>${janusgraph.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>

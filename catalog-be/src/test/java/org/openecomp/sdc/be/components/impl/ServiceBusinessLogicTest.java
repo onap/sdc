@@ -33,14 +33,14 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
@@ -71,9 +71,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class ServiceBusinessLogicTest {
 
@@ -89,7 +87,7 @@ public class ServiceBusinessLogicTest {
     private AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
     private ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
     private GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
-    private TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+    private JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
@@ -164,7 +162,7 @@ public class ServiceBusinessLogicTest {
         bl.setUserAdmin(mockUserAdmin);
         bl.setArtifactBl(artifactBl);
         bl.setGraphLockOperation(graphLockOperation);
-        bl.setTitanGenericDao(mockTitanDao);
+        bl.setJanusGraphGenericDao(mockJanusGraphDao);
         bl.setToscaOperationFacade(toscaOperationFacade);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         bl.setComponentsUtils(componentsUtils);

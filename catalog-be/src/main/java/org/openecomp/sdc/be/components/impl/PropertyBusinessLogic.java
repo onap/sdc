@@ -34,7 +34,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -489,7 +489,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         }
         String innerType;
 
-        Either<String, TitanOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
+        Either<String, JanusGraphOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
         if (checkInnerType.isRight()) {
             return StorageOperationStatus.INVALID_TYPE;
         }
@@ -551,19 +551,19 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         return jsonElement.toString();
     }
 
-    private Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
+    private Either<String, JanusGraphOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
         String innerType = null;
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
 
             SchemaDefinition def = schemeGen.get();
             if (def == null) {
                 log.debug("Schema doesn't exists for property of type {}", type);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             PropertyDataDefinition propDef = def.getProperty();
             if (propDef == null) {
                 log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             innerType = propDef.getType();
         }

@@ -144,31 +144,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- TITAN -->
-		<dependency>
-			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-core</artifactId>
-			<version>${titan.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-collections</artifactId>
-					<groupId>commons-collections</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>groovy</artifactId>
-					<groupId>org.codehaus.groovy</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-			<artifactId>sdc-titan-cassandra</artifactId>
-			<version>${sdc.titan.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>

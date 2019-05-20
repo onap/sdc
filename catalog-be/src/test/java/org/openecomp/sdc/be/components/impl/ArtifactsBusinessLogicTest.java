@@ -47,8 +47,8 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -71,9 +71,9 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
@@ -131,7 +131,7 @@ public class ArtifactsBusinessLogicTest {
 	public static final String RESOURCE_SUBCATEGORY = "Router";
 	final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
 
-	TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+	JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
 
 	static ConfigurationSource configurationSource = new FSConfigurationSource(
 			ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
@@ -167,7 +167,7 @@ public class ArtifactsBusinessLogicTest {
 	@Mock
 	private IGraphLockOperation graphLockOperation;
 	@Mock
-	TitanDao titanDao;
+  JanusGraphDao janusGraphDao;
 
 	public static final Resource resource = Mockito.mock(Resource.class);
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -225,7 +225,7 @@ public class ArtifactsBusinessLogicTest {
 		when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(StorageOperationStatus.OK);
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
 		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
-		when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
+		when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
 		Either<Component, StorageOperationStatus> resourceStorageOperationStatusEither = Either
 				.right(StorageOperationStatus.BAD_REQUEST);
@@ -498,7 +498,7 @@ public class ArtifactsBusinessLogicTest {
 		when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
 		artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD),
 				ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME, USER, INSTANCE_ID, true, false);
-		verify(titanDao, times(1)).commit();
+		verify(janusGraphDao, times(1)).commit();
 	}
 	
 	
@@ -518,7 +518,7 @@ public class ArtifactsBusinessLogicTest {
 		when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
 		artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD),
 				ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME, USER, INSTANCE_ID, true, false);
-		verify(titanDao, times(1)).commit();
+		verify(janusGraphDao, times(1)).commit();
 		return artifactDefinition;
 	}
 

@@ -22,7 +22,7 @@ import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 @RunWith(MockitoJUnitRunner.class)

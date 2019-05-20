@@ -3,7 +3,7 @@ package org.openecomp.sdc.be.tosca;
 import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -44,7 +44,7 @@ public class GroupExportParserImpl implements GroupExportParser {
 	}
     
     private Map<String, DataTypeDefinition> getDataTypes()  {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
 		if (dataTypesEither.isRight()) {
 			log.error("Failed to retrieve all data types {}", dataTypesEither.right().value()); 
 			throw new SdcResourceNotFoundException(); 

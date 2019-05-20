@@ -22,7 +22,7 @@
 
 package org.openecomp.sdc.asdctool.main;
 
-import org.openecomp.sdc.asdctool.impl.TitanGraphInitializer;
+import org.openecomp.sdc.asdctool.impl.JanusGraphInitializer;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
@@ -62,14 +62,14 @@ public class DataSchemaMenu {
                     System.exit(2);
                 }
                 break;
-            case "create-titan-structures":
-                log.debug("Start create titan keyspace");
-                String titanCfg = 2 == args.length ? configurationManager.getConfiguration().getTitanCfgFile() : args[2];
-                if (TitanGraphInitializer.createGraph(titanCfg)) {
-                    log.debug("create titan keyspace successfull");
+            case "create-janusgraph-structures":
+                log.debug("Start create janusgraph keyspace");
+                String janusGraphCfg = 2 == args.length ? configurationManager.getConfiguration().getTitanCfgFile() : args[2];
+                if (JanusGraphInitializer.createGraph(janusGraphCfg)) {
+                    log.debug("create janusgraph keyspace successfull");
                     System.exit(0);
                 } else {
-                    log.debug("create titan keyspace failed");
+                    log.debug("create janusgraph keyspace failed");
                     System.exit(2);
                 }
                 break;
@@ -96,6 +96,6 @@ public class DataSchemaMenu {
 
     private static void DataSchemeUsage() {
         System.out.println("Usage: create-cassandra-structures <configuration dir> ");
-        System.out.println("Usage: create-titan-structures <configuration dir> ");
+        System.out.println("Usage: create-janusgraph-structures <configuration dir> ");
     }
 }

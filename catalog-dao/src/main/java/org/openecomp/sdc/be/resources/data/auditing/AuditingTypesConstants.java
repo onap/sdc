@@ -26,7 +26,7 @@ public interface AuditingTypesConstants {
     String REPO_KEYSPACE = "sdcrepository";
     String AUDIT_KEYSPACE = "sdcaudit";
     String COMPONENT_KEYSPACE = "sdccomponent";
-    String TITAN_KEYSPACE = "titan";
+    String janusGraph_KEYSPACE = "janusgraph";
 
     String USER_ADMIN_EVENT_TYPE = "useradminevent";
     String USER_ACCESS_EVENT_TYPE = "useraccessevent";

@@ -18,9 +18,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.CommonImportManager;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
@@ -56,7 +55,7 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
     static final String userId = "jh0003";
 
     private static AccessValidations accessValidations;
-    private static HealingTitanGenericDao titanGenericDao;
+    private static HealingJanusGraphGenericDao janusGraphGenericDao;
     private static PropertyOperation propertyOperation;
     private static ComponentsUtils componentUtils;
     private static OperationUtils operationUtils;
@@ -82,13 +81,13 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         CommonTypeOperations commonTypeOperations() {
-            return new CommonTypeOperations(titanGenericDao, propertyOperation, operationUtils);
+            return new CommonTypeOperations(janusGraphGenericDao, propertyOperation, operationUtils);
         }
     }
 
     @BeforeClass
     public static void initClass() {
-        titanGenericDao = mock(HealingTitanGenericDao.class);
+        janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
         accessValidations = mock(AccessValidations.class);
         propertyOperation = mock(PropertyOperation.class);
         componentUtils = Mockito.mock(ComponentsUtils.class);
@@ -113,14 +112,16 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
     @Test
     public void creatingAnnotationTypeSuccessTest() {
         doNothing().when(accessValidations).validateUserExists(eq(userId), anyString());
-        when(titanGenericDao.createNode(isA(AnnotationTypeData.class), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
-        when(titanGenericDao.getNode(anyString(), eq("org.openecomp.annotations.source.1.0.annotationtype"), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
-        when(titanGenericDao.getByCriteria(eq(NodeTypeEnum.AnnotationType), anyMap(), eq(AnnotationTypeData.class))).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.createNode(isA(AnnotationTypeData.class), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
+        when(janusGraphGenericDao.getNode(anyString(), eq("org.openecomp.annotations.source.1.0.annotationtype"), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
+        when(janusGraphGenericDao.getByCriteria(eq(NodeTypeEnum.AnnotationType), anyMap(), eq(AnnotationTypeData.class))).thenReturn(Either.right(
+            JanusGraphOperationStatus.NOT_FOUND));
         when(propertyOperation.addPropertiesToElementType(anyString(), eq(NodeTypeEnum.AnnotationType), anyList())).thenReturn(Either.left(emptyMap()));
-        when(propertyOperation.fillPropertiesList(anyString(), eq(NodeTypeEnum.AnnotationType), any())).thenReturn(TitanOperationStatus.OK);
-        when(propertyOperation.getTitanGenericDao()).thenReturn(titanGenericDao);
-        when(titanGenericDao.commit()).thenReturn(TitanOperationStatus.OK);
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(propertyOperation.fillPropertiesList(anyString(), eq(NodeTypeEnum.AnnotationType), any())).thenReturn(
+            JanusGraphOperationStatus.OK);
+        when(propertyOperation.getJanusGraphGenericDao()).thenReturn(janusGraphGenericDao);
+        when(janusGraphGenericDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         FileDataBodyPart filePart = new FileDataBodyPart("annotationTypesZip", new File("src/test/resources/types/annotationTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -149,14 +150,17 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
     @Test
     public void creatingAnnotationTypeFailureTest() {
         doNothing().when(accessValidations).validateUserExists(eq(userId), anyString());
-        when(titanGenericDao.createNode(isA(AnnotationTypeData.class), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
-        when(titanGenericDao.getNode(anyString(), eq("org.openecomp.annotations.source.1.0.annotationtype"), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
-        when(titanGenericDao.getByCriteria(eq(NodeTypeEnum.AnnotationType), anyMap(), eq(AnnotationTypeData.class))).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
-        when(propertyOperation.addPropertiesToElementType(anyString(), eq(NodeTypeEnum.AnnotationType), anyList())).thenThrow(new StorageException(TitanOperationStatus.MATCH_NOT_FOUND));
-        when(propertyOperation.fillPropertiesList(anyString(), eq(NodeTypeEnum.AnnotationType), any())).thenReturn(TitanOperationStatus.OK);
-        when(propertyOperation.getTitanGenericDao()).thenReturn(titanGenericDao);
-        when(titanGenericDao.commit()).thenReturn(TitanOperationStatus.OK);
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.createNode(isA(AnnotationTypeData.class), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
+        when(janusGraphGenericDao.getNode(anyString(), eq("org.openecomp.annotations.source.1.0.annotationtype"), eq(AnnotationTypeData.class))).thenReturn(Either.left(new AnnotationTypeData()));
+        when(janusGraphGenericDao.getByCriteria(eq(NodeTypeEnum.AnnotationType), anyMap(), eq(AnnotationTypeData.class))).thenReturn(Either.right(
+            JanusGraphOperationStatus.NOT_FOUND));
+        when(propertyOperation.addPropertiesToElementType(anyString(), eq(NodeTypeEnum.AnnotationType), anyList())).thenThrow(new StorageException(
+            JanusGraphOperationStatus.MATCH_NOT_FOUND));
+        when(propertyOperation.fillPropertiesList(anyString(), eq(NodeTypeEnum.AnnotationType), any())).thenReturn(
+            JanusGraphOperationStatus.OK);
+        when(propertyOperation.getJanusGraphGenericDao()).thenReturn(janusGraphGenericDao);
+        when(janusGraphGenericDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         FileDataBodyPart filePart = new FileDataBodyPart("annotationTypesZip", new File("src/test/resources/types/annotationTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);

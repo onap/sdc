@@ -13,7 +13,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.components.validation.ValidationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -64,7 +64,7 @@ public class ProductBusinessLogicTest {
 	private ToscaOperationFacade toscaOperationFacade;
 
 	@Mock
-	private TitanDao titanDao;
+	private JanusGraphDao janusGraphDao;
 
 	@Mock
 	private ValidationUtils validationUtils;
