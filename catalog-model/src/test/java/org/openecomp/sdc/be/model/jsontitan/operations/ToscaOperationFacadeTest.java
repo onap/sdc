@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -82,6 +83,8 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -91,6 +94,12 @@ import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
+    private static final String COMPONENT_ID = "componentId";
+    private static final String PROPERTY1_NAME = "prop1";
+    private static final String PROPERTY1_TYPE = "string";
+    private static final String PROPERTY2_NAME = "prop2";
+    private static final String PROPERTY2_TYPE = "integer";
+
     @InjectMocks
     private ToscaOperationFacade testInstance;
 
@@ -102,6 +111,9 @@ public class ToscaOperationFacadeTest {
 
     @Mock
     private NodeTypeOperation nodeTypeOperation;
+
+    @Mock
+    private NodeTemplateOperation nodeTemplateOperationMock;
 
     @Before
     public void setUp() throws Exception {
@@ -582,6 +594,36 @@ public class ToscaOperationFacadeTest {
         GraphVertex graphVertex = getTopologyTemplateVertex();
         result = testInstance.deleteDataTypeOfComponent(component, "datatype1");
         assertEquals(datatype, result);
+    }
+
+    @Test
+    public void testAddComponentInstancePropertiesToComponent() {
+        // set up component object
+        Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        List<ComponentInstanceProperty> instanceProps = new ArrayList<>();
+        ComponentInstanceProperty instanceProp = new ComponentInstanceProperty();
+        instanceProp.setName(PROPERTY1_NAME);
+        instanceProp.setType(PROPERTY1_TYPE);
+        instanceProps.add(instanceProp);
+        instanceProp = new ComponentInstanceProperty();
+        instanceProp.setName(PROPERTY2_NAME);
+        instanceProp.setType(PROPERTY2_TYPE);
+        instanceProps.add(instanceProp);
+        Map<String, List<ComponentInstanceProperty>> instancePropsMap =
+            Collections.singletonMap(COMPONENT_ID, instanceProps);
+        component.setComponentInstancesProperties(Collections.singletonMap(COMPONENT_ID, new ArrayList<>()));
+
+        when(nodeTemplateOperationMock.addComponentInstanceProperty(any(), any(), any()))
+            .thenReturn(StorageOperationStatus.OK);
+
+        Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> result =
+            testInstance.addComponentInstancePropertiesToComponent(component, instancePropsMap);
+        assertTrue(result.isLeft());
+        verify(nodeTemplateOperationMock, times(2)).addComponentInstanceProperty(any(), any(), any());
+        List<ComponentInstanceProperty> resultProps = result.left().value().get(COMPONENT_ID);
+        assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY1_NAME)));
+        assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY2_NAME)));
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
