@@ -6,7 +6,7 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -92,11 +92,11 @@ public class PropertyValidator {
                 break;
             }
 
-            Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
             if (allDataTypes.isRight()) {
-                TitanOperationStatus status = allDataTypes.right().value();
+                JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToGroup", "Failed to validate property. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
             }
 
             type = property.getType();

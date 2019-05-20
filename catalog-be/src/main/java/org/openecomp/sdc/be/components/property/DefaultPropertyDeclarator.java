@@ -21,7 +21,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
@@ -466,10 +466,12 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     Either<InputDefinition, ResponseFormat>  prepareValueBeforeDelete(InputDefinition inputForDelete, PropertyDataDefinition inputValue, List<String> pathOfComponentInstances) {
         Either<InputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
 
-        Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
+        Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation
+            .findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
                 (String) inputValue.getDefaultValue());
         if (findDefaultValue.isRight()) {
-            deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()))));
+            deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils
+                .convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()))));
             return deleteEither;
 
         }

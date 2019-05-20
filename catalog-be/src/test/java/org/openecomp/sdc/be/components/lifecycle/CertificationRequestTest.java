@@ -33,8 +33,8 @@ import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -66,7 +66,8 @@ public class CertificationRequestTest extends LifecycleTestBase {
     @Before
     public void setup() {
         super.setup();
-        rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceBusinessLogic, toscaOperationFacade,  titanDao);
+        rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceBusinessLogic, toscaOperationFacade,
+            janusGraphDao);
         rfcObj.setConfigurationManager(configurationManager);
     }
 

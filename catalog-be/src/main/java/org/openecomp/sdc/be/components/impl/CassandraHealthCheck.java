@@ -68,20 +68,20 @@ public class CassandraHealthCheck {
             sdcKeyspaces.add(table.getTableDescription().getKeyspace());
         }
 
-        String titanCfgFile = ConfigurationManager.getConfigurationManager().getConfiguration().getTitanCfgFile();
+        String janusGraphCfgFile = ConfigurationManager.getConfigurationManager().getConfiguration().getTitanCfgFile();
         Properties prop = new Properties();
-        InputStream titanProp = null;
+        InputStream janusGraphProp = null;
         try {
             //load a properties file
-            titanProp = new FileInputStream(titanCfgFile);
-            prop.load(titanProp);
-            //Add titan keyspace
-            String titanKeyspace = prop.getProperty("storage.cassandra.keyspace");
-            if (!GeneralUtility.isEmptyString(titanKeyspace))  {
-                sdcKeyspaces.add(titanKeyspace);
+            janusGraphProp = new FileInputStream(janusGraphCfgFile);
+            prop.load(janusGraphProp);
+            //Add janusgraph keyspace
+            String janusGraphKeyspace = prop.getProperty("storage.cassandra.keyspace");
+            if (!GeneralUtility.isEmptyString(janusGraphKeyspace))  {
+                sdcKeyspaces.add(janusGraphKeyspace);
             }
         } catch (Exception e) {
-            log.error("Failed to open titen.properties file , url is : {}", titanCfgFile, e);
+            log.error("Failed to open titen.properties file , url is : {}", janusGraphCfgFile, e);
         }
 
         log.info("All sdc keyspaces are : {}", sdcKeyspaces);

@@ -28,17 +28,17 @@ import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
@@ -51,7 +51,7 @@ public class InterfaceOperationMigration implements Migration {
     private static final Logger LOGGER = Logger.getLogger(InterfaceOperationMigration.class);
 
     @Autowired
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Autowired
     private UserAdminOperation userAdminOperation;
     @Autowired
@@ -86,7 +86,8 @@ public class InterfaceOperationMigration implements Migration {
     private StorageOperationStatus getAndUpdateAllComponents(){
         Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
-        return titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, hasNotProps, JsonParseFlagEnum.ParseAll)
+        return janusGraphDao
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, hasNotProps, JsonParseFlagEnum.ParseAll)
                 .either(this::updateComponentVertices, this::handleError);
     }
 
@@ -101,16 +102,17 @@ public class InterfaceOperationMigration implements Migration {
         return status;
     }
 
-    private StorageOperationStatus handleError(TitanOperationStatus err) {
-        titanDao.rollback();
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(
-                TitanOperationStatus.NOT_FOUND == err ? TitanOperationStatus.OK : err);
+    private StorageOperationStatus handleError(JanusGraphOperationStatus err) {
+        janusGraphDao.rollback();
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                JanusGraphOperationStatus.NOT_FOUND == err ? JanusGraphOperationStatus.OK : err);
     }
 
     private StorageOperationStatus updateDataOnGraph(GraphVertex componentVertex) {
         try {
-            Either<GraphVertex, TitanOperationStatus> interfaceVertexEither =
-                    titanDao.getChildVertex(componentVertex, EdgeLabelEnum.INTERFACE, JsonParseFlagEnum.ParseJson);
+            Either<GraphVertex, JanusGraphOperationStatus> interfaceVertexEither =
+                    janusGraphDao
+                        .getChildVertex(componentVertex, EdgeLabelEnum.INTERFACE, JsonParseFlagEnum.ParseJson);
             if (interfaceVertexEither.isLeft()) {
                 GraphVertex interfaceVertex = interfaceVertexEither.left().value();
                 Map<String, InterfaceDataDefinition> interfaceDefinitions = (Map<String, InterfaceDataDefinition>) interfaceVertex.getJson();
@@ -121,9 +123,10 @@ public class InterfaceOperationMigration implements Migration {
                         }
                     }
                     interfaceVertex.setJson(interfaceDefinitions);
-                    Either<GraphVertex, TitanOperationStatus> updateInterfaceVertexEither = titanDao.updateVertex(interfaceVertex);
+                    Either<GraphVertex, JanusGraphOperationStatus> updateInterfaceVertexEither = janusGraphDao
+                        .updateVertex(interfaceVertex);
                     if(updateInterfaceVertexEither.isRight()){
-                        return DaoStatusConverter.convertTitanStatusToStorageStatus(updateInterfaceVertexEither.right().value());
+                        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateInterfaceVertexEither.right().value());
                     }
                 }
 
@@ -134,8 +137,8 @@ public class InterfaceOperationMigration implements Migration {
                 }
             }
 
-            Either<GraphVertex, TitanOperationStatus> instInterfaceVertexEither =
-                    titanDao.getChildVertex(componentVertex, EdgeLabelEnum.INST_INTERFACES, JsonParseFlagEnum.ParseJson);
+            Either<GraphVertex, JanusGraphOperationStatus> instInterfaceVertexEither =
+                    janusGraphDao.getChildVertex(componentVertex, EdgeLabelEnum.INST_INTERFACES, JsonParseFlagEnum.ParseJson);
             if (instInterfaceVertexEither.isLeft()) {
                 GraphVertex instInterfaceVertex = instInterfaceVertexEither.left().value();
                 Map<String, MapInterfaceDataDefinition> instInterfaceDefinitions = (Map<String, MapInterfaceDataDefinition>) instInterfaceVertex.getJson();
@@ -148,17 +151,18 @@ public class InterfaceOperationMigration implements Migration {
                         }
                     }
                     instInterfaceVertex.setJson(instInterfaceDefinitions);
-                    Either<GraphVertex, TitanOperationStatus> updateInstInterfaceVertexEither = titanDao.updateVertex(instInterfaceVertex);
+                    Either<GraphVertex, JanusGraphOperationStatus> updateInstInterfaceVertexEither = janusGraphDao
+                        .updateVertex(instInterfaceVertex);
                     if(updateInstInterfaceVertexEither.isRight()){
-                        return DaoStatusConverter.convertTitanStatusToStorageStatus(updateInstInterfaceVertexEither.right().value());
+                        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateInstInterfaceVertexEither.right().value());
                     }
                 }
             }
 
-            titanDao.commit();
+            janusGraphDao.commit();
         } catch (Exception e) {
             LOGGER.debug("Interface operation migration failed with error : ", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return StorageOperationStatus.GENERAL_ERROR;
         }
 

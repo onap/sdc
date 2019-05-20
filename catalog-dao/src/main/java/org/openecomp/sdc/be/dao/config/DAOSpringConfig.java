@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@Import({TitanSpringConfig.class})
+@Import({JanusGraphSpringConfig.class})
 @ComponentScan({
         "org.openecomp.sdc.be.dao.cassandra",
         "org.openecomp.sdc.be.dao.neo4j",

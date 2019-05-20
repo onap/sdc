@@ -70,7 +70,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
@@ -649,13 +649,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             if (resultOp == null || resultOp.isRight()) {
                 log.debug(ROLLBACK);
                 if (!inTransaction) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
             }
             else {
                 log.debug(COMMIT);
                 if (!inTransaction) {
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
             }
             if (shouldLock) {
@@ -801,11 +801,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             // unlock resource
             if (resultOp == null || resultOp.isRight()) {
                 log.debug(ROLLBACK);
-                titanDao.rollback();
+                janusGraphDao.rollback();
             }
             else {
                 log.debug(COMMIT);
-                titanDao.commit();
+                janusGraphDao.commit();
             }
 
             componentType = component.getComponentType();
@@ -4061,7 +4061,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
                     if (saveArtifactStatus.equals(CassandraOperationStatus.OK)) {
                         if (!inTransaction) {
-                            titanDao.commit();
+                            janusGraphDao.commit();
                         }
                         log.debug("Artifact Saved In ES {}", artifactData.getId());
                         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
@@ -4072,7 +4072,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     }
                     else {
                         if (!inTransaction) {
-                            titanDao.rollback();
+                            janusGraphDao.rollback();
                         }
                         log.info("Failed to save artifact {}.", artifactData.getId());
                         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -4217,13 +4217,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             if (resultOp == null || resultOp.isRight()) {
                 log.debug(ROLLBACK);
                 if (!inTransaction) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
             }
             else {
                 log.debug(COMMIT);
                 if (!inTransaction) {
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
             }
             if (shouldLock) {

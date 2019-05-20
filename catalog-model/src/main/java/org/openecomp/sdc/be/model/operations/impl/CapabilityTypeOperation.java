@@ -30,9 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -66,10 +66,10 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     /**
      * FOR TEST ONLY
      *
-     * @param titanGenericDao
+     * @param janusGraphGenericDao
      */
-    public void setTitanGenericDao(HealingTitanGenericDao titanGenericDao) {
-        this.titanGenericDao = titanGenericDao;
+    public void setJanusGraphGenericDao(HealingJanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     @Override
@@ -102,26 +102,27 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.error("#addCapabilityType - Going to execute rollback on graph.");
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug("#addCapabilityType - Going to execute commit on graph.");
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }
 
     }
     
-    public Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType) {
+    public Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType) {
         return propertyOperation.getAllTypePropertiesFromAllDerivedFrom(firstParentType, NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
     }
 
     public Either<CapabilityTypeDefinition, StorageOperationStatus> validateUpdateProperties(CapabilityTypeDefinition capabilityTypeDefinition) {
-        TitanOperationStatus error = null;
+        JanusGraphOperationStatus error = null;
         if (MapUtils.isNotEmpty(capabilityTypeDefinition.getProperties()) && capabilityTypeDefinition.getDerivedFrom() != null) {
-            Either<Map<String, PropertyDefinition>, TitanOperationStatus> allPropertiesRes = 
+            Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> allPropertiesRes =
                                         getAllCapabilityTypePropertiesFromAllDerivedFrom(capabilityTypeDefinition.getDerivedFrom());
-            if (allPropertiesRes.isRight() && !allPropertiesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+            if (allPropertiesRes.isRight() && !allPropertiesRes.right().value().equals(
+                JanusGraphOperationStatus.NOT_FOUND)) {
                 error = allPropertiesRes.right().value();
                 log.debug("Couldn't fetch derived from property nodes for capability type {}, error: {}", capabilityTypeDefinition.getType(), error);
             }
@@ -131,7 +132,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
                         .forEach(e -> e.getValue().setType(derivedFromProperties.get(e.getKey()).getType()));
 
                 List<PropertyDefinition> properties = capabilityTypeDefinition.getProperties().values().stream().collect(Collectors.toList());
-                Either<List<PropertyDefinition>, TitanOperationStatus> validatePropertiesRes = propertyOperation.validatePropertiesUniqueness(allPropertiesRes.left().value(),
+                Either<List<PropertyDefinition>, JanusGraphOperationStatus> validatePropertiesRes = propertyOperation.validatePropertiesUniqueness(allPropertiesRes.left().value(),
                         properties);
                 if (validatePropertiesRes.isRight()) {
                     error = validatePropertiesRes.right().value();
@@ -141,7 +142,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         if (error == null) {
             return Either.left(capabilityTypeDefinition);
         }
-        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(error));
+        return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error));
     }
     
 
@@ -179,21 +180,22 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         CapabilityTypeData capabilityTypeData = buildCapabilityTypeData(capabilityTypeDefinition, ctUniqueId);
 
         log.debug("Before adding capability type to graph. capabilityTypeData = {}", capabilityTypeData);
-        Either<CapabilityTypeData, TitanOperationStatus> createCTResult = titanGenericDao.createNode(capabilityTypeData, CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> createCTResult = janusGraphGenericDao
+            .createNode(capabilityTypeData, CapabilityTypeData.class);
         log.debug("After adding capability type to graph. status is = {}", createCTResult);
 
         if (createCTResult.isRight()) {
-            TitanOperationStatus operationStatus = createCTResult.right().value();
+            JanusGraphOperationStatus operationStatus = createCTResult.right().value();
             log.error("Failed to capability type {} to graph. status is {}", capabilityTypeDefinition.getType(), operationStatus);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus));
         }
 
         CapabilityTypeData resultCTD = createCTResult.left().value();
         Map<String, PropertyDefinition> propertiesMap = capabilityTypeDefinition.getProperties();
-        Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToCapablityType = propertyOperation.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.CapabilityType, propertiesMap);
+        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToCapablityType = propertyOperation.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.CapabilityType, propertiesMap);
         if (addPropertiesToCapablityType.isRight()) {
             log.error("Failed add properties {} to capability {}", propertiesMap, capabilityTypeDefinition.getType());
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertiesToCapablityType.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertiesToCapablityType.right().value()));
         }
 
         return addDerivedFromRelation(capabilityTypeDefinition, ctUniqueId)
@@ -223,14 +225,14 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         Either<CapabilityTypeDefinition, StorageOperationStatus> result = null;
         try {
 
-            Either<CapabilityTypeDefinition, TitanOperationStatus> ctResult = this.getCapabilityTypeByUid(uniqueId);
+            Either<CapabilityTypeDefinition, JanusGraphOperationStatus> ctResult = this.getCapabilityTypeByUid(uniqueId);
 
             if (ctResult.isRight()) {
-                TitanOperationStatus status = ctResult.right().value();
-                if (status != TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus status = ctResult.right().value();
+                if (status != JanusGraphOperationStatus.NOT_FOUND) {
                     log.error("Failed to retrieve information on capability type {}. status is {}", uniqueId, status);
                 }
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(ctResult.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(ctResult.right().value()));
                 return result;
             }
 
@@ -240,13 +242,13 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         } finally {
             if (!inTransaction) {
                 log.debug("Going to execute commit on graph.");
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }
 
 
-    public Either<CapabilityTypeDefinition, TitanOperationStatus> getCapabilityTypeByType(String capabilityType) {
+    public Either<CapabilityTypeDefinition, JanusGraphOperationStatus> getCapabilityTypeByType(String capabilityType) {
         // Optimization: In case of Capability Type its unique ID is the same as type
         return getCapabilityTypeByUid(capabilityType);
     }
@@ -257,14 +259,15 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
      * @param uniqueId
      * @return
      */
-    public Either<CapabilityTypeDefinition, TitanOperationStatus> getCapabilityTypeByUid(String uniqueId) {
+    public Either<CapabilityTypeDefinition, JanusGraphOperationStatus> getCapabilityTypeByUid(String uniqueId) {
 
-        Either<CapabilityTypeDefinition, TitanOperationStatus> result = null;
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> result = null;
 
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypesRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypesRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, CapabilityTypeData.class);
 
         if (capabilityTypesRes.isRight()) {
-            TitanOperationStatus status = capabilityTypesRes.right().value();
+            JanusGraphOperationStatus status = capabilityTypesRes.right().value();
             log.debug("Capability type {} cannot be found in graph. status is {}", uniqueId, status);
             return Either.right(status);
         }
@@ -272,9 +275,9 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         CapabilityTypeData ctData = capabilityTypesRes.left().value();
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition(ctData.getCapabilityTypeDataDefinition());
 
-        Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus =
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesStatus =
                 OperationUtils.fillProperties(uniqueId, propertyOperation, NodeTypeEnum.CapabilityType);
-        if (propertiesStatus.isRight() && propertiesStatus.right().value() != TitanOperationStatus.OK) {
+        if (propertiesStatus.isRight() && propertiesStatus.right().value() != JanusGraphOperationStatus.OK) {
             log.error("Failed to fetch properties of capability type {}", uniqueId);
             return Either.right(propertiesStatus.right().value());
         }
@@ -283,14 +286,16 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             capabilityTypeDefinition.setProperties(propertiesStatus.left().value());
         }
 
-        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
         log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
         if (parentNode.isRight()) {
-            TitanOperationStatus titanOperationStatus = parentNode.right().value();
-            if (titanOperationStatus != TitanOperationStatus.NOT_FOUND) {
-                log.error("Failed to find the parent capability of capability type {}. status is {}", uniqueId, titanOperationStatus);
-                result = Either.right(titanOperationStatus);
+            JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
+            if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
+                log.error("Failed to find the parent capability of capability type {}. status is {}", uniqueId,
+                    janusGraphOperationStatus);
+                result = Either.right(janusGraphOperationStatus);
                 return result;
             }
         } else {
@@ -319,9 +324,10 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     
     
     private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityTypeOnGraph(CapabilityTypeDefinition capabilityTypeDefinitionNew, CapabilityTypeDefinition capabilityTypeDefinitionOld) {
-        return titanGenericDao.updateNode(new CapabilityTypeData(capabilityTypeDefinitionNew), CapabilityTypeData.class)
+        return janusGraphGenericDao
+            .updateNode(new CapabilityTypeData(capabilityTypeDefinitionNew), CapabilityTypeData.class)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus)
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
                 .left()
                 .bind(updatedNode -> updateProperties(capabilityTypeDefinitionNew.getUniqueId(), capabilityTypeDefinitionNew.getProperties()))
                 .left()
@@ -336,7 +342,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         log.debug("#updateCapabilityTypeProperties - updating properties for capability type with id {}", capabilityTypeId);
         return propertyOperation.mergePropertiesAssociatedToNode(NodeTypeEnum.CapabilityType, capabilityTypeId, properties)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     private Either<GraphRelation, StorageOperationStatus> updateDerivedFrom(CapabilityTypeDefinition updatedCapabilityType, String currDerivedFromCapabilityType) {
@@ -408,16 +414,17 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId) {
         return getCapabilityType(uniqueId, true);
     }
-    public Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> getAllCapabilityTypes() {
+    public Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes() {
 
         Map<String, CapabilityTypeDefinition> capabilityTypes = new HashMap<>();
-        Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> result = Either.left(capabilityTypes);
+        Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> result = Either.left(capabilityTypes);
 
-        Either<List<CapabilityTypeData>, TitanOperationStatus> getAllCapabilityTypes =
-                titanGenericDao.getByCriteria(NodeTypeEnum.CapabilityType, null, CapabilityTypeData.class);
+        Either<List<CapabilityTypeData>, JanusGraphOperationStatus> getAllCapabilityTypes =
+                janusGraphGenericDao
+                    .getByCriteria(NodeTypeEnum.CapabilityType, null, CapabilityTypeData.class);
         if (getAllCapabilityTypes.isRight()) {
-            TitanOperationStatus status = getAllCapabilityTypes.right().value();
-            if (status != TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus status = getAllCapabilityTypes.right().value();
+            if (status != JanusGraphOperationStatus.NOT_FOUND) {
                 return Either.right(status);
             } else {
                 return result;
@@ -434,12 +441,12 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
                 log.trace("Going to fetch data type {}. uid is {}",
                         capabilityTypeData.getCapabilityTypeDataDefinition().getType(),
                         capabilityTypeData.getUniqueId());
-                Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypesByUid =
+                Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypesByUid =
                         getAndAddPropertiesANdDerivedFrom(capabilityTypeData.getUniqueId(), capabilityTypes);
                 if (capabilityTypesByUid.isRight()) {
-                    TitanOperationStatus status = capabilityTypesByUid.right().value();
-                    if (status == TitanOperationStatus.NOT_FOUND) {
-                        status = TitanOperationStatus.INVALID_ID;
+                    JanusGraphOperationStatus status = capabilityTypesByUid.right().value();
+                    if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                        status = JanusGraphOperationStatus.INVALID_ID;
                     }
                     return Either.right(status);
                 }
@@ -473,18 +480,19 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         return derivedFrom;
     }
 
-    private Either<CapabilityTypeDefinition, TitanOperationStatus> getAndAddPropertiesANdDerivedFrom(
+    private Either<CapabilityTypeDefinition, JanusGraphOperationStatus> getAndAddPropertiesANdDerivedFrom(
             String uniqueId, Map<String, CapabilityTypeDefinition> capabilityTypeDefinitionMap) {
         if (capabilityTypeDefinitionMap.containsKey(uniqueId)) {
             return Either.left(capabilityTypeDefinitionMap.get(uniqueId));
         }
 
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypesRes =
-                titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId,
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypesRes =
+                janusGraphGenericDao
+                    .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId,
                         CapabilityTypeData.class);
 
         if (capabilityTypesRes.isRight()) {
-            TitanOperationStatus status = capabilityTypesRes.right().value();
+            JanusGraphOperationStatus status = capabilityTypesRes.right().value();
             log.debug(DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS, uniqueId, status);
             return Either.right(status);
         }
@@ -493,10 +501,10 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         CapabilityTypeDefinition capabilityTypeDefinition =
                 new CapabilityTypeDefinition(ctData.getCapabilityTypeDataDefinition());
 
-        Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus =
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesStatus =
                 OperationUtils.fillProperties(uniqueId, propertyOperation, NodeTypeEnum.CapabilityType);
 
-        if (propertiesStatus.isRight() && propertiesStatus.right().value() != TitanOperationStatus.OK) {
+        if (propertiesStatus.isRight() && propertiesStatus.right().value() != JanusGraphOperationStatus.OK) {
             log.error(FAILED_TO_FETCH_PROPERTIES_OF_DATA_TYPE, uniqueId);
             return Either.right(propertiesStatus.right().value());
         }

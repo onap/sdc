@@ -26,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +39,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -64,7 +64,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     private PolicyTypeOperation policyTypeOperation;
 
     @Autowired
-    private HealingTitanGenericDao titanGenericDao;
+    private HealingJanusGraphGenericDao janusGraphGenericDao;
 
     @BeforeClass
     public static void setupBeforeClass() {
@@ -74,20 +74,20 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
     @Before
     public void cleanUp() {
-        TitanGenericDao titanGenericDao = policyTypeOperation.titanGenericDao;
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanGenericDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+        JanusGraphGenericDao janusGraphGenericDao = policyTypeOperation.janusGraphGenericDao;
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphGenericDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
 
         }
-        titanGenericDao.commit();
+        janusGraphGenericDao.commit();
     }
 
     @Test
@@ -310,17 +310,17 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     }
 
     private void verifyDerivedFromNodeEqualsToRootPolicyType(PolicyTypeDefinition rootPolicyType, String parentPolicyId) {
-        Either<ImmutablePair<PolicyTypeData, GraphEdge>, TitanOperationStatus> derivedFromRelation = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<PolicyTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.PolicyType, PolicyTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getPolicyTypeDataDefinition())
                 .isEqualToComparingFieldByField(rootPolicyType);
     }
 
     private void verifyDerivedFromRelationDoesntExist(String parentPolicyId) {
-        Either<ImmutablePair<PolicyTypeData, GraphEdge>, TitanOperationStatus> derivedFromRelation = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<PolicyTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.PolicyType, PolicyTypeData.class);
         assertThat(derivedFromRelation.right().value())
-                .isEqualTo(TitanOperationStatus.NOT_FOUND);
+                .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
     }
 
     private PolicyTypeDefinition createRootPolicyTypeOnGraph() {

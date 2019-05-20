@@ -1,8 +1,7 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -12,14 +11,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -40,10 +39,10 @@ public class ArtifactUuidFixTest {
 	private ArtifactUuidFix test;
 
 	@Mock
-	private TitanDao titanDao;
+	private JanusGraphDao janusGraphDao;
 
 	@Mock
-	private TitanVertex vertex;
+	private JanusGraphVertex vertex;
 
 	@Mock
 	ToscaOperationFacade toscaOperationFacade;
@@ -70,25 +69,26 @@ public class ArtifactUuidFixTest {
 		graphVertex.setUniqueId(uniqueId);
 		graphVertex.setMetadataProperties(hasProps1);
 		list.add(graphVertex);
-		when(titanDao.getByCriteria(VertexTypeEnum.NODE_TYPE, hasProps1)).thenReturn(Either.left(list));
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.NODE_TYPE, hasProps1)).thenReturn(Either.left(list));
 
 		Map<GraphPropertyEnum, Object> hasProps2 = new HashMap<>();
 		hasProps2.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
 		hasProps2.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
 		hasProps2.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-		when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps2)).thenReturn(Either.left(list));
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps2)).thenReturn(Either.left(list));
 
 		Map<GraphPropertyEnum, Object> hasProps3 = new HashMap<>();
 		hasProps3.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 		hasProps3.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-		when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps3)).thenReturn(Either.left(list));
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps3)).thenReturn(Either.left(list));
 
 		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
 		hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF.name());
 		Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
 		hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
-		when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
+		when(janusGraphDao
+        .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
 		Resource resource = new Resource();
 		resource.setName(uniqueId);
 		Map<String, ArtifactDefinition> deployArtifact = new HashMap<>();
@@ -155,7 +155,8 @@ public class ArtifactUuidFixTest {
 		componentInstances.add(componentInstance);
 		service.setComponentInstances(componentInstances);
 
-		when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
+		when(janusGraphDao
+        .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
 		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq(graphVertex.getUniqueId()),any(ComponentParametersView.class)))
 				.thenReturn(Either.left(service));
 		byte[] payload = "value".getBytes();
@@ -188,7 +189,8 @@ public class ArtifactUuidFixTest {
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 		Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
 		hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
-		when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
+		when(janusGraphDao
+        .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
 		result = test.doFix(fixComponent, runMode);
 		assertEquals(false,result);
 	}

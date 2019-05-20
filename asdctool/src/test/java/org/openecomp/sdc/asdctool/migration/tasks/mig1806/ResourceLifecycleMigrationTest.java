@@ -11,14 +11,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResourceLifecycleMigrationTest {
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Mock
@@ -29,7 +29,7 @@ public class ResourceLifecycleMigrationTest {
     @Before
     public void setUp() throws Exception {
         resourceLifecycleMigration =
-                new ResourceLifecycleMigration(titanDao, lifecycleBusinessLogic, userAdminOperation);
+                new ResourceLifecycleMigration(janusGraphDao, lifecycleBusinessLogic, userAdminOperation);
     }
 
     @Test

@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -66,13 +66,13 @@ public class ModelTestBase {
         configurationManager.getConfiguration().setDeploymentResourceInstanceArtifacts(deploymentRIArtifacts);
 	}
 
-    protected void removeGraphVertices(Either<TitanGraph, TitanOperationStatus> graphResult) {
-        TitanGraph graph = graphResult.left().value();
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+    protected void removeGraphVertices(Either<JanusGraph, JanusGraphOperationStatus> graphResult) {
+        JanusGraph graph = graphResult.left().value();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
 

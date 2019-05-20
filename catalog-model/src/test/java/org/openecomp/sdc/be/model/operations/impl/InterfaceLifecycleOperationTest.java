@@ -33,8 +33,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -72,7 +72,7 @@ public class InterfaceLifecycleOperationTest {
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
 
-    TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
     @InjectMocks
     private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation();
 
@@ -87,7 +87,7 @@ public class InterfaceLifecycleOperationTest {
         MockitoAnnotations.initMocks(this);
         final String UNIQUE_ID = "UNIQUE_ID";
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceCategory);
-        when(titanGenericDao.createNode(any(),any())).thenReturn(Either.left(categoryData));
+        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.left(categoryData));
         deleteAndCreateCategory(CATEGORY_NAME);
         deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
     }
@@ -124,7 +124,7 @@ public class InterfaceLifecycleOperationTest {
         String reqRelationship = "myrelationship";
 
         ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
-        resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
+        resourceOperationTest.setOperations(janusGraphDao, resourceOperation, propertyOperation);
 
         Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "100.0", null, true, true);
 
@@ -161,7 +161,7 @@ public class InterfaceLifecycleOperationTest {
         String softwareCompName = "tosca.nodes.SoftwareComponent";
 
         ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
-        resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
+        resourceOperationTest.setOperations(janusGraphDao, resourceOperation, propertyOperation);
 
         Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "200.0", null, true, true);
 
@@ -178,7 +178,7 @@ public class InterfaceLifecycleOperationTest {
         ResourceMetadataData resourceData = new ResourceMetadataData();
         resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
         resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-        Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
+        Either<ResourceMetadataData, JanusGraphOperationStatus> updateNode = janusGraphDao.updateNode(resourceData, ResourceMetadataData.class);
         assertTrue(updateNode.isLeft());
 
         Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId());
@@ -198,7 +198,7 @@ public class InterfaceLifecycleOperationTest {
 
         Either<Operation, StorageOperationStatus> opResult = interfaceOperation.updateInterfaceOperation(softwareComponent.getUniqueId(), "standard", "create", op);
         // PrintGraph pg = new PrintGraph();
-        // System.out.println(pg.buildGraphForWebgraphWiz(titanDao.getGraph().left().value()));
+        // System.out.println(pg.buildGraphForWebgraphWiz(janusGraphDao.getGraph().left().value()));
         assertTrue(opResult.isLeft());
         log.debug("{}", opResult.left().value());
 
@@ -247,12 +247,12 @@ public class InterfaceLifecycleOperationTest {
 
     private void deleteAndCreateCategory(String category) {
         String[] names = category.split("/");
-        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanGenericDao);
+        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], janusGraphGenericDao);
 
         /*
          * CategoryData categoryData = new CategoryData(); categoryData.setName(category);
          *
-         * titanDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, TitanOperationStatus> createNode = titanDao .createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
+         * janusGraphDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphDao .createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
          */
 
     }
@@ -263,18 +263,18 @@ public class InterfaceLifecycleOperationTest {
         userData.setFirstName(firstName);
         userData.setLastName(lastName);
 
-        titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId,
+        janusGraphGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId,
             UserData.class);
-        titanGenericDao.createNode(userData, UserData.class);
-        titanGenericDao.commit();
+        janusGraphGenericDao.createNode(userData, UserData.class);
+        janusGraphGenericDao.commit();
 
         return userData;
     }
 
     @Test
     public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
-        when(titanGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(),
-            InterfaceData.class)).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(),
+            InterfaceData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
         Assert.assertEquals(types.isRight(), Boolean.TRUE);
     }
@@ -288,12 +288,13 @@ public class InterfaceLifecycleOperationTest {
         interfaceData.getInterfaceDataDefinition().setType(TYPE);
         List<InterfaceData> interfaceDataList = new ArrayList<>();
         interfaceDataList.add(interfaceData);
-        Either<List<InterfaceData>, TitanOperationStatus> allInterfaceTypes = Either.left(interfaceDataList);
-        when(titanGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(allInterfaceTypes);
+        Either<List<InterfaceData>, JanusGraphOperationStatus> allInterfaceTypes = Either.left(interfaceDataList);
+        when(janusGraphGenericDao
+            .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(allInterfaceTypes);
 
         List<ImmutablePair<OperationData, GraphEdge>> list = new ArrayList<>();
-        Either<List<ImmutablePair<OperationData, GraphEdge>>, TitanOperationStatus> childrenNodes = Either.left(list);
-        when(titanGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
+        Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = Either.left(list);
+        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
 
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
         Assert.assertEquals(types.left().value().size(),1);

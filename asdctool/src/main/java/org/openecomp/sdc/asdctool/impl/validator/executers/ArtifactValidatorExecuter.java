@@ -2,15 +2,15 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ArtifactValidatorExecuter{
 	
 	 @Autowired
-	 protected TitanDao titanDao;
+	 protected JanusGraphDao janusGraphDao;
 
 	 @Autowired
 	 private ToscaOperationFacade toscaOperationFacade;
@@ -42,7 +42,8 @@ public class ArtifactValidatorExecuter{
 	
 	   public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type, Map<GraphPropertyEnum, Object> hasProps){
 		   Map<String, List<Component>> result = new HashMap<>();
-	        Either<List<GraphVertex>, TitanOperationStatus> resultsEither = titanDao.getByCriteria(type, hasProps);
+	        Either<List<GraphVertex>, JanusGraphOperationStatus> resultsEither = janusGraphDao
+              .getByCriteria(type, hasProps);
 	        if (resultsEither.isRight()) {
 	        	log.error("getVerticesToValidate failed "+ resultsEither.right().value());
 	            return result;
@@ -101,7 +102,7 @@ public class ArtifactValidatorExecuter{
 				log.error("Failed to fetch vf resources ", e);
 				return false;
 			} finally {
-				titanDao.commit();
+				janusGraphDao.commit();
 			}
 			return result;
 	    }

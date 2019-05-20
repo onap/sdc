@@ -14,7 +14,7 @@ import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -46,13 +46,13 @@ public class YamlTemplateParsingHandler {
 
 
     private Gson gson = new Gson();
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     private GroupTypeBusinessLogic groupTypeBusinessLogic;
     private AnnotationBusinessLogic annotationBusinessLogic;
 
-    public YamlTemplateParsingHandler(TitanDao titanDao,
+    public YamlTemplateParsingHandler(JanusGraphDao  janusGraphDao,
                                       GroupTypeBusinessLogic groupTypeBusinessLogic, AnnotationBusinessLogic annotationBusinessLogic) {
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
     }
@@ -844,17 +844,17 @@ public class YamlTemplateParsingHandler {
     }
 
     private Map<String, Object> failIfNoNodeTemplates(String fileName) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
     }
 
     private Object failIfNotTopologyTemplate(String fileName) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
     }
 
     private void rollbackWithException(ActionStatus actionStatus, String... params) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ComponentException(actionStatus, params);
     }
 

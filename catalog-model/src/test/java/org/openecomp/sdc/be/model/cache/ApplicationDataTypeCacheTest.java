@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
@@ -54,7 +54,7 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 
 	@Test
 	public void testGetAllDataTypesFromGraph() throws Exception {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> result;
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "getAllDataTypesFromGraph");
@@ -62,7 +62,7 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 
 	@Test
 	public void testGetAll() throws Exception {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> result;
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
 
 		// default test
 		result = testSubject.getAll();
@@ -71,7 +71,7 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 	@Test
 	public void testGet() throws Exception {
 		String uniqueId = "";
-		Either<DataTypeDefinition, TitanOperationStatus> result;
+		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
 		// default test
 		result = testSubject.get(uniqueId);
@@ -80,13 +80,13 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 	@Test
 	public void testGet2() throws Exception {
 		String uniqueId = "";
-		Either<DataTypeDefinition, TitanOperationStatus> result;
+		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
 		HashMap<String, DataTypeDefinition> a = new HashMap<>();
 		DataTypeDefinition value1 = new DataTypeDefinition();
 		value1.setUniqueId("mock");
 		a.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> value = Either.left(a);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.left(a);
 		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
 		// default test
 		Deencapsulation.invoke(testSubject, "replaceAllData");
@@ -100,7 +100,8 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 
 	@Test
 	public void testRun2() throws Exception {
-		Either<List<DataTypeData>, TitanOperationStatus> value = Either.right(TitanOperationStatus.GENERAL_ERROR);
+		Either<List<DataTypeData>, JanusGraphOperationStatus> value = Either.right(
+        JanusGraphOperationStatus.GENERAL_ERROR);
 		Mockito.when(propertyOperation.getAllDataTypeNodes()).thenReturn(value);
 		testSubject.run();
 	}
@@ -109,14 +110,14 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 	public void testRun3() throws Exception {
 		LinkedList<DataTypeData> a = new LinkedList<>();
 		a.add(new DataTypeData());
-		Either<List<DataTypeData>, TitanOperationStatus> value = Either.left(a);
+		Either<List<DataTypeData>, JanusGraphOperationStatus> value = Either.left(a);
 		Mockito.when(propertyOperation.getAllDataTypeNodes()).thenReturn(value);
 		
 		HashMap<String, DataTypeDefinition> a1 = new HashMap<>();
 		DataTypeDefinition value1 = new DataTypeDefinition();
 		value1.setUniqueId("mock");
 		a1.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> value2 = Either.left(a1);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value2 = Either.left(a1);
 		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value2);
 		
 		Deencapsulation.invoke(testSubject, "replaceAllData");
@@ -152,7 +153,7 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 		DataTypeDefinition value1 = new DataTypeDefinition();
 		value1.setUniqueId("mock");
 		a.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> value = Either.left(a);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.left(a);
 		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
 		// default test
 		Deencapsulation.invoke(testSubject, "replaceAllData");
@@ -160,7 +161,8 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 	
 	@Test
 	public void testReplaceAllData2() throws Exception {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> value = Either.right(TitanOperationStatus.GENERAL_ERROR);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.right(
+        JanusGraphOperationStatus.GENERAL_ERROR);
 		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
 		// default test
 		Deencapsulation.invoke(testSubject, "replaceAllData");

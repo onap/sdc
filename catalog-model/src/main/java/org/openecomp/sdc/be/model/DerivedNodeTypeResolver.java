@@ -21,13 +21,13 @@
 package org.openecomp.sdc.be.model;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 
 import java.util.List;
 
 public interface DerivedNodeTypeResolver {
 
-    Either<List<GraphVertex>, TitanOperationStatus> findDerivedResources(String parentResource);
+    Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource);
 
 }

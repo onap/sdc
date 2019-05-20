@@ -36,9 +36,9 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -57,9 +57,9 @@ import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
@@ -106,10 +106,10 @@ public abstract class BaseBusinessLogic {
     protected IGraphLockOperation graphLockOperation;
 
     @Autowired
-    protected TitanDao titanDao;
+    protected JanusGraphDao janusGraphDao;
 
     @Autowired
-    protected TitanGenericDao titanGenericDao;
+    protected JanusGraphGenericDao janusGraphGenericDao;
 
     @Autowired
     protected IElementOperation elementDao;
@@ -281,9 +281,9 @@ public abstract class BaseBusinessLogic {
         NodeTypeEnum nodeType = componentType.getNodeType();
         if (!inTransaction) {
             if (either == null || either.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
         // unlock resource
@@ -337,11 +337,11 @@ public abstract class BaseBusinessLogic {
     }
 
     <T extends PropertyDataDefinition> Either<String, ResponseFormat> updateInputPropertyObjectValue(T property) {
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
-            TitanOperationStatus status = allDataTypesEither.right().value();
+            JanusGraphOperationStatus status = allDataTypesEither.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
         }
         Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
         String propertyType = property.getType();
@@ -354,7 +354,8 @@ public abstract class BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
             }
         } else {
             Object object = isValid.left().value();
@@ -427,15 +428,15 @@ public abstract class BaseBusinessLogic {
     }
 
     // For UT
-    public void setTitanGenericDao(TitanDao titanDao) {
-        this.titanDao = titanDao;
+    public void setJanusGraphGenericDao(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
     }
 
     protected Either<Map<String, DataTypeDefinition>, ResponseFormat> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus operationStatus = allDataTypes.right().value();
-            if (operationStatus == TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus operationStatus = allDataTypes.right().value();
+            if (operationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logInternalDataError("FetchDataTypes", "Data types are not loaded", ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY));
             } else {
@@ -534,10 +535,10 @@ public abstract class BaseBusinessLogic {
     void commitOrRollback(Either<?, ResponseFormat> result) {
         if (result == null || result.isRight()) {
             log.warn("operation failed. do rollback");
-            titanDao.rollback();
+            janusGraphDao.rollback();
         } else {
             log.debug("operation success. do commit");
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 
@@ -585,7 +586,8 @@ public abstract class BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                throw new StorageException(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT));
+                throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
             }
         } else {
             Object object = isValid.left().value();
@@ -597,7 +599,8 @@ public abstract class BaseBusinessLogic {
         log.trace("After validateAndUpdateRules. pair = {}", pair);
         if (Boolean.FALSE.equals(pair.getRight())) {
             BeEcompErrorManager.getInstance().logBeInvalidValueError(ADD_PROPERTY_VALUE, pair.getLeft(), property.getName(), propertyType);
-            throw new StorageException(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT));
+            throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
         }
         return newValue;
     }
@@ -623,7 +626,8 @@ public abstract class BaseBusinessLogic {
     private void failOnIllegalArgument() {
         throw new ComponentException(
                 componentsUtils.convertFromStorageResponse(
-                        DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT)));
+                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                            JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
     }
 
     public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, boolean isValidate, String innerType, Map<String, DataTypeDefinition> dataTypes) {
@@ -710,7 +714,7 @@ public abstract class BaseBusinessLogic {
     }
 
     protected void rollbackWithException(ActionStatus actionStatus, String... params) {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         throw new ComponentException(actionStatus, params);
     }
 
