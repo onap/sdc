@@ -21,9 +21,9 @@
 package org.openecomp.sdc.be.model.operations.impl.util;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -36,20 +36,20 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class OperationTestsUtil {
 
-    public static String deleteAndCreateServiceCategory(String category, TitanGenericDao titanDao) {
+    public static String deleteAndCreateServiceCategory(String category, JanusGraphGenericDao janusGraphDao) {
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ServiceNewCategory);
         categoryData.getCategoryDataDefinition().setName(category);
         categoryData.getCategoryDataDefinition()
                 .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
         categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
                 ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ServiceNewCategory));
-        titanDao.deleteNode(categoryData, CategoryData.class);
-        Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
+        janusGraphDao.deleteNode(categoryData, CategoryData.class);
+        Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphDao.createNode(categoryData, CategoryData.class);
         return (String) createNode.left().value().getUniqueId();
     }
 
     public static String deleteAndCreateResourceCategory(String category, String subcategory,
-            TitanGenericDao titanDao) {
+            JanusGraphGenericDao janusGraphDao) {
 
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceNewCategory);
         categoryData.getCategoryDataDefinition().setName(category);
@@ -64,22 +64,22 @@ public class OperationTestsUtil {
                 .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
         subcategoryData.getSubCategoryDataDefinition().setUniqueId(UniqueIdBuilder
                 .buildSubCategoryUid(categoryData.getCategoryDataDefinition().getUniqueId(), subcategory));
-        titanDao.deleteNode(categoryData, CategoryData.class);
-        titanDao.deleteNode(subcategoryData, SubCategoryData.class);
-        Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
-        titanDao.createNode(subcategoryData, SubCategoryData.class);
-        titanDao.createRelation(categoryData, subcategoryData, GraphEdgeLabels.SUB_CATEGORY, null);
+        janusGraphDao.deleteNode(categoryData, CategoryData.class);
+        janusGraphDao.deleteNode(subcategoryData, SubCategoryData.class);
+        Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphDao.createNode(categoryData, CategoryData.class);
+        janusGraphDao.createNode(subcategoryData, SubCategoryData.class);
+        janusGraphDao.createRelation(categoryData, subcategoryData, GraphEdgeLabels.SUB_CATEGORY, null);
         return (String) createNode.left().value().getUniqueId();
     }
 
-    public static void deleteServiceCategory(String category, TitanGenericDao titanDao) {
+    public static void deleteServiceCategory(String category, JanusGraphGenericDao janusGraphDao) {
         ServiceCategoryData categoryData = new ServiceCategoryData(category);
-        titanDao.deleteNode(categoryData, ServiceCategoryData.class);
+        janusGraphDao.deleteNode(categoryData, ServiceCategoryData.class);
     }
 
-    public static void deleteResourceCategory(String category, String subcategory, TitanGenericDao titanDao) {
+    public static void deleteResourceCategory(String category, String subcategory, JanusGraphGenericDao janusGraphDao) {
         ResourceCategoryData categoryData = new ResourceCategoryData(category, subcategory);
-        titanDao.deleteNode(categoryData, ResourceCategoryData.class);
+        janusGraphDao.deleteNode(categoryData, ResourceCategoryData.class);
     }
 
     public static User convertUserDataToUser(UserData modifierData) {

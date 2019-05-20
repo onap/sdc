@@ -23,17 +23,13 @@ package org.openecomp.sdc.be.model;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
 public class Service extends Component {
 

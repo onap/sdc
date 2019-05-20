@@ -11,7 +11,7 @@ public class GraphMLDataAnalyzerTest {
 	@Test
 	public void testAnalyzeGraphMLData() throws Exception {
 		GraphMLDataAnalyzer testSubject;
-		String[] args = new String[] { "export", "src/main/resources/config/titan.properties", "./" };
+		String[] args = new String[] { "export", "src/main/resources/config/janusgraph.properties", "./" };
 		String result;
 
 		// default test

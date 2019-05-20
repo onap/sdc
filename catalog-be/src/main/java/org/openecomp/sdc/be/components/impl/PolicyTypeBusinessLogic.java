@@ -4,7 +4,7 @@ import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -25,13 +25,13 @@ public class PolicyTypeBusinessLogic {
 
     private static final Logger log = Logger.getLogger(PolicyTypeBusinessLogic.class);
     private PolicyTypeOperation policyTypeOperation;
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     private ComponentsUtils componentsUtils;
     private UserValidations userValidations;
 
-    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, TitanDao titanDao, ComponentsUtils componentsUtils, UserValidations userValidations) {
+    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, JanusGraphDao janusGraphDao, ComponentsUtils componentsUtils, UserValidations userValidations) {
         this.policyTypeOperation = policyTypeOperation;
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
         this.componentsUtils = componentsUtils;
         this.userValidations = userValidations;
     }

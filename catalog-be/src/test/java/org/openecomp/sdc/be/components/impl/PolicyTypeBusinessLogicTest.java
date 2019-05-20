@@ -13,7 +13,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.User;
@@ -42,7 +42,7 @@ public class PolicyTypeBusinessLogicTest {
     @InjectMocks
     private PolicyTypeBusinessLogic testInstance;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private PolicyTypeOperation policyTypeOperation;
     @Mock

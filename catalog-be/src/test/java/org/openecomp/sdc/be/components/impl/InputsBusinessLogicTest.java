@@ -28,30 +28,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.Optional;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -71,13 +62,21 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InputsBusinessLogicTest {
 
@@ -120,7 +119,7 @@ public class InputsBusinessLogicTest {
     private PropertyOperation propertyOperation;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Mock
     private DataTypeBusinessLogic dataTypeBusinessLogic;
@@ -251,7 +250,7 @@ public class InputsBusinessLogicTest {
         when(propertyDeclarationOrchestrator.declarePropertiesToInputs(any(), any())).thenReturn(Either.left(
                 declaredPropertiesToInputs));
         when(toscaOperationFacadeMock.addInputsToComponent(any(), any())).thenReturn(Either.left(declaredPropertiesToInputs));
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.unlockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(componentInstanceBusinessLogic.setInputConstraint(any())).thenReturn(Collections.emptyList());
@@ -456,7 +455,7 @@ public class InputsBusinessLogicTest {
         // for createListInputsInGraph:
         when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID))).thenReturn(Either.left(Arrays.asList(listInput)));
         // for rollback/commit:
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         // for unlock resource
         when(graphLockOperation.unlockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
 
@@ -510,7 +509,7 @@ public class InputsBusinessLogicTest {
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(componentsUtilsMock.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY)).thenReturn(new ResponseFormat());
 
         Either<List<InputDefinition>, ResponseFormat> result =

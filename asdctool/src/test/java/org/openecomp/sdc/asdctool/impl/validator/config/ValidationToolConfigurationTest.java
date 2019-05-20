@@ -8,13 +8,13 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidat
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
+import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsontitan.operations.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 
 public class ValidationToolConfigurationTest {
 
@@ -125,7 +125,7 @@ public class ValidationToolConfigurationTest {
 	@Test
 	public void testDaoStrategy() {
 		ValidationToolConfiguration testSubject;
-		TitanClientStrategy result;
+		JanusGraphClientStrategy result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -174,14 +174,14 @@ public class ValidationToolConfigurationTest {
 	}
 
 	@Test
-	public void testTitanDao() {
+	public void testJanusGraphDao() {
 		ValidationToolConfiguration testSubject;
-		TitanGraphClient titanGraphClient = null;
-		TitanDao result;
+		JanusGraphClient janusGraphClient = null;
+		JanusGraphDao result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.titanDao(titanGraphClient);
+		result = testSubject.janusGraphDao(janusGraphClient);
 	}
 
 	@Test

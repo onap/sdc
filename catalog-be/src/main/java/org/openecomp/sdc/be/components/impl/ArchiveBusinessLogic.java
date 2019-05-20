@@ -5,7 +5,7 @@ import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -13,8 +13,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArchiveOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -28,14 +28,14 @@ public class ArchiveBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ArchiveBusinessLogic.class.getName());
 
-    private final TitanDao titanDao;
+    private final JanusGraphDao janusGraphDao;
     private final AccessValidations accessValidations;
     private final ArchiveOperation archiveOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentUtils;
 
-    public ArchiveBusinessLogic(TitanDao titanDao, AccessValidations accessValidations, ArchiveOperation archiveOperation, ToscaOperationFacade tof, ComponentsUtils componentsUtils) {
-        this.titanDao = titanDao;
+    public ArchiveBusinessLogic(JanusGraphDao janusGraphDao, AccessValidations accessValidations, ArchiveOperation archiveOperation, ToscaOperationFacade tof, ComponentsUtils componentsUtils) {
+        this.janusGraphDao = janusGraphDao;
         this.accessValidations = accessValidations;
         this.archiveOperation = archiveOperation;
         this.toscaOperationFacade = tof;
@@ -122,7 +122,7 @@ public class ArchiveBusinessLogic {
             throw e;
         }
         finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 

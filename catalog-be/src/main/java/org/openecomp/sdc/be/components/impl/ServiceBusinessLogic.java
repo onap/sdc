@@ -113,9 +113,9 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -232,14 +232,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
             Either<Service, StorageOperationStatus> result = toscaOperationFacade.updateDistributionStatus(service, user, newState);
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("ChangeServiceDistributionState");
                 log.debug("service {} is  change destribuation status failed", service.getUniqueId());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, service.getVersion(), service.getName());
                 createAudit(user, auditAction, comment, service, responseFormat);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             Service updatedService = result.left().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
             log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
@@ -318,10 +318,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 operationList.add(operationEither.left().value());
             }
 
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(operationList);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 
         } finally {
@@ -1008,7 +1008,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameUniqueness(serviceName, null, ComponentTypeEnum.SERVICE);
         // DE242223
-        titanDao.commit();
+        janusGraphDao.commit();
 
         if (dataModelResponse.isLeft()) {
             Map<String, Boolean> result = new HashMap<>();
@@ -1068,12 +1068,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         try {
             Either<Service, StorageOperationStatus> updateResponse = toscaOperationFacade.updateToscaElement(serviceToUpdate);
             if (updateResponse.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
                 log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(updateResponse.left().value());
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
@@ -1094,7 +1094,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (lock) {
             Either<Boolean, ResponseFormat> lockResult = lockComponent(service.getUniqueId(), service, "Delete Forwarding Path on Service");
             if (lockResult.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils
                     .convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
             }
@@ -1103,15 +1103,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             result = forwardingPathOperation.deleteForwardingPath(service ,pathIdsToDelete);
             if (result.isRight()) {
                 log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, service.getName(), result.right().value());
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE)));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, service.getSystemName());
 
         } catch (Exception e){
             log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
               graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
@@ -1209,7 +1209,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                         result = forwardingPathOperation.addForwardingPath(serviceId, forwardingPathDataDefinition);
                     }
                     if (result.isRight()) {
-                        titanDao.rollback();
+                        janusGraphDao.rollback();
                         return Either.right(componentsUtils.getResponseFormat(
                             componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
                             ""));
@@ -1220,12 +1220,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 }
 
             } catch (Exception e) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 log.error("Exception occurred during add or update forwarding path property values: {}", e.getMessage(),
                     e);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
         } finally {
             if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
                 graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
@@ -1603,7 +1603,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validating service category {} against valid categories list", list);
             Either<List<CategoryDefinition>, ActionStatus> categorys = elementDao.getAllServiceCategories();
             if (categorys.isRight()) {
-                log.debug("failed to retrieve service categories from Titan");
+                log.debug("failed to retrieve service categories from JanusGraph");
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(categorys.right().value());
                 return Either.right(responseFormat);
             }
@@ -1661,10 +1661,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
                 log.warn("operation failed. do rollback");
                 BeEcompErrorManager.getInstance().logBeSystemError("Delete Service");
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
                 log.debug("operation success. do commit");
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
         }
@@ -1703,10 +1703,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
                 log.warn("operation failed. do rollback");
                 BeEcompErrorManager.getInstance().logBeSystemError("Delete Service");
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
                 log.debug("operation success. do commit");
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
         }
@@ -2001,12 +2001,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         try {
             Either<Service, StorageOperationStatus> result = toscaOperationFacade.updateDistributionStatus(service, user, state);
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("updateDistributionStatusForActivation");
                 log.debug("service {}  change distribution status failed", serviceId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(result.left().value());
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
@@ -2683,7 +2683,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (lock) {
             Either<Boolean, ResponseFormat> lockResult = lockComponent(service.getUniqueId(), service, "Delete Service Filter from service");
             if (lockResult.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils
                                                                               .convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
             }
@@ -2692,15 +2692,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             result = serviceFilterOperation.deleteNodeFilter(service , resourceId);
             if (result.isRight()) {
                 log.debug("Failed to delete node filter in service {}. Response is {}. ", service.getName(), result.right().value());
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE)));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             log.debug("Node filter successfully changed in service {} . ", service.getSystemName());
 
         } catch (Exception e){
             log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
             graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
@@ -2755,17 +2755,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         try {
             result =  serviceFilterOperation.createNodeFilter(serviceId, componentInstanceId);
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
                         ""));
             } else {
                 serviceFilterResult = result.left().value();
             }
-            titanDao.commit();
+            janusGraphDao.commit();
 
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
                     e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -2827,17 +2827,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             Either<CINodeFilterDataDefinition, StorageOperationStatus>  result =  serviceFilterOperation.updateProperties(serviceId, componentInstanceId, serviceFilter ,properties);
 
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
                         ""));
             } else {
                 serviceFilterResult = result.left().value();
             }
-            titanDao.commit();
+            janusGraphDao.commit();
 
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
                     e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -2921,17 +2921,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
 
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
                         ""));
             } else {
                 serviceFilterResult = result.left().value();
             }
-            titanDao.commit();
+            janusGraphDao.commit();
 
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             log.error("Exception occurred during add or update node filter property values: {}", e.getMessage(),
                     e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));

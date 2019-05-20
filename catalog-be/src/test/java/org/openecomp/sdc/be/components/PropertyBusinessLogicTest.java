@@ -31,11 +31,11 @@ import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -81,7 +81,7 @@ public class PropertyBusinessLogicTest {
     @Mock
     IGraphLockOperation graphLockOperation;
     @Mock
-    TitanDao titanDao;
+    JanusGraphDao janusGraphDao;
 
     @InjectMocks
     private PropertyBusinessLogic bl = new PropertyBusinessLogic();
@@ -291,16 +291,16 @@ public class PropertyBusinessLogicTest {
         resource.setUniqueId(resourceId);
 
         Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
+        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("janusGraphDao");
         baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
+        baseBusinessLogic3.set(bl, janusGraphDao);
 
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
 
         StorageOperationStatus lockResult = StorageOperationStatus.OK;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
+        //doNothing().when(janusGraphDao).commit();
 
         Either<PropertyDefinition, ResponseFormat> result;
 
@@ -327,16 +327,16 @@ public class PropertyBusinessLogicTest {
         resource.setUniqueId(resourceId);
 
         Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
+        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("janusGraphDao");
         baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
+        baseBusinessLogic3.set(bl, janusGraphDao);
 
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
 
         StorageOperationStatus lockResult = StorageOperationStatus.OK;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
+        //doNothing().when(janusGraphDao).commit();
 
         Either<PropertyDefinition, ResponseFormat> result;
 
@@ -363,16 +363,16 @@ public class PropertyBusinessLogicTest {
         resource.setUniqueId(resourceId);
 
         Field baseBusinessLogic3;
-        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("titanDao");
+        baseBusinessLogic3 = bl.getClass().getSuperclass().getDeclaredField("janusGraphDao");
         baseBusinessLogic3.setAccessible(true);
-        baseBusinessLogic3.set(bl, titanDao);
+        baseBusinessLogic3.set(bl, janusGraphDao);
 
 
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
 
         StorageOperationStatus lockResult = StorageOperationStatus.OK;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
-        //doNothing().when(titanDao).commit();
+        //doNothing().when(janusGraphDao).commit();
 
         Either<PropertyDefinition, ResponseFormat> result;
 

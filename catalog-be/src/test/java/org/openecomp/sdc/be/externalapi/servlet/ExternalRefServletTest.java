@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import com.google.common.collect.ImmutableListMultimap;
 import fj.data.Either;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -34,20 +33,16 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.DAOTitanStrategy;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
+import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
+import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.heal.Heal;
-import org.openecomp.sdc.be.dao.jsongraph.heal.HealVersionBuilder;
-import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -55,8 +50,8 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.*;
-import org.openecomp.sdc.be.model.jsontitan.utils.IdMapper;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
@@ -70,7 +65,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -114,7 +108,8 @@ public class ExternalRefServletTest extends JerseyTest {
     private static final ToscaOperationFacade toscaOperationFacadeMock = Mockito.mock(ToscaOperationFacade.class);
     private static final AccessValidations accessValidationsMock = Mockito.mock(AccessValidations.class);
     private static final ComponentLocker componentLocker = Mockito.mock(ComponentLocker.class);
-    private static final HealingTitanGenericDao titanGenericDao = Mockito.mock(HealingTitanGenericDao.class);
+    private static final HealingJanusGraphGenericDao
+        janusGraphGenericDao = Mockito.mock(HealingJanusGraphGenericDao.class);
     private static final ICacheMangerOperation cacheManagerOperation = Mockito.mock(ICacheMangerOperation.class);
     private static final IGraphLockOperation graphLockOperation = Mockito.mock(IGraphLockOperation.class);
 
@@ -140,7 +135,7 @@ public class ExternalRefServletTest extends JerseyTest {
         private GraphVertex serviceVertex;
         private GraphVertex resourceVertex;
         private ExternalReferencesOperation externalReferenceOperation;
-        private HealingTitanDao titanDao;
+        private HealingJanusGraphDao janusGraphDao;
         private OperationUtils operationUtils;
 
         @Bean
@@ -149,7 +144,7 @@ public class ExternalRefServletTest extends JerseyTest {
         }
 
         @Bean
-        OperationUtils operationUtils() {return new OperationUtils(titanDao());}
+        OperationUtils operationUtils() {return new OperationUtils(janusGraphDao());}
 
         @Bean
         ComponentExceptionMapper componentExceptionMapper() {
@@ -178,9 +173,9 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         ExternalReferencesOperation externalReferencesOperation() {
-            this.externalReferenceOperation = new ExternalReferencesOperation(titanDao(), nodeTypeOpertaion(), topologyTemplateOperation(), idMapper());
+            this.externalReferenceOperation = new ExternalReferencesOperation(janusGraphDao(), nodeTypeOpertaion(), topologyTemplateOperation(), idMapper());
             this.externalReferenceOperation.setHealingPipelineDao(healingPipelineDao());
-            GraphTestUtils.clearGraph(titanDao);
+            GraphTestUtils.clearGraph(janusGraphDao);
             initGraphForTest();
             return this.externalReferenceOperation;
         }
@@ -206,7 +201,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         ArchiveOperation archiveOperation() {
-            return new ArchiveOperation(titanDao(), graphLockOperation());
+            return new ArchiveOperation(janusGraphDao(), graphLockOperation());
         }
 
         @Bean
@@ -235,19 +230,19 @@ public class ExternalRefServletTest extends JerseyTest {
         }
 
         @Bean
-        HealingTitanDao titanDao() {
-            this.titanDao = new HealingTitanDao(titanGraphClient());
-            return titanDao;
+        HealingJanusGraphDao janusGraphDao() {
+            this.janusGraphDao = new HealingJanusGraphDao(janusGraphClient());
+            return janusGraphDao;
         }
 
         @Bean
-        TitanGraphClient titanGraphClient() {
-            return new TitanGraphClient(titanClientStrategy());
+        JanusGraphClient janusGraphClient() {
+            return new JanusGraphClient(janusGraphClientStrategy());
         }
 
         @Bean
-        TitanClientStrategy titanClientStrategy() {
-            return new DAOTitanStrategy();
+        JanusGraphClientStrategy janusGraphClientStrategy() {
+            return new DAOJanusGraphStrategy();
         }
 
         @Bean
@@ -261,8 +256,8 @@ public class ExternalRefServletTest extends JerseyTest {
         }
 
         @Bean
-        TitanGenericDao titanGenericDao() {
-            return titanGenericDao;
+        JanusGraphGenericDao janusGraphGenericDao() {
+            return janusGraphGenericDao;
         }
 
         @Bean("healingPipelineDao")
@@ -277,11 +272,11 @@ public class ExternalRefServletTest extends JerseyTest {
         private void initGraphForTest() {
             if (!setupDone) {
 
-                resourceVertex = GraphTestUtils.createResourceVertex(titanDao, new HashMap<>(), ResourceTypeEnum.VF);
+                resourceVertex = GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VF);
                 resourceVertexUuid = resourceVertex.getUniqueId();
 
                 //create a service and add ref
-                serviceVertex = GraphTestUtils.createServiceVertex(titanDao, new HashMap<>());
+                serviceVertex = GraphTestUtils.createServiceVertex(janusGraphDao, new HashMap<>());
                 serviceVertexUuid = this.serviceVertex.getUniqueId();
 
                 //monitoring references
@@ -293,8 +288,8 @@ public class ExternalRefServletTest extends JerseyTest {
                 //workflow references
                 externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, WORKFLOW_OBJECT_TYPE, REF_6);
 
-                final TitanOperationStatus commit = this.titanDao.commit();
-                assertThat(commit).isEqualTo(TitanOperationStatus.OK);
+                final JanusGraphOperationStatus commit = this.janusGraphDao.commit();
+                assertThat(commit).isEqualTo(JanusGraphOperationStatus.OK);
             }
         }
 

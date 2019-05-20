@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -29,7 +29,7 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
     static final String NEW_DESCRIPTION = "new description";
 
     @Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     @Resource
     private CommonTypeOperations commonTypeOperations;
@@ -47,13 +47,13 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
 
     @Before
     public void initTestData() {
-        removeGraphVertices(titanGenericDao.getGraph());
+        removeGraphVertices(janusGraphGenericDao.getGraph());
         prop1 = createSimpleProperty("val1", "prop1", "string");
     }
 
     @After
     public void tearDown() {
-        titanGenericDao.rollback();
+        janusGraphGenericDao.rollback();
     }
 
     @SuppressWarnings("unchecked")
@@ -86,7 +86,7 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
     public void addAnnotationType() {
         prepareInitialType();
         annotationTypeOperations.addType(initialAnnotationDefinition);
-        titanGenericDao.commit();
+        janusGraphGenericDao.commit();
     }
 
     @Test

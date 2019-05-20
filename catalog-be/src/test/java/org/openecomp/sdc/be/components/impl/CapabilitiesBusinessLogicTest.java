@@ -28,8 +28,8 @@ import org.openecomp.sdc.be.components.validation.CapabilitiesValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -45,8 +45,8 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.CapabilitiesOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CapabilitiesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.Role;
@@ -76,7 +76,7 @@ public class CapabilitiesBusinessLogicTest {
     private final String componentId = "resourceId1";
     private final String capabilityId = "uniqueId1";
 
-    private final TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+    private final JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     private final UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private final UserValidations userValidations = Mockito.mock(UserValidations.class);
@@ -127,13 +127,13 @@ public class CapabilitiesBusinessLogicTest {
                                 "0", "10"))));
         when(capabilitiesOperation.deleteCapabilities( anyObject(), anyString()))
                 .thenReturn(StorageOperationStatus.OK);
-        when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         capabilitiesBusinessLogicMock = new CapabilitiesBusinessLogic();
         capabilitiesBusinessLogicMock.setComponentsUtils(componentsUtils);
         capabilitiesBusinessLogicMock.setUserAdmin(mockUserAdmin);
         capabilitiesBusinessLogicMock.setGraphLockOperation(graphLockOperation);
-        capabilitiesBusinessLogicMock.setTitanGenericDao(mockTitanDao);
+        capabilitiesBusinessLogicMock.setJanusGraphGenericDao(mockJanusGraphDao);
         capabilitiesBusinessLogicMock.setToscaOperationFacade(toscaOperationFacade);
         capabilitiesBusinessLogicMock.setUserValidations(userValidations);
         capabilitiesBusinessLogicMock.setCapabilitiesOperation(capabilitiesOperation);
@@ -178,7 +178,7 @@ public class CapabilitiesBusinessLogicTest {
     }
 
     @Test
-    public void shouldFailCreateCapabilitiesWhenOperationFailedInTitan(){
+    public void shouldFailCreateCapabilitiesWhenOperationFailedInJanusGraph(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName2", "capDesc", "capType", "source1",
                         "0", "10"));
@@ -274,7 +274,7 @@ public class CapabilitiesBusinessLogicTest {
     }
 
     @Test
-    public void shouldFailUpdateCapabilitiesWhenOperationFailedInTitan(){
+    public void shouldFailUpdateCapabilitiesWhenOperationFailedInJanusGraph(){
         List<CapabilityDefinition> capabilityDefinitions = createMockCapabilityListToReturn(
                 createCapability("capName2", "capDesc", "capType", "source1",
                         "0", "10"));
@@ -312,7 +312,7 @@ public class CapabilitiesBusinessLogicTest {
     }
 
     @Test
-    public void shouldFailDeleteCapabilitiesWhenOperationFailedInTitan(){
+    public void shouldFailDeleteCapabilitiesWhenOperationFailedInJanusGraph(){
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);

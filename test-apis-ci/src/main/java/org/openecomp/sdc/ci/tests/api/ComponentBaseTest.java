@@ -24,7 +24,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
-import com.thinkaurelius.titan.core.TitanGraph;
+import org.janusgraph.core.JanusGraph;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.junit.rules.TestName;
@@ -67,7 +67,7 @@ public abstract class ComponentBaseTest {
     protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
     private static final String VERSIONS_INFO_FILE_NAME = "versions.info";
     private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
-    protected static TitanGraph titanGraph;
+    protected static JanusGraph titanGraph;
     public static Config config;
     protected static ITestContext myContext;
 

@@ -17,10 +17,10 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
 import com.google.common.collect.ImmutableListMultimap;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.graphdb.relations.StandardVertexProperty;
-import com.thinkaurelius.titan.graphdb.types.system.EmptyVertex;
-import com.thinkaurelius.titan.graphdb.types.system.ImplicitKey;
+import org.janusgraph.core.JanusGraphVertex;
+import org.janusgraph.graphdb.relations.StandardVertexProperty;
+import org.janusgraph.graphdb.types.system.EmptyVertex;
+import org.janusgraph.graphdb.types.system.ImplicitKey;
 import java.util.HashMap;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -85,7 +85,7 @@ public class HealingPipelineDaoTest {
     }
 
     @Test
-    public void testPipelineFilter3AttributesTitanVertex() {
+    public void testPipelineFilter3AttributesJanusGraphVertex() {
         // init data
         HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
         healingPipelineDao.setHealVersion(7);
@@ -95,16 +95,16 @@ public class HealingPipelineDaoTest {
 
         assertEquals(2,
                 healingPipelineDao.getHealersForVertex(GraphEdgeLabels.CAPABILITY.getProperty(), HealVersionBuilder.build(5)).size());
-        TitanVertex titanVertex = Mockito.mock(TitanVertex.class);
+        JanusGraphVertex janusGraphVertex = Mockito.mock(JanusGraphVertex.class);
         final int version = 5;
         StandardVertexProperty vertexProperty = new StandardVertexProperty(1, ImplicitKey.ID, new EmptyVertex(), version, (byte) 1);
-        Mockito.when(titanVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty())).thenReturn(vertexProperty);
+        Mockito.when(janusGraphVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty())).thenReturn(vertexProperty);
 
         // perform test
 
-        Optional optional = healingPipelineDao.performGraphReadHealing(titanVertex, GraphEdgeLabels.CAPABILITY);
+        Optional optional = healingPipelineDao.performGraphReadHealing(janusGraphVertex, GraphEdgeLabels.CAPABILITY);
         assertTrue(optional.isPresent());
-        final TitanVertex changedVertex = (TitanVertex) optional.get();
+        final JanusGraphVertex changedVertex = (JanusGraphVertex) optional.get();
 
         //validate result
         assertNotNull(changedVertex);
@@ -112,7 +112,7 @@ public class HealingPipelineDaoTest {
     }
 
     @Test
-    public void testPipelineFilterGenericTitanDao() {
+    public void testPipelineFilterGenericJanusGraphDao() {
         // init data
         HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
         healingPipelineDao.setHealVersion(7);
@@ -140,7 +140,7 @@ public class HealingPipelineDaoTest {
     }
 
     @Test
-    public void testPipelineFilterTitanGraph1Attributes() {
+    public void testPipelineFilterJanusGraph1Attributes() {
         // init data
         HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
         healingPipelineDao.setHealVersion(7);
@@ -217,9 +217,9 @@ public class HealingPipelineDaoTest {
                 .put(GraphEdgeLabels.ATTRIBUTE.getProperty(), new GraphNodeHealTestMock(4))
                 .put(GraphEdgeLabels.ATTRIBUTE.getProperty(), new GraphNodeHealTestMock(5))
                 .put(GraphEdgeLabels.ATTRIBUTE.getProperty(), new GraphNodeHealTestMock(6))
-                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new TitanVertexHealTestMock(4))
-                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new TitanVertexHealTestMock(5))
-                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new TitanVertexHealTestMock(6)).build();
+                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new JanusGraphVertexHealTestMock(4))
+                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new JanusGraphVertexHealTestMock(5))
+                .put(GraphEdgeLabels.CAPABILITY.getProperty(), new JanusGraphVertexHealTestMock(6)).build();
     }
 
     public GraphEdge createGraphEdge(GraphEdgeLabels graphEdgeLabels){
@@ -247,7 +247,7 @@ public class HealingPipelineDaoTest {
 
     }
 
-    private class GraphNodeHealTestMock extends AbstractTitanVertexHeal {
+    private class GraphNodeHealTestMock extends AbstractJanusGraphVertexHeal {
         private HealVersion healVersion;
 
         public GraphNodeHealTestMock(int i) {
@@ -266,10 +266,10 @@ public class HealingPipelineDaoTest {
     }
 
 
-    private class TitanVertexHealTestMock implements Heal<TitanVertex> {
+    private class JanusGraphVertexHealTestMock implements Heal<JanusGraphVertex> {
         private HealVersion healVersion;
 
-        public TitanVertexHealTestMock(int i) {
+        public JanusGraphVertexHealTestMock(int i) {
             healVersion = HealVersionBuilder.build(i);
         }
 
@@ -279,7 +279,7 @@ public class HealingPipelineDaoTest {
         }
 
         @Override
-        public void healData(TitanVertex parentV) {
+        public void healData(JanusGraphVertex parentV) {
 
         }
     }

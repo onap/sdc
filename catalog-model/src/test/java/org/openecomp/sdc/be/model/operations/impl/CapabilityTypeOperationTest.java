@@ -25,8 +25,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +44,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -62,23 +61,15 @@ import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class CapabilityTypeOperationTest extends ModelTestBase {
 
-    @Resource(name = "titan-generic-dao")
-    private HealingTitanGenericDao titanDao;
+    @Resource(name = "janusgraph-generic-dao")
+    private HealingJanusGraphGenericDao janusGraphDao;
 
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
@@ -90,20 +81,20 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
     
     @Before
     public void cleanUp() {
-        HealingTitanGenericDao titanGenericDao = capabilityTypeOperation.titanGenericDao;
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanGenericDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+        HealingJanusGraphGenericDao janusGraphGenericDao = capabilityTypeOperation.janusGraphGenericDao;
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphGenericDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
 
         }
-        titanGenericDao.commit();
+        janusGraphGenericDao.commit();
     }
 
     @Test
@@ -124,7 +115,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         CapabilityTypeDefinition capabilityTypeAdded = addCapabilityType1.left().value();
         compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
 
-        Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
         compareBetweenCreatedToSent(capabilityTypeByUid.left().value(), capabilityTypeDefinition);
 
         Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
@@ -441,7 +432,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
     }
 
     private void verifyDerivedFromNodeEqualsToRootCapabilityType(CapabilityTypeDefinition rootCapabilityType, String parentCapabilityId) {
-        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> derivedFromRelation = titanDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), parentCapabilityId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), parentCapabilityId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getCapabilityTypeDataDefinition())
                 .isEqualToComparingFieldByField(rootCapabilityType);

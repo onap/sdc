@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -471,9 +471,9 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
         try {
 
-            Either<AdditionalInformationDefinition, TitanOperationStatus> findIdRes = additionalInformationOperation.getAllAdditionalInformationParameters(nodeType, resourceId, false);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> findIdRes = additionalInformationOperation.getAllAdditionalInformationParameters(nodeType, resourceId, false);
             if (findIdRes.isRight()) {
-                StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(findIdRes.right().value());
+                StorageOperationStatus status = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findIdRes.right().value());
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
                 result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus));
             } else {

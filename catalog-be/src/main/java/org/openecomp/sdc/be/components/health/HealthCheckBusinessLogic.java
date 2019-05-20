@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.impl.EsHealthCheckDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
@@ -78,7 +78,7 @@ public class HealthCheckBusinessLogic {
     private final ScheduledExecutorService healthCheckScheduler = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "BE-Health-Check-Task"));
     private HealthCheckScheduledTask healthCheckScheduledTask = null;
     @Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
     @Resource
     private EsHealthCheckDao esHealthCheckDao;
     @Resource
@@ -130,8 +130,8 @@ public class HealthCheckBusinessLogic {
         // BE
         getBeHealthCheck(healthCheckInfos);
 
-        // Titan
-        getTitanHealthCheck(healthCheckInfos);
+        // JanusGraph
+        getJanusGraphHealthCheck(healthCheckInfos);
         // ES
         getEsHealthCheck(healthCheckInfos);
 
@@ -195,24 +195,24 @@ public class HealthCheckBusinessLogic {
     }
 
 
-    public List<HealthCheckInfo> getTitanHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-        // Titan health check and version
+    public List<HealthCheckInfo> getJanusGraphHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+        // JanusGraph health check and version
         String description;
-        boolean isTitanUp;
+        boolean isJanusGraphUp;
 
         try {
-            isTitanUp = titanGenericDao.isGraphOpen();
+            isJanusGraphUp = janusGraphGenericDao.isGraphOpen();
         } catch (Exception e) {
-            description = "Titan error: ";
+            description = "JanusGraph error: ";
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, DOWN, null, description));
             log.error(description, e);
             return healthCheckInfos;
         }
-        if (isTitanUp) {
+        if (isJanusGraphUp) {
             description = "OK";
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, UP, null, description));
         } else {
-            description = "Titan graph is down";
+            description = "JanusGraph graph is down";
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, DOWN, null, description));
         }
         return healthCheckInfos;

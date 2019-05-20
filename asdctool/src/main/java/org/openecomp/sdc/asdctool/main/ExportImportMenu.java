@@ -36,7 +36,7 @@ public class ExportImportMenu {
 	}
 
 	private static void importUsage() {
-		System.out.println("Usage: import <titan.properties> <graph file location>");
+		System.out.println("Usage: import <janusgraph.properties> <graph file location>");
 	}
 
 	private static void validateJsonUsage() {
@@ -44,7 +44,7 @@ public class ExportImportMenu {
 	}
 
 	private static void exportUsage() {
-		System.out.println("Usage: export <titan.properties> <output directory>");
+		System.out.println("Usage: export <janusgraph.properties> <output directory>");
 	}
 
 	private static void dataReportUsage() {
@@ -52,7 +52,7 @@ public class ExportImportMenu {
 	}
 
 	private static void exportUsersUsage() {
-		System.out.println("Usage: exportusers <titan.properties> <output directory>");
+		System.out.println("Usage: exportusers <janusgraph.properties> <output directory>");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -116,7 +116,7 @@ public class ExportImportMenu {
 		case "validate-json":
 			String jsonFilePath = validateAndGetJsonFilePath(args);
 			GraphJsonValidator graphJsonValidator = new GraphJsonValidator();
-			if (graphJsonValidator.verifyTitanJson(jsonFilePath)) {
+			if (graphJsonValidator.verifyJanusGraphJson(jsonFilePath)) {
 				System.exit(2);
 			}
 			break;

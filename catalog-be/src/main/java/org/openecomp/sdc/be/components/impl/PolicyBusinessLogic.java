@@ -398,7 +398,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                     .left()
                     .bind(cmpt -> getPolicyById(cmpt, policyId)).left().map(PolicyDataDefinition::getProperties);
         } finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 

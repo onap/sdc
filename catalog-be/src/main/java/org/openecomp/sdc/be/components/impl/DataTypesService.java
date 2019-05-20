@@ -3,7 +3,7 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -22,10 +22,10 @@ public class DataTypesService {
     }
 
     public Either<Map<String, DataTypeDefinition>, ResponseFormat> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus operationStatus = allDataTypes.right().value();
-            if (operationStatus == TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus operationStatus = allDataTypes.right().value();
+            if (operationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logInternalDataError("FetchDataTypes", "Data types are not loaded", BeEcompErrorManager.ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY));
             } else {

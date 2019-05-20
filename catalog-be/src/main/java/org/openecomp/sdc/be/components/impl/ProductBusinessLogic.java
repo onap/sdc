@@ -229,7 +229,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(userId, "validate Product Name Exists", false);
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameUniqueness(productName, null, ComponentTypeEnum.PRODUCT);
         // DE242223
-        titanDao.commit();
+        janusGraphDao.commit();
 
         if (dataModelResponse.isLeft()) {
             Map<String, Boolean> result = new HashMap<>();
@@ -375,7 +375,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         for (Map.Entry<String, Map<String, Set<String>>> entry : nonDuplicatedCategories.entrySet()) {
             catExist = false;
             CategoryDefinition categoryDefinition = null;
-            // over all categories from Titan
+            // over all categories from JanusGraph
             List<CategoryDefinition> categoriesList = allProductCategories.left().value();
             if (categoriesList != null) {
                 for (CategoryDefinition catInDb : categoriesList) {
@@ -412,7 +412,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                                             }
                                             if (!groupExist) {
                                                 // error grouping isn't defined
-                                                // in Titan
+                                                // in JanusGraph
                                                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_GROUP_ASSOCIATION, CategoryTypeEnum.GROUPING.getValue(), group);
                                                 componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
                                                 return Either.right(responseFormat);
@@ -423,7 +423,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                                 }
                             }
                             if (!subcatExist) {
-                                // error sub category isn't defined in Titan
+                                // error sub category isn't defined in JanusGraph
                                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_GROUP_ASSOCIATION, CategoryTypeEnum.SUBCATEGORY.getValue(), subcat.getKey());
                                 componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
                                 return Either.right(responseFormat);
@@ -434,7 +434,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                 }
             }
             if (!catExist) {
-                // error category isn't defined in Titan
+                // error category isn't defined in JanusGraph
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_GROUP_ASSOCIATION, CategoryTypeEnum.CATEGORY.getValue(), entry.getKey());
                 componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
                 return Either.right(responseFormat);

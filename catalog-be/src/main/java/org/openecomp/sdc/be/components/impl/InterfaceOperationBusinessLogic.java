@@ -139,7 +139,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                                         NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()),
                                         true);
                         if(removeArifactFromComponent.isRight()){
-                            titanDao.rollback();
+                            janusGraphDao.rollback();
                             ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
                                     componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
                                     storedOperation.getImplementation().getArtifactDisplayName());
@@ -148,7 +148,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
                         CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
                         if (cassandraStatus != CassandraOperationStatus.OK) {
-                            titanDao.rollback();
+                            janusGraphDao.rollback();
                             ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
                                     componentsUtils.convertFromStorageResponse(
                                             componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
@@ -166,7 +166,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     interfaceOperation.updateInterfaces(storedComponent.getUniqueId(),
                             Collections.singletonList(interfaceDefinition));
             if (deleteOperationEither.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                         deleteOperationEither.right().value(), storedComponent.getComponentType())));
             }
@@ -175,19 +175,19 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 Either<String, StorageOperationStatus> deleteInterfaceEither = interfaceOperation.deleteInterface(
                         storedComponent.getUniqueId(), interfaceDefinition.getUniqueId());
                 if (deleteInterfaceEither.isRight()) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                             deleteInterfaceEither.right().value(), storedComponent.getComponentType())));
                 }
             }
 
-            titanDao.commit();
+            janusGraphDao.commit();
             interfaceDefinition.getOperations().putAll(operationsCollection);
             interfaceDefinition.getOperations().keySet().removeIf(key -> !(operationsToDelete.contains(key)));
             return Either.left(Collections.singletonList(interfaceDefinition));
         } catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "delete", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_DELETED));
         } finally {
             if (lockResult.isLeft() && lockResult.left().value()) {
@@ -212,7 +212,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         if (lock) {
             Either<Boolean, ResponseFormat> lockResult = lockComponent(component.getUniqueId(), component, action);
             if (lockResult.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(lockResult.right().value());
             }
         }
@@ -253,12 +253,12 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 }
             }
 
-            titanDao.commit();
+            janusGraphDao.commit();
             interfaceDefinition.getOperations().keySet().removeIf(key -> !(operationsToGet.contains(key)));
             return Either.left(Collections.singletonList(interfaceDefinition));
         } catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "get", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(
                     componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, componentId));
         } finally {
@@ -335,7 +335,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                                 getOperationFromInterfaceDefinition(interfaceDef,
                                         operation.getUniqueId());
                         if (!optionalOperation.isPresent()) {
-                            titanDao.rollback();
+                            janusGraphDao.rollback();
                             return Either.right(componentsUtils
                                                         .getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND,
                                                                 storedComponent.getUniqueId()));
@@ -354,7 +354,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                                                 NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()),
                                                 true);
                                 if(removeArifactFromComponent.isRight()){
-                                    titanDao.rollback();
+                                    janusGraphDao.rollback();
                                     ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
                                             componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
                                             storedOperation.getImplementation().getArtifactDisplayName());
@@ -363,7 +363,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
                                 CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
                                 if (cassandraStatus != CassandraOperationStatus.OK) {
-                                    titanDao.rollback();
+                                    janusGraphDao.rollback();
                                     ResponseFormat responseFormatByArtifactId =
                                             componentsUtils.getResponseFormatByArtifactId(
                                                     componentsUtils.convertFromStorageResponse(
@@ -383,18 +383,18 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             Either<List<InterfaceDefinition>, StorageOperationStatus> addCreateOperationEither =
                     interfaceOperation.updateInterfaces(storedComponent.getUniqueId(), interfacesCollection);
             if (addCreateOperationEither.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                         addCreateOperationEither.right().value(), storedComponent.getComponentType())));
             }
 
-            titanDao.commit();
+            janusGraphDao.commit();
             interfacesCollection.forEach(interfaceDefinition -> interfaceDefinition.getOperations().entrySet().removeIf(
                     entry -> !operationsCollection.values().stream().map(OperationDataDefinition::getName)
                                       .collect(Collectors.toList()).contains(entry.getValue().getName())));
             return Either.left(interfacesCollection);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -431,7 +431,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 interfaceOperation.addInterfaces(component.getUniqueId(),
                         Collections.singletonList(interfaceDefinition));
         if (interfaceCreateEither.isRight()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                     interfaceCreateEither.right().value(), component.getComponentType())));
         }
@@ -580,7 +580,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "get", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND));
         }
         finally {

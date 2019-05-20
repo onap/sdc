@@ -24,18 +24,18 @@ import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaUtils;
@@ -50,8 +50,8 @@ public class CheckoutTransition extends LifeCycleTransition {
 
     private static final Logger log = Logger.getLogger(CheckoutTransition.class);
 
-    CheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
-        super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+    CheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
+        super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
 
         // authorized roles
         Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
@@ -131,12 +131,12 @@ public class CheckoutTransition extends LifeCycleTransition {
                 BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
                 if (!inTransaction) {
                     log.debug("operation failed. do rollback");
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
             } else {
                 if (!inTransaction) {
                     log.debug("operation success. do commit");
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
             }
         }

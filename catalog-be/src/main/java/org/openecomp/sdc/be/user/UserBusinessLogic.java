@@ -25,7 +25,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -57,7 +57,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
     @Resource
     private ComponentsUtils componentsUtils;
     @Autowired
-    private TitanGenericDao titanDao;
+    private JanusGraphGenericDao janusGraphDao;
 
     @Override
     public Either<User, ActionStatus> getUser(String userId, boolean inTransaction) {
@@ -603,9 +603,9 @@ public class UserBusinessLogic implements IUserBusinessLogic {
             // commit will be perform outside!!!
             if (result == null || result.isRight()) {
                 log.debug("getUserPendingTasksList failed to perform fetching");
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
     }

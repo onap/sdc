@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.model.cache;
 
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 public class DaoInfo {
     private ToscaOperationFacade toscaOperationFacade;
