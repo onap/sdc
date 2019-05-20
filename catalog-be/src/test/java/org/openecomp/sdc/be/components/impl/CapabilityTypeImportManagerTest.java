@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 public class CapabilityTypeImportManagerTest {
     private static final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
     private static final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-    private static final TitanGenericDao titanGenericDao = mock(TitanGenericDao.class);
+    private static final JanusGraphGenericDao JANUS_GRAPH_GENERIC_DAO = mock(JanusGraphGenericDao.class);
     private static final PropertyOperation propertyOperation = mock(PropertyOperation.class);
     private CommonImportManager commonImportManager = new CommonImportManager(componentsUtils, propertyOperation);
     private CapabilityTypeImportManager manager = new CapabilityTypeImportManager(capabilityTypeOperation, commonImportManager);
@@ -69,7 +69,7 @@ public class CapabilityTypeImportManagerTest {
 
         });
 
-        when(propertyOperation.getTitanGenericDao()).thenReturn(titanGenericDao);
+        when(propertyOperation.getJanusGraphGenericDao()).thenReturn(JANUS_GRAPH_GENERIC_DAO);
         when(capabilityTypeOperation.getCapabilityType(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
     }
 

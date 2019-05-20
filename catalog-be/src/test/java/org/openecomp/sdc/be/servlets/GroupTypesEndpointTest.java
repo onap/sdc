@@ -15,8 +15,8 @@ import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.GroupTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -47,7 +47,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
@@ -57,10 +56,10 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
     private static final HashSet<String> EXCLUDED_TYPES = Sets.newHashSet("Root", "Heat");
 
     private static ComponentsUtils componentsUtils;
-    private static TitanGenericDao titanGenericDao;
+    private static JanusGraphGenericDao janusGraphGenericDao;
     private static CapabilityTypeOperation capabilityTypeOperation;
     private static DerivedFromOperation derivedFromOperation;
-    private static TitanDao titanDao;
+    private static JanusGraphDao janusGraphDao;
     private static PropertyOperation propertyOperation;
     private static CapabilityOperation capabilityOperation;
     private static UserValidations userValidations;
@@ -81,12 +80,12 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupTypeBusinessLogic groupTypeBusinessLogic() {
-            return new GroupTypeBusinessLogic(groupTypeOperation(), titanDao, userValidations, componentsUtils);
+            return new GroupTypeBusinessLogic(groupTypeOperation(), janusGraphDao, userValidations, componentsUtils);
         }
 
         @Bean
         GroupTypeOperation groupTypeOperation() {
-            return new GroupTypeOperation(titanGenericDao, propertyOperation, capabilityTypeOperation, capabilityOperation, derivedFromOperation, operationUtils);
+            return new GroupTypeOperation(janusGraphGenericDao, propertyOperation, capabilityTypeOperation, capabilityOperation, derivedFromOperation, operationUtils);
         }
     }
 
@@ -95,8 +94,8 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
         componentsUtils = mock(ComponentsUtils.class);
         propertyOperation = mock(PropertyOperation.class);
         capabilityTypeOperation = mock(CapabilityTypeOperation.class);
-        titanDao = mock(TitanDao.class);
-        titanGenericDao = mock(TitanGenericDao.class);
+        janusGraphDao = mock(JanusGraphDao.class);
+        janusGraphGenericDao = mock(JanusGraphGenericDao.class);
         userValidations = mock(UserValidations.class);
         operationUtils = mock(OperationUtils.class);
         user = mock(User.class);
@@ -105,7 +104,7 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
     @Before
     public void init() {
         when(userValidations.validateUserExists(eq(USER_ID), anyString(), anyBoolean())).thenReturn(user);
-        when(titanGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class))).thenReturn(Either.left(buildGroupTypeDataList()));
+        when(janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class))).thenReturn(Either.left(buildGroupTypeDataList()));
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -51,7 +51,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
@@ -64,7 +64,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
-import org.yaml.snakeyaml.Yaml;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -182,7 +181,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		component = getNewService();
 		Mockito.when(capabiltyRequirementConvertor.convertRequirements(Mockito.any(Map.class),Mockito.any(Service.class),
 				Mockito.any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
-		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
 		// default test when component is Service
 		result = testSubject.exportComponent(component);
@@ -195,7 +194,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
 		((Resource) component).setInterfaces(new HashMap<>());
 
-		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(Collections.emptyMap()));
 		// default test when convertInterfaceNodeType is right
 		result = testSubject.exportComponentInterface(component, false);
@@ -450,7 +449,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
 		Either<ToscaTemplate, ToscaError> result;
 
-		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(TitanOperationStatus.ALREADY_EXIST));
+		Mockito.when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
 		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
 				.thenReturn(Either.left(Collections.emptyMap()));
 		// default test

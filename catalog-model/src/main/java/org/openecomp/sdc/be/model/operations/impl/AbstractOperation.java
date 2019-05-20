@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -37,9 +37,9 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -63,7 +63,7 @@ public abstract class AbstractOperation {
     private static final Logger log = Logger.getLogger(AbstractOperation.class.getName());
 
     @Autowired
-    protected HealingTitanGenericDao titanGenericDao;
+    protected HealingJanusGraphGenericDao janusGraphGenericDao;
 
     public static final String EMPTY_VALUE = null;
 
@@ -74,8 +74,8 @@ public abstract class AbstractOperation {
 
     protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
-    protected <SomeData extends GraphNode, SomeDefenition> Either<SomeData, TitanOperationStatus> addDefinitionToNodeType(SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-            Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
+    protected <SomeData extends GraphNode, SomeDefenition> Either<SomeData, JanusGraphOperationStatus> addDefinitionToNodeType(SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
+                                                                                                                               Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
         String defName = defNameGenerator.get();
         log.debug("Got {} {}", defName, someDefinition);
 
@@ -84,29 +84,31 @@ public abstract class AbstractOperation {
         log.debug("Before adding {} to graph. data = {}", defName, someData);
 
         @SuppressWarnings("unchecked")
-        Either<SomeData, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData, (Class<SomeData>) someData.getClass());
+        Either<SomeData, JanusGraphOperationStatus> eitherSomeData = janusGraphGenericDao
+            .createNode(someData, (Class<SomeData>) someData.getClass());
 
         log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
 
         if (eitherSomeData.isRight()) {
-            TitanOperationStatus operationStatus = eitherSomeData.right().value();
+            JanusGraphOperationStatus operationStatus = eitherSomeData.right().value();
             log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
             return Either.right(operationStatus);
         }
         UniqueIdData uniqueIdData = new UniqueIdData(nodeType, nodeUniqueId);
         log.debug("Before associating {} to {}.", uniqueIdData, defName);
 
-        Either<GraphRelation, TitanOperationStatus> eitherRelations = titanGenericDao.createRelation(uniqueIdData, eitherSomeData.left().value(), edgeType, null);
+        Either<GraphRelation, JanusGraphOperationStatus> eitherRelations = janusGraphGenericDao
+            .createRelation(uniqueIdData, eitherSomeData.left().value(), edgeType, null);
         if (eitherRelations.isRight()) {
-            TitanOperationStatus operationStatus = eitherRelations.right().value();
+            JanusGraphOperationStatus operationStatus = eitherRelations.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + operationStatus, ErrorSeverity.ERROR);
             return Either.right(operationStatus);
         }
         return Either.left(eitherSomeData.left().value());
     }
 
-    protected <SomeData extends GraphNode, SomeDefenition> TitanOperationStatus addDefinitionToNodeType(TitanVertex vertex, SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-            Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
+    protected <SomeData extends GraphNode, SomeDefenition> JanusGraphOperationStatus addDefinitionToNodeType(JanusGraphVertex vertex, SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
+                                                                                                             Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
         String defName = defNameGenerator.get();
         log.debug("Got {} {}", defName, someDefinition);
 
@@ -115,18 +117,20 @@ public abstract class AbstractOperation {
         log.debug("Before adding {} to graph. data = {}", defName, someData);
 
         @SuppressWarnings("unchecked")
-        Either<TitanVertex, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData);
+        Either<JanusGraphVertex, JanusGraphOperationStatus> eitherSomeData = janusGraphGenericDao.createNode(someData);
 
         log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
 
         if (eitherSomeData.isRight()) {
-            TitanOperationStatus operationStatus = eitherSomeData.right().value();
+            JanusGraphOperationStatus operationStatus = eitherSomeData.right().value();
             log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
             return operationStatus;
         }
 
-        TitanOperationStatus relations = titanGenericDao.createEdge(vertex, eitherSomeData.left().value(), edgeType, null);
-        if (!relations.equals(TitanOperationStatus.OK)) {
+        JanusGraphOperationStatus
+            relations = janusGraphGenericDao
+            .createEdge(vertex, eitherSomeData.left().value(), edgeType, null);
+        if (!relations.equals(JanusGraphOperationStatus.OK)) {
             BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + relations, ErrorSeverity.ERROR);
             return relations;
         }
@@ -134,25 +138,27 @@ public abstract class AbstractOperation {
     }
 
     interface NodeElementFetcher<ElementDefinition> {
-        TitanOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
+        JanusGraphOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
     }
 
-    public <ElementDefinition> TitanOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
+    public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
 
         if (log.isTraceEnabled())
             log.trace("Going to fetch elements under resource {}", resourceId);
-        TitanOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
+        JanusGraphOperationStatus
+            resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
 
-        if (resourceAttributesStatus != TitanOperationStatus.OK) {
+        if (resourceAttributesStatus != JanusGraphOperationStatus.OK) {
             return resourceAttributesStatus;
         }
 
-        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
+        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
                 ResourceMetadataData.class);
 
         if (parentNodes.isRight()) {
-            TitanOperationStatus parentNodesStatus = parentNodes.right().value();
-            if (parentNodesStatus != TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus parentNodesStatus = parentNodes.right().value();
+            if (parentNodesStatus != JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
                 return parentNodesStatus;
             }
@@ -161,25 +167,25 @@ public abstract class AbstractOperation {
         if (parentNodes.isLeft()) {
             ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
             String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-            TitanOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
+            JanusGraphOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
 
-            if (addParentIntStatus != TitanOperationStatus.OK) {
+            if (addParentIntStatus != JanusGraphOperationStatus.OK) {
                 BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
 
                 return addParentIntStatus;
             }
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
     }
 
     protected <T, TStatus> void handleTransactionCommitRollback(boolean inTransaction, Either<T, TStatus> result) {
         if (!inTransaction) {
             if (result == null || result.isRight()) {
                 log.error("Going to execute rollback on graph.");
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             } else {
                 log.debug("Going to execute commit on graph.");
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }
@@ -212,7 +218,7 @@ public abstract class AbstractOperation {
         }
         String innerType = null;
 
-        Either<String, TitanOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
+        Either<String, JanusGraphOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
         if (checkInnerType.isRight()) {
             return StorageOperationStatus.INVALID_TYPE;
         }
@@ -300,19 +306,19 @@ public abstract class AbstractOperation {
         return value;
     }
 
-    protected Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
+    protected Either<String, JanusGraphOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
         String innerType = null;
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
 
             SchemaDefinition def = schemeGen.get();
             if (def == null) {
                 log.debug("Schema doesn't exists for property of type {}", type);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             PropertyDataDefinition propDef = def.getProperty();
             if (propDef == null) {
                 log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
             innerType = propDef.getType();
         }

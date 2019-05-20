@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.validation.CapabilitiesValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -33,8 +33,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.CapabilitiesOperation;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CapabilitiesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -94,7 +94,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
         try {
             return createCapability(componentId, capabilityDefinitions, storedComponent);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error(EXCEPTION_OCCURRED_DURING_CAPABILITIES, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -151,7 +151,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             result = capabilitiesOperation.addCapabilities(componentId, capabilitiesToReturn);
         }
         if (result.isRight()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result
                     .right().value(), storedComponent.getComponentType()), ""));
         }
@@ -161,11 +161,11 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             StorageOperationStatus storageOperationStatus = capabilitiesOperation
                     .createOrUpdateCapabilityProperties(componentId, propertiesMap);
             if (storageOperationStatus != StorageOperationStatus.OK) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));
             }
         }
-        titanDao.commit();
+        janusGraphDao.commit();
         return Either.left(capabilitiesToReturn);
     }
 
@@ -242,7 +242,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
                 result = capabilitiesOperation.addCapabilities(componentId, capabilitiesToReturn);
             }
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result
                         .right().value(), storedComponent.getComponentType()), ""));
             }
@@ -252,14 +252,14 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
                 StorageOperationStatus storageOperationStatus = capabilitiesOperation
                         .createOrUpdateCapabilityProperties(componentId, propertiesMap);
                 if (storageOperationStatus != StorageOperationStatus.OK) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));
                 }
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(capabilitiesToReturn);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error(EXCEPTION_OCCURRED_DURING_CAPABILITIES, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -292,13 +292,13 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
         Either<List<CapabilityDefinition>, StorageOperationStatus> deleteCapabilityEither
                 = deleteCapability(storedComponent, storedComponentCapabilities, capabilityDefinitionToDelete);
         if (deleteCapabilityEither.isRight()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(deleteCapabilityEither.right().value()));
         }
         StorageOperationStatus deleteStorageOperationStatus = capabilitiesOperation
                 .deleteCapabilityProperties(storedComponent, buildCapPropKey(capabilityDefinitionToDelete));
         if (deleteStorageOperationStatus != StorageOperationStatus.OK) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(deleteStorageOperationStatus));
         }
         capabilitiesToReturn.add(initiateNewCapability(storedComponent, capabilityDefinitionToUpdate));
@@ -334,13 +334,13 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             Either<List<CapabilityDefinition>, StorageOperationStatus> deleteCapabilityEither
                     = deleteCapability(storedComponent, storedComponentCapabilities, capabilityDefinitionToDelete);
             if (deleteCapabilityEither.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(deleteCapabilityEither.right().value()));
             }
             StorageOperationStatus deleteStorageOperationStatus = capabilitiesOperation
                     .deleteCapabilityProperties(storedComponent, buildCapPropKey(capabilityDefinitionToDelete));
             if (deleteStorageOperationStatus != StorageOperationStatus.OK) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(deleteStorageOperationStatus));
             }
         }
@@ -416,7 +416,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             return deleteCapability(capabilityIdToDelete, storedComponent);
         } catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_CAPABILITIES, "delete", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CAPABILITY_NOT_FOUND));
         } finally {
             if (lockResult.isLeft() && lockResult.left().value()) {
@@ -441,14 +441,14 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
         Either<List<CapabilityDefinition>, StorageOperationStatus> result = deleteCapability(storedComponent,
                 storedComponentCapabilities, capabilityDefinitionToDeleteEither.left().value());
         if (result.isRight()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error("Failed to delete capability  from component {}. Response is {}", storedComponent.getName(),
                     result.right().value());
             return Either.right(componentsUtils.getResponseFormat(
                     componentsUtils.convertFromStorageResponse(result.right().value(),
                             storedComponent.getComponentType())));
         }
-        titanDao.commit();
+        janusGraphDao.commit();
 
         return Either.left(capabilityDefinitionToDeleteEither.left().value());
     }
@@ -528,7 +528,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             if (lockResult.isRight()) {
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(),
                         lockResult.right().value().getFormattedMessage());
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(lockResult.right().value());
             }
         }
@@ -584,7 +584,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             StorageOperationStatus deleteStorageOperationStatus = capabilitiesOperation
                     .deleteCapabilityProperties(component, buildCapPropKey(storedCapability));
             if (deleteStorageOperationStatus != StorageOperationStatus.OK) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             }
         }
 
@@ -605,11 +605,11 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> getAllCapabilityTypes() {
-        Either<Map<String, CapabilityTypeDefinition>, TitanOperationStatus> capabilityTypeCacheAll =
+        Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> capabilityTypeCacheAll =
                 capabilityTypeOperation.getAllCapabilityTypes();
         if (capabilityTypeCacheAll.isRight()) {
-            TitanOperationStatus operationStatus = capabilityTypeCacheAll.right().value();
-            if (TitanOperationStatus.NOT_FOUND == operationStatus) {
+            JanusGraphOperationStatus operationStatus = capabilityTypeCacheAll.right().value();
+            if (JanusGraphOperationStatus.NOT_FOUND == operationStatus) {
                 BeEcompErrorManager.getInstance().logInternalDataError("FetchCapabilityTypes",
                         "Capability types are not loaded", BeEcompErrorManager.ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY));

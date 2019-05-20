@@ -58,13 +58,13 @@ public class BeEcompErrorManagerTest {
 
 	
 	@Test
-	public void testLogBeHealthCheckTitanRecovery() throws Exception {
+	public void testLogBeHealthCheckJanusGraphRecovery() throws Exception {
 		BeEcompErrorManager testSubject;
 		String context = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.logBeHealthCheckTitanRecovery(context);
+		testSubject.logBeHealthCheckJanusGraphRecovery(context);
 	}
 
 	
@@ -113,13 +113,13 @@ public class BeEcompErrorManagerTest {
 
 	
 	@Test
-	public void testLogBeHealthCheckTitanError() throws Exception {
+	public void testLogBeHealthCheckJanusGraphError() throws Exception {
 		BeEcompErrorManager testSubject;
 		String context = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.logBeHealthCheckTitanError(context);
+		testSubject.logBeHealthCheckJanusGraphError(context);
 	}
 
 	

@@ -20,12 +20,12 @@ public class HealNodeGraphDao implements HealGraphDao<GraphNode, GraphEdge> {
     public GraphNode performGraphReadHealing(GraphNode childVertex, GraphEdge graphEdge) {
         Integer healingVersionInt =  childVertex.getHealingVersion();
         HealVersion<Integer> healingVersion = HealVersionBuilder.build(healingVersionInt);
-        healingPipelineDao.getHealersForVertex(graphEdge.getEdgeType().getProperty(), healingVersion).forEach(heal -> healTitanVertex(childVertex, heal));
+        healingPipelineDao.getHealersForVertex(graphEdge.getEdgeType().getProperty(), healingVersion).forEach(heal -> healJanusGraphVertex(childVertex, heal));
         childVertex.setHealingVersion(healingPipelineDao.getCurrentHealVersion().getVersion());
         return childVertex;
     }
 
-    private GraphNode healTitanVertex(GraphNode childVertex, Heal<GraphNode> heal) {
+    private GraphNode healJanusGraphVertex(GraphNode childVertex, Heal<GraphNode> heal) {
         heal.healData(childVertex);
         final HealVersion<Integer> healVersion = heal.fromVersion();
         HealVersion<Integer> newerVersion = HealVersionBuilder.build(healVersion.getVersion() + 1);

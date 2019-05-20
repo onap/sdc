@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -33,11 +33,11 @@ import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -61,7 +61,7 @@ public class ArtifactOperation implements IArtifactOperation {
     private static final String THE_RETURNED_ARTIFACT_DEFINTION_IS = "The returned ArtifactDefintion is {}";
 
 	@javax.annotation.Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     @javax.annotation.Resource
     private HeatParametersOperation heatParametersOperation;
@@ -77,12 +77,12 @@ public class ArtifactOperation implements IArtifactOperation {
         super();
     }
 
-    public TitanGenericDao getTitanGenericDao() {
-        return titanGenericDao;
+    public JanusGraphGenericDao getJanusGraphGenericDao() {
+        return janusGraphGenericDao;
     }
 
-    public void setTitanGenericDao(TitanGenericDao titanGenericDao) {
-        this.titanGenericDao = titanGenericDao;
+    public void setJanusGraphGenericDao(JanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     public HeatParametersOperation getHeatParametersOperation() {
@@ -100,13 +100,13 @@ public class ArtifactOperation implements IArtifactOperation {
 
         if (status.isRight()) {
             if (!inTransaction) {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
             log.debug("Failed to add artifact {} to {} {}", artifactInfo.getArtifactName(), type , parentId);
             return Either.right(status.right().value());
         } else {
             if (!inTransaction) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
             ArtifactData artifactData = status.left().value();
 
@@ -119,7 +119,7 @@ public class ArtifactOperation implements IArtifactOperation {
     }
 
     @Override
-    public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, TitanVertex parentVertex) {
+    public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, JanusGraphVertex parentVertex) {
 
         StorageOperationStatus status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist, parentVertex);
 
@@ -129,7 +129,7 @@ public class ArtifactOperation implements IArtifactOperation {
         return status;
     }
 
-    private StorageOperationStatus addArtifactToGraph(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfexist, TitanVertex parentVertex) {
+    private StorageOperationStatus addArtifactToGraph(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfexist, JanusGraphVertex parentVertex) {
 
         if (artifactInfo.getUniqueId() == null || artifactInfo.getUniqueId().isEmpty()) {
             String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactInfo.getArtifactLabel());
@@ -142,20 +142,21 @@ public class ArtifactOperation implements IArtifactOperation {
 
         ArtifactData artifactData = new ArtifactData(artifactInfo);
 
-        Either<TitanVertex, TitanOperationStatus> existArtifact = titanGenericDao.getVertexByProperty(artifactData.getUniqueIdKey(), artifactData.getUniqueId());
+        Either<JanusGraphVertex, JanusGraphOperationStatus> existArtifact = janusGraphGenericDao
+            .getVertexByProperty(artifactData.getUniqueIdKey(), artifactData.getUniqueId());
         if (existArtifact.isRight()) {
-            if (existArtifact.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+            if (existArtifact.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 // create new node
                 log.debug("Before adding artifact to graph {}", artifactData);
                 if (artifactData.getArtifactDataDefinition().getArtifactUUID() == null || artifactData.getArtifactDataDefinition().getArtifactUUID().isEmpty())
                     updateUUID(artifactData.getArtifactDataDefinition(), null, artifactData.getArtifactDataDefinition().getArtifactVersion());
-                Either<TitanVertex, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(artifactData);
+                Either<JanusGraphVertex, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao.createNode(artifactData);
 
                 if (createNodeResult.isRight()) {
-                    TitanOperationStatus operationStatus = createNodeResult.right().value();
+                    JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                     log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
                     BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
-                    return DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus);
+                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus);
                 }
 
                 // add heat parameters
@@ -169,11 +170,11 @@ public class ArtifactOperation implements IArtifactOperation {
 
             } else {
                 log.debug("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
-                return DaoStatusConverter.convertTitanStatusToStorageStatus(existArtifact.right().value());
+                return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(existArtifact.right().value());
             }
         } else if (failIfexist) {
             log.debug("Artifact {} already exist", artifactData.getUniqueId());
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ALREADY_EXIST);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ALREADY_EXIST);
         }
 
         // save logical artifact ref name on edge as property
@@ -181,10 +182,11 @@ public class ArtifactOperation implements IArtifactOperation {
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), artifactInfo.getArtifactLabel());
         if (artifactInfo.getArtifactGroupType() != null)
             properties.put(GraphEdgePropertiesDictionary.GROUP_TYPE.getProperty(), artifactInfo.getArtifactGroupType().getType());
-        TitanOperationStatus relation = titanGenericDao.createEdge(parentVertex, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
-        if (!relation.equals(TitanOperationStatus.OK)) {
+        JanusGraphOperationStatus relation = janusGraphGenericDao
+            .createEdge(parentVertex, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
+        if (!relation.equals(JanusGraphOperationStatus.OK)) {
             log.debug("Failed to create relation in graph for id {} to new artifact", id);
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(relation);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(relation);
         }
 
         return StorageOperationStatus.OK;
@@ -203,21 +205,23 @@ public class ArtifactOperation implements IArtifactOperation {
 
         ArtifactData artifactData = new ArtifactData(artifactInfo);
 
-        Either<ArtifactData, TitanOperationStatus> existArtifact = titanGenericDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> existArtifact = janusGraphGenericDao
+            .getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         if (existArtifact.isRight()) {
-            if (existArtifact.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+            if (existArtifact.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 // create new node
                 log.debug("Before adding artifact to graph {}" , artifactData);
                 if (artifactData.getArtifactDataDefinition().getArtifactUUID() == null || artifactData.getArtifactDataDefinition().getArtifactUUID().isEmpty())
                     updateUUID(artifactData.getArtifactDataDefinition(), null, artifactData.getArtifactDataDefinition().getArtifactVersion());
-                Either<ArtifactData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(artifactData, ArtifactData.class);
+                Either<ArtifactData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao
+                    .createNode(artifactData, ArtifactData.class);
                 log.debug("After adding artifact to graph {}", artifactData);
 
                 if (createNodeResult.isRight()) {
-                    TitanOperationStatus operationStatus = createNodeResult.right().value();
+                    JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
                     log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
                     BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
-                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus));
+                    return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus));
                 }
                 artifactData = createNodeResult.left().value();
 
@@ -232,11 +236,12 @@ public class ArtifactOperation implements IArtifactOperation {
 
             } else {
                 log.debug("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
-                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(existArtifact.right().value()));
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(existArtifact.right().value()));
             }
         } else if (failIfexist) {
             log.debug("Artifact {} already exist", artifactData.getUniqueId());
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ALREADY_EXIST));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                JanusGraphOperationStatus.ALREADY_EXIST));
         } else {
             artifactData = existArtifact.left().value();
         }
@@ -248,10 +253,11 @@ public class ArtifactOperation implements IArtifactOperation {
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), artifactInfo.getArtifactLabel());
         if (artifactInfo.getArtifactGroupType() != null)
             properties.put(GraphEdgePropertiesDictionary.GROUP_TYPE.getProperty(), artifactInfo.getArtifactGroupType().getType());
-        Either<GraphRelation, TitanOperationStatus> relation = titanGenericDao.createRelation(parent, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
+        Either<GraphRelation, JanusGraphOperationStatus> relation = janusGraphGenericDao
+            .createRelation(parent, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
         if (relation.isRight()) {
             log.debug("Failed to create relation in graph fro id {} to new artifact", id);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(relation.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(relation.right().value()));
         }
 
         return Either.left(artifactData);
@@ -291,14 +297,14 @@ public class ArtifactOperation implements IArtifactOperation {
 
         if (status.isRight()) {
             if (!inTransaction) {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
             log.debug("Failed to update artifact {} of {} {}. status is {}", artifactId, type.getName(), id, status.right().value());
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
             if (!inTransaction) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
             ArtifactData artifactData = status.left().value();
 
@@ -314,7 +320,7 @@ public class ArtifactOperation implements IArtifactOperation {
 
         if (status.isRight()) {
             if (!inTransaction) {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
             log.debug("Failed to delete artifact {} of resource {}", artifactId, id);
 
@@ -322,7 +328,7 @@ public class ArtifactOperation implements IArtifactOperation {
             return Either.right(status.right().value());
         } else {
             if (!inTransaction) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
             ArtifactData artifactData = status.left().value();
 
@@ -335,21 +341,21 @@ public class ArtifactOperation implements IArtifactOperation {
     @SuppressWarnings("null")
     private Either<ArtifactData, StorageOperationStatus> updateArtifactOnGraph(ArtifactDefinition artifactInfo, String artifactId, NodeTypeEnum type, String id) {
 
-        Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
         if (graph.isRight()) {
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(graph.right().value()));
         }
 
-        TitanGraph tGraph = graph.left().value();
+        JanusGraph tGraph = graph.left().value();
 
         @SuppressWarnings("unchecked")
-        Iterable<TitanVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId).vertices();
-        Iterator<TitanVertex> iterator = verticesArtifact.iterator();
+        Iterable<JanusGraphVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId).vertices();
+        Iterator<JanusGraphVertex> iterator = verticesArtifact.iterator();
         if (!iterator.hasNext()) {
             log.debug("No artifact node for id = {}", artifactId);
             return Either.right(StorageOperationStatus.NOT_FOUND);
         }
-        TitanVertex artifactV = iterator.next();
+        JanusGraphVertex artifactV = iterator.next();
 
         Iterator<Edge> iterEdge = artifactV.edges(Direction.IN, GraphEdgeLabels.ARTIFACT_REF.getProperty());
 
@@ -385,8 +391,10 @@ public class ArtifactOperation implements IArtifactOperation {
             String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactInfo.getArtifactLabel());
             artifactInfo.setUniqueId(uniqueId);
             // update UUID and artifact version
-            String oldChecksum = artifactV.valueOrNull(titanGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_CHECKSUM.getProperty()));
-            String oldVersion = artifactV.valueOrNull(titanGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_VERSION.getProperty()));
+            String oldChecksum = artifactV.valueOrNull(
+                janusGraphGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_CHECKSUM.getProperty()));
+            String oldVersion = artifactV.valueOrNull(
+                janusGraphGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_VERSION.getProperty()));
             updateUUID(artifactInfo, oldChecksum, oldVersion);
             log.debug("try to create new artifact ref node for id {}", uniqueId);
             Either<ArtifactData, StorageOperationStatus> addedArtifactRes = addArtifactToGraph(artifactInfo, id, type, true);
@@ -435,10 +443,11 @@ public class ArtifactOperation implements IArtifactOperation {
                     Vertex vertexIn = edgeToHeat.inVertex();
                     String generatedFromArtifactId = vertexIn.value(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef));
                     UniqueIdData generatedFromArtifactNode = new UniqueIdData(NodeTypeEnum.ArtifactRef, generatedFromArtifactId);
-                    Either<GraphRelation, TitanOperationStatus> createRelationToGeneratedFromArtifactRes = titanGenericDao.createRelation(addedArtifact, generatedFromArtifactNode, GraphEdgeLabels.GENERATED_FROM, null);
+                    Either<GraphRelation, JanusGraphOperationStatus> createRelationToGeneratedFromArtifactRes = janusGraphGenericDao
+                        .createRelation(addedArtifact, generatedFromArtifactNode, GraphEdgeLabels.GENERATED_FROM, null);
                     if (createRelationToGeneratedFromArtifactRes.isRight()) {
                         log.error("Failed to create relation from heat_env {} to heat {}", addedArtifact.getUniqueId(), generatedFromArtifactNode);
-                        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(createRelationToGeneratedFromArtifactRes.right().value()));
+                        return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createRelationToGeneratedFromArtifactRes.right().value()));
                     }
                 }
             }
@@ -446,14 +455,17 @@ public class ArtifactOperation implements IArtifactOperation {
 
         } else {
             if (edgeCount == 1) {
-                String oldChecksum = artifactV.valueOrNull(titanGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_CHECKSUM.getProperty()));
-                String oldVersion = artifactV.valueOrNull(titanGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_VERSION.getProperty()));
+                String oldChecksum = artifactV.valueOrNull(
+                    janusGraphGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_CHECKSUM.getProperty()));
+                String oldVersion = artifactV.valueOrNull(
+                    janusGraphGenericDao.getGraph().left().value().getPropertyKey(GraphPropertiesDictionary.ARTIFACT_VERSION.getProperty()));
                 updateUUID(artifactInfo, oldChecksum, oldVersion);
                 // update exist
-                Either<ArtifactData, TitanOperationStatus> updatedArtifact = titanGenericDao.updateNode(artifactData, ArtifactData.class);
+                Either<ArtifactData, JanusGraphOperationStatus> updatedArtifact = janusGraphGenericDao
+                    .updateNode(artifactData, ArtifactData.class);
                 if (updatedArtifact.isRight()) {
                     log.debug("failed to update artifact node for id {}", artifactData.getUniqueId());
-                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updatedArtifact.right().value()));
+                    return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updatedArtifact.right().value()));
                 }
 
                 if (artifactInfo.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType())) {
@@ -511,7 +523,7 @@ public class ArtifactOperation implements IArtifactOperation {
         return false;
     }
 
-    private Either<Boolean, StorageOperationStatus> setRelevantHeatParamId(TitanVertex artifactV, ArtifactDefinition artifactInfo) {
+    private Either<Boolean, StorageOperationStatus> setRelevantHeatParamId(JanusGraphVertex artifactV, ArtifactDefinition artifactInfo) {
 
         Map<String, String> heatParametersHM = new HashMap<>();
 
@@ -524,7 +536,8 @@ public class ArtifactOperation implements IArtifactOperation {
         Vertex heatVertex = heat.inVertex();
         String heatUniqueId = (String) heatVertex.value(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef));
 
-        Either<List<ImmutablePair<HeatParameterData, GraphEdge>>, TitanOperationStatus> getHeatParametersRes = titanGenericDao.getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), heatUniqueId, GraphEdgeLabels.HEAT_PARAMETER,
+        Either<List<ImmutablePair<HeatParameterData, GraphEdge>>, JanusGraphOperationStatus> getHeatParametersRes = janusGraphGenericDao
+            .getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), heatUniqueId, GraphEdgeLabels.HEAT_PARAMETER,
                 NodeTypeEnum.HeatParameter, HeatParameterData.class);
         if (getHeatParametersRes.isRight()) {
             log.debug("No heat parameters for heat artifact {}", heatUniqueId);
@@ -550,17 +563,18 @@ public class ArtifactOperation implements IArtifactOperation {
     }
 
     private Either<ArtifactData, StorageOperationStatus> removeArtifactOnGraph(String id, String artifactId, NodeTypeEnum type, boolean deleteMandatoryArtifact) {
-        Either<TitanGraph, StorageOperationStatus> graph = titanGenericDao.getGraph()
+        Either<JanusGraph, StorageOperationStatus> graph = janusGraphGenericDao.getGraph()
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
         if (graph.isRight()) {
             return Either.right(graph.right().value());
         }
 
-        TitanGraph tGraph = graph.left().value();
-        Either<ArtifactData, StorageOperationStatus> artifactData = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class)
+        JanusGraph tGraph = graph.left().value();
+        Either<ArtifactData, StorageOperationStatus> artifactData = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
         if (artifactData.isRight()) {
             log.debug("Failed to retrieve  artifact for id = {}", artifactId);
             return Either.right(artifactData.right().value());
@@ -572,8 +586,8 @@ public class ArtifactOperation implements IArtifactOperation {
         }
 
         @SuppressWarnings("unchecked")
-        Iterable<TitanVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId).vertices();
-        Iterator<TitanVertex> iterator = verticesArtifact.iterator();
+        Iterable<JanusGraphVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId).vertices();
+        Iterator<JanusGraphVertex> iterator = verticesArtifact.iterator();
         if (!iterator.hasNext()) {
             log.debug("No artifact node for id = {}", artifactId);
             return Either.right(StorageOperationStatus.NOT_FOUND);
@@ -649,20 +663,20 @@ public class ArtifactOperation implements IArtifactOperation {
     public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId, NodeTypeEnum parentType, boolean inTransaction) {
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> result = null;
         try {
-            Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+            Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
             if (graph.isRight()) {
                 log.debug("Failed to work with graph {}", graph.right().value());
-                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(graph.right().value()));
             }
-            TitanGraph tGraph = graph.left().value();
+            JanusGraph tGraph = graph.left().value();
             @SuppressWarnings("unchecked")
-            Iterable<TitanVertex> vertices = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(parentType), parentId).vertices();
+            Iterable<JanusGraphVertex> vertices = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(parentType), parentId).vertices();
             if (vertices == null) {
                 log.debug("No nodes for type {}  for id = {}", parentType, parentId);
                 result = Either.right(StorageOperationStatus.NOT_FOUND);
                 return result;
             }
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
 
             Map<String, ArtifactDefinition> artifactMap = new HashMap<>();
             while (iterator.hasNext()) {
@@ -676,15 +690,16 @@ public class ArtifactOperation implements IArtifactOperation {
 
                         Vertex artifactV = edge.inVertex();
 
-                        Map<String, Object> properties = this.titanGenericDao.getProperties(artifactV);
+                        Map<String, Object> properties = this.janusGraphGenericDao.getProperties(artifactV);
                         ArtifactData artifact = GraphElementFactory.createElement(NodeTypeEnum.ArtifactRef.getName(), GraphElementTypeEnum.Node, properties, ArtifactData.class);
                         if (artifact != null) {
 
                             ArtifactDefinition artifactDefinition = new ArtifactDefinition(artifact.getArtifactDataDefinition());
                             Iterator<Edge> edgesGeneratedFrom = artifactV.edges(Direction.OUT, GraphEdgeLabels.GENERATED_FROM.getProperty());
                             if (edgesGeneratedFrom != null && edgesGeneratedFrom.hasNext()) {
-                                TitanVertex inVertex = (TitanVertex) edgesGeneratedFrom.next().inVertex();
-                                String artifactIdGeneratedFrom = (String) titanGenericDao.getProperty(inVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+                                JanusGraphVertex inVertex = (JanusGraphVertex) edgesGeneratedFrom.next().inVertex();
+                                String artifactIdGeneratedFrom = (String) janusGraphGenericDao
+                                    .getProperty(inVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
                                 artifactDefinition.setGeneratedFromId(artifactIdGeneratedFrom);
                             }
                             List<HeatParameterDefinition> heatParams = new ArrayList<>();
@@ -707,9 +722,9 @@ public class ArtifactOperation implements IArtifactOperation {
         } finally {
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
-                    this.titanGenericDao.rollback();
+                    this.janusGraphGenericDao.rollback();
                 } else {
-                    this.titanGenericDao.commit();
+                    this.janusGraphGenericDao.commit();
                 }
 
             }

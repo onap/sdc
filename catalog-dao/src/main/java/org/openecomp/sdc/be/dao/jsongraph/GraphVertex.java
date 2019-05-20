@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -37,7 +37,7 @@ import java.util.Map.Entry;
 public class GraphVertex {
 	private String uniqueId;
 
-	private TitanVertex vertex;
+	private JanusGraphVertex vertex;
 	private VertexTypeEnum label;
 
 	private Map<String, ? extends ToscaDataDefinition> json;
@@ -70,11 +70,11 @@ public class GraphVertex {
 		this.json = json;
 	}
 
-	public TitanVertex getVertex() {
+	public JanusGraphVertex getVertex() {
 		return vertex;
 	}
 
-	public void setVertex(TitanVertex vertex) {
+	public void setVertex(JanusGraphVertex vertex) {
 		this.vertex = vertex;
 	}
 

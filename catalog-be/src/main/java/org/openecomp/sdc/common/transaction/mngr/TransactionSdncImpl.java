@@ -23,15 +23,15 @@ package org.openecomp.sdc.common.transaction.mngr;
 import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.*;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.*;
 import org.openecomp.sdc.common.transaction.impl.ESAction;
 import org.openecomp.sdc.common.transaction.impl.ESRollbackHandler;
-import org.openecomp.sdc.common.transaction.impl.TitanCommitHandler;
-import org.openecomp.sdc.common.transaction.impl.TitanRollbackHandler;
+import org.openecomp.sdc.common.transaction.impl.JanusGraphCommitHandler;
+import org.openecomp.sdc.common.transaction.impl.JanusGraphRollbackHandler;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 
 import java.util.ArrayList;
@@ -45,14 +45,14 @@ public class TransactionSdncImpl implements ITransactionSdnc {
     private RollbackManager rollbackManager;
     private CommitManager commitManager;
     private ESCatalogDAO esCatalogDao;
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
     private Integer transactionId;
     private TransactionStatusEnum status;
     private String userId, actionType;
 
-    TransactionSdncImpl(Integer transactionId, String userId, ActionTypeEnum actionTypeEnum, ESCatalogDAO esCatalogDao, TitanGenericDao titanGenericDao) {
+    TransactionSdncImpl(Integer transactionId, String userId, ActionTypeEnum actionTypeEnum, ESCatalogDAO esCatalogDao, JanusGraphGenericDao janusGraphGenericDao) {
         this.esCatalogDao = esCatalogDao;
-        this.titanGenericDao = titanGenericDao;
+        this.janusGraphGenericDao = janusGraphGenericDao;
         this.transactionId = transactionId;
         this.userId = userId;
         actionType = actionTypeEnum.name();
@@ -64,13 +64,14 @@ public class TransactionSdncImpl implements ITransactionSdnc {
 
     private List<ICommitHandler> initCommitHandlers() {
         List<ICommitHandler> commitHandlers = new ArrayList<>();
-        commitHandlers.add(new TitanCommitHandler(titanGenericDao));
+        commitHandlers.add(new JanusGraphCommitHandler(janusGraphGenericDao));
         return commitHandlers;
     }
 
     private List<RollbackHandler> initRollbackHandlers() {
         List<RollbackHandler> rolebackHandlers = new ArrayList<>();
-        rolebackHandlers.add(new TitanRollbackHandler(transactionId, userId, actionType, titanGenericDao));
+        rolebackHandlers.add(new JanusGraphRollbackHandler(transactionId, userId, actionType,
+            janusGraphGenericDao));
         rolebackHandlers.add(new ESRollbackHandler(transactionId, userId, actionType));
         return rolebackHandlers;
     }
@@ -115,10 +116,10 @@ public class TransactionSdncImpl implements ITransactionSdnc {
         return result;
     }
 
-    public <T> Either<T, TransactionCodeEnum> invokeTitanAction(boolean isLastAction, IDBAction dbAction) {
+    public <T> Either<T, TransactionCodeEnum> invokeJanusGraphAction(boolean isLastAction, IDBAction dbAction) {
         Either<T, TransactionCodeEnum> result;
         if (status == TransactionStatusEnum.OPEN) {
-            result = invokeAction(isLastAction, dbAction, DBTypeEnum.TITAN);
+            result = invokeAction(isLastAction, dbAction, DBTypeEnum.JANUSGRAPH);
         } else {
             result = handleActionOnClosedTransaction();
         }

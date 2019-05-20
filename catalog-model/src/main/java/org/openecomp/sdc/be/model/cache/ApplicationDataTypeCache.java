@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheInfo;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -146,7 +146,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         }
     }
 
-    private Either<Map<String, DataTypeDefinition>, TitanOperationStatus> getAllDataTypesFromGraph() {
+    private Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAllDataTypesFromGraph() {
 
         return propertyOperation
                 .getAllDataTypes();
@@ -154,7 +154,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     }
 
     @Override
-    public Either<Map<String, DataTypeDefinition>, TitanOperationStatus> getAll() {
+    public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll() {
 
         try {
 
@@ -171,7 +171,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     }
 
     @Override
-    public Either<DataTypeDefinition, TitanOperationStatus> get(String uniqueId) {
+    public Either<DataTypeDefinition, JanusGraphOperationStatus> get(String uniqueId) {
 
         try {
             r.lock();
@@ -202,12 +202,12 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
             Long start = System.currentTimeMillis();
             log.trace("Start fetching all data types from db");
-            Either<List<DataTypeData>, TitanOperationStatus> allDataTypeNodes = propertyOperation.getAllDataTypeNodes();
+            Either<List<DataTypeData>, JanusGraphOperationStatus> allDataTypeNodes = propertyOperation.getAllDataTypeNodes();
             Long end = System.currentTimeMillis();
             log.trace("Finish fetching all data types from db. Took {} Milliseconds", (end - start));
             if (allDataTypeNodes.isRight()) {
-                TitanOperationStatus status = allDataTypeNodes.right().value();
-                if (status != TitanOperationStatus.OK) {
+                JanusGraphOperationStatus status = allDataTypeNodes.right().value();
+                if (status != JanusGraphOperationStatus.OK) {
                     log.debug("ApplicationDataTypesCache - Failed to fetch all data types nodes");
                     BeEcompErrorManager.getInstance().logInternalConnectionError("FetchDataTypes",
                             "Failed to fetch data types from graph(cache)", ErrorSeverity.INFO);
@@ -251,7 +251,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
                     "Failed to run refresh data types job", ErrorSeverity.INFO);
         } finally {
             try {
-                propertyOperation.getTitanGenericDao().commit();
+                propertyOperation.getJanusGraphGenericDao().commit();
             } catch (Exception e) {
                 log.trace("Failed to commit ApplicationDataTypeCache", e);
             }
@@ -301,11 +301,11 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     private void replaceAllData() {
 
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = propertyOperation
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = propertyOperation
                 .getAllDataTypes();
 
         if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
+            JanusGraphOperationStatus status = allDataTypes.right().value();
             log.debug("Failed to fetch all data types from db. Status is {}", status);
         } else {
 

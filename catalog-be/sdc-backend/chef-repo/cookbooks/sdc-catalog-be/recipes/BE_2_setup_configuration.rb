@@ -2,18 +2,18 @@
 replication_factor=node['cassandra']['replication_factor']
 
 if node['Pair_EnvName'] == ""
-    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s
+    janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s
     conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s
 else
-    titan_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s + "," + node['cassandra']['cluster_name']   + node['Pair_EnvName'] + ","   + replication_factor.to_s
+    janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s + "," + node['cassandra']['cluster_name']   + node['Pair_EnvName'] + ","   + replication_factor.to_s
     conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s + "','" + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "','" + replication_factor.to_s
 end
 
 
 
-template "titan.properties" do
-   path "#{ENV['JETTY_BASE']}/config/catalog-be/titan.properties"
-   source "BE-titan.properties.erb"
+template "janusgraph.properties" do
+   path "#{ENV['JETTY_BASE']}/config/catalog-be/janusgraph.properties"
+   source "BE-janusgraph.properties.erb"
    owner "jetty"
    group "jetty"
    mode "0755"
@@ -23,8 +23,8 @@ template "titan.properties" do
       :cassandra_usr            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
       :DC_NAME                  => node['cassandra']['datacenter_name'],
-      :DC_NAME_WITH_REP         => titan_dcname_with_rep,
-      :titan_connection_timeout => node['cassandra']['titan_connection_timeout'],
+      :DC_NAME_WITH_REP         => janusgraph_dcname_with_rep,
+      :janusgraph_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
       :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
    })
@@ -46,7 +46,7 @@ template "catalog-be-config" do
       :rep_factor             => replication_factor,
       :DC_NAME                => node['cassandra']['datacenter_name'],
       :REP_STRING             => conf_dcname_with_rep,
-      :titan_Path             => "/var/lib/jetty/config/catalog-be/",
+      :janusgraph_Path        => "/var/lib/jetty/config/catalog-be/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout    => node['cassandra']['socket_read_timeout'],
       :cassandra_pwd          => node['cassandra'][:cassandra_password],

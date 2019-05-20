@@ -5,9 +5,9 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidatio
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -24,7 +24,7 @@ public class TopologyTemplateValidatorExecuter {
     private static Logger log = Logger.getLogger(VfValidatorExecuter.class.getName());
 
     @Autowired
-    protected TitanDao titanDao;
+    protected JanusGraphDao janusGraphDao;
 
     protected String name;
 
@@ -43,7 +43,8 @@ public class TopologyTemplateValidatorExecuter {
             props.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
         }
 
-        Either<List<GraphVertex>, TitanOperationStatus> results = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> results = janusGraphDao
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props);
         if (results.isRight()) {
             log.error("getVerticesToValidate failed "+ results.right().value());
             return new ArrayList<>();

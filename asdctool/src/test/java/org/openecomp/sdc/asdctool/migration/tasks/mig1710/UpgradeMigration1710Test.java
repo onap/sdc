@@ -41,18 +41,18 @@ import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLog
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
@@ -95,7 +95,7 @@ public class UpgradeMigration1710Test {
     @Mock
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private ComponentsUtils componentUtils;
     @Mock
@@ -179,8 +179,8 @@ public class UpgradeMigration1710Test {
     public void nodeTypesUpgradeFailed() {
         migration.setNodeTypesSupportOnly(true);
         resolveUserAndDefineUpgradeLevel();
-        when(titanDao.getByCriteria(any(), any(), any(), any()))
-                .thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+        when(janusGraphDao.getByCriteria(any(), any(), any(), any()))
+                .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         assertEquals(MigrationResult.MigrationStatus.FAILED, migration.migrate().getMigrationStatus());
     }
 
@@ -189,8 +189,8 @@ public class UpgradeMigration1710Test {
         configurationManager.getConfiguration().setEnableAutoHealing(false);
         migration.init();
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(0)).commit();
-        verify(titanDao, times(0)).rollback();
+        verify(janusGraphDao, times(0)).commit();
+        verify(janusGraphDao, times(0)).rollback();
     }
 
     @Test
@@ -213,8 +213,8 @@ public class UpgradeMigration1710Test {
         migration.setNodeTypesSupportOnly(true);
         upgradeAllScenario(false);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(2)).commit();
-        verify(titanDao, times(0)).rollback();
+        verify(janusGraphDao, times(2)).commit();
+        verify(janusGraphDao, times(0)).rollback();
     }
 
     @Test
@@ -230,8 +230,8 @@ public class UpgradeMigration1710Test {
         resolveUserAndDefineUpgradeLevel();
         upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeVFC, isFailed);
         assertEquals(MigrationResult.MigrationStatus.FAILED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(1)).commit();
-        verify(titanDao, times(2)).rollback();
+        verify(janusGraphDao, times(1)).commit();
+        verify(janusGraphDao, times(2)).rollback();
     }
 
 
@@ -247,8 +247,8 @@ public class UpgradeMigration1710Test {
         upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeVFC, isFailed);
         migration.init();
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(2)).commit();
-        verify(titanDao, times(0)).rollback();
+        verify(janusGraphDao, times(2)).commit();
+        verify(janusGraphDao, times(0)).rollback();
     }
 
     @Test
@@ -262,8 +262,8 @@ public class UpgradeMigration1710Test {
         resolveUserAndDefineUpgradeLevel();
         upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeVFC, isFailed);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(3)).commit();
-        verify(titanDao, times(1)).rollback();
+        verify(janusGraphDao, times(3)).commit();
+        verify(janusGraphDao, times(1)).rollback();
     }
 
 
@@ -271,8 +271,8 @@ public class UpgradeMigration1710Test {
     public void upgradeAll() {
         upgradeAllScenario(true);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(4)).commit();
-        verify(titanDao, times(0)).rollback();
+        verify(janusGraphDao, times(4)).commit();
+        verify(janusGraphDao, times(0)).rollback();
     }
 
     @Test
@@ -282,8 +282,8 @@ public class UpgradeMigration1710Test {
                 .thenReturn(StorageOperationStatus.OK);
         upgradeAllScenario(true);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
-        verify(titanDao, times(4)).commit();
-        verify(titanDao, times(0)).rollback();
+        verify(janusGraphDao, times(4)).commit();
+        verify(janusGraphDao, times(0)).rollback();
     }
 
     @Test
@@ -302,7 +302,7 @@ public class UpgradeMigration1710Test {
     @Test
     public void migrationFailedWhenUserNotResolved() {
         when(userAdminOperation.getUserData(anyString(), eq(false))).thenReturn(Either.right(ActionStatus.MISSING_INFORMATION));
-        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         assertEquals(MigrationResult.MigrationStatus.FAILED, migration.migrate().getMigrationStatus());
     }
 
@@ -523,13 +523,13 @@ public class UpgradeMigration1710Test {
         List<GraphVertex> components = Lists.newArrayList();
         components.add(component);
 
-        when(titanDao.getByCriteria(any(), any(), any(), any()))
+        when(janusGraphDao.getByCriteria(any(), any(), any(), any()))
                 .thenReturn(Either.left(components));
-        when(titanDao.getParentVertecies(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class)))
+        when(janusGraphDao.getParentVertecies(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class)))
                 //1th node to upgrade
                 .thenReturn(Either.left(components))
                 //parent of the 1th node - stop recursion
-                .thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
+                .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
     }
 
     private GraphVertex createComponent() {
@@ -601,7 +601,7 @@ public class UpgradeMigration1710Test {
         components.add(component);
 
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
-        when(titanDao.getByCriteria(any(), any(), any(), any()))
+        when(janusGraphDao.getByCriteria(any(), any(), any(), any()))
                 .thenReturn(Either.left(components));
         when(csarOperation.getCsarLatestVersion(anyString(), any()))
                 .thenReturn(Either.left("2.0"));

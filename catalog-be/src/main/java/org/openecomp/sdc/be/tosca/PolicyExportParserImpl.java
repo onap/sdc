@@ -3,7 +3,7 @@ package org.openecomp.sdc.be.tosca;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.*;
@@ -43,7 +43,7 @@ public class PolicyExportParserImpl implements PolicyExportParser {
 	}
 	
 	private Map<String, DataTypeDefinition> getDataTypes()  {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
 		if (dataTypesEither.isRight()) {
 			log.error("Failed to retrieve all data types {}", dataTypesEither.right().value()); 
 			throw new SdcResourceNotFoundException(); 

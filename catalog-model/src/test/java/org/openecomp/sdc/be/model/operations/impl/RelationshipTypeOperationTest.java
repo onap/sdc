@@ -44,9 +44,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -70,7 +69,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     private static final String PROP = "prop";
 
     @Mock
-    HealingTitanGenericDao titanGenericDao;
+    HealingJanusGraphGenericDao janusGraphGenericDao;
 
     @Mock
     PropertyOperation propertyOperation;
@@ -101,16 +100,16 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        Mockito.doReturn(TitanOperationStatus.OK).when(titanGenericDao).commit();
-        Mockito.doReturn(TitanOperationStatus.OK).when(titanGenericDao).rollback();
+        Mockito.doReturn(JanusGraphOperationStatus.OK).when(janusGraphGenericDao).commit();
+        Mockito.doReturn(JanusGraphOperationStatus.OK).when(janusGraphGenericDao).rollback();
     }
 
     @Test
     public void getRelationshipTypeByNameNotCreated() {
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_CREATED))
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_CREATED))
                 .when(relationshipTypeOperation).getRelationshipTypeByUid(Mockito.anyString());
 
-        Either<RelationshipTypeDefinition, TitanOperationStatus> either =
+        Either<RelationshipTypeDefinition, JanusGraphOperationStatus> either =
                 relationshipTypeOperation.getRelationshipTypeByName("name");
         assertTrue(either.isRight());
     }
@@ -122,7 +121,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
 
     @Test
     public void testAddRelationshipTypeValidationFailStatusNullInTransactionFalse() {
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_CONNECTED))
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_CONNECTED))
                 .when(propertyOperation)
                 .getAllTypePropertiesFromAllDerivedFrom(Mockito.anyString(), Mockito.any(), Mockito.any());
 
@@ -137,7 +136,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     public void testAddRelationshipTypeValidationFailStatusPropertiesReturnedInTransactionFalse() {
         Mockito.doReturn(Either.left(Collections.singletonMap("prop1", new PropertyDefinition()))).when(propertyOperation)
                 .getAllTypePropertiesFromAllDerivedFrom(Mockito.anyString(), Mockito.any(), Mockito.any());
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_FOUND)).when(propertyOperation)
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(propertyOperation)
                 .validatePropertiesUniqueness(Mockito.any(), Mockito.any());
 
         Either<RelationshipTypeDefinition, StorageOperationStatus> addRelationshipType =
@@ -148,20 +147,22 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
 
     @Test
     public void testGetAllRelationshipTypesNotFound() {
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_FOUND)).when(titanGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(
+            janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
                 RelationshipTypeData.class);
-        Either<Map<String, RelationshipTypeDefinition>, TitanOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
 
         assertTrue(either.isLeft() && MapUtils.isEmpty(either.left().value()));
     }
 
     @Test
     public void testGetAllRelationshipTypesNotConnnected() {
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_CONNECTED)).when(titanGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_CONNECTED)).when(
+            janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
                 RelationshipTypeData.class);
-        Either<Map<String, RelationshipTypeDefinition>, TitanOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
 
-        assertTrue(either.isRight() && TitanOperationStatus.NOT_CONNECTED == either.right().value());
+        assertTrue(either.isRight() && JanusGraphOperationStatus.NOT_CONNECTED == either.right().value());
     }
 
     @Test
@@ -177,10 +178,10 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         relationshipTypeDataList.add(relationshipTypeData1);
 
         Mockito.doReturn(Either.left(relationshipTypeDataList))
-                .when(titanGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+                .when(janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
                 RelationshipTypeData.class);
 
-        Mockito.doReturn(Either.left(relationshipTypeData1)).when(titanGenericDao)
+        Mockito.doReturn(Either.left(relationshipTypeData1)).when(janusGraphGenericDao)
                 .getNode(Mockito.anyString(), Mockito.anyString(), Mockito.eq(RelationshipTypeData.class));
 
         Mockito.doReturn(Either.left(createPropertyData("prop1"))).when(propertyOperation)
@@ -194,7 +195,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
                 .when(derivedFromOperation)
                 .getDerivedFromChild("tosca.relationships.Root1", NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
 
-        Either<Map<String, RelationshipTypeDefinition>, TitanOperationStatus> either =
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either =
                                             relationshipTypeOperation.getAllRelationshipTypes();
 
         assertTrue(either.isLeft());
@@ -352,7 +353,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         Mockito.doReturn(Either.left(new ArrayList<>(relationshipTypeDefinition.getProperties().values()))).when(propertyOperation)
                 .validatePropertiesUniqueness(Mockito.any(), Mockito.any());
 
-        Mockito.doReturn(Either.left(relationshipTypeData)).when(titanGenericDao)
+        Mockito.doReturn(Either.left(relationshipTypeData)).when(janusGraphGenericDao)
                 .createNode(Mockito.any(), Mockito.eq(RelationshipTypeData.class));
 
         Mockito.doReturn(Either.left(new HashMap())).when(propertyOperation)
@@ -376,7 +377,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
 
     @Test
     public void testGetRelationshipTypeNotConnected() {
-        Mockito.doReturn(Either.right(TitanOperationStatus.NOT_CONNECTED))
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_CONNECTED))
                 .when(relationshipTypeOperation).getRelationshipTypeByUid(Mockito.anyString());
 
         Either<RelationshipTypeDefinition, StorageOperationStatus> either =
@@ -405,7 +406,8 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         newRelationshipTypeDefinition.setDerivedFrom("tosca.relationships.Root");
         newRelationshipTypeDefinition.setProperties(createPropertyData("prop1"));
 
-        Mockito.doReturn(Either.left(new RelationshipTypeData(newRelationshipTypeDefinition))).when(titanGenericDao)
+        Mockito.doReturn(Either.left(new RelationshipTypeData(newRelationshipTypeDefinition))).when(
+            janusGraphGenericDao)
                 .updateNode(Mockito.any(), Mockito.eq(RelationshipTypeData.class));
 
         Mockito.doReturn(Either.left(newRelationshipTypeDefinition.getProperties()))
@@ -435,7 +437,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     public void testGetRelationshipTypeByUid() {
         RelationshipTypeData relationshipTypeData = new RelationshipTypeData(relationshipTypeDefinition);
 
-        Mockito.doReturn(Either.left(relationshipTypeData)).when(titanGenericDao)
+        Mockito.doReturn(Either.left(relationshipTypeData)).when(janusGraphGenericDao)
                 .getNode(Mockito.anyString(), Mockito.any(), Mockito.eq(RelationshipTypeData.class));
 
         Mockito.doReturn(Either.left(relationshipTypeDefinition.getProperties()))
@@ -444,11 +446,12 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         RelationshipTypeDefinition childRelationshipTypeDefinition = new RelationshipTypeDefinition();
         childRelationshipTypeDefinition.setType("tosca.relationships.ContainerChild");
 
-        Mockito.doReturn(Either.left(new ImmutablePair(new RelationshipTypeData(childRelationshipTypeDefinition), null))).when(titanGenericDao)
+        Mockito.doReturn(Either.left(new ImmutablePair(new RelationshipTypeData(childRelationshipTypeDefinition), null))).when(
+            janusGraphGenericDao)
                 .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(),
                         Mockito.eq(RelationshipTypeData.class));
 
-        Either<RelationshipTypeDefinition, TitanOperationStatus> either =
+        Either<RelationshipTypeDefinition, JanusGraphOperationStatus> either =
                 relationshipTypeOperation.getRelationshipTypeByUid("tosca.relationships.Container1");
 
         assertTrue(either.isLeft()

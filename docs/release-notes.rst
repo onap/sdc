@@ -399,7 +399,6 @@ Workflow information is available in readthedocs
 -  [`SDC-951 <https://jira.onap.org/browse/SDC-951>`__\ ] - update SDC-TOSCA packages
 -  [`SDC-952 <https://jira.onap.org/browse/SDC-952>`__\ ] - update SDC-DISTRIBUTION-CLIENT packages
 -  [`SDC-953 <https://jira.onap.org/browse/SDC-953>`__\ ] - update SDC-DOCKER-BASE packages
--  [`SDC-954 <https://jira.onap.org/browse/SDC-954>`__\ ] - update SDC-TITAN-CASSANDRA packages
 -  [`SDC-955 <https://jira.onap.org/browse/SDC-955>`__\ ] - configuration ovriding capabilities.
 -  [`SDC-957 <https://jira.onap.org/browse/SDC-957>`__\ ] - add ignore conformance level option
 -  [`SDC-969 <https://jira.onap.org/browse/SDC-969>`__\ ] - sync1802E to ONAP part 1

@@ -11,22 +11,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.exception.ResponseFormat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -40,7 +37,7 @@ public class AttributeBusinessLogicTest {
 
 	UserValidations userValidations  = Mockito.mock(UserValidations.class);
 	ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
-	TitanDao titanDao = Mockito.mock(TitanDao.class);
+	JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
 	ToscaOperationFacade toscaOperationFacade  = Mockito.mock(ToscaOperationFacade.class);
 	ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
 	PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
@@ -67,9 +64,9 @@ public class AttributeBusinessLogicTest {
 		baseBusinessLogic2.setAccessible(true);
 		baseBusinessLogic2.set(attributeBusinessLogic, componentsUtils);
 
-		baseBusinessLogic3 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("titanDao");
+		baseBusinessLogic3 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("janusGraphDao");
 		baseBusinessLogic3.setAccessible(true);
-		baseBusinessLogic3.set(attributeBusinessLogic, titanDao);
+		baseBusinessLogic3.set(attributeBusinessLogic, janusGraphDao);
 
 		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("toscaOperationFacade");
 		baseBusinessLogic.setAccessible(true);
@@ -185,7 +182,7 @@ public class AttributeBusinessLogicTest {
 
 		Map<String,DataTypeDefinition> data=new HashMap<>();
 		data.put("ONE",new DataTypeDefinition());
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = Either.left(data);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
 		when(propertyOperation.isPropertyDefaultValueValid(anyObject(),anyObject())).thenReturn(true);
@@ -301,7 +298,7 @@ public class AttributeBusinessLogicTest {
 
 		Map<String,DataTypeDefinition> data=new HashMap<>();
 		data.put("ONE",new DataTypeDefinition());
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = Either.left(data);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
 		when(propertyOperation.isPropertyDefaultValueValid(anyObject(),anyObject())).thenReturn(true);

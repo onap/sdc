@@ -32,10 +32,10 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
@@ -250,7 +250,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resources.right().value())));
             }
         } finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 
@@ -999,7 +999,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                     .bimap(this::groupByComponentType,
                             err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
         } finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 
@@ -1229,10 +1229,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
         CategoryData categoryData = categoryResult.left().value();
 
-        Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
+        Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
                 GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
         if (childrenNodes.isRight()) {
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenNodes.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenNodes.right().value()));
         }
         return Either.left(childrenNodes.left().value());
     }
@@ -1248,7 +1249,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return collectComponents(neededType, categoryUid, categoryType, clazz, resourceType);
         } finally {
             if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
     }
@@ -1260,7 +1261,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
             Map<String, Object> props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
-            Either<List<GraphNode>, TitanOperationStatus> getCategory = titanGenericDao.getByCriteria(categoryType, props, categoryClazz);
+            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao
+                .getByCriteria(categoryType, props, categoryClazz);
             if (getCategory.isRight()) {
                 return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }
@@ -1275,7 +1277,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.left(components);
         } finally {
             if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
     }
@@ -1283,7 +1285,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
     private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> collectComponents(NodeTypeEnum neededType, String categoryUid, NodeTypeEnum categoryType, Class<S> clazz, ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
-        Either<List<ImmutablePair<S, GraphEdge>>, TitanOperationStatus> parentNodes = titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(categoryType), categoryUid, GraphEdgeLabels.CATEGORY, neededType, clazz);
+        Either<List<ImmutablePair<S, GraphEdge>>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
+            .getParentNodes(UniqueIdBuilder.getKeyByNodeType(categoryType), categoryUid, GraphEdgeLabels.CATEGORY, neededType, clazz);
         if (parentNodes.isLeft()) {
             for (ImmutablePair<S, GraphEdge> component : parentNodes.left().value()) {
                 ComponentMetadataDataDefinition componentData = component.getLeft().getMetadataDataDefinition();
@@ -1359,7 +1362,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return result;
         } finally {
             if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
     }

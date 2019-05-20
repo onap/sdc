@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -29,10 +29,10 @@ import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -58,7 +58,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     private static final Logger log = Logger.getLogger(AdditionalInformationOperation.class.getName());
 
     @javax.annotation.Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     private static final String GOING_TO_EXECUTE_COMMIT_ON_GRAPH = "Going to execute commit on graph.";
 	private static final String GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH = "Going to execute rollback on graph.";
@@ -71,18 +71,20 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
 
     @Override
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String key, String value) {
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String key, String value) {
 
-        TitanOperationStatus verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
-        if (verifyNodeTypeVsComponent != TitanOperationStatus.OK) {
+        JanusGraphOperationStatus
+            verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
+        if (verifyNodeTypeVsComponent != JanusGraphOperationStatus.OK) {
             return Either.right(verifyNodeTypeVsComponent);
         }
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
+            JanusGraphOperationStatus status = getResult.right().value();
             return Either.right(status);
         }
 
@@ -104,17 +106,18 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         if (parameters.containsKey(key)) {
             log.debug("The key {} already exists under component {}", key, componentId);
-            return Either.right(TitanOperationStatus.ALREADY_EXIST);
+            return Either.right(JanusGraphOperationStatus.ALREADY_EXIST);
         }
 
         idToKey.put(String.valueOf(lastCreatedCounter), key);
         parameters.put(key, value);
         parameterData.getAdditionalInfoParameterDataDefinition().setLastCreatedCounter(lastCreatedCounter);
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(parameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+            .updateNode(parameterData, AdditionalInfoParameterData.class);
 
         if (updateNode.isRight()) {
-            TitanOperationStatus status = updateNode.right().value();
+            JanusGraphOperationStatus status = updateNode.right().value();
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("UpdateAdditionalInformationParameter", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + componentId, String.valueOf(status));
             return Either.right(status);
         }
@@ -126,18 +129,20 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id, String key, String value) {
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id, String key, String value) {
 
-        TitanOperationStatus verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
-        if (verifyNodeTypeVsComponent != TitanOperationStatus.OK) {
+        JanusGraphOperationStatus
+            verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
+        if (verifyNodeTypeVsComponent != JanusGraphOperationStatus.OK) {
             return Either.right(verifyNodeTypeVsComponent);
         }
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
+            JanusGraphOperationStatus status = getResult.right().value();
             return Either.right(status);
         }
 
@@ -146,7 +151,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         Map<String, String> parameters = parameterData.getParameters();
         Map<String, String> idToKey = parameterData.getIdToKey();
         if (idToKey == null || !idToKey.containsKey(id)) {
-            return Either.right(TitanOperationStatus.INVALID_ID);
+            return Either.right(JanusGraphOperationStatus.INVALID_ID);
         }
 
         String origKey = idToKey.get(id);
@@ -154,7 +159,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         if (!origKey.equals(key)) {
             if (parameters.containsKey(key)) {
                 log.debug("The key {} already exists", key);
-                return Either.right(TitanOperationStatus.ALREADY_EXIST);
+                return Either.right(JanusGraphOperationStatus.ALREADY_EXIST);
             }
             String removed = parameters.remove(origKey);
             log.trace("The key-value {} = {} was removed from additionalInformation", origKey, removed);
@@ -162,10 +167,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         parameters.put(key, value);
         idToKey.put(id, key);
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(parameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+            .updateNode(parameterData, AdditionalInfoParameterData.class);
 
         if (updateNode.isRight()) {
-            TitanOperationStatus status = updateNode.right().value();
+            JanusGraphOperationStatus status = updateNode.right().value();
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("UpdateAdditionalInformationParameter", "additional information of resource " + componentId, String.valueOf(status));
             return Either.right(status);
         }
@@ -177,18 +183,20 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
 
-        TitanOperationStatus verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
-        if (verifyNodeTypeVsComponent != TitanOperationStatus.OK) {
+        JanusGraphOperationStatus
+            verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
+        if (verifyNodeTypeVsComponent != JanusGraphOperationStatus.OK) {
             return Either.right(verifyNodeTypeVsComponent);
         }
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
+            JanusGraphOperationStatus status = getResult.right().value();
             return Either.right(status);
         }
 
@@ -198,7 +206,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         Map<String, String> idToKey = parameterData.getIdToKey();
 
         if (idToKey == null || !idToKey.containsKey(id)) {
-            return Either.right(TitanOperationStatus.INVALID_ID);
+            return Either.right(JanusGraphOperationStatus.INVALID_ID);
         }
 
         String key = idToKey.get(id);
@@ -206,10 +214,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         String removedValue = parameters.remove(key);
         log.trace("The key-value {} = {} was removed from additionalInformation", removedKey, removedValue);
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(parameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+            .updateNode(parameterData, AdditionalInfoParameterData.class);
 
         if (updateNode.isRight()) {
-            TitanOperationStatus status = updateNode.right().value();
+            JanusGraphOperationStatus status = updateNode.right().value();
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("DeleteAdditionalInformationParameter", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + componentId, String.valueOf(status));
             return Either.right(status);
         }
@@ -248,7 +257,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<AdditionalInfoParameterData, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId) {
+    public Either<AdditionalInfoParameterData, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId) {
 
         UniqueIdData from = new UniqueIdData(nodeType, componentId);
 
@@ -258,18 +267,20 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         AdditionalInfoParameterData additionalInfoParameterData = new AdditionalInfoParameterData(additionalInfoParameterDataDefinition, new HashMap<>(), new HashMap<>());
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> createNode = titanGenericDao.createNode(additionalInfoParameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> createNode = janusGraphGenericDao
+            .createNode(additionalInfoParameterData, AdditionalInfoParameterData.class);
         if (createNode.isRight()) {
-            TitanOperationStatus status = createNode.right().value();
+            JanusGraphOperationStatus status = createNode.right().value();
             BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("AddAdditionalInformationNode", uniqueId, String.valueOf(status));
             return Either.right(status);
         }
 
         AdditionalInfoParameterData to = createNode.left().value();
 
-        Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(from, to, GraphEdgeLabels.ADDITIONAL_INFORMATION, null);
+        Either<GraphRelation, JanusGraphOperationStatus> createRelation = janusGraphGenericDao
+            .createRelation(from, to, GraphEdgeLabels.ADDITIONAL_INFORMATION, null);
         if (createRelation.isRight()) {
-            TitanOperationStatus status = createRelation.right().value();
+            JanusGraphOperationStatus status = createRelation.right().value();
             return Either.right(status);
         }
 
@@ -277,7 +288,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<TitanVertex, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, TitanVertex metadataVertex) {
+    public Either<JanusGraphVertex, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, JanusGraphVertex metadataVertex) {
 
         String uniqueId = UniqueIdBuilder.buildAdditionalInformationUniqueId(componentId);
         AdditionalInfoParameterDataDefinition additionalInfoParameterDataDefinition = new AdditionalInfoParameterDataDefinition();
@@ -285,26 +296,27 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         AdditionalInfoParameterData additionalInfoParameterData = new AdditionalInfoParameterData(additionalInfoParameterDataDefinition, new HashMap<>(), new HashMap<>());
 
-        Either<TitanVertex, TitanOperationStatus> createNode = titanGenericDao.createNode(additionalInfoParameterData);
+        Either<JanusGraphVertex, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(additionalInfoParameterData);
         if (createNode.isRight()) {
-            TitanOperationStatus status = createNode.right().value();
+            JanusGraphOperationStatus status = createNode.right().value();
             BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("AddAdditionalInformationNode", uniqueId, String.valueOf(status));
             return Either.right(status);
         }
 
-        TitanVertex additionalInfoVertex = createNode.left().value();
+        JanusGraphVertex additionalInfoVertex = createNode.left().value();
 
-        TitanOperationStatus createRelation = titanGenericDao.createEdge(metadataVertex, additionalInfoVertex, GraphEdgeLabels.ADDITIONAL_INFORMATION, null);
+        JanusGraphOperationStatus createRelation = janusGraphGenericDao
+            .createEdge(metadataVertex, additionalInfoVertex, GraphEdgeLabels.ADDITIONAL_INFORMATION, null);
 
-        if (!createRelation.equals(TitanOperationStatus.OK)) {
+        if (!createRelation.equals(JanusGraphOperationStatus.OK)) {
             return Either.right(createRelation);
         }
         return Either.left(additionalInfoVertex);
     }
 
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters) {
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters) {
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> status = this.addAdditionalInformationNode(nodeType, componentId);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> status = this.addAdditionalInformationNode(nodeType, componentId);
 
         if (status.isRight()) {
             return Either.right(status.right().value());
@@ -314,7 +326,8 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         populateParameterNodeWithParameters(parameterData, parameters);
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(parameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+            .updateNode(parameterData, AdditionalInfoParameterData.class);
 
         if (updateNode.isRight()) {
             return Either.right(updateNode.right().value());
@@ -325,21 +338,21 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         return Either.left(informationDefinition);
     }
 
-    public TitanOperationStatus addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters, TitanVertex metadataVertex) {
+    public JanusGraphOperationStatus addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, AdditionalInformationDefinition parameters, JanusGraphVertex metadataVertex) {
 
-        Either<TitanVertex, TitanOperationStatus> status = this.addAdditionalInformationNode(nodeType, componentId, metadataVertex);
+        Either<JanusGraphVertex, JanusGraphOperationStatus> status = this.addAdditionalInformationNode(nodeType, componentId, metadataVertex);
 
         if (status.isRight()) {
             return status.right().value();
         }
-        TitanVertex additionalInfoVertex = status.left().value();
+        JanusGraphVertex additionalInfoVertex = status.left().value();
 
-        Map<String, Object> newProp = titanGenericDao.getProperties(additionalInfoVertex);
+        Map<String, Object> newProp = janusGraphGenericDao.getProperties(additionalInfoVertex);
         AdditionalInfoParameterData parameterData = GraphElementFactory.createElement(NodeTypeEnum.AdditionalInfoParameters.getName(), GraphElementTypeEnum.Node, newProp, AdditionalInfoParameterData.class);
 
         populateParameterNodeWithParameters(parameterData, parameters);
 
-        return titanGenericDao.updateVertex(parameterData, additionalInfoVertex);
+        return janusGraphGenericDao.updateVertex(parameterData, additionalInfoVertex);
     }
 
     private void populateParameterNodeWithParameters(AdditionalInfoParameterData parameterData, AdditionalInformationDefinition aiDefinition) {
@@ -373,21 +386,22 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public TitanOperationStatus findResourceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
+    public JanusGraphOperationStatus findResourceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
 
         log.trace("Going to fetch additional information under resource {}", uniqueId);
-        TitanOperationStatus resourceCapabilitiesStatus = findAdditionalInformationOfNode(NodeTypeEnum.Resource, uniqueId, properties);
+        JanusGraphOperationStatus resourceCapabilitiesStatus = findAdditionalInformationOfNode(NodeTypeEnum.Resource, uniqueId, properties);
 
-        if (!resourceCapabilitiesStatus.equals(TitanOperationStatus.OK)) {
+        if (!resourceCapabilitiesStatus.equals(JanusGraphOperationStatus.OK)) {
             return resourceCapabilitiesStatus;
         }
 
-        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
+        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
                 ResourceMetadataData.class);
 
         if (parentNodes.isRight()) {
-            TitanOperationStatus parentNodesStatus = parentNodes.right().value();
-            if (!parentNodesStatus.equals(TitanOperationStatus.NOT_FOUND)) {
+            JanusGraphOperationStatus parentNodesStatus = parentNodes.right().value();
+            if (!parentNodesStatus.equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 log.error("Failed to find parent additional information of resource {}. status is {}", uniqueId, parentNodesStatus);
                 return parentNodesStatus;
             }
@@ -396,33 +410,34 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         if (parentNodes.isLeft()) {
             ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
             String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-            TitanOperationStatus addParentIntStatus = findResourceAllAdditionalInformationRecursively(parentUniqueId, properties);
+            JanusGraphOperationStatus addParentIntStatus = findResourceAllAdditionalInformationRecursively(parentUniqueId, properties);
 
-            if (addParentIntStatus != TitanOperationStatus.OK) {
+            if (addParentIntStatus != JanusGraphOperationStatus.OK) {
                 log.error("Failed to find all resource additional information of resource {}", parentUniqueId);
                 return addParentIntStatus;
             }
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
 
     }
 
     @Override
-    public TitanOperationStatus findServiceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
+    public JanusGraphOperationStatus findServiceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
 
         log.trace("Going to fetch additional information under service {}", uniqueId);
-        TitanOperationStatus resourceCapabilitiesStatus = findAdditionalInformationOfNode(NodeTypeEnum.Service, uniqueId, properties);
+        JanusGraphOperationStatus resourceCapabilitiesStatus = findAdditionalInformationOfNode(NodeTypeEnum.Service, uniqueId, properties);
 
-        if (!resourceCapabilitiesStatus.equals(TitanOperationStatus.OK)) {
+        if (!resourceCapabilitiesStatus.equals(JanusGraphOperationStatus.OK)) {
             return resourceCapabilitiesStatus;
         }
 
-        Either<ImmutablePair<ServiceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Service), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Service,
+        Either<ImmutablePair<ServiceMetadataData, GraphEdge>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Service), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Service,
                 ServiceMetadataData.class);
 
         if (parentNodes.isRight()) {
-            TitanOperationStatus parentNodesStatus = parentNodes.right().value();
-            if (!parentNodesStatus.equals(TitanOperationStatus.NOT_FOUND)) {
+            JanusGraphOperationStatus parentNodesStatus = parentNodes.right().value();
+            if (!parentNodesStatus.equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 log.error("Failed to find parent additional information of resource {}. status is {}", uniqueId, parentNodesStatus);
                 return parentNodesStatus;
             }
@@ -431,26 +446,27 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         if (parentNodes.isLeft()) {
             ImmutablePair<ServiceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
             String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-            TitanOperationStatus addParentIntStatus = findServiceAllAdditionalInformationRecursively(parentUniqueId, properties);
+            JanusGraphOperationStatus addParentIntStatus = findServiceAllAdditionalInformationRecursively(parentUniqueId, properties);
 
-            if (addParentIntStatus != TitanOperationStatus.OK) {
+            if (addParentIntStatus != JanusGraphOperationStatus.OK) {
                 log.error("Failed to find all resource additional information of resource {}", parentUniqueId);
                 return addParentIntStatus;
             }
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
 
     }
 
-    private TitanOperationStatus findAdditionalInformationOfNode(NodeTypeEnum nodeType, String uniqueId, List<AdditionalInformationDefinition> properties) {
+    private JanusGraphOperationStatus findAdditionalInformationOfNode(NodeTypeEnum nodeType, String uniqueId, List<AdditionalInformationDefinition> properties) {
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> childNode = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> childNode = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (childNode.isRight()) {
-            TitanOperationStatus status = childNode.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.OK;
+            JanusGraphOperationStatus status = childNode.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.OK;
             }
             return status;
         }
@@ -464,7 +480,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
             properties.add(additionalInfoDef);
         }
 
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
 
     }
 
@@ -483,13 +499,13 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<AdditionalInformationDefinition, TitanOperationStatus> either = this.addAdditionalInformationParameter(nodeType, resourceId, key, value);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> either = this.addAdditionalInformationParameter(nodeType, resourceId, key, value);
 
             if (either.isRight()) {
-                TitanOperationStatus status = either.right().value();
+                JanusGraphOperationStatus status = either.right().value();
                 log.debug("Failed to add additional information property {} to component {}. Status is {}", key, resourceId, status);
                 BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("CreateAdditionalInformationParameter", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + resourceId, String.valueOf(status));
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             } else {
                 AdditionalInformationDefinition additionalInformationDefinition = either.left().value();
                 result = Either.left(additionalInformationDefinition);
@@ -509,11 +525,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<AdditionalInformationDefinition, TitanOperationStatus> either = this.updateAdditionalInformationParameter(nodeType, resourceId, id, key, value);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> either = this.updateAdditionalInformationParameter(nodeType, resourceId, id, key, value);
 
             if (either.isRight()) {
                 log.info("Failed to update additional information property {} to component {}", key, resourceId);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(either.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(either.right().value()));
             } else {
                 AdditionalInformationDefinition additionalInformationDefinition = either.left().value();
                 result = Either.left(additionalInformationDefinition);
@@ -534,11 +550,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<AdditionalInformationDefinition, TitanOperationStatus> either = this.deleteAdditionalInformationParameter(nodeType, resourceId, id);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> either = this.deleteAdditionalInformationParameter(nodeType, resourceId, id);
 
             if (either.isRight()) {
                 log.error("Failed to delete additional information id {} to component {}", id, resourceId);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(either.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(either.right().value()));
             } else {
                 AdditionalInformationDefinition additionalInformationDefinition = either.left().value();
                 result = Either.left(additionalInformationDefinition);
@@ -559,11 +575,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<Integer, TitanOperationStatus> either = this.getNumberOfParameters(nodeType, resourceId);
+            Either<Integer, JanusGraphOperationStatus> either = this.getNumberOfParameters(nodeType, resourceId);
 
             if (either.isRight()) {
                 log.error("Failed to get the number of additional information properties in component {}", resourceId);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(either.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(either.right().value()));
             } else {
                 Integer counter = either.left().value();
                 result = Either.left(counter);
@@ -574,10 +590,10 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.error(GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH);
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 } else {
                     log.debug(GOING_TO_EXECUTE_COMMIT_ON_GRAPH);
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 }
             }
         }
@@ -585,13 +601,14 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<Integer, TitanOperationStatus> getNumberOfParameters(NodeTypeEnum nodeType, String resourceId) {
+    public Either<Integer, JanusGraphOperationStatus> getNumberOfParameters(NodeTypeEnum nodeType, String resourceId) {
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
+            JanusGraphOperationStatus status = getResult.right().value();
             return Either.right(status);
         }
 
@@ -609,18 +626,20 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<AdditionalInfoParameterInfo, TitanOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
+    public Either<AdditionalInfoParameterInfo, JanusGraphOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
 
-        TitanOperationStatus verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
-        if (verifyNodeTypeVsComponent != TitanOperationStatus.OK) {
+        JanusGraphOperationStatus
+            verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
+        if (verifyNodeTypeVsComponent != JanusGraphOperationStatus.OK) {
             return Either.right(verifyNodeTypeVsComponent);
         }
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
+            JanusGraphOperationStatus status = getResult.right().value();
             return Either.right(status);
         }
 
@@ -630,7 +649,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         Map<String, String> idToKey = parameterData.getIdToKey();
 
         if (idToKey == null || !idToKey.containsKey(id)) {
-            return Either.right(TitanOperationStatus.INVALID_ID);
+            return Either.right(JanusGraphOperationStatus.INVALID_ID);
         }
 
         String key = idToKey.get(id);
@@ -638,11 +657,12 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         log.trace("The key-value {} = {} was retrieved for id {}", key, value, id);
 
-        Either<AdditionalInfoParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(parameterData, AdditionalInfoParameterData.class);
+        Either<AdditionalInfoParameterData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
+            .updateNode(parameterData, AdditionalInfoParameterData.class);
 
         if (updateNode.isRight()) {
-            TitanOperationStatus status = updateNode.right().value();
-            if (status != TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus status = updateNode.right().value();
+            if (status != JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("GetAdditionnalInformationParameter", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + componentId, String.valueOf(status));
             }
             return Either.right(status);
@@ -655,21 +675,23 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
     @Override
-    public Either<AdditionalInformationDefinition, TitanOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String componentId, boolean ignoreVerification) {
+    public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String componentId, boolean ignoreVerification) {
 
         if (!ignoreVerification) {
-            TitanOperationStatus verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
-            if (verifyNodeTypeVsComponent != TitanOperationStatus.OK) {
+            JanusGraphOperationStatus
+                verifyNodeTypeVsComponent = verifyNodeTypeVsComponent(nodeType, componentId);
+            if (verifyNodeTypeVsComponent != JanusGraphOperationStatus.OK) {
                 return Either.right(verifyNodeTypeVsComponent);
             }
         }
 
-        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+        Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                 NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
         if (getResult.isRight()) {
-            TitanOperationStatus status = getResult.right().value();
-            if (status != TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus status = getResult.right().value();
+            if (status != JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("GetAdditionnalInformationParameters", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + componentId, String.valueOf(status));
             }
             return Either.right(status);
@@ -693,11 +715,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<AdditionalInformationDefinition, TitanOperationStatus> either = this.getAllAdditionalInformationParameters(nodeType, resourceId, ignoreVerification);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> either = this.getAllAdditionalInformationParameters(nodeType, resourceId, ignoreVerification);
 
             if (either.isRight()) {
-                TitanOperationStatus status = either.right().value();
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                JanusGraphOperationStatus status = either.right().value();
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             } else {
                 AdditionalInformationDefinition additionalInformationDefinition = either.left().value();
                 result = Either.left(additionalInformationDefinition);
@@ -716,10 +738,10 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         if (!inTransaction) {
             if (result == null || result.isRight()) {
                 log.error(GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH);
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             } else {
                 log.debug(GOING_TO_EXECUTE_COMMIT_ON_GRAPH);
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }
@@ -732,11 +754,11 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<AdditionalInfoParameterInfo, TitanOperationStatus> either = this.getAdditionalInformationParameter(nodeType, resourceId, id);
+            Either<AdditionalInfoParameterInfo, JanusGraphOperationStatus> either = this.getAdditionalInformationParameter(nodeType, resourceId, id);
 
             if (either.isRight()) {
                 log.error("Failed to fetch additional information property with id {} of component {}", id, resourceId);
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(either.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(either.right().value()));
             } else {
                 AdditionalInfoParameterInfo additionalInformationDefinition = either.left().value();
                 result = Either.left(additionalInformationDefinition);
@@ -756,16 +778,17 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
         try {
 
-            Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, TitanOperationStatus> getResult = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
+            Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
+                .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.ADDITIONAL_INFORMATION,
                     NodeTypeEnum.AdditionalInfoParameters, AdditionalInfoParameterData.class);
 
             if (getResult.isRight()) {
-                TitanOperationStatus status = getResult.right().value();
-                if (status == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus status = getResult.right().value();
+                if (status == JanusGraphOperationStatus.NOT_FOUND) {
                     return Either.right(StorageOperationStatus.OK);
                 } else {
                     BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("DeleteAdditionalInformationNode", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + resourceId, String.valueOf(status));
-                    result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                    result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 }
                 return result;
             }
@@ -773,11 +796,12 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
             ImmutablePair<AdditionalInfoParameterData, GraphEdge> value = getResult.left().value();
             AdditionalInfoParameterData parameterData = value.getLeft();
 
-            Either<AdditionalInfoParameterData, TitanOperationStatus> deleteNodeRes = titanGenericDao.deleteNode(parameterData, AdditionalInfoParameterData.class);
+            Either<AdditionalInfoParameterData, JanusGraphOperationStatus> deleteNodeRes = janusGraphGenericDao
+                .deleteNode(parameterData, AdditionalInfoParameterData.class);
             if (deleteNodeRes.isRight()) {
-                TitanOperationStatus status = getResult.right().value();
+                JanusGraphOperationStatus status = getResult.right().value();
                 BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("DeleteAdditionalInformationNode", (String) parameterData.getUniqueId(), String.valueOf(status));
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 return result;
             }
 
@@ -792,12 +816,13 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         }
     }
 
-    private TitanOperationStatus verifyNodeTypeVsComponent(NodeTypeEnum nodeType, String componentId) {
-        Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId);
+    private JanusGraphOperationStatus verifyNodeTypeVsComponent(NodeTypeEnum nodeType, String componentId) {
+        Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty = janusGraphGenericDao
+            .getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId);
         if (vertexByProperty.isRight()) {
-            TitanOperationStatus status = vertexByProperty.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = vertexByProperty.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return status;
         } else {
@@ -806,14 +831,14 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
             if (label != null) {
                 if (!label.equals(nodeType.getName())) {
                     log.debug("The node type {} is not appropriate to component {}", nodeType, componentId);
-                    return TitanOperationStatus.INVALID_ID;
+                    return JanusGraphOperationStatus.INVALID_ID;
                 }
             } else {
                 log.debug("The node type {}  with id {} does not have a label property.", nodeType, componentId);
-                return TitanOperationStatus.INVALID_ID;
+                return JanusGraphOperationStatus.INVALID_ID;
             }
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
     }
 
 }

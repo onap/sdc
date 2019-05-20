@@ -31,7 +31,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
-import org.openecomp.sdc.ci.tests.utils.DbUtils.TitanState;
+import org.openecomp.sdc.ci.tests.utils.DbUtils.JanusGraphState;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -45,7 +45,7 @@ public class ImportCapabilityTypeCITest {
 
 	@AfterClass
 	public static void afterClass() {
-		DbUtils.shutDowntitan();
+		DbUtils.shutDownJanusGraph();
 	}
 
 	static Config config = Config.instance();
@@ -55,7 +55,7 @@ public class ImportCapabilityTypeCITest {
 
 	@Test
 	public void testAddingCapabilityTypes() throws IOException {
-		TitanState originalState = DbUtils.getCurrentTitanState();
+		JanusGraphState originalState = DbUtils.getCurrentJanusGraphState();
 
 		String importResourceDir = config.getImportResourceConfigDir();
 
@@ -64,20 +64,20 @@ public class ImportCapabilityTypeCITest {
 		importCapabilityType(capabilityTypes);
 		Either<Vertex, Boolean> eitherVertex = DbUtils.getVertexByUId("tosca.capabilities.Test.Ci");
 		AssertJUnit.assertTrue(eitherVertex.isLeft());
-		DbUtils.restoreToTitanState(originalState);
+		DbUtils.restoreToJanusGraphState(originalState);
 		eitherVertex = DbUtils.getVertexByUId("tosca.capabilities.Test.Ci");
 		AssertJUnit.assertTrue(eitherVertex.isRight());
 	}
 
 	@Test
 	public void AddingCapabilityNotFound() throws IOException {
-		TitanState originalState = DbUtils.getCurrentTitanState();
+		JanusGraphState originalState = DbUtils.getCurrentJanusGraphState();
 		String importResourceTestsDir = config.getImportResourceTestsConfigDir();
 		String capabilitiesTests = importResourceTestsDir + File.separator + "capabilityTypesCi.zip";
 		importCapabilityType(capabilitiesTests);
 		Either<Vertex, Boolean> eitherVertex = DbUtils.getVertexByUId("tosca.capabilities.NonExsitingCapability");
 		AssertJUnit.assertTrue(eitherVertex.isRight());
-		DbUtils.restoreToTitanState(originalState);
+		DbUtils.restoreToJanusGraphState(originalState);
 	}
 
 	public static Integer importAllCapabilityTypes() throws IOException {

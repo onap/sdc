@@ -42,16 +42,16 @@ supportAllottedResourcesAndProxy: false
 deleteLockTimeoutInSeconds: 60
 maxDeleteComponents: 10
 
-titanCfgFile: src\main\resources\config\titan.properties
-titanMigrationKeySpaceCfgFile: src\main\resources\config\titan-migration.properties
-titanInMemoryGraph: false
-titanLockTimeout: 1800
+janusGraphCfgFile: src\main\resources\config\janusgraph.properties
+janusGraphMigrationKeySpaceCfgFile: src\main\resources\config\janusgraph-migration.properties
+janusGraphInMemoryGraph: false
+janusGraphLockTimeout: 1800
 
-# The interval to try and reconnect to titan DB when it is down during ASDC startup:
-titanReconnectIntervalInSeconds: 3
+# The interval to try and reconnect to JanusGraph DB when it is down during ASDC startup:
+janusGraphReconnectIntervalInSeconds: 3
 
-# The read timeout towards Titan DB when health check is invoked:
-titanHealthCheckReadTimeout: 1
+# The read timeout towards JanusGraph DB when health check is invoked:
+janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 esReconnectIntervalInSeconds: 3

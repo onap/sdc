@@ -44,7 +44,7 @@ import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.AnnotationValidator;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
@@ -59,7 +59,7 @@ public class YamlTemplateParsingHandlerTest {
     @Mock
     private AnnotationValidator annotationValidator;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private User user;
 
@@ -103,7 +103,7 @@ public class YamlTemplateParsingHandlerTest {
 
         AnnotationBusinessLogic annotationBusinessLogic = new AnnotationBusinessLogic(annotationTypeOperations,
                 annotationValidator);
-        handler = new YamlTemplateParsingHandler(titanDao, groupTypeBusinessLogic, annotationBusinessLogic);
+        handler = new YamlTemplateParsingHandler(janusGraphDao, groupTypeBusinessLogic, annotationBusinessLogic);
         stubGetGroupType();
     }
 

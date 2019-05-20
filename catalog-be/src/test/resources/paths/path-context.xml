@@ -38,7 +38,7 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.dao.neo4j,
 		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.cache,
-		org.openecomp.sdc.be.dao.titan,
+		org.openecomp.sdc.be.dao.janusgraph,
 		org.openecomp.sdc.be.user, 
 		org.openecomp.sdc.be.impl,
 		org.openecomp.sdc.be.auditing.impl,
@@ -51,8 +51,8 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.switchover.detector,
 		org.openecomp.sdc.be.tosca,
 		org.openecomp.sdc.be.model.operations.impl,
-		org.openecomp.sdc.be.model.jsontitan.operations,
-		org.openecomp.sdc.be.model.jsontitan.utils,
+		org.openecomp.sdc.be.model.jsonjanusgraph.operations,
+		org.openecomp.sdc.be.model.jsonjanusgraph.utils,
 		org.openecomp.sdc.be.components.csar,
 		org.openecomp.sdc.be.datamodel.utils,
 		org.openecomp.sdc.be.model.utils,
@@ -79,7 +79,7 @@ Modifications copyright (c) 2018 Nokia
   <bean id="distribution-engine-cluster-health" class="org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth" />
   <bean id="categoriesImportManager" class="org.openecomp.sdc.be.components.impl.CategoriesImportManager" />
   <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
-  <bean id="titan-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryTitanGraphClient" />
+  <bean id="janusgraph-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient" />
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
   <bean id="component-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ComponentCassandraDaoMock" />
   <bean id="cassandra-client" class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock" />

@@ -43,7 +43,8 @@ public class UndoCheckoutTest extends LifecycleTestBase {
 
         super.setup();
         // checkout transition object
-        undoCheckoutObj = new UndoCheckoutTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  titanDao);
+        undoCheckoutObj = new UndoCheckoutTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         undoCheckoutObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         undoCheckoutObj.setConfigurationManager(configurationManager);
 

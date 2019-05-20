@@ -21,7 +21,7 @@ import java.util.Map;
 import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
@@ -39,11 +39,11 @@ public class RelationshipTypeBusinessLogic {
     protected ComponentsUtils componentsUtils;
 
     public Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> getAllRelationshipTypes() {
-        Either<Map<String, RelationshipTypeDefinition>, TitanOperationStatus> allRelationshipTypes =
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> allRelationshipTypes =
                 relationshipTypeOperation.getAllRelationshipTypes();
         if (allRelationshipTypes.isRight()) {
-            TitanOperationStatus operationStatus = allRelationshipTypes.right().value();
-            if (TitanOperationStatus.NOT_FOUND == operationStatus) {
+            JanusGraphOperationStatus operationStatus = allRelationshipTypes.right().value();
+            if (JanusGraphOperationStatus.NOT_FOUND == operationStatus) {
                 BeEcompErrorManager.getInstance().logInternalDataError("FetchRelationshipTypes", "Relationship types "
                                 + "are "
                                 + "not loaded",

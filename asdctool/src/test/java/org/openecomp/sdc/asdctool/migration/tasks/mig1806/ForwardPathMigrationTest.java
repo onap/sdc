@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 
 public class ForwardPathMigrationTest {
@@ -17,7 +17,7 @@ public class ForwardPathMigrationTest {
     ForwardPathMigration forwardPathMigration = null;
 
     @Mock
-    TitanDao titanDao;
+    JanusGraphDao janusGraphDao;
 
     @Mock
     UserAdminOperation userAdminOperation;
@@ -27,7 +27,7 @@ public class ForwardPathMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        forwardPathMigration = new ForwardPathMigration(titanDao, userAdminOperation, toscaOperationFacade);
+        forwardPathMigration = new ForwardPathMigration(janusGraphDao, userAdminOperation, toscaOperationFacade);
     }
 
     @Test

@@ -9,7 +9,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.springframework.core.annotation.Order;
 
 import java.util.List;

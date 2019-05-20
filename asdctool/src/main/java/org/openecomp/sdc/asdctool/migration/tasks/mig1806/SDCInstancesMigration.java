@@ -4,12 +4,12 @@ import fj.data.Either;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
@@ -17,8 +17,8 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 @Component
 public class SDCInstancesMigration implements Migration {
 
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     private NodeTemplateOperation nodeTemplateOperation;
 
     private static final Logger log = Logger.getLogger(SDCInstancesMigration.class);
@@ -41,8 +41,8 @@ public class SDCInstancesMigration implements Migration {
     private static final List<String> UUID_PROPS_NAMES = Arrays.asList("providing_service_uuid", "providing_service_uuid");
  
  
-    public SDCInstancesMigration(TitanDao titanDao, NodeTemplateOperation nodeTemplateOperation) {
-        this.titanDao = titanDao;
+    public SDCInstancesMigration(JanusGraphDao janusGraphDao, NodeTemplateOperation nodeTemplateOperation) {
+        this.janusGraphDao = janusGraphDao;
         this.nodeTemplateOperation = nodeTemplateOperation;
     }
 
@@ -69,13 +69,15 @@ public class SDCInstancesMigration implements Migration {
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
         hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.CVFC);
 
-        status = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, hasNotProps, JsonParseFlagEnum.ParseAll)
+        status = janusGraphDao
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, hasNotProps, JsonParseFlagEnum.ParseAll)
                 .either(this::connectAll, this::handleError);
         return status;
     }
 
-    private StorageOperationStatus handleError(TitanOperationStatus err) {
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.NOT_FOUND == err ? TitanOperationStatus.OK : err);
+    private StorageOperationStatus handleError(JanusGraphOperationStatus err) {
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+            JanusGraphOperationStatus.NOT_FOUND == err ? JanusGraphOperationStatus.OK : err);
     }
 
     private StorageOperationStatus connectAll(List<GraphVertex> containersV) {
@@ -96,7 +98,8 @@ public class SDCInstancesMigration implements Migration {
         ComponentTypeEnum componentType = containerV.getType();
         Map<String, MapPropertiesDataDefinition> instanceProperties = null;
         if (componentType == ComponentTypeEnum.RESOURCE) {
-            Either<GraphVertex, TitanOperationStatus> subcategoryV = titanDao.getChildVertex(containerV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+            Either<GraphVertex, JanusGraphOperationStatus> subcategoryV = janusGraphDao
+                .getChildVertex(containerV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
             if (subcategoryV.isRight()) {
                 log.debug("Failed to fetch category vertex for resource {} error {}  ", containerV.getUniqueId(), subcategoryV.right().value());
                 return StorageOperationStatus.GENERAL_ERROR;
@@ -122,9 +125,9 @@ public class SDCInstancesMigration implements Migration {
 
             } finally {
                 if (status == StorageOperationStatus.OK) {
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 } else {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
             }
         }
@@ -133,10 +136,11 @@ public class SDCInstancesMigration implements Migration {
 
     private Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> getInstProperties(GraphVertex containerV) {
         Map<String, MapPropertiesDataDefinition> instanceProperties;
-       Either<GraphVertex, TitanOperationStatus> instProps = titanDao.getChildVertex(containerV, EdgeLabelEnum.INST_PROPERTIES, JsonParseFlagEnum.ParseAll);
+       Either<GraphVertex, JanusGraphOperationStatus> instProps = janusGraphDao
+           .getChildVertex(containerV, EdgeLabelEnum.INST_PROPERTIES, JsonParseFlagEnum.ParseAll);
       
         if (instProps.isRight()) {
-            if (instProps.right().value() == TitanOperationStatus.NOT_FOUND) {
+            if (instProps.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
                 instanceProperties = new HashMap<>();
             } else {
                 log.debug("Failed to fetch instance properties vertex for resource {} error {}  ", containerV.getUniqueId(), instProps.right().value());

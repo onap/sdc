@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.joining;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphElement;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.impl.heal.HealGraphDao;
 import org.openecomp.sdc.be.dao.impl.heal.HealNodeGraphDao;
-import org.openecomp.sdc.be.dao.impl.heal.HealTitanGraphDao;
+import org.openecomp.sdc.be.dao.impl.heal.HealJanusGraphDao;
 import org.openecomp.sdc.be.dao.impl.heal.HealVertexGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.heal.Heal;
@@ -58,7 +58,7 @@ public class HealingPipelineDao {
 
     private HealGraphDao healNodeGraphDao;
     private HealGraphDao healVertexGraphDao;
-    private HealGraphDao healTitanVertexGraphDao;
+    private HealGraphDao healJanusGraphVertexGraphDao;
 
     public HealingPipelineDao() {
         healingPipeline = ImmutableListMultimap.of();
@@ -74,7 +74,7 @@ public class HealingPipelineDao {
     public void initGraphHealers() {
         healNodeGraphDao = new HealNodeGraphDao(this);
         healVertexGraphDao = new HealVertexGraphDao(this);
-        healTitanVertexGraphDao = new HealTitanGraphDao(this);
+        healJanusGraphVertexGraphDao = new HealJanusGraphDao(this);
     }
 
 
@@ -85,8 +85,8 @@ public class HealingPipelineDao {
         if (graphNode instanceof GraphElement) {
             return healNodeGraphDao;
         }
-        if (graphNode instanceof TitanVertex) {
-            return healTitanVertexGraphDao;
+        if (graphNode instanceof JanusGraphVertex) {
+            return healJanusGraphVertexGraphDao;
         }
 
         return null;
@@ -133,7 +133,7 @@ public class HealingPipelineDao {
         graphVertex.addMetadataProperty(GraphPropertyEnum.HEALING_VERSION, currentHealVersion.getVersion());
     }
 
-    public void setHealingVersion(TitanVertex graphVertex) {
+    public void setHealingVersion(JanusGraphVertex graphVertex) {
         graphVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty(), currentHealVersion.getVersion());
     }
 

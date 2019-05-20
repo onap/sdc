@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,10 +31,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -55,14 +55,14 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class AdditionalInformationOperationTest extends ModelTestBase {
-    private static final TitanGenericDao titanGenericDao = mock(TitanGenericDao.class);
+    private static final JanusGraphGenericDao JANUS_GRAPH_GENERIC_DAO = mock(JanusGraphGenericDao.class);
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
     @Mock
-    private TitanVertex titanVertex;
+    private JanusGraphVertex janusGraphVertex;
 
-    @javax.annotation.Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
+    @javax.annotation.Resource(name = "janusgraph-generic-dao")
+    private JanusGraphGenericDao janusGraphDao;
 
     @javax.annotation.Resource(name = "additional-information-operation")
     private IAdditionalInformationOperation additionalInformationOperation;
@@ -90,10 +90,10 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 
     @Test
     public void testAddInfoParameter_InvalidId(){
-        Either<AdditionalInformationDefinition, TitanOperationStatus> result;
+        Either<AdditionalInformationDefinition, JanusGraphOperationStatus> result;
         String uid = "uid";
         String componentId = "componentId";
-        when(titanGenericDao.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(titanVertex));
+        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(janusGraphVertex));
         result = additionalInformationOperation.addAdditionalInformationParameter
                 (NodeTypeEnum.Resource,componentId,"key","value");
         assertThat(result.isRight());
@@ -101,10 +101,10 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 
     @Test
     public void testUpdateInfoParameter_InvalidId(){
-        Either<AdditionalInformationDefinition, TitanOperationStatus> result;
+        Either<AdditionalInformationDefinition, JanusGraphOperationStatus> result;
         String uid = "uid";
         String componentId = "componentId";
-        when(titanGenericDao.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(titanVertex));
+        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(janusGraphVertex));
         result = additionalInformationOperation.updateAdditionalInformationParameter
                 (NodeTypeEnum.Resource,componentId,"id","key","value");
         assertTrue(result.isRight());
@@ -112,17 +112,17 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 
     @Test
     public void testDelAdditionalInfoParam_InvalidId() {
-        Either<AdditionalInformationDefinition, TitanOperationStatus> result;
+        Either<AdditionalInformationDefinition, JanusGraphOperationStatus> result;
         String id = "uid";
         String componentId = "componentId";
-        TitanGraph graph = titanDao.getGraph().left().value();
-        TitanVertex v1 = graph.addVertex();
+        JanusGraph graph = janusGraphDao.getGraph().left().value();
+        JanusGraphVertex v1 = graph.addVertex();
         v1.property("uid", componentId);
         v1.property(GraphPropertiesDictionary.LABEL.getProperty(), "resource");
-        TitanVertex v2 = graph.addVertex();
+        JanusGraphVertex v2 = graph.addVertex();
         v2.property(id,id);
 
-        TitanEdge addEdge = v1.addEdge(GraphEdgeLabels.ADDITIONAL_INFORMATION.getProperty(), v2);
+        JanusGraphEdge addEdge = v1.addEdge(GraphEdgeLabels.ADDITIONAL_INFORMATION.getProperty(), v2);
         addEdge.property("edgeProp", "resource");
         graph.tx().commit();
 
@@ -132,18 +132,18 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
     }
 
     private void clearGraph() {
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
         }
-        titanDao.commit();
+        janusGraphDao.commit();
     }
 
     private UserData deleteAndCreateUser(String userId, String firstName, String lastName) {
@@ -152,16 +152,16 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
         userData.setFirstName(firstName);
         userData.setLastName(lastName);
 
-        titanDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
-        titanDao.createNode(userData, UserData.class);
-        titanDao.commit();
+        janusGraphDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
+        janusGraphDao.createNode(userData, UserData.class);
+        janusGraphDao.commit();
 
         return userData;
     }
 
     private void deleteAndCreateCategory(String category) {
         String[] names = category.split("/");
-        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
+        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], janusGraphDao);
     }
 
 }

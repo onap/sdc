@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.RequirementOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.RequirementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -120,15 +120,15 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
                 result = requirementOperation.addRequirement(componentId, requirementsToReturn);
             }
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(),
                                 storedComponent.getComponentType()), ""));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(requirementsToReturn);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error(EXCEPTION_OCCURRED_DURING_REQUIREMENTS, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -222,15 +222,15 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
                 result = requirementOperation.addRequirement(componentId, requirementsToReturn);
             }
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(),
                                 storedComponent.getComponentType()), ""));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(requirementsToReturn);
         } catch (Exception e) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             LOGGER.error(EXCEPTION_OCCURRED_DURING_REQUIREMENTS, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -263,7 +263,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
         Either<List<RequirementDefinition>, StorageOperationStatus> deleteRequirementEither
                 = deleteRequirement(storedComponent, storedComponentRequirements, requirementDefinitionToDelete);
         if (deleteRequirementEither.isRight()) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(deleteRequirementEither.right().value()));
         }
         requirementsToReturn.add(initiateNewRequirement(storedComponent, requirementDefinitionToUpdate));
@@ -300,7 +300,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
             Either<List<RequirementDefinition>, StorageOperationStatus> deleteRequirementEither
                     = deleteRequirement(storedComponent, storedComponentRequirements, requirementDefinitionToDelete);
             if (deleteRequirementEither.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(deleteRequirementEither.right().value()));
             }
         }
@@ -392,17 +392,17 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
             Either<List<RequirementDefinition>, StorageOperationStatus> result
                     = deleteRequirement(storedComponent, storedComponentRequirements, requirementDefinitionToDelete);
             if (result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 LOGGER.error("Failed to delete requirement  from component {}. Response is {}",
                         storedComponent.getName(), result.right().value());
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils
                         .convertFromStorageResponse(result.right().value(), storedComponent.getComponentType())));
             }
-            titanDao.commit();
+            janusGraphDao.commit();
             return Either.left(requirementDefinitionToDelete);
         } catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_REQUIREMENTS, "delete", e);
-            titanDao.rollback();
+            janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.REQUIREMENT_NOT_FOUND));
         } finally {
             if (lockResult.isLeft() && lockResult.left().value()) {
@@ -462,7 +462,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
             if (lockResult.isRight()) {
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(),
                         lockResult.right().value().getFormattedMessage());
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 return Either.right(lockResult.right().value());
             }
         }

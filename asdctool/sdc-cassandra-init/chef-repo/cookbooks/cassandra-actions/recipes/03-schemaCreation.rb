@@ -12,17 +12,17 @@ bash "install tar" do
 end
 
 
-template "titan.properties" do
+template "janusgraph.properties" do
   sensitive true
-  path "/tmp/sdctool/config/titan.properties"
-  source "titan.properties.erb"
+  path "/tmp/sdctool/config/janusgraph.properties"
+  source "janusgraph.properties.erb"
   mode "0755"
   variables({
      :DC_NAME      => node['cassandra']['datacenter_name'],
      :cassandra_ip  => node['Nodes']['CS'].first,
      :cassandra_pwd => node['cassandra'][:cassandra_password],
      :cassandra_usr => node['cassandra'][:cassandra_user],
-     :titan_connection_timeout => node['cassandra']['titan_connection_timeout'],
+     :janusgraph_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
      :replication_factor => node['cassandra']['replication_factor']
   })
 end
@@ -40,7 +40,7 @@ template "/tmp/sdctool/config/configuration.yaml" do
       :cassandra_port         => node['cassandra']['cassandra_port'],
       :rep_factor             => node['cassandra']['replication_factor'],
       :DC_NAME                => node['cassandra']['datacenter_name'],
-      :titan_Path             => "/tmp/sdctool/config/",
+      :janusgraph_Path        => "/tmp/sdctool/config/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout    => node['cassandra']['socket_read_timeout'],
       :cassandra_pwd          => node['cassandra'][:cassandra_password],
@@ -66,9 +66,9 @@ bash "excuting-schema-creation" do
    EOH
 end
 
-bash "excuting-titanSchemaCreation.sh" do
+bash "excuting-janusGraphSchemaCreation.sh" do
   code <<-EOH
-     chmod +x /tmp/sdctool/scripts/titanSchemaCreation.sh
-     /tmp/sdctool/scripts/titanSchemaCreation.sh /tmp/sdctool/config
+     chmod +x /tmp/sdctool/scripts/janusGraphSchemaCreation.sh
+     /tmp/sdctool/scripts/janusGraphSchemaCreation.sh /tmp/sdctool/config
    EOH
 end

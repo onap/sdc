@@ -38,8 +38,7 @@ Modifications copyright (c) 2018 Nokia
         <lang3.version>3.3.2</lang3.version>
         <lang3.version>3.3.2</lang3.version>
         <guava.version>18.0</guava.version>
-        <titan.version>1.0.0</titan.version>
-        <sdc.titan.version>1.2.0</sdc.titan.version>
+        <janusgraph.version>0.3.1</janusgraph.version>
         <spring.version>4.3.18.RELEASE</spring.version>
         <spring.security.version>3.2.3.RELEASE</spring.security.version>
         <spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
