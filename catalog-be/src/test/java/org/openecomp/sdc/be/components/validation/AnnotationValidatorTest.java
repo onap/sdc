@@ -34,7 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -71,7 +71,7 @@ public class AnnotationValidatorTest {
     public void setUp() throws Exception {
         annotationValidator = new AnnotationValidator(propertyValidator, exceptionUtils, dataTypeCache, componentsUtils);
         allData = Collections.emptyMap();
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> cacheResponse = Either.left(allData);
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> cacheResponse = Either.left(allData);
         Mockito.when(dataTypeCache.getAll()).thenReturn(cacheResponse);
         annotationTypeProperties = Collections.emptyList();
         propertyDataDefinitions = new ArrayList<>();

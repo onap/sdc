@@ -27,18 +27,18 @@ import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -69,7 +69,7 @@ public class LifecycleBusinessLogic {
     private ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Autowired
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Autowired
     private CapabilityOperation capabilityOperation;
@@ -127,30 +127,37 @@ public class LifecycleBusinessLogic {
     private void initStateOperations() {
         stateTransitions = new HashMap<>();
 
-        LifeCycleTransition checkoutOp = new CheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        LifeCycleTransition checkoutOp = new CheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         stateTransitions.put(checkoutOp.getName().name(), checkoutOp);
 
-        UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         undoCheckoutOp.setArtifactsBusinessLogic(artifactsBusinessLogic);
         stateTransitions.put(undoCheckoutOp.getName().name(), undoCheckoutOp);
 
-        LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         stateTransitions.put(checkinOp.getName().name(), checkinOp);
 
         LifeCycleTransition certificationRequest = new CertificationRequestTransition(componentUtils, lifecycleOperation, serviceBusinessLogic, toscaOperationFacade,
-                titanDao);
+            janusGraphDao);
         stateTransitions.put(certificationRequest.getName().name(), certificationRequest);
 
-        LifeCycleTransition startCertification = new StartCertificationTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        LifeCycleTransition startCertification = new StartCertificationTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         stateTransitions.put(startCertification.getName().name(), startCertification);
 
-        LifeCycleTransition failCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.FAIL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        LifeCycleTransition failCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.FAIL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         stateTransitions.put(failCertification.getName().name(), failCertification);
 
-        LifeCycleTransition cancelCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CANCEL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        LifeCycleTransition cancelCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CANCEL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         stateTransitions.put(cancelCertification.getName().name(), cancelCertification);
 
-        CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
+        CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         successCertification.setArtifactsManager(artifactsBusinessLogic);
         successCertification.setNodeTemplateOperation(nodeTemplateOperation);
         stateTransitions.put(successCertification.getName().name(), successCertification);
@@ -532,9 +539,9 @@ public class LifecycleBusinessLogic {
             log.info("unlock component {}", resource.getUniqueId());
             if (!inTransaction) {
                 if (result.isLeft()) {
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 } else {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
                 if (needLock) {
                     NodeTypeEnum nodeType = resource.getComponentType().getNodeType();

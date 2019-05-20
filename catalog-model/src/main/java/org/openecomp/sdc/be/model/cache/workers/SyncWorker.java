@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.model.cache.workers;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
@@ -85,7 +85,7 @@ public class SyncWorker implements Runnable, IWorker {
             log.debug("sync worker:{} encounered an exception", workerName);
             log.debug("exception", e);
         } finally {
-            this.cacheMangerOperation.getTitanGenericDao().commit();
+            this.cacheMangerOperation.getJanusGraphGenericDao().commit();
         }
     }
 
@@ -97,11 +97,11 @@ public class SyncWorker implements Runnable, IWorker {
     private void clearCacheRecords() {
         cacheIdAndTimeMap.forEach((k, v) -> {
             try {
-                Either<ComponentMetadataData, TitanOperationStatus> componentFromGraphRes = getComponentMetaData(k,
+                Either<ComponentMetadataData, JanusGraphOperationStatus> componentFromGraphRes = getComponentMetaData(k,
                         NodeTypeEnum.getByName(v.getType()));
                 if (componentFromGraphRes.isRight()) {
-                    TitanOperationStatus error = componentFromGraphRes.right().value();
-                    if (TitanOperationStatus.NOT_FOUND.equals(error)) {
+                    JanusGraphOperationStatus error = componentFromGraphRes.right().value();
+                    if (JanusGraphOperationStatus.NOT_FOUND.equals(error)) {
                         long delay = System.currentTimeMillis() - v.getModificationTime().getTime();
                         if (delay > updateDelayInMilliseconds) {
                             this.cacheMangerOperation.deleteComponentInCache(k, v.getModificationTime().getTime(),
@@ -148,11 +148,11 @@ public class SyncWorker implements Runnable, IWorker {
     private void syncCacheByComponentType(NodeTypeEnum nodeTypeEnum) {
         if (!this.shutdown) {
             log.trace("syncCache records of type:{} .", nodeTypeEnum);
-            Either<List<ComponentMetadataData>, TitanOperationStatus> getAllResult = getAllComponentsMetaData(
+            Either<List<ComponentMetadataData>, JanusGraphOperationStatus> getAllResult = getAllComponentsMetaData(
                     nodeTypeEnum);
             List<ComponentMetadataData> componentList = new ArrayList<>();
-            if (getAllResult.isRight() && !TitanOperationStatus.NOT_FOUND.equals(getAllResult.right().value())) {
-                log.debug("error while trying to get all components of type:{} TitanOperationStatus:{}.", nodeTypeEnum,
+            if (getAllResult.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(getAllResult.right().value())) {
+                log.debug("error while trying to get all components of type:{} JanusGraphOperationStatus:{}.", nodeTypeEnum,
                         getAllResult.right().value());
                 return;
             }
@@ -243,9 +243,9 @@ public class SyncWorker implements Runnable, IWorker {
      * @return a list of retrieved nodes matching the given type or not found in
      *         case no nodes were found or error in case of failure
      */
-    private Either<List<ComponentMetadataData>, TitanOperationStatus> getAllComponentsMetaData(
+    private Either<List<ComponentMetadataData>, JanusGraphOperationStatus> getAllComponentsMetaData(
             NodeTypeEnum nodeTypeEnum) {
-        return this.cacheMangerOperation.getTitanGenericDao().getByCriteria(nodeTypeEnum, null,
+        return this.cacheMangerOperation.getJanusGraphGenericDao().getByCriteria(nodeTypeEnum, null,
                 ComponentMetadataData.class);
     }
 
@@ -259,9 +259,9 @@ public class SyncWorker implements Runnable, IWorker {
      * @return the meta dat of the component or the error encountered during the
      *         get
      */
-    private Either<ComponentMetadataData, TitanOperationStatus> getComponentMetaData(String uid,
-            NodeTypeEnum nodeTypeEnum) {
-        return this.cacheMangerOperation.getTitanGenericDao().getNode(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum),
+    private Either<ComponentMetadataData, JanusGraphOperationStatus> getComponentMetaData(String uid,
+                                                                                          NodeTypeEnum nodeTypeEnum) {
+        return this.cacheMangerOperation.getJanusGraphGenericDao().getNode(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum),
                 uid, ComponentMetadataData.class);
     }
 }

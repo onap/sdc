@@ -21,10 +21,10 @@
 package org.openecomp.sdc.ci.tests.utils;
 
 import com.google.gson.*;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
@@ -43,8 +43,8 @@ import java.util.Map.Entry;
 
 public class DbUtils {
 
-	private static String titanConfigFilePath;
-	private static TitanGraph titanGraph;
+	private static String janusGraphConfigFilePath;
+	private static JanusGraph janusGraph;
 
 	
 	public static void cleanAllAudits() throws IOException {
@@ -74,11 +74,11 @@ public class DbUtils {
 	}
 
 	public Either<Vertex, Boolean> getVertexByUId(String uid) {
-		TitanGraph titanGraph = getTitanGraph();
+		JanusGraph janusGraph = getJanusGraph();
 		Either<Vertex, Boolean> result = Either.right(false);
-		// Iterator<Vertex> vertexItr = titanGraph.getVertices().iterator();
+		// Iterator<Vertex> vertexItr = janusGraph.getVertices().iterator();
 
-		Iterator<TitanVertex> vertexItr = titanGraph.query().vertices().iterator();
+		Iterator<JanusGraphVertex> vertexItr = janusGraph.query().vertices().iterator();
 		while (vertexItr.hasNext()) {
 			Vertex vertex = vertexItr.next();
 			// String uidFoundVal = vertex.getProperty("uid");
@@ -90,14 +90,14 @@ public class DbUtils {
 		return result;
 	}
 
-	public static TitanState getCurrentTitanState() {
-		TitanGraph titanGraph = getTitanGraph();
+	public static JanusGraphState getCurrentJanusGraphState() {
+		JanusGraph janusGraph = getJanusGraph();
 		List<Vertex> vertices = new ArrayList<>();
 		List<Edge> edges = new ArrayList<>();
-		// Iterator<Edge> edgesItr = titanGraph.getEdges().iterator();
-		Iterator<TitanEdge> edgesItr = titanGraph.query().edges().iterator();
-		// Iterator<Vertex> verticesItr = titanGraph.getVertices().iterator();
-		Iterator<TitanVertex> verticesItr = titanGraph.query().vertices().iterator();
+		// Iterator<Edge> edgesItr = janusGraph.getEdges().iterator();
+		Iterator<JanusGraphEdge> edgesItr = janusGraph.query().edges().iterator();
+		// Iterator<Vertex> verticesItr = janusGraph.getVertices().iterator();
+		Iterator<JanusGraphVertex> verticesItr = janusGraph.query().vertices().iterator();
 		while (edgesItr.hasNext()) {
 			edges.add(edgesItr.next());
 		}
@@ -105,43 +105,43 @@ public class DbUtils {
 			vertices.add(verticesItr.next());
 		}
 
-		TitanState currState = new TitanState(edges, vertices);
+		JanusGraphState currState = new JanusGraphState(edges, vertices);
 		return currState;
 
 	}
 
 	//
-	private static TitanGraph getTitanGraph() {
-		if (titanGraph == null) {
-			titanGraph = TitanFactory.open(titanConfigFilePath);
+	private static JanusGraph getJanusGraph() {
+		if (janusGraph == null) {
+			janusGraph = JanusGraphFactory.open(janusGraphConfigFilePath);
 		}
-		return titanGraph;
+		return janusGraph;
 	}
 
-	public void restoreToTitanState(TitanState titanStateToRestoreTo) {
+	public void restoreToJanusGraphState(JanusGraphState janusGraphStateToRestoreTo) {
 		List<Vertex> verticesToRemove = new ArrayList<>(), verticesToAdd = new ArrayList<>();
 		List<Edge> edgesToRemove = new ArrayList<>(), edgesToAdd = new ArrayList<>();
 
-		TitanState currentTitanState = getCurrentTitanState();
+		JanusGraphState currentJanusGraphState = getCurrentJanusGraphState();
 
 		List<Edge> joinedEdges = new ArrayList<>();
-		joinedEdges.addAll(titanStateToRestoreTo.edges);
-		joinedEdges.retainAll(currentTitanState.edges);
+		joinedEdges.addAll(janusGraphStateToRestoreTo.edges);
+		joinedEdges.retainAll(currentJanusGraphState.edges);
 
 		List<Vertex> joinedVertices = new ArrayList<>();
-		joinedVertices.addAll(titanStateToRestoreTo.vertices);
-		joinedVertices.retainAll(currentTitanState.vertices);
+		joinedVertices.addAll(janusGraphStateToRestoreTo.vertices);
+		joinedVertices.retainAll(currentJanusGraphState.vertices);
 
-		edgesToRemove.addAll(currentTitanState.edges);
+		edgesToRemove.addAll(currentJanusGraphState.edges);
 		edgesToRemove.removeAll(joinedEdges);
 
-		verticesToRemove.addAll(currentTitanState.vertices);
+		verticesToRemove.addAll(currentJanusGraphState.vertices);
 		verticesToRemove.removeAll(joinedVertices);
 
-		edgesToAdd.addAll(titanStateToRestoreTo.edges);
+		edgesToAdd.addAll(janusGraphStateToRestoreTo.edges);
 		edgesToAdd.removeAll(joinedEdges);
 
-		verticesToAdd.addAll(titanStateToRestoreTo.vertices);
+		verticesToAdd.addAll(janusGraphStateToRestoreTo.vertices);
 		verticesToAdd.removeAll(joinedVertices);
 
 		modifyGraphAccordingToDelta(verticesToRemove, verticesToAdd, edgesToRemove, edgesToAdd);
@@ -151,24 +151,24 @@ public class DbUtils {
 	private void modifyGraphAccordingToDelta(List<Vertex> verticesToRemove, List<Vertex> verticesToAdd,
 			List<Edge> edgesToRemove, List<Edge> edgesToAdd) {
 
-		TitanGraph titanGraph = getTitanGraph();
+		JanusGraph janusGraph = getJanusGraph();
 
 		for (Vertex vertex : verticesToRemove) {
-			// titanGraph.removeVertex(vertex);
+			// janusGraph.removeVertex(vertex);
 			vertex.remove();
 		}
 		for (Vertex vertex : verticesToAdd) {
-			TitanVertex titanVertex = titanGraph.addVertex();
-			copyProperties(vertex, titanVertex);
+			JanusGraphVertex janusGraphVertex = janusGraph.addVertex();
+			copyProperties(vertex, janusGraphVertex);
 		}
 
 		for (Edge edge : edgesToRemove) {
-			// titanGraph.removeEdge(edge);
+			// janusGraph.removeEdge(edge);
 			edge.remove();
 		}
 
 		for (Edge edge : edgesToAdd) {
-			// Element addedEdge = titanGraph.addEdge(edge.getId(),
+			// Element addedEdge = janusGraph.addEdge(edge.getId(),
 			// edge.getVertex(Direction.OUT), edge.getVertex(Direction.IN),
 			// edge.getLabel());
 
@@ -181,8 +181,8 @@ public class DbUtils {
 
 		}
 
-		// titanGraph.commit();
-		titanGraph.tx().commit();
+		// janusGraph.commit();
+		janusGraph.tx().commit();
 
 	}
 
@@ -197,26 +197,26 @@ public class DbUtils {
 
 	}
 
-	public static class TitanState {
+	public static class JanusGraphState {
 		private List<Edge> edges;
 		private List<Vertex> vertices;
 
-		private TitanState(List<Edge> edges, List<Vertex> vertices) {
+		private JanusGraphState(List<Edge> edges, List<Vertex> vertices) {
 			this.edges = edges;
 			this.vertices = vertices;
 		}
 
 		@Override
 		public String toString() {
-			return "TitanState [edges=" + edges.size() + ", vertices=" + vertices.size() + "]";
+			return "JanusGraphState [edges=" + edges.size() + ", vertices=" + vertices.size() + "]";
 		}
 
 	}
 
-	public void shutDowntitan() {
-		if (titanGraph != null) {
-			// titanGraph.shutdown();
-			titanGraph.close();
+	public void shutDownJanusGraph() {
+		if (janusGraph != null) {
+			// janusGraph.shutdown();
+			janusGraph.close();
 		}
 	}
 

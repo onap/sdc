@@ -28,8 +28,8 @@ import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -48,17 +48,17 @@ import static org.mockito.Mockito.when;
 
 public class SdncTransactionTest {
     private static ESCatalogDAO esCatalogDao = Mockito.mock(ESCatalogDAO.class);
-    private static TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    private static JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
     private static final Logger log = Mockito.spy(Logger.getLogger(SdncTransactionTest.class));
     private static int transactionId = 0;
     private static ConfigurationManager configurationManager;
 
     public enum TestAction {
-        TitanAction, Rollback, GeneralAction
+        JanusGraphAction, Rollback, GeneralAction
     }
 
     public enum TestResponse {
-        TitanResponseSuccess, GeneralSuccess
+        JanusGraphResponseSuccess, GeneralSuccess
     }
 
     @BeforeClass
@@ -75,22 +75,24 @@ public class SdncTransactionTest {
     public void beforeTest() {
         reset(log);
         reset(esCatalogDao);
-        reset(titanGenericDao);
+        reset(janusGraphGenericDao);
     }
 
     @Test
-    public void testInvokeTitanAction() {
+    public void testInvokeJanusGraphAction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
 
-        doBasicTitanAction(transactionId, tx, false, true);
+        doBasicJanusGraphAction(transactionId, tx, false, true);
         assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
     }
 
     @Test
     public void testInvokeESAction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
 
         doESAddArtifactAction(transactionId, tx, true, true);
         assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
@@ -99,7 +101,8 @@ public class SdncTransactionTest {
     @Test
     public void testfinishTransaction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doFinishTransaction(transactionId, tx, true);
         assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
     }
@@ -107,7 +110,8 @@ public class SdncTransactionTest {
     @Test
     public void testFinishOnClosedTransaction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doFinishTransaction(transactionId, tx, true);
 
         TransactionCodeEnum finishTransaction = tx.finishTransaction();
@@ -120,30 +124,33 @@ public class SdncTransactionTest {
     @Test
     public void testCallingLastActionTwice() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
-        doBasicTitanAction(transactionId, tx, true, true);
-        Either<TestResponse, TransactionCodeEnum> doBasicTitanAction = doBasicTitanAction(transactionId, tx, true, false);
-        assertTrue(doBasicTitanAction.isRight());
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
+        doBasicJanusGraphAction(transactionId, tx, true, true);
+        Either<TestResponse, TransactionCodeEnum> doBasicJanusGraphAction = doBasicJanusGraphAction(transactionId, tx, true, false);
+        assertTrue(doBasicJanusGraphAction.isRight());
         assertNotSame(tx.getStatus(), TransactionStatusEnum.OPEN);
-        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DOUBLE_FINISH_FLAG_ACTION, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DOUBLE_FINISH_FLAG_ACTION, transactionId, DBTypeEnum.JANUSGRAPH
+            .name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
     public void testActionOnClosedTransaction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doFinishTransaction(transactionId, tx, true);
 
         Either<DBActionCodeEnum, TransactionCodeEnum> eitherESResult = tx.invokeESAction(false, ESActionTypeEnum.ADD_ARTIFACT, createDummyArtifactData());
         assertTrue(eitherESResult.isRight());
         assertSame(eitherESResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
-        Either<Object, TransactionCodeEnum> eitherTitanResult = tx.invokeTitanAction(false, createBasicAction(TestAction.TitanAction, TestResponse.TitanResponseSuccess));
-        assertTrue(eitherTitanResult.isRight());
-        assertSame(eitherTitanResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
+        Either<Object, TransactionCodeEnum> eitherJanusGraphResult = tx.invokeJanusGraphAction(false, createBasicAction(TestAction.JanusGraphAction, TestResponse.JanusGraphResponseSuccess));
+        assertTrue(eitherJanusGraphResult.isRight());
+        assertSame(eitherJanusGraphResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
-        Either<Object, TransactionCodeEnum> eitherGeneralDBAction = tx.invokeGeneralDBAction(true, DBTypeEnum.TITAN, createBasicAction(TestAction.TitanAction, TestResponse.TitanResponseSuccess),
-                createBasicAction(TestAction.Rollback, TestResponse.TitanResponseSuccess));
+        Either<Object, TransactionCodeEnum> eitherGeneralDBAction = tx.invokeGeneralDBAction(true, DBTypeEnum.JANUSGRAPH, createBasicAction(TestAction.JanusGraphAction, TestResponse.JanusGraphResponseSuccess),
+                createBasicAction(TestAction.Rollback, TestResponse.JanusGraphResponseSuccess));
         assertTrue(eitherGeneralDBAction.isRight());
         assertSame(eitherGeneralDBAction.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
@@ -155,9 +162,10 @@ public class SdncTransactionTest {
     @Test
     public void testBasicHappyScenario() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
 
-        doBasicTitanAction(transactionId, tx, false, true);
+        doBasicJanusGraphAction(transactionId, tx, false, true);
         assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
 
         doESAddArtifactAction(transactionId, tx, true, true);
@@ -172,23 +180,27 @@ public class SdncTransactionTest {
     @Test
     public void testRollbackSucceededOnAction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doESAddArtifactAction(transactionId, tx, false, true);
 
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         String crushMessage = "DB Crush Simulation";
-        Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeTitanAction(false, createCrushingAction(TestAction.TitanAction, crushMessage));
+        Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeJanusGraphAction(false, createCrushingAction(TestAction.JanusGraphAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
         assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_SUCCESS);
         assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
-        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
-        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log).info(LogMessages.ROLLBACK_SUCCEEDED_GENERAL, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_SUCCEEDED_GENERAL, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -197,35 +209,40 @@ public class SdncTransactionTest {
     @Test
     public void testRollbackFailedOnAction() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
 
         doESAddArtifactAction(transactionId, tx, false, true);
 
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.NOT_CONNECTED);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.NOT_CONNECTED);
         String crushMessage = "DB Crush Simulation";
-        Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeTitanAction(false, createCrushingAction(TestAction.TitanAction, crushMessage));
+        Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeJanusGraphAction(false, createCrushingAction(TestAction.JanusGraphAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
         assertSame(tx.getStatus(), TransactionStatusEnum.FAILED_ROLLBACK);
         assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_FAILED);
-        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
-        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
     public void testRollbackSucceededOnCommit() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doESAddArtifactAction(transactionId, tx, false, true);
-        doBasicTitanAction(transactionId, tx, true, true);
+        doBasicJanusGraphAction(transactionId, tx, true, true);
 
-        when(titanGenericDao.commit()).thenReturn(TitanOperationStatus.GENERAL_ERROR);
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.commit()).thenReturn(JanusGraphOperationStatus.GENERAL_ERROR);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
         assertSame(transactionCode, TransactionCodeEnum.ROLLBACK_SUCCESS);
@@ -234,8 +251,10 @@ public class SdncTransactionTest {
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
-        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log).info(LogMessages.ROLLBACK_SUCCEEDED_GENERAL, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_SUCCEEDED_GENERAL, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -244,12 +263,13 @@ public class SdncTransactionTest {
     @Test
     public void testRollbackFailedOnCommit() {
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         doESAddArtifactAction(transactionId, tx, false, true);
-        doBasicTitanAction(transactionId, tx, true, true);
+        doBasicJanusGraphAction(transactionId, tx, true, true);
 
-        when(titanGenericDao.commit()).thenReturn(TitanOperationStatus.GENERAL_ERROR);
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.commit()).thenReturn(JanusGraphOperationStatus.GENERAL_ERROR);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         String esError = "No Connection to Es";
         Mockito.doThrow(new RuntimeException(esError)).when(esCatalogDao).deleteArtifact(Mockito.anyString());
         // finishTransaction
@@ -260,15 +280,18 @@ public class SdncTransactionTest {
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
-        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+        verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.JANUSGRAPH
+            .name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
     public void testInvokeGeneralAction() {
-        when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         int transactionId = getNextTransactionId();
-        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
+        TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
+            janusGraphGenericDao);
         IDBAction generalAction = createBasicAction(TestAction.GeneralAction, TestResponse.GeneralSuccess);
         IDBAction rollbackAction = createBasicAction(TestAction.Rollback, TestResponse.GeneralSuccess);
         String crushMessage = "No DB Connection";
@@ -294,30 +317,31 @@ public class SdncTransactionTest {
 
     }
 
-    private Either<TestResponse, TransactionCodeEnum> doBasicTitanAction(int transactionId, TransactionSdncImpl tx, boolean isLastAction, boolean isVerifyAction) {
-        // Add Titan Action
-        Either<TestResponse, TransactionCodeEnum> eitherTitanResult = tx.invokeTitanAction(isLastAction, createBasicAction(TestAction.TitanAction, TestResponse.TitanResponseSuccess));
+    private Either<TestResponse, TransactionCodeEnum> doBasicJanusGraphAction(int transactionId, TransactionSdncImpl tx, boolean isLastAction, boolean isVerifyAction) {
+        // Add JanusGraph Action
+        Either<TestResponse, TransactionCodeEnum> eitherJanusGraphResult = tx.invokeJanusGraphAction(isLastAction, createBasicAction(TestAction.JanusGraphAction, TestResponse.JanusGraphResponseSuccess));
         if (isVerifyAction) {
-            // Check Titan Action
-            assertTrue(eitherTitanResult.isLeft());
-            assertSame(eitherTitanResult.left().value(), TestResponse.TitanResponseSuccess);
-            verify(log).debug(TestAction.TitanAction.name());
-            verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+            // Check JanusGraph Action
+            assertTrue(eitherJanusGraphResult.isLeft());
+            assertSame(eitherJanusGraphResult.left().value(), TestResponse.JanusGraphResponseSuccess);
+            verify(log).debug(TestAction.JanusGraphAction.name());
+            verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.JANUSGRAPH.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verifyNoErrorsInLog();
             verifyNoInfoInLog();
         }
-        return eitherTitanResult;
+        return eitherJanusGraphResult;
     }
 
     private TransactionCodeEnum doFinishTransaction(int transactionId, TransactionSdncImpl tx, boolean isVerifyAction) {
         // Prerequisite finishTransaction
-        when(titanGenericDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphGenericDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
         if (isVerifyAction) {
             // Check finishTransaction
             verify(log).debug(LogMessages.COMMIT_ACTION_ALL_DB, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-            verify(log).debug(LogMessages.COMMIT_ACTION_SPECIFIC_DB, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
+            verify(log).debug(LogMessages.COMMIT_ACTION_SPECIFIC_DB, transactionId, DBTypeEnum.JANUSGRAPH
+                .name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             assertSame(transactionCode, TransactionCodeEnum.SUCCESS);
         }
         return transactionCode;
@@ -332,7 +356,7 @@ public class SdncTransactionTest {
         Either<DBActionCodeEnum, TransactionCodeEnum> eitherEsAction = tx.invokeESAction(isLastAction, ESActionTypeEnum.ADD_ARTIFACT, createDummyArtifactData());
 
         if (isVerifyAction) {
-            // Check Titan Action
+            // Check JanusGraph Action
             assertTrue(eitherEsAction.isLeft());
             assertSame(eitherEsAction.left().value(), DBActionCodeEnum.SUCCESS);
             verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.ELASTIC_SEARCH.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());

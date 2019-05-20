@@ -29,14 +29,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -68,7 +68,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void primitiveValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -84,7 +84,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void primitiveValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -100,7 +100,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithValidValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -116,7 +116,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithValidValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -132,7 +132,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithListWithPrimitiveValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -148,7 +148,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithListWithPrimitiveValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -164,7 +164,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithMapWithPrimitiveValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -180,7 +180,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void complexWithMapWithPrimitiveValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -196,7 +196,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void inputValidValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		InputDefinition inputDefinition = new InputDefinition();
@@ -216,7 +216,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void inputValidValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		InputDefinition inputDefinition = new InputDefinition();
@@ -235,7 +235,7 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	@Test
 	public void serviceConsumptionValidValueSuccessTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
@@ -251,7 +251,7 @@ public class PropertyValueConstraintValidationUtilTest {
 	}
 	@Test
 	public void serviceConsumptionValidValueFailTest() {
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
 		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();

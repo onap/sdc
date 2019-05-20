@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -34,7 +34,7 @@ public class CommonImportManagerTest {
     @Mock
     PropertyOperation propertyOperation;
     @Mock
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
     
     @Mock
     private Function<Object, Either<ActionStatus, ResponseFormat>> validator;
@@ -51,7 +51,7 @@ public class CommonImportManagerTest {
     public void startUp() {
         commonImportManager = new CommonImportManager(componentsUtils, propertyOperation);
         
-        when(propertyOperation.getTitanGenericDao()).thenReturn(titanGenericDao);
+        when(propertyOperation.getJanusGraphGenericDao()).thenReturn(janusGraphGenericDao);
     }
     
     @Test
@@ -71,7 +71,7 @@ public class CommonImportManagerTest {
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
-        verify(titanGenericDao).rollback();
+        verify(janusGraphGenericDao).rollback();
     }
     
     @Test
@@ -91,7 +91,7 @@ public class CommonImportManagerTest {
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
-        verify(titanGenericDao).rollback();
+        verify(janusGraphGenericDao).rollback();
     }
     
     @Test
@@ -114,7 +114,7 @@ public class CommonImportManagerTest {
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
-        verify(titanGenericDao).rollback();
+        verify(janusGraphGenericDao).rollback();
     }
     
     @Test
@@ -139,7 +139,7 @@ public class CommonImportManagerTest {
 
         verify(elementAdder).apply(type1);
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
-        verify(titanGenericDao).rollback();
+        verify(janusGraphGenericDao).rollback();
     }
 
     
@@ -160,7 +160,7 @@ public class CommonImportManagerTest {
 
         verify(elementAdder).apply(type1);
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
-        verify(titanGenericDao).commit();
+        verify(janusGraphGenericDao).commit();
         
         assertEquals(type1, result.left().value().get(0).getLeft());
         assertEquals(true, result.left().value().get(0).getRight());
@@ -189,7 +189,7 @@ public class CommonImportManagerTest {
 
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader).apply(type1_1, type1);
-        verify(titanGenericDao).rollback();
+        verify(janusGraphGenericDao).rollback();
     }
     
     @Test
@@ -209,7 +209,7 @@ public class CommonImportManagerTest {
 
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader).apply(type1_1, type1);
-        verify(titanGenericDao).commit();
+        verify(janusGraphGenericDao).commit();
         
         assertEquals(type1_1, result.left().value().get(0).getLeft());
         assertEquals(true, result.left().value().get(0).getRight());
@@ -232,7 +232,7 @@ public class CommonImportManagerTest {
 
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader).apply(type1_1, type1);
-        verify(titanGenericDao).commit();
+        verify(janusGraphGenericDao).commit();
         
         assertEquals(type1_1, result.left().value().get(0).getLeft());
         assertEquals(false, result.left().value().get(0).getRight());

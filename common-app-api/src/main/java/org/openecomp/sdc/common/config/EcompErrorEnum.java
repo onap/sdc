@@ -40,7 +40,7 @@ public enum EcompErrorEnum {
 									EcompClassification.FATAL),
 
 	BeHealthCheckRecovery(EcompErrorCode.E_205, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL,
-			EcompClassification.INFORMATION, null), BeHealthCheckTitanRecovery(EcompErrorCode.E_206, ErrorType.RECOVERY,
+			EcompClassification.INFORMATION, null), BeHealthCheckJanusGraphRecovery(EcompErrorCode.E_206,	ErrorType.RECOVERY,
 					AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
 					null), BeHealthCheckElasticSearchRecovery(EcompErrorCode.E_207, ErrorType.RECOVERY,
 							AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
@@ -54,8 +54,8 @@ public enum EcompErrorEnum {
 													AlarmSeverity.CRITICAL, EcompClassification.ERROR,
 													BeHealthCheckRecovery),
 
-	BeHealthCheckTitanError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL,
-			EcompClassification.ERROR, BeHealthCheckTitanRecovery), BeHealthCheckElasticSearchError(
+	BeHealthCheckJanusGraphError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL,
+			EcompClassification.ERROR, BeHealthCheckJanusGraphRecovery), BeHealthCheckElasticSearchError(
 					EcompErrorCode.E_202, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR,
 					BeHealthCheckElasticSearchRecovery), BeHealthCheckUebClusterError(EcompErrorCode.E_203,
 							ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR,
@@ -245,7 +245,7 @@ public enum EcompErrorEnum {
 	 * 
 	 * BeHealthCheckRecovery(EcompErrorCode.E_205, ErrorType.RECOVERY,
 	 * AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
-	 * BeHealthCheckTitanRecovery(EcompErrorCode.E_206, ErrorType.RECOVERY,
+	 * BeHealthCheckJanusGraphRecovery(EcompErrorCode.E_206, ErrorType.RECOVERY,
 	 * AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
 	 * BeHealthCheckElasticSearchRecovery(EcompErrorCode.E_207,
 	 * ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL,
@@ -258,9 +258,9 @@ public enum EcompErrorEnum {
 	 * AlarmSeverity.CRITICAL, EcompClassification.ERROR,
 	 * BeHealthCheckRecovery),
 	 * 
-	 * BeHealthCheckTitanError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR,
+	 * BeHealthCheckJanusGraphError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR,
 	 * AlarmSeverity.CRITICAL, EcompClassification.ERROR,
-	 * BeHealthCheckTitanRecovery),
+	 * BeHealthCheckJanusGraphRecovery),
 	 * BeHealthCheckElasticSearchError(EcompErrorCode.E_202,
 	 * ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL,
 	 * EcompClassification.ERROR, BeHealthCheckElasticSearchRecovery),

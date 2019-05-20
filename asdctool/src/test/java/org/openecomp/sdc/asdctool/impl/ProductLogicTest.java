@@ -12,7 +12,7 @@ public class ProductLogicTest {
 	@Test
 	public void testDeleteAllProducts() throws Exception {
 		ProductLogic testSubject;
-		String titanFile = "";
+		String janusGraphFile = "";
 		String beHost = "";
 		String bePort = "";
 		String adminUser = "";
@@ -20,7 +20,7 @@ public class ProductLogicTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.deleteAllProducts(titanFile, beHost, bePort, adminUser);
+		result = testSubject.deleteAllProducts(janusGraphFile, beHost, bePort, adminUser);
 		assertFalse(result);
 	}
 }

@@ -20,17 +20,17 @@ import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLog
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
@@ -73,7 +73,7 @@ public class UpgradeMigration1710 implements PostMigration {
     private boolean isNodeTypesSupportOnly = true;
 
     @Autowired
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
@@ -262,10 +262,10 @@ public class UpgradeMigration1710 implements PostMigration {
     private void cleanup(MigrationResult.MigrationStatus status) {
         if (status == MigrationResult.MigrationStatus.COMPLETED ) {
             log.info("Upgrade migration 1710 has been successfully finished. ");
-            titanDao.commit();
+            janusGraphDao.commit();
         } else {
             log.info("Upgrade migration 1710 was failed. ");
-            titanDao.rollback();
+            janusGraphDao.rollback();
         }
         outputHandler.writeOutputAndCloseFile();
         if (!isNodeTypesSupportOnly && isLockSucceeded) {
@@ -298,11 +298,11 @@ public class UpgradeMigration1710 implements PostMigration {
         finally {
             if (result) {
                 log.info("Service upgrade finished successfully: uniqueId {} ", currUid);
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             else {
                 log.error("Failed to upgrade service with uniqueId {} ", currUid);
-                titanDao.rollback();
+                janusGraphDao.rollback();
             }
             markCheckedOutServiceAsDeletedIfUpgradeFailed(currUid, result);
         }
@@ -313,7 +313,7 @@ public class UpgradeMigration1710 implements PostMigration {
     }
 
     private void upgradeServices() {
-        Either<List<String>, TitanOperationStatus> getServicesRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.SERVICE);
+        Either<List<String>, JanusGraphOperationStatus> getServicesRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.SERVICE);
         if (getServicesRes.isRight()) {
             log.error("Failed to retrieve the latest certified service versions");
             return;
@@ -340,7 +340,7 @@ public class UpgradeMigration1710 implements PostMigration {
             return upgradeService(getServiceRes.left().value());
         }
         if(!latestGenericTypes.containsKey(derivedFromGenericType)){
-            Either<List<GraphVertex>, TitanOperationStatus> getDerivedRes = findDerivedResources(derivedFromGenericType);
+            Either<List<GraphVertex>, JanusGraphOperationStatus> getDerivedRes = findDerivedResources(derivedFromGenericType);
             if(getDerivedRes.isRight()){
                 log.error(FAILED_TO_UPGRADE_COMPONENT, getServiceRes.left().value().getComponentType().getValue(), getServiceRes.left().value().getName(), getServiceRes.left().value().getInvariantUUID(), getServiceRes.left().value().getVersion(), "findDerivedResources", getDerivedRes.right().value());
                 outputHandler.addRecord( getServiceRes.left().value().getComponentType().name(),getServiceRes.left().value().getName(), getServiceRes.left().value().getInvariantUUID(), getServiceRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), getDerivedRes.right().value());
@@ -530,7 +530,7 @@ public class UpgradeMigration1710 implements PostMigration {
             Optional<ComponentInstanceProperty> propertyInvariantUuid = instanceProperties.stream().filter(p->p.getName().equals(SERVICE_INVARIANT_UUID_RPOPERTY)).findFirst();
             if(propertyUuid.isPresent() && propertyInvariantUuid.isPresent()){
                 String serviceInvariantUUID = propertyInvariantUuid.get().getValue();
-                Either<List<GraphVertex>, TitanOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(serviceInvariantUUID);
+                Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(serviceInvariantUUID);
                 if (getLatestOriginServiceRes.isRight()) {
                     return instance;
                 }
@@ -564,9 +564,9 @@ public class UpgradeMigration1710 implements PostMigration {
     }
 
     private Either<ComponentInstance, ResponseFormat> upgradeServiceProxyInstance(org.openecomp.sdc.be.model.Component component, ComponentInstance instance, ComponentInstance newComponentInstance) {
-        Either<List<GraphVertex>, TitanOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(instance.getSourceModelInvariant());
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(instance.getSourceModelInvariant());
         if (getLatestOriginServiceRes.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(getLatestOriginServiceRes.right().value()), instance.getOriginType().getComponentType())));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getLatestOriginServiceRes.right().value()), instance.getOriginType().getComponentType())));
         }
         ModelConverter.getVertexType(instance.getOriginType().name());
         Either<Resource, StorageOperationStatus> getOriginRes = toscaOperationFacade.getLatestByName(instance.getComponentName());
@@ -579,7 +579,7 @@ public class UpgradeMigration1710 implements PostMigration {
         return changeAssetVersion(component, instance, newComponentInstance);
     }
 
-    private Either<List<GraphVertex>, TitanOperationStatus> getLatestCertifiedService(String invariantUUID) {
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestCertifiedService(String invariantUUID) {
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
@@ -588,7 +588,8 @@ public class UpgradeMigration1710 implements PostMigration {
         propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
-        return titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
+        return janusGraphDao
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 
     private Either<ComponentInstance, ResponseFormat> changeAssetVersion(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance instance, ComponentInstance newComponentInstance) {
@@ -598,7 +599,7 @@ public class UpgradeMigration1710 implements PostMigration {
     private boolean upgradeNodeTypes() {
         log.info("Starting upgrade node types upon upgrade migration 1710 process. ");
         if (nodeTypes != null && !nodeTypes.isEmpty()) {
-            Either<List<String>, TitanOperationStatus> getRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.NODE_TYPE, ComponentTypeEnum.RESOURCE);
+            Either<List<String>, JanusGraphOperationStatus> getRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.NODE_TYPE, ComponentTypeEnum.RESOURCE);
             if (getRes.isRight()) {
                 return false;
             }
@@ -632,7 +633,7 @@ public class UpgradeMigration1710 implements PostMigration {
 
     private boolean upgradeVFs() {
         log.info("Starting upgrade VFs upon upgrade migration 1710 process. ");
-        Either<List<String>, TitanOperationStatus> getVfsRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.RESOURCE);
+        Either<List<String>, JanusGraphOperationStatus> getVfsRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.RESOURCE);
         if (getVfsRes.isRight()) {
             log.info(UPGRADE_VFS_FAILED);
             return false;
@@ -664,11 +665,11 @@ public class UpgradeMigration1710 implements PostMigration {
             finally {
                 if (result) {
                     log.info("Resource upgrade finished successfully: uniqueId {} ", currUid);
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
                 else {
                     log.error("Failed to upgrade resource with uniqueId {} ", currUid);
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
                 markCheckedOutResourceAsDeletedIfUpgradeFailed(currUid, result);
             }
@@ -803,7 +804,7 @@ public class UpgradeMigration1710 implements PostMigration {
         if (StringUtils.isNotEmpty(derivedFromGenericType) && !latestGenericTypes.containsKey(derivedFromGenericType)) {
             log.info("Starting upgrade vf with name {}, invariantUUID {}, version {}, latest derived from generic type {}, latest derived from generic version {}. ", component.getName(), component.getInvariantUUID(), component.getVersion(), derivedFromGenericType, derivedFromGenericVersion);
             log.info("Starting to fetch latest generic node type {}. ", derivedFromGenericType);
-            Either<List<GraphVertex>, TitanOperationStatus> getDerivedRes = findDerivedResources(derivedFromGenericType);
+            Either<List<GraphVertex>, JanusGraphOperationStatus> getDerivedRes = findDerivedResources(derivedFromGenericType);
             if (getDerivedRes.isRight()) {
                 outputHandler.addRecord(component.getComponentType().name(), component.getName(), component.getInvariantUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), getDerivedRes.right().value());
                 log.info("Failed to upgrade component with name {}, invariantUUID {}, version {} and latest generic. Status is {}. ", component.getName(), component.getInvariantUUID(), component.getVersion(), derivedFromGenericType);
@@ -834,9 +835,10 @@ public class UpgradeMigration1710 implements PostMigration {
         StorageOperationStatus result = StorageOperationStatus.OK;
         log.info("Starting upgrade node type with name {}, invariantUUID {}, version{}. ", nodeTypeV.getMetadataProperty(GraphPropertyEnum.NAME), nodeTypeV.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID), nodeTypeV.getMetadataProperty(GraphPropertyEnum.VERSION));
         log.info("Starting to find derived to for node type with name {}, invariantUUID {}, version{}. ", nodeTypeV.getMetadataProperty(GraphPropertyEnum.NAME), nodeTypeV.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID), nodeTypeV.getMetadataProperty(GraphPropertyEnum.VERSION));
-        Either<List<GraphVertex>, TitanOperationStatus> parentResourceRes = titanDao.getParentVertecies(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseMetadata);
-        if (parentResourceRes.isRight() && parentResourceRes.right().value() != TitanOperationStatus.NOT_FOUND) {
-            return DaoStatusConverter.convertTitanStatusToStorageStatus(parentResourceRes.right().value());
+        Either<List<GraphVertex>, JanusGraphOperationStatus> parentResourceRes = janusGraphDao
+            .getParentVertecies(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseMetadata);
+        if (parentResourceRes.isRight() && parentResourceRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(parentResourceRes.right().value());
 
         }
         List<GraphVertex> derivedResourcesUid = getAllDerivedGraphVertices(allCertifiedUids, parentResourceRes);
@@ -870,13 +872,13 @@ public class UpgradeMigration1710 implements PostMigration {
         }
         if (performFullCertification(checkouRes.left().value()).isLeft()) {
             upgradedNodeTypesMap.put(nodeType.getToscaResourceName(), checkouRes.left().value());
-            titanDao.commit();
+            janusGraphDao.commit();
             return true;
         }
         return false;
     }
 
-    private List<GraphVertex> getAllDerivedGraphVertices(List<String> allCertifiedUids, Either<List<GraphVertex>, TitanOperationStatus> parentResources) {
+    private List<GraphVertex> getAllDerivedGraphVertices(List<String> allCertifiedUids, Either<List<GraphVertex>, JanusGraphOperationStatus> parentResources) {
         List<GraphVertex> derivedResourcesUid = new ArrayList<>();
 
         if (parentResources.isLeft()) {
@@ -915,14 +917,15 @@ public class UpgradeMigration1710 implements PostMigration {
         return changeStateEither;
     }
 
-    private Either<List<GraphVertex>, TitanOperationStatus> findDerivedResources(String parentResource) {
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, parentResource);
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
-        return titanDao.getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
+        return janusGraphDao
+            .getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 
     private boolean latestVersionExists(GraphVertex latestDerivedFrom, String currentVersion) {
@@ -939,14 +942,14 @@ public class UpgradeMigration1710 implements PostMigration {
         return Double.parseDouble(latestVersion) > Double.parseDouble(currentVersion);
     }
 
-    private Either<List<String>, TitanOperationStatus> getAllLatestCertifiedComponentUids(VertexTypeEnum vertexType, ComponentTypeEnum componentType) {
+    private Either<List<String>, JanusGraphOperationStatus> getAllLatestCertifiedComponentUids(VertexTypeEnum vertexType, ComponentTypeEnum componentType) {
         log.info("Starting to fetch all latest certified not checked out components with type {} upon upgrade migration 1710 process", componentType);
-        Either<List<String>, TitanOperationStatus> result = null;
+        Either<List<String>, JanusGraphOperationStatus> result = null;
         Map<String, String> latestCertifiedMap = new HashMap<>();
         Map<String, String> latestNotCertifiedMap = new HashMap<>();
 
-        Either<List<GraphVertex>, TitanOperationStatus> getComponentsRes = getAllLatestComponents(vertexType, componentType);
-        if (getComponentsRes.isRight() && getComponentsRes.right().value() != TitanOperationStatus.NOT_FOUND) {
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getComponentsRes = getAllLatestComponents(vertexType, componentType);
+        if (getComponentsRes.isRight() && getComponentsRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             log.error("Failed to fetch all latest certified not checked out components with type {}. Status is {}. ", componentType, getComponentsRes.right().value());
             result = Either.right(getComponentsRes.right().value());
         }
@@ -967,7 +970,7 @@ public class UpgradeMigration1710 implements PostMigration {
         return result;
     }
 
-    private Either<List<GraphVertex>, TitanOperationStatus> getAllLatestComponents(VertexTypeEnum vertexType, ComponentTypeEnum componentType) {
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getAllLatestComponents(VertexTypeEnum vertexType, ComponentTypeEnum componentType) {
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
@@ -978,7 +981,8 @@ public class UpgradeMigration1710 implements PostMigration {
         if (vertexType == VertexTypeEnum.TOPOLOGY_TEMPLATE && componentType == ComponentTypeEnum.RESOURCE) {
             propertiesNotToMatch.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.CVFC.name());
         }
-        return titanDao.getByCriteria(vertexType, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
+        return janusGraphDao
+            .getByCriteria(vertexType, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 
     private Either<List<GraphVertex>, StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName) {
@@ -989,11 +993,12 @@ public class UpgradeMigration1710 implements PostMigration {
         propertiesToMatch.put(property, nodeName);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
-        Either<List<GraphVertex>, TitanOperationStatus> highestResources = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> highestResources = janusGraphDao
+            .getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
         if (highestResources.isRight()) {
-            TitanOperationStatus status = highestResources.right().value();
+            JanusGraphOperationStatus status = highestResources.right().value();
             log.debug("Failed to fetch resource with name {}. Status is {} ", nodeName, status);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         List<GraphVertex> resources = highestResources.left().value();
         List<GraphVertex> result = new ArrayList<>();

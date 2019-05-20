@@ -48,7 +48,8 @@ public class CheckoutTest extends LifecycleTestBase {
 
         super.setup();
         // checkout transition object
-        checkoutObj = new CheckoutTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  titanDao);
+        checkoutObj = new CheckoutTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
+            janusGraphDao);
         checkoutObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         checkoutObj.setConfigurationManager(configurationManager);
         bl.setToscaOperationFacade(toscaOperationFacade);

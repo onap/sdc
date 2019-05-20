@@ -20,17 +20,17 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -51,13 +51,13 @@ import static org.junit.Assert.*;
 
 public class PropertyOperationTest extends ModelTestBase {
 
-    HealingTitanGenericDao titanGenericDao = Mockito.mock(HealingTitanGenericDao.class);
+    HealingJanusGraphGenericDao janusGraphGenericDao = Mockito.mock(HealingJanusGraphGenericDao.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(titanGenericDao, null);
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
 
     @Before
     public void setup() {
-        propertyOperation.setTitanGenericDao(titanGenericDao);
+        propertyOperation.setJanusGraphGenericDao(janusGraphGenericDao);
 
     }
 
@@ -68,10 +68,10 @@ public class PropertyOperationTest extends ModelTestBase {
      *
      * PropertyData propertyData = new PropertyData(property, propertyOperation.convertConstraintsToString(constraints));
      *
-     * Either<PropertyData, TitanOperationStatus> either = Either.left(propertyData); //when(propertyDao.create((GraphNeighbourTable)anyObject(), eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either); GraphRelation graphRelation =
-     * new GraphRelation(); Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+     * Either<PropertyData, JanusGraphOperationStatus> either = Either.left(propertyData); //when(propertyDao.create((GraphNeighbourTable)anyObject(), eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either); GraphRelation graphRelation =
+     * new GraphRelation(); Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
      *
-     * when(titanGenericDao.createNode((PropertyData)anyObject(), eq(PropertyData.class))).thenReturn(either); when(titanGenericDao.createRelation((GraphNode)anyObject(), (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
+     * when(janusGraphGenericDao.createNode((PropertyData)anyObject(), eq(PropertyData.class))).thenReturn(either); when(janusGraphGenericDao.createRelation((GraphNode)anyObject(), (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
      * anyMap())).thenReturn(relationResult);
      *
      * Either<PropertyDefinition, StorageOperationStatus> result = propertyOperation.addPropertyToResource(propName, property, NodeTypeEnum.Resource, "my-resource.1.0");
@@ -512,7 +512,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingTitanGenericDao(new TitanGraphClient()), null);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
 	}
 
 	
@@ -572,7 +572,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		String propertyName = "";
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		String resourceId = "";
-		Either<PropertyData, TitanOperationStatus> result;
+		Either<PropertyData, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -583,11 +583,11 @@ public class PropertyOperationTest extends ModelTestBase {
 	@Test
 	public void testAddPropertyToGraphByVertex() throws Exception {
 		PropertyOperation testSubject;
-		TitanVertex metadataVertex = null;
+		JanusGraphVertex metadataVertex = null;
 		String propertyName = "";
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		String resourceId = "";
-		TitanOperationStatus result;
+		JanusGraphOperationStatus result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -596,20 +596,20 @@ public class PropertyOperationTest extends ModelTestBase {
 
 	
 	@Test
-	public void testGetTitanGenericDao() throws Exception {
+	public void testGetJanusGraphGenericDao() throws Exception {
 		PropertyOperation testSubject;
-		TitanGenericDao result;
+		JanusGraphGenericDao result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getTitanGenericDao();
+		result = testSubject.getJanusGraphGenericDao();
 	}
 
 	@Test
 	public void testDeletePropertyFromGraph() throws Exception {
 		PropertyOperation testSubject;
 		String propertyId = "";
-		Either<PropertyData, TitanOperationStatus> result;
+		Either<PropertyData, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -636,7 +636,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyOperation testSubject;
 		String propertyId = "";
 		PropertyDefinition propertyDefinition = null;
-		Either<PropertyData, TitanOperationStatus> result;
+		Either<PropertyData, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -645,14 +645,14 @@ public class PropertyOperationTest extends ModelTestBase {
 
 
 	@Test
-	public void testSetTitanGenericDao()  {
+	public void testSetJanusGraphGenericDao()  {
 
 		PropertyOperation testSubject;
-        HealingTitanGenericDao titanGenericDao = null;
+        HealingJanusGraphGenericDao janusGraphGenericDao = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setTitanGenericDao(titanGenericDao);
+		testSubject.setJanusGraphGenericDao(janusGraphGenericDao);
 	}
 
 	
@@ -663,7 +663,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		NodeTypeEnum nodeType = NodeTypeEnum.Attribute;
 		String uniqueId = "";
-		Either<PropertyData, TitanOperationStatus> result;
+		Either<PropertyData, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -676,7 +676,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyOperation testSubject;
 		NodeTypeEnum nodeType = null;
 		String uniqueId = "";
-		Either<Map<String, PropertyDefinition>, TitanOperationStatus> result;
+		Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -760,7 +760,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyOperation testSubject;
 		String resourceInstanceId = "";
 		String propertyId = "";
-		ImmutablePair<TitanOperationStatus, String> result;
+		ImmutablePair<JanusGraphOperationStatus, String> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -785,7 +785,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	public void testGetAllPropertiesOfResourceInstanceOnlyPropertyDefId() throws Exception {
 		PropertyOperation testSubject;
 		String resourceInstanceUid = "";
-		Either<List<ComponentInstanceProperty>, TitanOperationStatus> result;
+		Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -798,7 +798,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyOperation testSubject;
 		String propertyValueUid = "";
 		String resourceInstanceId = "";
-		Either<PropertyValueData, TitanOperationStatus> result;
+		Either<PropertyValueData, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -882,7 +882,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		PropertyOperation testSubject;
 		String resourceInstanceUid = "";
 		NodeTypeEnum instanceNodeType = null;
-		Either<List<ComponentInstanceProperty>, TitanOperationStatus> result;
+		Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -896,7 +896,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		List<String> pathOfComponentInstances = null;
 		String propertyUniqueId = "";
 		String defaultValue = "";
-		Either<String, TitanOperationStatus> result;
+		Either<String, JanusGraphOperationStatus> result;
 
 		// test 1
 		testSubject = createTestSubject();
@@ -927,7 +927,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	public void testGetDataTypeByUid() throws Exception {
 		PropertyOperation testSubject;
 		String uniqueId = "";
-		Either<DataTypeDefinition, TitanOperationStatus> result;
+		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -988,7 +988,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	public void testGetDataTypeByUidWithoutDerivedDataTypes() throws Exception {
 		PropertyOperation testSubject;
 		String uniqueId = "";
-		Either<DataTypeDefinition, TitanOperationStatus> result;
+		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -1000,7 +1000,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	public void testIsDefinedInDataTypes() throws Exception {
 		PropertyOperation testSubject;
 		String propertyType = "";
-		Either<Boolean, TitanOperationStatus> result;
+		Either<Boolean, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -1011,7 +1011,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	@Test
 	public void testGetAllDataTypes() throws Exception {
 		PropertyOperation testSubject;
-		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> result;
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -1023,7 +1023,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	public void testCheckInnerType() throws Exception {
 		PropertyOperation testSubject;
 		PropertyDataDefinition propDataDef = new PropertyDataDefinition();
-		Either<String, TitanOperationStatus> result;
+		Either<String, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -1034,7 +1034,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	@Test
 	public void testGetAllDataTypeNodes() throws Exception {
 		PropertyOperation testSubject;
-		Either<List<DataTypeData>, TitanOperationStatus> result;
+		Either<List<DataTypeData>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -1083,7 +1083,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		String uniqueId = "";
 		NodeTypeEnum elementType = null;
 		List<PropertyDefinition> properties = null;
-		Either<Map<String, PropertyData>, TitanOperationStatus> result;
+		Either<Map<String, PropertyData>, JanusGraphOperationStatus> result;
 
 		// test 1
 		testSubject = createTestSubject();

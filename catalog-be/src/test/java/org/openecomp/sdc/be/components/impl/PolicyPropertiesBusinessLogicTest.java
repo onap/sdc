@@ -23,7 +23,7 @@ import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -33,7 +33,7 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -51,7 +51,7 @@ public class PolicyPropertiesBusinessLogicTest {
     private UserValidations userValidations;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
@@ -68,7 +68,7 @@ public class PolicyPropertiesBusinessLogicTest {
     @Before
     public void setUp() throws Exception {
         testInstance.setUserValidations(userValidations);
-        testInstance.setTitanGenericDao(titanDao);
+        testInstance.setJanusGraphGenericDao(janusGraphDao);
         testInstance.setToscaOperationFacade(toscaOperationFacade);
         testInstance.setComponentsUtils(componentsUtils);
 
@@ -99,7 +99,7 @@ public class PolicyPropertiesBusinessLogicTest {
 
     @After
     public void tearDown() {
-        verify(titanDao).commit();
+        verify(janusGraphDao).commit();
     }
 
     @Test

@@ -6,13 +6,13 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.operations.UpgradeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
@@ -31,7 +31,7 @@ public class UpgradeBusinessLogic {
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentsUtils;
     private final UpgradeOperation upgradeOperation;
-    private final TitanDao titanDao;
+    private final JanusGraphDao janusGraphDao;
     private LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction("automated upgrade");
 
     private static final List<String> UUID_PROPS_NAMES = Arrays.asList("depending_service_uuid", "providing_service_uuid");
@@ -41,14 +41,14 @@ public class UpgradeBusinessLogic {
     private static final Logger LOGGER = Logger.getLogger(UpgradeBusinessLogic.class);
 
     public UpgradeBusinessLogic(LifecycleBusinessLogic lifecycleBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBusinessLogic, UserValidations userValidations, ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils,
-                                UpgradeOperation upgradeOperation, TitanDao titanDao) {
+                                UpgradeOperation upgradeOperation, JanusGraphDao janusGraphDao) {
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.userValidations = userValidations;
         this.toscaOperationFacade = toscaOperationFacade;
         this.componentsUtils = componentsUtils;
         this.upgradeOperation = upgradeOperation;
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
     }
 
 
@@ -113,7 +113,7 @@ public class UpgradeBusinessLogic {
                     .map(rf -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(rf)));
         } finally {
             // all operation were read only. no commit needed
-            titanDao.rollback();
+            janusGraphDao.rollback();
         }
 
     }

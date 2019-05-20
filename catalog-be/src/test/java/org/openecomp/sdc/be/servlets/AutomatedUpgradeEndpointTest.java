@@ -19,13 +19,13 @@ import org.openecomp.sdc.be.components.upgrade.UpgradeStatus;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.operations.UpgradeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
@@ -71,7 +71,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     private static ToscaOperationFacade toscaOperationFacade;
     private static ComponentsUtils componentsUtils;
     private static UpgradeOperation upgradeOperation;
-    private static TitanDao titanDao;
+    private static JanusGraphDao janusGraphDao;
 
     private static User user;
     private static Resource vfPrev;
@@ -96,7 +96,8 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         UpgradeBusinessLogic upgradeBusinessLogic() {
-            return new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic, userValidations, toscaOperationFacade, componentsUtils, upgradeOperation, titanDao);
+            return new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic, userValidations, toscaOperationFacade, componentsUtils, upgradeOperation,
+                janusGraphDao);
         }
     }
 
@@ -108,7 +109,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         toscaOperationFacade = mock(ToscaOperationFacade.class);
         componentsUtils = mock(ComponentsUtils.class);
         upgradeOperation = mock(UpgradeOperation.class);
-        titanDao = mock(TitanDao.class);
+        janusGraphDao = mock(JanusGraphDao.class);
         user = mock(User.class);
     }
 

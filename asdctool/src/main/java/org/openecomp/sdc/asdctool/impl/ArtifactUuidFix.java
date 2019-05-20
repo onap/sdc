@@ -8,12 +8,12 @@ import org.openecomp.sdc.asdctool.impl.validator.utils.VfModuleArtifactPayloadEx
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
@@ -25,10 +25,10 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -71,7 +71,7 @@ public class ArtifactUuidFix {
     private static final String UTF8 = "utf-8";
 	
 	@Autowired
-	private TitanDao titanDao;
+	private JanusGraphDao janusGraphDao;
 
 	@Autowired
 	private ToscaOperationFacade toscaOperationFacade;
@@ -140,7 +140,7 @@ public class ArtifactUuidFix {
 			hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
 			log.info("Try to fetch resources with properties {} and not {}", hasProps, hasNotProps);
 
-			Either<List<GraphVertex>, TitanOperationStatus> servicesByCriteria = titanDao
+			Either<List<GraphVertex>, JanusGraphOperationStatus> servicesByCriteria = janusGraphDao
 					.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll);
 			if (servicesByCriteria.isRight()) {
 				log.info("Failed to fetch resources {}", servicesByCriteria.right().value());
@@ -182,14 +182,14 @@ public class ArtifactUuidFix {
 					writeModuleResultToFile(writer, resource, null);
 					writer.flush();
 				}
-				titanDao.commit();
+				janusGraphDao.commit();
 			}
 
 		} catch (Exception e) {
 			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 			return false;
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 		}
 		return true;
 	}
@@ -228,7 +228,7 @@ public class ArtifactUuidFix {
 							writer.flush();
 							
 						}
-						titanDao.commit();
+						janusGraphDao.commit();
 					}
 				}
 			}
@@ -237,7 +237,7 @@ public class ArtifactUuidFix {
 			log.info("Failed to fetch services ", e);
 			return false;
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 		}
 		return true;
 	}
@@ -259,7 +259,7 @@ public class ArtifactUuidFix {
 			hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
 			log.info("Try to fetch services with properties {} and not {}", hasProps, hasNotProps);
 
-			Either<List<GraphVertex>, TitanOperationStatus> servicesByCriteria = titanDao
+			Either<List<GraphVertex>, JanusGraphOperationStatus> servicesByCriteria = janusGraphDao
 					.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll);
 			if (servicesByCriteria.isRight()) {
 				log.info("Failed to fetch services {}", servicesByCriteria.right().value());
@@ -290,14 +290,14 @@ public class ArtifactUuidFix {
 				
 				}
 				
-				titanDao.commit();
+				janusGraphDao.commit();
 			}
 			log.info("output file with list of services : {}", fileName);
 		} catch (Exception e) {
 			log.info("Failed to fetch services ", e);
 			return false;
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 		}
 		return true;
 	}
@@ -608,7 +608,7 @@ public class ArtifactUuidFix {
 						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
 								EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
 					}
-					titanDao.commit();
+					janusGraphDao.commit();
 				} else {
 					failedList.add(component);
 				}
@@ -639,7 +639,7 @@ public class ArtifactUuidFix {
 						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
 								EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
 					}
-					titanDao.commit();
+					janusGraphDao.commit();
 				} else {
 					failedList.add(component);
 				}
@@ -660,7 +660,7 @@ public class ArtifactUuidFix {
 		} catch (IOException e) {
 		    log.error(e.getMessage());
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 		}
 		log.info(" Fix finished with res {} ***** ", res);
 		return res;
@@ -688,7 +688,7 @@ public class ArtifactUuidFix {
 					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
 					res = fixDataOnGraph(c.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS,
 							arifacts);
-					titanDao.commit();
+					janusGraphDao.commit();
 				} else {
 					failedList.add(c);
 				}
@@ -737,9 +737,9 @@ public class ArtifactUuidFix {
 			}
 		} finally {
 			if (res)
-				titanDao.commit();
+				janusGraphDao.commit();
 			else
-				titanDao.rollback();
+				janusGraphDao.rollback();
 		}
 		log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent finished  component name {} id {} res {}",
 				c.getName(), c.getUniqueId(), res);
@@ -751,7 +751,7 @@ public class ArtifactUuidFix {
 		log.debug("amount groups to update: VertexTypeEnum {} EdgeLabelEnum {} data size {}", vertexTypeEnum.getName(),
 				edgeLabelEnum, groups.size());
 		boolean res = true;
-		Either<GraphVertex, TitanOperationStatus> getResponse = titanDao.getVertexById(componentId,
+		Either<GraphVertex, JanusGraphOperationStatus> getResponse = janusGraphDao.getVertexById(componentId,
 				JsonParseFlagEnum.NoParse);
 		if (getResponse.isRight()) {
 			log.debug("Couldn't fetch component  unique id {}, error: {}", componentId, getResponse.right().value());
@@ -762,9 +762,9 @@ public class ArtifactUuidFix {
 			GraphVertex componentVertex = getResponse.left().value();
 
 			GraphVertex toscaDataVertex = null;
-			Either<GraphVertex, TitanOperationStatus> groupVertexEither = titanDao.getChildVertex(componentVertex,
+			Either<GraphVertex, JanusGraphOperationStatus> groupVertexEither = janusGraphDao.getChildVertex(componentVertex,
 					edgeLabelEnum, JsonParseFlagEnum.ParseJson);
-			if (groupVertexEither.isRight() && groupVertexEither.right().value() == TitanOperationStatus.NOT_FOUND) {
+			if (groupVertexEither.isRight() && groupVertexEither.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
 				log.debug("no child {}  vertex for component  unique id {}, error: {}", edgeLabelEnum, componentId,
 						groupVertexEither.right().value());
 				return true;
@@ -777,11 +777,11 @@ public class ArtifactUuidFix {
 			if (res) {
 				toscaDataVertex = groupVertexEither.left().value();
 				toscaDataVertex.setJson(groups);
-				Either<GraphVertex, TitanOperationStatus> updatevertexEither = titanDao.updateVertex(toscaDataVertex);
+				Either<GraphVertex, JanusGraphOperationStatus> updatevertexEither = janusGraphDao.updateVertex(toscaDataVertex);
 				if (updatevertexEither.isRight()) {
 					log.debug("failed to update vertex for component  unique id {}, error: {}", componentId,
 							updatevertexEither.right().value());
-					titanDao.rollback();
+					janusGraphDao.rollback();
 					return false;
 				}
 			}
@@ -1081,7 +1081,8 @@ public class ArtifactUuidFix {
 		Map<String, List<Component>> result = new HashMap<>();
 		try {
 
-			Either<List<GraphVertex>, TitanOperationStatus> resultsEither = titanDao.getByCriteria(type, hasProps);
+			Either<List<GraphVertex>, JanusGraphOperationStatus> resultsEither = janusGraphDao
+          .getByCriteria(type, hasProps);
 			if (resultsEither.isRight()) {
 				log.error("getVerticesToValidate failed {} ",resultsEither.right().value());
 				return result;
@@ -1107,7 +1108,7 @@ public class ArtifactUuidFix {
 				} else {
 					compList.add(toscaElement.left().value());
 				}
-				titanDao.commit();
+				janusGraphDao.commit();
 
 			});
 
@@ -1115,7 +1116,7 @@ public class ArtifactUuidFix {
 			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 
 		}
 		return result;
@@ -1161,7 +1162,7 @@ public class ArtifactUuidFix {
 						} else {
 							compListfull.add(toscaElement.left().value());
 						}
-						this.titanDao.commit();
+						this.janusGraphDao.commit();
 					}
 
 					compToFix.put(entry.getKey(), compListfull);
@@ -1174,7 +1175,7 @@ public class ArtifactUuidFix {
 			log.info(FAILED_TO_FETCH_VF_RESOURCES, e);
 			return false;
 		} finally {
-			titanDao.commit();
+			janusGraphDao.commit();
 		}
 		return result;
 	}

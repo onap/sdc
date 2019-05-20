@@ -20,15 +20,15 @@
 
 package org.openecomp.sdc.be.components.path.utils;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -44,21 +44,21 @@ import java.util.UUID;
 
 public final class GraphTestUtils {
 
-    public static GraphVertex createRootCatalogVertex(TitanDao titanDao) {
+    public static GraphVertex createRootCatalogVertex(JanusGraphDao janusGraphDao) {
         GraphVertex catalogRootVertex = new GraphVertex(VertexTypeEnum.CATALOG_ROOT);
         catalogRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
-        return titanDao.createVertex(catalogRootVertex)
+        return janusGraphDao.createVertex(catalogRootVertex)
                 .either(v -> v, s -> null);
     }
 
-    public static GraphVertex createRootArchiveVertex(TitanDao titanDao) {
+    public static GraphVertex createRootArchiveVertex(JanusGraphDao janusGraphDao) {
         GraphVertex archiveRootVertex = new GraphVertex(VertexTypeEnum.ARCHIVE_ROOT);
         archiveRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
-        return titanDao.createVertex(archiveRootVertex)
+        return janusGraphDao.createVertex(archiveRootVertex)
                 .either(v -> v, s -> null);
     }
 
-    public static GraphVertex createResourceVertex(TitanDao titanDao, Map<GraphPropertyEnum,Object> metadataProps, ResourceTypeEnum type) {
+    public static GraphVertex createResourceVertex(JanusGraphDao janusGraphDao, Map<GraphPropertyEnum,Object> metadataProps, ResourceTypeEnum type) {
         GraphVertex vertex = new GraphVertex();
         if (type == ResourceTypeEnum.VF) {
             vertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
@@ -77,12 +77,12 @@ public final class GraphTestUtils {
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());
         }
-        titanDao.createVertex(vertex);
-        titanDao.commit();
+        janusGraphDao.createVertex(vertex);
+        janusGraphDao.commit();
         return vertex;
     }
 
-    public static GraphVertex createServiceVertex(TitanDao titanDao, Map<GraphPropertyEnum, Object> metadataProps){
+    public static GraphVertex createServiceVertex(JanusGraphDao janusGraphDao, Map<GraphPropertyEnum, Object> metadataProps){
         GraphVertex vertex = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         String uuid = UUID.randomUUID().toString();
 
@@ -95,27 +95,27 @@ public final class GraphTestUtils {
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());
         }
-        titanDao.createVertex(vertex);
-        titanDao.commit();
+        janusGraphDao.createVertex(vertex);
+        janusGraphDao.commit();
         return vertex;
     }
 
-    public static void clearGraph(TitanDao titanDao) {
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+    public static void clearGraph(JanusGraphDao janusGraphDao) {
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
         }
-        titanDao.commit();
+        janusGraphDao.commit();
     }
 
-    public static String exportGraphMl(TitanGraph graph, String outputDirectory) {
+    public static String exportGraphMl(JanusGraph graph, String outputDirectory) {
         String result = null;
         String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".graphml";
         try {

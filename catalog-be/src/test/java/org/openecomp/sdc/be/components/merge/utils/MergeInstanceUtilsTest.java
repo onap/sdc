@@ -11,11 +11,11 @@ import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.utils.ServiceBuilder;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
@@ -39,11 +39,11 @@ public class MergeInstanceUtilsTest {
     private ToscaOperationFacade toscaOperationFacade;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Before
     public void startUp() {
-        ExceptionUtils exceptionUtils = new ExceptionUtils(titanDao);
+        ExceptionUtils exceptionUtils = new ExceptionUtils(janusGraphDao);
         mergeInstanceUtils = new MergeInstanceUtils(toscaOperationFacade, exceptionUtils);
     }
 
@@ -121,7 +121,7 @@ public class MergeInstanceUtilsTest {
         when(toscaOperationFacade.getToscaElement("inst1Uid")).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         assertThatExceptionOfType(StorageException.class)
                 .isThrownBy(() -> mergeInstanceUtils.mapOldToNewCapabilitiesOwnerIds(container, oldVf, "inst1", emptyList()));
-        verify(titanDao).rollback();
+        verify(janusGraphDao).rollback();
     }
 
     @Test

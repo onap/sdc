@@ -40,7 +40,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -238,7 +238,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
             }
         } else {
             Object object = isValid.left().value();
@@ -339,10 +340,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 if (!inTransaction) {
                     if (result == null || result.isRight()) {
                         log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                        titanDao.rollback();
+                        janusGraphDao.rollback();
                     } else {
                         log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                        titanDao.commit();
+                        janusGraphDao.commit();
                     }
                 }
                 // unlock resource
@@ -439,10 +440,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
                     log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
             }
             // unlock resource
@@ -526,10 +527,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
                     log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
             }
             // unlock resource
@@ -768,10 +769,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         } finally {
             if (deleteEither == null || deleteEither.isRight()) {
                 log.debug("Component id: {} delete input id: {} failed", componentId, inputId);
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
                 log.debug("Component id: {} delete input id: {} success", componentId, inputId);
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             unlockComponent(deleteEither, component);
         }
@@ -879,10 +880,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
                 if (result == null || result.isRight()) {
                     log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
                     log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
 
             }

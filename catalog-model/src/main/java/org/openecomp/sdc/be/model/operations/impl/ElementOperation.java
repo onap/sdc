@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -31,10 +31,10 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
@@ -62,13 +62,14 @@ import java.util.*;
 @Component("element-operation")
 public class ElementOperation implements IElementOperation {
 
-    private static final String COULDN_T_FETCH_TITAN_GRAPH = "Couldn't fetch titan graph";
+    private static final String COULDN_T_FETCH_janusGraph_GRAPH = "Couldn't fetch janusgraph graph";
 	private static final String UNKNOWN_CATEGORY_TYPE = "Unknown category type {}";
-	private TitanGenericDao titanGenericDao;
+	private JanusGraphGenericDao janusGraphGenericDao;
 
-    public ElementOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+    public ElementOperation(@Qualifier("janusgraph-generic-dao")
+                                JanusGraphGenericDao janusGraphGenericDao) {
         super();
-        this.titanGenericDao = titanGenericDao;
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     private static final Logger log = Logger.getLogger(ElementOperation.class.getName());
@@ -109,12 +110,13 @@ public class ElementOperation implements IElementOperation {
         CategoryData categoryData = new CategoryData(nodeType, category);
 
         try {
-            Either<CategoryData, TitanOperationStatus> createNode = titanGenericDao.createNode(categoryData, CategoryData.class);
+            Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphGenericDao
+                .createNode(categoryData, CategoryData.class);
             if (createNode.isRight()) {
-                TitanOperationStatus value = createNode.right().value();
+                JanusGraphOperationStatus value = createNode.right().value();
                 ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
                 log.debug("Problem while creating category, reason {}", value);
-                if (value == TitanOperationStatus.TITAN_SCHEMA_VIOLATION) {
+                if (value == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
                     actionStatus = ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS;
                 }
                 result = Either.right(actionStatus);
@@ -126,9 +128,9 @@ public class ElementOperation implements IElementOperation {
         } finally {
             if (!inTransaction) {
                 if (result != null && result.isLeft()) {
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 } else {
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 }
             }
         }
@@ -146,12 +148,13 @@ public class ElementOperation implements IElementOperation {
 
         try {
             // create edge from category to sub-category
-            Either<CategoryData, TitanOperationStatus> categoryNode = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
+            Either<CategoryData, JanusGraphOperationStatus> categoryNode = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
             ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
             if (categoryNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = categoryNode.right().value();
-                log.debug("Problem while fetching category, reason {}", titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = categoryNode.right().value();
+                log.debug("Problem while fetching category, reason {}", janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     actionStatus = ActionStatus.COMPONENT_CATEGORY_NOT_FOUND;
                 }
                 result = Either.right(actionStatus);
@@ -162,18 +165,20 @@ public class ElementOperation implements IElementOperation {
             subCategory.setUniqueId(UniqueIdBuilder.buildSubCategoryUid(categoryDataDefinition.getUniqueId(), subCategory.getNormalizedName()));
             SubCategoryData subCategoryData = new SubCategoryData(nodeType, subCategory);
 
-            Either<SubCategoryData, TitanOperationStatus> subCategoryNode = titanGenericDao.createNode(subCategoryData, SubCategoryData.class);
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryNode = janusGraphGenericDao
+                .createNode(subCategoryData, SubCategoryData.class);
             if (subCategoryNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = subCategoryNode.right().value();
-                log.debug("Problem while creating category, reason {}", titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.TITAN_SCHEMA_VIOLATION) {
+                JanusGraphOperationStatus janusGraphOperationStatus = subCategoryNode.right().value();
+                log.debug("Problem while creating category, reason {}", janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
                     actionStatus = ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY;
                 }
                 result = Either.right(actionStatus);
                 return result;
             }
 
-            Either<GraphRelation, TitanOperationStatus> relation = titanGenericDao.createRelation(categoryNode.left().value(), subCategoryNode.left().value(), GraphEdgeLabels.SUB_CATEGORY, null);
+            Either<GraphRelation, JanusGraphOperationStatus> relation = janusGraphGenericDao
+                .createRelation(categoryNode.left().value(), subCategoryNode.left().value(), GraphEdgeLabels.SUB_CATEGORY, null);
             if (relation.isRight()) {
                 log.debug("Problem while create relation between category and sub-category ", relation.right().value());
                 result = Either.right(actionStatus);
@@ -185,9 +190,9 @@ public class ElementOperation implements IElementOperation {
         } finally {
             if (!inTransaction) {
                 if (result != null && result.isLeft()) {
-                    titanGenericDao.commit();
+                    janusGraphGenericDao.commit();
                 } else {
-                    titanGenericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 }
             }
         }
@@ -200,12 +205,13 @@ public class ElementOperation implements IElementOperation {
 
         try {
             // create edge from sub-category to grouping
-            Either<SubCategoryData, TitanOperationStatus> subCategoryNode = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryNode = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
             ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
             if (subCategoryNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = subCategoryNode.right().value();
-                log.debug("Problem while fetching category, reason {}", titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.TITAN_SCHEMA_VIOLATION) {
+                JanusGraphOperationStatus janusGraphOperationStatus = subCategoryNode.right().value();
+                log.debug("Problem while fetching category, reason {}", janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
                     actionStatus = ActionStatus.COMPONENT_CATEGORY_NOT_FOUND;
                 }
                 result = Either.right(actionStatus);
@@ -216,18 +222,20 @@ public class ElementOperation implements IElementOperation {
             grouping.setUniqueId(UniqueIdBuilder.buildGroupingUid(subCatData.getUniqueId(), grouping.getNormalizedName()));
             GroupingData groupingData = new GroupingData(nodeType, grouping);
 
-            Either<GroupingData, TitanOperationStatus> groupingNode = titanGenericDao.createNode(groupingData, GroupingData.class);
+            Either<GroupingData, JanusGraphOperationStatus> groupingNode = janusGraphGenericDao
+                .createNode(groupingData, GroupingData.class);
             if (groupingNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = groupingNode.right().value();
-                log.debug("Problem while creating grouping, reason {}", titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = groupingNode.right().value();
+                log.debug("Problem while creating grouping, reason {}", janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     actionStatus = ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY;
                 }
                 result = Either.right(actionStatus);
                 return result;
             }
 
-            Either<GraphRelation, TitanOperationStatus> relation = titanGenericDao.createRelation(subCategoryNode.left().value(), groupingNode.left().value(), GraphEdgeLabels.GROUPING, null);
+            Either<GraphRelation, JanusGraphOperationStatus> relation = janusGraphGenericDao
+                .createRelation(subCategoryNode.left().value(), groupingNode.left().value(), GraphEdgeLabels.GROUPING, null);
             if (relation.isRight()) {
                 log.debug("Problem while create relation between sub-category and grouping", relation.right().value());
                 result = Either.right(actionStatus);
@@ -238,9 +246,9 @@ public class ElementOperation implements IElementOperation {
             return result;
         } finally {
             if (result != null && result.isLeft()) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             } else {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
         }
     }
@@ -253,8 +261,9 @@ public class ElementOperation implements IElementOperation {
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
 
-            Either<List<org.openecomp.sdc.be.resources.data.category.CategoryData>, TitanOperationStatus> either = titanGenericDao.getAll(nodeType, org.openecomp.sdc.be.resources.data.category.CategoryData.class);
-            if (either.isRight() && (either.right().value() != TitanOperationStatus.NOT_FOUND)) {
+            Either<List<org.openecomp.sdc.be.resources.data.category.CategoryData>, JanusGraphOperationStatus> either = janusGraphGenericDao
+                .getAll(nodeType, org.openecomp.sdc.be.resources.data.category.CategoryData.class);
+            if (either.isRight() && (either.right().value() != JanusGraphOperationStatus.NOT_FOUND)) {
                 log.debug("Problem while get all categories. reason - {}", either.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -267,8 +276,9 @@ public class ElementOperation implements IElementOperation {
                     CategoryDefinition categoryDefinition = new CategoryDefinition(categoryDataDefinition);
                     String categoryName = categoryDataDefinition.getName();
                     log.trace("Found category {}, category type {}", categoryName, nodeType);
-                    TitanOperationStatus setSubCategories = setSubCategories(nodeType, categoryDefinition);
-                    if (setSubCategories != TitanOperationStatus.OK) {
+                    JanusGraphOperationStatus
+                        setSubCategories = setSubCategories(nodeType, categoryDefinition);
+                    if (setSubCategories != JanusGraphOperationStatus.OK) {
                         log.debug("Failed to set sub-categories for category {}, category type {}, error {}", categoryName, nodeType, setSubCategories);
                         return Either.right(ActionStatus.GENERAL_ERROR);
                     }
@@ -278,25 +288,26 @@ public class ElementOperation implements IElementOperation {
             return Either.left(categoryList);
         } finally {
             if (!inTransaction) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }
 
-    private TitanOperationStatus setSubCategories(NodeTypeEnum parentNodeType, CategoryDefinition parentCategory) {
+    private JanusGraphOperationStatus setSubCategories(NodeTypeEnum parentNodeType, CategoryDefinition parentCategory) {
         NodeTypeEnum childNodeType = getChildNodeType(parentNodeType);
         if (childNodeType != null) {
             String categoryName = parentCategory.getName();
             log.trace("Getting sub-categories for category {}, category type {}", categoryName, parentNodeType);
-            Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> parentNode = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(parentNodeType), parentCategory.getUniqueId(), GraphEdgeLabels.SUB_CATEGORY,
+            Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
+                .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(parentNodeType), parentCategory.getUniqueId(), GraphEdgeLabels.SUB_CATEGORY,
                     childNodeType, SubCategoryData.class);
             if (parentNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = parentNode.right().value();
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     log.trace("Didn't find subcategories for category {}, category type {}", categoryName, parentNodeType);
-                    titanOperationStatus = TitanOperationStatus.OK;
+                    janusGraphOperationStatus = JanusGraphOperationStatus.OK;
                 }
-                return titanOperationStatus;
+                return janusGraphOperationStatus;
             }
             List<ImmutablePair<SubCategoryData, GraphEdge>> subsCategoriesData = parentNode.left().value();
             List<SubCategoryDefinition> subCategoriesDefinitions = new ArrayList<>();
@@ -305,32 +316,34 @@ public class ElementOperation implements IElementOperation {
                 SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition(subCategoryDataDefinition);
 
                 log.trace("Found sub-category {} for category {}, category type {}", subCategoryDataDefinition.getName(), categoryName, parentNodeType);
-                TitanOperationStatus setGroupings = setGroupings(childNodeType, subCategoryDefinition);
-                if (setGroupings != TitanOperationStatus.OK) {
+                JanusGraphOperationStatus
+                    setGroupings = setGroupings(childNodeType, subCategoryDefinition);
+                if (setGroupings != JanusGraphOperationStatus.OK) {
                     log.debug("Failed to set groupings for sub-category {}, sub-category type {}, error {}", subCategoryDataDefinition.getName(), childNodeType, setGroupings);
-                    return TitanOperationStatus.GENERAL_ERROR;
+                    return JanusGraphOperationStatus.GENERAL_ERROR;
                 }
                 subCategoriesDefinitions.add(subCategoryDefinition);
             }
             parentCategory.setSubcategories(subCategoriesDefinitions);
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
     }
 
-    private TitanOperationStatus setGroupings(NodeTypeEnum parentNodeType, SubCategoryDefinition parentSubCategory) {
+    private JanusGraphOperationStatus setGroupings(NodeTypeEnum parentNodeType, SubCategoryDefinition parentSubCategory) {
         NodeTypeEnum childNodeType = getChildNodeType(parentNodeType);
         if (childNodeType != null) {
             String subCategoryName = parentSubCategory.getName();
             log.trace("Getting groupings for subcategory {}, subcategory type {}", subCategoryName, parentNodeType);
-            Either<List<ImmutablePair<GroupingData, GraphEdge>>, TitanOperationStatus> parentNode = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(parentNodeType), parentSubCategory.getUniqueId(), GraphEdgeLabels.GROUPING,
+            Either<List<ImmutablePair<GroupingData, GraphEdge>>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
+                .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(parentNodeType), parentSubCategory.getUniqueId(), GraphEdgeLabels.GROUPING,
                     childNodeType, GroupingData.class);
             if (parentNode.isRight()) {
-                TitanOperationStatus titanOperationStatus = parentNode.right().value();
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     log.trace("Didn't find groupings for subcategory {}, subcategory type {}", subCategoryName, parentNodeType);
-                    titanOperationStatus = TitanOperationStatus.OK;
+                    janusGraphOperationStatus = JanusGraphOperationStatus.OK;
                 }
-                return titanOperationStatus;
+                return janusGraphOperationStatus;
             }
             List<ImmutablePair<GroupingData, GraphEdge>> groupingData = parentNode.left().value();
             List<GroupingDefinition> groupingDefinitions = new ArrayList<>();
@@ -341,7 +354,7 @@ public class ElementOperation implements IElementOperation {
             }
             parentSubCategory.setGroupings(groupingDefinitions);
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
     }
 
     private static NodeTypeEnum getChildNodeType(NodeTypeEnum parentTypeEnum) {
@@ -370,11 +383,13 @@ public class ElementOperation implements IElementOperation {
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
 
-            Either<CategoryData, TitanOperationStatus> categoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
+            Either<CategoryData, JanusGraphOperationStatus> categoryDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
             if (categoryDataEither.isRight()) {
-                TitanOperationStatus titanOperationStatus = categoryDataEither.right().value();
-                log.debug("Problem while get category by id {}. reason {}", categoryId, titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = categoryDataEither.right().value();
+                log.debug("Problem while get category by id {}. reason {}", categoryId,
+                    janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     return Either.right(ActionStatus.COMPONENT_CATEGORY_NOT_FOUND);
                 }
                 return Either.right(ActionStatus.GENERAL_ERROR);
@@ -382,7 +397,7 @@ public class ElementOperation implements IElementOperation {
             CategoryDataDefinition categoryDataDefinition = categoryDataEither.left().value().getCategoryDataDefinition();
             return Either.left(new CategoryDefinition(categoryDataDefinition));
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -394,11 +409,13 @@ public class ElementOperation implements IElementOperation {
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
 
-            Either<SubCategoryData, TitanOperationStatus> subCategoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
             if (subCategoryDataEither.isRight()) {
-                TitanOperationStatus titanOperationStatus = subCategoryDataEither.right().value();
-                log.debug("Problem while get sub-category by id {}. reason {}", subCategoryId, titanOperationStatus);
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = subCategoryDataEither.right().value();
+                log.debug("Problem while get sub-category by id {}. reason {}", subCategoryId,
+                    janusGraphOperationStatus);
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     return Either.right(ActionStatus.COMPONENT_CATEGORY_NOT_FOUND);
                 }
                 return Either.right(ActionStatus.GENERAL_ERROR);
@@ -406,7 +423,7 @@ public class ElementOperation implements IElementOperation {
             SubCategoryDataDefinition subCategoryDataDefinition = subCategoryDataEither.left().value().getSubCategoryDataDefinition();
             return Either.left(new SubCategoryDefinition(subCategoryDataDefinition));
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -419,24 +436,25 @@ public class ElementOperation implements IElementOperation {
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
-            Either<CategoryData, TitanOperationStatus> categoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
+            Either<CategoryData, JanusGraphOperationStatus> categoryDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
             if (categoryDataEither.isRight()) {
                 log.debug("Failed to retrieve  category for id {} ", categoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+            Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
             if (graph.isRight()) {
-                log.debug(COULDN_T_FETCH_TITAN_GRAPH);
+                log.debug(COULDN_T_FETCH_janusGraph_GRAPH);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            TitanGraph tGraph = graph.left().value();
+            JanusGraph tGraph = graph.left().value();
 
-            Iterable<TitanVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId).vertices();
-            Iterator<TitanVertex> iterator = verticesArtifact.iterator();
+            Iterable<JanusGraphVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId).vertices();
+            Iterator<JanusGraphVertex> iterator = verticesArtifact.iterator();
             if (!iterator.hasNext()) {
                 log.debug("No category node for id = {}", categoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
@@ -449,9 +467,9 @@ public class ElementOperation implements IElementOperation {
             return result;
         } finally {
             if (result != null && result.isLeft()) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             } else {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
         }
     }
@@ -465,24 +483,25 @@ public class ElementOperation implements IElementOperation {
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
-            Either<SubCategoryData, TitanOperationStatus> subCategoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
             if (subCategoryDataEither.isRight()) {
                 log.debug("Failed to retrieve  sub-category for id {}", subCategoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+            Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
             if (graph.isRight()) {
-                log.debug(COULDN_T_FETCH_TITAN_GRAPH);
+                log.debug(COULDN_T_FETCH_janusGraph_GRAPH);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            TitanGraph tGraph = graph.left().value();
+            JanusGraph tGraph = graph.left().value();
 
-            Iterable<TitanVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId).vertices();
-            Iterator<TitanVertex> iterator = verticesArtifact.iterator();
+            Iterable<JanusGraphVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId).vertices();
+            Iterator<JanusGraphVertex> iterator = verticesArtifact.iterator();
             if (!iterator.hasNext()) {
                 log.debug("No sub-category node for id {}", subCategoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
@@ -496,9 +515,9 @@ public class ElementOperation implements IElementOperation {
             return result;
         } finally {
             if (result != null && result.isLeft()) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             } else {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
         }
 
@@ -513,24 +532,25 @@ public class ElementOperation implements IElementOperation {
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
-            Either<GroupingData, TitanOperationStatus> groupingDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
+            Either<GroupingData, JanusGraphOperationStatus> groupingDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
             if (groupingDataEither.isRight()) {
                 log.debug("Failed to retrieve  grouping for id {}", groupingId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
+            Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphGenericDao.getGraph();
             if (graph.isRight()) {
-                log.debug(COULDN_T_FETCH_TITAN_GRAPH);
+                log.debug(COULDN_T_FETCH_janusGraph_GRAPH);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
 
-            TitanGraph tGraph = graph.left().value();
+            JanusGraph tGraph = graph.left().value();
 
-            Iterable<TitanVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId).vertices();
-            Iterator<TitanVertex> iterator = verticesArtifact.iterator();
+            Iterable<JanusGraphVertex> verticesArtifact = tGraph.query().has(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId).vertices();
+            Iterator<JanusGraphVertex> iterator = verticesArtifact.iterator();
             if (!iterator.hasNext()) {
                 log.debug("No grouping node for id {}", groupingId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
@@ -544,9 +564,9 @@ public class ElementOperation implements IElementOperation {
             return result;
         } finally {
             if (result != null && result.isLeft()) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             } else {
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             }
         }
     }
@@ -557,8 +577,9 @@ public class ElementOperation implements IElementOperation {
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), normalizedName);
         try {
-            Either<List<CategoryData>, TitanOperationStatus> categoryEither = titanGenericDao.getByCriteria(nodeType, properties, CategoryData.class);
-            if (categoryEither.isRight() && categoryEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+            Either<List<CategoryData>, JanusGraphOperationStatus> categoryEither = janusGraphGenericDao
+                .getByCriteria(nodeType, properties, CategoryData.class);
+            if (categoryEither.isRight() && categoryEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("Failed to get categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, categoryEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -575,7 +596,7 @@ public class ElementOperation implements IElementOperation {
                 return Either.left(true);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -584,8 +605,9 @@ public class ElementOperation implements IElementOperation {
 
         String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(parentCategoryId, subCategoryNormName);
         try {
-            Either<SubCategoryData, TitanOperationStatus> subCategoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
-            if (subCategoryDataEither.isRight() && subCategoryDataEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
+            if (subCategoryDataEither.isRight() && subCategoryDataEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("Failed to get sub-category with id {}, error {}", subCategoryId, subCategoryDataEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -598,7 +620,7 @@ public class ElementOperation implements IElementOperation {
                 return Either.left(true);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -607,8 +629,9 @@ public class ElementOperation implements IElementOperation {
 
         String groupingId = UniqueIdBuilder.buildGroupingUid(parentSubCategoryId, groupingNormName);
         try {
-            Either<GroupingData, TitanOperationStatus> groupingDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
-            if (groupingDataEither.isRight() && groupingDataEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+            Either<GroupingData, JanusGraphOperationStatus> groupingDataEither = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
+            if (groupingDataEither.isRight() && groupingDataEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("Failed to get grouping with id {}, error {}", groupingId, groupingDataEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -621,7 +644,7 @@ public class ElementOperation implements IElementOperation {
                 return Either.left(true);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -630,8 +653,9 @@ public class ElementOperation implements IElementOperation {
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), normalizedName);
         try {
-            Either<List<SubCategoryData>, TitanOperationStatus> subCategoryEither = titanGenericDao.getByCriteria(nodeType, properties, SubCategoryData.class);
-            if (subCategoryEither.isRight() && subCategoryEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+            Either<List<SubCategoryData>, JanusGraphOperationStatus> subCategoryEither = janusGraphGenericDao
+                .getByCriteria(nodeType, properties, SubCategoryData.class);
+            if (subCategoryEither.isRight() && subCategoryEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("Failed to get sub-categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, subCategoryEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -646,7 +670,7 @@ public class ElementOperation implements IElementOperation {
                 return Either.left(null);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -655,8 +679,9 @@ public class ElementOperation implements IElementOperation {
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), groupingNormalizedName);
         try {
-            Either<List<GroupingData>, TitanOperationStatus> groupingEither = titanGenericDao.getByCriteria(nodeType, properties, GroupingData.class);
-            if (groupingEither.isRight() && groupingEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+            Either<List<GroupingData>, JanusGraphOperationStatus> groupingEither = janusGraphGenericDao
+                .getByCriteria(nodeType, properties, GroupingData.class);
+            if (groupingEither.isRight() && groupingEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 log.debug("Failed to get grouping, nodeType {}, normalizedName {}, error {}", nodeType, groupingNormalizedName, groupingEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
@@ -671,7 +696,7 @@ public class ElementOperation implements IElementOperation {
                 return Either.left(null);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -682,7 +707,8 @@ public class ElementOperation implements IElementOperation {
     @Override
     public Either<List<Tag>, ActionStatus> getAllTags() {
         try {
-            Either<List<TagData>, TitanOperationStatus> either = titanGenericDao.getAll(NodeTypeEnum.Tag, TagData.class);
+            Either<List<TagData>, JanusGraphOperationStatus> either = janusGraphGenericDao
+                .getAll(NodeTypeEnum.Tag, TagData.class);
             if (either.isRight()) {
                 log.debug("Problem while get all tags. reason - {}", either.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
@@ -691,7 +717,7 @@ public class ElementOperation implements IElementOperation {
             List<Tag> tagList = convertToListOfTag(tagDataList);
             return Either.left(tagList);
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
@@ -708,12 +734,14 @@ public class ElementOperation implements IElementOperation {
             } else {
                 categoryUid = UniqueIdBuilder.buildServiceCategoryUid(name, type);
             }
-            Either<T, TitanOperationStatus> either = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(type), categoryUid, clazz);
+            Either<T, JanusGraphOperationStatus> either = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(type), categoryUid, clazz);
 
             if (either.isRight()) {
-                TitanOperationStatus titanOperationStatus = either.right().value();
-                log.debug("Problem while geting category with id {}. reason - {}", categoryUid, titanOperationStatus.name());
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = either.right().value();
+                log.debug("Problem while geting category with id {}. reason - {}", categoryUid, janusGraphOperationStatus
+                    .name());
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
                 } else {
                     return Either.right(StorageOperationStatus.GENERAL_ERROR);
@@ -804,12 +832,14 @@ public class ElementOperation implements IElementOperation {
             String categoryUid = UniqueIdBuilder.buildServiceCategoryUid(name, type);
             Map props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(name));
-            Either<List<T>, TitanOperationStatus> either = titanGenericDao.getByCriteria(type, props, clazz);
+            Either<List<T>, JanusGraphOperationStatus> either = janusGraphGenericDao
+                .getByCriteria(type, props, clazz);
 
             if (either.isRight()) {
-                TitanOperationStatus titanOperationStatus = either.right().value();
-                log.debug("Problem while geting category with id {}. reason - {}", categoryUid, titanOperationStatus.name());
-                if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+                JanusGraphOperationStatus janusGraphOperationStatus = either.right().value();
+                log.debug("Problem while geting category with id {}. reason - {}", categoryUid, janusGraphOperationStatus
+                    .name());
+                if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
                     return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
                 } else {
                     return Either.right(StorageOperationStatus.GENERAL_ERROR);

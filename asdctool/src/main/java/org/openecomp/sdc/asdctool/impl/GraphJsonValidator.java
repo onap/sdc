@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * simple util class to verify that the titan export json graph is not corrupted
+ * simple util class to verify that the janusgraph export json graph is not corrupted
  */
 public class GraphJsonValidator {
 
     private static Logger log = Logger.getLogger(GraphJsonValidator.class.getName());
 
-    public boolean verifyTitanJson(String filePath) throws IOException {
+    public boolean verifyJanusGraphJson(String filePath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Integer> invalidRows = new ArrayList<>();
         AtomicInteger atomicInteger = new AtomicInteger(1);

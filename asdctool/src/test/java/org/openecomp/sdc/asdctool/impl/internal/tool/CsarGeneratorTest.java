@@ -37,7 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -45,7 +45,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
@@ -58,7 +58,7 @@ public class CsarGeneratorTest {
     private CsarGenerator test;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Mock
     private Component component;
@@ -83,9 +83,10 @@ public class CsarGeneratorTest {
         props.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
         graphVertex.setMetadataProperties(props);
 
-        when(titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props)).thenReturn(Either.left(list));
+        when(janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props)).thenReturn(Either.left(list));
         when(toscaOperationFacade.getToscaFullElement(any(String.class))).thenReturn(Either.left(component));
-        when(titanDao.getChildVertex(graphVertex, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.left(graphVertex));
+        when(janusGraphDao
+            .getChildVertex(graphVertex, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.left(graphVertex));
 
         test.generateCsar(uuid,scanner);
     }

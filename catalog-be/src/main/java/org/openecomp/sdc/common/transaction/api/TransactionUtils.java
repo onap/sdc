@@ -30,7 +30,7 @@ public final class TransactionUtils {
     }
 
     public enum DBTypeEnum {
-        ELASTIC_SEARCH, TITAN, MYSTERY, SWIFT
+        ELASTIC_SEARCH, JANUSGRAPH, MYSTERY, SWIFT
     }
 
     public enum TransactionCodeEnum {

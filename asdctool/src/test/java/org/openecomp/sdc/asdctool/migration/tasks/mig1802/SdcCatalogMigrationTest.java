@@ -3,14 +3,14 @@ package org.openecomp.sdc.asdctool.migration.tasks.mig1802;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 
 public class SdcCatalogMigrationTest {
 
 	private SdcCatalogMigration createTestSubject() {
-		return new SdcCatalogMigration(new TopologyTemplateOperation(), new TitanDao(new TitanGraphClient()));
+		return new SdcCatalogMigration(new TopologyTemplateOperation(), new JanusGraphDao(new JanusGraphClient()));
 	}
 
 	@Test

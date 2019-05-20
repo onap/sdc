@@ -37,7 +37,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
@@ -76,10 +76,10 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeFilterOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -1042,13 +1042,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (deleteServiceFilterEither.isRight()) {
                     ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFilterEither.right().value(),
                             containerComponentType);
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
                 }
                 resultOp = deleteServiceFiltersRelatedTobeDeletedComponentInstance((Service) containerComponent,
                         componentInstance, ComponentTypeEnum.SERVICE, userId);
                 if (resultOp.isRight()) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                     return resultOp;
                 }
             }
@@ -1672,9 +1672,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         finally {
             if (result == null || result.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
@@ -1800,9 +1800,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
@@ -1926,11 +1926,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends PropertyDefinition> Either<String,ResponseFormat> updatePropertyObjectValue(T property, boolean isInput) {
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
-            TitanOperationStatus status = allDataTypesEither.right().value();
+            JanusGraphOperationStatus status = allDataTypesEither.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
         }
         Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
         String innerType = null;
@@ -1957,7 +1957,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (!res) {
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
             }
         } else {
             Object object = isValid.left().value();
@@ -1969,7 +1969,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, ((ComponentInstanceProperty) property).getRules(), innerType, allDataTypes, true);
             if (pair.getRight() != null && pair.getRight() == false) {
                 BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
             }
         }
         return Either.left(newValue);
@@ -2052,9 +2052,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
@@ -2147,9 +2147,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
@@ -2236,9 +2236,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
@@ -2292,9 +2292,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(serviceId, componentTypeEnum.getNodeType());
@@ -2894,11 +2894,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
 
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
+            JanusGraphOperationStatus status = allDataTypes.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
         }
 
         try {
@@ -2920,9 +2920,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
@@ -2982,9 +2982,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } finally {
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             // unlock resource
             graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
@@ -3028,7 +3028,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             // on failure of the create instance unlock the resource and rollback the transaction.
             if (null == actionResponse || actionResponse.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             }
             unlockComponent(actionResponse, origComponent);
         }
@@ -3053,10 +3053,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         } finally {
 
             if (resultOp == null || resultOp.isRight()) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
 
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
                 log.debug("Success trasaction commit");
             }
             // unlock resource
