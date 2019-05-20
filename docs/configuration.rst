@@ -125,7 +125,7 @@ environment.json
                 "commitlog_dir": "/var/lib/cassandra/commitlog",
                 "socket_read_timeout": "20000",
                 "socket_connect_timeout": "20000",
-                "titan_connection_timeout": "10000"
+                "janusgraph_connection_timeout": "10000"
             }
         }
     }
@@ -180,20 +180,20 @@ BE-configuration.yaml
     # Catalog minimum tosca conformance version
     minToscaConformanceLevel: 3.0
 
-    # Titan configuration file location
-    titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
+    # JanusGraph configuration file location
+    janusGraphCfgFile: /var/lib/jetty/config/catalog-be/janusgraph.properties
 
-    # Does titan hold the persistence data in memory
-    titanInMemoryGraph: false
+    # Does JanusGraph hold the persistence data in memory
+    janusGraphInMemoryGraph: false
 
-    # The timeout for titan to lock on an object in a transaction
-    titanLockTimeout: 1800
+    # The timeout for JanusGraph to lock on an object in a transaction
+    janusGraphLockTimeout: 1800
 
-    # The interval to try and reconnect to titan DB when it is down during SDC startup
-    titanReconnectIntervalInSeconds: 3
+    # The interval to try and reconnect to JanusGraph DB when it is down during SDC startup
+    janusGraphReconnectIntervalInSeconds: 3
 
-    # The read timeout towards Titan DB when health check is invoked
-    titanHealthCheckReadTimeout: 1
+    # The read timeout towards JanusGraph DB when health check is invoked
+    janusGraphHealthCheckReadTimeout: 1
 
     # The interval to try and reconnect to Elasticsearch when it is down during SDC startup
     esReconnectIntervalInSeconds: 3
@@ -1118,42 +1118,42 @@ BE-distribution-engine-configuration.yaml
 
     currentArtifactInstallationTimeout: 120
 
-BE-titan.properties
+BE-janusgraph.properties
 *******************
 
 ::
 
-    # Titan storage backend
+    # JanusGraph storage backend
     storage.backend=cassandra
 
-    # Titan storage hostname
+    # JanusGraph storage hostname
     storage.hostname=<%= @CASSANDRA_IP %>
 
-    # Titan storage port
+    # JanusGraph storage port
     storage.port=9160
 
-    # Titan storage username
+    # JanusGraph storage username
     storage.username=<%= @CASSANDRA_USR %>
 
-    # Titan storage password
+    # JanusGraph storage password
     storage.password=<%= @CASSANDRA_PWD %>
 
-    # Titan storage connection timeout
+    # JanusGraph storage connection timeout
     storage.connection-timeout=10000
 
-    # Titan cassandra keyspace name
+    # JanusGraph cassandra keyspace name
     storage.cassandra.keyspace=sdctitan
 
-    # Is Titan cassandra ssl is enabled
+    # Is JanusGraph cassandra ssl is enabled
     storage.cassandra.ssl.enabled=false
 
-    # Titan cassandra ssl truststore file location
+    # JanusGraph cassandra ssl truststore file location
     storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/.truststore
 
-    # Titan cassandra ssl truststore file password
+    # JanusGraph cassandra ssl truststore file password
     storage.cassandra.ssl.truststore.password=Aa123456
 
-    # Should titan use cache
+    # Should JanusGraph use cache
     cache.db-cache = false
 
     # How long in milliseconds should the cache keep entries before flushing them
@@ -1162,22 +1162,22 @@ BE-titan.properties
     # Default expiration time in milliseconds for entries in the cache
     cache.db-cache-time = 180000
 
-    # Size of titan database cache
+    # Size of JanusGraph database cache
     cache.db-cache-size = 0.5
 
-    # Titan cassandra read consistency level
+    # JanusGraph cassandra read consistency level
     storage.cassandra.read-consistency-level=LOCAL_QUORUM
 
-    # Titan cassandra write consistency level
+    # JanusGraph cassandra write consistency level
     storage.cassandra.write-consistency-level=LOCAL_QUORUM
 
-    # Titan cassandra replication strategy class name
+    # JanusGraph cassandra replication strategy class name
     storage.cassandra.replication-strategy-class=org.apache.cassandra.locator.NetworkTopologyStrategy
 
-    # Titan cassandra replication startegy options
+    # JanusGraph cassandra replication startegy options
     storage.cassandra.replication-strategy-options=<%= @DC_NAME %>,<%= @rep_factor %>
 
-    # Titan cassandra local data center name
+    # JanusGraph cassandra local data center name
     storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
 
     # Number of times the system attempts to acquire a lock before giving up and throwing an exception

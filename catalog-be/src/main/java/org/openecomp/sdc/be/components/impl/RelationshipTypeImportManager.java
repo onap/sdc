@@ -68,7 +68,7 @@ public class RelationshipTypeImportManager {
         return commonImportManager.createElementTypesByDao(relationshipTypesToCreate, this::validateRelationshipType,
                 relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipType.getType()),
                 relationshipTypeName -> relationshipTypeOperation.getRelationshipTypeByName(relationshipTypeName)
-                        .right().map(DaoStatusConverter::convertTitanStatusToStorageStatus),
+                        .right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus),
                 relationshipType -> relationshipTypeOperation.addRelationshipType(relationshipType, inTransaction),
                 (newRelationshipType, oldRelationshipType) -> relationshipTypeOperation
                         .updateRelationshipType(newRelationshipType, oldRelationshipType, inTransaction));

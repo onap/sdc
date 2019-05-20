@@ -20,18 +20,18 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
@@ -47,13 +47,13 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
-import org.openecomp.sdc.be.model.jsontitan.utils.GraphTestUtils;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -70,7 +70,7 @@ import static org.junit.Assert.assertTrue;
 public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
     @javax.annotation.Resource
-    protected TitanDao titanDao;
+    protected JanusGraphDao janusGraphDao;
 
     @javax.annotation.Resource
     private NodeTypeOperation nodeTypeOperation;
@@ -105,7 +105,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         createUsers();
         createResourceCategory();
         createServiceCategory();
-        GraphTestUtils.createRootCatalogVertex(titanDao);
+        GraphTestUtils.createRootCatalogVertex(janusGraphDao);
         rootVertex = createRootNodeType();
         createNodeType("firstVf");
         serviceVertex = createTopologyTemplate("firstService");
@@ -263,7 +263,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
         verifyInCatalogData(4, null);
-        // exportGraphMl(titanDao.getGraph().left().value());
+        // exportGraphMl(janusGraphDao.getGraph().left().value());
 
     }
 
@@ -322,7 +322,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
     public void testGetToscaElOwner_Fail(){
         Either<User, StorageOperationStatus> result;
         String toscaEleId = "toscaElementId";
-        titanDao.getVertexById(toscaEleId, JsonParseFlagEnum.NoParse);
+        janusGraphDao.getVertexById(toscaEleId, JsonParseFlagEnum.NoParse);
         result = lifecycleOperation.getToscaElementOwner(toscaEleId);
         assertEquals(StorageOperationStatus.NOT_FOUND, result.right().value());
     }
@@ -351,12 +351,14 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         subCat.setMetadataProperties(metadataProperties);
         subCat.updateMetadataJsonWithCurrentMetadataProperties();
 
-        Either<GraphVertex, TitanOperationStatus> catRes = titanDao.createVertex(cat);
+        Either<GraphVertex, JanusGraphOperationStatus> catRes = janusGraphDao.createVertex(cat);
 
-        Either<GraphVertex, TitanOperationStatus> subCatRes = titanDao.createVertex(subCat);
+        Either<GraphVertex, JanusGraphOperationStatus> subCatRes = janusGraphDao.createVertex(subCat);
 
-        TitanOperationStatus status = titanDao.createEdge(catRes.left().value().getVertex(), subCatRes.left().value().getVertex(), EdgeLabelEnum.SUB_CATEGORY, new HashMap<>());
-        assertEquals(TitanOperationStatus.OK, status);
+        JanusGraphOperationStatus
+            status = janusGraphDao
+            .createEdge(catRes.left().value().getVertex(), subCatRes.left().value().getVertex(), EdgeLabelEnum.SUB_CATEGORY, new HashMap<>());
+        assertEquals(JanusGraphOperationStatus.OK, status);
     }
 
     private void createServiceCategory() {
@@ -372,7 +374,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
-        Either<GraphVertex, TitanOperationStatus> catRes = titanDao.createVertex(cat);
+        Either<GraphVertex, JanusGraphOperationStatus> catRes = janusGraphDao.createVertex(cat);
 
         assertTrue(catRes.isLeft());
     }
@@ -398,7 +400,8 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         Either<TopologyTemplate, StorageOperationStatus> createRes = topologyTemplateOperation.createTopologyTemplate(service);
         assertTrue(createRes.isLeft());
 
-        Either<GraphVertex, TitanOperationStatus> getNodeTyeRes = titanDao.getVertexById(createRes.left().value().getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes = janusGraphDao
+            .getVertexById(createRes.left().value().getUniqueId());
         assertTrue(getNodeTyeRes.isLeft());
 
         // serviceVertex = getNodeTyeRes.left().value();
@@ -436,7 +439,8 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
         assertTrue(createVFRes.isLeft());
 
-        Either<GraphVertex, TitanOperationStatus> getNodeTyeRes = titanDao.getVertexById(createVFRes.left().value().getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes = janusGraphDao
+            .getVertexById(createVFRes.left().value().getUniqueId());
         assertTrue(getNodeTyeRes.isLeft());
 
         vfVertex = getNodeTyeRes.left().value();
@@ -482,7 +486,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
         Either<GraphVertex, StorageOperationStatus> res = nodeTypeOperation.associateElementToData(vfVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, capProps);
 
-        // exportGraphMl(titanDao.getGraph().left().value());
+        // exportGraphMl(janusGraphDao.getGraph().left().value());
 
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add("capName");
@@ -542,7 +546,8 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
         assertTrue(createVFRes.isLeft());
 
-        Either<GraphVertex, TitanOperationStatus> getNodeTyeRes = titanDao.getVertexById(createVFRes.left().value().getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes = janusGraphDao
+            .getVertexById(createVFRes.left().value().getUniqueId());
         assertTrue(getNodeTyeRes.isLeft());
         return getNodeTyeRes.left().value();
     }
@@ -559,7 +564,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         ownerV.setMetadataProperties(metadataProperties);
         ownerV.updateMetadataJsonWithCurrentMetadataProperties();
         ownerV.setJson(new HashMap<>());
-        Either<GraphVertex, TitanOperationStatus> createUserRes = titanDao.createVertex(ownerV);
+        Either<GraphVertex, JanusGraphOperationStatus> createUserRes = janusGraphDao.createVertex(ownerV);
         assertTrue(createUserRes.isLeft());
 
         ownerVertex = createUserRes.left().value();
@@ -574,12 +579,12 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         modifierV.setMetadataProperties(metadataProperties);
         modifierV.updateMetadataJsonWithCurrentMetadataProperties();
         modifierV.setJson(new HashMap<>());
-        createUserRes = titanDao.createVertex(modifierV);
+        createUserRes = janusGraphDao.createVertex(modifierV);
         assertTrue(createUserRes.isLeft());
 
         modifierVertex = createUserRes.left().value();
 
-        Either<GraphVertex, TitanOperationStatus> getOwnerRes = lifecycleOperation.findUser(ownerVertex.getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> getOwnerRes = lifecycleOperation.findUser(ownerVertex.getUniqueId());
         assertTrue(getOwnerRes.isLeft());
 
     }
@@ -602,17 +607,17 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
     }
 
     private void clearGraph() {
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
         }
-        titanDao.commit();
+        janusGraphDao.commit();
     }
 }

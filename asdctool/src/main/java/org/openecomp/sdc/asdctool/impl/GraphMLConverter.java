@@ -21,11 +21,11 @@
 package org.openecomp.sdc.asdctool.impl;
 
 import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphQuery;
+import org.janusgraph.core.JanusGraphVertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.*;
@@ -79,11 +79,11 @@ public class GraphMLConverter {
 
 	public boolean importGraph(String[] args) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		try {
-			String titanFileLocation = args[1];
+			String janusGraphFileLocation = args[1];
 			String inputFile = args[2];
-			graph = openGraph(titanFileLocation);
+			graph = openGraph(janusGraphFileLocation);
 
 			List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
 			ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
@@ -113,11 +113,11 @@ public class GraphMLConverter {
 
 	public boolean exportGraph(String[] args) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		try {
-			String titanFileLocation = args[1];
+			String janusGraphFileLocation = args[1];
 			String outputDirectory = args[2];
-			graph = openGraph(titanFileLocation);
+			graph = openGraph(janusGraphFileLocation);
 
 			String result = exportJsonGraph(graph, outputDirectory);
 
@@ -140,12 +140,12 @@ public class GraphMLConverter {
 
 	public String exportGraphMl(String[] args) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String result = null;
 		try {
-			String titanFileLocation = args[1];
+			String janusGraphFileLocation = args[1];
 			String outputDirectory = args[2];
-			graph = openGraph(titanFileLocation);
+			graph = openGraph(janusGraphFileLocation);
 
 			result = exportGraphMl(graph, outputDirectory);
 
@@ -164,11 +164,11 @@ public class GraphMLConverter {
 
 	public boolean findErrorInJsonGraph(String[] args) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		try {
-			String titanFileLocation = args[1];
+			String janusGraphFileLocation = args[1];
 			String outputDirectory = args[2];
-			graph = openGraph(titanFileLocation);
+			graph = openGraph(janusGraphFileLocation);
 
 			String result = findErrorInJsonGraph(graph, outputDirectory);
 
@@ -189,13 +189,13 @@ public class GraphMLConverter {
 		return true;
 	}
 
-	public TitanGraph openGraph(String titanFileLocation) {
+	public JanusGraph openGraph(String janusGraphFileLocation) {
 
-		return TitanFactory.open(titanFileLocation);
+		return JanusGraphFactory.open(janusGraphFileLocation);
 
 	}
 
-	public String exportJsonGraph(TitanGraph graph, String outputDirectory) {
+	public String exportJsonGraph(JanusGraph graph, String outputDirectory) {
 
 		String result = null;
 
@@ -231,7 +231,7 @@ public class GraphMLConverter {
 
 	}
 
-	public String exportGraphMl(TitanGraph graph, String outputDirectory) {
+	public String exportGraphMl(JanusGraph graph, String outputDirectory) {
 		String result = null;
 		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
 		try {
@@ -253,7 +253,7 @@ public class GraphMLConverter {
 		return builder.create();
 	}
 
-	public boolean importJsonGraph(TitanGraph graph, String graphJsonFile,
+	public boolean importJsonGraph(JanusGraph graph, String graphJsonFile,
 			List<ImmutablePair<String, String>> propertiesCriteriaToDelete) {
 
 		boolean result = false;
@@ -312,7 +312,7 @@ public class GraphMLConverter {
 
 	}
 
-	public String findErrorInJsonGraph(TitanGraph graph, String outputDirectory) {
+	public String findErrorInJsonGraph(JanusGraph graph, String outputDirectory) {
 
 		boolean runVertexScan = false;
 		boolean runEdgeScan = false;
@@ -331,8 +331,8 @@ public class GraphMLConverter {
 				Vertex vertexTo = null;
 				Edge edge = null;
 
-				Iterable<TitanEdge> edges = graph.query().edges();
-				Iterator<TitanEdge> iterator = edges.iterator();
+				Iterable<JanusGraphEdge> edges = graph.query().edges();
+				Iterator<JanusGraphEdge> iterator = edges.iterator();
 				while (iterator.hasNext()) {
 
 					try {
@@ -344,12 +344,12 @@ public class GraphMLConverter {
 
 						BaseConfiguration conf = new BaseConfiguration();
 						conf.setProperty(STORAGE_BACKEND, INMEMORY);
-						TitanGraph openGraph = Utils.openGraph(conf);
+						JanusGraph openGraph = Utils.openGraph(conf);
 
-						TitanVertex addVertexFrom = openGraph.addVertex();
+						JanusGraphVertex addVertexFrom = openGraph.addVertex();
 						Utils.setProperties(addVertexFrom, Utils.getProperties(vertexFrom));
 
-						TitanVertex addVertexTo = openGraph.addVertex();
+						JanusGraphVertex addVertexTo = openGraph.addVertex();
 						Utils.setProperties(addVertexTo, Utils.getProperties(vertexTo));
 
 						Edge addEdge = addVertexFrom.addEdge(edge.label(), addVertexTo);
@@ -394,9 +394,9 @@ public class GraphMLConverter {
 
 							BaseConfiguration conf = new BaseConfiguration();
 							conf.setProperty(STORAGE_BACKEND, INMEMORY);
-							TitanGraph openGraph = Utils.openGraph(conf);
+							JanusGraph openGraph = Utils.openGraph(conf);
 
-							TitanVertex addVertexFrom = openGraph.addVertex();
+							JanusGraphVertex addVertexFrom = openGraph.addVertex();
 							Utils.setProperties(addVertexFrom, Utils.getProperties(vertex));
 
 							log.info(FROM_VERTEX, Utils.getProperties(addVertexFrom));
@@ -426,7 +426,7 @@ public class GraphMLConverter {
 
 			}
 
-			Iterable<TitanVertex> vertices2 = graph.query()
+			Iterable<JanusGraphVertex> vertices2 = graph.query()
 					.has(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(), "GOOD").vertices();
 			;
 
@@ -458,17 +458,17 @@ public class GraphMLConverter {
 
 	}
 
-	private void removeNodesByLabel(TitanGraph graph, String label) {
-		Iterable<TitanVertex> vertices = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label)
+	private void removeNodesByLabel(JanusGraph graph, String label) {
+		Iterable<JanusGraphVertex> vertices = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label)
 				.vertices();
-		Iterator<TitanVertex> iterator = vertices.iterator();
+		Iterator<JanusGraphVertex> iterator = vertices.iterator();
 		while (iterator.hasNext()) {
 			Vertex next2 = iterator.next();
 			next2.remove();
 		}
 	}
 
-	public String exportUsers(TitanGraph graph, String outputDirectory) {
+	public String exportUsers(JanusGraph graph, String outputDirectory) {
 
 		List<Map<String, Object>> users = new ArrayList<>();
 		String result = null;
@@ -478,11 +478,11 @@ public class GraphMLConverter {
 		FileWriter fileWriter = null;
 		try {
 
-			TitanGraphQuery graphQuery = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(),
+			JanusGraphQuery graphQuery = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(),
 					NodeTypeEnum.User.getName());
 
 			@SuppressWarnings("unchecked")
-			Iterable<TitanVertex> vertices = graphQuery.vertices();
+			Iterable<JanusGraphVertex> vertices = graphQuery.vertices();
 
 			if (vertices != null) {
 				for (Vertex v : vertices) {
@@ -538,11 +538,11 @@ public class GraphMLConverter {
 
 	public boolean exportUsers(String[] args) {
 
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		try {
-			String titanFileLocation = args[1];
+			String janusGraphFileLocation = args[1];
 			String outputDirectory = args[2];
-			graph = openGraph(titanFileLocation);
+			graph = openGraph(janusGraphFileLocation);
 
 			String result = exportUsers(graph, outputDirectory);
 

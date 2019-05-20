@@ -26,10 +26,10 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
@@ -48,20 +48,22 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
     @Autowired
     PropertyOperation propertyOperation;
 
-    public <ElementDefinition> TitanOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
+    public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
 
         log.trace("Going to fetch elements under resource {}" , resourceId);
-        TitanOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
+        JanusGraphOperationStatus
+            resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
 
-        if (resourceAttributesStatus != TitanOperationStatus.OK) {
+        if (resourceAttributesStatus != JanusGraphOperationStatus.OK) {
             return resourceAttributesStatus;
         }
 
-        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource, ResourceMetadataData.class);
+        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource, ResourceMetadataData.class);
 
         if (parentNodes.isRight()) {
-            TitanOperationStatus parentNodesStatus = parentNodes.right().value();
-            if (parentNodesStatus != TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus parentNodesStatus = parentNodes.right().value();
+            if (parentNodesStatus != JanusGraphOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
                 return parentNodesStatus;
             }
@@ -70,26 +72,26 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
         if (parentNodes.isLeft()) {
             ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
             String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-            TitanOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
+            JanusGraphOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
 
-            if (addParentIntStatus != TitanOperationStatus.OK) {
+            if (addParentIntStatus != JanusGraphOperationStatus.OK) {
                 BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
 
                 return addParentIntStatus;
             }
         }
-        return TitanOperationStatus.OK;
+        return JanusGraphOperationStatus.OK;
     }
 
 
     @Override
-    public ImmutablePair<TitanOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId) {
+    public ImmutablePair<JanusGraphOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId) {
 
         log.debug("Going to check whether the property {} already added to resource instance {}", propertyId, resourceInstanceId);
 
-        Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllRes = getAllInputsOfResourceInstanceOnlyInputDefId(resourceInstanceId);
+        Either<List<ComponentInstanceInput>, JanusGraphOperationStatus> getAllRes = getAllInputsOfResourceInstanceOnlyInputDefId(resourceInstanceId);
         if (getAllRes.isRight()) {
-            TitanOperationStatus status = getAllRes.right().value();
+            JanusGraphOperationStatus status = getAllRes.right().value();
             log.trace("After fetching all properties of resource instance {}. Status is {}" ,resourceInstanceId, status);
             return new ImmutablePair<>(status, null);
         }
@@ -102,12 +104,12 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
                 log.trace("Go over property {} under resource instance {}. valueUniqueId = {}" ,propertyUniqueId, resourceInstanceId, valueUniqueUid);
                 if (propertyId.equals(propertyUniqueId) && valueUniqueUid != null) {
                     log.debug("The property {} already created under resource instance {}", propertyId, resourceInstanceId);
-                    return new ImmutablePair<>(TitanOperationStatus.ALREADY_EXIST, valueUniqueUid);
+                    return new ImmutablePair<>(JanusGraphOperationStatus.ALREADY_EXIST, valueUniqueUid);
                 }
             }
         }
 
-        return new ImmutablePair<>(TitanOperationStatus.NOT_FOUND, null);
+        return new ImmutablePair<>(JanusGraphOperationStatus.NOT_FOUND, null);
     }
 
     /**
@@ -116,34 +118,36 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
      * @param resourceInstanceUid
      * @return
      */
-    public Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllInputsOfResourceInstanceOnlyInputDefId(String resourceInstanceUid) {
+    public Either<List<ComponentInstanceInput>, JanusGraphOperationStatus> getAllInputsOfResourceInstanceOnlyInputDefId(String resourceInstanceUid) {
 
         return getAllInputsOfResourceInstanceOnlyInputDefId(resourceInstanceUid, NodeTypeEnum.ResourceInstance);
 
     }
 
-    public Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllInputsOfResourceInstanceOnlyInputDefId(String resourceInstanceUid, NodeTypeEnum instanceNodeType) {
+    public Either<List<ComponentInstanceInput>, JanusGraphOperationStatus> getAllInputsOfResourceInstanceOnlyInputDefId(String resourceInstanceUid, NodeTypeEnum instanceNodeType) {
 
-        Either<ComponentInstanceData, TitanOperationStatus> findResInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid, ComponentInstanceData.class);
+        Either<ComponentInstanceData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid, ComponentInstanceData.class);
 
         if (findResInstanceRes.isRight()) {
-            TitanOperationStatus status = findResInstanceRes.right().value();
-            if (status == TitanOperationStatus.NOT_FOUND) {
-                status = TitanOperationStatus.INVALID_ID;
+            JanusGraphOperationStatus status = findResInstanceRes.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                status = JanusGraphOperationStatus.INVALID_ID;
             }
             return Either.right(status);
         }
 
-        Either<List<ImmutablePair<InputValueData, GraphEdge>>, TitanOperationStatus> propertyImplNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid, GraphEdgeLabels.INPUT_VALUE, NodeTypeEnum.InputValue, InputValueData.class);
+        Either<List<ImmutablePair<InputValueData, GraphEdge>>, JanusGraphOperationStatus> propertyImplNodes = janusGraphGenericDao
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid, GraphEdgeLabels.INPUT_VALUE, NodeTypeEnum.InputValue, InputValueData.class);
 
         if (propertyImplNodes.isRight()) {
-            TitanOperationStatus status = propertyImplNodes.right().value();
+            JanusGraphOperationStatus status = propertyImplNodes.right().value();
             return Either.right(status);
         }
 
         List<ImmutablePair<InputValueData, GraphEdge>> list = propertyImplNodes.left().value();
         if (list == null || list.isEmpty()) {
-            return Either.right(TitanOperationStatus.NOT_FOUND);
+            return Either.right(JanusGraphOperationStatus.NOT_FOUND);
         }
 
         List<ComponentInstanceInput> result = new ArrayList<>();
@@ -155,7 +159,8 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
             String propertyValueUid = propertyValueData.getUniqueId();
             String value = propertyValueData.getValue();
 
-            Either<ImmutablePair<InputsData, GraphEdge>, TitanOperationStatus> inputNodes = titanGenericDao.getParentNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), propertyValueData.getUniqueId(), GraphEdgeLabels.GET_INPUT, NodeTypeEnum.Input, InputsData.class);
+            Either<ImmutablePair<InputsData, GraphEdge>, JanusGraphOperationStatus> inputNodes = janusGraphGenericDao
+                .getParentNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), propertyValueData.getUniqueId(), GraphEdgeLabels.GET_INPUT, NodeTypeEnum.Input, InputsData.class);
 
             if (inputNodes.isRight()) {
 
@@ -165,25 +170,28 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
             InputsData input = inputNodes.left().value().left;
             String inputId = input.getPropertyDataDefinition().getUniqueId();
 
-            Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> propertyDefRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.InputValue), propertyValueUid, GraphEdgeLabels.INPUT_IMPL, NodeTypeEnum.Property, PropertyData.class);
+            Either<ImmutablePair<PropertyData, GraphEdge>, JanusGraphOperationStatus> propertyDefRes = janusGraphGenericDao
+                .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.InputValue), propertyValueUid, GraphEdgeLabels.INPUT_IMPL, NodeTypeEnum.Property, PropertyData.class);
             if (propertyDefRes.isRight()) {
-                TitanOperationStatus status = propertyDefRes.right().value();
-                if (status == TitanOperationStatus.NOT_FOUND) {
-                    status = TitanOperationStatus.INVALID_ID;
+                JanusGraphOperationStatus status = propertyDefRes.right().value();
+                if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                    status = JanusGraphOperationStatus.INVALID_ID;
                 }
                 return Either.right(status);
             }
 
             ImmutablePair<PropertyData, GraphEdge> propertyDefPair = propertyDefRes.left().value();
             PropertyData propertyData = propertyDefPair.left;
-            Either<Edge, TitanOperationStatus> inputsEges = titanGenericDao.getIncomingEdgeByCriteria(propertyData, GraphEdgeLabels.INPUT, null);
+            Either<Edge, JanusGraphOperationStatus> inputsEges = janusGraphGenericDao
+                .getIncomingEdgeByCriteria(propertyData, GraphEdgeLabels.INPUT, null);
             if (inputsEges.isRight()) {
-                TitanOperationStatus status = inputsEges.right().value();
+                JanusGraphOperationStatus status = inputsEges.right().value();
 
                 return Either.right(status);
             }
             Edge edge = inputsEges.left().value();
-            String inputName = (String) titanGenericDao.getProperty(edge, GraphEdgePropertiesDictionary.NAME.getProperty());
+            String inputName = (String) janusGraphGenericDao
+                .getProperty(edge, GraphEdgePropertiesDictionary.NAME.getProperty());
 
             ComponentInstanceInput resourceInstanceProperty = new ComponentInstanceInput(propertyData.getPropertyDataDefinition(), inputId, value, propertyValueUid);
 

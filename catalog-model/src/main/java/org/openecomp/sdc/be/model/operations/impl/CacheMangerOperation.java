@@ -23,7 +23,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.model.cache.jobs.*;
 import org.openecomp.sdc.be.model.cache.workers.CacheWorker;
 import org.openecomp.sdc.be.model.cache.workers.IWorker;
 import org.openecomp.sdc.be.model.cache.workers.SyncWorker;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class CacheMangerOperation implements ICacheMangerOperation {
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
     @Autowired
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
     @Autowired
     private ComponentCache componentCache;
 
@@ -183,8 +183,8 @@ public class CacheMangerOperation implements ICacheMangerOperation {
         }
     }
 
-    public TitanGenericDao getTitanGenericDao() {
-        return titanGenericDao;
+    public JanusGraphGenericDao getJanusGraphGenericDao() {
+        return janusGraphGenericDao;
     }
 
     public ComponentCache getComponentCache() {

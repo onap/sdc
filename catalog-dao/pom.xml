@@ -230,11 +230,10 @@ Modifications copyright (c) 2018 Nokia
 			<scope>test</scope>
 		</dependency>
 
-		<!-- TITAN -->
 		<dependency>
-			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-core</artifactId>
-			<version>${titan.version}</version>
+			<groupId>org.janusgraph</groupId>
+			<artifactId>janusgraph-core</artifactId>
+			<version>${janusgraph.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -257,9 +256,9 @@ Modifications copyright (c) 2018 Nokia
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-			<artifactId>sdc-titan-cassandra</artifactId>
-			<version>${sdc.titan.version}</version>
+			<groupId>org.janusgraph</groupId>
+			<artifactId>janusgraph-cassandra</artifactId>
+			<version>${janusgraph.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -275,7 +274,6 @@ Modifications copyright (c) 2018 Nokia
 			<version>${lang3.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- TITAN END -->
 
 		<!-- CASSANDRA -->
 		<dependency>

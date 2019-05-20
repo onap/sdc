@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import com.google.common.base.Strings;
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -30,11 +30,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -54,7 +54,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
+import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
 
 @Component("group-type-operation")
 public class GroupTypeOperation implements IGroupTypeOperation {
@@ -63,19 +63,19 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     private static final String CREATE_FLOW_CONTEXT = "CreateGroupType";
 
     private final PropertyOperation propertyOperation;
-    private final TitanGenericDao titanGenericDao;
+    private final JanusGraphGenericDao janusGraphGenericDao;
     private final CapabilityTypeOperation capabilityTypeOperation;
     private final CapabilityOperation capabilityOperation;
     private final DerivedFromOperation derivedFromOperation;
     private final OperationUtils operationUtils;
 
 
-    public GroupTypeOperation(TitanGenericDao titanGenericDao,
+    public GroupTypeOperation(JanusGraphGenericDao janusGraphGenericDao,
                               PropertyOperation propertyOperation,
                               CapabilityTypeOperation capabilityTypeOperation,
                               CapabilityOperation capabilityOperation,
                               DerivedFromOperation derivedFromOperation, OperationUtils operationUtils) {
-        this.titanGenericDao = titanGenericDao;
+        this.janusGraphGenericDao = janusGraphGenericDao;
         this.propertyOperation = propertyOperation;
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.capabilityOperation = capabilityOperation;
@@ -101,11 +101,11 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
         try {
 
-            Either<GroupTypeData, TitanOperationStatus> eitherStatus = addGroupTypeToGraph(groupTypeDefinition);
+            Either<GroupTypeData, JanusGraphOperationStatus> eitherStatus = addGroupTypeToGraph(groupTypeDefinition);
 
             if (eitherStatus.isRight()) {
                 BeEcompErrorManager.getInstance().logBeFailedCreateNodeError(CREATE_FLOW_CONTEXT, groupTypeDefinition.getType(), eitherStatus.right().value().name());
-                result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherStatus.right().value()));
             }
             else {
                 result = getGroupType(eitherStatus.left().value().getUniqueId(), inTransaction);
@@ -114,7 +114,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
             return result;
 
         } finally {
-            titanGenericDao.handleTransactionCommitRollback(inTransaction, result);
+            janusGraphGenericDao.handleTransactionCommitRollback(inTransaction, result);
         }
 
     }
@@ -127,16 +127,17 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     
     
     public Either<GroupTypeDefinition, StorageOperationStatus> validateUpdateProperties(GroupTypeDefinition groupTypeDefinition) {
-        TitanOperationStatus error = null;
+        JanusGraphOperationStatus error = null;
         if (CollectionUtils.isNotEmpty(groupTypeDefinition.getProperties()) && !Strings.isNullOrEmpty(groupTypeDefinition.getDerivedFrom())) {
-            Either<Map<String, PropertyDefinition>, TitanOperationStatus> allPropertiesRes = 
+            Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> allPropertiesRes =
                                         getAllGroupTypePropertiesFromAllDerivedFrom(groupTypeDefinition.getDerivedFrom());
-            if (allPropertiesRes.isRight() && !allPropertiesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+            if (allPropertiesRes.isRight() && !allPropertiesRes.right().value().equals(
+                JanusGraphOperationStatus.NOT_FOUND)) {
                 error = allPropertiesRes.right().value();
                 log.debug("Couldn't fetch derived from property nodes for group type {}, error: {}", groupTypeDefinition.getType(), error);
             }
             if (error == null && !allPropertiesRes.left().value().isEmpty()) {
-                Either<List<PropertyDefinition>, TitanOperationStatus> validatePropertiesRes = propertyOperation.validatePropertiesUniqueness(allPropertiesRes.left().value(),
+                Either<List<PropertyDefinition>, JanusGraphOperationStatus> validatePropertiesRes = propertyOperation.validatePropertiesUniqueness(allPropertiesRes.left().value(),
                         groupTypeDefinition.getProperties());
                 if (validatePropertiesRes.isRight()) {
                     error = validatePropertiesRes.right().value();
@@ -146,11 +147,12 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         if (error == null) {
             return Either.left(groupTypeDefinition);
         }
-        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(error));
+        return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error));
     }
     
-    private Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllGroupTypePropertiesFromAllDerivedFrom(String firstParentType) {
-        return titanGenericDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), firstParentType, GroupTypeData.class)
+    private Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getAllGroupTypePropertiesFromAllDerivedFrom(String firstParentType) {
+        return janusGraphGenericDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), firstParentType, GroupTypeData.class)
                     .left()
                     .bind(parentGroup -> propertyOperation.getAllTypePropertiesFromAllDerivedFrom(parentGroup.getUniqueId(), NodeTypeEnum.GroupType, GroupTypeData.class));
     }
@@ -185,8 +187,8 @@ public class GroupTypeOperation implements IGroupTypeOperation {
             }
         }
 
-        TitanOperationStatus createCapResult = createCapabilities(new GroupTypeData(groupTypeDef), newGroupTypeCapabilities);
-        return DaoStatusConverter.convertTitanStatusToStorageStatus(createCapResult);
+        JanusGraphOperationStatus createCapResult = createCapabilities(new GroupTypeData(groupTypeDef), newGroupTypeCapabilities);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createCapResult);
     }
 
     /**
@@ -239,9 +241,9 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue) ): null;
     }
 
-    private TitanOperationStatus createCapabilities(GroupTypeData groupTypeData, Map<String, CapabilityDefinition> groupCapabilities) {
+    private JanusGraphOperationStatus createCapabilities(GroupTypeData groupTypeData, Map<String, CapabilityDefinition> groupCapabilities) {
         if (MapUtils.isEmpty(groupCapabilities)) {
-            return TitanOperationStatus.OK;
+            return JanusGraphOperationStatus.OK;
         }
         
         return groupCapabilities.values().stream()
@@ -249,11 +251,11 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 .filter(Either::isRight)
                 .findFirst()
                 .map(either -> either.right().value())
-                .orElse(TitanOperationStatus.OK);
+                .orElse(JanusGraphOperationStatus.OK);
     }
 
-    private Either<GraphRelation, TitanOperationStatus> createCapability(GroupTypeData groupTypeData, CapabilityDefinition  capabilityDef) {
-        Either<CapabilityTypeDefinition, TitanOperationStatus> eitherCapData = capabilityTypeOperation.getCapabilityTypeByType(capabilityDef.getType());
+    private Either<GraphRelation, JanusGraphOperationStatus> createCapability(GroupTypeData groupTypeData, CapabilityDefinition  capabilityDef) {
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> eitherCapData = capabilityTypeOperation.getCapabilityTypeByType(capabilityDef.getType());
         return eitherCapData
                 .left()
                 .map(CapabilityTypeData::new)
@@ -270,15 +272,15 @@ public class GroupTypeOperation implements IGroupTypeOperation {
      * @return
      */
     private Either<List<CapabilityDefinition>, StorageOperationStatus> getCapablities(String groupTypeId) {
-        Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> groupCapabilitiesOnGraph =
-                titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), groupTypeId, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class, true);
+        Either<List<ImmutablePair<CapabilityData, GraphEdge>>, JanusGraphOperationStatus> groupCapabilitiesOnGraph =
+                janusGraphGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), groupTypeId, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class, true);
 
         if (groupCapabilitiesOnGraph.isRight()) {
-            TitanOperationStatus capabilityStatus = groupCapabilitiesOnGraph.right().value();
-            if (capabilityStatus == TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus capabilityStatus = groupCapabilitiesOnGraph.right().value();
+            if (capabilityStatus == JanusGraphOperationStatus.NOT_FOUND) {
                 return Either.left(Collections.emptyList());
             }
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(capabilityStatus));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(capabilityStatus));
         }
 
         List<ImmutablePair<CapabilityData, GraphEdge>> groupCapabilites = groupCapabilitiesOnGraph.left().value();
@@ -286,26 +288,27 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
         return capabilityOperation.getCapabilitiesWithProps(groupCapabilites)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     private void fillCapabilityName(ImmutablePair<CapabilityData, GraphEdge> pair) {
         pair.getLeft().getCapabilityDataDefinition().setName((String)pair.getRight().getProperties().get(GraphEdgePropertiesDictionary.NAME.getProperty()));
     }
 
-    private Either<GraphRelation, TitanOperationStatus> connectToCapability(GroupTypeData groupTypeData, CapabilityData capabilityData, String capabilityName) {
+    private Either<GraphRelation, JanusGraphOperationStatus> connectToCapability(GroupTypeData groupTypeData, CapabilityData capabilityData, String capabilityName) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), capabilityName);
 
-        return titanGenericDao.createRelation(groupTypeData, capabilityData, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, properties);
+        return janusGraphGenericDao.createRelation(groupTypeData, capabilityData, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, properties);
     }
 
 
     public List<GroupTypeDefinition> getAllGroupTypes(Set<String> excludedGroupTypes) {
-        Map<String, Map.Entry<TitanPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(), excludedGroupTypes);
-        List<GroupTypeData> groupTypes = titanGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class)
+        Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(), excludedGroupTypes);
+        List<GroupTypeData> groupTypes = janusGraphGenericDao
+            .getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class)
                 .left()
-                .on(operationUtils::onTitanOperationFailure);
+                .on(operationUtils::onJanusGraphOperationFailure);
         return convertGroupTypesToDefinition(groupTypes);
     }
 
@@ -319,9 +322,10 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
     public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByUid(String uniqueId) {
         log.debug("#getGroupTypeByUid - fetching group type with id {}", uniqueId);
-        return titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), uniqueId, GroupTypeData.class)
+        return janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), uniqueId, GroupTypeData.class)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus)
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
                 .left()
                 .bind(groupType -> buildGroupTypeDefinition(uniqueId, groupType));
     }
@@ -346,7 +350,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
             return result;
         } finally {
-            titanGenericDao.handleTransactionCommitRollback(inTransaction, result);
+            janusGraphGenericDao.handleTransactionCommitRollback(inTransaction, result);
         }
 
     }
@@ -375,9 +379,10 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 return result;
             }
 
-            Either<List<GroupTypeData>, StorageOperationStatus> groupTypeEither = titanGenericDao.getByCriteria(NodeTypeEnum.GroupType, properties, GroupTypeData.class)
+            Either<List<GroupTypeData>, StorageOperationStatus> groupTypeEither = janusGraphGenericDao
+                .getByCriteria(NodeTypeEnum.GroupType, properties, GroupTypeData.class)
                     .right()
-                    .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                    .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
             if (groupTypeEither.isRight()) {
                 result = Either.right(groupTypeEither.right().value());
             } else {
@@ -391,7 +396,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
             return result;
 
         } finally {
-            titanGenericDao.handleTransactionCommitRollback(inTransaction, result);
+            janusGraphGenericDao.handleTransactionCommitRollback(inTransaction, result);
         }
     }
 
@@ -432,11 +437,11 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 .bind(propsMap -> fillDerivedFromProperties(groupType, derivedFromNode, new ArrayList<>(propsMap.values())));
     }
 
-    Either<Map<String, PropertyDefinition>, StorageOperationStatus> handleGroupTypeHasNoProperties(TitanOperationStatus err) {
-        if (err == TitanOperationStatus.NOT_FOUND) {
+    Either<Map<String, PropertyDefinition>, StorageOperationStatus> handleGroupTypeHasNoProperties(JanusGraphOperationStatus err) {
+        if (err == JanusGraphOperationStatus.NOT_FOUND) {
             return Either.left(new HashMap<>());
         }
-        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(err));
+        return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(err));
     }
 
     private Either<List<PropertyDefinition>, StorageOperationStatus> fillDerivedFromProperties(GroupTypeDefinition groupType, GroupTypeData derivedFromNode, List<PropertyDefinition> groupTypeDirectProperties) {
@@ -493,7 +498,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
      * @param groupTypeDefinition
      * @return
      */
-    private Either<GroupTypeData, TitanOperationStatus> addGroupTypeToGraph(GroupTypeDefinition groupTypeDefinition) {
+    private Either<GroupTypeData, JanusGraphOperationStatus> addGroupTypeToGraph(GroupTypeDefinition groupTypeDefinition) {
 
         log.debug("Got group type {}", groupTypeDefinition);
 
@@ -503,18 +508,19 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
         log.debug("Before adding group type to graph. groupTypeData = {}", groupTypeData);
 
-        Either<GroupTypeData, TitanOperationStatus> createGTResult = titanGenericDao.createNode(groupTypeData, GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> createGTResult = janusGraphGenericDao
+            .createNode(groupTypeData, GroupTypeData.class);
         log.debug("After adding group type to graph. status is = {}", createGTResult);
 
         if (createGTResult.isRight()) {
-            TitanOperationStatus operationStatus = createGTResult.right().value();
+            JanusGraphOperationStatus operationStatus = createGTResult.right().value();
             log.error("Failed to add group type {} to graph. status is {}", groupTypeDefinition.getType(), operationStatus);
             return Either.right(operationStatus);
         }
 
         GroupTypeData resultCTD = createGTResult.left().value();
         List<PropertyDefinition> properties = groupTypeDefinition.getProperties();
-        Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToCapablityType = propertyOperation.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.GroupType, properties);
+        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToCapablityType = propertyOperation.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.GroupType, properties);
         if (addPropertiesToCapablityType.isRight()) {
             log.error("Failed add properties {} to capability {}", properties, groupTypeDefinition.getType());
             return Either.right(addPropertiesToCapablityType.right().value());
@@ -522,7 +528,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
         String derivedFrom = groupTypeDefinition.getDerivedFrom();
         if (derivedFrom != null) {
-            Either<GraphRelation, TitanOperationStatus> createRelation = connectToDerivedFrom(ctUniqueId, derivedFrom);
+            Either<GraphRelation, JanusGraphOperationStatus> createRelation = connectToDerivedFrom(ctUniqueId, derivedFrom);
             if (createRelation.isRight()) {
                 return Either.right(createRelation.right().value());
             }
@@ -530,8 +536,8 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         
         Map<String, CapabilityDefinition> groupCapTypes = groupTypeDefinition.getCapabilities();
         if (!MapUtils.isEmpty(groupCapTypes)) {
-            TitanOperationStatus status = createCapabilities(groupTypeData, groupCapTypes);
-            if (status != TitanOperationStatus.OK) {
+            JanusGraphOperationStatus status = createCapabilities(groupTypeData, groupCapTypes);
+            if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(status);
             }
         }
@@ -541,21 +547,23 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     }
 
 
-    private Either<GraphRelation, TitanOperationStatus> connectToDerivedFrom(String ctUniqueId, String derivedFrom) {
+    private Either<GraphRelation, JanusGraphOperationStatus> connectToDerivedFrom(String ctUniqueId, String derivedFrom) {
         log.debug("Before creating relation between Group Type with id {} to its parent {}", ctUniqueId, derivedFrom);
 
-        Either<GroupTypeData, TitanOperationStatus> derivedFromGroupTypeResult =
-                titanGenericDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), derivedFrom, GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> derivedFromGroupTypeResult =
+                janusGraphGenericDao
+                    .getNode(GraphPropertiesDictionary.TYPE.getProperty(), derivedFrom, GroupTypeData.class);
 
         if (derivedFromGroupTypeResult.isLeft()) {
             UniqueIdData from = new UniqueIdData(NodeTypeEnum.GroupType, ctUniqueId);
             GroupTypeData to = derivedFromGroupTypeResult.left().value();
 
-            Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(from, to, GraphEdgeLabels.DERIVED_FROM, null);
+            Either<GraphRelation, JanusGraphOperationStatus> createRelation = janusGraphGenericDao
+                .createRelation(from, to, GraphEdgeLabels.DERIVED_FROM, null);
             log.debug("After create relation between Group Type with id {} to its parent {}, status is {}.", ctUniqueId, derivedFrom, createRelation);
             return createRelation;
         } else {
-            TitanOperationStatus status = derivedFromGroupTypeResult.right().value();
+            JanusGraphOperationStatus status = derivedFromGroupTypeResult.right().value();
             log.debug("Failed to found parent Group Type {}, stauts is {}.", derivedFrom, status);
             return Either.right(status);
         }
@@ -579,23 +587,29 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     public Either<Boolean, StorageOperationStatus> isCapabilityTypeDerivedFrom(String childCandidateType, String parentCandidateType) {
         Map<String, Object> propertiesToMatch = new HashMap<>();
         propertiesToMatch.put(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), childCandidateType);
-        Either<List<CapabilityTypeData>, TitanOperationStatus> getResponse = titanGenericDao.getByCriteria(NodeTypeEnum.CapabilityType, propertiesToMatch, CapabilityTypeData.class);
+        Either<List<CapabilityTypeData>, JanusGraphOperationStatus> getResponse = janusGraphGenericDao
+            .getByCriteria(NodeTypeEnum.CapabilityType, propertiesToMatch, CapabilityTypeData.class);
         if (getResponse.isRight()) {
-            TitanOperationStatus titanOperationStatus = getResponse.right().value();
-            log.debug("Couldn't fetch capability type {}, error: {}", childCandidateType, titanOperationStatus);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+            JanusGraphOperationStatus janusGraphOperationStatus = getResponse.right().value();
+            log.debug("Couldn't fetch capability type {}, error: {}", childCandidateType,
+                janusGraphOperationStatus);
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                janusGraphOperationStatus));
         }
         String childUniqueId = getResponse.left().value().get(0).getUniqueId();
         Set<String> travelledTypes = new HashSet<>();
         do {
             travelledTypes.add(childUniqueId);
-            Either<List<ImmutablePair<CapabilityTypeData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), childUniqueId, GraphEdgeLabels.DERIVED_FROM,
+            Either<List<ImmutablePair<CapabilityTypeData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
+                .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), childUniqueId, GraphEdgeLabels.DERIVED_FROM,
                     NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
             if (childrenNodes.isRight()) {
-                if (childrenNodes.right().value() != TitanOperationStatus.NOT_FOUND) {
-                    TitanOperationStatus titanOperationStatus = getResponse.right().value();
-                    log.debug("Couldn't fetch derived from node for capability type {}, error: {}", childCandidateType, titanOperationStatus);
-                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+                if (childrenNodes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                    JanusGraphOperationStatus janusGraphOperationStatus = getResponse.right().value();
+                    log.debug("Couldn't fetch derived from node for capability type {}, error: {}", childCandidateType,
+                        janusGraphOperationStatus);
+                    return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                        janusGraphOperationStatus));
                 } else {
                     log.debug("Derived from node is not found for type {} - this is OK for root capability.", childCandidateType);
                     return Either.left(false);
@@ -627,9 +641,9 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
     private Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeOnGraph(GroupTypeDefinition updatedGroupType, GroupTypeDefinition currGroupType) {
         updateGroupTypeData(updatedGroupType, currGroupType);
-        return titanGenericDao.updateNode(new GroupTypeData(updatedGroupType), GroupTypeData.class)
+        return janusGraphGenericDao.updateNode(new GroupTypeData(updatedGroupType), GroupTypeData.class)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus)
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
                 .left()
                 .bind(updatedNode -> updateGroupProperties(updatedGroupType.getUniqueId(), updatedGroupType.getProperties()))
                 .left()
@@ -649,7 +663,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 .collect(Collectors.toMap(PropertyDefinition::getName, Function.identity())): null;
         return propertyOperation.mergePropertiesAssociatedToNode(NodeTypeEnum.GroupType, groupId, mapProperties)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
 

@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -34,8 +34,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
@@ -52,7 +52,7 @@ public abstract class LifeCycleTransition {
     @Autowired
     protected ToscaElementLifecycleOperation lifeCycleOperation;
     @Autowired
-    protected TitanDao titanDao;
+    protected JanusGraphDao janusGraphDao;
     protected ComponentsUtils componentUtils;
 
     protected Map<ComponentTypeEnum, List<Role>> authorizedRoles;
@@ -60,7 +60,7 @@ public abstract class LifeCycleTransition {
 
     ToscaOperationFacade toscaOperationFacade;
 
-    protected LifeCycleTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation2, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+    protected LifeCycleTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation2, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
 
         this.configurationManager = ConfigurationManager.getConfigurationManager();
         this.lifeCycleOperation = lifecycleOperation2;
@@ -68,7 +68,7 @@ public abstract class LifeCycleTransition {
         this.authorizedRoles = new HashMap<>();
         this.resourceAuthorizedRoles = new HashMap<>();
         this.toscaOperationFacade = toscaOperationFacade;
-        this.titanDao = titanDao;
+        this.janusGraphDao = janusGraphDao;
     }
 
     public abstract LifeCycleTransitionEnum getName();

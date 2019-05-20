@@ -23,18 +23,17 @@ package org.openecomp.sdc.be.model.operations.impl;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.*;
@@ -60,8 +59,8 @@ public class ArtifactOperationTest extends ModelTestBase {
 
     private static final String ARTIFACT_NAME = "myHeatArtifact";
 
-    @javax.annotation.Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
+    @javax.annotation.Resource(name = "janusgraph-generic-dao")
+    private JanusGraphGenericDao janusGraphDao;
 
     @javax.annotation.Resource(name = "tosca-operation-facade")
     private ToscaOperationFacade toscaOperationFacade;
@@ -99,20 +98,20 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertEquals(1, heatParameters.size());
         HeatParameterDefinition parameter = heatParameters.get(0);
         HeatParameterData parameterData = new HeatParameterData(parameter);
-        Either<HeatParameterData, TitanOperationStatus> parameterNode = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNode = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNode.isLeft());
 
         Either<ArtifactDefinition, StorageOperationStatus> removeArifact = artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
         assertTrue(removeArifact.isLeft());
 
         ArtifactData artifactData = new ArtifactData(artifactWithHeat);
-        Either<ArtifactData, TitanOperationStatus> artifactAfterDelete = titanDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> artifactAfterDelete = janusGraphDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         assertTrue(artifactAfterDelete.isRight());
 
-        Either<HeatParameterData, TitanOperationStatus> parameterNodeAfterDelete = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isRight());
 
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
     }
 
     @Test
@@ -125,7 +124,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertEquals(1, heatParameters.size());
         HeatParameterDefinition parameter = heatParameters.get(0);
         HeatParameterData parameterData = new HeatParameterData(parameter);
-        Either<HeatParameterData, TitanOperationStatus> parameterNode = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNode = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNode.isLeft());
 
         // update to artifact without params
@@ -139,18 +138,18 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertTrue(updateArifact.isLeft());
 
         ArtifactData artifactData = new ArtifactData(artifactWithHeat);
-        Either<ArtifactData, TitanOperationStatus> artifactAfterUpdate = titanDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> artifactAfterUpdate = janusGraphDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         assertTrue(artifactAfterUpdate.isLeft());
         ArtifactData artifactAfterUpdateValue = artifactAfterUpdate.left().value();
         assertEquals(artifactNoParams.getArtifactVersion(), artifactAfterUpdateValue.getArtifactDataDefinition()
                                                                                     .getArtifactVersion());
 
-        Either<HeatParameterData, TitanOperationStatus> parameterNodeAfterDelete = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isRight());
 
         artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
     }
 
     @Test
@@ -163,7 +162,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertEquals(1, heatParameters.size());
         HeatParameterDefinition parameter = heatParameters.get(0);
         HeatParameterData parameterData = new HeatParameterData(parameter);
-        Either<HeatParameterData, TitanOperationStatus> parameterNode = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNode = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNode.isLeft());
 
         // update to artifact without params
@@ -175,19 +174,19 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertTrue(updateArifact.isLeft());
 
         ArtifactData artifactData = new ArtifactData(artifactWithHeat);
-        Either<ArtifactData, TitanOperationStatus> artifactAfterUpdate = titanDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> artifactAfterUpdate = janusGraphDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         assertTrue(artifactAfterUpdate.isLeft());
         ArtifactData artifactAfterUpdateValue = artifactAfterUpdate.left().value();
         assertEquals(artifactWithHeat.getArtifactVersion(), artifactAfterUpdateValue.getArtifactDataDefinition()
                                                                                     .getArtifactVersion());
 
-        Either<HeatParameterData, TitanOperationStatus> parameterNodeAfterDelete = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isLeft());
 
         Either<ArtifactDefinition, StorageOperationStatus> removeArifact = artifactOperation.removeArifactFromResource(RESOURCE_ID_2, (String) artifactAfterUpdateValue.getUniqueId(), NodeTypeEnum.Resource, true, false);
         removeArifact = artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
 
     }
 
@@ -198,7 +197,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         ResourceMetadataData resource2 = createResource(RESOURCE_ID_2);
         Map<String, Object> props = new HashMap<>();
         props.put(GraphEdgePropertiesDictionary.NAME.getProperty(), ArtifactGroupTypeEnum.DEPLOYMENT.name());
-        Either<GraphRelation, TitanOperationStatus> createRelation = titanDao.createRelation(resource2, new ArtifactData(artifactWithHeat), GraphEdgeLabels.ARTIFACT_REF, props);
+        Either<GraphRelation, JanusGraphOperationStatus> createRelation = janusGraphDao.createRelation(resource2, new ArtifactData(artifactWithHeat), GraphEdgeLabels.ARTIFACT_REF, props);
         assertTrue(createRelation.isLeft());
 
         List<HeatParameterDefinition> heatParameters = artifactWithHeat.getListHeatParameters();
@@ -206,7 +205,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertEquals(1, heatParameters.size());
         HeatParameterDefinition parameter = heatParameters.get(0);
         HeatParameterData parameterData = new HeatParameterData(parameter);
-        Either<HeatParameterData, TitanOperationStatus> parameterNode = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNode = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNode.isLeft());
 
         ArtifactDefinition atifactToUpdate = new ArtifactDefinition(artifactWithHeat);
@@ -227,19 +226,19 @@ public class ArtifactOperationTest extends ModelTestBase {
 
         // verify old artifact and parameter still exist
         ArtifactData artifactData = new ArtifactData(artifactWithHeat);
-        Either<ArtifactData, TitanOperationStatus> origArtifact = titanDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> origArtifact = janusGraphDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         assertTrue(origArtifact.isLeft());
         ArtifactData origArtifactData = origArtifact.left().value();
         assertEquals(artifactWithHeat.getArtifactVersion(), origArtifactData.getArtifactDataDefinition()
                                                                             .getArtifactVersion());
 
-        Either<HeatParameterData, TitanOperationStatus> parameterNodeAfterDelete = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isLeft());
 
         // verify new artifact and new parameter
         ArtifactDefinition artifactDefinitionUpdated = updateArifact.left().value();
         ArtifactData artifactDataUpdated = new ArtifactData(artifactDefinitionUpdated);
-        Either<ArtifactData, TitanOperationStatus> updatedArtifact = titanDao.getNode(artifactDataUpdated.getUniqueIdKey(), artifactDataUpdated.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> updatedArtifact = janusGraphDao.getNode(artifactDataUpdated.getUniqueIdKey(), artifactDataUpdated.getUniqueId(), ArtifactData.class);
         assertTrue(updatedArtifact.isLeft());
         ArtifactData updatedArtifactData = updatedArtifact.left().value();
         assertEquals(atifactToUpdate.getArtifactVersion(), updatedArtifactData.getArtifactDataDefinition()
@@ -251,7 +250,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertEquals(1, heatParametersAfterUpdate.size());
         HeatParameterDefinition UpdatedHeatParameter = heatParametersAfterUpdate.get(0);
         assertFalse(UpdatedHeatParameter.getUniqueId().equalsIgnoreCase((String) parameterData.getUniqueId()));
-        Either<HeatParameterData, TitanOperationStatus> parameterNodeAfterUpdate = titanDao.getNode(new HeatParameterData(UpdatedHeatParameter).getUniqueIdKey(), UpdatedHeatParameter.getUniqueId(), HeatParameterData.class);
+        Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterUpdate = janusGraphDao.getNode(new HeatParameterData(UpdatedHeatParameter).getUniqueIdKey(), UpdatedHeatParameter.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterUpdate.isLeft());
 
         // delete new artifact
@@ -259,25 +258,25 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertTrue(removeArifact.isLeft());
 
         // verify old artifact and parameter still exist
-        origArtifact = titanDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
+        origArtifact = janusGraphDao.getNode(artifactData.getUniqueIdKey(), artifactData.getUniqueId(), ArtifactData.class);
         assertTrue(origArtifact.isLeft());
         origArtifactData = origArtifact.left().value();
         assertEquals(artifactWithHeat.getArtifactVersion(), origArtifactData.getArtifactDataDefinition()
                                                                             .getArtifactVersion());
 
-        parameterNodeAfterDelete = titanDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
+        parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isLeft());
 
         // verify new artifact is deleted
-        Either<ArtifactData, TitanOperationStatus> artifactAfterDelete = titanDao.getNode(artifactDataUpdated.getUniqueIdKey(), artifactDataUpdated.getUniqueId(), ArtifactData.class);
+        Either<ArtifactData, JanusGraphOperationStatus> artifactAfterDelete = janusGraphDao.getNode(artifactDataUpdated.getUniqueIdKey(), artifactDataUpdated.getUniqueId(), ArtifactData.class);
         assertTrue(artifactAfterDelete.isRight());
 
-        parameterNodeAfterDelete = titanDao.getNode(new HeatParameterData(UpdatedHeatParameter).getUniqueIdKey(), new HeatParameterData(UpdatedHeatParameter).getUniqueId(), HeatParameterData.class);
+        parameterNodeAfterDelete = janusGraphDao.getNode(new HeatParameterData(UpdatedHeatParameter).getUniqueIdKey(), new HeatParameterData(UpdatedHeatParameter).getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isRight());
 
         artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
-        titanDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
+        janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
     }
 
     private ArtifactDefinition createResourceWithHeat() {
@@ -369,8 +368,8 @@ public class ArtifactOperationTest extends ModelTestBase {
 
     private void deleteAndCreateCategory(String category) {
         String[] names = category.split("/");
-        OperationTestsUtil.deleteAndCreateServiceCategory(category, titanDao);
-        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
+        OperationTestsUtil.deleteAndCreateServiceCategory(category, janusGraphDao);
+        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], janusGraphDao);
     }
 
     private UserData deleteAndCreateUser(String userId, String firstName, String lastName, String role) {
@@ -384,9 +383,9 @@ public class ArtifactOperationTest extends ModelTestBase {
             userData.setRole("ADMIN");
         }
 
-        titanDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
-        titanDao.createNode(userData, UserData.class);
-        titanDao.commit();
+        janusGraphDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
+        janusGraphDao.createNode(userData, UserData.class);
+        janusGraphDao.commit();
 
         return userData;
     }
@@ -395,7 +394,7 @@ public class ArtifactOperationTest extends ModelTestBase {
 
         ResourceMetadataData serviceData1 = new ResourceMetadataData();
         serviceData1.getMetadataDataDefinition().setUniqueId(resourceName);
-        Either<ResourceMetadataData, TitanOperationStatus> createNode = titanDao.createNode(serviceData1, ResourceMetadataData.class);
+        Either<ResourceMetadataData, JanusGraphOperationStatus> createNode = janusGraphDao.createNode(serviceData1, ResourceMetadataData.class);
 
         assertTrue("check resource created", createNode.isLeft());
         return createNode.left().value();

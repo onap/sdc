@@ -52,7 +52,7 @@ public class RemoveUtils {
 	}
 
 	private static void removeUsage() {
-		System.out.println("Usage: remove-products <titan.properties> <BE host> <BE port> <admin user>");
+		System.out.println("Usage: remove-products <janusgraph.properties> <BE host> <BE port> <admin user>");
 	}
 
 	private static boolean verifyParamsLength(String[] args, int i) {

@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.post;
 
-import org.openecomp.sdc.be.dao.DAOTitanStrategy;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 
 import java.io.File;
 
@@ -30,39 +30,39 @@ public class Install {
 	public static void main(String[] args) {
 
 		if (args == null || args.length == 0) {
-			System.out.println("Usage: org.openecomp.sdc.post.Install path_to_titan.properties");
+			System.out.println("Usage: org.openecomp.sdc.post.Install path_to_janusgraph.properties");
 			System.exit(1);
 		}
-		String titanPropsFile = args[0];
+		String janusGraphPropsFile = args[0];
 
-		if (!isFileExists(titanPropsFile)) {
+		if (!isFileExists(janusGraphPropsFile)) {
 			System.exit(2);
 		}
 
-		if (!createTitanSchema(titanPropsFile)) {
+		if (!createJanusGraphSchema(janusGraphPropsFile)) {
 			System.exit(3);
 		}
 
 		System.exit(0);
 	}
 
-	private static boolean createTitanSchema(String titanPropsFile) {
-		TitanGraphClient titanGraphClient = new TitanGraphClient(new DAOTitanStrategy());
-		TitanOperationStatus status = titanGraphClient.createGraph(titanPropsFile);
-		if (TitanOperationStatus.OK == status) {
-			System.out.println("Titan schema ,indexes and default values created successfully.");
+	private static boolean createJanusGraphSchema(String janusGraphPropsFile) {
+		JanusGraphClient janusGraphClient = new JanusGraphClient(new DAOJanusGraphStrategy());
+		JanusGraphOperationStatus status = janusGraphClient.createGraph(janusGraphPropsFile);
+		if (JanusGraphOperationStatus.OK == status) {
+			System.out.println("JanusGraph schema ,indexes and default values created successfully.");
 			return true;
 		} else {
 			System.out.println(
-					"Problem while creating titan schema ,indexes and default values. (" + status.name() + ")");
+					"Problem while creating janusgraph schema ,indexes and default values. (" + status.name() + ")");
 			return false;
 		}
 	}
 
-	private static boolean isFileExists(String titanPropsFile) {
-		File f = new File(titanPropsFile);
+	private static boolean isFileExists(String janusGraphPropsFile) {
+		File f = new File(janusGraphPropsFile);
 		if (!f.exists()) {
-			System.out.println(titanPropsFile + " not found");
+			System.out.println(janusGraphPropsFile + " not found");
 			return false;
 		}
 		return true;

@@ -34,6 +34,6 @@ public interface ITransactionSdnc {
 
     <T> Either<T, TransactionCodeEnum> invokeGeneralDBAction(boolean isLastAction, DBTypeEnum dbType, IDBAction dbAction, IDBAction dbRollbackAction);
 
-    <T> Either<T, TransactionCodeEnum> invokeTitanAction(boolean isLastAction, IDBAction dbAction);
+    <T> Either<T, TransactionCodeEnum> invokeJanusGraphAction(boolean isLastAction, IDBAction dbAction);
 
 }

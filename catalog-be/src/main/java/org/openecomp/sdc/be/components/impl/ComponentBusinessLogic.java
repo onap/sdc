@@ -561,7 +561,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either.left(result);
         }
         finally{
-            titanDao.commit();
+            janusGraphDao.commit();
         }
     }
 
@@ -596,7 +596,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             }
             responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value()));
         } finally {
-            titanDao.commit();
+            janusGraphDao.commit();
         }
         return Either.right(responseFormat);
     }
@@ -771,12 +771,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
 
         if ( deleteMarkedElements.isRight()){
-            titanDao.rollback();
+            janusGraphDao.rollback();
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteMarkedElements.right().value(), componentType));
             return Either.right(responseFormat);
         }
         log.trace("end deleteMarkedComponents");
-        titanDao.commit();
+        janusGraphDao.commit();
         return Either.left(deleteMarkedElements.left().value());
     }
 

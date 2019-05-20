@@ -30,7 +30,7 @@ configurationFile: ../catalog-be/src/main/resources/config/configuration.yaml
 importTypesConfigDir: src/test/resources/CI/importTypesTest
 
 
-titanPropertiesFile: src/main/resources/ci/conf/titan.properties
+janusGraphPropertiesFile: src/main/resources/ci/conf/janusgraph.properties
 cassandraHost: 127.0.0.1
 cassandraAuthenticate: false
 cassandraUsername: koko
@@ -47,7 +47,7 @@ localDataCenter: DC-Automate01
 
 stopOnClassFailure: false
 
-#List of non-abstract resources to keep during titan cleanup between tests
+#List of non-abstract resources to keep during janus graph cleanup between tests
 #Only 1.0 version will be kept
 resourcesNotToDelete:
      - Compute

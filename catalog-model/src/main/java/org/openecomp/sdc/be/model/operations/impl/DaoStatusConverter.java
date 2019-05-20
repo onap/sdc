@@ -21,18 +21,18 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 public class DaoStatusConverter {
 
-    public static StorageOperationStatus convertTitanStatusToStorageStatus(TitanOperationStatus titanStatus) {
+    public static StorageOperationStatus convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus janusGraphStatus) {
 
-        if (titanStatus == null) {
+        if (janusGraphStatus == null) {
             return StorageOperationStatus.GENERAL_ERROR;
         }
 
-        switch (titanStatus) {
+        switch (janusGraphStatus) {
 
         case OK:
             return StorageOperationStatus.OK;
@@ -54,7 +54,7 @@ public class DaoStatusConverter {
         case ALREADY_LOCKED:
             return StorageOperationStatus.FAILED_TO_LOCK_ELEMENT;
 
-        case TITAN_SCHEMA_VIOLATION:
+        case JANUSGRAPH_SCHEMA_VIOLATION:
             return StorageOperationStatus.SCHEMA_VIOLATION;
 
         case INVALID_ID:

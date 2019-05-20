@@ -12,7 +12,7 @@ template "sdc-yaml-config" do
         :catalogBE_port               => node['BE'][:http_port],
         :webportal_ip                 => node['Nodes']['FE'],
         :webportal_port               => node['FE'][:http_port],
-        :titan_file                   => "#{tests_base}/conf/titan.properties",
+        :janusgraph_file              => "#{tests_base}/conf/janusgraph.properties",
         :tests_base_ci                => "#{tests_base}/CI/tests",
         :components_path              => "#{tests_base}/CI/components",
         :importResourceConfigDir      => "#{tests_base}/CI/importResource",
@@ -26,9 +26,9 @@ template "sdc-yaml-config" do
     })
 end
 
-template "titan.properties" do
-   path "/#{tests_base}/conf/titan.properties"
-   source "BE-titan.properties.erb"
+template "janusgraph.properties" do
+   path "/#{tests_base}/conf/janusgraph.properties"
+   source "BE-janusgraph.properties.erb"
    owner "root"
    group "root"
    mode "0755"

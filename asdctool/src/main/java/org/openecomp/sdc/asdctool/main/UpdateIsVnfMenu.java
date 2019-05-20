@@ -41,7 +41,7 @@ public class UpdateIsVnfMenu {
 
 	private static void updateIsVnfTrueUsage() {
 		System.out.println(
-				"Usage: updateIsVnfTrue <titan.properties> <systemServiceName1,systemServiceName2,...,systemServiceNameN>");
+				"Usage: updateIsVnfTrue <janusgraph.properties> <systemServiceName1,systemServiceName2,...,systemServiceNameN>");
 	}
 
 	public static void main(String[] args) {

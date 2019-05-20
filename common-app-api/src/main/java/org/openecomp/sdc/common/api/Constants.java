@@ -133,7 +133,7 @@ public final class Constants {
 	//SDC HealthCheck components
 	public static final String HC_COMPONENT_FE = "FE";
 	public static final String HC_COMPONENT_BE = "BE";
-	public static final String HC_COMPONENT_TITAN = "TITAN";
+	public static final String HC_COMPONENT_JANUSGRAPH = "JANUSGRAPH";
 	public static final String HC_COMPONENT_ES = "ES";
 	public static final String HC_COMPONENT_CASSANDRA = "CASSANDRA";
 	public static final String HC_COMPONENT_DISTRIBUTION_ENGINE = "DE";

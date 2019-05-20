@@ -21,13 +21,13 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.resources.data.InputValueData;
 
 public interface IInputsOperation {
 
-    ImmutablePair<TitanOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId);
+    ImmutablePair<JanusGraphOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId);
 
     ComponentInstanceInput buildResourceInstanceInput(InputValueData propertyValueData, ComponentInstanceInput resourceInstanceInput);
 

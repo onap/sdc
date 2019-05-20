@@ -22,11 +22,11 @@ beSslPort: 8443
 version: 1.0
 released: 2012-11-30
 
-titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
-titanInMemoryGraph: false
-titanLockTimeout: 30
-titanReconnectIntervalInSeconds: 3
-titanHealthCheckReadTimeout: 1
+janusGraphCfgFile: /home/vagrant/catalog-be/config/catalog-be/janusgraph.properties
+janusGraphInMemoryGraph: false
+janusGraphLockTimeout: 30
+janusGraphReconnectIntervalInSeconds: 3
+janusGraphHealthCheckReadTimeout: 1
 esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4

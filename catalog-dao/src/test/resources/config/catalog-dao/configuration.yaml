@@ -25,9 +25,9 @@ beSslPort: 8443
 version: 1.0
 released: 2012-11-30
 
-titanCfgFile: src/main/resources/config/titan.properties
-titanInMemoryGraph: true
-titanLockTimeout: 30
+janusGraphCfgFile: src/main/resources/config/janusgraph.properties
+janusGraphInMemoryGraph: true
+janusGraphLockTimeout: 30
 
 # Protocols
 protocols:

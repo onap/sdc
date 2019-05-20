@@ -69,14 +69,14 @@ public class Configuration extends BasicConfiguration {
     private Map<String, String> users;
     private Map<String, Object> neo4j;
     private ElasticSearchConfig elasticSearch;
-    private String titanCfgFile;
-    private String titanMigrationKeySpaceCfgFile;
-    private Boolean titanInMemoryGraph;
+    private String janusGraphCfgFile;
+    private String janusGraphMigrationKeySpaceCfgFile;
+    private Boolean janusGraphInMemoryGraph;
     private int startMigrationFrom;
-    private Long titanLockTimeout;
-    private Long titanReconnectIntervalInSeconds;
+    private Long janusGraphLockTimeout;
+    private Long janusGraphReconnectIntervalInSeconds;
     private List<String> healthStatusExclude;
-    private Long titanHealthCheckReadTimeout;
+    private Long janusGraphHealthCheckReadTimeout;
     private Long esReconnectIntervalInSeconds;
     private Long uebHealthCheckReconnectIntervalInSeconds;
     private Long uebHealthCheckReadTimeout;
@@ -374,28 +374,28 @@ public class Configuration extends BasicConfiguration {
         this.elasticSearch = elasticSearch;
     }
 
-    public String getTitanCfgFile() {
-        return titanCfgFile;
+    public String getJanusGraphCfgFile() {
+        return janusGraphCfgFile;
     }
 
-    public void setTitanCfgFile(String titanCfgFile) {
-        this.titanCfgFile = titanCfgFile;
+    public void setJanusGraphCfgFile(String janusGraphCfgFile) {
+        this.janusGraphCfgFile = janusGraphCfgFile;
     }
 
-    public String getTitanMigrationKeySpaceCfgFile() {
-        return titanMigrationKeySpaceCfgFile;
+    public String getJanusGraphMigrationKeySpaceCfgFile() {
+        return janusGraphMigrationKeySpaceCfgFile;
     }
 
-    public void setTitanMigrationKeySpaceCfgFile(String titanMigrationKeySpaceCfgFile) {
-        this.titanMigrationKeySpaceCfgFile = titanMigrationKeySpaceCfgFile;
+    public void setJanusGraphMigrationKeySpaceCfgFile(String janusGraphMigrationKeySpaceCfgFile) {
+        this.janusGraphMigrationKeySpaceCfgFile = janusGraphMigrationKeySpaceCfgFile;
     }
 
-    public Boolean getTitanInMemoryGraph() {
-        return titanInMemoryGraph;
+    public Boolean getJanusGraphInMemoryGraph() {
+        return janusGraphInMemoryGraph;
     }
 
-    public void setTitanInMemoryGraph(Boolean titanInMemoryGraph) {
-        this.titanInMemoryGraph = titanInMemoryGraph;
+    public void setJanusGraphInMemoryGraph(Boolean janusGraphInMemoryGraph) {
+        this.janusGraphInMemoryGraph = janusGraphInMemoryGraph;
     }
 
     public int getStartMigrationFrom() {
@@ -406,36 +406,36 @@ public class Configuration extends BasicConfiguration {
         this.startMigrationFrom = startMigrationFrom;
     }
 
-    public Long getTitanLockTimeout() {
-        return titanLockTimeout;
+    public Long getJanusGraphLockTimeout() {
+        return janusGraphLockTimeout;
     }
 
-    public void setTitanLockTimeout(Long titanLockTimeout) {
-        this.titanLockTimeout = titanLockTimeout;
+    public void setJanusGraphLockTimeout(Long janusGraphLockTimeout) {
+        this.janusGraphLockTimeout = janusGraphLockTimeout;
     }
 
-    public Long getTitanHealthCheckReadTimeout() {
-        return titanHealthCheckReadTimeout;
+    public Long getJanusGraphHealthCheckReadTimeout() {
+        return janusGraphHealthCheckReadTimeout;
     }
 
-    public Long getTitanHealthCheckReadTimeout(long defaultVal) {
-        return titanHealthCheckReadTimeout == null ? defaultVal : titanHealthCheckReadTimeout;
+    public Long getJanusGraphHealthCheckReadTimeout(long defaultVal) {
+        return janusGraphHealthCheckReadTimeout == null ? defaultVal : janusGraphHealthCheckReadTimeout;
     }
 
-    public void setTitanHealthCheckReadTimeout(Long titanHealthCheckReadTimeout) {
-        this.titanHealthCheckReadTimeout = titanHealthCheckReadTimeout;
+    public void setJanusGraphHealthCheckReadTimeout(Long janusGraphHealthCheckReadTimeout) {
+        this.janusGraphHealthCheckReadTimeout = janusGraphHealthCheckReadTimeout;
     }
 
-    public Long getTitanReconnectIntervalInSeconds() {
-        return titanReconnectIntervalInSeconds;
+    public Long getJanusGraphReconnectIntervalInSeconds() {
+        return janusGraphReconnectIntervalInSeconds;
     }
 
-    public Long getTitanReconnectIntervalInSeconds(long defaultVal) {
-        return titanReconnectIntervalInSeconds == null ? defaultVal : titanReconnectIntervalInSeconds;
+    public Long getJanusGraphReconnectIntervalInSeconds(long defaultVal) {
+        return janusGraphReconnectIntervalInSeconds == null ? defaultVal : janusGraphReconnectIntervalInSeconds;
     }
 
-    public void setTitanReconnectIntervalInSeconds(Long titanReconnectIntervalInSeconds) {
-        this.titanReconnectIntervalInSeconds = titanReconnectIntervalInSeconds;
+    public void setJanusGraphReconnectIntervalInSeconds(Long janusGraphReconnectIntervalInSeconds) {
+        this.janusGraphReconnectIntervalInSeconds = janusGraphReconnectIntervalInSeconds;
     }
 
     public Long getEsReconnectIntervalInSeconds() {
@@ -1365,10 +1365,11 @@ public class Configuration extends BasicConfiguration {
                 .append(format("Released: %s%n", released)).append(format("Supported protocols: %s%n", protocols))
                 .append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
                 .append(format("ElasticSearch: %s%n", elasticSearch))
-                .append(format("Titan Cfg File: %s%n", titanCfgFile))
-                .append(format("Titan In memory: %s%n", titanInMemoryGraph))
-                .append(format("Titan lock timeout: %s%n", titanLockTimeout))
-                .append(format("Titan reconnect interval seconds: %s%n", titanReconnectIntervalInSeconds))
+                .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile))
+                .append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
+                .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
+                .append(format("JanusGraph reconnect interval seconds: %s%n",
+                    janusGraphReconnectIntervalInSeconds))
                 .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
                 .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
                 .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))

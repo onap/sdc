@@ -35,7 +35,7 @@ import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -81,7 +81,7 @@ public class ResourceImportManagerTest {
         configurationManager = new ConfigurationManager(configurationSource);
 
         Configuration configuration = new Configuration();
-        configuration.setTitanInMemoryGraph(true);
+        configuration.setJanusGraphInMemoryGraph(true);
         configurationManager.setConfiguration(configuration);
     }
 

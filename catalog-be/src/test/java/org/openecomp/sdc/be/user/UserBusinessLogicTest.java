@@ -12,13 +12,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -36,7 +35,7 @@ public class UserBusinessLogicTest {
 	@Mock
 	private ComponentsUtils componentsUtils;
 	@Mock
-	private TitanGenericDao titanDao;
+	private JanusGraphGenericDao janusGraphDao;
 
 	@Before
 	public void setUp() {
@@ -339,8 +338,8 @@ public class UserBusinessLogicTest {
 		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
 		List<Edge> list = new LinkedList<>();
 
-		list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(), Pair.with("sadas", "sadasd"),
-				Pair.with("sadas", "sadasd")));
+		list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(),"sadas","sadasd",
+				"sadas","sadasd" ));
 		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(list);
 		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
 
@@ -657,7 +656,7 @@ public class UserBusinessLogicTest {
 		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
 		LinkedList<Edge> a = new LinkedList<>();
 		a.add(new DetachedEdge(userUniuqeIdToDeactive, userUniuqeIdToDeactive, new HashMap<>(),
-				Pair.with("dsfds", "dsfds"), Pair.with("dsfds", "dsfds")));
+				"dsfds","dsfds", "dsfds", "dsfds"));
 		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(a);
 		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
 

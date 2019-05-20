@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -28,10 +28,10 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -52,11 +52,12 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 @Component("user-operation")
 public class UserAdminOperation implements IUserAdminOperation {
 
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
-    public UserAdminOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+    public UserAdminOperation(@Qualifier("janusgraph-generic-dao")
+                                  JanusGraphGenericDao janusGraphGenericDao) {
         super();
-        this.titanGenericDao = titanGenericDao;
+        this.janusGraphGenericDao = janusGraphGenericDao;
 
     }
 
@@ -93,7 +94,7 @@ public class UserAdminOperation implements IUserAdminOperation {
             return resultWrapper.getInnerElement();
         } finally {
             if (!inTransaction) {
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
             log.debug("getUserData - end");
         }
@@ -127,7 +128,8 @@ public class UserAdminOperation implements IUserAdminOperation {
             return;
         }
         id = id.toLowerCase();
-        Either<UserData, TitanOperationStatus> either = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+        Either<UserData, JanusGraphOperationStatus> either = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
 
         if (either.isRight()) {
             resultWrapper.setInnerElement(getUserNotFoundError(id, either.right().value()));
@@ -138,10 +140,10 @@ public class UserAdminOperation implements IUserAdminOperation {
 
     @Override
     public Either<User, StorageOperationStatus> saveUserData(User user) {
-        Either<UserData, TitanOperationStatus> result = null;
+        Either<UserData, JanusGraphOperationStatus> result = null;
         try {
             UserData userData = convertToUserData(user);
-            result = titanGenericDao.createNode(userData, UserData.class);
+            result = janusGraphGenericDao.createNode(userData, UserData.class);
             if (result.isRight()) {
                 log.debug("Problem while saving User  {}. Reason - {}", userData.getUserId(), result.right().value());
                 return Either.right(StorageOperationStatus.GENERAL_ERROR);
@@ -153,21 +155,21 @@ public class UserAdminOperation implements IUserAdminOperation {
 
             if (result == null || result.isRight()) {
                 log.error("saveUserData - Failed");
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             } else {
                 log.debug("saveUserData - end");
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
         }
     }
 
     @Override
     public Either<User, StorageOperationStatus> updateUserData(User user) {
-        Either<UserData, TitanOperationStatus> result = null;
+        Either<UserData, JanusGraphOperationStatus> result = null;
         try {
             log.debug("updateUserData - start");
             UserData userData = convertToUserData(user);
-            result = titanGenericDao.updateNode(userData, UserData.class);
+            result = janusGraphGenericDao.updateNode(userData, UserData.class);
             if (result.isRight()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Problem while updating User {}. Reason - {}", userData.toString(), result.right().value());
@@ -181,10 +183,10 @@ public class UserAdminOperation implements IUserAdminOperation {
 
             if (result == null || result.isRight()) {
                 log.error("updateUserData - Failed");
-                titanGenericDao.rollback();
+                janusGraphGenericDao.rollback();
             } else {
                 log.debug("updateUserData - end");
-                titanGenericDao.commit();
+                janusGraphGenericDao.commit();
             }
 
         }
@@ -206,10 +208,11 @@ public class UserAdminOperation implements IUserAdminOperation {
     @Override
     public Either<User, ActionStatus> deleteUserData(String id) {
         Either<User, ActionStatus> result;
-        Either<UserData, TitanOperationStatus> eitherGet = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+        Either<UserData, JanusGraphOperationStatus> eitherGet = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
         if (eitherGet.isRight()) {
             log.debug("Problem while retriving user with userId {}",id);
-            if (eitherGet.right().value() == TitanOperationStatus.NOT_FOUND) {
+            if (eitherGet.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
                 result = Either.right(ActionStatus.USER_NOT_FOUND);
             } else {
                 result = Either.right(ActionStatus.GENERAL_ERROR);
@@ -228,13 +231,14 @@ public class UserAdminOperation implements IUserAdminOperation {
                 deleteUser(resultWrapper, userData);
             }
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
         return resultWrapper.getInnerElement();
     }
 
     private void deleteUser(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
-        Either<UserData, TitanOperationStatus> eitherDelete = titanGenericDao.deleteNode(userData, UserData.class);
+        Either<UserData, JanusGraphOperationStatus> eitherDelete = janusGraphGenericDao
+            .deleteNode(userData, UserData.class);
         if (eitherDelete.isRight()) {
             if (log.isDebugEnabled()) {
                 log.debug("Problem while deleting User {}. Reason - {}", userData.toString(), eitherDelete.right().value());
@@ -249,7 +253,8 @@ public class UserAdminOperation implements IUserAdminOperation {
     private void validateUserHasNoConnections(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
         if (resultWrapper.isEmpty()) {
 
-            Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao.getEdgesForNode(userData, Direction.BOTH);
+            Either<List<Edge>, JanusGraphOperationStatus> edgesForNode = janusGraphGenericDao
+                .getEdgesForNode(userData, Direction.BOTH);
             if (edgesForNode.isRight()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Problem while deleting User {}. Reason - {}", userData.getUserId(), edgesForNode.right().value());
@@ -266,21 +271,23 @@ public class UserAdminOperation implements IUserAdminOperation {
 
     public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties) {
 
-        Either<TitanVertex, TitanOperationStatus> vertexUser = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId());
+        Either<JanusGraphVertex, JanusGraphOperationStatus> vertexUser = janusGraphGenericDao
+            .getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId());
         if (vertexUser.isRight()) {
-            TitanOperationStatus tos = vertexUser.right().value();
+            JanusGraphOperationStatus tos = vertexUser.right().value();
             log.debug("Failed to get User {} from graph while retrieving pending tasks. Reason - {}", user.getUserId(), tos);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(tos));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(tos));
         }
         List<Edge> pendingTasks = new ArrayList<>();
-        Either<List<Edge>, TitanOperationStatus> edges = titanGenericDao.getOutgoingEdgesByCriteria(vertexUser.left().value(), GraphEdgeLabels.STATE, properties);
+        Either<List<Edge>, JanusGraphOperationStatus> edges = janusGraphGenericDao
+            .getOutgoingEdgesByCriteria(vertexUser.left().value(), GraphEdgeLabels.STATE, properties);
         if (edges.isRight() || edges.left().value() == null) {
-            TitanOperationStatus tos = edges.right().value();
-            if (tos == TitanOperationStatus.NOT_FOUND) {
+            JanusGraphOperationStatus tos = edges.right().value();
+            if (tos == JanusGraphOperationStatus.NOT_FOUND) {
                 return Either.left(pendingTasks);
             } else {
                 log.debug("Failed while retrieving pending tasks for user {} . Reason - {}", user.getUserId(), tos);
-                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(tos));
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(tos));
             }
         }
         for (Edge edge : edges.left().value()) {
@@ -322,21 +329,22 @@ public class UserAdminOperation implements IUserAdminOperation {
                 propertiesToMatch.put(GraphPropertiesDictionary.USER_STATUS.getProperty(), status);
             }
 
-            Either<List<UserData>, TitanOperationStatus> userNodes = titanGenericDao.getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
+            Either<List<UserData>, JanusGraphOperationStatus> userNodes = janusGraphGenericDao
+                .getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
 
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
             return convertToUsers(role, userNodes);
         } finally {
-            titanGenericDao.commit();
+            janusGraphGenericDao.commit();
         }
     }
 
-    private Either<List<User>, ActionStatus> convertToUsers(String role, Either<List<UserData>, TitanOperationStatus> userNodes) {
+    private Either<List<User>, ActionStatus> convertToUsers(String role, Either<List<UserData>, JanusGraphOperationStatus> userNodes) {
 
         if (userNodes.isRight()) {
-            // in case of NOT_FOUND from Titan return empty list
-            TitanOperationStatus tos = userNodes.right().value();
-            if (tos.equals(TitanOperationStatus.NOT_FOUND)) {
+            // in case of NOT_FOUND from JanusGraph return empty list
+            JanusGraphOperationStatus tos = userNodes.right().value();
+            if (tos.equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 return Either.left(Collections.emptyList());
             } else {
                 log.error("Problem while getting all users with role {}. Reason - {}", role, tos);
@@ -361,8 +369,8 @@ public class UserAdminOperation implements IUserAdminOperation {
         return result;
     }
 
-    private Either<User, ActionStatus> getUserNotFoundError(String uid, TitanOperationStatus status) {
-        if (status == TitanOperationStatus.NOT_FOUND) {
+    private Either<User, ActionStatus> getUserNotFoundError(String uid, JanusGraphOperationStatus status) {
+        if (status == JanusGraphOperationStatus.NOT_FOUND) {
             log.debug("User with userId {} not found", uid);
             return Either.right(ActionStatus.USER_NOT_FOUND);
         } else {

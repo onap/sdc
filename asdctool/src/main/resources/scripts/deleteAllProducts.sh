@@ -1,8 +1,8 @@
 #!/bin/bash
 
-##############################
-# delete all products from titan
-##############################
+#####################################
+# delete all products from JanusGraph
+#####################################
 
 CURRENT_DIR=`pwd`
 BASEDIR=$(dirname $0)

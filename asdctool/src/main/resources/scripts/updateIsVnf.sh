@@ -3,7 +3,7 @@
 ########################################################################
 #
 #   Example:
-#     ./updateIsVnf.sh ../config/titan.properties Bservice,Myservice
+#     ./updateIsVnf.sh ../config/janusgraph.properties Bservice,Myservice
 #
 ########################################################################
 

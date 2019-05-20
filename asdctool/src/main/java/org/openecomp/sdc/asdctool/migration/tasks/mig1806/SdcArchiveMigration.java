@@ -4,11 +4,11 @@ import fj.data.Either;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
@@ -19,10 +19,10 @@ import java.math.BigInteger;
 public class SdcArchiveMigration implements Migration {
     private static final Logger logger = Logger.getLogger(SdcArchiveMigration.class);
 
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
-    public SdcArchiveMigration(TitanDao titanDao) {
-        this.titanDao = titanDao;
+    public SdcArchiveMigration(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
     }
 
     @Override
@@ -37,30 +37,30 @@ public class SdcArchiveMigration implements Migration {
 
     @Override
     public MigrationResult migrate() {
-        TitanOperationStatus status = null;
+        JanusGraphOperationStatus status = null;
         try {
             status = getOrCreateArchiveRoot();
-            return status == TitanOperationStatus.OK ? MigrationResult.success() : MigrationResult.error("failed to create archive root node. error: " + status);
+            return status == JanusGraphOperationStatus.OK ? MigrationResult.success() : MigrationResult.error("failed to create archive root node. error: " + status);
         } finally {
             commitOrRollBack(status);
         }
     }
 
-    private void commitOrRollBack(TitanOperationStatus status) {
-        if (status == TitanOperationStatus.OK) {
-            titanDao.commit();
+    private void commitOrRollBack(JanusGraphOperationStatus status) {
+        if (status == JanusGraphOperationStatus.OK) {
+            janusGraphDao.commit();
         } else {
-            titanDao.rollback();
+            janusGraphDao.rollback();
         }
     }
 
-    private TitanOperationStatus getOrCreateArchiveRoot() {
+    private JanusGraphOperationStatus getOrCreateArchiveRoot() {
         logger.info("creating or getting catalog archive vertex");
-        return titanDao.getVertexByLabel(VertexTypeEnum.ARCHIVE_ROOT)
-                .either(v -> TitanOperationStatus.OK, s -> this.createRootArchiveVertex());
+        return janusGraphDao.getVertexByLabel(VertexTypeEnum.ARCHIVE_ROOT)
+                .either(v -> JanusGraphOperationStatus.OK, s -> this.createRootArchiveVertex());
     }
 
-    private TitanOperationStatus createRootArchiveVertex() {
+    private JanusGraphOperationStatus createRootArchiveVertex() {
         GraphVertex archiveRootVertex = new GraphVertex(VertexTypeEnum.ARCHIVE_ROOT);
         archiveRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
         archiveRootVertex.addMetadataProperty(GraphPropertyEnum.LABEL, VertexTypeEnum.ARCHIVE_ROOT);
@@ -68,9 +68,9 @@ public class SdcArchiveMigration implements Migration {
 
         logger.info("Creating root archive vertex {}", archiveRootVertex.getUniqueId());
 
-        final Either<GraphVertex, TitanOperationStatus> vertexE = titanDao.createVertex(archiveRootVertex);
+        final Either<GraphVertex, JanusGraphOperationStatus> vertexE = janusGraphDao.createVertex(archiveRootVertex);
 
-        return vertexE.isLeft() ? TitanOperationStatus.OK : vertexE.right().value();
+        return vertexE.isLeft() ? JanusGraphOperationStatus.OK : vertexE.right().value();
     }
 
 }

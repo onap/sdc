@@ -45,13 +45,13 @@ localDataCenter: DC-Automate01
 useBrowserMobProxy: false
 captureTraffic: false
 
-titanPropertiesFile: src/main/resources/ci/conf/titan.properties
+janusGraphPropertiesFile: src/main/resources/ci/conf/janusgraph.properties
 
 stopOnClassFailure: false
 #todo
 onboardingBeHost: 192.168.33.10
 onboardingBePort: 8080
-#List of non-abstract resources to keep during titan cleanup between tests
+#List of non-abstract resources to keep during JanusGraph cleanup between tests
 #Only 1.0 version will be kept
 resourcesNotToDelete:
      - tosca.nodes.Compute

@@ -1,6 +1,6 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import org.janusgraph.core.JanusGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.junit.Test;
@@ -61,18 +61,18 @@ public class GraphMLConverterTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testOpenGraph() throws Exception {
 		GraphMLConverter testSubject;
-		String titanFileLocation = "";
-		TitanGraph result;
+		String janusGraphFileLocation = "";
+		JanusGraph result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.openGraph("src/main/resources/config/titan.properties");
+		result = testSubject.openGraph("src/main/resources/config/janusgraph.properties");
 	}
 
 	@Test(expected=NullPointerException.class)
 	public void testExportJsonGraph() throws Exception {
 		GraphMLConverter testSubject;
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String outputDirectory = "";
 		String result;
 
@@ -84,7 +84,7 @@ public class GraphMLConverterTest {
 	@Test(expected=NullPointerException.class)
 	public void testExportGraphMl_1() throws Exception {
 		GraphMLConverter testSubject;
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String outputDirectory = "";
 		String result;
 
@@ -96,7 +96,7 @@ public class GraphMLConverterTest {
 	@Test
 	public void testImportJsonGraph() throws Exception {
 		GraphMLConverter testSubject;
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String graphJsonFile = "";
 		List<ImmutablePair<String, String>> propertiesCriteriaToDelete = null;
 		boolean result;
@@ -109,7 +109,7 @@ public class GraphMLConverterTest {
 	@Test(expected=NullPointerException.class)
 	public void testFindErrorInJsonGraph_1() throws Exception {
 		GraphMLConverter testSubject;
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String outputDirectory = "";
 		String result;
 
@@ -122,7 +122,7 @@ public class GraphMLConverterTest {
 	@Test(expected=NullPointerException.class)
 	public void testExportUsers() throws Exception {
 		GraphMLConverter testSubject;
-		TitanGraph graph = null;
+		JanusGraph graph = null;
 		String outputDirectory = "";
 		String result;
 

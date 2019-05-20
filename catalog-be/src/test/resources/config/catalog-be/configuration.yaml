@@ -26,15 +26,15 @@ released: 2012-11-30
 toscaConformanceLevel: 8.0
 minToscaConformanceLevel: 3.0
 
-titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
-titanInMemoryGraph: false
-titanLockTimeout: 1800
+janusGraphCfgFile: /home/vagrant/catalog-be/config/catalog-be/janusgraph.properties
+janusGraphInMemoryGraph: false
+janusGraphLockTimeout: 1800
 
-# The interval to try and reconnect to titan DB when it is down during ASDC startup:
-titanReconnectIntervalInSeconds: 3
+# The interval to try and reconnect to janusgraph DB when it is down during ASDC startup:
+janusGraphReconnectIntervalInSeconds: 3
 
-# The read timeout towards Titan DB when health check is invoked:
-titanHealthCheckReadTimeout: 1
+# The read timeout towards JanusGraph DB when health check is invoked:
+janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 esReconnectIntervalInSeconds: 3

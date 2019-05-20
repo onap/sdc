@@ -43,7 +43,7 @@ public class BaseConfDependent {
 
 		configurationManager = new ConfigurationManager(configurationSource);
 
-		configurationManager.getConfiguration().setTitanInMemoryGraph(true);
+		configurationManager.getConfiguration().setJanusGraphInMemoryGraph(true);
 	
 	}
 	

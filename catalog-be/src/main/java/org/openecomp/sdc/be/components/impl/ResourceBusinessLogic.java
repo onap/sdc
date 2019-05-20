@@ -75,7 +75,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -127,7 +127,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
@@ -321,7 +321,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
                 .validateComponentNameUniqueness(resourceName, resourceTypeEnum, ComponentTypeEnum.RESOURCE);
         // DE242223
-        titanDao.commit();
+        janusGraphDao.commit();
 
         if (dataModelResponse.isLeft()) {
             Map<String, Boolean> result = new HashMap<>();
@@ -487,7 +487,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             throw e;
         }
         finally {
-            titanDao.commit();
+            janusGraphDao.commit();
             log.debug("unlock resource {}", lockedResourceId);
             graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
         }
@@ -1420,7 +1420,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             throw e;
         } finally {
             if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(),
@@ -1431,7 +1431,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void rollback(boolean inTransaction, Resource resource, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
         if(!inTransaction) {
-            titanDao.rollback();
+            janusGraphDao.rollback();
         }
         if (isNotEmpty(createdArtifacts) && isNotEmpty(nodeTypesNewCreatedArtifacts)) {
             createdArtifacts.addAll(nodeTypesNewCreatedArtifacts);
@@ -2181,13 +2181,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
         log.debug("#createResourceInstancesRelations - Before get all datatypes. ");
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
         if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
+            JanusGraphOperationStatus status = allDataTypes.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
                     "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName));
+                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName));
 
         }
         Resource finalResource = resource;
@@ -2369,7 +2369,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private void processComponentInstance(String yamlName, Resource resource, List<ComponentInstance> componentInstancesList, Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<String, List<ComponentInstanceProperty>> instProperties, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<PropertyDefinition>> instAttributes, Map<String, Resource> originCompMap, Map<String, List<ComponentInstanceInput>> instInputs, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
+    private void processComponentInstance(String yamlName, Resource resource, List<ComponentInstance> componentInstancesList, Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes, Map<String, List<ComponentInstanceProperty>> instProperties, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<PropertyDefinition>> instAttributes, Map<String, Resource> originCompMap, Map<String, List<ComponentInstanceInput>> instInputs, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
                 .filter(i->i.getName().equals(uploadComponentInstanceInfo.getName()))
                 .findFirst();
@@ -2435,7 +2435,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return originResource;
     }
 
-    private void processComponentInstanceCapabilities(Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, UploadComponentInstanceInfo uploadComponentInstanceInfo, ComponentInstance currentCompInstance, Resource originResource) {
+    private void processComponentInstanceCapabilities(Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, UploadComponentInstanceInfo uploadComponentInstanceInfo, ComponentInstance currentCompInstance, Resource originResource) {
         Map<String, List<CapabilityDefinition>> originCapabilities;
         if (isNotEmpty(uploadComponentInstanceInfo.getCapabilities())) {
             originCapabilities = new HashMap<>();
@@ -2449,7 +2449,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         instCapabilties.put(currentCompInstance, originCapabilities);
     }
 
-    private void updateCapabilityPropertiesValues(Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<String, List<CapabilityDefinition>> originCapabilities, Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
+    private void updateCapabilityPropertiesValues(Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes, Map<String, List<CapabilityDefinition>> originCapabilities, Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
         originCapabilities.values().stream()
                 .flatMap(Collection::stream)
                 .filter(c -> newPropertiesMap.containsKey(c.getName()))
@@ -3240,10 +3240,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (result == null || result.isRight()) {
                 BeEcompErrorManager.getInstance().logBeSystemError("Change LifecycleState - Certify");
                 if (!inTransaction) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
             } else if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
     }
@@ -3429,9 +3429,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         } finally {
             if (resourcePair == null) {
                 BeEcompErrorManager.getInstance().logBeSystemError("Change LifecycleState - Certify");
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             if (needLock) {
                 log.debug("unlock resource {}", lockedResourceId);
@@ -3919,9 +3919,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         } finally {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
         }
@@ -3947,11 +3947,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         } finally {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                titanDao.rollback();
+                janusGraphDao.rollback();
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
                 responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resourceName);
             } else {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
         }
         if (resource != null) {
@@ -3971,9 +3971,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
             } finally {
                 if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 } else {
-                    titanDao.commit();
+                    janusGraphDao.commit();
                 }
                 graphLockOperation.unlockComponent(resource.getUniqueId(), NodeTypeEnum.Resource);
             }
@@ -4097,7 +4097,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         finally {
             if (!inTransaction) {
-                titanDao.commit();
+                janusGraphDao.commit();
             }
             if (needToUnlock) {
                 graphLockOperation.unlockComponent(resourceIdToUpdate, NodeTypeEnum.Resource);
@@ -4643,7 +4643,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Either<List<CategoryDefinition>, ActionStatus> categories = elementDao
                     .getAllCategories(NodeTypeEnum.ResourceNewCategory, inTransaction);
             if (categories.isRight()) {
-                log.debug("failed to retrieve resource categories from Titan");
+                log.debug("failed to retrieve resource categories from JanusGraph");
                 responseFormat = componentsUtils.getResponseFormat(categories.right().value());
                 componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
                 throw new ByActionStatusComponentException(categories.right().value());
@@ -4830,7 +4830,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                 if (deleteArtifactByInterface.isRight()) {
                                     log.debug("Couldn't remove artifact definition with id {}", uniqueId);
                                     if (!inTransaction) {
-                                        titanDao.rollback();
+                                        janusGraphDao.rollback();
                                     }
                                     return Either.right(deleteArtifactByInterface.right().value());
                                 }
@@ -4852,7 +4852,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     && !findPropertiesOfNode.right().value().equals(StorageOperationStatus.OK)) {
                 log.debug("Failed to remove all properties of resource");
                 if (!inTransaction) {
-                    titanDao.rollback();
+                    janusGraphDao.rollback();
                 }
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(findPropertiesOfNode.right().value())));
@@ -4865,7 +4865,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (inTransaction) {
             return Either.left(true);
         }
-        titanDao.commit();
+        janusGraphDao.commit();
         return Either.left(true);
 
     }

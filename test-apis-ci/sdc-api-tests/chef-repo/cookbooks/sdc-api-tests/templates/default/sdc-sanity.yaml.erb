@@ -25,7 +25,7 @@ importResourceTestsConfigDir: <%= @importResourceTestsConfigDir %>
 errorConfigurationFile: <%= @errorConfigurationFile %>
 configurationFile: <%= @ConfigurationFile %>
 importTypesConfigDir: <%= @importTypesDir %>
-titanPropertiesFile: <%= @titan_file %>
+janusGraphPropertiesFile: <%= @janusgraph_file %>
 systemUnderDebug: true
 
 cassandraHost: <%= @CASSANDRA_IP %>
@@ -42,7 +42,7 @@ localDataCenter: DC-Automate01
 
 stopOnClassFailure: false
 
-#List of non-abstract resources to keep during titan cleanup between tests
+#List of non-abstract resources to keep during JanusGraph cleanup between tests
 #Only 1.0 version will be kept
 resourcesNotToDelete:
      - Compute

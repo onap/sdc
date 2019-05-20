@@ -1,7 +1,7 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -10,11 +10,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.*;
@@ -44,8 +43,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
     private static final String TOSCA_GROUPS_ROOT = "tosca.groups.Root";
     private static final String NULL_STRING = null;
 
-    @Resource(name = "titan-generic-dao")
-    private HealingTitanGenericDao titanDao;
+    @Resource(name = "janusgraph-generic-dao")
+    private HealingJanusGraphGenericDao janusGraphDao;
     
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
@@ -60,7 +59,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
     @After
     public void tearDown() {
-        titanDao.rollback();
+        janusGraphDao.rollback();
         cleanUp();
     }
 
@@ -120,10 +119,12 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
         
-        Either<GroupTypeData, TitanOperationStatus> groupTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
         GroupTypeData groupTypeNode = extractVal(groupTypeResult);
         
-        Either<Edge, TitanOperationStatus> edgeResult = titanDao.getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
+        Either<Edge, JanusGraphOperationStatus> edgeResult = janusGraphDao
+            .getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
         validate(edgeResult);
     }
     
@@ -132,7 +133,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         getOrCreateRootGroupTypeNode();
 
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(null);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
 
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -171,7 +173,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
                 buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
 
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
         
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -199,7 +202,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
         
-        Either<GroupTypeData, TitanOperationStatus> groupTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
         GroupTypeData groupTypeNode = extractVal(groupTypeResult);
         
         Either<GroupTypeDefinition, StorageOperationStatus> groupTypeDefResult = groupTypeOperation.getGroupTypeByUid(groupTypeNode.getUniqueId());
@@ -213,7 +217,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         CapabilityDefinition updatedCapabilityDef = capabilityDefs.get("vlan_assignment");
         assertEquals(2, updatedCapabilityDef.getProperties().size());
         
-        Either<Edge, TitanOperationStatus> edgeDerivedFromResult = titanDao.getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
+        Either<Edge, JanusGraphOperationStatus> edgeDerivedFromResult = janusGraphDao
+            .getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
         validate(edgeDerivedFromResult);
     }
     
@@ -226,7 +231,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
 
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -254,7 +260,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
 
-        Either<GroupTypeData, TitanOperationStatus> groupTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
         GroupTypeData groupTypeNode = extractVal(groupTypeResult);
 
         Either<GroupTypeDefinition, StorageOperationStatus> groupTypeDefResult = groupTypeOperation.getGroupTypeByUid(groupTypeNode.getUniqueId());
@@ -281,7 +288,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
 
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -317,7 +325,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
 
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -362,7 +371,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
-        Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
+        Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
 
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -501,7 +511,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
     
     
     private GroupTypeData getOrCreateRootGroupTypeNode() {
-        Either<GroupTypeData, TitanOperationStatus> groupTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), TOSCA_GROUPS_ROOT, GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), TOSCA_GROUPS_ROOT, GroupTypeData.class);
         if(groupTypeResult.isLeft()) {
             return groupTypeResult.left().value();
         }
@@ -514,7 +525,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(rootGroupDefinition, false);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         
-        Either<GroupTypeData, TitanOperationStatus> groupTypeResult = titanDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), rootGroupDefinition.getType(), GroupTypeData.class);
+        Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), rootGroupDefinition.getType(), GroupTypeData.class);
         return extractVal(groupTypeResult);        
     }
     
@@ -603,11 +615,11 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertEquals(expected.getDescription(), actual.getDescription());
     }
     
-    private <T> void validate(Either<T, TitanOperationStatus> result) {
+    private <T> void validate(Either<T, JanusGraphOperationStatus> result) {
         extractVal(result);
     }
     
-    private <T> T extractVal(Either<T, TitanOperationStatus> result) {
+    private <T> T extractVal(Either<T, JanusGraphOperationStatus> result) {
         assertTrue(result.isLeft());
         T t = result.left().value();
         assertNotNull(t);
@@ -616,19 +628,19 @@ public class GroupTypeOperationTest extends ModelTestBase {
     }
 
     private void cleanUp() {
-        Either<TitanGraph, TitanOperationStatus> graphResult = titanDao.getGraph();
-        TitanGraph graph = graphResult.left().value();
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        JanusGraph graph = graphResult.left().value();
 
-        Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().vertices();
         if (vertices != null) {
-            Iterator<TitanVertex> iterator = vertices.iterator();
+            Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
-                TitanVertex vertex = iterator.next();
+                JanusGraphVertex vertex = iterator.next();
                 vertex.remove();
             }
 
         }
-        titanDao.commit();
+        janusGraphDao.commit();
     }
 
 
@@ -764,17 +776,19 @@ public class GroupTypeOperationTest extends ModelTestBase {
     }
 
     private void verifyDerivedFromNodeEqualsToRootGroupType(GroupTypeDefinition rootGroupType, String parentGroupId) {
-        Either<ImmutablePair<GroupTypeData, GraphEdge>, TitanOperationStatus> derivedFromRelation = titanDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<GroupTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.GroupType, GroupTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getGroupTypeDataDefinition())
                 .isEqualToComparingFieldByField(rootGroupType);
     }
 
     private void verifyDerivedFromRelationDoesntExist(String parentGroupId) {
-        Either<ImmutablePair<GroupTypeData, GraphEdge>, TitanOperationStatus> derivedFromRelation = titanDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
+        Either<ImmutablePair<GroupTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.GroupType, GroupTypeData.class);
         assertThat(derivedFromRelation.right().value())
-                .isEqualTo(TitanOperationStatus.NOT_FOUND);
+                .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
     }
 
     private GroupTypeDefinition createGroupTypeDef() {

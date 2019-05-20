@@ -6,10 +6,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -24,27 +24,28 @@ import java.util.function.Function;
 public class DefaultDerivedFromOperation implements DerivedFromOperation {
 
     private static final Logger log = Logger.getLogger(DefaultDerivedFromOperation.class.getName());
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
-    public DefaultDerivedFromOperation(TitanGenericDao titanGenericDao) {
-        this.titanGenericDao = titanGenericDao;
+    public DefaultDerivedFromOperation(JanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     @Override
     public Either<GraphRelation, StorageOperationStatus> addDerivedFromRelation(String parentUniqueId, String derivedFromUniqueId, NodeTypeEnum nodeType) {
         UniqueIdData from = new UniqueIdData(nodeType, parentUniqueId);
         UniqueIdData to = new UniqueIdData(nodeType, derivedFromUniqueId);
-        return titanGenericDao.createRelation(from, to, GraphEdgeLabels.DERIVED_FROM, null)
+        return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.DERIVED_FROM, null)
                 .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
     public <T extends GraphNode> Either<T, StorageOperationStatus> getDerivedFromChild(String uniqueId, NodeTypeEnum nodeType, Class<T> clazz) {
         log.debug("#getDerivedFromChild - fetching derived from entity for node type {} with id {}", nodeType, uniqueId);
-        return titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.DERIVED_FROM, nodeType, clazz)
+        return janusGraphGenericDao
+            .getChild(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.DERIVED_FROM, nodeType, clazz)
                 .bimap(Pair::getKey,
-                       DaoStatusConverter::convertTitanStatusToStorageStatus);
+                       DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
@@ -53,19 +54,19 @@ public class DefaultDerivedFromOperation implements DerivedFromOperation {
         UniqueIdData to = new UniqueIdData(nodeType, derivedFromUniqueId);
         return isDerivedFromExists(from, to)
                 .either(isRelationExist -> isRelationExist ? deleteDerivedFrom(from, to) : StorageOperationStatus.OK,
-                        DaoStatusConverter::convertTitanStatusToStorageStatus);
+                        DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
 
 
     }
 
     private StorageOperationStatus deleteDerivedFrom(UniqueIdData from,  UniqueIdData to) {
-        return titanGenericDao.deleteRelation(from, to, GraphEdgeLabels.DERIVED_FROM)
+        return janusGraphGenericDao.deleteRelation(from, to, GraphEdgeLabels.DERIVED_FROM)
                 .either(deletedRelation -> StorageOperationStatus.OK,
-                        DaoStatusConverter::convertTitanStatusToStorageStatus);
+                        DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
-    private Either<Boolean, TitanOperationStatus> isDerivedFromExists(UniqueIdData from, UniqueIdData to) {
-        return titanGenericDao.isRelationExist(from, to, GraphEdgeLabels.DERIVED_FROM);
+    private Either<Boolean, JanusGraphOperationStatus> isDerivedFromExists(UniqueIdData from, UniqueIdData to) {
+        return janusGraphGenericDao.isRelationExist(from, to, GraphEdgeLabels.DERIVED_FROM);
     }
     
     @Override
@@ -74,11 +75,14 @@ public class DefaultDerivedFromOperation implements DerivedFromOperation {
         Map<String, Object> propertiesToMatch = new HashMap<>();
         propertiesToMatch.put(GraphPropertiesDictionary.TYPE.getProperty(), childCandidateType);
         
-        Either<List<T>, TitanOperationStatus> getResponse = titanGenericDao.getByCriteria(nodeType, propertiesToMatch, clazz);
+        Either<List<T>, JanusGraphOperationStatus> getResponse = janusGraphGenericDao
+            .getByCriteria(nodeType, propertiesToMatch, clazz);
         if (getResponse.isRight()) {
-            TitanOperationStatus titanOperationStatus = getResponse.right().value();
-            log.debug("Couldn't fetch type {}, error: {}", childCandidateType, titanOperationStatus);
-            return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+            JanusGraphOperationStatus janusGraphOperationStatus = getResponse.right().value();
+            log.debug("Couldn't fetch type {}, error: {}", childCandidateType,
+                janusGraphOperationStatus);
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                janusGraphOperationStatus));
         }
         T node = getResponse.left().value().get(0);
         String childUniqueId = node.getUniqueId();
@@ -91,13 +95,16 @@ public class DefaultDerivedFromOperation implements DerivedFromOperation {
         
         do {
             travelledTypes.add(childType);
-            Either<List<ImmutablePair<T, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), childUniqueId, GraphEdgeLabels.DERIVED_FROM,
+            Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
+                .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), childUniqueId, GraphEdgeLabels.DERIVED_FROM,
                     nodeType, clazz);
             if (childrenNodes.isRight()) {
-                if (childrenNodes.right().value() != TitanOperationStatus.NOT_FOUND) {
-                    TitanOperationStatus titanOperationStatus = getResponse.right().value();
-                    log.debug("Couldn't fetch derived from node for type {}, error: {}", childCandidateType, titanOperationStatus);
-                    return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+                if (childrenNodes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                    JanusGraphOperationStatus janusGraphOperationStatus = getResponse.right().value();
+                    log.debug("Couldn't fetch derived from node for type {}, error: {}", childCandidateType,
+                        janusGraphOperationStatus);
+                    return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                        janusGraphOperationStatus));
                 } else {
                     log.debug("Derived from node is not found for type {} - this is OK for root capability.", childCandidateType);
                     return Either.left(false);

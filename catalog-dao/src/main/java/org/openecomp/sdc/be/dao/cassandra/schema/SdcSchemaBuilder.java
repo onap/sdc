@@ -120,7 +120,7 @@ public class SdcSchemaBuilder {
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
       log.info("Cassandra Metadata: {}" ,cassndraMetadata);
       cassndraMetadata.forEach((k, v) -> {
-				if (AuditingTypesConstants.TITAN_KEYSPACE.equals(k)) {
+				if (AuditingTypesConstants.janusGraph_KEYSPACE.equals(k)) {
 					// session.execute("")
 				} else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(k)) {
 
