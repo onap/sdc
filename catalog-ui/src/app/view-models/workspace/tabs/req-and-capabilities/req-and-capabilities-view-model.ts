@@ -84,7 +84,7 @@ interface IReqAndCapabilitiesViewModelScope extends IWorkspaceViewModelScope {
     modalInstance: ComponentRef<ModalComponent>;
     filter: {txt: string; show: boolean};
 
-    sort(sortBy:string, sortByTableDefined:SortTableDefined):void;
+    sort(sortBy: string, sortByTableDefined: SortTableDefined, autoCollapseCapabilitiesRows: boolean): void;
     sortByIsCreatedManually(arrToSort: Array<RequirementUI|CapabilityUI>): Array<any>;
     updateProperty(property:PropertyModel, indexInFilteredProperties:number):void;
     allCapabilitiesSelected(selected:boolean):void;
@@ -229,9 +229,12 @@ export class ReqAndCapabilitiesViewModel {
         this.$scope.filteredCapabilitiesList = this.$scope.sortByIsCreatedManually(this.$scope.capabilities);
         this.$scope.filteredRequirementsList = this.$scope.sortByIsCreatedManually(this.$scope.requirements);
 
-        this.$scope.sort = (sortBy:string, sortByTableDefined:SortTableDefined):void => {
+        this.$scope.sort = (sortBy: string, sortByTableDefined: SortTableDefined, autoCollapseCapabilitiesRows: boolean): void => {
             sortByTableDefined.reverse = (sortByTableDefined.sortByField === sortBy) ? !sortByTableDefined.reverse : false;
             sortByTableDefined.sortByField = sortBy;
+            if (autoCollapseCapabilitiesRows) {
+                this.$scope.allCapabilitiesSelected(false);
+            }
         };
 
         this.$scope.updateProperty = (property:PropertyModel, indexInFilteredProperties:number):void => {

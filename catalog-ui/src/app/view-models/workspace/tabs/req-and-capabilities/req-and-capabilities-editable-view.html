@@ -74,7 +74,7 @@
         <div class="table" data-ng-class="{'view-mode': isViewMode()}" data-tests-id="requirement-table">
             <div class="head flex-container">
                 <div data-ng-repeat="header in editableRequirementsTableHeadersList track by $index"
-                     data-ng-click="sort(header.property, requirementsSortTableDefined)"
+                     data-ng-click="sort(header.property, requirementsSortTableDefined, false)"
                      class="table-header head-row hand flex-item {{header.property}}"
                      data-tests-id="table-header-{{header.property}}">
                     {{header.title}}
@@ -133,7 +133,7 @@
         <div class="table" data-ng-class="{'view-mode': isViewMode()}">
             <div class="head flex-container">
                 <div data-ng-repeat="header in editableCapabilitiesTableHeadersList track by $index"
-                     data-ng-click="sort(header.property, capabilitiesSortTableDefined)"
+                     data-ng-click="sort(header.property, capabilitiesSortTableDefined, true)"
                      class="table-header head-row hand flex-item {{header.property}}"
                      data-tests-id="header-{{header.property}}">
                     {{header.title}}
@@ -200,7 +200,7 @@
                                 <div class="head flex-container">
                                     <div class="table-header head-row hand flex-item"
                                          data-ng-repeat="header in capabilityPropertiesTableHeadersList track by $index"
-                                         data-ng-click="sort(header.property, propertiesSortTableDefined)">
+                                         data-ng-click="sort(header.property, propertiesSortTableDefined, false)">
                                         {{header.title}}
                                         <span data-ng-if="propertiesSortTableDefined.sortByField === header.property"
                                               class="table-header-sort-arrow"
