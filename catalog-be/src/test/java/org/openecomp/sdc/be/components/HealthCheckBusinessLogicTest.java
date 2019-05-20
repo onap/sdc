@@ -47,29 +47,29 @@ public class HealthCheckBusinessLogicTest {
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);
 
-        HealthCheckInfo checkInfoTitanUp = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.UP, null, null);
-        HealthCheckInfo checkInfoTitanDown = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.DOWN, null, null);
+        HealthCheckInfo checkInfoJanusGraphUp = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.UP, null, null);
+        HealthCheckInfo checkInfoJanusGraphDown = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.DOWN, null, null);
 
-        checkInfosLeft.add(checkInfoTitanUp);
+        checkInfosLeft.add(checkInfoJanusGraphUp);
 
-        checkInfosRight.add(checkInfoTitanUp);
+        checkInfosRight.add(checkInfoJanusGraphUp);
 
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);
 
-        checkInfosRight.remove(checkInfoTitanUp);
+        checkInfosRight.remove(checkInfoJanusGraphUp);
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertTrue("check true", statusChanged);
 
-        checkInfosRight.add(checkInfoTitanDown);
+        checkInfosRight.add(checkInfoJanusGraphDown);
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertTrue("check true", statusChanged);
 
-        checkInfosRight.remove(checkInfoTitanDown);
+        checkInfosRight.remove(checkInfoJanusGraphDown);
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertTrue("check true", statusChanged);
 
-        checkInfosRight.add(checkInfoTitanUp);
+        checkInfosRight.add(checkInfoJanusGraphUp);
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);
 

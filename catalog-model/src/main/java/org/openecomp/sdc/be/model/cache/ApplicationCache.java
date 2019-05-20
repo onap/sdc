@@ -21,14 +21,14 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 
 import java.util.Map;
 
 public interface ApplicationCache<T> {
 
-    public abstract Either<Map<String, T>, TitanOperationStatus> getAll();
+    public abstract Either<Map<String, T>, JanusGraphOperationStatus> getAll();
 
-    public abstract Either<T, TitanOperationStatus> get(String uniqueId);
+    public abstract Either<T, JanusGraphOperationStatus> get(String uniqueId);
 
 }

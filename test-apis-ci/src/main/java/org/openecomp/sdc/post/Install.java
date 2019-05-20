@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.post;
 
-import org.openecomp.sdc.be.dao.DAOTitanStrategy;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 
 import java.io.File;
 
@@ -47,14 +47,14 @@ public class Install {
 	}
 
 	private static boolean createTitanSchema(String titanPropsFile) {
-		TitanGraphClient titanGraphClient = new TitanGraphClient(new DAOTitanStrategy());
-		TitanOperationStatus status = titanGraphClient.createGraph(titanPropsFile);
-		if (TitanOperationStatus.OK == status) {
+		JanusGraphClient janusGraphClient = new JanusGraphClient(new DAOJanusGraphStrategy());
+		JanusGraphOperationStatus status = janusGraphClient.createGraph(titanPropsFile);
+		if (JanusGraphOperationStatus.OK == status) {
 			System.out.println("Titan schema ,indexes and default values created successfully.");
 			return true;
 		} else {
 			System.out.println(
-					"Problem while creating titan schema ,indexes and default values. (" + status.name() + ")");
+					"Problem while creating janusgraph schema ,indexes and default values. (" + status.name() + ")");
 			return false;
 		}
 	}

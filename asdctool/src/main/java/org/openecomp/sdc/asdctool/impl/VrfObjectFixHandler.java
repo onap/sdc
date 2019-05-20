@@ -6,18 +6,18 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.asdctool.migration.tasks.handlers.XlsOutputHandler;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
@@ -42,10 +42,10 @@ public class VrfObjectFixHandler {
     private XlsOutputHandler outputHandler;
     private final String sheetName = this.getClass().getSimpleName() + "Report";
 
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
-    public VrfObjectFixHandler(TitanDao titanDao) {
-        this.titanDao = titanDao;
+    public VrfObjectFixHandler(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
     }
 
     public boolean handle(String mode, String outputPath) {
@@ -65,10 +65,10 @@ public class VrfObjectFixHandler {
         try{
             Map<GraphVertex,Map<Vertex, List<ComponentInstanceDataDefinition>>> corruptedData = fetchCorruptedData();
             corruptedData.forEach(this::fixCorruptedVfrObjectAndRelatedInstances);
-            titanDao.commit();
+            janusGraphDao.commit();
             writeOutput(corruptedData);
         } catch (Exception e){
-            titanDao.rollback();
+            janusGraphDao.rollback();
             log.debug("#fixCorruptedData - Failed to detect corrupted data. The exception occurred: ", e);
             return false;
         }
@@ -93,7 +93,7 @@ public class VrfObjectFixHandler {
 
     private void fixCorruptedVfrObject(GraphVertex vfrObjectV) {
         vfrObjectV.getMetadataProperties().put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, VALID_TOSCA_NAME);
-        titanDao.updateVertex(vfrObjectV).left().on(this::rightOnUpdate);
+        janusGraphDao.updateVertex(vfrObjectV).left().on(this::rightOnUpdate);
     }
 
     private Map<GraphVertex,Map<Vertex,List<ComponentInstanceDataDefinition>>> fetchCorruptedData(){
@@ -106,7 +106,7 @@ public class VrfObjectFixHandler {
     private List<GraphVertex> getCorruptedVrfObjects() {
         Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, "org.openecomp.resource.configuration.VRFObject");
-        return titanDao.getByCriteria(VertexTypeEnum.NODE_TYPE, props).left().on(this::rightOnGet);
+        return janusGraphDao.getByCriteria(VertexTypeEnum.NODE_TYPE, props).left().on(this::rightOnGet);
     }
 
     private void fillCorruptedData(GraphVertex vrfObjectV, Map<GraphVertex, Map<Vertex, List<ComponentInstanceDataDefinition>>> findToUpdate) {
@@ -115,7 +115,8 @@ public class VrfObjectFixHandler {
         Iterator<Edge> instanceEdges = vrfObjectV.getVertex().edges(Direction.IN, EdgeLabelEnum.INSTANCE_OF.name());
         while(instanceEdges.hasNext()){
             Edge edge = instanceEdges.next();
-            putCorruptedInstances(corruptedInstances, edge, (List<String>) titanDao.getProperty(edge, EdgePropertyEnum.INSTANCES));
+            putCorruptedInstances(corruptedInstances, edge, (List<String>) janusGraphDao
+                .getProperty(edge, EdgePropertyEnum.INSTANCES));
         }
     }
 
@@ -139,7 +140,7 @@ public class VrfObjectFixHandler {
             String jsonMetadataStr = JsonParserUtils.toJson(jsonObj);
             container.property(GraphPropertyEnum.JSON.getProperty(), jsonMetadataStr);
         } catch (IOException e) {
-            throw new StorageException("Failed to fix the corrupted instances of the container", e, TitanOperationStatus.GENERAL_ERROR);
+            throw new StorageException("Failed to fix the corrupted instances of the container", e, JanusGraphOperationStatus.GENERAL_ERROR);
         }
     }
 
@@ -159,7 +160,7 @@ public class VrfObjectFixHandler {
 
     private Map getJsonMap(Vertex container) {
         String json = (String)container.property(GraphPropertyEnum.JSON.getProperty()).value();
-        Map<GraphPropertyEnum, Object> properties = titanDao.getVertexProperties(container);
+        Map<GraphPropertyEnum, Object> properties = janusGraphDao.getVertexProperties(container);
         VertexTypeEnum label = VertexTypeEnum.getByName((String) (properties.get(GraphPropertyEnum.LABEL)));
         return JsonParserUtils.toMap(json, label != null ? label.getClassOfJson() : null);
     }
@@ -175,13 +176,13 @@ public class VrfObjectFixHandler {
         }
     }
 
-    private List<GraphVertex> rightOnGet(TitanOperationStatus status) {
-        if(status == TitanOperationStatus.NOT_FOUND){
+    private List<GraphVertex> rightOnGet(JanusGraphOperationStatus status) {
+        if(status == JanusGraphOperationStatus.NOT_FOUND){
             return emptyList();
         }
         throw new StorageException(status);
     }
-    private GraphVertex rightOnUpdate(TitanOperationStatus status) {
+    private GraphVertex rightOnUpdate(JanusGraphOperationStatus status) {
         throw new StorageException(status);
     }
 

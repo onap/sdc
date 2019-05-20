@@ -71,8 +71,8 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
 		processEcompError(context, EcompErrorEnum.BeHealthCheckRecovery);
 	}
 
-	public void logBeHealthCheckTitanRecovery(String context) {
-		processEcompError(context, EcompErrorEnum.BeHealthCheckTitanRecovery);
+	public void logBeHealthCheckJanusGraphRecovery(String context) {
+		processEcompError(context, EcompErrorEnum.BeHealthCheckJanusGraphRecovery);
 	}
 
 	public void logBeHealthCheckElasticSearchRecovery(String context) {
@@ -99,8 +99,8 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
 		processEcompError(context, EcompErrorEnum.BeHealthCheckError);
 	}
 
-	public void logBeHealthCheckTitanError(String context) {
-		processEcompError(context, EcompErrorEnum.BeHealthCheckTitanError);
+	public void logBeHealthCheckJanusGraphError(String context) {
+		processEcompError(context, EcompErrorEnum.BeHealthCheckJanusGraphError);
 	}
 
 	public void logBeHealthCheckElasticSearchError(String context) {

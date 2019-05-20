@@ -1,6 +1,6 @@
 package org.openecomp.sdc.asdctool;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import org.janusgraph.core.JanusGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class UtilsTest {
 	@Test
 	public void testOpenGraph() throws Exception {
 		Configuration conf = null;
-		TitanGraph result;
+		JanusGraph result;
 
 		// default test with null
 		result = Utils.openGraph(conf);

@@ -34,7 +34,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -53,8 +53,8 @@ import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.operations.UpgradeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -106,7 +106,7 @@ public class UpgradeBusinessLogicTest {
     private UpgradeOperation upgradeOperation;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @InjectMocks
     private UpgradeBusinessLogic upgradeBusinessLogic;
@@ -116,7 +116,8 @@ public class UpgradeBusinessLogicTest {
         MockitoAnnotations.initMocks(this);
 
         upgradeBusinessLogic = new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic,
-                userValidations, toscaOperationFacade, componentsUtils, upgradeOperation, titanDao);
+                userValidations, toscaOperationFacade, componentsUtils, upgradeOperation,
+            janusGraphDao);
 
         user = new User();
         user.setRole(Role.ADMIN.name());

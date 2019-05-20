@@ -23,7 +23,7 @@ package org.openecomp.sdc.common.transaction.mngr;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Queues;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.ITransactionSdnc;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils;
@@ -45,7 +45,7 @@ public class TransactionManager {
     @Resource
     private ESCatalogDAO esCatalogDao;
     @Resource
-    private TitanGenericDao titanGenericDao;
+    private JanusGraphGenericDao janusGraphGenericDao;
 
     /**
      * userId and actionType parameters are used only for logging purposes.
@@ -55,7 +55,8 @@ public class TransactionManager {
             init();
         }
         log.debug("TransactionManager creating new SdncTransaction");
-        ITransactionSdnc tx = new TransactionSdncImpl(generateTransactionID(), userId, actionType, esCatalogDao, titanGenericDao);
+        ITransactionSdnc tx = new TransactionSdncImpl(generateTransactionID(), userId, actionType, esCatalogDao,
+            janusGraphGenericDao);
         transactions.add(tx);
 
         return tx;

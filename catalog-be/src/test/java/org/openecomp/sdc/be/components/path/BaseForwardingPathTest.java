@@ -6,14 +6,14 @@ import org.junit.Before;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.path.beans.TitanGraphTestSetup;
+import org.openecomp.sdc.be.components.path.beans.JanusGraphTestSetup;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
@@ -48,7 +48,7 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     private ForwardingPathDataDefinition forwardingPathDataDefinition;
 
     @Autowired
-    protected TitanGraphClient titanGraphClient;
+    protected JanusGraphClient janusGraphClient;
 
     @Autowired
     protected CapabilityRequirementConverter capabiltyRequirementConvertor;
@@ -66,11 +66,11 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     protected ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     @javax.annotation.Resource
-    protected TitanDao titanDao;
+    protected JanusGraphDao janusGraphDao;
 
     @Before
-    public void initTitan() {
-        TitanGraphTestSetup.createGraph(titanGraphClient.getGraph().left().value());
+    public void initJanusGraph() {
+        JanusGraphTestSetup.createGraph(janusGraphClient.getGraph().left().value());
         categoryDefinition = new CategoryDefinition();
         categoryDefinition.setName(CATEGORY_NAME);
     }
@@ -105,12 +105,13 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, "org.openecomp.resource.abstract.nodes.service");
 
-        GraphTestUtils.createServiceVertex(titanDao, props);
+        GraphTestUtils.createServiceVertex(janusGraphDao, props);
 
-        GraphVertex resourceVertex = GraphTestUtils.createResourceVertex(titanDao, props, ResourceTypeEnum.PNF);
+        GraphVertex resourceVertex = GraphTestUtils.createResourceVertex(janusGraphDao, props, ResourceTypeEnum.PNF);
         resourceVertex.setJsonMetadataField(JsonPresentationFields.VERSION, "0.1");
-        Either<GraphVertex, TitanOperationStatus> vertexTitanOperationStatusEither = titanDao.updateVertex(resourceVertex);
-        assertTrue(vertexTitanOperationStatusEither.isLeft());
+        Either<GraphVertex, JanusGraphOperationStatus> vertexJanusGraphOperationStatusEither = janusGraphDao
+            .updateVertex(resourceVertex);
+        assertTrue(vertexJanusGraphOperationStatusEither.isLeft());
     }
 
     private Service createTestService() {
@@ -153,7 +154,7 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
-        Either<GraphVertex, TitanOperationStatus> catRes = titanDao.createVertex(cat);
+        Either<GraphVertex, JanusGraphOperationStatus> catRes = janusGraphDao.createVertex(cat);
 
         assertTrue(catRes.isLeft());
     }

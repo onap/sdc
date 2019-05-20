@@ -29,7 +29,7 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,11 +39,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class DeleteComponentHandlerTest {
     private DeleteComponentHandler test;
 
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
 
     @Mock
     private TopologyTemplateOperation topologyTemplateOperation;
@@ -74,7 +74,7 @@ public class DeleteComponentHandlerTest {
         Scanner scanner = new Scanner(in);
         String id = "start";
         GraphVertex loc = new GraphVertex();
-        TitanVertex vertex = Mockito.mock(TitanVertex.class);
+        JanusGraphVertex vertex = Mockito.mock(JanusGraphVertex.class);
         loc.setVertex(vertex);
 
         Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
@@ -83,7 +83,7 @@ public class DeleteComponentHandlerTest {
         metadataProperties.put(GraphPropertyEnum.NAME, "user1");
         loc.setMetadataProperties(metadataProperties);
 
-        when(titanDao.getVertexById(id)).thenReturn(Either.left(loc));
+        when(janusGraphDao.getVertexById(id)).thenReturn(Either.left(loc));
         when(topologyTemplateOperation.deleteToscaElement(ArgumentMatchers.any(GraphVertex.class))).thenReturn(Either.left(toscaElement));
 
         test.deleteComponent(id,scanner);

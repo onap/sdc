@@ -43,8 +43,8 @@ import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -53,9 +53,9 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
@@ -85,7 +85,7 @@ public class InterfaceOperationBusinessLogicTest {
     @Mock
     private IGraphLockOperation graphLockOperation;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private InterfaceLifecycleOperation interfaceLifecycleOperation;
     @Mock
@@ -118,7 +118,7 @@ public class InterfaceOperationBusinessLogicTest {
         when(interfaceOperationValidation
                 .validateDeleteOperationContainsNoMappedOutput(any(), any(), any()))
                 .thenReturn(Either.left(true));
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
     }
 
     private List<InputDefinition> createInputsForResource() {
@@ -390,7 +390,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void getInterfaceOperationTestFailOnException() {
-        when(titanDao.commit()).thenThrow(new RuntimeException());
+        when(janusGraphDao.commit()).thenThrow(new RuntimeException());
         Assert.assertTrue(interfaceOperationBusinessLogic.getInterfaceOperation(resourceId, interfaceId,
                 Collections.singletonList(operationId), user, true).isRight());
     }

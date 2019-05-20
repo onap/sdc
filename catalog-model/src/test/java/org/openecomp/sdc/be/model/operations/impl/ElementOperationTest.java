@@ -26,8 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -56,8 +56,8 @@ public class ElementOperationTest extends ModelTestBase {
     @javax.annotation.Resource(name = "element-operation")
     private ElementOperation elementOperation;
 
-    @javax.annotation.Resource(name = "titan-generic-dao")
-    private TitanGenericDao titanDao;
+    @javax.annotation.Resource(name = "janusgraph-generic-dao")
+    private JanusGraphGenericDao janusGraphDao;
 
     private static String CATEGORY = "category";
     private static String SUBCATEGORY = "subcategory";
@@ -112,7 +112,7 @@ public class ElementOperationTest extends ModelTestBase {
 
     // @Test
     public void testGetResourceAndServiceCategoty() {
-        String id = OperationTestsUtil.deleteAndCreateResourceCategory(CATEGORY, SUBCATEGORY, titanDao);
+        String id = OperationTestsUtil.deleteAndCreateResourceCategory(CATEGORY, SUBCATEGORY, janusGraphDao);
 
         Either<CategoryDefinition, ActionStatus> res = elementOperation.getCategory(NodeTypeEnum.ResourceNewCategory, id);
         assertTrue(res.isLeft());
@@ -120,7 +120,7 @@ public class ElementOperationTest extends ModelTestBase {
         assertEquals(CATEGORY, categoryDefinition.getName());
         assertEquals(SUBCATEGORY, categoryDefinition.getSubcategories().get(0).getName());
 
-        id = OperationTestsUtil.deleteAndCreateServiceCategory(CATEGORY, titanDao);
+        id = OperationTestsUtil.deleteAndCreateServiceCategory(CATEGORY, janusGraphDao);
 
         res = elementOperation.getCategory(NodeTypeEnum.ServiceNewCategory, id);
         assertTrue(res.isLeft());
@@ -129,7 +129,7 @@ public class ElementOperationTest extends ModelTestBase {
 	}
 
 	private ElementOperation createTestSubject() {
-		return new ElementOperation(new TitanGenericDao(new TitanGraphClient()));
+		return new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()));
 	}
 
 	

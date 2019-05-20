@@ -14,7 +14,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;

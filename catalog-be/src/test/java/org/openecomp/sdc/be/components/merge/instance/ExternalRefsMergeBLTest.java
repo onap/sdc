@@ -9,7 +9,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ExternalReferencesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOperation;
 
 import javax.annotation.Resource;
 import java.util.*;

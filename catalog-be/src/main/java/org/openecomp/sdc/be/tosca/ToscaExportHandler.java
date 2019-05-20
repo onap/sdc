@@ -32,7 +32,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -41,8 +41,8 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
@@ -235,7 +235,7 @@ public class ToscaExportHandler {
         }
 
 
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -534,7 +534,7 @@ public class ToscaExportHandler {
                 .collect(Collectors.toList());
         toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
 
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -1007,7 +1007,7 @@ public class ToscaExportHandler {
         String derivedFrom = ((Resource) origComponent).getToscaResourceName();
 
         toscaNodeType.setDerived_from(derivedFrom);
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
         }

@@ -50,17 +50,17 @@ import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.DAOTitanStrategy;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
+import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
+import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
-import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -72,13 +72,13 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArchiveOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.CategoryOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -118,14 +118,15 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final AccessValidations accessValidationsMock = mock(AccessValidations.class);
     private static final ComponentValidations componentValidationsMock = mock(ComponentValidations.class);
     private static final IGraphLockOperation graphLockOperation = mock(IGraphLockOperation.class);
-    private static final HealingTitanGenericDao titanGenericDao = mock(HealingTitanGenericDao.class);
+    private static final HealingJanusGraphGenericDao
+        janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
     private static final HealingPipelineDao HEALING_PIPELINE_DAO = mock(HealingPipelineDao.class);
     private static final ICacheMangerOperation cacheManagerOperation = mock(ICacheMangerOperation.class);
     private static GraphVertex serviceVertex;
     private static GraphVertex resourceVertex;
     private static GraphVertex resourceVertexVspArchived;
 
-    private static HealingTitanDao titanDao;
+    private static HealingJanusGraphDao janusGraphDao;
 
     @Configuration
     @PropertySource("classpath:dao.properties")
@@ -155,13 +156,13 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveBusinessLogic archiveBusinessLogic() {
-            return new ArchiveBusinessLogic(titanDao(), accessValidations(), archiveOperation(), toscaOperationFacade(), componentUtils);
+            return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(), toscaOperationFacade(), componentUtils);
         }
 
         @Bean
         ArchiveOperation archiveOperation() {
-            this.archiveOperation = new ArchiveOperation(titanDao(), graphLockOperation());
-            GraphTestUtils.clearGraph(titanDao);
+            this.archiveOperation = new ArchiveOperation(janusGraphDao(), graphLockOperation());
+            GraphTestUtils.clearGraph(janusGraphDao);
             initGraphForTest();
             return this.archiveOperation;
         }
@@ -207,19 +208,19 @@ public class ArchiveEndpointTest extends JerseyTest {
         }
 
         @Bean
-        HealingTitanDao titanDao() {
-            titanDao = new HealingTitanDao(titanGraphClient());
-            return titanDao;
+        HealingJanusGraphDao janusGraphDao() {
+            janusGraphDao = new HealingJanusGraphDao(janusGraphClient());
+            return janusGraphDao;
         }
 
         @Bean
-        TitanGraphClient titanGraphClient() {
-            return new TitanGraphClient(titanClientStrategy());
+        JanusGraphClient janusGraphClient() {
+            return new JanusGraphClient(janusGraphClientStrategy());
         }
 
         @Bean
-        TitanClientStrategy titanClientStrategy() {
-            return new DAOTitanStrategy();
+        JanusGraphClientStrategy janusGraphClientStrategy() {
+            return new DAOJanusGraphStrategy();
         }
 
         @Bean
@@ -233,8 +234,8 @@ public class ArchiveEndpointTest extends JerseyTest {
         }
 
         @Bean
-        TitanGenericDao titanGenericDao() {
-            return titanGenericDao;
+        JanusGraphGenericDao janusGraphGenericDao() {
+            return janusGraphGenericDao;
         }
 
         @Bean
@@ -244,31 +245,31 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         private void initGraphForTest() {
             //Create Catalog Root
-            catalogVertex = GraphTestUtils.createRootCatalogVertex(titanDao);
+            catalogVertex = GraphTestUtils.createRootCatalogVertex(janusGraphDao);
             //Create Archive Root
-            GraphTestUtils.createRootArchiveVertex(titanDao);
+            GraphTestUtils.createRootArchiveVertex(janusGraphDao);
 
             createSingleVersionServiceAndResource();
         }
 
         private void createSingleVersionServiceAndResource() {
             //Create Service for Scenario 1 Tests (1 Service)
-            serviceVertex = GraphTestUtils.createServiceVertex(titanDao, propsForHighestVersion());
+            serviceVertex = GraphTestUtils.createServiceVertex(janusGraphDao, propsForHighestVersion());
 
 
             Map<GraphPropertyEnum, Object> props = propsForHighestVersion();
             props.put(GraphPropertyEnum.IS_VSP_ARCHIVED, false);
             props.put(GraphPropertyEnum.CSAR_UUID, CSAR_UUID1);
-            resourceVertex = GraphTestUtils.createResourceVertex(titanDao, props, ResourceTypeEnum.VF);
+            resourceVertex = GraphTestUtils.createResourceVertex(janusGraphDao, props, ResourceTypeEnum.VF);
 
             props = propsForHighestVersion();
             props.put(GraphPropertyEnum.IS_VSP_ARCHIVED, true);
             props.put(GraphPropertyEnum.CSAR_UUID, CSAR_UUID2);
-            resourceVertexVspArchived = GraphTestUtils.createResourceVertex(titanDao, props, ResourceTypeEnum.VF);
+            resourceVertexVspArchived = GraphTestUtils.createResourceVertex(janusGraphDao, props, ResourceTypeEnum.VF);
 
             //Connect Service/Resource to Catalog Root
-            titanDao.createEdge(catalogVertex, serviceVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
-            titanDao.createEdge(catalogVertex, resourceVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
+            janusGraphDao.createEdge(catalogVertex, serviceVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
+            janusGraphDao.createEdge(catalogVertex, resourceVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
         }
 
         private Map<GraphPropertyEnum, Object> propsForHighestVersion(){
@@ -409,16 +410,16 @@ public class ArchiveEndpointTest extends JerseyTest {
     }
 
     private void checkoutComponent(GraphVertex component) {
-        Either<GraphVertex, TitanOperationStatus> vE = titanDao.getVertexById(component.getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> vE = janusGraphDao.getVertexById(component.getUniqueId());
         GraphVertex v = vE.left().value();
         v.addMetadataProperty(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         v.setJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        titanDao.updateVertex(v);
-        titanDao.commit();
+        janusGraphDao.updateVertex(v);
+        janusGraphDao.commit();
     }
 
     private void assertOnVertexProp(String componentId, Object expectedValue) {
-        Either<GraphVertex, TitanOperationStatus> vE = titanDao.getVertexById(componentId);
+        Either<GraphVertex, JanusGraphOperationStatus> vE = janusGraphDao.getVertexById(componentId);
         GraphVertex v = vE.left().value();
         assertThat(v.getMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED)).isEqualTo(expectedValue);
     }

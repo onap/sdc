@@ -235,17 +235,17 @@ public class CommonImportManager {
                     typeOperations.addType(newTypeDefinition);
                 } else {
                     if (typeOperations.isSameType(newTypeDefinition, existingDefinition)) {
-                        propertyOperation.getTitanGenericDao().rollback();
+                        propertyOperation.getJanusGraphGenericDao().rollback();
                         createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, null));
                         continue;
                     } else {
                         typeOperations.updateType(existingDefinition, newTypeDefinition);
                     }
                 }
-                propertyOperation.getTitanGenericDao().commit();
+                propertyOperation.getJanusGraphGenericDao().commit();
                 createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, true));
             } catch (Exception e) {
-                propertyOperation.getTitanGenericDao().rollback();
+                propertyOperation.getJanusGraphGenericDao().rollback();
                 createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, false));
             }
 
@@ -285,10 +285,10 @@ public class CommonImportManager {
         } 
         finally {
             if (eitherResult.isLeft()) {
-                propertyOperation.getTitanGenericDao().commit();
+                propertyOperation.getJanusGraphGenericDao().commit();
             }
             else {
-                propertyOperation.getTitanGenericDao().rollback();
+                propertyOperation.getJanusGraphGenericDao().rollback();
             }
         }
 

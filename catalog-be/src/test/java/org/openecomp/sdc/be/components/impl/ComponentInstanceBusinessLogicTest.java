@@ -46,9 +46,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -74,15 +74,13 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.function.BiPredicate;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -94,7 +92,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 /**
  * The test suite designed for test functionality of ComponentInstanceBusinessLogic class
@@ -143,7 +140,7 @@ public class ComponentInstanceBusinessLogicTest {
     @Mock
     private UserValidations userValidations;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private ArtifactsBusinessLogic artifactBusinessLogic;
     @Mock
@@ -716,8 +713,8 @@ public class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        TitanDao mock = Mockito.mock(TitanDao.class);
-        testSubject.setTitanGenericDao(mock);
+        JanusGraphDao mock = Mockito.mock(JanusGraphDao.class);
+        testSubject.setJanusGraphGenericDao(mock);
         result = testSubject.deleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceId,
                 userId);
     }
@@ -1203,7 +1200,7 @@ public class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
                 .thenReturn(leftServiceOp);
-        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
                 .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
@@ -1231,7 +1228,7 @@ public class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
                 .thenReturn(leftServiceOp);
-        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
                 .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
@@ -1460,7 +1457,7 @@ public class ComponentInstanceBusinessLogicTest {
                 .thenReturn(result2);
         when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
                 .thenReturn(cont);
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         result = componentInstanceBusinessLogic
                          .batchDeleteComponentInstance(containerComponentParam, containerComponentId,

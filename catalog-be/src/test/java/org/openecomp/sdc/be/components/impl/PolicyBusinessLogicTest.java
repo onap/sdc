@@ -33,8 +33,8 @@ import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -51,8 +51,8 @@ import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
@@ -77,7 +77,7 @@ public class PolicyBusinessLogicTest {
     @Mock
     private UserValidations userValidations;
     @Mock
-    private TitanDao titanDao;
+    private JanusGraphDao janusGraphDao;
     @Mock
     private ApplicationDataTypeCache dataTypeCache;
     @Mock
@@ -121,7 +121,7 @@ public class PolicyBusinessLogicTest {
     public void initBl() {
         businessLogic.setComponentsUtils(componentsUtils);
         businessLogic.setToscaOperationFacade(toscaOperationFacade);
-        businessLogic.setTitanGenericDao(titanDao);
+        businessLogic.setJanusGraphGenericDao(janusGraphDao);
         businessLogic.setUserValidations(userValidations);
         businessLogic.setGraphLockOperation(graphLockOperation);
         businessLogic.setPolicyTypeOperation(policyTypeOperation);
@@ -366,11 +366,11 @@ public class PolicyBusinessLogicTest {
     }
 
     private void stubCommit() {
-        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
     }
 
     private void stubRollback() {
-        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
     }
 
     private void stubUnlockAndCommit() {
