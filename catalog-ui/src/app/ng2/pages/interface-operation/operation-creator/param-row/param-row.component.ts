@@ -47,7 +47,11 @@ export class ParamRowComponent {
                         _.reduce(
                             this.operationOutputs,
                             (acc, op) => [...acc, ...op.outputs.listToscaDataDefinition],
-                        [])
+                            []),
+                        _.reduce(
+                            this.capabilitiesProps,
+                            (acc, capab) => [...acc, ...capab.properties],
+                            [])
                     ),
                     prop => prop.type
                 )
