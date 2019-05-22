@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -31,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -253,7 +255,7 @@ public abstract class BaseBusinessLogic {
 
     private Boolean logAndThrowException(ActionStatus status, String componentId, String name){
         log.debug(FAILED_TO_LOCK_COMPONENT_ERROR, componentId, status);
-        throw new ComponentException(status, name);
+        throw new ByActionStatusComponentException(status, name);
     }
 
     private ResponseFormat logAndConvertError(ActionStatus status, String componentId, String name){
@@ -372,12 +374,12 @@ public abstract class BaseBusinessLogic {
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
             if (property.getSchema() == null) {
                 log.debug(SCHEMA_DOESN_T_EXISTS_FOR_PROPERTY_OF_TYPE, type);
-                throw new ComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
             }
             PropertyDataDefinition innerProperty = property.getSchema().getProperty();
             if (innerProperty == null) {
                 log.debug(PROPERTY_IN_SCHEMA_DEFINITION_INSIDE_PROPERTY_OF_TYPE_DOESN_T_EXIST, type);
-                throw new ComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
             }
             innerType = innerProperty.getType();
         }
@@ -621,7 +623,7 @@ public abstract class BaseBusinessLogic {
     }
 
     private void failOnIllegalArgument() {
-        throw new ComponentException(
+        throw new ByActionStatusComponentException(
                 componentsUtils.convertFromStorageResponse(
                         DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT)));
     }
@@ -711,7 +713,7 @@ public abstract class BaseBusinessLogic {
 
     protected void rollbackWithException(ActionStatus actionStatus, String... params) {
         titanDao.rollback();
-        throw new ComponentException(actionStatus, params);
+        throw new ByActionStatusComponentException(actionStatus, params);
     }
 
     public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(String userId, String componentId,

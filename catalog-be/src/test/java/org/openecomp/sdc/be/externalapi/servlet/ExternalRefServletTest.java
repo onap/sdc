@@ -16,11 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import com.google.common.collect.ImmutableListMultimap;
 import fj.data.Either;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -30,7 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -40,10 +41,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.HealingTitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.heal.Heal;
-import org.openecomp.sdc.be.dao.jsongraph.heal.HealVersionBuilder;
-import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.titan.HealingTitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
@@ -70,7 +67,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -325,9 +321,8 @@ public class ExternalRefServletTest extends JerseyTest {
         when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
-        ComponentException ce = Mockito.mock(ComponentException.class);
+        ByResponseFormatComponentException ce = Mockito.mock(ByResponseFormatComponentException.class);
         String[] params = {otherDesignerUser.getUserId()};
-        when(ce.getParams()).thenReturn(params);
         when(ce.getResponseFormat()).thenReturn(responseFormat);
         doThrow(ce).when(accessValidationsMock)
                    .validateUserCanWorkOnComponent(any(), eq(otherDesignerUser.getUserId()), any());

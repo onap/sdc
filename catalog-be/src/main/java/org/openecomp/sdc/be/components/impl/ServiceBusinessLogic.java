@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -61,6 +63,8 @@ import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -962,7 +966,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
             Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, service, actionEnum);
             if (serviceNameUniquenessValidation.isRight()) {
-                throw new ComponentException(serviceNameUniquenessValidation.right().value());
+                throw new ByResponseFormatComponentException(serviceNameUniquenessValidation.right().value());
             }
             Either<Boolean, ResponseFormat> categoryValidation = validateServiceCategory(user, service, actionEnum);
             if (categoryValidation.isRight()) {
@@ -1461,7 +1465,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String serviceType = ((Service)component).getServiceType();
         if (serviceType == null) {
             log.info("service type is not valid.");
-            throw new ComponentException(ActionStatus.INVALID_SERVICE_TYPE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_SERVICE_TYPE);
         }
         serviceType = cleanUpText(serviceType);
         validateServiceType(serviceType);
@@ -1474,11 +1478,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         if (!ValidationUtils.validateServiceTypeLength(serviceType)) {
             log.info("service type exceeds limit.");
-            throw new ComponentException(ActionStatus.SERVICE_TYPE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_TYPE_MAX_LENGTH);
+            throw new ByActionStatusComponentException(ActionStatus.SERVICE_TYPE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_TYPE_MAX_LENGTH);
         }
         if (!ValidationUtils.validateIsEnglish(serviceType)) {
             log.info("service type is not valid.");
-            throw new ComponentException(ActionStatus.INVALID_SERVICE_TYPE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_SERVICE_TYPE);
         }
     }
 
@@ -2377,7 +2381,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validateRoleForDeploy method - user is not listed. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.USER_NOT_FOUND, user.getUserId());
             auditDeployError(did, user, auditAction, service, ActionStatus.USER_NOT_FOUND);
-            throw new ComponentException(ActionStatus.USER_NOT_FOUND, user.getUserId());
+            throw new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND, user.getUserId());
         }
         user = eitherCreator.left().value();
         log.debug("validate user role");
@@ -2386,7 +2390,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         roles.add(Role.OPS);
         try{
             validateUserRole(user, service, roles, auditAction, null);
-        } catch (ComponentException e){
+        } catch (ByActionStatusComponentException e){
             log.info("role {} is not allowed to perform this action", user.getRole());
             auditDeployError(did, user, auditAction, service, e.getActionStatus());
             throw e;

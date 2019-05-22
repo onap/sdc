@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -60,6 +62,8 @@ import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CINodeFilterUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -380,7 +384,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CSAR_UUID,
                     resource.getName());
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            throw new ComponentException(ActionStatus.MISSING_CSAR_UUID, resource.getName());
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_CSAR_UUID, resource.getName());
         }
         return updatedResource;
     }
@@ -406,7 +410,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VSP_ALREADY_EXISTS, csarUUID,
                     resourceLinkedToCsarRes.left().value().getName());
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.UPDATE_RESOURCE_METADATA);
-            throw new ComponentException(ActionStatus.VSP_ALREADY_EXISTS, csarUUID,
+            throw new ByActionStatusComponentException(ActionStatus.VSP_ALREADY_EXISTS, csarUUID,
                     resourceLinkedToCsarRes.left().value().getName());
         }
     }
@@ -425,7 +429,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(
                     ActionStatus.RESOURCE_LINKED_TO_DIFFERENT_VSP, resource.getName(), csarUUID, oldCsarUUID);
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.UPDATE_RESOURCE_METADATA);
-            throw new ComponentException(ActionStatus.RESOURCE_LINKED_TO_DIFFERENT_VSP, resource.getName(), csarUUID, oldCsarUUID);
+            throw new ByActionStatusComponentException(ActionStatus.RESOURCE_LINKED_TO_DIFFERENT_VSP, resource.getName(), csarUUID, oldCsarUUID);
         }
     }
 
@@ -458,7 +462,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Boolean, ResponseFormat> lockResult = lockComponent(lockedResourceId, oldResource,
                 "update Resource From Csar");
         if (lockResult.isRight()) {
-            throw new ComponentException(lockResult.right().value());
+            throw new ByResponseFormatComponentException(lockResult.right().value());
         }
 
         Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
@@ -468,7 +472,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
             log.debug("failed to find node types for update with artifacts during import csar {}. ",
                     csarInfo.getCsarUUID());
-            throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
+            throw new ByResponseFormatComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = findNodeTypesArtifactsToHandleRes
                 .left().value();
@@ -496,7 +500,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 !oldResource.getLastUpdaterUserId().equals(user.getUserId())) {
             log.debug("#validateLifecycleState - Current user is not last updater, last updater userId: {}, current user userId: {}",
                     oldResource.getLastUpdaterUserId(), user.getUserId());
-            throw new ComponentException(ActionStatus.RESTRICTED_OPERATION);
+            throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
         }
     }
 
@@ -529,7 +533,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             uploadComponentInstanceInfoMap = csarBusinessLogic.getParsedToscaYamlInfo(yamlFileContent, yamlFileName, nodeTypesInfo, csarInfo, nodeName);
             Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
             if (MapUtils.isEmpty(instances) && newRresource.getResourceType() != ResourceTypeEnum.PNF) {
-                throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
+                throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
             }
             preparedResource = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(),
                     inTransaction, shouldLock, isNested).left;
@@ -540,8 +544,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             preparedResource = createInputsOnResource(preparedResource,  uploadComponentInstanceInfoMap.getInputs());
             preparedResource = createResourceInstances(yamlFileName, preparedResource, instances, csarInfo.getCreatedNodes());
             preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, instances);
-        } catch (ComponentException e) {
-            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+        } catch (ByResponseFormatComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat();
+            log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
+            throw e;
+        } catch (ByActionStatusComponentException e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
             throw e;
@@ -556,7 +565,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         preparedResource.getSystemName());
         if (validateUpdateVfGroupNamesRes.isRight()) {
 
-            throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
+            throw new ByResponseFormatComponentException(validateUpdateVfGroupNamesRes.right().value());
         }
         // add groups to resource
         Map<String, GroupDefinition> groups;
@@ -575,7 +584,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 csarInfo, preparedResource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
         if (updateArtifactsEither.isRight()) {
             log.debug("failed to update artifacts {}", updateArtifactsEither.right().value());
-            throw new ComponentException(updateArtifactsEither.right().value());
+            throw new ByResponseFormatComponentException(updateArtifactsEither.right().value());
         }
         preparedResource = getResourceWithGroups(updateArtifactsEither.left().value().getUniqueId());
 
@@ -583,7 +592,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (mergingPropsAndInputsStatus != ActionStatus.OK) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(mergingPropsAndInputsStatus,
                     preparedResource);
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         compositionBusinessLogic.setPositionsForComponentInstances(preparedResource, csarInfo.getModifier().getUserId());
         return preparedResource;
@@ -688,7 +697,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, status);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.CREATE_RESOURCE);
-            throw new ComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
         } else if (StringUtils.isNotEmpty(currVfcToscaName)) {
             return (Resource)toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName)
                     .left()
@@ -710,7 +719,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             nodeTypeArtifactsToHandle = putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete);
         } catch (Exception e) {
             log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
-            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
         return nodeTypeArtifactsToHandle;
     }
@@ -753,7 +762,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 artifactsToUpload.remove(currNewArtifact);
             } else {
                 log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
-                throw new ComponentException(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
+                throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
                         currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
                         foundArtifact.get().getArtifactType());
             }
@@ -937,7 +946,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
             log.debug("failed to find node types for update with artifacts during import csar {}. ",
                     csarInfo.getCsarUUID());
-            throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
+            throw new ByResponseFormatComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
         Resource vfResource = createResourceFromYaml(resource, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(),
                 nodeTypesInfo, csarInfo, findNodeTypesArtifactsToHandleRes.left().value(), true, false,
@@ -972,15 +981,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         try{
             ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName);
             if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances()) && resource.getResourceType() != ResourceTypeEnum.PNF) {
-                throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+                throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
             }
             log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", resource.getName());
             createdResource = createResourceAndRIsFromYaml(yamlName, resource,
                     parsedToscaYamlInfo, AuditingActionEnum.IMPORT_RESOURCE, false, createdArtifacts, topologyTemplateYaml,
                     nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
             log.debug("#createResourceFromYaml - The resource {} has been created ", resource.getName());
-        } catch (ComponentException e) {
-            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+        } catch (ByActionStatusComponentException e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
+            throw e;
+        } catch (ByResponseFormatComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         } catch (StorageException e){
@@ -1000,7 +1013,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<String, ResultStatusEnum> toscaVersion = findFirstToscaStringElement(mappedToscaTemplate,
                 TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
         if (toscaVersion.isRight()) {
-            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
         Map<String, Object> mapToConvert = new HashMap<>();
         mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
@@ -1084,7 +1097,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
             log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ",
                     newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
-            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         } else if (oldComplexVfcRes.isLeft()) {
             log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
             Either<Boolean, ResponseFormat> eitherValidation = validateNestedDerivedFromDuringUpdate(
@@ -1202,7 +1215,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private ImmutablePair<Resource,ActionStatus> failOnCertification(ResponseFormat error) {
-        throw new ComponentException(error);
+        throw new ByResponseFormatComponentException(error);
     }
 
     private UploadResourceInfo fillResourceMetadata(String yamlName, Resource resourceVf,
@@ -1213,7 +1226,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (!nodeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
             log.debug("invalid nodeName:{} does not start with {}.", nodeName,
                     Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, resourceMetaData.getName(), nodeName);
         }
 
@@ -1231,7 +1244,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (!ResourceTypeEnum.containsName(resourceType.toUpperCase())) {
             log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(),
                     ResourceTypeEnum.values());
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, resourceMetaData.getName(), nodeName);
         }
 
@@ -1331,7 +1344,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     CREATE_RESOURCE);
             if (lockResult.isRight()) {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ComponentException(lockResult.right().value());
+                throw new ByResponseFormatComponentException(lockResult.right().value());
             }
             log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
         }
@@ -1362,7 +1375,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     .validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), resource.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
+                throw new ByResponseFormatComponentException(validateUpdateVfGroupNamesRes.right().value());
             }
             // add groups to resource
             Map<String, GroupDefinition> groups;
@@ -1378,7 +1391,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     groups);
             if (createGroupsOnResource.isRight()) {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ComponentException(createGroupsOnResource.right().value());
+                throw new ByResponseFormatComponentException(createGroupsOnResource.right().value());
             }
             resource = createGroupsOnResource.left().value();
             log.trace("************* Finished to add groups from yaml {}", yamlName);
@@ -1392,7 +1405,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     csarInfo, resource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ComponentException(createArtifactsEither.right().value());
+                throw new ByResponseFormatComponentException(createArtifactsEither.right().value());
             }
 
             resource = getResourceWithGroups(createArtifactsEither.left().value().getUniqueId());
@@ -1524,7 +1537,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
                 .getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormatByResource(
                     componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
         return updatedResource.left().value();
@@ -1601,7 +1614,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs,
                     resource);
             if (createInputs.isRight()) {
-                throw new ComponentException(createInputs.right().value());
+                throw new ByResponseFormatComponentException(createInputs.right().value());
             }
         } else {
             return resource;
@@ -1609,7 +1622,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
                 .getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormatByResource(
                     componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
         return updatedResource.left().value();
@@ -1623,7 +1636,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (groups != null) {
             Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = validateCyclicGroupsDependencies(groups);
             if (validateCyclicGroupsDependencies.isRight()) {
-                throw new ComponentException(validateCyclicGroupsDependencies.right().value());
+                throw new ByResponseFormatComponentException(validateCyclicGroupsDependencies.right().value());
             }
             for (Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
@@ -1647,7 +1660,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             String membersAstString = compInstancesNames.stream().collect(joining(","));
             log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.",
                     membersAstString, groupName, component.getNormalizedName());
-            throw new ComponentException(componentsUtils.getResponseFormat(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(
                     ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
                     component.getNormalizedName(), getComponentTypeForResponse(component)));
         }
@@ -1669,7 +1682,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             String membersAstString = compInstancesNames.stream().collect(joining(","));
             log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString,
                     groupName, component.getNormalizedName());
-            throw new ComponentException(componentsUtils.getResponseFormat(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(
                     ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
                     component.getNormalizedName(), getComponentTypeForResponse(component)));
         }
@@ -1836,9 +1849,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             createResourcesFromYamlNodeTypesList(yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         } catch (StorageException e){
@@ -2152,7 +2168,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", resource.getUniqueId(), yamlName);
             BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
         }
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
         Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
@@ -2170,7 +2186,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             TitanOperationStatus status = allDataTypes.right().value();
             BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
                     "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                     DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName));
 
         }
@@ -2197,7 +2213,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
         log.debug("************* in create relations, getResource end");
         if (eitherGetResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormatByResource(
                     componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
         }
         return eitherGetResource.left().value();
@@ -2220,7 +2236,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate instances of resource {} status is {}", resource.getUniqueId(),
                     addArtToInst);
-            throw new ComponentException(componentsUtils
+            throw new ByResponseFormatComponentException(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
@@ -2243,7 +2259,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
                     addArtToInst);
-            throw new ComponentException(componentsUtils
+            throw new ByResponseFormatComponentException(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
@@ -2255,7 +2271,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(),
                     addArtToInst);
-            throw new ComponentException(componentsUtils
+            throw new ByResponseFormatComponentException(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
@@ -2266,7 +2282,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource.getUniqueId());
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
+            throw new ByResponseFormatComponentException(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
@@ -2276,7 +2292,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 .associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource.getUniqueId(), user);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
+            throw new ByResponseFormatComponentException(componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
@@ -2288,7 +2304,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (addInputToInst.isRight()) {
                 log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(),
                         addInputToInst.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
             }
         }
@@ -2300,7 +2316,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (addPropToInst.isRight()) {
             log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
                     addPropToInst.right().value());
-            throw new ComponentException(componentsUtils.getResponseFormat(
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(
                     componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
         }
     }
@@ -2311,14 +2327,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (getResourceRes.isRight()) {
                 ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
                         componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
             getResourceRes = updateCalculatedCapReqWithSubstitutionMappings(getResourceRes.left().value(),
                     uploadResInstancesMap);
             if (getResourceRes.isRight()) {
                 ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
                         componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
         }
     }
@@ -2343,12 +2359,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         resource.getUniqueId(), ErrorSeverity.ERROR);
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
 
             ResponseFormat addRelationToRiRes = addRelationToRI(yamlName, resource, entry.getValue(), relations);
             if (addRelationToRiRes.getStatus() != 200) {
-                throw new ComponentException(addRelationToRiRes);
+                throw new ByResponseFormatComponentException(addRelationToRiRes);
             }
         }
     }
@@ -2365,7 +2381,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     resource.getUniqueId(), ErrorSeverity.ERROR);
             ResponseFormat responseFormat = componentsUtils
                     .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         ComponentInstance currentCompInstance = currentCompInstanceOpt.get();
         String resourceInstanceId = currentCompInstance.getUniqueId();
@@ -2390,7 +2406,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, resource,
                     originResource, currentCompInstance, instProperties, allDataTypes.left().value());
             if (addPropertiesValueToRiRes.getStatus() != 200) {
-                throw new ComponentException(addPropertiesValueToRiRes);
+                throw new ByResponseFormatComponentException(addPropertiesValueToRiRes);
             }
         } else {
             addInputsValuesToRi(uploadComponentInstanceInfo, resource,
@@ -2409,7 +2425,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         getOriginResourceRes);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
             originResource = getOriginResourceRes.left().value();
             originCompMap.put(originResource.getUniqueId(), originResource);
@@ -2692,7 +2708,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
             if (CollectionUtils.isEmpty( originResource.getInputs())) {
                 log.debug("failed to find properties ");
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND));
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND));
             }
             originResource.getInputs().forEach(p->addInput(currPropertiesMap, p));
             for (List<UploadPropInfo> propertyList : propMap.values()) {
@@ -2708,7 +2724,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String propName = propertyInfo.getName();
         if (!currPropertiesMap.containsKey(propName)) {
             log.debug("failed to find property {} ", propName);
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
                     propName));
         }
         InputDefinition curPropertyDef = currPropertiesMap.get(propName);
@@ -2742,7 +2758,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 if (CollectionUtils.isEmpty(inputs)) {
                     log.debug("Failed to add property {} to resource instance {}. Inputs list is empty ",
                             property, currentCompInstance.getUniqueId());
-                    throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                    throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
                 }
 
                 Optional<InputDefinition> optional = inputs.stream()
@@ -2750,7 +2766,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 if (!optional.isPresent()) {
                     log.debug("Failed to find input {} ", getInput.getInputName());
                     // @@TODO error message
-                    throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                    throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
                 }
                 InputDefinition input = optional.get();
                 getInput.setInputId(input.getUniqueId());
@@ -2774,7 +2790,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (!optional.isPresent()) {
                 log.debug("Failed to find input {} ", getInputIndex.getInputName());
                 // @@TODO error message
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             InputDefinition inputIndex = optional.get();
             getInputIndex.setInputId(inputIndex.getUniqueId());
@@ -3029,7 +3045,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
         if (isEmpty(uploadResInstancesMap) && resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         Map<String, Resource> existingNodeTypeMap = new HashMap<>();
         if (MapUtils.isNotEmpty(nodeNamespaceMap)) {
@@ -3048,7 +3064,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(componentsUtils.convertFromStorageResponse(status));
                 eitherResource = Either.right(responseFormat);
-                throw new ComponentException(eitherResource.right().value());
+                throw new ByResponseFormatComponentException(eitherResource.right().value());
             }
         }
         log.debug("*************Going to get resource {}", resource.getUniqueId());
@@ -3058,14 +3074,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (eitherGetResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
                     componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances()) &&
                 resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             log.debug("Error when create resource instance from csar. ComponentInstances list empty");
             BeEcompErrorManager.getInstance().logBeDaoSystemError(
                     "Error when create resource instance from csar. ComponentInstances list empty");
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
         }
         return eitherGetResource.left().value();
     }
@@ -3114,7 +3130,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         Resource origResource = existingnodeTypeMap.get(uploadComponentInstanceInfo.getType());
         componentInstance.setName(uploadComponentInstanceInfo.getName());
@@ -3170,7 +3186,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(findResourceEither.right().value()));
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
             refResource = findResourceEither.left().value();
             nodeNamespaceMap.put(refResource.getToscaResourceName(), refResource);
@@ -3182,14 +3198,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     refResource.getName(), componentState);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE,
                     refResource.getComponentType().getValue(), refResource.getName(), componentState);
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
 
         if (!ModelConverter.isAtomicComponent(refResource) && refResource.getResourceType() != ResourceTypeEnum.CVFC) {
             log.debug("validateResourceInstanceBeforeCreate -  ref resource type is  ", refResource.getResourceType());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-            throw new ComponentException(responseFormat);
+            throw new ByResponseFormatComponentException(responseFormat);
         }
         return refResource;
     }
@@ -3484,7 +3500,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         .state(oldResource.getLifecycleState().name())
                         .version(oldResource.getVersion())
                         .build());
-        throw new ComponentException(response);
+        throw new ByResponseFormatComponentException(response);
     }
 
     public Resource validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum, boolean inTransaction, CsarInfo csarInfo) {
@@ -3691,7 +3707,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (lockResult.isRight()) {
                 ResponseFormat responseFormat = lockResult.right().value();
                 componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
 
             log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
@@ -3705,8 +3721,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditResource(componentsUtils.getResponseFormat(ActionStatus.CREATED), user,
                     createdResource, actionEnum);
             ASDCKpiApi.countCreatedResourcesKPI();
-        } catch(ComponentException e) {
-            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+        } catch(ByActionStatusComponentException e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+            throw e;
+        } catch(ByResponseFormatComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
             throw e;
         } catch (StorageException e){
@@ -3734,13 +3754,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     eitherValidation.right().value());
             ResponseFormat errorResponse = componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
-            throw new ComponentException(errorResponse);
+            throw new ByResponseFormatComponentException(errorResponse);
         }
         if (eitherValidation.left().value()) {
             log.debug("resource with name: {}, already exists", resource.getName());
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
                     ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
-            throw new ComponentException(errorResponse);
+            throw new ByResponseFormatComponentException(errorResponse);
         }
 
         log.debug("send resource {} to dao for create", resource.getName());
@@ -3764,7 +3784,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private Resource throwComponentExceptionByResource(StorageOperationStatus status, Resource resource) {
         ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
                 componentsUtils.convertFromStorageResponse(status), resource);
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private void createArtifactsPlaceHolderData(Resource resource, User user) {
@@ -4019,7 +4039,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade
                         .getToscaElement(resourceIdToUpdate);
                 if (storageStatus.isRight()) {
-                    throw new ComponentException(componentsUtils.getResponseFormatByResource(
+                    throw new ByResponseFormatComponentException(componentsUtils.getResponseFormatByResource(
                             componentsUtils.convertFromStorageResponse(storageStatus.right().value()), ""));
                 }
 
@@ -4028,7 +4048,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             // verify that resource is checked-out and the user is the last
             // updater
             if (!ComponentValidationUtils.canWorkOnResource(currentResource, user.getUserId())) {
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
 
             // lock resource
@@ -4040,7 +4060,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.debug("Failed to lock resource: {}, error - {}", resourceIdToUpdate, lockResult);
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(componentsUtils.convertFromStorageResponse(lockResult));
-                throw new ComponentException(responseFormat);
+                throw new ByResponseFormatComponentException(responseFormat);
             }
 
             needToUnlock = true;
@@ -4064,7 +4084,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (dataModelResponse.isRight()) {
                 log.debug("failed to update resource metadata!!!");
                 rollbackNeeded = true;
-                throw new ComponentException(dataModelResponse.right().value());
+                throw new ByResponseFormatComponentException(dataModelResponse.right().value());
             }
 
             log.debug("Resource metadata updated successfully!!!");
@@ -4368,7 +4388,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             } else {
                 log.info("Resource name: {}, cannot be updated once the resource has been certified once.",
                         resourceNameUpdated);
-                throw new ComponentException(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
+                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
             }
         }
     }
@@ -4381,7 +4401,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 validateIcon(null, updateInfoResource, null);
             } else {
                 log.info("Icon {} cannot be updated once the resource has been certified once.", iconUpdated);
-                throw new ComponentException(ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
+                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
             }
         }
     }
@@ -4497,12 +4517,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus), resource);
             log.trace("audit before sending response");
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(componentsUtils.convertFromStorageResponse(storageStatus));
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(storageStatus));
         } else if (!dataModelResponse.left().value()) {
             log.info("resource template with name: {}, does not exists", templateName);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PARENT_RESOURCE_NOT_FOUND);
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.PARENT_RESOURCE_NOT_FOUND);
+            throw new ByActionStatusComponentException(ActionStatus.PARENT_RESOURCE_NOT_FOUND);
         }
     }
 
@@ -4547,7 +4567,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     .getResponseFormat(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
 
-            throw new ComponentException(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
 
@@ -4558,7 +4578,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         resource.getComponentType());
         if (resourceOperationResponse.isLeft() && resourceOperationResponse.left().value()) {
             log.debug("resource with name: {}, already exists", resource.getName());
-            throw new ComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
                     resource.getName());
         } else if(resourceOperationResponse.isRight()){
             log.debug("error while validateResourceNameExists for resource: {}", resource.getName());
@@ -4576,22 +4596,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
         }
         if (categories.size() > 1) {
             log.debug("Must be only one category for resource");
-            throw new ComponentException(ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.RESOURCE.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.RESOURCE.getValue());
         }
         CategoryDefinition category = categories.get(0);
         List<SubCategoryDefinition> subcategories = category.getSubcategories();
         if (CollectionUtils.isEmpty(subcategories)) {
             log.debug("Missinig subcategory for resource");
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
         }
         if (subcategories.size() > 1) {
             log.debug("Must be only one sub category for resource");
-            throw new ComponentException(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
+            throw new ByActionStatusComponentException(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
         }
 
         SubCategoryDefinition subcategory = subcategories.get(0);
@@ -4601,7 +4621,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
         }
         if (!ValidationUtils.validateStringNotEmpty(subcategory.getName())) {
@@ -4609,7 +4629,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(
                     ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
 
         validateCategoryListed(category, subcategory, user, resource, actionEnum, inTransaction);
@@ -4626,7 +4646,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.debug("failed to retrieve resource categories from Titan");
                 responseFormat = componentsUtils.getResponseFormat(categories.right().value());
                 componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-                throw new ComponentException(categories.right().value());
+                throw new ByActionStatusComponentException(categories.right().value());
             }
             List<CategoryDefinition> categoryList = categories.left().value();
             Optional<CategoryDefinition> foundCategory = categoryList.stream()
@@ -4655,7 +4675,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
                 ComponentTypeEnum.RESOURCE.getValue());
         componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-        throw new ComponentException(ActionStatus.COMPONENT_INVALID_CATEGORY,
+        throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_CATEGORY,
                 ComponentTypeEnum.RESOURCE.getValue());
     }
 
@@ -4666,7 +4686,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.info("vendor relese name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_RELEASE);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.MISSING_VENDOR_RELEASE);
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_VENDOR_RELEASE);
         }
 
         validateVendorReleaseName(vendorRelease, user, resource, actionEnum);
@@ -4679,14 +4699,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(
                         ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
             }
 
             if (!ValidationUtils.validateVendorRelease(vendorRelease)) {
                 log.info("vendor release  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_RELEASE);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.INVALID_VENDOR_RELEASE);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_RELEASE);
             }
         }
     }
@@ -4698,7 +4718,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.info("vendor name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_NAME);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.MISSING_VENDOR_NAME);
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_VENDOR_NAME);
         }
         validateVendorName(vendorName, user, resource, actionEnum);
     }
@@ -4711,7 +4731,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
                         "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
+                throw new ByActionStatusComponentException(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
                         "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
             }
 
@@ -4719,7 +4739,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.info("vendor name  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_NAME);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.INVALID_VENDOR_NAME);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_NAME);
             }
         }
     }
@@ -4733,7 +4753,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
                         "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
+                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
                         "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
             }
             // resource vendor model number is currently validated as vendor
@@ -4743,7 +4763,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ResponseFormat errorResponse = componentsUtils
                         .getResponseFormat(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
             }
         }
     }
@@ -4754,7 +4774,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (cost != null) {
             if (!ValidationUtils.validateCost(cost)) {
                 log.debug("resource cost is invalid.");
-                throw new ComponentException(ActionStatus.INVALID_CONTENT);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
             }
         }
     }
@@ -4773,7 +4793,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     // In update case, no audit is required
                     componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
                 }
-                throw new ComponentException(ActionStatus.INVALID_CONTENT);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
             }
         }
     }
@@ -5001,7 +5021,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             validCapabilityList.add(defaultCapability);
             validCapabilitiesMap.put(key, validCapabilityList);
         } else {
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, capabilityType));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, capabilityType));
         }
     }
 
@@ -5013,7 +5033,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug(
                     "Failed to update capability property values. Property list of fetched capability {} is empty. ",
                     defaultCapability.getName());
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId));
         } else if (isNotEmpty(capabilities.get(0).getProperties())) {
             validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, capabilities.get(0));
         }
@@ -5029,7 +5049,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (getFullComponentRes.isRight()) {
                 log.debug("Failed to get full component {}. Status is {}. ", resourceId,
                         getFullComponentRes.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND,
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND,
                         resourceId));
             }
             defaultCapability = getFullComponentRes.left().value().getCapabilities().get(capabilityType).get(0);
@@ -5048,7 +5068,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             String propertyType = property.getType();
             ComponentInstanceProperty validProperty;
             if (defaultProperties.containsKey(propertyName) && propertTypeEqualsTo(defaultProperties, propertyName, propertyType)) {
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
                         propertyName));
             }
             validProperty = new ComponentInstanceProperty();
@@ -5197,7 +5217,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
             log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
-            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
         }
     }
 

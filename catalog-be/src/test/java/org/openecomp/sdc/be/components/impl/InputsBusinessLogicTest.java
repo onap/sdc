@@ -568,7 +568,7 @@ public class InputsBusinessLogicTest {
         //ComponentInstListInput createListInputParams = setUpCreateListInputParams();
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(componentsUtilsMock.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
 
         Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, LISTINPUT_NAME);
         assertEquals(true, result.isRight());
@@ -587,7 +587,7 @@ public class InputsBusinessLogicTest {
 
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
                 .thenReturn(Either.left(service));
-        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(componentsUtilsMock.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
 
         Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, NONEXIST_INPUT_NAME);
         assertEquals(true, result.isRight());
@@ -625,7 +625,7 @@ public class InputsBusinessLogicTest {
                 .thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.deleteInputOfResource(service, listInput.getName())).thenReturn(StorageOperationStatus.BAD_REQUEST);
-        when(componentsUtilsMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(componentsUtilsMock.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
 
         Either<InputDefinition, ResponseFormat> result = testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
         assertEquals(true, result.isRight());

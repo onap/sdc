@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
- * ================================================================================
  */
 package org.openecomp.sdc.be.components.impl.exceptions;
 
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-/**
- * This class will be initialized either by action status and params or by ResponseFormat
- */
-public abstract class ComponentException extends RuntimeException {
+public class ByResponseFormatComponentException extends ComponentException {
 
-    public abstract ResponseFormat responseFormat(ResponseFormatManager responseFormatManager);
-    
+    private final transient ResponseFormat responseFormat;
+
+    public ByResponseFormatComponentException(ResponseFormat responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+
+    public ResponseFormat getResponseFormat() {
+        return responseFormat;
+    }
+
     @Override
-    public String getMessage() {
-        return this.toString();
+    public String toString() {
+        return "ComponentException{" +
+            "responseFormat=" + responseFormat +
+            '}';
+    }
+
+    @Override
+    public ResponseFormat responseFormat(ResponseFormatManager responseFormatManager) {
+        return getResponseFormat();
     }
 }
