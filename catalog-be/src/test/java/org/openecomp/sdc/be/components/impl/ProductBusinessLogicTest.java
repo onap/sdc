@@ -1,3 +1,24 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.components.impl;
 
 import java.util.ArrayList;
@@ -9,6 +30,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.components.validation.ValidationUtils;
@@ -134,13 +157,13 @@ public class ProductBusinessLogicTest {
 	@Test(expected = ComponentException.class)
 	public void testCreateProduct_givenEmptyUserId_thenReturnsException() {
 		when(userValidations.validateUserNotEmpty(Mockito.any(User.class), Mockito.anyString()))
-				.thenThrow(new ComponentException(new ResponseFormat()));
+				.thenThrow(new ByResponseFormatComponentException(new ResponseFormat()));
 		productBusinessLogic.createProduct(product, user);
 	}
 
 	@Test(expected = ComponentException.class)
 	public void testCreateProduct_givenUnknownUser_thenReturnsException() {
-		ComponentException componentException = new ComponentException(ActionStatus.USER_NOT_FOUND);
+		ComponentException componentException = new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND);
 		when(userValidations.validateUserNotEmpty(any(User.class), anyString()))
 				.thenReturn(user);
 		when(userValidations.validateUserExists(anyString(), anyString(), anyBoolean()))
@@ -151,7 +174,7 @@ public class ProductBusinessLogicTest {
 	@Test(expected = ComponentException.class)
 	public void testCreateProduct_givenInvalidUserRole_thenReturnsException() {
 		user.setRole("CREATOR");
-		doThrow(new ComponentException(new ResponseFormat())).when(userValidations).validateUserRole(any(), anyList());
+		doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserRole(any(), anyList());
 		assertTrue(productBusinessLogic.createProduct(product, user).isRight());
 	}
 

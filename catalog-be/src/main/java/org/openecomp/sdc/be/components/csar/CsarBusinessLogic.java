@@ -1,10 +1,32 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.components.csar;
 
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
@@ -51,7 +73,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         } else if (status != StorageOperationStatus.OK) {
             log.debug("Failed to validate uniqueness of CsarUUID {} for resource", csarUUID,
                     resource.getSystemName());
-            throw new ComponentException(componentsUtils.convertFromStorageResponse(status));
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
         }
     }
 
@@ -86,11 +108,11 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
 
     private String logAndThrowComponentException(ResponseFormat responseFormat, String logMessage, String ...params) {
         log.debug(logMessage, params, responseFormat);
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private ImmutablePair<String,String> throwComponentException(ResponseFormat responseFormat) {
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Resource resource, User user,
@@ -142,6 +164,6 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private void auditAndThrowException(Resource resource, User user, AuditingActionEnum auditingAction, ActionStatus status, String... params){
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(status, params);
         componentsUtils.auditResource(errorResponse, user, resource, auditingAction);
-        throw new ComponentException(errorResponse);
+        throw new ByResponseFormatComponentException(errorResponse);
     }
 }

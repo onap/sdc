@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -27,6 +29,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -233,9 +237,13 @@ public class ServiceBusinessLogicTest {
         assertResponse(createResponse.right().value(), expectedStatus, variables);
     }
 
-    private void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
-        ResponseFormat actualResponse = e.getResponseFormat() != null ?
-                e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+    private void assertComponentException(ByActionStatusComponentException e, ActionStatus expectedStatus, String... variables) {
+        ResponseFormat actualResponse = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        assertResponse(actualResponse, expectedStatus, variables);
+    }
+
+    private void assertComponentException(ByResponseFormatComponentException e, ActionStatus expectedStatus, String... variables) {
+        ResponseFormat actualResponse = e.getResponseFormat();
         assertResponse(actualResponse, expectedStatus, variables);
     }
 
@@ -295,7 +303,7 @@ public class ServiceBusinessLogicTest {
         serviceExccedsNameLimit.setName(null);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -307,7 +315,7 @@ public class ServiceBusinessLogicTest {
         service.setName(nameWrongFormat);
         try{
             bl.createService(service, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -317,7 +325,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setDescription("");
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -327,7 +335,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setDescription(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -347,7 +355,7 @@ public class ServiceBusinessLogicTest {
         serviceExccedsDescLimit.setDescription(tooLongServiceDesc);
         try{
             bl.createService(serviceExccedsDescLimit, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.SERVICE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
         }
     }
@@ -359,7 +367,7 @@ public class ServiceBusinessLogicTest {
         notEnglish.setDescription(tooLongServiceDesc);
         try{
             bl.createService(notEnglish, user);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -371,7 +379,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setIcon("");
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -381,7 +389,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setIcon(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -391,7 +399,7 @@ public class ServiceBusinessLogicTest {
         resourceExist.setIcon("kjk3453^&");
         try{
             bl.createService(resourceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -401,7 +409,7 @@ public class ServiceBusinessLogicTest {
         resourceExist.setIcon("dsjfhskdfhskjdhfskjdhkjdhfkshdfksjsdkfhsdfsdfsdfsfsdfsf");
         try{
             bl.createService(resourceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, "Service", "25");
         }
     }
@@ -414,7 +422,7 @@ public class ServiceBusinessLogicTest {
         serviceExccedsNameLimit.setTags(tagsList);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
         }
     }
@@ -427,7 +435,7 @@ public class ServiceBusinessLogicTest {
         serviceExccedsNameLimit.setTags(tagsList);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_FIELD_FORMAT, "Service", "tag");
         }
     }
@@ -437,7 +445,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setTags(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
         }
     }
@@ -447,7 +455,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setTags(new ArrayList<>());
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
         }
     }
@@ -461,7 +469,7 @@ public class ServiceBusinessLogicTest {
         serviceContactId.setContactId(contactIdTooLong);
         try{
             bl.createService(serviceContactId, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -473,7 +481,7 @@ public class ServiceBusinessLogicTest {
         serviceContactId.setContactId(contactIdTooLong);
         try{
             bl.createService(serviceContactId, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -483,7 +491,7 @@ public class ServiceBusinessLogicTest {
         resourceExist.setContactId(null);
         try{
             bl.createService(resourceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -495,7 +503,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setCategories(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -573,7 +581,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setCategories(categories);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
         }
     }
@@ -620,7 +628,7 @@ public class ServiceBusinessLogicTest {
         serviceExist.setProjectCode(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ComponentException e) {
+        } catch(ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_PROJECT_CODE);
         }
     }

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.servlets;
@@ -45,6 +47,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
@@ -299,7 +302,7 @@ public class ArchiveEndpointTest extends JerseyTest {
         when(componentUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE), any())).thenReturn(invalidServiceStateResponseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
-        ComponentException ce = new ComponentException(responseFormat);
+        ComponentException ce = new ByResponseFormatComponentException(responseFormat);
         doThrow(ce).when(accessValidationsMock).userIsAdminOrDesigner(eq(otherUser.getUserId()), any());
 
         //Needed for error configuration

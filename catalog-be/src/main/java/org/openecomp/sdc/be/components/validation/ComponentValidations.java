@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.validation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -108,7 +110,7 @@ public class ComponentValidations {
 
     void validateComponentIsCheckedOutByUser(Component component, String userId) {
         if (!ComponentValidationUtils.canWorkOnComponent(component, userId)) {
-            throw new ComponentException(ActionStatus.ILLEGAL_COMPONENT_STATE, component.getComponentType().name(), component.getName(), component.getLifecycleState().name());
+            throw new ByActionStatusComponentException(ActionStatus.ILLEGAL_COMPONENT_STATE, component.getComponentType().name(), component.getName(), component.getLifecycleState().name());
         }
     }
     Component validateComponentIsCheckedOutByUser(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
@@ -129,7 +131,7 @@ public class ComponentValidations {
 
     private void validateComponentType(Component component, ComponentTypeEnum componentType) {
         if (componentType!=component.getComponentType()) {
-            throw new ComponentException(ActionStatus.INVALID_RESOURCE_TYPE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_RESOURCE_TYPE);
         }
     }
 

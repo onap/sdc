@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -75,7 +77,7 @@ public class CompositionBusinessLogic {
     }
 
     private List<ComponentInstance> throwComponentException(ResponseFormat responseFormat) {
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private void setRelativePosition(Entry<ImmutablePair<Double, Double>, ComponentInstance> entry) {

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.lifecycle;
@@ -24,7 +26,7 @@ import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.*;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -314,7 +316,7 @@ public class LifecycleBusinessLogic {
                 lastName = fullName[1];
             }
         }
-        throw new ComponentException(ActionStatus.COMPONENT_ALREADY_CERTIFIED,
+        throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ALREADY_CERTIFIED,
                 component.getName(),
                 component.getComponentType().name().toLowerCase(),
                 firstName,

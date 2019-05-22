@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -24,6 +26,8 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -393,13 +397,15 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         User user;
         try{
             user =  validateUserExists(userId, "createSubCategory", false);
-        } catch(ComponentException e){
-            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
-                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            user = new User();
-            user.setUserId(userId);
-            handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleComponentException(userId, auditingAction, componentType, parentCategoryName, origSubCategoryName,
+                responseFormat);
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
+            handleComponentException(userId, auditingAction, componentType, parentCategoryName, origSubCategoryName,
+                responseFormat);
             throw e;
         }
         if (componentTypeEnum == null) {
@@ -512,6 +518,35 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return Either.left(subCategoryCreated);
     }
 
+    private void handleComponentException(String userId, AuditingActionEnum auditingAction, String componentType,
+        String parentCategoryName, String origSubCategoryName, ResponseFormat responseFormat) {
+        User user;
+        log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+        user = new User();
+        user.setUserId(userId);
+        handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction,
+            componentType);
+    }
+
+    private void handleComponentException(GroupingDefinition grouping, String userId, AuditingActionEnum auditingAction,
+        String componentType, String parentCategoryName, String parentSubCategoryName, ResponseFormat responseFormat) {
+        User user;
+        log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+        user = new User();
+        user.setUserId(userId);
+        String groupingNameForAudit = grouping == null ? null : grouping.getName();
+        handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, groupingNameForAudit,
+            auditingAction, componentType);
+    }
+
+    private void handleComponentException(String componentType, String userId, ResponseFormat responseFormat) {
+        User user;
+        user = new User();
+        user.setUserId(userId);
+        log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+        componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
+    }
+
     public Either<GroupingDefinition, ResponseFormat> createGrouping(GroupingDefinition grouping, String componentTypeParamName, String grandParentCategoryId, String parentSubCategoryId, String userId) {
 
         AuditingActionEnum auditingAction = AuditingActionEnum.ADD_GROUPING;
@@ -525,14 +560,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         User user;
         try{
             user = validateUserExists(userId, "create Grouping", false);
-        } catch(ComponentException e){
-            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
-                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            user = new User();
-            user.setUserId(userId);
-            String groupingNameForAudit = grouping == null ? null : grouping.getName();
-            handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, groupingNameForAudit, auditingAction, componentType);
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
+            handleComponentException(grouping, userId, auditingAction, componentType, parentCategoryName,
+                parentSubCategoryName,
+                responseFormat);
+            throw e;
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleComponentException(grouping, userId, auditingAction, componentType, parentCategoryName,
+                parentSubCategoryName, responseFormat);
             throw e;
         }
 
@@ -672,6 +709,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return Either.left(groupingCreated);
     }
 
+
+
     public Either<List<CategoryDefinition>, ResponseFormat> getAllCategories(String componentType, String userId) {
         ResponseFormat responseFormat;
         User user = new User();
@@ -683,13 +722,13 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
         try {
             user = validateUserExists(userId, "get All Categories", false);
-        } catch (ComponentException e){
-            user = new User();
-            user.setUserId(userId);
-            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
-            responseFormat = e.getResponseFormat() != null ? e.getResponseFormat():
-                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
+        } catch (ByActionStatusComponentException e){
+            responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleComponentException(componentType, userId, responseFormat);
+            throw e;
+        } catch (ByResponseFormatComponentException e){
+            responseFormat = e.getResponseFormat();
+            handleComponentException(componentType, userId, responseFormat);
             throw e;
         }
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
@@ -712,6 +751,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
         return Either.left(categories);
     }
+
+
 
     public Either<UiCategories, ResponseFormat> getAllCategories(String userId) {
         ResponseFormat responseFormat;

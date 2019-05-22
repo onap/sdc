@@ -16,11 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
@@ -272,11 +275,11 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             try{
                 contactUser = validateUserExists(contact, CREATE_PRODUCT, false);
                 validateUserRole(contactUser, contactsRoles);
-            } catch(ComponentException e){
+            } catch(ByActionStatusComponentException e){
                 log.debug("Cannot set contact with userId {} as product contact, error: {}", contact, e.getActionStatus());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PRODUCT_CONTACT, contact);
                 componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
-                throw new ComponentException(e.getActionStatus(), e.getParams());
+                throw new ByActionStatusComponentException(e.getActionStatus(), e.getParams());
             }
         }
 

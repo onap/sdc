@@ -12,6 +12,7 @@ import org.openecomp.sdc.asdctool.migration.tasks.handlers.XlsOutputHandler;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -732,7 +733,7 @@ public class UpgradeMigration1710 implements PostMigration {
         resourceToUpdate.setCategories(((Resource)checkouRes.left().value()).getCategories());
         try {
             Resource updateResourceFromCsarRes = resourceBusinessLogic.validateAndUpdateResourceFromCsar(resourceToUpdate, user, null, null, resourceToUpdate.getUniqueId());
-        } catch(ComponentException e){
+        } catch(ByResponseFormatComponentException e){
             outputHandler.addRecord(resourceToUpdate.getComponentType().name(), resourceToUpdate.getName(), resourceToUpdate.getUUID(), resourceToUpdate.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), e.getResponseFormat().getFormattedMessage());
             log.info("Failed to update vf with name {}, invariantUUID {}, version {} and latest VSP {}. ", vf.getName(), vf.getInvariantUUID(), vf.getVersion(), latestVersion);
             return false;

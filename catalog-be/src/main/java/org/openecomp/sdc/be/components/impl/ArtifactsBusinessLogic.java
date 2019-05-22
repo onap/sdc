@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -34,7 +36,8 @@ import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactTypeToPayloadTypeSelector;
 import org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -3637,15 +3640,23 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         User user;
         try{
             user = validateUserExists(userId, auditingAction.getName(), inTransaction);
-        } catch(ComponentException e){
-            user = new User();
-            user.setUserId(userId);
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
-                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            handleAuditing(auditingAction, null, componentId, user, null, null, artifactId, responseFormat, componentType, null);
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
+            handleComponentException(auditingAction, componentId, artifactId, responseFormat, componentType, userId);
+            throw e;
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleComponentException(auditingAction, componentId, artifactId, responseFormat, componentType, userId);
             throw e;
         }
         return Either.left(user);
+    }
+
+    private void handleComponentException(AuditingActionEnum auditingAction, String componentId, String artifactId,
+        ResponseFormat responseFormat, ComponentTypeEnum componentType, String userId){
+        User user = new User();
+        user.setUserId(userId);
+        handleAuditing(auditingAction, null, componentId, user, null, null, artifactId, responseFormat, componentType, null);
     }
 
     protected AuditingActionEnum detectAuditingType(ArtifactOperationInfo operation, String origMd5) {
