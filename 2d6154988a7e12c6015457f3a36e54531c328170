@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "495af22a_dfccca19",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-22T05:41:27Z",
+      "side": 1,
+      "message": "Test should Assert something. What is a successful result? what is a failure.",
+      "revId": "2d6154988a7e12c6015457f3a36e54531c328170",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
