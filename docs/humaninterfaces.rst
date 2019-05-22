@@ -10,9 +10,9 @@ User Guides In ONAP Confluence
 
 These are links to the SDC user guides found in ONAP Confluence:
 
-- `Resource Onboarding <https://wiki.onap.org/display/DW/Resource+Onboarding>`_
-- `Service Design <https://wiki.onap.org/display/DW/Service+Design>`_
-- `VF Creation and Testing <https://wiki.onap.org/display/DW/VF+Creation+and+Testing>`_
-- `Governance Approval and Service Distribution <https://wiki.onap.org/display/DW/Governance+Approval+and+Service+Distribution>`_
+- `Resource Onboarding <https://onap.readthedocs.io/en/latest/guides/onap-user/design/resource-onboarding/index.html>`_
+- `Service Design <https://onap.readthedocs.io/en/latest/guides/onap-user/design/service-design/index.html>`_
+- `VF Creation and Testing <https://onap.readthedocs.io/en/latest/guides/onap-user/design/vfcreation/index.html>`_
+- `Governance Approval and Service Distribution <https://onap.readthedocs.io/en/latest/guides/onap-user/design/service-distribution/index.html>`_
 
 
