@@ -1,10 +1,31 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.components.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -81,24 +102,24 @@ public class GroupBusinessLogicNew {
 
     private ComponentInstance getComponentInstance(Component component, String memberUniqueId) {
         return componentValidations.getComponentInstance(component, memberUniqueId)
-                .orElseThrow(() -> new ComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
+                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
                         memberUniqueId, "",
                         component.getActualComponentType(), component.getSystemName()));
     }
 
     private GroupDefinition getGroup(Component component, String groupUniqueId) {
         return component.getGroupById(groupUniqueId)
-                .orElseThrow(() -> new ComponentException(ActionStatus.GROUP_IS_MISSING,
+                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.GROUP_IS_MISSING,
                         component.getSystemName(), component.getActualComponentType()));
     }
 
     private void validateUpdatedPropertiesAndSetEmptyValues(GroupDefinition originalGroup, List<GroupProperty> groupPropertiesToUpdate) {
 
         if (CollectionUtils.isEmpty(groupPropertiesToUpdate)) {
-            throw new ComponentException(ActionStatus.PROPERTY_NOT_FOUND, StringUtils.EMPTY);
+            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, StringUtils.EMPTY);
         }
         if (CollectionUtils.isEmpty(originalGroup.getProperties())) {
-            throw new ComponentException(ActionStatus.PROPERTY_NOT_FOUND, groupPropertiesToUpdate.get(NumberUtils.INTEGER_ZERO).getName());
+            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, groupPropertiesToUpdate.get(NumberUtils.INTEGER_ZERO).getName());
         }
         Map<String, GroupProperty> originalProperties = originalGroup.convertToGroupProperties()
                 .stream()
@@ -108,10 +129,10 @@ public class GroupBusinessLogicNew {
         for (GroupProperty gp : groupPropertiesToUpdate) {
             String updatedPropertyName = gp.getName();
             if (!originalProperties.containsKey(updatedPropertyName)) {
-                throw new ComponentException(ActionStatus.PROPERTY_NOT_FOUND, updatedPropertyName);
+                throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, updatedPropertyName);
             }
             if (!isOnlyGroupPropertyValueChanged(gp, originalProperties.get(updatedPropertyName))) {
-                throw new ComponentException(ActionStatus.INVALID_PROPERTY, updatedPropertyName);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY, updatedPropertyName);
             }
             if (StringUtils.isEmpty(gp.getValue())) {
                 gp.setValue(originalProperties.get(updatedPropertyName).getDefaultValue());
@@ -175,15 +196,15 @@ public class GroupBusinessLogicNew {
 
         if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.INITIAL_COUNT)
                 && (latestInitialCount > latestMaxInstances || latestInitialCount < latestMinInstances)) {
-            throw new ComponentException(ActionStatus.INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE, PropertyDefinition.PropertyNames.INITIAL_COUNT.getPropertyName(), String.valueOf(latestMinInstances), String.valueOf(latestMaxInstances));
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE, PropertyDefinition.PropertyNames.INITIAL_COUNT.getPropertyName(), String.valueOf(latestMinInstances), String.valueOf(latestMaxInstances));
         }
         if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MAX_INSTANCES) &&
                 latestMaxInstances < latestInitialCount) {
-            throw new ComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MAX_INSTANCES.getPropertyName(), "higher", String.valueOf(latestInitialCount));
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MAX_INSTANCES.getPropertyName(), "higher", String.valueOf(latestInitialCount));
         }
         if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MIN_INSTANCES) &&
                 latestMinInstances > latestInitialCount) {
-            throw new ComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MIN_INSTANCES.getPropertyName(), "lower", String.valueOf(latestInitialCount));
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MIN_INSTANCES.getPropertyName(), "lower", String.valueOf(latestInitialCount));
         }
     }
 
@@ -218,11 +239,11 @@ public class GroupBusinessLogicNew {
         final String groupTypeValue = groupPropertyToUpdate.getValue();
         if (!org.apache.commons.lang3.StringUtils.isEmpty(groupTypeValue)) {
             if (!ValidationUtils.validateDescriptionLength(groupTypeValue)) {
-                throw new ComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
                         NodeTypeEnum.Property.getName(),
                         String.valueOf(ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH));
             } else if (!ValidationUtils.validateIsEnglish(groupTypeValue)) {
-                throw new ComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION,
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION,
                         NodeTypeEnum.Property.getName());
             }
         }

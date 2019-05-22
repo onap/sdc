@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -31,7 +33,8 @@ import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -119,15 +122,18 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction, boolean inTransaction) {
         User validatedUser;
         ResponseFormat responseFormat;
-        try{
+        try {
             validateUserNotEmpty(user, ecompErrorContext);
             validatedUser = validateUserExists(user, ecompErrorContext, inTransaction);
-        } catch(ComponentException e){
-            if(e.getActionStatus()== ActionStatus.MISSING_INFORMATION){
+        } catch(ByActionStatusComponentException e){
+            if(e.getActionStatus() == ActionStatus.MISSING_INFORMATION){
                 user.setUserId("UNKNOWN");
             }
-            responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            responseFormat = e.getResponseFormat();
             componentsUtils.auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
             throw e;
         }
@@ -139,24 +145,32 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             roles.add(Role.ADMIN);
             roles.add(Role.DESIGNER);
         }
-        try{
+        try {
             validateUserRole(user, roles);
-        } catch(ComponentException e){
-            String commentStr = null;
-            String distrStatus = null;
-            ComponentTypeEnum componentType = component.getComponentType();
-            if (componentType.equals(ComponentTypeEnum.SERVICE)) {
-                distrStatus = ((ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getDistributionStatus();
-                commentStr = comment;
-            }
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(componentType.getValue()),
-                    ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
-                    ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
-                    commentStr, null, null);
+        }catch (ByActionStatusComponentException e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleComponentException(component, comment, responseFormat, user, auditAction);
+            throw e;
+        }catch (ByResponseFormatComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat();
+            handleComponentException(component, comment, responseFormat, user, auditAction);
             throw e;
         }
+    }
+
+    private void handleComponentException(Component component, String comment, ResponseFormat responseFormat,
+        User user, AuditingActionEnum auditAction){
+        String commentStr = null;
+        String distrStatus = null;
+        ComponentTypeEnum componentType = component.getComponentType();
+        if (componentType.equals(ComponentTypeEnum.SERVICE)) {
+            distrStatus = ((ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getDistributionStatus();
+            commentStr = comment;
+        }
+        componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(componentType.getValue()),
+            ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
+            ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
+            commentStr, null, null);
     }
 
     protected void validateComponentName(User user, Component component, AuditingActionEnum actionEnum) {
@@ -166,21 +180,21 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             log.debug("component name is empty");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_COMPONENT_NAME, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.MISSING_COMPONENT_NAME, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_COMPONENT_NAME, type.getValue());
         }
 
         if (!ValidationUtils.validateComponentNameLength(componentName)) {
             log.debug("Component name exceeds max length {} ", ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT,type.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT,type.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
         }
 
         if (!validateTagPattern(componentName)) {
             log.debug("Component name {} has invalid format", componentName);
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPONENT_NAME, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.INVALID_COMPONENT_NAME, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_COMPONENT_NAME, type.getValue());
         }
         component.setNormalizedName(ValidationUtils.normaliseComponentName(componentName));
         component.setSystemName(ValidationUtils.convertToSystemName(componentName));
@@ -192,15 +206,18 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         if (!ValidationUtils.validateStringNotEmpty(description)) {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_DESCRIPTION, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_DESCRIPTION, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_DESCRIPTION, type.getValue());
         }
 
         description = cleanUpText(description);
-        try{
+        try {
             validateComponentDescription(description, type);
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
             throw e;
         }
@@ -210,11 +227,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     private void validateComponentDescription(String description, ComponentTypeEnum type) {
         if (description != null) {
             if (!ValidationUtils.validateDescriptionLength(description)) {
-                throw new ComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
             }
 
             if (!ValidationUtils.validateIsEnglish(description)) {
-                throw new ComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION, type.getValue());
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION, type.getValue());
             }
         }
     }
@@ -254,7 +271,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             log.info("contact is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
         }
        validateContactId(contactId, user, component, actionEnum, type);
     }
@@ -264,7 +281,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             log.info("contact is invalid.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());
         }
     }
 
@@ -317,13 +334,16 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             log.info("icon is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
         }
         try {
             validateIcon(icon, type);
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
             throw e;
         }
@@ -333,12 +353,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         if (icon != null) {
             if (!ValidationUtils.validateIconLength(icon)) {
                 log.debug("icon exceeds max length");
-                throw new ComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
             }
 
             if (!ValidationUtils.validateIcon(icon)) {
                 log.info("icon is invalid.");
-                throw new ComponentException(ActionStatus.COMPONENT_INVALID_ICON, type.getValue());
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_ICON, type.getValue());
             }
         }
     }
@@ -347,9 +367,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         List<String> tagsList = component.getTags();
         try {
             validateComponentTags(tagsList, component.getName(), component.getComponentType(), user, component, actionEnum);
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch(ByActionStatusComponentException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType());
+            throw e;
+        } catch(ByResponseFormatComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat();
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType());
             throw e;
         }
@@ -367,7 +390,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                     log.debug("tag length exceeds limit {}", ValidationUtils.TAG_MAX_LENGTH);
                     responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
                     componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                    throw new ComponentException(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
+                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
                 }
                 if (validateTagPattern(tag)) {
                     if (!includesComponentName) {
@@ -377,7 +400,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                     log.debug("invalid tag {}", tag);
                     responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_FIELD_FORMAT, componentType.getValue(), TAG_FIELD_LABEL);
                     componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                    throw new ComponentException(ActionStatus.INVALID_FIELD_FORMAT, componentType.getValue(), TAG_FIELD_LABEL);
+                    throw new ByActionStatusComponentException(ActionStatus.INVALID_FIELD_FORMAT, componentType.getValue(), TAG_FIELD_LABEL);
                 }
                 tagListSize += tag.length() + 1;
             }
@@ -389,18 +412,18 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                 log.debug("tags must include component name");
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
                 componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                throw new ComponentException(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
             }
             if (!ValidationUtils.validateTagListLength(tagListSize)) {
                 log.debug("overall tags length exceeds limit {}", ValidationUtils.TAG_LIST_MAX_LENGTH);
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
                 componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                throw new ComponentException(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
             }
         } else {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_TAGS);
             componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_TAGS);
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_TAGS);
         }
     }
 
@@ -831,7 +854,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component);
         if(genericTypeEither.isRight()){
             log.debug("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
-            throw new ComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
+            throw new ByActionStatusComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
         }
         Resource genericTypeResource = genericTypeEither.left().value();
         component.setDerivedFromGenericInfo(genericTypeResource);
@@ -1095,7 +1118,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     public List<GroupDefinition> throwComponentException(ResponseFormat responseFormat) {
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 }
 

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.impl;
@@ -41,6 +43,8 @@ import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAdminEventFactory;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -1516,15 +1520,21 @@ public class ComponentsUtils {
         }
         return result;
     }
-    
-    
+
     public ResponseFormat getResponseFormat(ComponentException exception) {
-        ResponseFormat responseFormat = exception.getResponseFormat();
-        if (responseFormat != null) {
-            return responseFormat;
-        }
+        return exception instanceof ByResponseFormatComponentException ?
+            getResponseFormat((ByResponseFormatComponentException) exception):
+            getResponseFormat((ByActionStatusComponentException) exception);
+    }
+
+    public ResponseFormat getResponseFormat(ByResponseFormatComponentException exception) {
+        return exception.getResponseFormat();
+    }
+
+    public ResponseFormat getResponseFormat(ByActionStatusComponentException exception) {
         return getResponseFormat(exception.getActionStatus(), exception.getParams());
     }
+
     public ActionStatus convertFromStorageResponseForRelationshipType(
             StorageOperationStatus storageResponse) {
         ActionStatus responseEnum;

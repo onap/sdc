@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -30,12 +32,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -358,7 +361,7 @@ public class ResourceBusinessLogicTest {
         try{
             createdResource= bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
             assertThat(createResourceObject(true)).isEqualTo(createdResource);
-        } catch(ComponentException e){
+        } catch(ByResponseFormatComponentException e){
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -380,7 +383,7 @@ public class ResourceBusinessLogicTest {
         try{
             createdResource= bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
             assertThat(resource.getUniqueId()).isEqualTo(createdResource.getUniqueId());
-        } catch(ComponentException e){
+        } catch(ByResponseFormatComponentException e){
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -434,7 +437,7 @@ public class ResourceBusinessLogicTest {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByResponseFormatComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
         }
     }
@@ -445,7 +448,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -458,7 +461,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
         }
     }
@@ -471,7 +474,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -493,7 +496,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsDescLimit.setDescription(tooLongResourceDesc);
         try {
             bl.createResource(resourceExccedsDescLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
         }
     }
@@ -506,7 +509,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(notEnglish, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -517,7 +520,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -528,7 +531,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -541,7 +544,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -552,7 +555,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -562,7 +565,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setIcon("dsjfhskdfhskjdhfskjdhkjdhfkshdfksjsdkfhsdfsdfsdfsfsdfsf");
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
         }
     }
@@ -574,7 +577,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setTags(null);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
         }
     }
@@ -584,7 +587,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setTags(new ArrayList<>());
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
         }
     }
@@ -640,7 +643,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsNameLimit.setTags(tagsList);
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
         }
     }
@@ -656,7 +659,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsNameLimit.setTags(tagsList);
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
         }
     }
@@ -669,7 +672,7 @@ public class ResourceBusinessLogicTest {
         serviceExccedsNameLimit.setTags(tagsList);
         try {
             bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
         }
     }
@@ -682,7 +685,7 @@ public class ResourceBusinessLogicTest {
         serviceExccedsNameLimit.setTags(tagsList);
         try {
             bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_FIELD_FORMAT, new String[]{"Resource", "tag"});
         }
     }
@@ -698,7 +701,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -710,7 +713,7 @@ public class ResourceBusinessLogicTest {
         resourceContactId.setContactId(contactIdFormatWrong);
         try {
             bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -720,7 +723,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setContactId("");
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -730,7 +733,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setContactId(null);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -741,7 +744,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsVendorNameLimit.setVendorName(tooLongVendorName);
         try {
             bl.createResource(resourceExccedsVendorNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
         }
     }
@@ -752,7 +755,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsVendorModelNumberLimit.setResourceVendorModelNumber(tooLongVendorModelNumber);
         try {
             bl.createResource(resourceExccedsVendorModelNumberLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT, "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
         }
     }
@@ -764,7 +767,7 @@ public class ResourceBusinessLogicTest {
         resource.setVendorName(nameWrongFormat);
         try {
             bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
         }
     }
@@ -776,7 +779,7 @@ public class ResourceBusinessLogicTest {
         resource.setVendorRelease(nameWrongFormat);
         try {
             bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_VENDOR_RELEASE);
         }
     }
@@ -787,7 +790,7 @@ public class ResourceBusinessLogicTest {
         resourceExccedsNameLimit.setVendorRelease(tooLongVendorRelease);
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
         }
     }
@@ -797,7 +800,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setVendorName(null);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_VENDOR_NAME);
         }
     }
@@ -807,7 +810,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setVendorRelease(null);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_VENDOR_RELEASE);
         }
     }
@@ -819,7 +822,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setCategories(null);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -831,7 +834,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.addCategory("koko", "koko");
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -855,7 +858,7 @@ public class ResourceBusinessLogicTest {
             createResourceObjectAfterCreate.setCost(cost);
             createResourceObjectAfterCreate.setLicenseType(licenseType);
             assertThat(createResourceObjectAfterCreate).isEqualTo(createdResource);
-        }catch(ComponentException e){
+        }catch(ByResponseFormatComponentException e){
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -867,7 +870,7 @@ public class ResourceBusinessLogicTest {
         resourceCost.setCost(cost);
         try {
             bl.createResource(resourceCost, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_CONTENT);
         }
     }
@@ -881,7 +884,7 @@ public class ResourceBusinessLogicTest {
         resourceLicenseType.setLicenseType(licenseType);
         try {
             bl.createResource(resourceLicenseType, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_CONTENT);
         }
     }
@@ -894,7 +897,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setDerivedFrom(list);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
@@ -904,7 +907,7 @@ public class ResourceBusinessLogicTest {
         resourceExist.setDerivedFrom(new ArrayList<>());
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
@@ -916,14 +919,20 @@ public class ResourceBusinessLogicTest {
         resourceExist.setDerivedFrom(derivedFrom);
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-        } catch (ComponentException e) {
+        } catch (ByResponseFormatComponentException e) {
+            assertComponentException(e, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
         }
     }
     // Derived from stop
-    private void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
-        ResponseFormat actualResponse = e.getResponseFormat() != null ?
-                e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+    private void assertComponentException(ByResponseFormatComponentException e, ActionStatus expectedStatus, String... variables) {
+        ResponseFormat actualResponse = e.getResponseFormat();
+        assertResponse(actualResponse, expectedStatus, variables);
+    }
+
+    private void assertComponentException(ByActionStatusComponentException e, ActionStatus expectedStatus, String... variables) {
+        ResponseFormat actualResponse = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
         assertResponse(actualResponse, expectedStatus, variables);
     }
 
@@ -955,7 +964,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -978,7 +987,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
         }
     }
@@ -998,7 +1007,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
         }
     }
@@ -1028,7 +1037,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
         }
     }
@@ -1049,7 +1058,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -1073,7 +1082,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
         }
     }
@@ -1138,7 +1147,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
         }
     }
@@ -1159,7 +1168,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
         }
     }
@@ -1182,7 +1191,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
         }
     }
@@ -1202,7 +1211,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
         }
     }
@@ -1224,7 +1233,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
     }
@@ -1247,7 +1256,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.RESOURCE_CATEGORY_CANNOT_BE_CHANGED);
         }
     }
@@ -1269,7 +1278,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
@@ -1289,7 +1298,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
@@ -1311,7 +1320,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
         }
     }
@@ -1369,7 +1378,7 @@ public class ResourceBusinessLogicTest {
 
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertComponentException(e, ActionStatus.PARENT_RESOURCE_DOES_NOT_EXTEND);
         }
     }

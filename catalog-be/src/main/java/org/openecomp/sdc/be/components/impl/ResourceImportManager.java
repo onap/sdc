@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -264,9 +266,8 @@ public class ResourceImportManager {
 
         }
         catch (ComponentException e) {
-            ResponseFormat responseFormat = e.getResponseFormat() != null?
-                    e.getResponseFormat() : getResponseFormatManager().getResponseFormat(e.getActionStatus(), e.getParams());
-            response = Either.right(handleImportResourceException(resourceMetaData, creator, false, e, responseFormat));
+            response = Either.right(handleImportResourceException(resourceMetaData, creator, false, e,
+                e.getResponseFormat()));
         }
         catch (RuntimeException e) {
             response = Either.right(handleImportResourceException(resourceMetaData, creator, false, e, null));
