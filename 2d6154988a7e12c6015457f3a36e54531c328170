@@ -16,6 +16,24 @@
       "revId": "2d6154988a7e12c6015457f3a36e54531c328170",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3d04a0f_5023b0d6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 5063
+      },
+      "writtenOn": "2019-05-22T09:04:08Z",
+      "side": 1,
+      "message": "I agree, it should be asserting on the result and this anti-pattern is evident in various other areas too. \nChanges you see here besides the last 10 tests are due to formatting of the file according to ONAP codestyle. \nI am not sure why these formatting changes are highlighted as there was no additional code added to these areas except for those 10 tests in the end.",
+      "parentUuid": "495af22a_dfccca19",
+      "revId": "2d6154988a7e12c6015457f3a36e54531c328170",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
