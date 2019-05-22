@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -27,6 +29,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.impl.policy.PolicyTargetsUpdateHandler;
@@ -1028,7 +1032,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private void validateGroupTypePerComponent(String groupType, Component component) {
         String specificType = component.getComponentMetadataDefinition().getMetadataDataDefinition().getActualComponentType();
         if (!component.isTopologyTemplate()) {
-            throw new ComponentException(ActionStatus.GROUP_TYPE_ILLEGAL_PER_COMPONENT, groupType,
+            throw new ByActionStatusComponentException(ActionStatus.GROUP_TYPE_ILLEGAL_PER_COMPONENT, groupType,
                     specificType);
         }
         Map<String, Set<String>> excludedGroupTypesMap = ConfigurationManager.getConfigurationManager().getConfiguration()
@@ -1037,7 +1041,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (MapUtils.isNotEmpty(excludedGroupTypesMap) && StringUtils.isNotEmpty(specificType)) {
             Set<String> excludedGroupTypesPerComponent = excludedGroupTypesMap.get(specificType);
             if (excludedGroupTypesPerComponent!=null && excludedGroupTypesPerComponent.contains(groupType)) {
-                throw new ComponentException(ActionStatus.GROUP_TYPE_ILLEGAL_PER_COMPONENT, groupType, specificType);
+                throw new ByActionStatusComponentException(ActionStatus.GROUP_TYPE_ILLEGAL_PER_COMPONENT, groupType, specificType);
             }
         }
     }
@@ -1077,13 +1081,13 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     private void assertNewNameIsValidAndUnique(String currentGroupName, String updatedGroupName, Component component) {
         if (!ValidationUtils.validateResourceInstanceNameLength(updatedGroupName)) {
-            throw new ComponentException(ActionStatus.EXCEEDS_LIMIT, "Group Name", ValidationUtils.RSI_NAME_MAX_LENGTH.toString());
+            throw new ByActionStatusComponentException(ActionStatus.EXCEEDS_LIMIT, "Group Name", ValidationUtils.RSI_NAME_MAX_LENGTH.toString());
         }
         if (!ValidationUtils.validateResourceInstanceName(updatedGroupName)) {
-            throw new ComponentException(ActionStatus.INVALID_VF_MODULE_NAME, updatedGroupName);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_VF_MODULE_NAME, updatedGroupName);
         }
         if (!ComponentValidations.validateNameIsUniqueInComponent(currentGroupName, updatedGroupName, component)) {
-            throw new ComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, "Group", updatedGroupName);
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, "Group", updatedGroupName);
         }
     }
 
@@ -1106,21 +1110,21 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     private List<GroupDefinition> onFailedGroupDBOperation(ResponseFormat responseFormat) {
         titanDao.rollback();
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private GroupDefinition onFailedUpdateGroupDBOperation(ResponseFormat responseFormat) {
         titanDao.rollback();
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private GroupDefinition onGroupNotFoundInComponentError(Component component, String groupId) {
-        throw new ComponentException(ActionStatus.GROUP_IS_MISSING, groupId,
+        throw new ByActionStatusComponentException(ActionStatus.GROUP_IS_MISSING, groupId,
                 component.getSystemName(), getComponentTypeForResponse(component));
     }
 
     private GroupTypeDefinition onGroupTypeNotFound(Component component) {
-        throw new ComponentException(ActionStatus.GROUP_TYPE_IS_INVALID, component.getSystemName(),
+        throw new ByActionStatusComponentException(ActionStatus.GROUP_TYPE_IS_INVALID, component.getSystemName(),
                 component.getComponentType().toString());
     }
 
@@ -1129,7 +1133,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         ActionStatus actionStatus = policyTargetsUpdateHandler.removePoliciesTargets(component, groupId, PolicyTargetType.GROUPS);
         if (ActionStatus.OK != actionStatus) {
             titanDao.rollback();
-            throw new ComponentException(actionStatus, groupId);
+            throw new ByActionStatusComponentException(actionStatus, groupId);
         }
     }
 

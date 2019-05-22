@@ -1,3 +1,24 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
@@ -8,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -73,10 +94,10 @@ public class ServiceDistributionValidationTest {
 
     @Test
     public void validateActivateServiceRequest_userNotExist() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenThrow(new ComponentException(errResponse));
+        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenThrow(new ByResponseFormatComponentException(errResponse));
         try {
             testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
-        } catch(ComponentException e){
+        } catch(ByResponseFormatComponentException e){
             assertEquals(errResponse, e.getResponseFormat());
         }
         verifyZeroInteractions(toscaOperationFacade, operationalEnvironmentDao, componentsUtils);

@@ -43,7 +43,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -318,11 +318,11 @@ public class ComponentInstanceBusinessLogicTest {
 
     private void getServiceRelationByIdUserValidationFailure(Component component) {
         when(userValidations.validateUserExists(eq(USER_ID), eq("get relation by Id"), eq(false)))
-                .thenThrow(new ComponentException(ActionStatus.USER_NOT_FOUND));
+                .thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
         try {
             componentInstanceBusinessLogic
                     .getRelationById(COMPONENT_ID, RELATION_ID, USER_ID, component.getComponentType());
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             assertSame(e.getActionStatus(), ActionStatus.USER_NOT_FOUND);
         }
     }
