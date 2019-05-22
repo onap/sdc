@@ -1,14 +1,31 @@
+/*
+ * Copyright © 2016-2019 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.be.tosca;
 
 import java.util.Iterator;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -22,12 +39,11 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
-import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
 
 
 import fj.data.Either;
 import mockit.Deencapsulation;
+import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -242,7 +258,103 @@ public class CapabilityRequirementConverterTest {
 
 		vfComponent.setComponentInstances(componentInstances);
 
-		testSubject.convertProxyCapabilities(componentsCache, vfComponent, vfComponent, instance, dataTypes);
+		testSubject.convertProxyCapabilities(componentsCache, instance, dataTypes);
+	}
+
+	@Test
+	public void testConvertProxyRequirementsNoRequirements() {
+		Map<String, Component> componentsCache = new HashMap<>();
+
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setUniqueId("id");
+		instance.setComponentUid("componentUid");
+		componentInstances.add(instance);
+
+		vfComponent.setComponentInstances(componentInstances);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+
+		List<Map<String, ToscaRequirement>> proxyRequirements =
+				testSubject.convertProxyRequirements(componentsCache, instance);
+		Assert.assertEquals(0, proxyRequirements.size());
+	}
+
+	@Test
+	public void testConvertProxyRequirementsNotSubstitutedName() {
+		Map<String, Component> componentsCache = new HashMap<>();
+		RequirementDefinition r = new RequirementDefinition();
+		r.setName("port0.dependency");
+		r.setPreviousName("dependency");
+		r.setCapability("tosca.capabilities.Node");
+		r.setNode("tosca.nodes.Root");
+		r.setRelationship("tosca.relationships.DependsOn");
+		r.setMinOccurrences(RequirementDataDefinition.MIN_OCCURRENCES);
+		r.setMaxOccurrences(RequirementDataDefinition.MAX_OCCURRENCES);
+		r.setOwnerId("id");
+		r.setParentName("parentName");
+
+		Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
+		List<RequirementDefinition> requirementDefinitions = new ArrayList<>();
+		requirementDefinitions.add(r);
+		requirements.put("dependency", requirementDefinitions);
+
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setUniqueId("id");
+		instance.setComponentUid("componentUid");
+		instance.setRequirements(requirements);
+		instance.setNormalizedName("port0");
+		componentInstances.add(instance);
+
+		vfComponent.setComponentInstances(componentInstances);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+
+		List<Map<String, ToscaRequirement>> proxyRequirements =
+				testSubject.convertProxyRequirements(componentsCache, instance);
+		Map<String, ToscaRequirement> proxyRequirement = proxyRequirements.get(0);
+		Assert.assertEquals("dependency", proxyRequirement.keySet().iterator().next());
+	}
+
+	@Test
+	public void testConvertProxyRequirementsSubstitutedName() {
+		Map<String, Component> componentsCache = new HashMap<>();
+		RequirementDefinition r = new RequirementDefinition();
+		r.setName("dependency");
+		r.setPreviousName("dependency");
+		r.setCapability("tosca.capabilities.Node");
+		r.setNode("tosca.nodes.Root");
+		r.setRelationship("tosca.relationships.DependsOn");
+		r.setMinOccurrences(RequirementDataDefinition.MIN_OCCURRENCES);
+		r.setMaxOccurrences(RequirementDataDefinition.MAX_OCCURRENCES);
+		r.setOwnerId("id");
+		r.setParentName("parentName");
+
+		Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
+		List<RequirementDefinition> requirementDefinitions = new ArrayList<>();
+		requirementDefinitions.add(r);
+		requirements.put("dependency", requirementDefinitions);
+
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setUniqueId("id");
+		instance.setComponentUid("componentUid");
+		instance.setRequirements(requirements);
+		instance.setNormalizedName("port0");
+		componentInstances.add(instance);
+
+		vfComponent.setComponentInstances(componentInstances);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+
+		testSubject.convertProxyRequirements(componentsCache, instance);
 	}
 
 	@Test
@@ -272,7 +384,7 @@ public class CapabilityRequirementConverterTest {
 				Mockito.any(ComponentParametersView.class)))
 				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		testSubject.convertProxyCapabilities(componentsCache, vfComponent, vfComponent, instance, dataTypes);
+		testSubject.convertProxyCapabilities(componentsCache, instance, dataTypes);
 	}
 
 	@Test
