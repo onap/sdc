@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -36,6 +38,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -430,7 +433,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
             return result;
 
-        } catch (ComponentException e) {
+        } catch (ByResponseFormatComponentException e) {
             log.error("#createMultipleInputs: Exception thrown: ", e);
             result = Either.right(e.getResponseFormat());
             return result;
@@ -491,7 +494,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 toscaOperationFacade.addDataTypesToComponent(dataTypesMap, componentId);
             if (dataTypeResult.isRight()) {
                 log.debug("#createListInput: DataType creation failed.");
-                throw new ComponentException(componentsUtils.getResponseFormat(dataTypeResult.right().value()));
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(dataTypeResult.right().value()));
             }
 
             // create list input
@@ -504,7 +507,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             result = createListInputsInGraph(listInputMap, dataTypesMap, component);
             if (result.isRight()) {
                 log.debug("#createListInput: createListInputsInGraph failed.");
-                throw new ComponentException(result.right().value());
+                throw new ByResponseFormatComponentException(result.right().value());
             }
 
             // update properties
@@ -517,7 +520,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
             return result;
 
-        } catch (ComponentException e) {
+        } catch (ByResponseFormatComponentException e) {
             log.error("#createListInput: Exception thrown", e);
             result = Either.right(e.getResponseFormat());
             return result;
@@ -569,7 +572,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 return Either.left(component);
             }).left().bind(component -> validateCanWorkOnComponent(component, userId).left().map(result -> component));
         if (componentEither.isRight()) {
-            throw new ComponentException(componentEither.right().value());
+            throw new ByResponseFormatComponentException(componentEither.right().value());
         }
         return componentEither.left().value();
     }
@@ -578,14 +581,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         // Confirm if type is list
         if (StringUtils.isEmpty(input.getType()) || !input.getType().equals(ToscaPropertyType.LIST.getType())) {
             log.debug("#prepareDataTypeForListInput: Type of input is not list.");
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE));
         }
 
         // Confirm schema type is not empty
         String desiredTypeName = input.getSchemaType();
         if (StringUtils.isEmpty(desiredTypeName)) {
             log.debug("#prepareDataTypeForListInput: Schema type of list input is empty.");
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE));
         }
 
         DataTypeDefinition dataType = new DataTypeDefinition();

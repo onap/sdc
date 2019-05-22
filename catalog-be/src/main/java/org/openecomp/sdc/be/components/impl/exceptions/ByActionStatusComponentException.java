@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
- * ================================================================================
  */
 package org.openecomp.sdc.be.components.impl.exceptions;
 
+import java.util.Arrays;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-/**
- * This class will be initialized either by action status and params or by ResponseFormat
- */
-public abstract class ComponentException extends RuntimeException {
+public class ByActionStatusComponentException extends ComponentException {
 
-    public abstract ResponseFormat responseFormat(ResponseFormatManager responseFormatManager);
-    
+    private final ActionStatus actionStatus;
+    private final String[] params;
+
+    public ByActionStatusComponentException(ActionStatus actionStatus, String... params) {
+        this.actionStatus = actionStatus;
+        this.params = params.clone();
+    }
+
+    public ActionStatus getActionStatus() {
+        return actionStatus;
+    }
+
+    public String[] getParams() {
+        return params.clone();
+    }
+
     @Override
-    public String getMessage() {
-        return this.toString();
+    public String toString() {
+        return "ComponentException{" +
+            "actionStatus=" + actionStatus +
+            ", params=" + Arrays.toString(params) +
+            '}';
+    }
+
+    @Override
+    public ResponseFormat responseFormat(ResponseFormatManager responseFormatManager) {
+        return responseFormatManager.getResponseFormat(getActionStatus(), getParams());
     }
 }

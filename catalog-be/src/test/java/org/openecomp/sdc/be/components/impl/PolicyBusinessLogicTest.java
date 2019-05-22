@@ -43,7 +43,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
@@ -178,12 +178,12 @@ public class PolicyBusinessLogicTest {
     
     @Test
     public void createPolicyUserFailureTest(){
-        ComponentException userNotFoundException = new ComponentException(ActionStatus.USER_NOT_FOUND);
+        ByActionStatusComponentException userNotFoundException = new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND);
         when(userValidations.validateUserExists(eq(USER_ID), eq(CREATE_POLICY), eq(false))).thenThrow(userNotFoundException);
         stubRollback();
         try{
             businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
-        } catch(ComponentException e){
+        } catch(ByActionStatusComponentException e){
             assertEquals(e.getActionStatus(), userNotFoundException.getActionStatus());
         }
     }

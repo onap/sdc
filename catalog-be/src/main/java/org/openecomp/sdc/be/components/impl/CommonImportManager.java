@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -23,7 +25,7 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -399,7 +401,7 @@ public class CommonImportManager {
                                                                                               TypeOperations<T> typeOperations) {
         Map<String, Object> fieldMap = convertToFieldMap(toscaTypesYml);
         if (fieldMap==null) {
-            throw new ComponentException(ActionStatus.INVALID_YAML_FILE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML_FILE);
         }
         List<T> elementTypes = createTypesFromToscaJsonMap(createApi, fieldMap);
         return createTypesByDao(elementTypes, typeOperations);
@@ -416,7 +418,7 @@ public class CommonImportManager {
         ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaType);
         if (typeMetaData == null) {
             log.debug("failing while trying to associate metadata for type {}. type not exist", toscaType);
-            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
         toscaTypeDefinition.setIcon(typeMetaData.getIcon());
         toscaTypeDefinition.setName(typeMetaData.getDisplayName());

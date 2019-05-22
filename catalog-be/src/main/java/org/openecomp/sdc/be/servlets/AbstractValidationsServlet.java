@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.servlets;
@@ -49,7 +51,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -649,7 +651,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
         Either<Map<String, byte[]>, ResponseFormat> csarUIPayloadRes = getCsarFromPayload(resourceInfoObject);
         if (csarUIPayloadRes.isRight()) {
-            throw new ComponentException(csarUIPayloadRes.right().value());
+            throw new ByResponseFormatComponentException(csarUIPayloadRes.right().value());
         }
         Map<String, byte[]> csarUIPayload = csarUIPayloadRes.left().value();
 
@@ -666,7 +668,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     private Resource throwComponentException(ResponseFormat responseFormat) {
-        throw new ComponentException(responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private void getAndValidateCsarYaml(Map<String, byte[]> csarUIPayload, Resource resource, User user, String csarUUID) {
