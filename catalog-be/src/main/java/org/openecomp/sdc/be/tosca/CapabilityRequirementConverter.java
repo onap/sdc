@@ -58,6 +58,7 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 public class CapabilityRequirementConverter {
 
     private static final String NO_CAPABILITIES = "No Capabilities for node type";
+    private static final String NO_REQUIREMENTS = "No Requirements for node type";
     private static CapabilityRequirementConverter instance;
     private static final Logger logger = Logger.getLogger(CapabilityRequirementConverter.class);
     private static final String PATH_DELIMITER = ".";
@@ -82,6 +83,18 @@ public class CapabilityRequirementConverter {
                     .orValue(c.getName());
         }
         return c.getPreviousName();
+    }
+
+    public String buildRequirementNameForComponentInstance(Map<String,Component> componentCache,
+                                                           ComponentInstance componentInstance,
+                                                           RequirementDefinition r) {
+        String prefix = buildCapReqNamePrefix(componentInstance.getNormalizedName());
+        if (ComponentUtilities.isNotUpdatedCapReqName(prefix, r.getName(), r.getPreviousName())) {
+            return buildSubstitutedName(componentCache, r.getName(), r.getPreviousName(), r.getPath(), r.getOwnerId(),
+                    componentInstance).left()
+                    .orValue(r.getName());
+        }
+        return r.getPreviousName();
     }
 
     private String buildCapReqNamePrefix(String normalizedName) {
@@ -187,6 +200,38 @@ public class CapabilityRequirementConverter {
         return result;
     }
 
+    /**
+     * Allows to convert requirements of a server proxy node type to tosca template requirements
+     * @param instanceProxy
+     * @return converted tosca template requirements
+     */
+    List<Map<String, ToscaRequirement>> convertProxyRequirements(Map<String, Component> componentCache,
+                                                                 ComponentInstance instanceProxy) {
+        Map<String, List<RequirementDefinition>> requirements = instanceProxy.getRequirements();
+        List<Map<String, ToscaRequirement>> toscaRequirements = new ArrayList<>();
+        if (requirements != null) {
+            requirements.entrySet().stream()
+                    .flatMap(e -> e.getValue().stream())
+                    .forEach(req -> {
+                ImmutablePair<String, ToscaRequirement> pair = convertProxyRequirement(
+                        buildRequirementNameForComponentInstance(componentCache, instanceProxy, req), req);
+                Map<String, ToscaRequirement> requirement = new HashMap<>();
+                requirement.put(pair.left, pair.right);
+                toscaRequirements.add(requirement);
+            });
+        } else {
+            logger.debug(NO_REQUIREMENTS);
+        }
+
+        return toscaRequirements;
+    }
+
+    private ImmutablePair<String, ToscaRequirement> convertProxyRequirement(String requirementName,
+                                                                            RequirementDefinition r) {
+        ToscaRequirement toscaRequirement = createToscaRequirement(r);
+        return new ImmutablePair<>(requirementName, toscaRequirement);
+    }
+
     private List<Map<String, ToscaRequirement>> convertRequirementsAsList(Map<String, Component> componentsCache, Component component) {
         Map<String, List<RequirementDefinition>> requirements = component.getRequirements();
         List<Map<String, ToscaRequirement>> toscaRequirements = new ArrayList<>();
@@ -202,7 +247,7 @@ public class CapabilityRequirementConverter {
                 logger.debug("Finish convert Requirements for node type");
             }
         } else {
-            logger.debug("No Requirements for node type");
+            logger.debug(NO_REQUIREMENTS);
         }
         return toscaRequirements;
     }
@@ -384,6 +429,11 @@ public class CapabilityRequirementConverter {
             name = buildReqNamePerOwnerByPath(componentsCache, component, r);
         }
         logger.debug("the requirement {} belongs to resource {} ", name, component.getUniqueId());
+        ToscaRequirement toscaRequirement = createToscaRequirement(r);
+        return new ImmutablePair<>(name, toscaRequirement);
+    }
+
+    private ToscaRequirement createToscaRequirement(RequirementDefinition r) {
         ToscaRequirement toscaRequirement = new ToscaRequirement();
 
         List<Object> occurrences = new ArrayList<>();
@@ -397,8 +447,7 @@ public class CapabilityRequirementConverter {
         toscaRequirement.setNode(r.getNode());
         toscaRequirement.setCapability(r.getCapability());
         toscaRequirement.setRelationship(r.getRelationship());
-
-        return new ImmutablePair<>(name, toscaRequirement);
+        return toscaRequirement;
     }
 
     /**
@@ -424,17 +473,16 @@ public class CapabilityRequirementConverter {
 
     /**
      * Allows to convert capabilities of a server proxy node type to tosca template capabilities
-     * @param component
-     * @param proxyComponent
      * @param instanceProxy
      * @param dataTypes
      * @return
      */
-    public Map<String, ToscaCapability> convertProxyCapabilities(Map<String, Component> componentCache, Component component, Component proxyComponent, ComponentInstance instanceProxy, Map<String, DataTypeDefinition> dataTypes) {
+    public Map<String, ToscaCapability> convertProxyCapabilities(Map<String, Component> componentCache,
+                                                                 ComponentInstance instanceProxy,
+                                                                 Map<String, DataTypeDefinition> dataTypes) {
         Map<String, List<CapabilityDefinition>> capabilities = instanceProxy.getCapabilities();
         Map<String, ToscaCapability> toscaCapabilities = new HashMap<>();
         if (capabilities != null) {
-            boolean isNodeType = ModelConverter.isAtomicComponent(component);
             for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
                 entry.getValue()
                         .stream()
