@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.utils;
@@ -30,7 +32,6 @@ public class CommonBeUtilsTest {
 
 	@Test
 	public void testCompareAsdcComponentVersions() {
-
 		assertTrue(CommonBeUtils.compareAsdcComponentVersions("1.1", "0.15"));
 		assertFalse(CommonBeUtils.compareAsdcComponentVersions("0.5", "0.5"));
 		assertFalse(CommonBeUtils.compareAsdcComponentVersions("0.5", "0.6"));
@@ -42,14 +43,19 @@ public class CommonBeUtilsTest {
 	
 	@Test
 	public void testConformanceLevelCompare() {
-
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.1", "0.15") > 0);
-        assertEquals(0, CommonBeUtils.conformanceLevelCompare("0.5", "0.5"));
+		assertEquals(0, CommonBeUtils.conformanceLevelCompare("0.5", "0.5"));
 		assertTrue(CommonBeUtils.conformanceLevelCompare("0.5", "0.6") < 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "2.6") < 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "1.5.3") < 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("2.5", "1.5.300") > 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("0.10", "0.1") > 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("2", "1.15") > 0);
+	}
+
+	@Test
+	public void testGenerateToscaResourceName(){
+		assertEquals(CommonBeUtils.generateToscaResourceName("ANY_RESOURCE", "ANY_RESOURCE_SYSTEM_NAME"),
+			"org.openecomp.resource.any_resource.ANY_RESOURCE_SYSTEM_NAME");
 	}
 }
