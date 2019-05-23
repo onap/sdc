@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,12 +36,12 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -828,6 +829,75 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 		component = new Service();
 		// test when component is service
 		result = Deencapsulation.invoke(testSubject, "createNodeType", component);
+	}
+
+	@Test
+	public void testCreateProxyInterfaceTypesComponentNotFound() throws Exception {
+		Component container = new Service();
+		Either<Map<String, ToscaNodeType>, ToscaError> result;
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setOriginType(OriginTypeEnum.ServiceProxy);
+		instance.setSourceModelUid("targetModelUid");
+		instance.setToscaComponentName("toscaComponentName");
+
+		componentInstances.add(instance);
+		container.setComponentInstances(componentInstances);
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+		result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
+		Assert.assertTrue(result.isRight());
+
+	}
+
+	@Test
+	public void testCreateProxyInterfaceTypesWhenInterfaceLifecycleFetchFailed() {
+		Component container = new Service();
+		Either<Map<String, ToscaNodeType>, ToscaError> result;
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setOriginType(OriginTypeEnum.ServiceProxy);
+		instance.setSourceModelUid("targetModelUid");
+		instance.setToscaComponentName("toscaComponentName");
+		componentInstances.add(instance);
+		container.setComponentInstances(componentInstances);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.left(new Resource()));
+		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+		result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
+		Assert.assertTrue(result.isRight());
+	}
+
+	@Test
+	public void testCreateProxyInterfaceTypesPositive() {
+		Component container = new Service();
+		Either<Map<String, ToscaNodeType>, ToscaError> result;
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance instance = new ComponentInstance();
+		instance.setOriginType(OriginTypeEnum.ServiceProxy);
+		instance.setSourceModelUid("targetModelUid");
+		instance.setToscaComponentName("toscaComponentName");
+		componentInstances.add(instance);
+		container.setComponentInstances(componentInstances);
+
+		Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+				.thenReturn(Either.left(Collections.emptyMap()));
+
+		Component proxyResource = new Resource();
+		Map<String, InterfaceDefinition> proxyInterfaces = new HashMap<>();
+		proxyInterfaces.put("Local", new InterfaceDefinition("Local", "desc", new HashMap<>()));
+		proxyResource.setInterfaces(proxyInterfaces);
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class),
+				Mockito.any(ComponentParametersView.class)))
+				.thenReturn(Either.left(proxyResource));
+
+		result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
+		Assert.assertTrue(result.isLeft());
+		Assert.assertEquals(1, result.left().value().size());
 	}
 
 	@Test
