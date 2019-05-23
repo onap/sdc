@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2644ad9e_ff1ff719",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-23T07:46:40Z",
+      "side": 1,
+      "message": "That\u0027s not anymore in Confluence but in \"ONAP User Guides\"",
+      "range": {
+        "startLine": 11,
+        "startChar": 48,
+        "endLine": 11,
+        "endChar": 63
+      },
+      "revId": "a2a5c89e5124c6b818d18c363cdec3802524f35c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61807bdd_e7141b92",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-23T07:46:40Z",
+      "side": 1,
+      "message": "The reference should not point to a URL (here even to a \"latest version of the doc), but to the respective RST within the documentation tree. Here the suggested way:\n\n.. toctree::\n   :maxdepth: 1\n   :titlesonly:\n\n   ../../../guides/onap-user/design/pre-onboarding/index.rst\n   ../../../guides/onap-user/design/resource-onboarding/index.rst\n   ../../../guides/onap-user/design/vfcreation/index.rst\n   ../../../guides/onap-user/design/service-design/index.rst\n   ../../../guides/onap-user/design/service-distribution/index.rst",
+      "revId": "a2a5c89e5124c6b818d18c363cdec3802524f35c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff4f01e0_1e6d2916",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-23T07:46:40Z",
+      "side": 1,
+      "message": "see above",
+      "revId": "a2a5c89e5124c6b818d18c363cdec3802524f35c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e207557c_1b91879d",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-23T07:46:40Z",
+      "side": 1,
+      "message": "see above",
+      "revId": "a2a5c89e5124c6b818d18c363cdec3802524f35c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b12be24_fe4e5313",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-23T07:46:40Z",
+      "side": 1,
+      "message": "see above",
+      "revId": "a2a5c89e5124c6b818d18c363cdec3802524f35c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
