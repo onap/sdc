@@ -28,6 +28,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
@@ -108,7 +109,7 @@ public class ConfigurationUtils {
         ArrayList<File> collection = new ArrayList<>();
         if (file.isDirectory() && file.exists()) {
             File[] files = file.listFiles();
-            for (File innerFile : files) {
+            for (File innerFile : Objects.requireNonNull(files)) {
                 if (innerFile.isFile() && !onlyDirectory) {
                     collection.add(innerFile);
                 } else if (innerFile.isDirectory()) {
@@ -430,20 +431,17 @@ public class ConfigurationUtils {
         Matcher matcher = pattern.matcher(data);
         if (matcher.matches()) {
             String key = matcher.group(1);
+            String value;
             if (key.toUpperCase().startsWith("ENV:")) {
-                String envValue = System.getenv(key.substring(4));
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        envValue == null ? "" : envValue.replace("\\", "\\\\")));
+                value = System.getenv(key.substring(4));
             } else if (key.toUpperCase().startsWith("SYS:")) {
-                String sysValue = System.getProperty(key.substring(4));
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        sysValue == null ? "" : sysValue.replace("\\", "\\\\")));
+                value = System.getProperty(key.substring(4));
             } else {
-                String propertyValue = ConfigurationUtils.getCollectionString(
+                value = ConfigurationUtils.getCollectionString(
                         ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key).toString());
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        propertyValue == null ? "" : propertyValue.replace("\\", "\\\\")));
             }
+            return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "}",
+                    value == null ? "" : value.replace("\\", "\\\\")));
         } else {
             return data;
         }
@@ -452,7 +450,7 @@ public class ConfigurationUtils {
     public static String getFileContents(String path) {
         try {
             if (path != null) {
-                return IOUtils.toString(new URL(path));
+                return IOUtils.toString(new URL(path), Charset.defaultCharset());
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -491,11 +489,11 @@ public class ConfigurationUtils {
     }
 
     public static Collection getCompatibleCollectionForAbstractDef(Class clazz) {
-        if (BlockingQueue.class.isAssignableFrom(clazz)) {
-            return getConcreteCollection(BlockingQueue.class);
-        }
         if (TransferQueue.class.isAssignableFrom(clazz)) {
             return getConcreteCollection(TransferQueue.class);
+        }
+        if (BlockingQueue.class.isAssignableFrom(clazz)) {
+            return getConcreteCollection(BlockingQueue.class);
         }
         if (Deque.class.isAssignableFrom(clazz)) {
             return getConcreteCollection(Deque.class);
@@ -512,7 +510,7 @@ public class ConfigurationUtils {
         if (List.class.isAssignableFrom(clazz)) {
             return getConcreteCollection(List.class);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public static Collection getConcreteCollection(Class clazz) {
@@ -533,7 +531,7 @@ public class ConfigurationUtils {
             case "java.util.concurrent.BlockingQueue":
                 return new LinkedBlockingQueue<>();
             default:
-                return null;
+                return Collections.emptyList();
         }
     }
 
