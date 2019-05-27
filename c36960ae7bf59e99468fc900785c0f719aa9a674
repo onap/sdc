@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf5fc46d_67c10043",
+        "filename": "version.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 3949
+      },
+      "writtenOn": "2019-05-27T13:36:37Z",
+      "side": 1,
+      "message": "I\u0027m slightly confused about this - how is any of this related to Jenkins (I couldn\u0027t find anything relevant from CSIT job configurations?), and is this additional versioning information compatible with it? Are these versions used for something else beyond CSIT?",
+      "range": {
+        "startLine": 4,
+        "startChar": 2,
+        "endLine": 4,
+        "endChar": 35
+      },
+      "revId": "c36960ae7bf59e99468fc900785c0f719aa9a674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
