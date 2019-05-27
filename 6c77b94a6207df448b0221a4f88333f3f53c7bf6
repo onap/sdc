@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f438c0b7_cf4b61a0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2019-05-27T09:46:07Z",
+      "side": 1,
+      "message": "Please ensure that code formatting is as per ONAP guidelines \nMax Chars per line: 120",
+      "revId": "6c77b94a6207df448b0221a4f88333f3f53c7bf6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42d5be47_4d1dfb2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 3122,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2019-05-27T09:46:07Z",
+      "side": 1,
+      "message": "Sonar Violation : Please use entrySet() instead of keySet for iteration",
+      "revId": "6c77b94a6207df448b0221a4f88333f3f53c7bf6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "60b0e955_65ddfb50",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2019-05-27T09:46:07Z",
+      "side": 1,
+      "message": "Use MapUtils isNotEmpty instead of multiple conditions.",
+      "revId": "6c77b94a6207df448b0221a4f88333f3f53c7bf6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
