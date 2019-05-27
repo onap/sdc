@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfec5f40_82cfc87e",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/utils/PropertyDefinitionUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-05-27T08:47:47Z",
+      "side": 1,
+      "message": "add empty line before assertions",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 59
+      },
+      "revId": "ddf7d79c0e45d01bf0660db60bddbe68494ee94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5648ee77_c949e5c9",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/utils/TypeUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-05-27T08:47:47Z",
+      "side": 1,
+      "message": "move this to top of file",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 90
+      },
+      "revId": "ddf7d79c0e45d01bf0660db60bddbe68494ee94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
