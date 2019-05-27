@@ -16,6 +16,7 @@ JETTY_BASE="/var/lib/jetty"
 SDC_CERT_DIR="onap/cert"
 
 RELEASE=latest
+DCAE_RELEASE=latest
 LOCAL=false
 RUNTESTS=false
 BE_DEBUG_PORT="--publish 4000:4000"
@@ -46,10 +47,11 @@ fi
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with-DCAE>][ -h|--help ]"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with DCAE using label DCAE-RELEASE-NAME>][ -h|--help ]"
     echo "start dockers built locally example: docker_run.sh -l"
     echo "start dockers built locally and simulator example: docker_run.sh -l -sim"
-    echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.3-STAGING-latest -sim"
+    echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.5-STAGING-latest -sim"
+    echo "start dockers with DCAE, pull from onap nexus according to respective releases: docker_run.sh -r 1.5-STAGING-latest -dcae 1.3-STAGING-latest"
     echo "start dockers built locally and run api tests docker example: docker_run.sh -l -tad"
     echo "start dockers built locally and run only the catalog be example: docker_run.sh -l -d sdc-BE "
 }
@@ -464,9 +466,9 @@ function dcae-be {
     DOCKER_NAME="dcae-be"
     echo "docker run ${DOCKER_NAME}..."
     if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-be/chef-solo/environments --publish 8444:8444 --publish 8082:8082 ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-be/chef-solo/environments --publish 8444:8444 --publish 8082:8082 ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while ${DOCKER_NAME^^} is starting....."
     monitor_docker ${DOCKER_NAME}
@@ -482,9 +484,9 @@ function dcae-tools {
     DOCKER_NAME="dcae-tools"
     echo "docker run ${DOCKER_NAME}..."
     if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-tools/chef-solo/environments  ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-tools/chef-solo/environments  ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while ${DOCKER_NAME^^} is starting....."
     monitor_docker ${DOCKER_NAME}
@@ -501,9 +503,9 @@ function dcae-fe {
     DOCKER_NAME="dcae-fe"
     echo "docker run ${DOCKER_NAME}..."
     if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-fe/chef-solo/environments/ --publish 9444:9444 --publish 8183:8183 ${PREFIX}/${DOCKER_NAME}:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-fe/chef-solo/environments/ --publish 9444:9444 --publish 8183:8183 ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while ${DOCKER_NAME^^} is starting....."
     monitor_docker ${DOCKER_NAME}
@@ -651,17 +653,19 @@ while [ $# -gt 0 ]; do
           shift 1 ;;
     # -sim | --simulator run the simulator
     -sim | --simulator )
-         RUN_SIMULATOR=true;
-         shift 1 ;;
+          RUN_SIMULATOR=true;
+          shift 1 ;;
     # -sim | --simulator run the simulator
     -u | --fe_url )
-         shift 1 ;
-         FE_URL=$1;
-         shift 1 ;;
+          shift 1 ;
+          FE_URL=$1;
+          shift 1 ;;
     # -dcae | --dcae - Use this to deploy DCAE upon SDC
     -dcae | --dcae )
-         shift 1 ;
-         DCAE_ENABLE='True';;
+          shift 1 ;
+          DCAE_RELEASE=$1;
+          shift 1;
+          DCAE_ENABLE='True';;
 
 	# -h | --help - Display the help message with all the available run options
     -h | --help )
