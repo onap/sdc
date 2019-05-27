@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e03a4c9c_82ca15ec",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-05-27T09:05:00Z",
+      "side": 1,
+      "message": "you are returning an emptyList object from this function.\nin the calling function(line 391) the variable clazzToInstantiate is initialized to emptyList and the in line 397(or any file that uses constuct) you get NPE.\n\nEmptyList is immutable and need to be careful when using it",
+      "range": {
+        "startLine": 513,
+        "startChar": 15,
+        "endLine": 513,
+        "endChar": 38
+      },
+      "revId": "e50f32379ef9487831922bd5126b1ffc59392dda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
