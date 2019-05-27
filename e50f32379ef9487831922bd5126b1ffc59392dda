@@ -22,6 +22,30 @@
       "revId": "e50f32379ef9487831922bd5126b1ffc59392dda",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2feae3f_5021cbf2",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-05-27T10:50:14Z",
+      "side": 1,
+      "message": "I proposed this change because of sonar variability connected with that line.\n\nIn current implementation when this method return null then will be NPE in line 391 (getClass method cause this). So I return emptyList to prevent against this situation (like sonar suggests). But you have right they are a better solution, so now I thinking about 2 options:\n- Instead of returning the null/emptyList, throw an exception (e.g IllegalArgumentException) (more similar this current situation but prevent the NPE), moreover in the line 332 this exception is throwing too.\n- Go back to the return null.",
+      "parentUuid": "e03a4c9c_82ca15ec",
+      "range": {
+        "startLine": 513,
+        "startChar": 15,
+        "endLine": 513,
+        "endChar": 38
+      },
+      "revId": "e50f32379ef9487831922bd5126b1ffc59392dda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
