@@ -170,7 +170,7 @@ export class ServiceDependenciesEditorComponent {
             return;
         }
         this.listOfValuesToAssign =  this.listOfSourceOptions.reduce((result, op:PropertyBEModel) => {
-            if(op.type === this.selectedPropertyObj.type && op.schemaType === this.selectedPropertyObj.schemaType) {
+            if (op.type === this.selectedPropertyObj.type && (!op.schemaType || op.schemaType === this.selectedPropertyObj.schemaType)) {
                 result.push(new DropdownValue(op.name, op.name));
             }
             return result;
