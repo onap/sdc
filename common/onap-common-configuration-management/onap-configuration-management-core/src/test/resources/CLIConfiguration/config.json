@@ -1,0 +1,23 @@
+{
+	"artifact": {
+		"name": {
+			"minlength": "6",
+			"maxlength": "14",
+			"allowedChar": "a-zA-Z_0-9"
+		},
+		"consumer": "appc",
+		"encoded": "true",
+		"extension": "pdf",
+		"supportedEncryption": "Base64",
+		"status": "deleted"
+	},
+	"CLIImpl": {
+		"testService": {
+			"enable": "true",
+			"implementationClass": "org.junit.Test"
+		}
+	},
+	"_config": {
+		"namespace": "OPENECOMP:CLIConfiguration"
+	}
+}
