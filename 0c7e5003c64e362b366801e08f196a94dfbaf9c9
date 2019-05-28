@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fdee315_ddbd3173",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-05-28T10:06:03Z",
+      "side": 1,
+      "message": "why are you adding this definition under this node type, it is not exist in ETSI tosca.nodes.nfv.Vdu.Compute node type definition\nin addition, the file value is string, not map",
+      "range": {
+        "startLine": 71,
+        "startChar": 17,
+        "endLine": 71,
+        "endChar": 18
+      },
+      "revId": "0c7e5003c64e362b366801e08f196a94dfbaf9c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba214ca7_b9b4ba09",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/ToscaExportHandlerTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-05-28T10:06:03Z",
+      "side": 1,
+      "message": "1. I want to see how the TOSCA is created when we download it\nare you adding the artifact part on the node type or node template, is it include only \"type\" and \"file\u0027 fields while both are string ?\nthere is no assert on the result, you should add in order to check the result in the test",
+      "range": {
+        "startLine": 1337,
+        "startChar": 20,
+        "endLine": 1337,
+        "endChar": 54
+      },
+      "revId": "0c7e5003c64e362b366801e08f196a94dfbaf9c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7864c3e_c5125109",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaArtifactDataDefinition.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-05-28T10:06:03Z",
+      "side": 1,
+      "message": "in TOSCA the artifact don\u0027t include \"name\", is this filed is display in the output TOSCA ? if yes then it is invalid TOSCA",
+      "range": {
+        "startLine": 29,
+        "startChar": 19,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "0c7e5003c64e362b366801e08f196a94dfbaf9c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13d5084a_26462c62",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-05-28T10:06:03Z",
+      "side": 1,
+      "message": "same Q as before",
+      "range": {
+        "startLine": 184,
+        "startChar": 17,
+        "endLine": 184,
+        "endChar": 26
+      },
+      "revId": "0c7e5003c64e362b366801e08f196a94dfbaf9c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
