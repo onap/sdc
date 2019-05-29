@@ -1,0 +1,25 @@
+errors:
+
+  BeRestApiGeneralError: {
+    type: SYSTEM_ERROR,
+    code: ASDC_4000,
+    severity: ERROR,
+    description: "Unexpected error during BE REST API execution",
+    alarmSeverity: CRITICAL
+  }
+
+  BeHealthCheckError: {
+    type: SYSTEM_ERROR,
+    code: ASDC_3010,
+    severity: ERROR,
+    description: "Error during BE Health Check",
+    alarmSeverity: CRITICAL
+  }
+
+  BeInitializationError: {
+    type: SYSTEM_ERROR,
+    code: ASDC_4019,
+    severity: ERROR,
+    description: "Catalog-BE was not initialized properly",
+    alarmSeverity: CRITICAL
+  }
