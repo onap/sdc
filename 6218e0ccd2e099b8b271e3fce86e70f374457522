@@ -16,6 +16,24 @@
       "revId": "6218e0ccd2e099b8b271e3fce86e70f374457522",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "951b51cd_65ab2160",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-05-29T13:23:56Z",
+      "side": 1,
+      "message": "Oh ok, I will change this load method. \nI follow the implementation in the org.openecomp.sdc.ci.tests.execute.imports.ImportCsarResourceTest class and e.g createImportResourceFromCsarUITest method. So in that case is good to refactor this file to have united access to the resource in the entire project. \nThanks for clue.",
+      "parentUuid": "73696b46_16fc5c04",
+      "revId": "6218e0ccd2e099b8b271e3fce86e70f374457522",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
