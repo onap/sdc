@@ -20,6 +20,22 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
@@ -34,16 +50,6 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
-import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 
 public class SdcSchemaFileImport {
@@ -235,24 +241,25 @@ public class SdcSchemaFileImport {
 		}
 		
 		for (String nodeTypesMainFolder : nodeTypesMainFolders) {
-			Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))
-		      .filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
-		      .forEach(yamlFile -> {
-		    	  try {
-						String path = yamlFile.toAbsolutePath().toString();
-						System.out.println("Processing node type file "+path+"...");
-						FileInputStream inputStream = new FileInputStream(path);
-				    	Yaml yaml = new Yaml();
-				    	Map<String, Object> load = yaml.loadAs(inputStream,Map.class);
-						Map<String, Object> nodeType = (Map<String, Object>) load.get(collectionTitle);
-						nodeTypeList.putAll(nodeType);
-						
-					} catch (Exception e) {
-						System.err.println("Error in opening file " + yamlFile.toAbsolutePath().toString());
-						System.exit(1);
-					}
-		      });
-		}
+        try (Stream<Path> paths = Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))) {
+            paths.filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
+                .forEach(yamlFile -> {
+                    try {
+                        String path = yamlFile.toAbsolutePath().toString();
+                        System.out.println("Processing node type file " + path + "...");
+                        FileInputStream inputStream = new FileInputStream(path);
+                        Yaml yaml = new Yaml();
+                        Map<String, Object> load = yaml.loadAs(inputStream, Map.class);
+                        Map<String, Object> nodeType = (Map<String, Object>) load.get(collectionTitle);
+                        nodeTypeList.putAll(nodeType);
+
+                    } catch (Exception e) {
+                        System.err.println("Error in opening file " + yamlFile.toAbsolutePath().toString());
+                        System.exit(1);
+                    }
+                });
+        }
+    }
 		createAndSaveSchemaFileYaml("nodes", importFileList, collectionTitle, nodeTypeList);
 	}
 
