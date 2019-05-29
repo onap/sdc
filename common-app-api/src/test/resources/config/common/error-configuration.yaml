@@ -1,0 +1,26 @@
+# Errors
+errors:
+    OK: {
+        code: 200,
+        message: "OK"
+    }
+    CREATED: {
+        code: 201,
+        message: "OK"
+    }
+    NO_CONTENT: {
+        code: 204,
+        message: "No Content"
+    }
+#--------POL4050-----------------------------
+    NOT_ALLOWED: {
+        code: 405,
+        message: "Error: Method not allowed.",
+        messageId: "POL4050"
+    }
+#--------POL5000-----------------------------
+    GENERAL_ERROR: {
+        code: 500,
+        message: "Error: Internal Server Error. Please try again later.",
+        messageId: "POL5000"
+    }

@@ -1,0 +1,62 @@
+identificationHeaderFields:
+  - HTTP_IV_USER
+
+# catalog backend hostname
+beFqdn: localhost
+# sdccatalog.com
+
+# catalog backend http port
+beHttpPort: 8080
+
+# catalog backend http context
+beContext: /sdc/rest/config/get
+
+# catalog backend protocol
+beProtocol: http
+
+# catalog backend ssl port
+beSslPort: 8443
+
+version: 1.1.0
+released: 2012-11-30
+toscaConformanceLevel: 8.0
+minToscaConformanceLevel: 3.0
+
+titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
+titanInMemoryGraph: false
+titanLockTimeout: 1800
+
+# The interval to try and reconnect to titan DB when it is down during ASDC startup:
+titanReconnectIntervalInSeconds: 3
+
+# The read timeout towards Titan DB when health check is invoked:
+titanHealthCheckReadTimeout: 1
+
+# The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
+esReconnectIntervalInSeconds: 3
+uebHealthCheckReconnectIntervalInSeconds: 15
+uebHealthCheckReadTimeout: 4
+
+# Protocols
+protocols:
+  - http
+  - https
+
+# Default imports
+defaultImports:
+  - nodes:
+      file: nodes.yml
+  - datatypes:
+      file: data.yml
+  - capabilities:
+      file: capabilities.yml
+  - relationships:
+      file: relationships.yml
+  - groups:
+      file: groups.yml
+  - policies:
+      file: policies.yml
+
+# Users
+users:
+  tom: passwd
