@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e697123_443a76b0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 922,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-05-29T07:30:15Z",
+      "side": 1,
+      "message": "Please consider collapsing these two blocks using \"|\" operator.",
+      "revId": "4fb33cf29ee9cfda2f97ed1c5fe87485ecb8fc93",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
