@@ -1,0 +1,4 @@
+# Errors
+errors:
+  Neo_ClientError_General_ReadOnly: "This is a read only database, writing or modifying the database is not allowed."
+  Neo_ClientError_LegacyIndex_NoSuchIndex: "The request (directly or indirectly) referred to a index that does not exist."
