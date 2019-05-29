@@ -637,6 +637,9 @@
 										<include>src/main/resources/**/*.json</include>
 										<include>src/test/resources/**/*.json</include>
 									</includes>
+									<excludes>
+										<exclude>src/test/resources/graphError.json</exclude>
+									</excludes>
 								</validationSet>
 							</validationSets>
 						</configuration>

@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.stream.Stream;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.io.IOException;
@@ -42,14 +43,16 @@ public class GraphJsonValidator {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Integer> invalidRows = new ArrayList<>();
         AtomicInteger atomicInteger = new AtomicInteger(1);
-        Files.lines(Paths.get(filePath)).forEach(line -> {
-            try {
-                verifyJsonLine(objectMapper, atomicInteger, line);
-            } catch (RuntimeException  | IOException e) {
-                logInvalidJsonRow(atomicInteger, line, e);
-                invalidRows.add(atomicInteger.get());
-            }
-        });
+        try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
+            stream.forEach(line -> {
+                try {
+                    verifyJsonLine(objectMapper, atomicInteger, line);
+                } catch (RuntimeException  | IOException e) {
+                    logInvalidJsonRow(atomicInteger, line, e);
+                    invalidRows.add(atomicInteger.get());
+                }
+            });
+        }
         return verificationResult(invalidRows);
     }
 
