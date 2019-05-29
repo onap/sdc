@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73696b46_16fc5c04",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-29T12:49:56Z",
+      "side": 1,
+      "message": "Please look at org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerTest for example how to access resources under test directory.",
+      "revId": "6218e0ccd2e099b8b271e3fce86e70f374457522",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
