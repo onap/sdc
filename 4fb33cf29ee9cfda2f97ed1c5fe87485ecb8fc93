@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "e618bd48_50e48e35",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/exception/ComponentExceptionMapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2019-05-30T12:14:49Z",
+      "side": 1,
+      "message": "This commit has made the ComponentException an abstract class, in order to support two ways to throw this exception with the appropriate information: \nactionStatus or responseFormat.\nThe ComponnetException abstract class exposes one method \"responseFormat\" which both ByResponseFormatComponnetException and ByActionStatusComponnetException override.\nTherefore, I would expect \"ComponentExceptionMapper\" clase, to use the componentException as is, and call it\u0027s responseFormat() method to get the response format, and won\u0027t use explicit casting via \"isInstanceOf\",\nThis behaviuor conflicts the principles of OOP.\nI suggest that ComponentException::responseFormat method won\u0027t get any parameter.\nThe ByResponseFormatException implementation will remain as is.\nThe ByActionStatusException implementation will be changed, so the responseFormat method will use the Singelton instance of ResponseFormatManager to convert the actionStatus+params to a responseFormat.\nThe ComponentExceptionMapper::toResponse implementation won\u0027t do any casting and logic, but simply call componentException.responseFormat().",
+      "revId": "4fb33cf29ee9cfda2f97ed1c5fe87485ecb8fc93",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3e697123_443a76b0",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
         "patchSetId": 3
