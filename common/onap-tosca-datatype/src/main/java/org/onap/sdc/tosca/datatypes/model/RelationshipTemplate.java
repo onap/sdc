@@ -22,8 +22,9 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Map;
 
+import lombok.Data;
 
-
+@Data
 public class RelationshipTemplate implements Template {
 
   private String type;
@@ -36,75 +37,4 @@ public class RelationshipTemplate implements Template {
   private Map<String, Object> interfaces;
   private String copy;
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public Map<String, String> getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(Map<String, String> metadata) {
-    this.metadata = metadata;
-  }
-
-  public Map<String, Object> getProperties() {
-    return properties;
-  }
-
-  public void setProperties(Map<String, Object> properties) {
-    this.properties = properties;
-  }
-
-  public Map<String, Object> getAttributes() {
-    return attributes;
-  }
-
-  public void setAttributes(Map<String, Object> attributes) {
-    this.attributes = attributes;
-  }
-
-  public Map<String, RequirementAssignment> getRequirements() {
-    return requirements;
-  }
-
-  public void setRequirements(Map<String, RequirementAssignment> requirements) {
-    this.requirements = requirements;
-  }
-
-  public Map<String, CapabilityAssignment> getCapabilities() {
-    return capabilities;
-  }
-
-  public void setCapabilities(Map<String, CapabilityAssignment> capabilities) {
-    this.capabilities = capabilities;
-  }
-
-  public Map<String, Object> getInterfaces() {
-    return interfaces;
-  }
-
-  public void setInterfaces(Map<String, Object> interfaces) {
-    this.interfaces = interfaces;
-  }
-
-  public String getCopy() {
-    return copy;
-  }
-
-  public void setCopy(String copy) {
-    this.copy = copy;
-  }
 }
