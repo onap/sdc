@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "332757d3_93ec4fa7",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/be/config/ConfigurationManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-30T06:23:51Z",
+      "side": 1,
+      "message": "As discussed before.\nNeo4J should be removed. Not tested.",
+      "revId": "d85fe415c6aed320fa810716ef6e841521932114",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7dd5c10_50f14761",
+        "filename": "common-app-api/src/test/resources/config/common/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-30T06:23:51Z",
+      "side": 1,
+      "message": "Neo4j should be removed",
+      "revId": "d85fe415c6aed320fa810716ef6e841521932114",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9604d3ed_ccd05a5a",
+        "filename": "common-app-api/src/test/resources/config/common/neo4j-errors-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-30T06:23:51Z",
+      "side": 1,
+      "message": "Neo4j should be removed.",
+      "revId": "d85fe415c6aed320fa810716ef6e841521932114",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
