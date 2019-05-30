@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58cb2098_314d1d21",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-30T12:36:02Z",
+      "side": 1,
+      "message": "Test should fail if exception does not occur.",
+      "revId": "30d16e5eadd2833b002d98b48ffe50d88c07b271",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aaeb8b05_80110474",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-05-30T12:36:02Z",
+      "side": 1,
+      "message": "Test should assert something.",
+      "revId": "30d16e5eadd2833b002d98b48ffe50d88c07b271",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
