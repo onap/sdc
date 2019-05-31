@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8658d316_47a87fea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/exception/ComponentExceptionMapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-05-31T11:05:49Z",
+      "side": 1,
+      "message": "Thanks for descriptive info. Done",
+      "parentUuid": "e618bd48_50e48e35",
+      "revId": "4fb33cf29ee9cfda2f97ed1c5fe87485ecb8fc93",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3e697123_443a76b0",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
         "patchSetId": 3
