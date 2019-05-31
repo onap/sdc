@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99dae68b_aff35994",
+        "filename": "docs/humaninterfaces.rst",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2679
+      },
+      "writtenOn": "2019-05-31T08:41:03Z",
+      "side": 1,
+      "message": "Hi, here is the correction (use referenes instead of the toctree):\n\n* :ref:`doc_guide_user_des_res-onb`\n* :ref:`doc_guide_user_des_vf-cre`\n* :ref:`doc_guide_user_des_ser-des`\n* :ref:`doc_guide_user_des_ser-dis`",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 0
+      },
+      "revId": "58cc3a5f1412ff2813be37a3ee6f8484c051b742",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
