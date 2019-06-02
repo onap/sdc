@@ -10,12 +10,8 @@ User Guides In ONAP Confluence
 
 These are links to the SDC user guides found in ONAP User Guides:
 
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-   ../../../guides/onap-user/design/resource-onboarding/index.rst
-   ../../../guides/onap-user/design/vfcreation/index.rst
-   ../../../guides/onap-user/design/service-design/index.rst
-   ../../../guides/onap-user/design/service-distribution/index.rst
-
+* :ref:`doc_guide_user_des_res-onb`
+* :ref:`doc_guide_user_des_vf-cre`
+* :ref:`doc_guide_user_des_ser-des`
+* :ref:`doc_guide_user_des_ser-dis` 
 
