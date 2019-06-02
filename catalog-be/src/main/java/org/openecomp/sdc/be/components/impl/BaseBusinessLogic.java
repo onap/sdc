@@ -764,7 +764,7 @@ public abstract class BaseBusinessLogic {
         for (PropertyDefinition propertyDefinition : propertyDefinitions) {
             if (propertyDefinition.getName().equals(anInputPathArr)) {
                 if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
-                    constraints.addAll(propertyDefinition.getConstraints());
+                    constraints.addAll(propertyDefinition.safeGetConstraints());
                 } else {
                     type = propertyDefinition.getType();
                 }
