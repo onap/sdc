@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d276675e_3d56147a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CsarUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-06-03T06:52:12Z",
+      "side": 1,
+      "message": "remove this catch",
+      "range": {
+        "startLine": 230,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 3
+      },
+      "revId": "f9ca0c933ce8c826f339a7ed521df952c3db8f91",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
