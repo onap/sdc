@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bdd35b4_f32042b2",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/impl/MutableHttpServletRequestTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-03T15:34:34Z",
+      "side": 1,
+      "message": "why not a @Mock annotation instead?",
+      "range": {
+        "startLine": 38,
+        "startChar": 48,
+        "endLine": 38,
+        "endChar": 52
+      },
+      "revId": "9c4be2cde612c5c8ff580c13e508458655b26c71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ec77f4a_b569f669",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/impl/MutableHttpServletRequestTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-03T15:34:34Z",
+      "side": 1,
+      "message": "Please use each of the comments: given, when and then only once in a test. Or don\u0027t use these comments at all ;-)",
+      "range": {
+        "startLine": 49,
+        "startChar": 10,
+        "endLine": 49,
+        "endChar": 14
+      },
+      "revId": "9c4be2cde612c5c8ff580c13e508458655b26c71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ca581ba_73d3be7c",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/impl/MutableHttpServletRequestTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-03T15:34:34Z",
+      "side": 1,
+      "message": "Please use constants for the same strings :-)",
+      "range": {
+        "startLine": 54,
+        "startChar": 66,
+        "endLine": 54,
+        "endChar": 80
+      },
+      "revId": "9c4be2cde612c5c8ff580c13e508458655b26c71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
