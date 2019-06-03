@@ -4,6 +4,123 @@
 Release Notes
 =============
 
+Version: 1.4.1
+==============
+
+:Release Date: 2019-06-06
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.3.0
+
+-  sdc-tosca
+
+   :Version: 1.5.1
+
+Release Purpose
+----------------
+
+**New Features**
+
+The main goal of the Dublin release was to:
+    - Support PNF onboarding
+    - SOL 001 v2.5.1 support
+    - VSP compliance check feature
+    - SDC and CDS integration
+    - improve code coverage of the SDC code.
+
+
+**Epics**
+
+-  [`SDC-1937 <https://jira.onap.org/browse/SDC-1937>`__\ ] - Service Workflow - Assigned Workflow and Complex Types in Operation
+-  [`SDC-1956 <https://jira.onap.org/browse/SDC-1956>`__\ ] - Add VSP Compliance Check feature 
+-  [`SDC-1970 <https://jira.onap.org/browse/SDC-1970>`__\ ] - Supporting PNF package onboarding
+-  [`SDC-1987 <https://jira.onap.org/browse/SDC-1987>`__\ ] - Add dependent child service to service
+-  [`SDC-1988 <https://jira.onap.org/browse/SDC-1988>`__\ ] - Add property to service
+-  [`SDC-1990 <https://jira.onap.org/browse/SDC-1990>`__\ ] - Service Consumption
+-  [`SDC-1991 <https://jira.onap.org/browse/SDC-1991>`__\ ] - Service Consumption - Input Data and Validations
+-  [`SDC-1992 <https://jira.onap.org/browse/SDC-1992>`__\ ] - Service dependency - Rainy Day Validations
+-  [`SDC-1993 <https://jira.onap.org/browse/SDC-1993>`__\ ] - Service dependency - Input Data and Validations
+-  [`SDC-1994 <https://jira.onap.org/browse/SDC-1994>`__\ ] - Add property to VNF and PNF
+-  [`SDC-1999 <https://jira.onap.org/browse/SDC-1999>`__\ ] - Operation interfaces
+-  [`SDC-2170 <https://jira.onap.org/browse/SDC-2170>`__\ ] - updating the VNFD (SOL001) type based on SOL001 v2.5.1
+
+**Stories**
+
+-  [`SDC-1000 <https://jira.onap.org/browse/SDC-1000>`__\ ] - SDC Parser is throwing exception on critical issues
+-  [`SDC-1392 <https://jira.onap.org/browse/SDC-1392>`__\ ] - Write Unit test for Compile-Helper-Plugin
+-  [`SDC-1399 <https://jira.onap.org/browse/SDC-1399>`__\ ] - Change the plugins load to be parallel
+-  [`SDC-1426 <https://jira.onap.org/browse/SDC-1426>`__\ ] - catalog documentation
+-  [`SDC-1427 <https://jira.onap.org/browse/SDC-1427>`__\ ] - Onboarding documentation
+-  [`SDC-1429 <https://jira.onap.org/browse/SDC-1429>`__\ ] - WORKFLOW documentation
+-  [`SDC-1489 <https://jira.onap.org/browse/SDC-1489>`__\ ] - multiple cloud technology artifact support
+-  [`SDC-1568 <https://jira.onap.org/browse/SDC-1568>`__\ ] - Health check integration for designers 
+-  [`SDC-1569 <https://jira.onap.org/browse/SDC-1569>`__\ ] - Enable a secuirity solution for the designers in sdc TBD
+-  [`SDC-1743 <https://jira.onap.org/browse/SDC-1743>`__\ ] - Add support for work flow deployment on heat
+-  [`SDC-1744 <https://jira.onap.org/browse/SDC-1744>`__\ ] - Add support for different locations of Main service template WIP
+-  [`SDC-1925 <https://jira.onap.org/browse/SDC-1925>`__\ ] - Resolve SONAR issues in SDC BE
+-  [`SDC-1941 <https://jira.onap.org/browse/SDC-1941>`__\ ] - SDC refactoring and code smells 
+-  [`SDC-1946 <https://jira.onap.org/browse/SDC-1946>`__\ ] - Code quality improvements
+-  [`SDC-1948 <https://jira.onap.org/browse/SDC-1948>`__\ ] - Solve BE issues from sonar
+-  [`SDC-1950 <https://jira.onap.org/browse/SDC-1950>`__\ ] - asdctool code quality improvements
+-  [`SDC-1973 <https://jira.onap.org/browse/SDC-1973>`__\ ] - Create VSP package from PNF onboarding package
+-  [`SDC-1974 <https://jira.onap.org/browse/SDC-1974>`__\ ] - Supporting PNF manifest file in the onboarding package
+-  [`SDC-1975 <https://jira.onap.org/browse/SDC-1975>`__\ ] - Design time catalog to associate artifacts with PNF (Test)
+-  [`SDC-1976 <https://jira.onap.org/browse/SDC-1976>`__\ ] - Supporting PNFD (SOL001) mapping to AID model 
+-  [`SDC-1977 <https://jira.onap.org/browse/SDC-1977>`__\ ] - Display VSP Resource Type (VF/PNF) in Import VSP UI
+-  [`SDC-1978 <https://jira.onap.org/browse/SDC-1978>`__\ ] - Ensure descriptor name matches name used in generated TOSCA.meta in VSP
+-  [`SDC-1979 <https://jira.onap.org/browse/SDC-1979>`__\ ] - Allowing the dedicated artifact folder with Entry-point in TOSCA.meta
+-  [`SDC-1980 <https://jira.onap.org/browse/SDC-1980>`__\ ] - Supporting onboarding packaging security
+-  [`SDC-2022 <https://jira.onap.org/browse/SDC-2022>`__\ ] - Allow custom plugins in SDC
+-  [`SDC-2067 <https://jira.onap.org/browse/SDC-2067>`__\ ] - SDC and CDS Integration to enable E2E Automation 
+-  [`SDC-2085 <https://jira.onap.org/browse/SDC-2085>`__\ ] - Outputs on operations - Operation screen BE
+-  [`SDC-2090 <https://jira.onap.org/browse/SDC-2090>`__\ ] - update the normative type of onboarding DM
+-  [`SDC-2094 <https://jira.onap.org/browse/SDC-2094>`__\ ] - R4 5G U/C SDC: FM Meta Data GUI Display from PNF Onboarded Package
+-  [`SDC-2108 <https://jira.onap.org/browse/SDC-2108>`__\ ] - Import VSP and Create PNF internal csar
+-  [`SDC-2109 <https://jira.onap.org/browse/SDC-2109>`__\ ] - Adding additional artifacts
+-  [`SDC-2110 <https://jira.onap.org/browse/SDC-2110>`__\ ] - Add PNF manually (without using vsp)
+-  [`SDC-2112 <https://jira.onap.org/browse/SDC-2112>`__\ ] - Add a copy of the onboarded package under artifact folder 
+-  [`SDC-2113 <https://jira.onap.org/browse/SDC-2113>`__\ ] - copy the on boarding artifacts into the right SDC artifact type 
+-  [`SDC-2136 <https://jira.onap.org/browse/SDC-2136>`__\ ] - HTTPS support on workflow application backend
+-  [`SDC-2168 <https://jira.onap.org/browse/SDC-2168>`__\ ] - M2/3/4 findings
+-  [`SDC-2194 <https://jira.onap.org/browse/SDC-2194>`__\ ] - Enhance SDC Workflow designer BE to connect to secure Cassandra
+-  [`SDC-2199 <https://jira.onap.org/browse/SDC-2199>`__\ ] - Migrate SDC to use Common Cassandra Cluster
+-  [`SDC-2226 <https://jira.onap.org/browse/SDC-2226>`__\ ] - Create Internal BE API for artifact Upload
+-  [`SDC-2233 <https://jira.onap.org/browse/SDC-2233>`__\ ] - Support workflow artifact in Service Distribution Notification
+-  [`SDC-2280 <https://jira.onap.org/browse/SDC-2280>`__\ ] - achieve CII Badging passing level for Dublin
+-  [`SDC-2313 <https://jira.onap.org/browse/SDC-2313>`__\ ] - Fix Service Proxy Node Type
+
+
+Security Notes
+--------------
+
+	TBD
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
 Version: 1.3.7
 ==============
 
