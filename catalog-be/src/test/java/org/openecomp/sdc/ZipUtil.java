@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +27,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -126,4 +129,15 @@ public class ZipUtil {
 
     }
 
+    private static byte[] loadResource(String resourceDir) throws IOException, URISyntaxException {
+
+        Path path = Paths.get(ZipUtil.class.getResource(resourceDir).toURI());
+        return Files.readAllBytes(path);
+    }
+
+    public static Map<String, byte[]> readData(String resourceDir) throws IOException, URISyntaxException {
+
+        byte[] data = loadResource(resourceDir);
+        return readZip(data);
+    }
 }
