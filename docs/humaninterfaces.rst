@@ -8,11 +8,10 @@ Human Interfaces
 User Guides In ONAP Confluence
 ==============================
 
-These are links to the SDC user guides found in ONAP Confluence:
+These are links to the SDC user guides found in ONAP User Guides:
 
-- `Resource Onboarding <https://wiki.onap.org/display/DW/Resource+Onboarding>`_
-- `Service Design <https://wiki.onap.org/display/DW/Service+Design>`_
-- `VF Creation and Testing <https://wiki.onap.org/display/DW/VF+Creation+and+Testing>`_
-- `Governance Approval and Service Distribution <https://wiki.onap.org/display/DW/Governance+Approval+and+Service+Distribution>`_
-
+* :ref:`doc_guide_user_des_res-onb`
+* :ref:`doc_guide_user_des_vf-cre`
+* :ref:`doc_guide_user_des_ser-des`
+* :ref:`doc_guide_user_des_ser-dis` 
 
