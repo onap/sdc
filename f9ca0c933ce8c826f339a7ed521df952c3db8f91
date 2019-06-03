@@ -22,6 +22,30 @@
       "revId": "f9ca0c933ce8c826f339a7ed521df952c3db8f91",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6468b456_46d9e123",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CsarUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-06-03T07:50:46Z",
+      "side": 1,
+      "message": "and add it to the function declaration (throws IOException)",
+      "parentUuid": "d276675e_3d56147a",
+      "range": {
+        "startLine": 230,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 3
+      },
+      "revId": "f9ca0c933ce8c826f339a7ed521df952c3db8f91",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
