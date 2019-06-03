@@ -51,6 +51,24 @@
       "revId": "30d16e5eadd2833b002d98b48ffe50d88c07b271",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28154dfc_768b21ad",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-06-03T14:39:41Z",
+      "side": 1,
+      "message": "Please let me know what I should do with that test.",
+      "parentUuid": "23f4c8b5_95c7c583",
+      "revId": "30d16e5eadd2833b002d98b48ffe50d88c07b271",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
