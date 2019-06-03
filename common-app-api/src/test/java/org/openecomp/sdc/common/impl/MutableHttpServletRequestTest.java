@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class MutableHttpServletRequestTest {
 
-    private HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+    private final static HttpServletRequest servletRequest = mock(HttpServletRequest.class);
     private MutableHttpServletRequest mutableHttpServletRequest;
 
     @Before
