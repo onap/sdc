@@ -16,65 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.fe.impl;
 
-public class ImportMetadata {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ImportMetadata {
 	private String name;
 	private long size;
 	private String mime;
 	private String creator;
 	private String md5Checksum;
-
-	public ImportMetadata(String name, long size, String mime, String creator, String md5Checksum) {
-		super();
-		this.name = name;
-		this.size = size;
-		this.mime = mime;
-		this.creator = creator;
-		this.md5Checksum = md5Checksum;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public String getMime() {
-		return mime;
-	}
-
-	public void setMime(String mime) {
-		this.mime = mime;
-	}
-
-	public String getCreator() {
-		return creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	public String getMd5Checksum() {
-		return md5Checksum;
-	}
-
-	public void setMd5Checksum(String md5Checksum) {
-		this.md5Checksum = md5Checksum;
-	}
-
 }
