@@ -36,7 +36,7 @@ The main goal of the Dublin release was to:
 **Epics**
 
 -  [`SDC-1937 <https://jira.onap.org/browse/SDC-1937>`__\ ] - Service Workflow - Assigned Workflow and Complex Types in Operation
--  [`SDC-1956 <https://jira.onap.org/browse/SDC-1956>`__\ ] - Add VSP Compliance Check feature 
+-  [`SDC-1956 <https://jira.onap.org/browse/SDC-1956>`__\ ] - Add VSP Compliance Check feature
 -  [`SDC-1970 <https://jira.onap.org/browse/SDC-1970>`__\ ] - Supporting PNF package onboarding
 -  [`SDC-1987 <https://jira.onap.org/browse/SDC-1987>`__\ ] - Add dependent child service to service
 -  [`SDC-1988 <https://jira.onap.org/browse/SDC-1988>`__\ ] - Add property to service
@@ -57,33 +57,33 @@ The main goal of the Dublin release was to:
 -  [`SDC-1427 <https://jira.onap.org/browse/SDC-1427>`__\ ] - Onboarding documentation
 -  [`SDC-1429 <https://jira.onap.org/browse/SDC-1429>`__\ ] - WORKFLOW documentation
 -  [`SDC-1489 <https://jira.onap.org/browse/SDC-1489>`__\ ] - multiple cloud technology artifact support
--  [`SDC-1568 <https://jira.onap.org/browse/SDC-1568>`__\ ] - Health check integration for designers 
+-  [`SDC-1568 <https://jira.onap.org/browse/SDC-1568>`__\ ] - Health check integration for designers
 -  [`SDC-1569 <https://jira.onap.org/browse/SDC-1569>`__\ ] - Enable a secuirity solution for the designers in sdc TBD
 -  [`SDC-1743 <https://jira.onap.org/browse/SDC-1743>`__\ ] - Add support for work flow deployment on heat
 -  [`SDC-1744 <https://jira.onap.org/browse/SDC-1744>`__\ ] - Add support for different locations of Main service template WIP
 -  [`SDC-1925 <https://jira.onap.org/browse/SDC-1925>`__\ ] - Resolve SONAR issues in SDC BE
--  [`SDC-1941 <https://jira.onap.org/browse/SDC-1941>`__\ ] - SDC refactoring and code smells 
+-  [`SDC-1941 <https://jira.onap.org/browse/SDC-1941>`__\ ] - SDC refactoring and code smells
 -  [`SDC-1946 <https://jira.onap.org/browse/SDC-1946>`__\ ] - Code quality improvements
 -  [`SDC-1948 <https://jira.onap.org/browse/SDC-1948>`__\ ] - Solve BE issues from sonar
 -  [`SDC-1950 <https://jira.onap.org/browse/SDC-1950>`__\ ] - asdctool code quality improvements
 -  [`SDC-1973 <https://jira.onap.org/browse/SDC-1973>`__\ ] - Create VSP package from PNF onboarding package
 -  [`SDC-1974 <https://jira.onap.org/browse/SDC-1974>`__\ ] - Supporting PNF manifest file in the onboarding package
 -  [`SDC-1975 <https://jira.onap.org/browse/SDC-1975>`__\ ] - Design time catalog to associate artifacts with PNF (Test)
--  [`SDC-1976 <https://jira.onap.org/browse/SDC-1976>`__\ ] - Supporting PNFD (SOL001) mapping to AID model 
+-  [`SDC-1976 <https://jira.onap.org/browse/SDC-1976>`__\ ] - Supporting PNFD (SOL001) mapping to AID model
 -  [`SDC-1977 <https://jira.onap.org/browse/SDC-1977>`__\ ] - Display VSP Resource Type (VF/PNF) in Import VSP UI
 -  [`SDC-1978 <https://jira.onap.org/browse/SDC-1978>`__\ ] - Ensure descriptor name matches name used in generated TOSCA.meta in VSP
 -  [`SDC-1979 <https://jira.onap.org/browse/SDC-1979>`__\ ] - Allowing the dedicated artifact folder with Entry-point in TOSCA.meta
 -  [`SDC-1980 <https://jira.onap.org/browse/SDC-1980>`__\ ] - Supporting onboarding packaging security
 -  [`SDC-2022 <https://jira.onap.org/browse/SDC-2022>`__\ ] - Allow custom plugins in SDC
--  [`SDC-2067 <https://jira.onap.org/browse/SDC-2067>`__\ ] - SDC and CDS Integration to enable E2E Automation 
+-  [`SDC-2067 <https://jira.onap.org/browse/SDC-2067>`__\ ] - SDC and CDS Integration to enable E2E Automation
 -  [`SDC-2085 <https://jira.onap.org/browse/SDC-2085>`__\ ] - Outputs on operations - Operation screen BE
 -  [`SDC-2090 <https://jira.onap.org/browse/SDC-2090>`__\ ] - update the normative type of onboarding DM
 -  [`SDC-2094 <https://jira.onap.org/browse/SDC-2094>`__\ ] - R4 5G U/C SDC: FM Meta Data GUI Display from PNF Onboarded Package
 -  [`SDC-2108 <https://jira.onap.org/browse/SDC-2108>`__\ ] - Import VSP and Create PNF internal csar
 -  [`SDC-2109 <https://jira.onap.org/browse/SDC-2109>`__\ ] - Adding additional artifacts
 -  [`SDC-2110 <https://jira.onap.org/browse/SDC-2110>`__\ ] - Add PNF manually (without using vsp)
--  [`SDC-2112 <https://jira.onap.org/browse/SDC-2112>`__\ ] - Add a copy of the onboarded package under artifact folder 
--  [`SDC-2113 <https://jira.onap.org/browse/SDC-2113>`__\ ] - copy the on boarding artifacts into the right SDC artifact type 
+-  [`SDC-2112 <https://jira.onap.org/browse/SDC-2112>`__\ ] - Add a copy of the onboarded package under artifact folder
+-  [`SDC-2113 <https://jira.onap.org/browse/SDC-2113>`__\ ] - copy the on boarding artifacts into the right SDC artifact type
 -  [`SDC-2136 <https://jira.onap.org/browse/SDC-2136>`__\ ] - HTTPS support on workflow application backend
 -  [`SDC-2168 <https://jira.onap.org/browse/SDC-2168>`__\ ] - M2/3/4 findings
 -  [`SDC-2194 <https://jira.onap.org/browse/SDC-2194>`__\ ] - Enhance SDC Workflow designer BE to connect to secure Cassandra
@@ -97,7 +97,11 @@ The main goal of the Dublin release was to:
 Security Notes
 --------------
 
-	TBD
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+*Known Vulnerabilities in Used Modules*
 
 Quick Links:
 
@@ -133,7 +137,7 @@ SDC SDKs Versions
 
 -  sdc-distribution-client
        :Version: 1.3.0
-	   
+
 -  sdc-tosca
 	   :Version: 1.4.63
 
@@ -167,7 +171,7 @@ SDC SDKs Versions
 
 -  sdc-distribution-client
        :Version: 1.3.0
-	   
+
 -  sdc-tosca
            :Version: 1.4.7
 
