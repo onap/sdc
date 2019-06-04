@@ -14,6 +14,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.functionaljava</groupId>
 			<artifactId>functionaljava</artifactId>
 			<version>${functionaljava.version}</version>
@@ -258,6 +264,13 @@
 			<artifactId>jersey-test-framework-provider-bundle</artifactId>
 			<version>${jersey-bom.version}</version>
 			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.bean-matchers</groupId>
+			<artifactId>bean-matchers</artifactId>
+			<version>${bean-matchers.version}</version>
 			<scope>test</scope>
 		</dependency>
 
