@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 
@@ -55,15 +56,19 @@ public class NonConfigResourceTest {
 
     @Test
     public void testShouldLocateResourceWhenNodeConfigPropertyIsSet2() {
+        final String path = new File(sampleResourcePath).getParentFile().getPath();
+        Map<String, String> properties = Collections.singletonMap(NODE_CONFIG_LOCATION, path);
 
-        Map<String, String> properties = Collections.singletonMap(
-                NODE_CONFIG_LOCATION, new File(sampleResourcePath).getParentFile().getPath());
-
-        NonConfigResource testedNonConfigResource = new NonConfigResource(properties::get);
-        System.getProperties().setProperty(NODE_CONFIG_LOCATION,
-                new File(sampleResourcePath).getParentFile().getPath());
+        NonConfigResource testedNonConfigResource =  new NonConfigResource(properties::get);
         Path thisFilePath = testedNonConfigResource.locate(RESOURCE_NAME);
-        assertEquals(0, thisFilePath.compareTo(new File(sampleResourcePath).toPath()));
+
+        NonConfigResource systemNonConfigResource = new NonConfigResource(System.getProperties()::getProperty);
+        System.setProperty(NODE_CONFIG_LOCATION, path);
+        Path systemFilePath = systemNonConfigResource.locate(RESOURCE_NAME);
+
+        Path testFilePath = sampleResourceFile.toPath();
+        assertEquals(0, thisFilePath.compareTo(testFilePath));
+        assertEquals(0, systemFilePath.compareTo(testFilePath));
     }
 
     @Test
@@ -88,9 +93,19 @@ public class NonConfigResourceTest {
 
     @Test
     public void testShouldNotLocateResource2() {
-        Map<String, String> properties = Collections.emptyMap();
+        String badResource = "noexistingresource";
+        String badPath = "noexistingpath";
+
+        Map<String, String> properties = new HashMap<>();
         NonConfigResource testedObject = new NonConfigResource(properties::get);
-        Path thisFilePath = testedObject.locate("nonexistingresource");
+        // empty properties and bad resource
+        Path thisFilePath = testedObject.locate(badResource);
+
+        properties.put(NODE_CONFIG_LOCATION, badPath);
+        // bad path in properties and bad resource
+        Path thisFilePath2 = testedObject.locate(badResource);
+
         assertNull(thisFilePath);
+        assertNull(thisFilePath2);
     }
 }

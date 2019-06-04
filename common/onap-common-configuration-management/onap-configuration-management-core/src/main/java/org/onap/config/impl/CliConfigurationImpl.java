@@ -41,7 +41,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
 
     private static final List<String> KEYS_TO_FILTER = Arrays.asList(NAMESPACE_KEY, MODE_KEY, LOAD_ORDER_KEY);
 
-    public CliConfigurationImpl() throws Exception {
+    public CliConfigurationImpl() {
         super();
     }
 
