@@ -207,7 +207,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 String k = keys.next();
                 if (k.startsWith(key + ".")) {
                     k = k.substring(key.length() + 1);
-                    String subkey = k.substring(0, k.indexOf("."));
+                    String subkey = k.substring(0, k.indexOf('.'));
                     if (!map.containsKey(subkey)) {
                         map.put(subkey, get(tenantId, namespace, key + "." + subkey, clazz));
                     }
@@ -248,10 +248,12 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
                 while (k.contains(".")) {
                     if (k.contains(".")) {
-                        String subkey = k.substring(0, k.indexOf("."));
-                        k = k.substring(k.indexOf(".") + 1);
+                        String subkey = k.substring(0, k.indexOf('.'));
+                        k = k.substring(k.indexOf('.') + 1);
                         if (!map.containsKey(subkey)) {
-                            map.put(subkey, map = new HashMap<>());
+                            Map tmp = new HashMap();
+                            map.put(subkey, tmp);
+                            map = tmp;
                         } else {
                             map = (Map) map.get(subkey);
                         }
