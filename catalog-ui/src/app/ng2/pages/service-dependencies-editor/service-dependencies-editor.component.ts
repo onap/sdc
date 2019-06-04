@@ -16,7 +16,7 @@
 import { Component } from '@angular/core';
 import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
 import {ConstraintObjectUI, OPERATOR_TYPES} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
-import {ServiceInstanceObject, PropertyBEModel} from 'app/models';
+import {ServiceInstanceObject, PropertyBEModel, InputBEModel} from 'app/models';
 import { PROPERTY_DATA } from 'app/utils';
 import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 
@@ -50,7 +50,7 @@ export class ServiceDependenciesEditorComponent {
         serviceRules: Array<ConstraintObjectUI>,
         compositeServiceName: string,
         currentServiceName: string,
-        compositeServiceProperties: Array<PropertyBEModel>,
+        parentServiceInputs: Array<InputBEModel>,
         selectedInstanceProperties: Array<PropertyBEModel>,
         operatorTypes: Array<DropdownValue>,
         selectedInstanceSiblings: Array<ServiceInstanceObject>
@@ -98,7 +98,7 @@ export class ServiceDependenciesEditorComponent {
             value: this.input.compositeServiceName,
             assignedLabel: this.SOURCE_TYPES.SERVICE_PROPERTY.label,
             type: this.SOURCE_TYPES.SERVICE_PROPERTY.value,
-            options: this.input.compositeServiceProperties
+            options: this.input.parentServiceInputs
         });
         _.forEach(this.input.selectedInstanceSiblings, sib =>
             this.sourceTypes.push({

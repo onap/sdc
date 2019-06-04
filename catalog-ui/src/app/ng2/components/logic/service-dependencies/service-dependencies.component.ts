@@ -15,11 +15,20 @@
  */
 import {Component, Input, Output, EventEmitter, ComponentRef} from '@angular/core';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {Service, ComponentInstance, ModalModel, ButtonModel, PropertyBEModel, ServiceInstanceObject} from 'app/models';
+import {
+    Service,
+    ComponentInstance,
+    ModalModel,
+    ButtonModel,
+    PropertyBEModel,
+    InputBEModel,
+    ServiceInstanceObject
+} from 'app/models';
 import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
+import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 
 export class ConstraintObject {
     servicePropertyName: string;
@@ -106,7 +115,7 @@ export class ServiceDependenciesComponent {
     modalInstance: ComponentRef<ModalComponent>;
     isDependent: boolean;
     isLoading: boolean;
-    compositeServiceProperties: Array<PropertyBEModel> = [];
+    parentServiceInputs: Array<InputBEModel> = [];
     rulesList: Array<ConstraintObject> = [];
     operatorTypes: Array<any>;
 
@@ -131,8 +140,8 @@ export class ServiceDependenciesComponent {
             {label: "<", value: OPERATOR_TYPES.LESS_THAN},
             {label: "=", value: OPERATOR_TYPES.EQUAL}
         ];
-        this.componentServiceNg2.getServiceProperties(this.compositeService).subscribe((properties: Array<PropertyBEModel>) => {
-            this.compositeServiceProperties = properties;
+        this.componentServiceNg2.getComponentInputsWithProperties(this.compositeService).subscribe((result: ComponentGenericResponse) => {
+            this.parentServiceInputs = result.inputs;
         });
         this.loadRules();
         this.translateService.languageChangedObservable.subscribe(lang => {
@@ -229,7 +238,7 @@ export class ServiceDependenciesComponent {
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
-                compositeServiceProperties: this.compositeServiceProperties,
+                parentServiceInputs: this.parentServiceInputs,
                 selectedInstanceProperties: this.selectedInstanceProperties,
                 selectedInstanceSiblings: this.selectedInstanceSiblings
             }
@@ -251,7 +260,7 @@ export class ServiceDependenciesComponent {
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
-                compositeServiceProperties: this.compositeServiceProperties,
+                parentServiceInputs: this.parentServiceInputs,
                 selectedInstanceProperties: this.selectedInstanceProperties,
                 selectedInstanceSiblings: this.selectedInstanceSiblings
             }
