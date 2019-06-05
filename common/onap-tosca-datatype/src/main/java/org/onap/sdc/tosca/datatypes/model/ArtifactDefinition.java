@@ -21,7 +21,11 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ArtifactDefinition {
   private String type;
   private String file;
@@ -29,43 +33,4 @@ public class ArtifactDefinition {
   private String description;
   private String deploy_path;
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getFile() {
-    return file;
-  }
-
-  public void setFile(String file) {
-    this.file = file;
-  }
-
-  public String getRepository() {
-    return repository;
-  }
-
-  public void setRepository(String repository) {
-    this.repository = repository;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getDeploy_path() {
-    return deploy_path;
-  }
-
-  public void setDeploy_path(String deploy_path) {
-    this.deploy_path = deploy_path;
-  }
 }
