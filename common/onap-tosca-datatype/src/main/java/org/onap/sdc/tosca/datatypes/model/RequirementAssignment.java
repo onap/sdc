@@ -20,7 +20,9 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
+import lombok.Data;
 
+@Data
 public class RequirementAssignment {
 
   private String capability;
@@ -29,43 +31,5 @@ public class RequirementAssignment {
   private NodeFilter node_filter;
   private Object[] occurrences;
 
-  public String getCapability() {
-    return capability;
-  }
 
-  public void setCapability(String capability) {
-    this.capability = capability;
-  }
-
-  public String getNode() {
-    return node;
-  }
-
-  public void setNode(String node) {
-    this.node = node;
-  }
-
-  public String getRelationship() {
-    return relationship;
-  }
-
-  public void setRelationship(String relationship) {
-    this.relationship = relationship;
-  }
-
-  public NodeFilter getNode_filter() {
-    return node_filter;
-  }
-
-  public void setNode_filter(NodeFilter node_filter) {
-    this.node_filter = node_filter;
-  }
-
-  public Object[] getOccurrences() {
-    return occurrences;
-  }
-
-  public void setOccurrences(Object[] occurrences) {
-    this.occurrences = occurrences;
-  }
 }
