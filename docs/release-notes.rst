@@ -101,6 +101,8 @@ Security Notes
 
 *Known Security Issues*
 
+-  [`OJSI-31 <https://jira.onap.org/browse/OJSI-31>`__\ ] - Unsecured Swagger UI Interface in sdc-wfd-be
+
 *Known Vulnerabilities in Used Modules*
 
 Quick Links:
