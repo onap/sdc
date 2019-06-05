@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27e6efed_60636e78",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/cache/ComponentCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-05T15:00:26Z",
+      "side": 1,
+      "message": "Could you use assertNull(result) instead?",
+      "range": {
+        "startLine": 135,
+        "startChar": 8,
+        "endLine": 135,
+        "endChar": 20
+      },
+      "revId": "8c85221efedc4aff1f88fd60769eb0df550e4bbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6777dd81_0eb5e649",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/cache/ComponentCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-05T15:00:26Z",
+      "side": 1,
+      "message": "Maybe this could be a constant - in this method it occurs three times.\n(The same applies to other repeated strings)",
+      "range": {
+        "startLine": 295,
+        "startChar": 53,
+        "endLine": 295,
+        "endChar": 77
+      },
+      "revId": "8c85221efedc4aff1f88fd60769eb0df550e4bbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
