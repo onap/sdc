@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model;
 
+import org.openecomp.sdc.be.dao.utils.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
@@ -53,6 +54,10 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
 
     public List<PropertyConstraint> getConstraints() {
         return constraints;
+    }
+
+    public List<PropertyConstraint> safeGetConstraints() {
+        return CollectionUtils.safeGetList(constraints);
     }
 
     public void setConstraints(List<PropertyConstraint> constraints) {

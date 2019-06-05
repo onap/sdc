@@ -700,6 +700,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		} else {
 			PropertyDefinition propertyDefinition = new PropertyDefinition();
 			propertyDefinition.setType(operationInputDefinition.getType());
+			propertyDefinition.setSchema(operationInputDefinition.getSchema());
 			propertyDefinition.setValue(value);
 			propertyDefinition.setName(operationInputDefinition.getName());
 
