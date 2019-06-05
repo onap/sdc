@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3453b1eb_ae239a2c",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/cache/ComponentCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-06-05T15:02:19Z",
+      "side": 1,
+      "message": "The generic comment -\u003e maybe worth to extract same repeat variables into \"private static final field\" variables? Like the componentUid, modificationTime, invalidTime variables e.t.c",
+      "revId": "8c85221efedc4aff1f88fd60769eb0df550e4bbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "27e6efed_60636e78",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/cache/ComponentCacheTest.java",
         "patchSetId": 1
