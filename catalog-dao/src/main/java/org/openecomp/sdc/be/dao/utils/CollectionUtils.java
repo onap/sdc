@@ -27,6 +27,10 @@ public final class CollectionUtils {
     private CollectionUtils() {
     }
 
+    public static <T> List<T> safeGetList(List<T> listToCheck) {
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(listToCheck) ? listToCheck : Collections.emptyList();
+    }
+
     /**
      * Add the content of the 'source' Set to the 'target' set and return the
      * union set.
