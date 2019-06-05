@@ -50,6 +50,7 @@ Modifications copyright (c) 2018 Nokia
         <lombok.version>1.18.2</lombok.version>
         <commons-beanutils>1.9.3</commons-beanutils>
         <commons-configuration>2.3</commons-configuration>
+        <apache-poi.version>4.1.0</apache-poi.version>
 
         <commons.collections.version>4.1</commons.collections.version>
 
