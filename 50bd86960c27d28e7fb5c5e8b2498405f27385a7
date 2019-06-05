@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7549ac5_9d183111",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/action-library-rest/action-library-rest-types/src/main/java/org/openecomp/sdcrests/action/types/ListResponseWrapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-05T14:04:47Z",
+      "side": 1,
+      "message": "remove this with @NoArgsConstructor",
+      "revId": "50bd86960c27d28e7fb5c5e8b2498405f27385a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
