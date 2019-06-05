@@ -108,6 +108,7 @@ Security Notes
 -  CVE-2019-12118 [`OJSI-79 <https://jira.onap.org/browse/OJSI-79>`__\ ] - demo-sdc-sdc-wfd-be exposes JDWP on port 7001 which allows for arbitrary code execution
 -  CVE-2019-12119 [`OJSI-80 <https://jira.onap.org/browse/OJSI-80>`__\ ] - demo-sdc-sdc-wfd-fe exposes JDWP on port 7000 which allows for arbitrary code execution
 -  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
 
 *Known Vulnerabilities in Used Modules*
 
