@@ -103,6 +103,7 @@ Security Notes
 
 -  [`OJSI-31 <https://jira.onap.org/browse/OJSI-31>`__\ ] - Unsecured Swagger UI Interface in sdc-wfd-be
 -  CVE-2019-12115 [`OJSI-76 <https://jira.onap.org/browse/OJSI-76>`__\ ] - demo-sdc-sdc-be exposes JDWP on port 4000 which allows for arbitrary code execution
+-  CVE-2019-12116 [`OJSI-77 <https://jira.onap.org/browse/OJSI-77>`__\ ] - demo-sdc-sdc-fe exposes JDWP on port 6000 which allows for arbitrary code execution
 
 *Known Vulnerabilities in Used Modules*
 
