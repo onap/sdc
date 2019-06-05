@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nustaq.serialization.FSTConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.ComponentCassandraDao;
@@ -25,9 +26,18 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
+import org.openecomp.sdc.common.util.SerializationUtils;
+import org.openecomp.sdc.common.util.ZipUtil;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ComponentCacheTest extends ModelConfDependentTest {
 
@@ -57,47 +67,45 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         boolean result;
 
         // default test
-
         result = testSubject.isEnabled();
+        assertTrue(result);
     }
 
     @Test
     public void testSetEnabled() throws Exception {
 
-        boolean enabled = false;
-
         // default test
 
-        testSubject.setEnabled(enabled);
+        testSubject.setEnabled(false);
+        assertFalse(testSubject.isEnabled());
     }
 
     @Test
     public void testGetComponentNotFound() throws Exception {
 
         String componentUid = "mock";
-        Long lastModificationTime = null;
-        Function<Component, Component> filterFieldsFunc = null;
         Either<Component, ActionStatus> result;
 
-        Mockito.when(componentCassandraDao.getComponent("mock"))
+        Mockito.when(componentCassandraDao.getComponent(componentUid))
                 .thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
         // default test
-        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+        result = testSubject.getComponent(componentUid, null, null);
+        assertEquals(Either.right(ActionStatus.ARTIFACT_NOT_FOUND), result);
     }
 
     @Test
     public void testGetComponentInvalidDate() throws Exception {
 
         String componentUid = "mock";
-        Long lastModificationTime = 0L;
-        Function<Component, Component> filterFieldsFunc = null;
+        Long invalidDateTime = 0L;
         Either<Component, ActionStatus> result;
 
         ComponentCacheData a = new ComponentCacheData();
         a.setModificationTime(new Date());
         Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
         // default test
-        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+        result = testSubject.getComponent(componentUid, invalidDateTime, null);
+        assertEquals(Either.right(ActionStatus.INVALID_CONTENT), result);
     }
 
     @Test
@@ -105,15 +113,15 @@ public class ComponentCacheTest extends ModelConfDependentTest {
 
         String componentUid = "mock";
         Long lastModificationTime = 0L;
-        Function<Component, Component> filterFieldsFunc = null;
         Either<Component, ActionStatus> result;
 
         ComponentCacheData a = new ComponentCacheData();
-        a.setModificationTime(new Date(0L));
+        a.setModificationTime(new Date(lastModificationTime));
         a.setType(NodeTypeEnum.Resource.getName());
         Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
         // default test
-        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+        result = testSubject.getComponent(componentUid, lastModificationTime, null);
+        assertEquals(Either.right(ActionStatus.CONVERT_COMPONENT_ERROR), result);
     }
 
     @Test
@@ -124,8 +132,10 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
 
         result = testSubject.getAllComponentIdTimeAndType();
+        assertEquals(null, result);
         testSubject.setEnabled(false);
         result = testSubject.getAllComponentIdTimeAndType();
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
@@ -144,13 +154,14 @@ public class ComponentCacheTest extends ModelConfDependentTest {
 
         Set<String> components = new HashSet<>();
         components.add("mock");
-        ComponentTypeEnum componentTypeEnum = null;
         List<Component> result;
 
         // default test
         testSubject.init();
         result = Deencapsulation.invoke(testSubject, "getDataFromInMemoryCache", components,
                 ComponentTypeEnum.RESOURCE);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -172,26 +183,29 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.init();
         result = testSubject.getComponents(components, filterFieldsFunc);
+        assertTrue(result.isLeft());
+        assertTrue(result.left().value().left.isEmpty());
+        assertTrue(result.left().value().middle.isEmpty());
+        assertTrue(result.left().value().right.isEmpty());
     }
 
     @Test
     public void testGetComponentsNotAllowed() throws Exception {
 
         Set<String> components = new HashSet<>();
-        Function<List<Component>, List<Component>> filterFieldsFunc = null;
 
         Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
 
         // default test
         testSubject.setEnabled(false);
-        result = testSubject.getComponents(components, filterFieldsFunc);
+        result = testSubject.getComponents(components, null);
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
     public void testGetComponentsCassndraError() throws Exception {
 
         Set<String> components = new HashSet<>();
-        Function<List<Component>, List<Component>> filterFieldsFunc = null;
         Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
 
         Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class)))
@@ -199,13 +213,13 @@ public class ComponentCacheTest extends ModelConfDependentTest {
 
         // default test
         testSubject.init();
-        result = testSubject.getComponents(components, filterFieldsFunc);
+        result = testSubject.getComponents(components, null);
+        assertEquals(Either.right(ActionStatus.GENERAL_ERROR), result);
     }
 
     @Test
     public void testGetComponentsForLeftPanel() throws Exception {
 
-        ComponentTypeEnum componentTypeEnum = null;
         String internalComponentType = "mock";
         Set<String> filteredResources = new HashSet<>();
         Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
@@ -216,6 +230,10 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         result = testSubject.getComponentsForLeftPanel(ComponentTypeEnum.RESOURCE, internalComponentType,
                 filteredResources);
+        assertTrue(result.isLeft());
+        assertTrue(result.left().value().left.isEmpty());
+        assertTrue(result.left().value().middle.isEmpty());
+        assertTrue(result.left().value().right.isEmpty());
     }
 
     @Test
@@ -244,14 +262,26 @@ public class ComponentCacheTest extends ModelConfDependentTest {
     @Test
     public void testFilterFieldsForLeftPanel() throws Exception {
         Component result;
+        String shouldBeCopied = "shouldBeCopied";
+        String shouldNotBe = "shouldNotBeCopied";
 
         // default test
         Resource resource = new Resource();
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        resource.setDescription(shouldBeCopied);
+        resource.setContactId(shouldNotBe);
         result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", resource);
+        assertEquals(ComponentTypeEnum.RESOURCE, result.getComponentType());
+        assertEquals(shouldBeCopied, result.getDescription());
+        assertNull(result.getContactId());
         Service service = new Service();
         service.setComponentType(ComponentTypeEnum.SERVICE);
+        service.setSystemName(shouldBeCopied);
+        service.setCreatorFullName(shouldNotBe);
         result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", service);
+        assertEquals(ComponentTypeEnum.SERVICE, result.getComponentType());
+        assertEquals(shouldBeCopied, result.getSystemName());
+        assertNull(result.getCreatorFullName());
     }
 
     @Test
@@ -263,12 +293,15 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         Resource resource = new Resource();
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", resource);
+        assertEquals(ComponentTypeEnum.RESOURCE, result.getComponentType());
         Service service = new Service();
         service.setComponentType(ComponentTypeEnum.SERVICE);
         result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", service);
+        assertEquals(ComponentTypeEnum.SERVICE, result.getComponentType());
         Product product = new Product();
         product.setComponentType(ComponentTypeEnum.PRODUCT);
         result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", product);
+        assertEquals(ComponentTypeEnum.PRODUCT, result.getComponentType());
     }
 
     @Test
@@ -292,6 +325,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = Deencapsulation.invoke(testSubject, "getComponentsFull", Set.class);
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
 
@@ -312,6 +346,10 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
 
         result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+        assertTrue(result.isLeft());
+        assertTrue(result.left().value().left.isEmpty());
+        assertTrue(result.left().value().middle.isEmpty());
+        assertEquals(filteredResources, result.left().value().right);
     }
 
 
@@ -326,13 +364,13 @@ public class ComponentCacheTest extends ModelConfDependentTest {
 
         // default test
         result = testSubject.getComponent(componentUid);
+        assertEquals(Either.right(ActionStatus.ARTIFACT_NOT_FOUND), result);
     }
 
     @Test
     public void testGetComponent_2() throws Exception {
 
         String componentUid = "mock";
-        Long lastModificationTime = null;
         Either<Component, ActionStatus> result;
 
         Mockito.when(componentCassandraDao.getComponent("mock"))
@@ -345,7 +383,8 @@ public class ComponentCacheTest extends ModelConfDependentTest {
                 return new Resource();
             }
         };
-        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+        result = testSubject.getComponent(componentUid, null, filterFieldsFunc);
+        assertEquals(Either.right(ActionStatus.ARTIFACT_NOT_FOUND), result);
     }
 
     @Test
@@ -361,6 +400,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
 
         result = Deencapsulation.invoke(testSubject, "saveComponent", componentUid, 0L, NodeTypeEnum.Resource,
                 component);
+        assertFalse(result);
     }
 
     @Test
@@ -373,6 +413,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = testSubject.setComponent(component, NodeTypeEnum.Resource);
+        assertFalse(result);
     }
 
     @Test
@@ -385,6 +426,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
 
         result = testSubject.setComponent(component, NodeTypeEnum.Resource);
+        assertFalse(result);
     }
 
 
@@ -402,6 +444,10 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(immutablePair));
 
         result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+        assertTrue(result.isLeft());
+        assertTrue(result.left().value().left.isEmpty());
+        assertEquals(1, result.left().value().right.size());
+        assertNull(result.left().value().right.iterator().next());
     }
 
     @Test
@@ -412,6 +458,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
@@ -423,6 +470,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
 
         result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+        assertEquals(Either.right(ActionStatus.ARTIFACT_NOT_FOUND), result);
     }
 
     @Test
@@ -434,6 +482,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
@@ -446,6 +495,9 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(value));
         testSubject.init();
         result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+        assertTrue(result.isLeft());
+        assertTrue(result.left().value().left.isEmpty());
+        assertTrue(result.left().value().right.isEmpty());
     }
 
     @Test
@@ -457,6 +509,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.COMPONENT_NOT_FOUND));
 
         result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+        assertEquals(Either.right(ActionStatus.COMPONENT_NOT_FOUND), result);
     }
 
     @Test
@@ -469,33 +522,32 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = testSubject.getComponents(components, filterFieldsFunc);
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
     public void testGetComponentAndTimeNotFound() throws Exception {
 
         String componentUid = "";
-        Function<Component, Component> filterFieldsFunc = null;
         Either<ImmutablePair<Component, Long>, ActionStatus> result;
 
         // default test
         Mockito.when(componentCassandraDao.getComponent(Mockito.anyString())).thenReturn(Either.right(ActionStatus.API_RESOURCE_NOT_FOUND));
 
-        result = testSubject.getComponentAndTime(componentUid, filterFieldsFunc);
+        result = testSubject.getComponentAndTime(componentUid, null);
+        assertEquals(Either.right(ActionStatus.API_RESOURCE_NOT_FOUND), result);
     }
 
     @Test
     public void testGetComponentFromCacheDisabled() throws Exception {
         String componentUid = "";
-        Long lastModificationTime = null;
-        Function<Component, Component> filterFieldsFunc = null;
         Either<ImmutablePair<Component, ComponentCacheData>, ActionStatus> result;
 
         // test 1
-        lastModificationTime = null;
         testSubject.setEnabled(false);
         result = Deencapsulation.invoke(testSubject, "getComponentFromCache",
                 new Object[]{componentUid, Long.class, Function.class});
+        assertEquals(Either.right(ActionStatus.NOT_ALLOWED), result);
     }
 
     @Test
@@ -507,6 +559,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
 
         result = testSubject.deleteComponentFromCache(id);
+        assertEquals(ActionStatus.GENERAL_ERROR, result);
     }
 
     @Test
@@ -518,6 +571,7 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         testSubject.setEnabled(false);
         result = testSubject.deleteComponentFromCache(id);
+        assertEquals(ActionStatus.NOT_ALLOWED, result);
     }
 
     @Test
@@ -529,5 +583,6 @@ public class ComponentCacheTest extends ModelConfDependentTest {
         // default test
         Mockito.when(componentCassandraDao.deleteComponent(Mockito.anyString())).thenReturn(CassandraOperationStatus.OK);
         result = testSubject.deleteComponentFromCache(id);
+        assertEquals(ActionStatus.OK, result);
     }
 }
