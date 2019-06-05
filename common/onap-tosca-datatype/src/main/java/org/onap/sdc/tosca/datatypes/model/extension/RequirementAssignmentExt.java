@@ -16,37 +16,17 @@
 
 package org.onap.sdc.tosca.datatypes.model.extension;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
+@Setter
+@Getter
+@EqualsAndHashCode
 public class RequirementAssignmentExt extends RequirementAssignment {
 
     private ServiceFilter service_filter;
 
-    public ServiceFilter getService_filter() {
-        return service_filter;
-    }
 
-    public void setService_filter(ServiceFilter serviceFilter) {
-        this.service_filter = serviceFilter;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof RequirementAssignmentExt)) {
-            return false;
-        }
-
-        RequirementAssignmentExt that = (RequirementAssignmentExt) o;
-
-        return getService_filter() != null ? getService_filter().equals(that.getService_filter()) :
-                       that.getService_filter() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getService_filter() != null ? getService_filter().hashCode() : 0;
-    }
 }
