@@ -106,6 +106,7 @@ Security Notes
 -  CVE-2019-12116 [`OJSI-77 <https://jira.onap.org/browse/OJSI-77>`__\ ] - demo-sdc-sdc-fe exposes JDWP on port 6000 which allows for arbitrary code execution
 -  CVE-2019-12117 [`OJSI-78 <https://jira.onap.org/browse/OJSI-78>`__\ ] - demo-sdc-sdc-onboarding-be exposes JDWP on port 4001 which allows for arbitrary code execution
 -  CVE-2019-12118 [`OJSI-79 <https://jira.onap.org/browse/OJSI-79>`__\ ] - demo-sdc-sdc-wfd-be exposes JDWP on port 7001 which allows for arbitrary code execution
+-  CVE-2019-12119 [`OJSI-80 <https://jira.onap.org/browse/OJSI-80>`__\ ] - demo-sdc-sdc-wfd-fe exposes JDWP on port 7000 which allows for arbitrary code execution
 
 *Known Vulnerabilities in Used Modules*
 
