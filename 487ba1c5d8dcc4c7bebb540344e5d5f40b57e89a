@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d776608_0424362f",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2019-06-05T12:23:51Z",
+      "side": 1,
+      "message": "@Data is generating all of this",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 18
+      },
+      "revId": "487ba1c5d8dcc4c7bebb540344e5d5f40b57e89a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
