@@ -114,6 +114,7 @@ Security Notes
 -  [`OJSI-126 <https://jira.onap.org/browse/OJSI-126>`__\ ] - In default deployment SDC (sdc-wfd-fe) exposes HTTP port 30256 outside of cluster.
 -  [`OJSI-127 <https://jira.onap.org/browse/OJSI-127>`__\ ] - In default deployment SDC (sdc-wfd-be) exposes HTTP port 30257 outside of cluster.
 -  [`OJSI-132 <https://jira.onap.org/browse/OJSI-132>`__\ ] - In default deployment SDC (sdc-dcae-fe) exposes HTTP port 30263 outside of cluster.
+-  [`OJSI-133 <https://jira.onap.org/browse/OJSI-133>`__\ ] - In default deployment SDC (sdc-dcae-dt) exposes HTTP port 30265 outside of cluster.
 
 *Known Vulnerabilities in Used Modules*
 
