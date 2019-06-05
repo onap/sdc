@@ -24,12 +24,15 @@ package org.openecomp.sdcrests.action.types;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Defines DTO used for Action Response.
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ActionResponseDto {
 
