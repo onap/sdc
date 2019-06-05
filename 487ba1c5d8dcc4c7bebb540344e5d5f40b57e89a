@@ -22,6 +22,30 @@
       "revId": "487ba1c5d8dcc4c7bebb540344e5d5f40b57e89a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28f82d21_388f0f7c",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-05T12:36:55Z",
+      "side": 1,
+      "message": "@Data also adds RequiredArgsConstructor\nI did not wanted to change previous constructors.",
+      "parentUuid": "2d776608_0424362f",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 18
+      },
+      "revId": "487ba1c5d8dcc4c7bebb540344e5d5f40b57e89a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
