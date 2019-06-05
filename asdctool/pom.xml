@@ -409,9 +409,8 @@
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>com.springsource.org.apache.poi</artifactId>
-			<version>3.9.0.FINAL</version>
-			<scope>compile</scope>
+			<artifactId>poi</artifactId>
+			<version>${apache-poi.version}</version>
 		</dependency>
 
 		<dependency>
