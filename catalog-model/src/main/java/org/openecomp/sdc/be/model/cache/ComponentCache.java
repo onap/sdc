@@ -144,7 +144,8 @@ public class ComponentCache {
     }
 
     /**
-     * get components for catalog
+     * @deprecated Use following method instead:
+     * {@link #getComponentsForCatalog(java.util.Map, org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum) getComponentsForCatalog}
      *
      * @param components
      * @param componentTypeEnum
@@ -171,11 +172,8 @@ public class ComponentCache {
         if (catalogInMemoryEnabled) {
             componentsFromMemory = getDataFromInMemoryCache(components, componentTypeEnum);
             log.debug("The number of components of type {} fetched from memory is {}",
-                    componentTypeEnum.name().toLowerCase(),
-                    componentsFromMemory == null ? 0 : componentsFromMemory.size());
-            if (componentsFromMemory != null) {
-                componentsFromMemory.forEach(p -> leftComponentsForSearch.remove(p.getUniqueId()));
-            }
+                    componentTypeEnum.name().toLowerCase(), componentsFromMemory.size());
+            componentsFromMemory.forEach(p -> leftComponentsForSearch.remove(p.getUniqueId()));
         } else {
             log.debug("Catalog InMemory cache is disabled");
         }
@@ -680,31 +678,30 @@ public class ComponentCache {
         log.debug("Number of components fetched from cassandra is {}", (list == null ? 0 : list.size()));
         if (list != null && !list.isEmpty()) {
 
-            log.debug("Number of components filterd is {}", list == null ? 0 : list.size());
+            log.debug("Number of components filterd is {}", list.size());
 
-            if (list != null) {
-                long desStart = System.currentTimeMillis();
+            long desStart = System.currentTimeMillis();
 
-                for (ComponentCacheData componentCacheData : list) {
+            for (ComponentCacheData componentCacheData : list) {
 
-                    log.debug("Process uid {} from cache", componentCacheData.getId());
+                log.debug("Process uid {} from cache", componentCacheData.getId());
 
-                    String compUid = componentCacheData.getId();
+                String compUid = componentCacheData.getId();
 
-                    Either<? extends Component, Boolean> deserializeExt = convertComponentCacheToComponent(
-                            componentCacheData);
+                Either<? extends Component, Boolean> deserializeExt =
+                    convertComponentCacheToComponent(componentCacheData);
 
-                    if (deserializeExt.isLeft()) {
-                        Component component = deserializeExt.left().value();
-                        foundResources.add(component);
-                    } else {
-                        notFoundResources.add(compUid);
-                    }
-
+                if (deserializeExt.isLeft()) {
+                    Component component = deserializeExt.left().value();
+                    foundResources.add(component);
+                } else {
+                    notFoundResources.add(compUid);
                 }
-                long desEnd = System.currentTimeMillis();
-                log.debug("Deserialization and unzip of {} components took {} ms", list.size(), (desEnd - desStart));
+
             }
+            long desEnd = System.currentTimeMillis();
+            log.debug("Deserialization and unzip of {} components took {} ms", list.size(),
+                (desEnd - desStart));
         }
         log.debug("Number of processed components from cache is {}", foundResources.size());
 
@@ -746,28 +743,25 @@ public class ComponentCache {
         if (catalogInMemoryEnabled) {
             componentsFromMemory = getDataFromInMemoryCache(components.keySet(), componentTypeEnum);
             log.debug("The number of components of type {} fetched from memory is {}",
-                    componentTypeEnum.name().toLowerCase(),
-                    componentsFromMemory == null ? 0 : componentsFromMemory.size());
-            if (componentsFromMemory != null) {
-                List<String> ignoredComponents = new ArrayList<>();
-                for (Component componentFromMem : componentsFromMemory) {
-                    if (componentFromMem.getLastUpdateDate().longValue() != components
-                            .get(componentFromMem.getUniqueId()).longValue()) {
-                        // Ignore the component from memory
-                        ignoredComponents.add(componentFromMem.getUniqueId());
-                    }
+                    componentTypeEnum.name().toLowerCase(), componentsFromMemory.size());
+            List<String> ignoredComponents = new ArrayList<>();
+            for (Component componentFromMem : componentsFromMemory) {
+                if (componentFromMem.getLastUpdateDate().longValue() != components
+                    .get(componentFromMem.getUniqueId()).longValue()) {
+                    // Ignore the component from memory
+                    ignoredComponents.add(componentFromMem.getUniqueId());
                 }
-
-                log.debug("Number of components from type {} ignored from memory cache is {}",
-                        componentTypeEnum.name().toLowerCase(), ignoredComponents.size());
-                // remove from memory result the components which are not valid
-                componentsFromMemory = componentsFromMemory.stream()
-                                                           .filter(p -> !ignoredComponents.contains(p.getUniqueId())).collect(Collectors.toList());
-                // Remove from leftComponentsForSearch the valid components from
-                // memory
-                componentsFromMemory.forEach(p -> leftComponentsForSearch.remove(p.getUniqueId()));
-
             }
+
+            log.debug("Number of components from type {} ignored from memory cache is {}",
+                componentTypeEnum.name().toLowerCase(), ignoredComponents.size());
+            // remove from memory result the components which are not valid
+            componentsFromMemory = componentsFromMemory.stream()
+                .filter(p -> !ignoredComponents.contains(p.getUniqueId()))
+                .collect(Collectors.toList());
+            // Remove from leftComponentsForSearch the valid components from
+            // memory
+            componentsFromMemory.forEach(p -> leftComponentsForSearch.remove(p.getUniqueId()));
         } else {
             log.debug("Catalog InMemory cache is disabled");
         }
