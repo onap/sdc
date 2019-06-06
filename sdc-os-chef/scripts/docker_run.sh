@@ -16,7 +16,7 @@ JETTY_BASE="/var/lib/jetty"
 SDC_CERT_DIR="onap/cert"
 
 RELEASE=latest
-DCAE_RELEASE=latest
+
 LOCAL=false
 RUNTESTS=false
 BE_DEBUG_PORT="--publish 4000:4000"
@@ -28,8 +28,6 @@ ONBOARD_DEBUG_PORT="--publish 4001:4001"
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m"
 FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m -Xms256m"
 ONBOARD_BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
-DCAE_BE_JAVA_OPTIONS="-XX:MaxPermSize=256m -Xmx1024m -Dconfig.home=config -Dlog.home=/var/lib/jetty/logs/ -Dlogging.config=config/dcae-be/logback-spring.xml"
-DCAE_FE_JAVA_OPTIONS="-XX:MaxPermSize=256m -Xmx1024m -Dconfig.home=config -Dlog.home=/var/lib/jetty/logs/ -Dlogging.config=config/dcae-fe/logback-spring.xml"
 SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m -Dlog4j.configuration=file:///${JETTY_BASE}/config/sdc-simulator/log4j.properties"
 API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
 UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
@@ -47,11 +45,10 @@ fi
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with DCAE using label DCAE-RELEASE-NAME>][ -h|--help ]"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -h|--help ]"
     echo "start dockers built locally example: docker_run.sh -l"
     echo "start dockers built locally and simulator example: docker_run.sh -l -sim"
     echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.5-STAGING-latest -sim"
-    echo "start dockers with DCAE, pull from onap nexus according to respective releases: docker_run.sh -r 1.5-STAGING-latest -dcae 1.3-STAGING-latest"
     echo "start dockers built locally and run api tests docker example: docker_run.sh -l -tad"
     echo "start dockers built locally and run only the catalog be example: docker_run.sh -l -d sdc-BE "
 }
@@ -82,19 +79,16 @@ function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
 
-    mkdir -p ${WORKSPACE}/data/logs/DCAE-BE/DCAE
-    mkdir -p ${WORKSPACE}/data/logs/DCAE-FE/DCAE
-
     mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport
     mkdir -p ${WORKSPACE}/data/logs/ONBOARD/SDC/ONBOARD-BE
-	mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/target
-	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport
-	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
-	mkdir -p ${WORKSPACE}/data/logs/docker_logs
-	mkdir -p ${WORKSPACE}/data/logs/WS
-	echo "create dir"
-	echo "${WORKSPACE}/data/${SDC_CERT_DIR}"
-	mkdir -p ${WORKSPACE}/data/${SDC_CERT_DIR}
+    mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/target
+    mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport
+    mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
+    mkdir -p ${WORKSPACE}/data/logs/docker_logs
+    mkdir -p ${WORKSPACE}/data/logs/WS
+    echo "create dir"
+    echo "${WORKSPACE}/data/${SDC_CERT_DIR}"
+    mkdir -p ${WORKSPACE}/data/${SDC_CERT_DIR}
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 #
@@ -158,39 +152,6 @@ function probe_sim {
 #
 
 
-function probe_dcae_be {
-    health_check_http_code=$(curl -i -o /dev/null -w '%{http_code}' http://${IP}:8082/dcae/conf/composition)
-    if [[ "${health_check_http_code}" -eq 200 ]] ; then
-        echo DOCKER start finished in $1 seconds
-        return ${SUCCESS}
-    fi
-    return ${FAILURE}
-}
-#
-
-function probe_dcae_fe {
-    health_check_http_code=$(curl -i -o /dev/null -w '%{http_code}' http://${IP}:8183/dcaed/healthCheck)
-    if [[ "${health_check_http_code}" -eq 200 ]] ; then
-        echo DOCKER start finished in $1 seconds
-        return ${SUCCESS}
-    fi
-    return ${FAILURE}
-}
-#
-
-
-# Not applicable for current release. Return Success in any case
-function probe_dcae_tools {
-   health_check_http_code=$(curl -i -o /dev/null -w '%{http_code}'  http://${IP}:8082/dcae/getResourcesByMonitoringTemplateCategory)
-    if [[ "${health_check_http_code}" -eq 200 ]] ; then
-        echo DOCKER start finished in $1 seconds
-        return ${SUCCESS}
-    fi
-    return ${SUCCESS}
-}
-#
-
-
 function monitor_docker {
     DOCKER_NAME=$1
     echo "Monitor ${DOCKER_NAME} Docker"
@@ -223,18 +184,6 @@ function monitor_docker {
                 ready_probe ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
-            dcae-be)
-                probe_dcae_be ${TIME} ;
-                status=$? ;
-            ;;
-            dcae-fe)
-                probe_dcae_fe ${TIME} ;
-                status=$? ;
-            ;;
-            dcae-tools)
-                probe_dcae_tools ;
-                status=$? ;
-            ;;
             *)
                 probe_docker ${DOCKER_NAME} ${TIME};
                 status=$? ;
@@ -263,12 +212,12 @@ function monitor_docker {
 function healthCheck {
 	curl --noproxy "*" ${IP}:9200/_cluster/health?pretty=true
 
-	echo "BE health-Check:"
+	echo "BE Health Check:"
 	curl --noproxy "*" http://${IP}:8080/sdc2/rest/healthCheck
 
 	echo ""
 	echo ""
-	echo "FE health-Check:"
+	echo "FE Health Check:"
 	curl --noproxy "*" http://${IP}:8181/sdc1/rest/healthCheck
 
 
@@ -276,10 +225,10 @@ function healthCheck {
 	echo ""
 	healthCheck_http_code=$(curl --noproxy "*" -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://${IP}:8080/sdc2/rest/v1/user/demo;)
 	if [[ ${healthCheck_http_code} != 200 ]]; then
-		echo "Error [${healthCheck_http_code}] while user existance check"
+		echo "Error [${healthCheck_http_code}] while checking existence of user"
 		return ${healthCheck_http_code}
 	fi
-	echo "check user existance: OK"
+	echo "check user existence: OK"
 	return ${healthCheck_http_code}
 }
 #
@@ -458,62 +407,6 @@ function sdc-FE {
 #
 
 
-# DCAE BackEnd
-function dcae-be {
-    if [ ! ${DCAE_ENABLE} ] ; then
-        return
-    fi
-    DOCKER_NAME="dcae-be"
-    echo "docker run ${DOCKER_NAME}..."
-    if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-be/chef-solo/environments --publish 8444:8444 --publish 8082:8082 ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while ${DOCKER_NAME^^} is starting....."
-    monitor_docker ${DOCKER_NAME}
-}
-#
-
-
-# DCAE Configuration
-function dcae-tools {
-    if [ ! ${DCAE_ENABLE} ] ; then
-        return
-    fi
-    DOCKER_NAME="dcae-tools"
-    echo "docker run ${DOCKER_NAME}..."
-    if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-tools/chef-solo/environments  ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while ${DOCKER_NAME^^} is starting....."
-    monitor_docker ${DOCKER_NAME}
-
-}
-#
-
-
-# DCAE FrontEnd
-function dcae-fe {
-    if [ ! ${DCAE_ENABLE} ] ; then
-        return
-    fi
-    DOCKER_NAME="dcae-fe"
-    echo "docker run ${DOCKER_NAME}..."
-    if [ ${LOCAL} = false ]; then
-	    docker pull ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${DCAE_FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/DCAE-FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/var/opt/dcae-fe/chef-solo/environments/ --publish 9444:9444 --publish 8183:8183 ${PREFIX}/${DOCKER_NAME}:${DCAE_RELEASE}
-    command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while ${DOCKER_NAME^^} is starting....."
-    monitor_docker ${DOCKER_NAME}
-
-}
-#
-
-
 # apis-sanity
 function sdc-api-tests {
     if [[ ${RUN_API_TESTS} = true ]] ; then
@@ -660,12 +553,6 @@ while [ $# -gt 0 ]; do
           shift 1 ;
           FE_URL=$1;
           shift 1 ;;
-    # -dcae | --dcae - Use this to deploy DCAE upon SDC
-    -dcae | --dcae )
-          shift 1 ;
-          DCAE_RELEASE=$1;
-          shift 1;
-          DCAE_ENABLE='True';;
 
 	# -h | --help - Display the help message with all the available run options
     -h | --help )
@@ -701,28 +588,25 @@ fi
 echo ""
 
 if [ -z "${DOCKER}" ]; then
-    cleanup all
+        cleanup all
 	dir_perms
 	sdc-es
 	sdc-init-es
 	sdc-cs
 	sdc-cs-init
-#	sdc-kbn
+#       sdc-kbn
 	sdc-cs-onboard-init
 	sdc-onboard-BE
 	sdc-BE
 	sdc-BE-init
 	sdc-FE
-	dcae-be
-	dcae-tools
-	dcae-fe
 	healthCheck
-    sdc-sim
+        sdc-sim
 	sdc-api-tests
 	sdc-ui-tests
 else
 	cleanup ${DOCKER}
 	dir_perms
 	${DOCKER}
-    healthCheck
+        healthCheck
 fi
