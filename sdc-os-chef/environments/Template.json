@@ -5,92 +5,92 @@
    "chef_type": "environment",
 
    "default_attributes": {
-        "disableHttp": false,
-        "CS_VIP": "yyy",
-        "BE_VIP": "yyy",
-        "ONBOARDING_BE_VIP": "yyy",
-        "FE_VIP": "yyy",
-        "ES_VIP": "yyy",
-        "KB_VIP": "yyy",
-        "DCAE_BE_VIP": "yyy",
-        "DCAE_FE_VIP": "yyy",
-        "interfaces": {
-            "application": "eth0",
-            "private": "eth1"
-        },
-		"ECompP": {
-		    "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
-            "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
-            "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
-            "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
-            "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
-            "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
-        },
-        "UEB": {
-            "PublicKey": "iPIxkpAMI8qTcQj8",
-            "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
-            "fqdn": ["10.0.11.1", "10.0.11.1"]
-        },
-        "Nodes": {
-            "CS": [
-              "yyy"
+      "disableHttp": false,
+      "CS_VIP": "yyy",
+      "BE_VIP": "yyy",
+      "ONBOARDING_BE_VIP": "yyy",
+      "FE_VIP": "yyy",
+      "ES_VIP": "yyy",
+      "KB_VIP": "yyy",
+      "DCAE_BE_VIP": "yyy",
+      "DCAE_FE_VIP": "yyy",
+      "DCAE_TOSCA_LAB_VIP": "yyy",
+      "interfaces": {
+         "application": "eth0",
+         "private": "eth1"
+   },
+   "ECompP": {
+      "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
+      "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
+      "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
+      "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
+      "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
+      "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
+   },
+   "UEB": {
+      "PublicKey": "iPIxkpAMI8qTcQj8",
+         "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
+         "fqdn": ["10.0.11.1", "10.0.11.1"]
+   },
+   "Nodes": {
+      "CS": [
+               "yyy"
             ],
-            "BE":            "yyy",
-            "ONBOARDING_BE": "yyy",
-            "FE":            "yyy",
-            "ES": [
-	       "yyy"
+      "BE":            "yyy",
+      "ONBOARDING_BE": "yyy",
+      "FE":            "yyy",
+      "ES": [
+                       "yyy"
             ],
-	    "KB":            "yyy"
-        },
-        "VnfRepo": {
-             "vnfRepoPort": "8702",
-             "vnfRepoHost": "10.0.14.1"
-           }
-    },
-    "override_attributes": {
-        "FE": {
-            "http_port": "8181",
-            "https_port": "9443"
-        },
-        "BE": {
-            "http_port": "8080",
-            "https_port": "8443"
-        },
-        "ONBOARDING_BE": {
-            "http_port": "8081",
-            "https_port": "8445",
-            "catalog_notification_url": "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/"
-        },
-        "elasticsearch": {
-            "cluster_name": "SDC-ES-",
-            "ES_path_home": "/usr/share/elasticsearch",
-            "ES_path_data": "/usr/share/elasticsearch/data",
-            "num_of_replicas": "0",
-            "num_of_shards": "1"
-        },
-
-        "cassandra": {
-            "cassandra_port": 9042,
-            "concurrent_reads": "32",
-            "num_tokens": "256",
-            "data_dir": "/var/lib/cassandra/data",
-            "hinted_handoff_enabled": "true",
-            "cassandra_user": "asdc_user",
-            "cassandra_password": "Aa1234%^!",
-            "concurrent_writes": "32",
-            "cluster_name": "SDC-CS",
-            "datacenter_name": "SDC-CS",
-            "multithreaded_compaction": "false",
-            "cache_dir": "/var/lib/cassandra/saved_caches",
-            "log_file": "/var/lib/cassandra/log/system.log",
-            "phi_convict_threshold": "8",
-            "commitlog_dir": "/var/lib/cassandra/commitlog",
-            "socket_read_timeout": "20000",
-            "socket_connect_timeout": "20000",
-            "titan_connection_timeout": "10000",
-            "replication_factor": "1"
-        }
-    }
+      "KB":            "yyy"
+   },
+   "VnfRepo": {
+      "vnfRepoPort": "8702",
+      "vnfRepoHost": "10.0.14.1"
+      }
+   },
+   "override_attributes": {
+      "FE": {
+         "http_port": "8181",
+         "https_port": "9443"
+      },
+      "BE": {
+         "http_port": "8080",
+         "https_port": "8443"
+      },
+      "ONBOARDING_BE": {
+         "http_port": "8081",
+         "https_port": "8445",
+         "catalog_notification_url": "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/"
+      },
+      "elasticsearch": {
+         "cluster_name": "SDC-ES-",
+         "ES_path_home": "/usr/share/elasticsearch",
+         "ES_path_data": "/usr/share/elasticsearch/data",
+         "num_of_replicas": "0",
+         "num_of_shards": "1"
+      },
+      "cassandra": {
+         "cassandra_port": 9042,
+         "concurrent_reads": "32",
+         "num_tokens": "256",
+         "data_dir": "/var/lib/cassandra/data",
+         "hinted_handoff_enabled": "true",
+         "cassandra_user": "asdc_user",
+         "cassandra_password": "Aa1234%^!",
+         "concurrent_writes": "32",
+         "cluster_name": "SDC-CS",
+         "datacenter_name": "SDC-CS",
+         "multithreaded_compaction": "false",
+         "cache_dir": "/var/lib/cassandra/saved_caches",
+         "log_file": "/var/lib/cassandra/log/system.log",
+         "phi_convict_threshold": "8",
+         "commitlog_dir": "/var/lib/cassandra/commitlog",
+         "socket_read_timeout": "20000",
+         "socket_connect_timeout": "20000",
+         "titan_connection_timeout": "10000",
+         "replication_factor": "1"
+         }
+      }
 }
 
