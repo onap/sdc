@@ -16,11 +16,14 @@
 
 package org.openecomp.sdc.be.components.utils;
 
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -38,8 +43,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 public class PropertiesUtils {
 
@@ -53,15 +56,32 @@ public class PropertiesUtils {
             properties = new ArrayList<>();
         }
         Set<PropertyDefinition> serviceProperties = new HashSet<>(properties);
-        if (service.getInputs() != null) {
-            Set<PropertyDefinition> inputs = service.getInputs().stream().map(PropertyDefinition::new)
-                                                    .collect(Collectors.toSet());
-            serviceProperties.addAll(inputs);
-        }
-        serviceProperties =
-                serviceProperties.stream().filter(distinctByKey(PropertyDefinition::getName)).collect(Collectors.toSet());
+        SetUtils.emptyIfNull(serviceProperties)
+                .forEach(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition,
+                        service.getInputs()));
+        Set<PropertyDefinition> inputs = ListUtils.emptyIfNull(service.getInputs()).stream()
+                        .map(PropertyDefinition::new)
+                        .collect(Collectors.toSet());
+        serviceProperties.addAll(inputs);
+        serviceProperties = serviceProperties.stream()
+                .filter(distinctByKey(PropertyDefinition::getName))
+                .collect(Collectors.toSet());
         return new ArrayList<>(serviceProperties);
     }
+
+    public static PropertyDefinition resolvePropertyValueFromInput(PropertyDefinition propertyDefinition,
+                                                                   List<InputDefinition> componentInputs) {
+        if (Objects.isNull(propertyDefinition) || CollectionUtils.isEmpty(componentInputs)) {
+            return propertyDefinition;
+        }
+        Optional<InputDefinition> mappedInput = componentInputs.stream()
+                .filter(componentInput -> Objects.nonNull(componentInput.getPropertyId())
+                        && componentInput.getPropertyId().equals(propertyDefinition.getUniqueId()))
+                .findFirst();
+        mappedInput.ifPresent(inputDefinition -> propertyDefinition.setValue(inputDefinition.getValue()));
+        return propertyDefinition;
+    }
+
 
     public static Optional<ComponentInstanceProperty> isCapabilityProperty(String propertyUniqueId,
                                                Component containerComponent) {
