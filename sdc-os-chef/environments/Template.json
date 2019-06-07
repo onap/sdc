@@ -14,7 +14,8 @@
         "KB_VIP": "yyy",
         "DCAE_BE_VIP": "yyy",
         "DCAE_FE_VIP": "yyy",
-        "interfaces": {
+        "DCAE_TOSCA_LAB_VIP": "yyy",
+	"interfaces": {
             "application": "eth0",
             "private": "eth1"
         },
