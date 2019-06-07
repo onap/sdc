@@ -16,178 +16,181 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.asdctool.main;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.asdctool.impl.GraphJsonValidator;
 import org.openecomp.sdc.asdctool.impl.GraphMLConverter;
 import org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer;
 
 public class ExportImportMenu {
 
-	private static void usageAndExit() {
-		exportUsage();
-		importUsage();
-		exportUsersUsage();
-		validateJsonUsage();
+	enum ExportImportEnum {
+		DATA_REPORT("Usage: get-data-report-from-graph-ml <full path of .graphml file>", "get-data-report-from-graph-ml"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 2)) {
+					usage();
+					System.exit(1);
+				}
+				String[] dataArgs = new String[] { args[1] };
+				if (new GraphMLDataAnalyzer().analyzeGraphMLData(dataArgs) == null) {
+					System.exit(2);
+				}
+			}
+		},
+		EXPORT("Usage: export <janusgraph.properties> <output directory>", "export"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
 
-		System.exit(1);
-	}
+				if (!GRAPH_ML_CONVERTER.exportGraph(args)) {
+					System.exit(2);
+				}
+			}
+		},EXPORT_AS_GRAPH("Usage: export-as-graph-ml <janusgraph.properties> <output directory>", "export-as-graph-ml"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
+				if (GRAPH_ML_CONVERTER.exportGraphMl(args) == null) {
+					System.exit(2);
+				}
+			}
+		},EXPORT_USERS("Usage: exportusers <janusgraph.properties> <output directory>", "exportusers"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
+				if (!GRAPH_ML_CONVERTER.exportUsers(args)) {
+					System.exit(2);
+				}
+			}
+		},EXPORT_WITH_REPORT("Usage: export-as-graph-ml-with-data-report <janusgraph.properties> <output directory>", "export-as-graph-ml-with-data-report"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
+				if (GRAPH_ML_CONVERTER.exportGraphMl(args) == null) {
+					System.exit(2);
+				}
+				String[] dataArgs = new String[] {GRAPH_ML_CONVERTER.exportGraphMl(args)};
+				if (new GraphMLDataAnalyzer().analyzeGraphMLData(dataArgs) == null) {
+					System.exit(2);
+				}
+			}
+		},FIND_PROBLEM("Usage: findproblem <janusgraph.properties> <graph file location>", "findproblem"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
+				if (!GRAPH_ML_CONVERTER.findErrorInJsonGraph(args)) {
+					System.exit(2);
+				}
+			}
+		},IMPORT("Usage: import <janusgraph.properties> <graph file location>", "import"){
+			@Override
+			void handle(String[] args) {
+				if (verifyParamsLength(args, 3)) {
+					usage();
+					System.exit(1);
+				}
+				if (!GRAPH_ML_CONVERTER.importGraph(args)) {
+					System.exit(2);
+				}
+			}
+		},VALIDATE_JSON("Usage: validate-json <export graph path>", "validate-json"){
+			@Override
+			void handle(String[] args) throws IOException {
+				if (verifyParamsLength(args, 2)) {
+					usage();
+					System.exit(1);
+				}
+				String jsonFilePath = args[1];
+				GraphJsonValidator graphJsonValidator = new GraphJsonValidator();
+				if (graphJsonValidator.verifyJanusGraphJson(jsonFilePath)) {
+					System.exit(2);
+				}
+			}
+		},NONE{
+			@Override
+			void handle(String[] args) {
+				usage();
+				System.exit(1);
+			}
 
-	private static void importUsage() {
-		System.out.println("Usage: import <janusgraph.properties> <graph file location>");
-	}
+			void usage(){
+				Arrays.stream(ExportImportEnum.values()).filter(type -> type != NONE).forEach(ExportImportEnum::usage);
+			}
+		};
 
-	private static void validateJsonUsage() {
-		System.out.println("Usage: validate-json <export graph path>");
-	}
+		private static final GraphMLConverter GRAPH_ML_CONVERTER = new GraphMLConverter();
+		private String usage;
+		private String keyword;
 
-	private static void exportUsage() {
-		System.out.println("Usage: export <janusgraph.properties> <output directory>");
-	}
+		ExportImportEnum(String usage, String keyword) {
+			this.usage = usage;
+			this.keyword = keyword;
+		}
 
-	private static void dataReportUsage() {
-		System.out.println("Usage: get-data-report-from-graph-ml <full path of .graphml file>");
-	}
+		ExportImportEnum() {}
 
-	private static void exportUsersUsage() {
-		System.out.println("Usage: exportusers <janusgraph.properties> <output directory>");
+		void usage(){
+			System.out.println(usage);
+		}
+
+		static ExportImportEnum getByKeyword(String keyword) {
+			List<ExportImportEnum> collected = Arrays.stream(ExportImportEnum.values())
+				.filter(type -> type != NONE)
+				.filter(type -> type.keyword.equals(keyword))
+				.collect(Collectors.toList());
+			return collected.isEmpty() ? NONE : collected.get(0);
+		}
+
+		abstract void handle(String[] args) throws IOException;
+
+		private static boolean verifyParamsLength(String[] args, int i) {
+			if (args == null) {
+				return i > 0;
+			}
+			return args.length < i;
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
-
+		ExportImportEnum type;
 		if (args == null || args.length < 1) {
-			usageAndExit();
+			type = ExportImportEnum.NONE;
+		}else{
+			type = ExportImportEnum.getByKeyword(getOperation(args).toLowerCase());
 		}
-
-		String operation = args[0];
-		GraphMLConverter graphMLConverter = new GraphMLConverter();
-		switch (operation.toLowerCase()) {
-
-		case "export":
-			boolean isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				exportUsage();
-				System.exit(1);
-			}
-
-			boolean result = graphMLConverter.exportGraph(args);
-			if (result == false) {
-				System.exit(2);
-			}
-
-			break;
-		case "import":
-			isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				importUsage();
-				System.exit(1);
-			}
-			result = graphMLConverter.importGraph(args);
-			if (result == false) {
-				System.exit(2);
-			}
-			break;
-
-		case "exportusers":
-			isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				importUsage();
-				System.exit(1);
-			}
-			result = graphMLConverter.exportUsers(args);
-			if (result == false) {
-				System.exit(2);
-			}
-			break;
-
-		case "findproblem":
-			isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				importUsage();
-				System.exit(1);
-			}
-			result = graphMLConverter.findErrorInJsonGraph(args);
-			if (result == false) {
-				System.exit(2);
-			}
-			break;
-		case "validate-json":
-			String jsonFilePath = validateAndGetJsonFilePath(args);
-			GraphJsonValidator graphJsonValidator = new GraphJsonValidator();
-			if (graphJsonValidator.verifyJanusGraphJson(jsonFilePath)) {
-				System.exit(2);
-			}
-			break;
-
-		case "export-as-graph-ml":
-			isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				exportUsage();
-				System.exit(1);
-			}
-			String mlFile = graphMLConverter.exportGraphMl(args);
-			if (mlFile == null) {
-				System.exit(2);
-			}
-			break;
-		case "export-as-graph-ml-with-data-report":
-			isValid = verifyParamsLength(args, 3);
-			if (false == isValid) {
-				exportUsage();
-				System.exit(1);
-			}
-			mlFile = graphMLConverter.exportGraphMl(args);
-			if (mlFile == null) {
-				System.exit(2);
-			}
-			String[] dataArgs = new String[] { mlFile };
-			mlFile = new GraphMLDataAnalyzer().analyzeGraphMLData(dataArgs);
-			if (mlFile == null) {
-				System.exit(2);
-			}
-			break;
-		case "get-data-report-from-graph-ml":
-			isValid = verifyParamsLength(args, 2);
-			if (false == isValid) {
-				dataReportUsage();
-				System.exit(1);
-			}
-			dataArgs = new String[] { args[1] };
-			mlFile = new GraphMLDataAnalyzer().analyzeGraphMLData(dataArgs);
-			if (mlFile == null) {
-				System.exit(2);
-			}
-			break;
-		default:
-			usageAndExit();
-		}
-
+		type.handle(args);
 	}
 
-	private static String validateAndGetJsonFilePath(String[] args) {
-		boolean isValid;
-		isValid = verifyParamsLength(args, 2);
-		if (!isValid) {
-            validateJsonUsage();
-            System.exit(1);
-        }
-        return args[1];
-	}
-
-	private static boolean verifyParamsLength(String[] args, int i) {
-		if (args == null) {
-			if (i > 0) {
-				return false;
-			}
-			return true;
+	private static String getOperation(String[] args) {
+		String operation = null;
+		if (args != null) {
+			operation = args[0];
 		}
-
-		if (args.length >= i) {
-			return true;
-		}
-		return false;
+		return operation;
 	}
 
 }
