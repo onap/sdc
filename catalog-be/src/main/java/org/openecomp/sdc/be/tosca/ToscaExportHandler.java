@@ -75,12 +75,12 @@ import java.util.stream.Collectors;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.resolvePropertyValueFromInput;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceDefinitionElement;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
 import static org.openecomp.sdc.be.tosca.utils.ToscaExportUtils.addInputsToProperties;
 import static org.openecomp.sdc.be.tosca.utils.ToscaExportUtils.getProxyNodeTypeInterfaces;
 import static org.openecomp.sdc.be.tosca.utils.ToscaExportUtils.getProxyNodeTypeProperties;
-import static org.openecomp.sdc.be.tosca.utils.ToscaExportUtils.resolvePropertyDefaultValueFromInput;
 
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {
@@ -562,15 +562,15 @@ public class ToscaExportHandler {
 
         if(CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
-            Map<String, ToscaProperty> convertedProperties = properties.stream().collect(Collectors.toMap(
-                    PropertyDataDefinition::getName,
-                    property -> propertyConvertor.convertProperty(dataTypes, property,
-                            PropertyConvertor.PropertyType.PROPERTY)));
+            Map<String, ToscaProperty> convertedProperties = properties.stream()
+                    .map(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition, component.getInputs()))
+                    .collect(Collectors.toMap(PropertyDataDefinition::getName,
+                            property -> propertyConvertor.convertProperty(dataTypes, property,
+                                    PropertyConvertor.PropertyType.PROPERTY)));
             // merge component properties and inputs properties
             mergedProperties.putAll(convertedProperties);
         }
         if (MapUtils.isNotEmpty(mergedProperties)) {
-            resolvePropertyDefaultValueFromInput(inputDef, mergedProperties, dataTypes);
             toscaNodeType.setProperties(mergedProperties);
         }
         // Extracted to method for code reuse
@@ -680,14 +680,14 @@ public class ToscaExportHandler {
                 addPropertiesOfParentComponent(dataTypes, originalComponent, props);
             }
 
-            if (null != componentInstancesProperties && componentInstancesProperties.containsKey(instanceUniqueId)
-                    && !isComponentOfTypeServiceProxy(componentInstance)) {
-                addPropertiesOfComponentInstance(componentInstancesProperties, dataTypes,
-                        instanceUniqueId, props);
+            if (null != componentInstancesProperties && componentInstancesProperties.containsKey(instanceUniqueId)) {
+                addPropertiesOfComponentInstance(componentInstancesProperties, dataTypes, instanceUniqueId,
+                        props);
             }
 
             if (componentInstancesInputs != null && componentInstancesInputs.containsKey(instanceUniqueId)
                     && !isComponentOfTypeServiceProxy(componentInstance)) {
+                //For service proxy the inputs are already handled under instance properties above
                 addComponentInstanceInputs(dataTypes, componentInstancesInputs, instanceUniqueId,
                         props);
             }
