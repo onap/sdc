@@ -88,46 +88,6 @@ public class ToscaExportUtilsTest {
     }
 
     @Test
-    public void testResolvePropertyDefaultValueFromInputNoInputs() {
-        Component service = getTestComponent();
-        service.setProperties(Collections.singletonList(createMockProperty("componentPropStr", null)));
-        Optional<Map<String, ToscaProperty>> properties = ToscaExportUtils.getProxyNodeTypeProperties(service,
-                dataTypes);
-        Assert.assertTrue(properties.isPresent());
-        Map<String, ToscaProperty> nodeTypeProperties = properties.get();
-        ToscaExportUtils.resolvePropertyDefaultValueFromInput(null, nodeTypeProperties, dataTypes);
-        nodeTypeProperties.values().forEach(val -> Assert.assertNull(val.getDefaultp()));
-    }
-
-    @Test
-    public void testResolvePropertyDefaultValueFromInput() {
-        Component service = getTestComponent();
-        service.setProperties(Arrays.asList(createMockProperty("componentPropStr1", "{get_input: componentInputStr1}"),
-                createMockProperty("componentPropStr2", "Default prop value"),
-                createMockProperty("componentPropStr3", null)));
-        Optional<Map<String, ToscaProperty>> properties = ToscaExportUtils.getProxyNodeTypeProperties(service,
-                dataTypes);
-        Assert.assertTrue(properties.isPresent());
-        Map<String, ToscaProperty> nodeTypeProperties = properties.get();
-        List<InputDefinition> componentInputs = Arrays.asList(createMockInput("componentInputStr1",
-                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2"));
-        ToscaExportUtils.resolvePropertyDefaultValueFromInput(componentInputs, nodeTypeProperties, dataTypes);
-        nodeTypeProperties.entrySet().stream()
-                .filter(entry -> entry.getKey().equals("componentPropStr1"))
-                .forEach(entry -> Assert.assertEquals("Default String Input1",
-                        entry.getValue().getDefaultp().toString()));
-
-        nodeTypeProperties.entrySet().stream()
-                .filter(entry -> entry.getKey().equals("componentPropStr2"))
-                .forEach(entry -> Assert.assertEquals("Default prop value",
-                        entry.getValue().getDefaultp().toString()));
-
-        nodeTypeProperties.entrySet().stream()
-                .filter(entry -> entry.getKey().equals("componentPropStr3"))
-                .forEach(entry -> Assert.assertNull(entry.getValue().getDefaultp()));
-    }
-
-    @Test
     public void testAddInputsToPropertiesNoInputs() {
         Component service = getTestComponent();
         service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
