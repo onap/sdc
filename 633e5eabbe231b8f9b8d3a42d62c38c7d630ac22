@@ -22,6 +22,30 @@
       "revId": "633e5eabbe231b8f9b8d3a42d62c38c7d630ac22",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f209512f_418dc3d4",
+        "filename": "sdc-os-chef/environments/Template.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 3949
+      },
+      "writtenOn": "2019-06-07T11:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3604974f_cf3f5e20",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 1
+      },
+      "revId": "633e5eabbe231b8f9b8d3a42d62c38c7d630ac22",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
