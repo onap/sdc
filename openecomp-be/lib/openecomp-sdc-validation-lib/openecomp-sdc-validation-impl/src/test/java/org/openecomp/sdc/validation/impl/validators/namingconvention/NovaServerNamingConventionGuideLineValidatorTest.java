@@ -73,8 +73,20 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   }
 
   @Test
-  public void testNovaImageAndFlavorNames() {
+  public void testNovaImageAndFlavorNamesEmptyProperties() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+            resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
+            PATH + "heatNovaServerImageAndFlavor/negativeEmptyProperties");
+    Assert.assertNotNull(messages);
+    Assert.assertEquals(1, messages.size());
+    Assert.assertEquals(1, messages.get("first.yaml").getErrorMessageList().size());
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+            "WARNING: [NNS13]: Server 'image' Parameter Name not aligned with Guidelines, Parameter Name [fsb2-image], Resource ID [FSB3]. As a result, VF/VFC Profile may miss this information");
+  }
+
+    @Test
+    public void testNovaImageAndFlavorNames() {
+        Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerImageAndFlavor/positive");
     Assert.assertNotNull(messages);

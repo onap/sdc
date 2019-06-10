@@ -154,6 +154,9 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                            Map<String, String> uniqueResourcePortNetworkRole,
                                                            HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                            GlobalValidationContext globalValidationContext) {
+      if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources().get(resourceId).getProperties())) {
+          return;
+      }
     Object propertyNetworkValue =
             heatOrchestrationTemplate.getResources().get(resourceId).getProperties().get("networks");
     if (propertyNetworkValue != null && propertyNetworkValue instanceof List) {
@@ -320,15 +323,16 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
   private Map<String, String> validateImageAndFlavorFromNovaServer(String fileName,
                                                                    Map.Entry<String, Resource> resourceEntry,
                                                                    GlobalValidationContext globalContext) {
+      Map<String, String> imageAndFlavorLegalNames = new HashMap<>();
+
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      return null;
+      return imageAndFlavorLegalNames;
     }
 
     Pair<String, String> imagePair = new ImmutablePair<>("image", ".*_image_name");
     Pair<String, String> flavorPair = new ImmutablePair<>("flavor", ".*_flavor_name");
     List<Pair<String, String>> imageFlavorPairs = Arrays.asList(imagePair, flavorPair);
     Map<String, Object> propertiesMap = resourceEntry.getValue().getProperties();
-    Map<String, String> imageAndFlavorLegalNames = new HashMap<>();
 
     for (Pair<String, String> imageOrFlavor : imageFlavorPairs) {
       boolean isErrorInImageOrFlavor =
