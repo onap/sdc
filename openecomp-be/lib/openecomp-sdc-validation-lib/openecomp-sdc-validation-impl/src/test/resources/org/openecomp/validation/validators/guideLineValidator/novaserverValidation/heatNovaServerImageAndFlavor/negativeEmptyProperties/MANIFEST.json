@@ -1,0 +1,14 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "file": "first.yaml",
+      "type": "HEAT",
+      "isBase": true,
+      "data": [
+       ]
+    }
+  ]
+}
