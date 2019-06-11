@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
@@ -82,7 +82,7 @@ public class CsarInfoTest {
             csarInfo.addNodeToQueue(NEW_NODE_NAME);
             csarInfo.addNodeToQueue(NEW_NODE_NAME);
             fail("AddNodeToQueue not throw the exception!");
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             List<String> expectParam = Arrays.asList(NEW_NODE_NAME, RESOURCE_NAME);
 
             // then
