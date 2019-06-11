@@ -40,11 +40,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.common.util.ZipUtil;
+import org.openecomp.sdc.ZipUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CsarInfoTest {
@@ -55,7 +55,7 @@ public class CsarInfoTest {
     private User user;
 
     private static final String CSAR_UUID = "csarUUID";
-    private static final String PAYLOAD_NAME = "mock_service.csar";
+    private static final String PAYLOAD_NAME = "/mock_service.csar";
     private static final String RESOURCE_NAME = "resourceName";
     private static final String MAIN_TEMPLATE_NAME = "Definitions/tosca_mock_vf.yaml";
 
@@ -67,11 +67,11 @@ public class CsarInfoTest {
     public void setup() throws IOException, URISyntaxException {
 
         // given
-        Map<String, byte[]> payload = loadPayload(PAYLOAD_NAME);
-        String main_template_content = new String(payload.get(MAIN_TEMPLATE_NAME));
+        Map<String, byte[]> payload = ZipUtil.readData(PAYLOAD_NAME);
+        String mainTemplateContent = new String(payload.get(MAIN_TEMPLATE_NAME));
 
         csarInfo = new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
-                MAIN_TEMPLATE_NAME, main_template_content, true);
+                MAIN_TEMPLATE_NAME, mainTemplateContent, true);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class CsarInfoTest {
             csarInfo.addNodeToQueue(NEW_NODE_NAME);
             csarInfo.addNodeToQueue(NEW_NODE_NAME);
             fail("AddNodeToQueue not throw the exception!");
-        } catch (ComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             List<String> expectParam = Arrays.asList(NEW_NODE_NAME, RESOURCE_NAME);
 
             // then
@@ -114,13 +114,5 @@ public class CsarInfoTest {
 
         assertEquals(MAIN_TEMPLATE_NAME, csarInfo.getMainTemplateName());
         assertEquals(csarInfo.getMainTemplateName(), nodeTypeInfo.getTemplateFileName());
-    }
-
-    private Map<String, byte[]> loadPayload(String payloadName) throws IOException, URISyntaxException {
-
-        Path path = Paths.get(getClass().getResource("/" + payloadName).toURI());
-        byte[] data = Files.readAllBytes(path);
-
-        return ZipUtil.readZip(data);
     }
 }
