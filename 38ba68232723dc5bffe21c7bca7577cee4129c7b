@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "139f409c_fa9edee9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-06-11T10:41:30Z",
+      "side": 1,
+      "message": "Yes exactly, I saw it before and I done similar commit 89675 :)",
+      "revId": "38ba68232723dc5bffe21c7bca7577cee4129c7b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
