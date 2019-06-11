@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -56,7 +57,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +125,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   @Override
   public Response get(String vspId, String versionId, String user) throws IOException {
     Optional<Pair<String, byte[]>> zipFile = candidateManager.get(vspId, new Version(versionId));
-    String fileName = null;
+    String fileName;
     if (zipFile.isPresent()) {
       fileName = "Candidate." + zipFile.get().getLeft();
     } else {
@@ -147,14 +147,13 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   }
 
   @Override
-  public Response abort(String vspId, String versionId) throws Exception {
+  public Response abort(String vspId, String versionId) {
     candidateManager.abort(vspId, new Version(versionId));
     return Response.ok().build();
   }
 
   @Override
-  public Response process(String vspId, String versionId, String user)
-      throws InvocationTargetException, IllegalAccessException {
+  public Response process(String vspId, String versionId, String user) {
 
     Version version = new Version(versionId);
     OrchestrationTemplateActionResponse response = candidateManager.process(vspId, version);
@@ -162,27 +161,17 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     activityLogManager.logActivity(new ActivityLogEntity(vspId, version,
             ActivityType.Upload_Network_Package, user, true, "", ""));
 
-    OrchestrationTemplateActionResponseDto responseDto =
-        new OrchestrationTemplateActionResponseDto();
-    BeanUtils.copyProperties(responseDto, response);
+    OrchestrationTemplateActionResponseDto responseDto = copyOrchestrationTemplateActionResponseToDto(response);
 
     return Response.ok(responseDto).build();
   }
 
   @Override
   public Response updateFilesDataStructure(
-      String vspId, String versionId, FileDataStructureDto fileDataStructureDto, String user)
-      throws Exception {
+      String vspId, String versionId, FileDataStructureDto fileDataStructureDto, String user) {
 
-    FilesDataStructure fileDataStructure = new FilesDataStructure();
-    try {
-      BeanUtils.copyProperties(fileDataStructure, fileDataStructureDto);
-    } catch (IllegalAccessException | InvocationTargetException exception) {
-      String errorWithParameters = ErrorMessagesFormatBuilder
-          .getErrorWithParameters(Messages.MAPPING_OBJECTS_FAILURE.getErrorMessage(),
-              fileDataStructureDto.toString(), fileDataStructure.toString());
-      throw new OrchestrationTemplateCandidateException(errorWithParameters, exception);
-    }
+    FilesDataStructure fileDataStructure = copyFilesDataStructureDtoToFilesDataStructure(fileDataStructureDto);
+
     ValidationResponse response = candidateManager
         .updateFilesDataStructure(vspId, new Version(versionId), fileDataStructure);
 
@@ -195,8 +184,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   }
 
   @Override
-  public Response getFilesDataStructure(String vspId, String versionId, String user)
-      throws Exception {
+  public Response getFilesDataStructure(String vspId, String versionId, String user) {
     Optional<FilesDataStructure> filesDataStructure =
         candidateManager.getFilesDataStructure(vspId, new Version(versionId));
     if (!filesDataStructure.isPresent()) {
@@ -209,6 +197,23 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             .applyMapping(dataStructure, FileDataStructureDto.class))
             .orElse(new FileDataStructureDto());
     return Response.ok(fileDataStructureDto).build();
+  }
+
+  private OrchestrationTemplateActionResponseDto copyOrchestrationTemplateActionResponseToDto(OrchestrationTemplateActionResponse response){
+    OrchestrationTemplateActionResponseDto result = new OrchestrationTemplateActionResponseDto();
+    result.setErrors(response.getErrors());
+    result.setFileNames(response.getFileNames());
+    result.setStatus(response.getStatus());
+    return result;
+  }
+
+  private FilesDataStructure copyFilesDataStructureDtoToFilesDataStructure(FileDataStructureDto fileDataStructureDto){
+    FilesDataStructure filesDataStructure = new FilesDataStructure();
+    filesDataStructure.setArtifacts(fileDataStructureDto.getArtifacts());
+    filesDataStructure.setModules(fileDataStructureDto.getModules());
+    filesDataStructure.setNested(fileDataStructureDto.getNested());
+    filesDataStructure.setUnassigned(fileDataStructureDto.getUnassigned());
+    return filesDataStructure;
   }
 
 }

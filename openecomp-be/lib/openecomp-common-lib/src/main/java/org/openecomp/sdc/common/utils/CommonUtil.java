@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.common.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Multimap;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -176,27 +177,7 @@ public class CommonUtil {
   public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
                                                          Class<T> classToCreate)
       throws Exception {
-    if (Objects.isNull(objectCandidate)) {
-      return Optional.empty();
-    }
-
-    Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
-    T result = classToCreate.newInstance();
-
-    Field[] declaredFields = classToCreate.getDeclaredFields();
-    for( Field field : declaredFields){
-      if(isComplexClass(field)){
-        Optional<?> objectUsingSetters =
-            createObjectUsingSetters(objectAsMap.get(field.getName()), field.getType());
-        if( objectUsingSetters.isPresent()){
-          objectAsMap.remove(field.getName());
-          objectAsMap.put(field.getName(), objectUsingSetters.get());
-        }
-      }
-    }
-    BeanUtils.populate(result, objectAsMap);
-
-    return Optional.of(result);
+    return org.onap.sdc.tosca.services.CommonUtil.createObjectUsingSetters(objectCandidate, classToCreate);
   }
 
   private static boolean isComplexClass(Field field) {
@@ -211,15 +192,7 @@ public class CommonUtil {
   }
 
   public static Map<String, Object> getObjectAsMap(Object obj) {
-    Map<String, Object> objectAsMap = obj instanceof Map ? (Map<String, Object>) obj
-        : new ObjectMapper().convertValue(obj, Map.class);
-
-    if (objectAsMap.containsKey(DEFAULT)) {
-      Object defaultValue = objectAsMap.get(DEFAULT);
-      objectAsMap.remove(DEFAULT);
-      objectAsMap.put(_DEFAULT, defaultValue);
-    }
-    return objectAsMap;
+    return org.onap.sdc.tosca.services.CommonUtil.getObjectAsMap(obj);
   }
 
     public static <K, V> boolean isMultimapEmpty(Multimap<K, V> obj) {

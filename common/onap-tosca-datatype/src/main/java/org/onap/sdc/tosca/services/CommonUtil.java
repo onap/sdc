@@ -12,12 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
-
 package org.onap.sdc.tosca.services;
 
-
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -25,10 +27,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import org.apache.commons.beanutils.BeanUtils;
 import com.google.common.collect.ImmutableSet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.beanutils.BeanUtils;
 
 public class CommonUtil {
 
@@ -47,9 +49,16 @@ public class CommonUtil {
             return Optional.empty();
         }
         Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
-        T result = classToCreate.newInstance();
 
         Field[] declaredFields = classToCreate.getDeclaredFields();
+        createSubObjectsUsingSetters(objectAsMap, declaredFields);
+        T result = populateBean(objectAsMap, classToCreate);
+
+        return Optional.of(result);
+    }
+
+    public static void createSubObjectsUsingSetters(Map<String, Object> objectAsMap, Field[] declaredFields)
+        throws Exception {
         for (Field field : declaredFields) {
             if (isComplexClass(field)) {
                 Optional<?> objectUsingSetters =
@@ -60,9 +69,13 @@ public class CommonUtil {
                 }
             }
         }
-        BeanUtils.populate(result, objectAsMap);
+    }
 
-        return Optional.of(result);
+    public static <T> T populateBean(Map<String, Object> propertiesMap, Class<T> classToCreate)
+        throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        T result = classToCreate.newInstance();
+        BeanUtils.populate(result, propertiesMap);
+        return result;
     }
 
     public static Map<String, Object> getObjectAsMap(Object obj) {

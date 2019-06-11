@@ -49,6 +49,8 @@ Modifications copyright (c) 2018 Nokia
         <ecomp.version>2.4.0</ecomp.version>
         <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
         <lombok.version>1.18.2</lombok.version>
+        <commons-beanutils>1.9.3</commons-beanutils>
+        <commons-configuration>2.3</commons-configuration>
 
         <commons.collections.version>4.1</commons.collections.version>
 
