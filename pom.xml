@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ============LICENSE_END=========================================================
-Modifications copyright (c) 2018 Nokia
+Modifications copyright (c) 2018-2019 Nokia
 ================================================================================
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -56,7 +56,7 @@ Modifications copyright (c) 2018 Nokia
         <elastic-search.version>2.4.0</elastic-search.version>
         <catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
         <catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
-        <jetty.version>9.4.11.v20180605</jetty.version>
+        <jetty.version>9.4.18.v20190429</jetty.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.8.10</jackson.version>
