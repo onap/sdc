@@ -22,82 +22,29 @@ package org.openecomp.sdc.notification.types;
 
 import java.util.Map;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class NotificationEntityDto {
-  private boolean read;
-  private UUID eventId;
-  private String dateTime;
-  private String eventType;
-  private Map<String, Object> eventAttributes;
 
-  public NotificationEntityDto() {
-  }
-  public NotificationEntityDto(boolean read, UUID eventId, String eventType,
-                               Map<String, Object> eventAttributes) {
-    this.read = read;
-    this.eventId = eventId;
-    this.eventType = eventType;
-    this.eventAttributes = eventAttributes;
-  }
+    private boolean read;
+    private UUID eventId;
+    private String dateTime;
+    private String eventType;
+    private Map<String, Object> eventAttributes;
 
-  public NotificationEntityDto(boolean read, UUID eventId,String eventType,
-                               Map<String, Object> eventAttributes, String dateTime) {
-    this.read = read;
-    this.eventId = eventId;
-    this.dateTime = dateTime;
-    this.eventType = eventType;
-    this.eventAttributes = eventAttributes;
-  }
-
-  public boolean isRead() {
-    return read;
-  }
-
-  public void setRead(boolean read) {
-    this.read = read;
-  }
-
-  public UUID getEventId() {
-    return eventId;
-  }
-
-  public void setEventId(UUID eventId) {
-    this.eventId = eventId;
-  }
-
-  public String getEventType() {
-    return eventType;
-  }
-
-  public void setEventType(String eventType) {
-    this.eventType = eventType;
-  }
-
-  public Map<String, Object> getEventAttributes() {
-    return eventAttributes;
-  }
-
-  public void setEventAttributes(Map<String, Object> eventAttributes) {
-    this.eventAttributes = eventAttributes;
-  }
-
-  public String getDateTime() {
-    return dateTime;
-  }
-
-  public void setDateTime(String dateTime) {
-    this.dateTime = dateTime;
-  }
-
-  @Override
-  public String toString() {
-    return "NotificationEntityDto {"
-        + ", state='" + (read ? "Read" : "Noread") + '\''
-        + ", dateTime='" + dateTime + '\''
-        + ", eventId='" + eventId + '\''
-        + ", eventType='" + eventType + '\''
-        + ", eventAttributes='" + eventAttributes + '\''
-        + '}';
-  }
-
+    public NotificationEntityDto(boolean read, UUID eventId, String eventType, Map<String, Object> eventAttributes) {
+        this.read = read;
+        this.eventId = eventId;
+        this.eventType = eventType;
+        this.eventAttributes = eventAttributes;
+    }
 }
