@@ -12,16 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.externalupload.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import org.onap.sdc.tosca.services.CommonUtil;
 
 public class ServiceUtils {
 
@@ -38,20 +41,12 @@ public class ServiceUtils {
     }
 
     Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
-    T result = classToCreate.newInstance();
 
     List<Field> declaredFields = getAllFields(classToCreate);
-    for( Field field : declaredFields){
-      if(isComplexClass(field)){
-        Optional<?> objectUsingSetters =
-            createObjectUsingSetters(objectAsMap.get(field.getName()), field.getType());
-        if( objectUsingSetters.isPresent()){
-          objectAsMap.remove(field.getName());
-          objectAsMap.put(field.getName(), objectUsingSetters.get());
-        }
-      }
-    }
-    BeanUtils.populate(result, objectAsMap);
+    declaredFields.toArray(new Field[0]);
+
+    CommonUtil.createSubObjectsUsingSetters(objectAsMap, declaredFields.toArray(new Field[0]));
+    T result = CommonUtil.populateBean(objectAsMap, classToCreate);
 
     return Optional.of(result);
   }
