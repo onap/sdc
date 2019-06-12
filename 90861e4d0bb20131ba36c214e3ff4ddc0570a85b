@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a81d104e_2c659d7f",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/janusgraph.properties.erb",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-06-12T07:15:24Z",
+      "side": 1,
+      "message": "Not renamed?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 35
+      },
+      "revId": "90861e4d0bb20131ba36c214e3ff4ddc0570a85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5cfacd5_0e09deb1",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/DataSchemaMenu.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-06-12T07:15:24Z",
+      "side": 1,
+      "message": "I guess you have tested and verified that this code is reading the new configuration.yaml file with the changes you did.",
+      "range": {
+        "startLine": 67,
+        "startChar": 98,
+        "endLine": 67,
+        "endChar": 118
+      },
+      "revId": "90861e4d0bb20131ba36c214e3ff4ddc0570a85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04c9060a_99acfbe9",
+        "filename": "asdctool/src/main/resources/config/janusgraph.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-06-12T07:15:24Z",
+      "side": 1,
+      "message": "rename or not? what was decided?",
+      "range": {
+        "startLine": 7,
+        "startChar": 27,
+        "endLine": 7,
+        "endChar": 35
+      },
+      "revId": "90861e4d0bb20131ba36c214e3ff4ddc0570a85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e797cc46_e1d2fd74",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-janusgraph.properties.erb",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-06-12T07:15:24Z",
+      "side": 1,
+      "message": "sorry that I am asking this on all places.",
+      "range": {
+        "startLine": 7,
+        "startChar": 27,
+        "endLine": 7,
+        "endChar": 35
+      },
+      "revId": "90861e4d0bb20131ba36c214e3ff4ddc0570a85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "baa70c59_073cf580",
+        "filename": "catalog-be/src/main/resources/config/janusgraph.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 133
+      },
+      "writtenOn": "2019-06-12T07:15:24Z",
+      "side": 1,
+      "message": "Didn\u0027t you change this also?",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "90861e4d0bb20131ba36c214e3ff4ddc0570a85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
