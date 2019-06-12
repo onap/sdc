@@ -68,7 +68,7 @@ public class Config {
 	private String neoDBusername;
 	private String neoDBpassword;
 
-	private String januGraphPropertiesFile;
+	private String janusGraphPropertiesFile;
 	private List<String> packages;
 	private List<String> bugs;
 	private List<String> resourcesNotToDelete;
@@ -498,12 +498,12 @@ public class Config {
 		this.neoDBpassword = neoDBpassword;
 	}
 
-	public String getjanuGraphPropertiesFile() {
-		return januGraphPropertiesFile;
+	public String getjanusGraphPropertiesFile() {
+		return janusGraphPropertiesFile;
 	}
 
-	public void setjanuGraphPropertiesFile(String januGraphPropertiesFile) {
-		this.januGraphPropertiesFile = januGraphPropertiesFile;
+	public void setjanusGraphPropertiesFile(String janusGraphPropertiesFile) {
+		this.janusGraphPropertiesFile = janusGraphPropertiesFile;
 	}
 
 	public List<String> getPackages() {
@@ -640,7 +640,7 @@ public class Config {
 				+ ", importTypesConfigDir=" + importTypesConfigDir + ", testSuites=" + testSuites + ", catalogFeHost="
 				+ catalogFeHost + ", catalogFePort=" + catalogFePort + ", catalogBePort=" + catalogBePort
 				+ ", catalogBeTlsPort=" + catalogBeTlsPort + ", neoDBusername=" + neoDBusername + ", neoDBpassword="
-				+ neoDBpassword + ", januGraphPropertiesFile=" + januGraphPropertiesFile + ", packages=" + packages + ", bugs="
+				+ neoDBpassword + ", janusGraphPropertiesFile=" + janusGraphPropertiesFile + ", packages=" + packages + ", bugs="
 				+ bugs + ", resourcesNotToDelete=" + resourcesNotToDelete + ", resourceCategoriesNotToDelete="
 				+ resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete=" + serviceCategoriesNotToDelete
 				+ ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder=" + outputFolder + ", reportName="
