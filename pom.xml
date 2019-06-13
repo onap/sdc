@@ -208,12 +208,12 @@ Modifications copyright (c) 2018 Nokia
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.0.45.Final</version>
+                <version>4.1.36.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.0.45.Final</version>
+                <version>4.1.36.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.platform</groupId>

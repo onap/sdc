@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockserver.model.HttpCallback.callback;
+import static org.mockserver.model.HttpClassCallback.callback;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.retryMethodOnResult;
@@ -138,7 +138,7 @@ public class StepsTenantIsolationCI {
 	@Given("^MSO Final Distribution Simulator is UP$")
 	public void mso_Final_Distribution_Simulator_is_UP() throws Throwable {
 		msoHttpRequest = request().withPath(MSO_PATH_REGEX);
-		msoMockServer.when(msoHttpRequest).callback(
+		msoMockServer.when(msoHttpRequest).forward(
 				callback().withCallbackClass("org.openecomp.sdc.cucumber.steps.PrecannedTestExpectationCallback"));
 	}
 
