@@ -121,6 +121,7 @@ Modifications copyright (c) 2018 Nokia
 
         <!--cassandra -->
         <cassandra.driver.version>3.0.0</cassandra.driver.version>
+        <libthrift.version>0.12.0</libthrift.version>
         <!-- maven central (Nexus) -->
         <nexus.id.release>nexus</nexus.id.release>
         <nexus.id.snapshot>nexus</nexus.id.snapshot>

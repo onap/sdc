@@ -304,6 +304,10 @@ Modifications copyright (c) 2018 Nokia
 					<groupId>org.apache.cassandra</groupId>
 					<artifactId>cassandra-all</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.thrift</groupId>
+					<artifactId>libthrift</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -311,6 +315,11 @@ Modifications copyright (c) 2018 Nokia
 			<artifactId>cassandra-all</artifactId>
 			<version>3.11.3</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.thrift</groupId>
+			<artifactId>libthrift</artifactId>
+			<version>${libthrift.version}</version>
 		</dependency>
 		<!-- CASSANDRA END -->
 
