@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c55e173_f58ddf34",
+        "filename": "asdctool/test-dir/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-06-13T08:24:45Z",
+      "side": 0,
+      "message": "This \"titanX\" can cause a problem, now onap use the janusGraph.",
+      "revId": "6a000e1f45c851ac81debe326e1f1e931987612e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
