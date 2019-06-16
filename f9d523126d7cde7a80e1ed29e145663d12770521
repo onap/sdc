@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca1fc245_e9221613",
+        "filename": "asdctool/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-16T05:51:35Z",
+      "side": 1,
+      "message": "dependencies versions should be in properties.",
+      "revId": "f9d523126d7cde7a80e1ed29e145663d12770521",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
