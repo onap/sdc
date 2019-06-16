@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e6bc4b7_bd098377",
+        "filename": "common/onap-tosca-datatype/src/test/java/org/onap/sdc/tosca/services/TestModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-06-16T13:15:25Z",
+      "side": 1,
+      "message": "please add member with type which is another object/class",
+      "range": {
+        "startLine": 31,
+        "startChar": 25,
+        "endLine": 31,
+        "endChar": 26
+      },
+      "revId": "b836d3492984e8c751f00b200d24eb07da792c75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0bb2a461_7cde31d7",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/utils/CommonUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-06-16T13:15:25Z",
+      "side": 1,
+      "message": "There is handle of complex member which was removed, this need to be tested, in the test there is one example with object with simple types, we need to make sure that object with member which is object is still working after removing the handle here\n\nsee if(isComplexClass(field)) -  which was removed",
+      "range": {
+        "startLine": 180,
+        "startChar": 10,
+        "endLine": 180,
+        "endChar": 11
+      },
+      "revId": "b836d3492984e8c751f00b200d24eb07da792c75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42db0115_1c5ac057",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/utils/CommonUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-06-16T13:15:25Z",
+      "side": 1,
+      "message": "the handle of the use case of member with the name DEFAULT was removed. we need to have it back, in TOSCA objects members will have the name DEFAULT which is saved word in JAVA and make problems, therefore we convert it to _DEFAULT",
+      "range": {
+        "startLine": 195,
+        "startChar": 4,
+        "endLine": 195,
+        "endChar": 10
+      },
+      "revId": "b836d3492984e8c751f00b200d24eb07da792c75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
