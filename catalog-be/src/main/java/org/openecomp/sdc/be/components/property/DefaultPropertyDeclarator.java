@@ -133,6 +133,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         policyDefinition.setUniqueId(UniqueIdBuilder.buildPolicyUniqueId(componentId, prop.getName()));
         policyDefinition.setInputPath(prop.getName());
         policyDefinition.setInstanceUniqueId(componentId);
+        policyDefinition.setPropertyId(prop.getUniqueId());
 
         changePropertyValueToGetPolicy(prop, policyDefinition);
         PROPERTYTYPE declaredProperty = createDeclaredProperty(prop);
