@@ -1,4 +1,4 @@
-FROM node:6
+FROM node:8.16.0
 
 
 ENV TESTS_BASE /var/lib/tests
