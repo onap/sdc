@@ -815,6 +815,42 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>false</springmvc>
+                            <schemes>http</schemes>
+                            <basePath>/sdc</basePath>
+                            <locations>io.swagger.jaxrs.json;org.openecomp.sdc.be.externalapi.servlet;org.openecomp.sdc.be.distribution.servlet;org.openecomp.normative.api</locations>
+                            <info>
+                                <title>External Rest API</title>
+                                <version>v1.0</version>
+                                <description>External Rest API Documentation</description>
+                                <termsOfService>
+                                    http://www.github.com/kongchen/swagger-maven-plugin
+                                </termsOfService>
+                            </info>
+                            <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
+                            <outputPath>${basedir}/target/generated/swagger-ui/api.html</outputPath>
+                            <swaggerDirectory>${basedir}/target/generated/swagger-ui
+                            </swaggerDirectory>
+                            <swaggerApiReader>io.swagger.jaxrs.config.DefaultJaxrsConfig</swaggerApiReader>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <pluginManagement>
