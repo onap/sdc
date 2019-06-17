@@ -21,7 +21,11 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class AttributeDefinition implements Cloneable{
 
   private String type;
@@ -34,45 +38,6 @@ public class AttributeDefinition implements Cloneable{
     status = Status.SUPPORTED;
   }
 
-  public EntrySchema getEntry_schema() {
-    return entry_schema;
-  }
-
-  public void setEntry_schema(EntrySchema entry_schema) {
-    this.entry_schema = entry_schema;
-  }
-
-  public Status getStatus() {
-    return status;
-  }
-
-  public void setStatus(Status status) {
-    this.status = status;
-  }
-
-  public Object get_default() {
-    return _default;
-  }
-
-  public void set_default(Object _default) {
-    this._default = _default;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
 
   @Override
   public AttributeDefinition clone() {
