@@ -29,4 +29,14 @@ import lombok.Setter;
 public class TestModel {
     private Integer field1;
     private String field2;
+    private TestModelInternalClass testModelInternalClass;
+
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TestModelInternalClass {
+        private Integer field1;
+        private String field2;
+    }
 }

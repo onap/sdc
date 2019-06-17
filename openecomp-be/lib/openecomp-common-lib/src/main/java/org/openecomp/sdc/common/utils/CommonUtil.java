@@ -167,12 +167,6 @@ public class CommonUtil {
         && fileOrigin.equalsIgnoreCase(OnboardingTypesEnum.ZIP.toString());
   }
 
-  public static Set<String> getClassFieldNames(Class<? extends Object> classType) {
-    Set<String> fieldNames = new HashSet<>();
-    Arrays.stream(classType.getDeclaredFields()).forEach(field -> fieldNames.add(field.getName()));
-
-    return fieldNames;
-  }
 
   public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
                                                          Class<T> classToCreate)
@@ -180,16 +174,6 @@ public class CommonUtil {
     return org.onap.sdc.tosca.services.CommonUtil.createObjectUsingSetters(objectCandidate, classToCreate);
   }
 
-  private static boolean isComplexClass(Field field) {
-    return !field.getType().equals(Map.class)
-        && !field.getType().equals(String.class)
-        && !field.getType().equals(Integer.class)
-        && !field.getType().equals(Float.class)
-        && !field.getType().equals(Double.class)
-        && !field.getType().equals(Set.class)
-        && !field.getType().equals(Object.class)
-        && !field.getType().equals(List.class);
-  }
 
   public static Map<String, Object> getObjectAsMap(Object obj) {
     return org.onap.sdc.tosca.services.CommonUtil.getObjectAsMap(obj);
