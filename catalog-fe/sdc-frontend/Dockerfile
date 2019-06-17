@@ -4,13 +4,11 @@ COPY chef-solo /root/chef-solo/
 
 COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
 
-ADD onboarding*.war         ${JETTY_BASE}/webapps/
+ADD --chown=jetty:jetty onboarding*.war         ${JETTY_BASE}/webapps/
 
-ADD catalog-fe-*.war        ${JETTY_BASE}/webapps/
+ADD --chown=jetty:jetty catalog-fe-*.war        ${JETTY_BASE}/webapps/
 
 USER root
-
-RUN chown -R jetty:jetty    ${JETTY_BASE}/webapps
 
 COPY startup.sh /root/
 
