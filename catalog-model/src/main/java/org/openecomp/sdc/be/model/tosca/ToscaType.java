@@ -163,7 +163,7 @@ public enum ToscaType {
 			case BOOLEAN:
 				return Boolean.valueOf(value);
 			case FLOAT:
-				return Double.valueOf(value);
+				return Float.valueOf(value);
 			case INTEGER:
 				return Long.valueOf(value);
 			case TIMESTAMP:
