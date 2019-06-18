@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04f071ba_e315eb10",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-18T10:07:50Z",
+      "side": 1,
+      "message": "version should be parameters like ${junit-jupiter.version}",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59eeae8c_1da3a49e",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-18T10:07:50Z",
+      "side": 1,
+      "message": "version should be parameter.",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcb4e8e2_2e13cc4d",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-18T10:07:50Z",
+      "side": 1,
+      "message": "version should be a patemeter.",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
