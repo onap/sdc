@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3894fa40_f9d229e7",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-06-18T12:15:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04f071ba_e315eb10",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59eeae8c_1da3a49e",
         "filename": "pom.xml",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1c89d91d_8b81f85b",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-06-18T12:15:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59eeae8c_1da3a49e",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dcb4e8e2_2e13cc4d",
         "filename": "test-apis-ci/pom.xml",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2019-06-18T10:07:50Z",
       "side": 1,
       "message": "version should be a patemeter.",
+      "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0d8d94a_5a8b8fcc",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-06-18T12:15:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcb4e8e2_2e13cc4d",
       "revId": "01457b4ebcfe60d32b5f488f195ee4fafae676d1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
