@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e0c5b3b_9d52f90a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CsarUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5571
+      },
+      "writtenOn": "2019-06-18T08:41:21Z",
+      "side": 1,
+      "message": "This seems like redundant import",
+      "revId": "6dcb20d1bd4f156e0a0467a11d17a13acaa38a16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
