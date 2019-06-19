@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09414ad3_56dc5edd",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/AbstractPropertyConstraintTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-06-19T05:57:02Z",
+      "side": 1,
+      "message": "I have only one open question -\u003e What is the reason for the conversion of Float type to Double inside the convert method ?",
+      "revId": "b57e113c587b3989eb51229f83457d62153d173c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
