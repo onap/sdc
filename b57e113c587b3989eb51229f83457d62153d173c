@@ -16,6 +16,24 @@
       "revId": "b57e113c587b3989eb51229f83457d62153d173c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07c92577_d20e1eac",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/AbstractPropertyConstraintTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5336
+      },
+      "writtenOn": "2019-06-19T14:25:19Z",
+      "side": 1,
+      "message": "That\u0027s a good question :-) Do you think we should change the production code here?",
+      "parentUuid": "09414ad3_56dc5edd",
+      "revId": "b57e113c587b3989eb51229f83457d62153d173c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
