@@ -75,6 +75,7 @@ public class OperationArtifactUtilTest {
         component.setVersion("1.0");
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setToscaComponentName("org.openecomp.resource.vf.TestResource");
+        componentInstance.setComponentVersion("1.0");
         final OperationDataDefinition op = new OperationDataDefinition();
         final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
         implementation.setArtifactName("createBPMN.bpmn");
