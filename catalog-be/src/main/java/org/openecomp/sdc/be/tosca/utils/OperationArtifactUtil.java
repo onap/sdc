@@ -64,7 +64,7 @@ public class OperationArtifactUtil {
             // Service Proxy is only in Node Template interface
             if(componentInstance != null) {
                 return createOperationArtifactPathInService(componentInstance.getToscaComponentName()
-                                                                    + "_v" + component.getVersion(), operation);
+                                                                    + "_v" + componentInstance.getComponentVersion(), operation);
             }
             // Resource Instance is part of Node Type interface
             else {
