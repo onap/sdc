@@ -24,7 +24,7 @@ There are four major components of SDC:
 
 ## Git Configuration
 
-Before cloning the sdc source code it's important to enable long paths on your Windows machine, otherwise git won't be able to handle some files
+Note that if you're working on Windows, it's important to enable long paths for your machine; otherwise git won't be able to handle some files.
 
 In order to do so just add this section to your global git.config file under the `[core]` key:
 
@@ -53,8 +53,9 @@ SDC is built from several projects while the parent "sdc" contains the main pom.
 In order to build all the projects, go to sdc project and run the command: `mvn clean install`
 
 Currently SDC build process also supports docker building.
-In order to build and upload local dockers to a local environment you'll need to define an environment variable on your machine with key: `DOCKER_HOST` and value: `tcp://<ip_address>:2375`
-For the dockers to be built during the build process use the "docker" profile by adding this: `-P docker` to the `mvn clean install` command
+Note that if you're working on Windows, you'll need to define an environment variable on your machine with key `DOCKER_HOST` and value: `tcp://<ip_address>:2375` in order to build and upload local dockers to a local environment.  
+
+For the dockers to be built during the build process use the "docker" profile by adding `-P docker` to the `mvn clean install` command
 
 More flags to use in the build process are:
 * -DskipTests - Skips unit tests execution
