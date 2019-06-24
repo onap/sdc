@@ -70,6 +70,7 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 import fj.data.Either;
 import mockit.Deencapsulation;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
