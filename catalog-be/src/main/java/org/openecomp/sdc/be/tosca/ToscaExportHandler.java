@@ -1324,25 +1324,43 @@ public class ToscaExportHandler {
                    origProperties.isEmpty()) {
             return;
         }
+        Map<String, List<Object>> propertyMapCopy = new HashMap<>();
         for(RequirementNodeFilterPropertyDataDefinition propertyDataDefinition : origProperties.getListToscaDataDefinition()) {
-            Map<String, List<Object>> propertyMapCopy = new HashMap<>();
             for(String propertyInfoEntry : propertyDataDefinition.getConstraints()) {
                 Map propertyValObj =  new YamlUtil().yamlToObject(propertyInfoEntry, Map.class);
-                if (propertyMapCopy.containsKey(propertyDataDefinition.getName())){
-                    propertyMapCopy.get(propertyDataDefinition.getName()).add(propertyValObj);
+                String propertyName = propertyDataDefinition.getName();
+                if (propertyMapCopy.containsKey(propertyName)){
+                    addPropertyConstraintValueToList(propertyName, propertyValObj, propertyMapCopy.get(propertyName));
                 } else {
-                    if (propertyDataDefinition.getName() != null) {
-                        List propsList =new ArrayList();
-                        propsList.add(propertyValObj);
-                        propertyMapCopy.put(propertyDataDefinition.getName(), propsList);
+                    if (propertyName != null) {
+                        List propsList = new ArrayList();
+                        addPropertyConstraintValueToList(propertyName, propertyValObj, propsList);
+                        propertyMapCopy.put(propertyName, propsList);
                     } else {
                         propertyMapCopy.putAll(propertyValObj);
                     }
                 }
             }
-            propertiesCopy.add(propertyMapCopy);
         }
+        propertyMapCopy.entrySet().stream().forEach(entry ->
+            addCalculatedConstraintsIntoPropertiesList(propertiesCopy, entry));
+    }
 
+    private void addPropertyConstraintValueToList(String propertyName, Map propertyValObj, List propsList) {
+        if(propertyValObj.containsKey(propertyName)) {
+            propsList.add(propertyValObj.get(propertyName));
+        } else {
+            propsList.add(propertyValObj);
+        }
+    }
+
+
+
+    private void addCalculatedConstraintsIntoPropertiesList(List<Map<String, List<Object>>> propertiesCopy,
+            Entry<String, List<Object>> entry) {
+        Map<String, List<Object>> tempMap = new HashMap<>();
+        tempMap.put(entry.getKey(), entry.getValue());
+        propertiesCopy.add(tempMap);
     }
 
     private static class CustomRepresenter extends Representer {
