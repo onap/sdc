@@ -93,6 +93,11 @@ The main goal of the Dublin release was to:
 -  [`SDC-2280 <https://jira.onap.org/browse/SDC-2280>`__\ ] - achieve CII Badging passing level for Dublin
 -  [`SDC-2313 <https://jira.onap.org/browse/SDC-2313>`__\ ] - Fix Service Proxy Node Type
 
+**Known Issues**
+
+-  [`SDC-1937 <https://jira.onap.org/browse/SDC-2336>`__\ ] - Service dependency - Can't select sibling property when sibling node is not service proxy
+-  [`SDC-1956 <https://jira.onap.org/browse/SDC-2374>`__\ ] - SDC appears to lose connectivity to Cassandra and Titan intermittently
+-  [`SDC-1970 <https://jira.onap.org/browse/SDC-2371>`__\ ] - SDC fails to deploy in Windriver lab
 
 Security Notes
 --------------
