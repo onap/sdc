@@ -95,9 +95,9 @@ The main goal of the Dublin release was to:
 
 **Known Issues**
 
--  [`SDC-1937 <https://jira.onap.org/browse/SDC-2336>`__\ ] - Service dependency - Can't select sibling property when sibling node is not service proxy
--  [`SDC-1956 <https://jira.onap.org/browse/SDC-2374>`__\ ] - SDC appears to lose connectivity to Cassandra and Titan intermittently
--  [`SDC-1970 <https://jira.onap.org/browse/SDC-2371>`__\ ] - SDC fails to deploy in Windriver lab
+-  [`SDC-2336 <https://jira.onap.org/browse/SDC-2336>`__\ ] - Service dependency - Can't select sibling property when sibling node is not service proxy
+-  [`SDC-2374 <https://jira.onap.org/browse/SDC-2374>`__\ ] - SDC appears to lose connectivity to Cassandra and Titan intermittently
+-  [`SDC-2371 <https://jira.onap.org/browse/SDC-2371>`__\ ] - SDC fails to deploy in Windriver lab
 
 Security Notes
 --------------
