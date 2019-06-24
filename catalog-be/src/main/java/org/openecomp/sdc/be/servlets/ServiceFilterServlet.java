@@ -101,7 +101,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
             Either<CINodeFilterDataDefinition, ResponseFormat> actionResponse;
             String constraint = new ConstraintConvertor().convert(uiConstraint);
             actionResponse = businessLogic
-                                     .addOrDeleteServiceFilter(serviceIdLower, ciId, NodeFilterConstraintAction.ADD,
+                                     .addOrDeleteServiceFilter(serviceIdLower, ciId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
                                              constraint, -1, modifier, true);
 
             if (actionResponse.isRight()) {
@@ -224,7 +224,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
             Either<CINodeFilterDataDefinition, ResponseFormat> actionResponse;
             actionResponse = businessLogic
                                      .addOrDeleteServiceFilter(serviceIdLower, ciId, NodeFilterConstraintAction.DELETE,
-                                             null, index, modifier, true);
+                                             null, null,  index, modifier, true);
 
             if (actionResponse.isRight()) {
 

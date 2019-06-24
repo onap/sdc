@@ -2862,7 +2862,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<CINodeFilterDataDefinition, ResponseFormat> addOrDeleteServiceFilter(String serviceId, String componentInstanceId,
-            NodeFilterConstraintAction action, String constraint, int position, User inUser, boolean lock) {
+            NodeFilterConstraintAction action, String propertyName, String constraint, int position, User inUser, boolean lock) {
         String errorContext =  "createIfNotAlreadyExistServiceFilter";
         User user = validateUserExists(inUser, errorContext, true);
         validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
@@ -2913,6 +2913,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             switch (action) {
                 case ADD:
                     RequirementNodeFilterPropertyDataDefinition newProperty = new RequirementNodeFilterPropertyDataDefinition();
+                    newProperty.setName(propertyName);
                     newProperty.setConstraints(Collections.singletonList(constraint));
                     result = serviceFilterOperation.addNewProperty(serviceId, componentInstanceId,serviceFilter,newProperty);
                     break;
