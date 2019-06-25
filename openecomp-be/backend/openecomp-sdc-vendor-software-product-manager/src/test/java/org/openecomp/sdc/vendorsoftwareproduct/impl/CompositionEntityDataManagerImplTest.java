@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.CompositionEntityDataManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
@@ -281,4 +282,14 @@ public class CompositionEntityDataManagerImplTest {
   private static String loadFileToString(String path) {
     return new String(FileUtils.toByteArray(FileUtils.loadFileToInputStream(path)));
   }
+
+  @Test(expected = CoreException.class)
+  public void shouldReturnCoreException() {
+    //given
+    NetworkCompositionSchemaInput schemaTemplateInput = new NetworkCompositionSchemaInput();
+
+    //then
+    compositionEntityDataManager.validateEntity(null, SchemaTemplateContext.composition, schemaTemplateInput);
+  }
+
 }
