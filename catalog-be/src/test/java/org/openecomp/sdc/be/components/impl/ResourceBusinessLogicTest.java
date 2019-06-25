@@ -70,7 +70,6 @@ import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -175,7 +174,6 @@ public class ResourceBusinessLogicTest {
     CsarBusinessLogic csarBusinessLogic = new CsarBusinessLogic();
     Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
-    CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
     List<Resource> reslist;
 
     public ResourceBusinessLogicTest() {
@@ -257,7 +255,6 @@ public class ResourceBusinessLogicTest {
         bl.setPropertyOperation(propertyOperation);
         bl.setJanusGraphGenericDao(mockJanusGraphDao);
         bl.setApplicationDataTypeCache(applicationDataTypeCache);
-        bl.setCacheManagerOperation(cacheManager);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
         toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);

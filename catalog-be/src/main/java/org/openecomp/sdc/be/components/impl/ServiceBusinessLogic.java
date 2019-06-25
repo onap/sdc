@@ -120,7 +120,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -173,8 +172,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private AuditCassandraDao auditCassandraDao;
     @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    @Autowired
-    private ICacheMangerOperation cacheManagerOperation;
     @Autowired
     private ServiceDistributionValidation serviceDistributionValidation;
 
@@ -2438,14 +2435,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         List<ComponentInstance> componentInstances = getComponentRes.left().value().getComponentInstances();
 
         return Either.left(componentInstances);
-    }
-
-    public ICacheMangerOperation getCacheManagerOperation() {
-        return cacheManagerOperation;
-    }
-
-    public void setCacheManagerOperation(ICacheMangerOperation cacheManagerOperation) {
-        this.cacheManagerOperation = cacheManagerOperation;
     }
 
     public void setForwardingPathOperation(ForwardingPathOperation forwardingPathOperation) {

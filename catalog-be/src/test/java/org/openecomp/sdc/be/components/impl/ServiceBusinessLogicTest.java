@@ -47,7 +47,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
@@ -93,7 +92,6 @@ public class ServiceBusinessLogicTest {
     private GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     private JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    private CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     private UserValidations userValidations = Mockito.mock(UserValidations.class);
     private ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
@@ -171,7 +169,6 @@ public class ServiceBusinessLogicTest {
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         bl.setComponentsUtils(componentsUtils);
         bl.setCassandraAuditingDao(auditingDao);
-        bl.setCacheManagerOperation(cacheManager);
         bl.setUserValidations(userValidations);
 
         mockAuditingDaoLogic();

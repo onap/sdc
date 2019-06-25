@@ -40,7 +40,6 @@ public enum Table {
     GET_USERS_LIST_EVENT(new GetUsersListEventTableDesc()),
     GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()),
     EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()),
-    COMPONENT_CACHE(new ComponentCacheTableDescription()),
     SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription()),
     SDC_REPO(new MigrationTasksTableDescription()),
     SDC_OPERATIONAL_ENVIRONMENT(new OperationalEnvironmentsTableDescription()),

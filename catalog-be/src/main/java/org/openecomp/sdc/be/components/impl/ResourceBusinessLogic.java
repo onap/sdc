@@ -129,7 +129,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
@@ -200,9 +199,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     @Autowired
     private CompositionBusinessLogic compositionBusinessLogic;
-
-    @Autowired
-    private ICacheMangerOperation cacheManagerOperation;
 
     @Autowired
     private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
@@ -1862,10 +1858,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         }
-        // add the created node types to the cache although they are not in the
-        // graph.
-        csarInfo.getCreatedNodes().values().stream()
-                .forEach(p -> cacheManagerOperation.storeComponentInCache(p, NodeTypeEnum.Resource));
     }
 
     private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo,
@@ -5219,14 +5211,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
             throw new ByActionStatusComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfResourceName);
         }
-    }
-
-    public ICacheMangerOperation getCacheManagerOperation() {
-        return cacheManagerOperation;
-    }
-
-    public void setCacheManagerOperation(ICacheMangerOperation cacheManagerOperation) {
-        this.cacheManagerOperation = cacheManagerOperation;
     }
 
     @Override

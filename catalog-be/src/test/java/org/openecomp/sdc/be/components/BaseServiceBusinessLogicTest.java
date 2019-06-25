@@ -26,7 +26,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperat
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.user.Role;
@@ -63,7 +62,6 @@ public abstract class BaseServiceBusinessLogicTest {
     GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
     GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     ForwardingPathOperation forwardingPathOperation  = Mockito.mock(ForwardingPathOperation.class);
 
@@ -142,7 +140,6 @@ public abstract class BaseServiceBusinessLogicTest {
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         bl.setComponentsUtils(componentsUtils);
         bl.setCassandraAuditingDao(auditingDao);
-        bl.setCacheManagerOperation(cacheManager);
         bl.setForwardingPathOperation(forwardingPathOperation);
         bl.setToscaOperationFacade(toscaOperationFacade);
         mockAuditingDaoLogic();

@@ -54,7 +54,6 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
@@ -111,7 +110,6 @@ public class ExternalRefServletTest extends JerseyTest {
     private static final AccessValidations accessValidationsMock = Mockito.mock(AccessValidations.class);
     private static final ComponentLocker componentLocker = Mockito.mock(ComponentLocker.class);
     private static final HealingJanusGraphGenericDao janusGraphGenericDao = Mockito.mock(HealingJanusGraphGenericDao.class);
-    private static final ICacheMangerOperation cacheManagerOperation = Mockito.mock(ICacheMangerOperation.class);
     private static final IGraphLockOperation graphLockOperation = Mockito.mock(IGraphLockOperation.class);
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
@@ -223,11 +221,6 @@ public class ExternalRefServletTest extends JerseyTest {
         @Bean
         GroupsOperation groupsOperation() {
             return new GroupsOperation();
-        }
-
-        @Bean
-        ICacheMangerOperation cacheMangerOperation() {
-            return cacheManagerOperation;
         }
 
         @Bean
