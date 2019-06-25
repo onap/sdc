@@ -15,87 +15,98 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>vendor-license-rest-services</artifactId>
-    <name>vendor-license-rest-services</name>
+  <artifactId>vendor-license-rest-services</artifactId>
+  <name>vendor-license-rest-services</name>
 
-    <parent>
-        <groupId>org.openecomp.sdc.onboarding</groupId>
-        <artifactId>vendor-license-rest</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
-        <relativePath>../</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.openecomp.sdc.onboarding</groupId>
+    <artifactId>vendor-license-rest</artifactId>
+    <version>1.5.0-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
 
-    <properties>
-        <errorcode.dir>${project.build.directory}/generated-sources/error-codes</errorcode.dir>
-    </properties>
+  <properties>
+    <errorcode.dir>${project.build.directory}/generated-sources/error-codes</errorcode.dir>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>vendor-license-rest-types</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-license-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-item-permissions-manager</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>vendor-license-rest-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-vendor-license-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-item-permissions-manager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <!-- CXF -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${http.client.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>${http.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Java Stuff -->
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>${javax.inject.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>item-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>unique-type-rest-types</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <!-- CXF -->
+    <!--        <dependency>-->
+    <!--            <groupId>org.apache.cxf</groupId>-->
+    <!--            <artifactId>cxf-rt-frontend-jaxrs</artifactId>-->
+    <!--            <version>${cxf.version}</version>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.apache.httpcomponents</groupId>-->
+    <!--            <artifactId>httpclient</artifactId>-->
+    <!--            <version>${http.client.version}</version>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.apache.httpcomponents</groupId>-->
+    <!--            <artifactId>httpcore</artifactId>-->
+    <!--            <version>${http.core.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Java Stuff -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>${javax.inject.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-healing-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--        <dependency>-->
+    <!--            <groupId>org.openecomp.sdc</groupId>-->
+    <!--            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>-->
+    <!--            <version>${project.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>item-rest-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>unique-type-rest-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-common-rest</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -66,11 +66,11 @@
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onap.sdc.common</groupId>
-      <artifactId>onap-tosca-datatype</artifactId>
-      <version>${tosca.datatype.version}</version>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.onap.sdc.common</groupId>-->
+    <!--      <artifactId>onap-tosca-datatype</artifactId>-->
+    <!--      <version>${tosca.datatype.version}</version>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
