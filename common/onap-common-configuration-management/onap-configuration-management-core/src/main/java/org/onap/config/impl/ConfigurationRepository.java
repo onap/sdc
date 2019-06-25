@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (c) 2019 Samsung
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +33,12 @@ import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ConfigurationRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationRepository.class);
 
     private static final ConfigurationRepository repo = new ConfigurationRepository();
 
@@ -49,13 +54,13 @@ public final class ConfigurationRepository {
                 protected boolean removeEldestEntry(Map.Entry eldest) {
                     try {
                         return size() > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-                                                .getInt("config.size.max");
+                                .getInt("config.size.max");
                     } catch (Exception exception) {
+                        logger.info("ConfigurationException", exception);
                         return false;
                     }
                 }
             });
-
 
     private ConfigurationRepository() {
         tenants.add(Constants.DEFAULT_TENANT);
@@ -74,7 +79,6 @@ public final class ConfigurationRepository {
         return namespaces;
     }
 
-
     public boolean isValidTenant(String tenant) {
         return tenant != null && tenants.contains(tenant.toUpperCase());
     }
@@ -86,7 +90,7 @@ public final class ConfigurationRepository {
     public Configuration getConfigurationFor(String tenant, String namespace) throws Exception {
         String module = tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace;
         ConfigurationHolder config = store.get(module);
-        return config.getConfiguration(tenant + Constants.KEY_ELEMENTS_DELIMITER + namespace);
+        return config.getConfiguration();
     }
 
     public void populateConfiguration(String key, Configuration builder) {
@@ -124,10 +128,6 @@ public final class ConfigurationRepository {
         Configuration config;
         Configuration composite;
 
-        public ConfigurationHolder(BasicConfigurationBuilder builder) {
-            this.builder = builder;
-        }
-
         public ConfigurationHolder(Configuration builder) {
             this.config = builder;
         }
@@ -138,7 +138,7 @@ public final class ConfigurationRepository {
         }
 
         private Configuration getEffectiveConfiguration(Configuration configuration,
-                Collection<FileBasedConfigurationBuilder<FileBasedConfiguration>> list) {
+                                                        Collection<FileBasedConfigurationBuilder<FileBasedConfiguration>> list) {
             try {
                 CompositeConfiguration cc = new CompositeConfiguration();
                 for (FileBasedConfigurationBuilder<FileBasedConfiguration> b : list) {
@@ -148,19 +148,19 @@ public final class ConfigurationRepository {
                 composite = cc;
                 return composite;
             } catch (Exception exception) {
+                logger.info("ConfigurationException", exception);
                 return null;
             }
         }
 
-        public Configuration getConfiguration(String namespace) throws Exception {
-
+        public Configuration getConfiguration() throws Exception {
             if (config == null) {
                 config = builder.getConfiguration();
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
             } else if (lastConfigurationBuildTime != null
-                               && System.currentTimeMillis() - lastConfigurationBuildTime.getTime()
-                                          > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-                                                    .getInt("config.refresh.interval")) {
+                    && System.currentTimeMillis() - lastConfigurationBuildTime.getTime()
+                    > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
+                    .getInt("config.refresh.interval")) {
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
             }
 
