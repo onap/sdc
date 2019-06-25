@@ -66,7 +66,6 @@ import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
@@ -87,9 +86,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     protected ArtifactsBusinessLogic artifactsBusinessLogic;
-
-    @Autowired
-    protected ComponentCache componentCache;
 
     @Autowired
     private GenericTypeBusinessLogic genericTypeBusinessLogic;
