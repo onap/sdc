@@ -6,6 +6,9 @@
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
+ * ================================================================================
+ *  Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +19,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.io.IOException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +57,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -389,5 +395,21 @@ public class OrchestrationTemplateCandidateManagerImplTest {
           break;
       }
     }
+  }
+
+  @Test
+  public void testUpdateFilesDataStructure() {
+    assertNotNull(candidateManager.updateFilesDataStructure(VSP_ID, VERSION01, new FilesDataStructure()));
+  }
+
+  @Test
+  public void testGet() throws IOException {
+    Optional<Pair<String, byte[]>> optionalStringPair = candidateManager.get(VSP_ID, VERSION01);
+    assertFalse(optionalStringPair.isPresent());
+  }
+
+  @Test
+  public void testGetInfo() {
+      assertNotNull(candidateManager.getInfo(VSP_ID, VERSION01));
   }
 }
