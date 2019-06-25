@@ -15,112 +15,112 @@
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>onap-configuration-management-core</name>
-    <artifactId>onap-configuration-management-core</artifactId>
+  <name>onap-configuration-management-core</name>
+  <artifactId>onap-configuration-management-core</artifactId>
 
-    <parent>
-        <artifactId>onap-common-configuration-management</artifactId>
-        <groupId>org.onap.sdc.common</groupId>
-        <version>1.5.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>onap-common-configuration-management</artifactId>
+    <groupId>org.onap.sdc.common</groupId>
+    <version>1.5.0-SNAPSHOT</version>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-configuration2</artifactId>
-            <version>${commons-configuration}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>${commons-beanutils}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>${commons-logging}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.corn</groupId>
-            <artifactId>corn-cps</artifactId>
-            <version>1.1.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun</groupId>
-                    <artifactId>tools</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.virtlink.commons</groupId>
-            <artifactId>commons-configuration2-jackson</artifactId>
-            <version>0.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.sdc.common</groupId>
-            <artifactId>onap-configuration-management-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <!--        <dependency>-->
+    <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--            <artifactId>jackson-databind</artifactId>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-configuration2</artifactId>
+      <version>${commons-configuration}</version>
+    </dependency>
+    <!--        <dependency>-->
+    <!--            <groupId>commons-beanutils</groupId>-->
+    <!--            <artifactId>commons-beanutils</artifactId>-->
+    <!--            <version>${commons-beanutils}</version>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>commons-logging</groupId>-->
+    <!--            <artifactId>commons-logging</artifactId>-->
+    <!--            <version>${commons-logging}</version>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.apache.commons</groupId>-->
+    <!--            <artifactId>commons-lang3</artifactId>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.corn</groupId>
+      <artifactId>corn-cps</artifactId>
+      <version>1.1.7</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.virtlink.commons</groupId>
+      <artifactId>commons-configuration2-jackson</artifactId>
+      <version>0.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.sdc.common</groupId>
+      <artifactId>onap-configuration-management-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!--        <dependency>-->
+    <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--            <artifactId>jackson-annotations</artifactId>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${mvn.surefire.version}</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <config.location>${project.basedir}/src/test/resources</config.location>
-                        <node.config.location>${user.home}/TestResources</node.config.location>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${mvn.surefire.version}</version>
+        <configuration>
+          <systemPropertyVariables>
+            <config.location>${project.basedir}/src/test/resources</config.location>
+            <node.config.location>${user.home}/TestResources</node.config.location>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
