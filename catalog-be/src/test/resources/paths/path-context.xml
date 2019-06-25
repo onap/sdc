@@ -81,7 +81,6 @@ Modifications copyright (c) 2018 Nokia
   <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
   <bean id="janusgraph-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient" />
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
-  <bean id="component-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ComponentCassandraDaoMock" />
   <bean id="cassandra-client" class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock" />
   <bean id="audit-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock" />
   <bean id="artifact-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock" />

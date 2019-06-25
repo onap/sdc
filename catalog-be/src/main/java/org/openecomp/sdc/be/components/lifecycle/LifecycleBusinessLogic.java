@@ -41,7 +41,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperatio
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
@@ -100,9 +99,6 @@ public class LifecycleBusinessLogic {
 
     @Autowired
     private ToscaExportHandler toscaExportUtils;
-
-    @Autowired
-    ICacheMangerOperation cacheManagerOperation;
 
     @Autowired
     ToscaOperationFacade toscaOperationFacade;
