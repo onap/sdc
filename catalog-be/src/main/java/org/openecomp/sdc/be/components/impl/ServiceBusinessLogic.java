@@ -120,7 +120,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -159,22 +158,21 @@ import javax.servlet.http.HttpServletRequest;
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
-    private static final String CHANGE_SERVICE_DISTRIBUTION = "Change Service Distribution";
+  private static final String CHANGE_SERVICE_DISTRIBUTION = "Change Service Distribution";
 	private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
 	private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
 	private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
 	private static final Logger log = Logger.getLogger(ServiceBusinessLogic.class);
-    private static final String INITIAL_VERSION = "0.1";
-    private static final String STATUS_SUCCESS_200 = "200";
+  private static final String INITIAL_VERSION = "0.1";
+  private static final String STATUS_SUCCESS_200 = "200";
 	private static final String STATUS_DEPLOYED = "DEPLOYED";
+
     @Autowired
     private IDistributionEngine distributionEngine;
     @Autowired
     private AuditCassandraDao auditCassandraDao;
     @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    @Autowired
-    private ICacheMangerOperation cacheManagerOperation;
     @Autowired
     private ServiceDistributionValidation serviceDistributionValidation;
 
@@ -2438,14 +2436,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         List<ComponentInstance> componentInstances = getComponentRes.left().value().getComponentInstances();
 
         return Either.left(componentInstances);
-    }
-
-    public ICacheMangerOperation getCacheManagerOperation() {
-        return cacheManagerOperation;
-    }
-
-    public void setCacheManagerOperation(ICacheMangerOperation cacheManagerOperation) {
-        this.cacheManagerOperation = cacheManagerOperation;
     }
 
     public void setForwardingPathOperation(ForwardingPathOperation forwardingPathOperation) {

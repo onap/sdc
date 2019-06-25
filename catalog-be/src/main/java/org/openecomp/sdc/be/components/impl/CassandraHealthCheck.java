@@ -41,7 +41,6 @@ import java.util.*;
 @Component("cassandra-health-check")
 public class CassandraHealthCheck {
 
-
     private static final Logger log = Logger.getLogger(CassandraHealthCheck.class.getName());
 
     private String localDataCenterName = null;
