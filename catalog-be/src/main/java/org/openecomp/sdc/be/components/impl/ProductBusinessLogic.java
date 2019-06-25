@@ -24,7 +24,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -36,7 +35,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
@@ -65,9 +63,6 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
-    @Autowired
-    private ICacheMangerOperation cacheManagerOperation;
 
     public ProductBusinessLogic() {
         creationRoles = new ArrayList<>();
@@ -801,14 +796,6 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     @Override
     public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId) {
         return null;
-    }
-
-    public ICacheMangerOperation getCacheManagerOperation() {
-        return cacheManagerOperation;
-    }
-
-    public void setCacheManagerOperation(ICacheMangerOperation cacheManagerOperation) {
-        this.cacheManagerOperation = cacheManagerOperation;
     }
 
     @Override

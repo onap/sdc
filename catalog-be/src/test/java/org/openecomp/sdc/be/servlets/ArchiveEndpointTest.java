@@ -82,7 +82,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperatio
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
@@ -124,7 +123,6 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final HealingJanusGraphGenericDao
         janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
     private static final HealingPipelineDao HEALING_PIPELINE_DAO = mock(HealingPipelineDao.class);
-    private static final ICacheMangerOperation cacheManagerOperation = mock(ICacheMangerOperation.class);
     private static GraphVertex serviceVertex;
     private static GraphVertex resourceVertex;
     private static GraphVertex resourceVertexVspArchived;
@@ -203,11 +201,6 @@ public class ArchiveEndpointTest extends JerseyTest {
         @Bean
         GroupsOperation groupsOperation() {
             return new GroupsOperation();
-        }
-
-        @Bean
-        ICacheMangerOperation cacheMangerOperation() {
-            return cacheManagerOperation;
         }
 
         @Bean

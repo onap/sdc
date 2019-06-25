@@ -186,12 +186,6 @@ public class DataMigrationTest {
     }
 
     @Test
-    public void createEventForNoneAuditTable() {
-        assertThat(dataMigration.createAuditEvent(dataMap, Table.COMPONENT_CACHE)).isNull();
-
-    }
-
-    @Test
     public void createEventWhenSomeFieldValuesNotSet() {
         dataMap.clear();
         dataMap.put(AUDIT_ACTION, AuditingActionEnum.AUTH_REQUEST.getName());
