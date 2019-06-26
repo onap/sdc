@@ -39,6 +39,10 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
             "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
     public static final String TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING =
             "org.onap.sdc.tosca.datatypes.model.extension.SubstitutionMappingExt";
+    public static final String TOSCA_MODEL_NODE_FILTER =
+            "org.onap.sdc.tosca.datatypes.model.NodeFilter";
+    public static final String TOSCA_MODEL_EXT_NODE_FILTER =
+            "org.onap.sdc.tosca.datatypes.model.extension.NodeFilterExt";
 
     @Override
     public <T> Constructor getConstructor(Class<T> typClass) {
@@ -64,6 +68,9 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
                 }
                 if (type.equals(Class.forName(TOSCA_MODEL_SUBSTITUTION_MAPPING))) {
                     classType = Class.forName(TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING);
+                }
+                if(type.equals(Class.forName(TOSCA_MODEL_NODE_FILTER))) {
+                    classType = Class.forName(TOSCA_MODEL_EXT_NODE_FILTER);
                 }
             } catch (ClassNotFoundException ex) {
                 throw new ToscaRuntimeException(ex);
@@ -100,7 +107,13 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
                         Object extendHeatObject = extendHeatClass.newInstance();
                         // create JavaBean
                         return super.constructJavaBean2ndStep(node, extendHeatObject);
-                    } else {
+                    } else if (type.equals(Class.forName(TOSCA_MODEL_NODE_FILTER))) {
+                        Class extendHeatClass = Class.forName(TOSCA_MODEL_EXT_NODE_FILTER);
+                        Object extendHeatObject = extendHeatClass.newInstance();
+                        // create JavaBean
+                        return super.constructJavaBean2ndStep(node, extendHeatObject);
+                    }
+                    else {
                         // create JavaBean
                         return super.constructJavaBean2ndStep(node, object);
                     }
