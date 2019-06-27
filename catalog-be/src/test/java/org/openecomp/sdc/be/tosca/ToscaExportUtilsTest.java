@@ -18,14 +18,14 @@ package org.openecomp.sdc.be.tosca;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -138,6 +138,35 @@ public class ToscaExportUtilsTest {
         Assert.assertEquals(2, proxyNodeTypeProperties.size());
         Assert.assertNotNull(proxyNodeTypeProperties.get("componentInputStr1"));
         Assert.assertNotNull(proxyNodeTypeProperties.get("componentInputStr2"));
+    }
+
+    @Test
+    public void testOperationImplementationInProxyNodeTypeNotPresent() {
+        Component service = getTestComponent();
+        InterfaceDefinition interfaceDefinition =
+                service.getInterfaces().get("normalizedServiceComponentName-interface");
+        interfaceDefinition.setOperations(new HashMap<>());
+        final OperationDataDefinition operation = new OperationDataDefinition();
+        operation.setName("start");
+        operation.setDescription("op description");
+        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        implementation.setArtifactName("createBPMN.bpmn");
+        operation.setImplementation(implementation);
+        interfaceDefinition.getOperations().put(operation.getName(), operation);
+        service.getInterfaces().put("normalizedServiceComponentName-interface", interfaceDefinition);
+        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
+                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
+                ToscaExportUtils.getProxyNodeTypeInterfaces(service, dataTypes);
+        Assert.assertTrue(proxyNodeTypeInterfaces.isPresent());
+        Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
+        Assert.assertNotNull(componentInterfaces);
+        Assert.assertEquals(1, componentInterfaces.size());
+        Map<String, Object> proxyInterfaceDefinition =
+                (Map<String, Object>) componentInterfaces.get("serviceName");
+        Map<String, Object> startOperationDefinition = (Map<String, Object>) proxyInterfaceDefinition.get("start");
+        Assert.assertNotNull(startOperationDefinition);
+        Assert.assertNull(startOperationDefinition.get("implementation"));
     }
 
     private Component getTestComponent() {

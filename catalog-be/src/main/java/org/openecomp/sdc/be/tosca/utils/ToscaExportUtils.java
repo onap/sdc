@@ -27,10 +27,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
@@ -45,8 +47,12 @@ public class ToscaExportUtils {
         if (Objects.isNull(proxyComponent) || MapUtils.isEmpty(proxyComponent.getInterfaces())) {
             return Optional.empty();
         }
+        Map<String, InterfaceDefinition> proxyComponentInterfaces = proxyComponent.getInterfaces();
+        //Unset artifact path for operation implementation for proxy node types as for operations with artifacts it is
+        // always available in the proxy node template
+        removeOperationImplementationForProxyNodeType(proxyComponentInterfaces);
         return Optional.ofNullable(InterfacesOperationsToscaUtil
-                .getInterfacesMap(proxyComponent, null, proxyComponent.getInterfaces(), dataTypes, false, false));
+                .getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false, false));
     }
 
     public static Optional<Map<String, ToscaProperty>> getProxyNodeTypeProperties(Component proxyComponent,
@@ -68,7 +74,6 @@ public class ToscaExportUtils {
         return MapUtils.isNotEmpty(proxyProperties) ? Optional.of(proxyProperties) : Optional.empty();
     }
 
-
     public static void addInputsToProperties(Map<String, DataTypeDefinition> dataTypes,
                                        List<InputDefinition> componentInputs,
                                        Map<String, ToscaProperty> mergedProperties) {
@@ -82,4 +87,15 @@ public class ToscaExportUtils {
         }
     }
 
+    private static void removeOperationImplementationForProxyNodeType(Map<String, InterfaceDefinition>
+                                                                          proxyComponentInterfaces) {
+        if (MapUtils.isEmpty(proxyComponentInterfaces)) {
+            return;
+        }
+        proxyComponentInterfaces.values().stream()
+                .map(InterfaceDataDefinition::getOperations)
+                .filter(MapUtils::isNotEmpty)
+                .forEach(operations -> operations.values()
+                        .forEach(operation -> operation.setImplementation(null)));
+    }
 }
