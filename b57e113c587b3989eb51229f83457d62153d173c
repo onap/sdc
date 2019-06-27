@@ -34,6 +34,24 @@
       "revId": "b57e113c587b3989eb51229f83457d62153d173c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7b6d73f_c43d7d11",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/AbstractPropertyConstraintTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-27T13:18:51Z",
+      "side": 1,
+      "message": "ToscaType.FLOAT probably maps to Yaml Type float.\nPlease check if YAML FLOAT is the same as java.lang.Double.\nIf it is not, there is a bug in the conversion.",
+      "parentUuid": "07c92577_d20e1eac",
+      "revId": "b57e113c587b3989eb51229f83457d62153d173c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
