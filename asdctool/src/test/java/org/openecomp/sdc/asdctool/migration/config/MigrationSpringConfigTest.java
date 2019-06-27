@@ -7,7 +7,10 @@ import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+
+import static org.mockito.Mockito.mock;
 
 public class MigrationSpringConfigTest {
 
@@ -56,7 +59,7 @@ public class MigrationSpringConfigTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.migrationTasksDao();
+		result = testSubject.migrationTasksDao(mock(CassandraClient.class));
 	}
 
 	@Test

@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.schema.Table;
 import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -43,8 +44,9 @@ public class AuditCassandraDao extends CassandraDao {
 
 	private static Logger logger = Logger.getLogger(AuditCassandraDao.class.getName());
 
-	public AuditCassandraDao() {
-		super();
+	@Autowired
+	public AuditCassandraDao(CassandraClient cassandraClient) {
+		super(cassandraClient);
 	}
 
 	@PostConstruct

@@ -35,13 +35,13 @@ public class EsToCassandraDataMigrationConfig {
 	}
 
 	@Bean(name = "artifact-cassandra-dao")
-	public ArtifactCassandraDao artifactCassandraDao() {
-		return new ArtifactCassandraDao();
+	public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {
+		return new ArtifactCassandraDao(cassandraClient);
 	}
 
 	@Bean(name = "audit-cassandra-dao")
-	public AuditCassandraDao auditCassandraDao() {
-		return new AuditCassandraDao();
+	public AuditCassandraDao auditCassandraDao(CassandraClient cassandraClient) {
+		return new AuditCassandraDao(cassandraClient);
 	}
 
 	@Bean(name = "cassandra-client")
@@ -50,7 +50,7 @@ public class EsToCassandraDataMigrationConfig {
 	}
 	
 	@Bean(name = "sdc-schema-files-cassandra-dao")
-	public SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao() {
-		return new SdcSchemaFilesCassandraDao();
+	public SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao(CassandraClient cassandraClient) {
+		return new SdcSchemaFilesCassandraDao(cassandraClient);
 	}
 }

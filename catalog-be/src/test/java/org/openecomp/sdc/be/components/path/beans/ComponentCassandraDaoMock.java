@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.components.path.beans;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.ComponentCacheAccessor;
 import org.openecomp.sdc.be.dao.cassandra.ComponentCassandraDao;
@@ -20,8 +21,8 @@ public class ComponentCassandraDaoMock  extends ComponentCassandraDao {
         public static Integer DEFAULT_FETCH_SIZE = 500;
         private ComponentCacheAccessor componentCacheAccessor;
 
-        public ComponentCassandraDaoMock() {
-            super();
+        public ComponentCassandraDaoMock(CassandraClient cassandraClient) {
+            super(cassandraClient);
         }
 
         @PostConstruct
