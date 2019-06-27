@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -45,9 +46,10 @@ public class ComponentCassandraDao extends CassandraDao {
 
 	private ComponentCacheAccessor componentCacheAccessor;
 
-	public ComponentCassandraDao() {
-		super();
 
+	@Autowired
+	public ComponentCassandraDao(CassandraClient cassandraClient) {
+		super(cassandraClient);
 	}
 
 	@PostConstruct

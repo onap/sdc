@@ -13,17 +13,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 public class ArtifactCassandraDaoTest {
 
 	@InjectMocks
-	ArtifactCassandraDao testSubject;
+	private ArtifactCassandraDao testSubject;
 	
 	@Mock
-	CassandraClient client;
+	private CassandraClient client;
 	
 	@Mock
-	ArtifactAccessor artifactAccessor;
+	private ArtifactAccessor artifactAccessor;
+
+	@Mock
+	private MappingManager mappingManager;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -89,6 +93,9 @@ public class ArtifactCassandraDaoTest {
 
 	@Test
 	public void testGetCountOfArtifactById() throws Exception {
+		Mockito.when(client.isConnected()).thenReturn(true);
+		Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE)).thenReturn(Either.left(ImmutablePair.of(null,mappingManager)));
+		Mockito.when(mappingManager.createAccessor(ArtifactAccessor.class)).thenReturn(artifactAccessor);
 		String uniqeId = "mock";
 		Either<Long, CassandraOperationStatus> result;
 		ResultSet value = Mockito.mock(ResultSet.class);
@@ -98,16 +105,20 @@ public class ArtifactCassandraDaoTest {
 		Mockito.when(artifactAccessor.getNumOfArtifactsById(uniqeId)).thenReturn(value);
 		
 		// default test
+		testSubject.init();
 		result = testSubject.getCountOfArtifactById(uniqeId);
 	}
 	
 	@Test
 	public void testGetCountOfArtifactById1() throws Exception {
+		Mockito.when(client.isConnected()).thenReturn(true);
+		Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE)).thenReturn(Either.left(ImmutablePair.of(null,mappingManager)));
+		Mockito.when(mappingManager.createAccessor(ArtifactAccessor.class)).thenReturn(artifactAccessor);
 		String uniqeId = "mock";
 		Either<Long, CassandraOperationStatus> result;
 		ResultSet value = Mockito.mock(ResultSet.class);
 		Mockito.when(artifactAccessor.getNumOfArtifactsById(uniqeId)).thenReturn(null);
-		
+		testSubject.init();
 		// default test
 		result = testSubject.getCountOfArtifactById(uniqeId);
 	}

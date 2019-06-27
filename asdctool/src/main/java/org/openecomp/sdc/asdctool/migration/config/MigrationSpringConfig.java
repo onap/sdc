@@ -10,6 +10,7 @@ import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ public class MigrationSpringConfig {
     }
 
     @Bean(name = "sdc-migration-tasks-cassandra-dao")
-    public MigrationTasksDao migrationTasksDao() {
-        return new MigrationTasksDao();
+    public MigrationTasksDao migrationTasksDao(CassandraClient cassandraClient) {
+        return new MigrationTasksDao(cassandraClient);
     }
 
     @Bean(name = "serviceDistributionArtifactsBuilder")

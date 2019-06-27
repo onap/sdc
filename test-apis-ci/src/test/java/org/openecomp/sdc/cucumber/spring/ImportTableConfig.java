@@ -13,7 +13,7 @@ public class ImportTableConfig {
 	}
 	
 	@Bean(name = "operational-environment-dao")
-	public OperationalEnvironmentDao operationalEnvironmentDao() {
-		return new OperationalEnvironmentDao();
+	public OperationalEnvironmentDao operationalEnvironmentDao(CassandraClient cassandraClient) {
+		return new OperationalEnvironmentDao(cassandraClient);
 	}
 }

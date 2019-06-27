@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -38,9 +39,10 @@ public class SdcSchemaFilesCassandraDao extends CassandraDao {
 	
 	private static Logger logger = Logger.getLogger(SdcSchemaFilesCassandraDao.class.getName());
 	private SdcSchemaFilesAccessor sdcSchemaFilesAccessor;
-	
-	public SdcSchemaFilesCassandraDao() {
-		super();
+
+	@Autowired
+	public SdcSchemaFilesCassandraDao(CassandraClient cassandraClient) {
+		super(cassandraClient);
 	}
 	
 	@PostConstruct

@@ -27,7 +27,6 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class CassandraDao {
 
@@ -36,8 +35,11 @@ public abstract class CassandraDao {
 	protected Session session;
 	protected MappingManager manager;
 
-	@Autowired
 	protected CassandraClient client;
+
+	public CassandraDao(CassandraClient cassandraClient) {
+		this.client = cassandraClient;
+	}
 
 	/**
 	 * the method checks if the given table is empty under the keyspace the

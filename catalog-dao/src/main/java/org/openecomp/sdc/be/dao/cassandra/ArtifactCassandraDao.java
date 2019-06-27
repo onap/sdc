@@ -28,6 +28,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -38,8 +39,10 @@ public class ArtifactCassandraDao extends CassandraDao {
 	private static Logger logger = Logger.getLogger(ArtifactCassandraDao.class.getName());
 	private ArtifactAccessor artifactAccessor;
 
-	public ArtifactCassandraDao() {
-		super();
+
+	@Autowired
+	public ArtifactCassandraDao(CassandraClient cassandraClient) {
+		super(cassandraClient);
 
 	}
 

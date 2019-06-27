@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
@@ -55,12 +56,13 @@ import java.util.List;
 import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ComponentsUtilsTest {
 
 	private ComponentsUtils createTestSubject() {
-		return new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(), new TestConfigurationProvider()));
+		return new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider()));
 	}
 
 	@Before
@@ -68,7 +70,7 @@ public class ComponentsUtilsTest {
 	String appConfigDir = "src/test/resources/config/catalog-be";
     ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 	ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-	ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+	ComponentsUtils componentsUtils = new ComponentsUtils(mock(AuditingManager.class));
 	}
 
 	@Test
@@ -611,7 +613,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testconvertJsonToObject() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -628,7 +630,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testconvertJsonToObject_NllData() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		User user = new User();
@@ -641,7 +643,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testconvertJsonToObjectInvalidData() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -657,7 +659,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testconvertToStorageOperationStatus() {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(StorageOperationStatus.OK,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.OK));
@@ -669,7 +671,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testgetResponseFormatByDataType() {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		DataTypeDefinition dataType = new DataTypeDefinition();
@@ -683,7 +685,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testGetResponseFormatByPolicyType_POLICY_TYPE_ALREADY_EXIST() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		PolicyTypeDefinition policyType = new PolicyTypeDefinition();
@@ -696,7 +698,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testGetResponseFormatByPolicyType_PolicyID_NULL() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		ResponseFormat responseFormat = compUtils.getResponseFormatByPolicyType(ActionStatus.POLICY_TYPE_ALREADY_EXIST,  null);
@@ -707,7 +709,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testGetResponseFormatByGroupType_GROUP_MEMBER_EMPTY() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		GroupTypeDefinition groupType = new GroupTypeDefinition();
@@ -721,7 +723,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testConvertFromStorageResponseForDataType_ALL() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -738,7 +740,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testConvertFromStorageResponseForGroupType_ALL() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -752,7 +754,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testConvertFromStorageResponseForConsumer_ALL() throws Exception {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -767,7 +769,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testGetResponseFormatAdditionalProperty_ALL() throws Exception {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 
@@ -802,7 +804,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testConvertFromResultStatusEnum_ALL() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(ActionStatus.OK,compUtils.convertFromResultStatusEnum(ResultStatusEnum.OK, null));
@@ -815,7 +817,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testconvertFromStorageResponseForAdditionalInformation() throws Exception{
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForAdditionalInformation(StorageOperationStatus.OK));
@@ -825,7 +827,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testgetResponseFormatByComponent() throws Exception{
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Component component = new Resource();
@@ -846,7 +848,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testConvertFromStorageResponseForResourceInstanceProperty_ALL() throws Exception {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(ActionStatus.OK,compUtils.convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus.OK));
@@ -860,7 +862,7 @@ public class ComponentsUtilsTest {
 
 	@Test
 	public void testConvertFromStorageResponseForResourceInstance_ALL() throws Exception {
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.ARTIFACT_NOT_FOUND, false));
@@ -877,7 +879,7 @@ public class ComponentsUtilsTest {
 	@Test
 	public void testConvertFromStorageResponse_ALL() throws Exception {
 
-		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		AuditingManager auditingmanager = mock(AuditingManager.class);
 		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
 		when(auditingmanager.auditEvent(any())).thenReturn("OK");
 		Assert.assertEquals(ActionStatus.GENERAL_ERROR,compUtils.convertFromStorageResponse(StorageOperationStatus.CONNECTION_FAILURE, ComponentTypeEnum.RESOURCE));

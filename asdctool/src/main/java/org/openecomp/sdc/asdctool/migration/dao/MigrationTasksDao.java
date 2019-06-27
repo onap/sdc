@@ -7,20 +7,29 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.CassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 
+@Service
 public class MigrationTasksDao extends CassandraDao {
 
     private static Logger logger = Logger.getLogger(MigrationTasksDao.class.getName());
     private MigrationTasksAccessor migrationTasksAccessor;
     private Mapper<MigrationTaskEntry> migrationTaskMapper;
+
+    @Autowired
+    public MigrationTasksDao(CassandraClient cassandraClient){
+        super(cassandraClient);
+    }
 
     @PostConstruct
     public void init() {

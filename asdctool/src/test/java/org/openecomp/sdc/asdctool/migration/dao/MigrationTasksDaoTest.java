@@ -1,14 +1,17 @@
 package org.openecomp.sdc.asdctool.migration.dao;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 
 import java.math.BigInteger;
 
+import static org.mockito.Mockito.mock;
+
 public class MigrationTasksDaoTest {
 
 	private MigrationTasksDao createTestSubject() {
-		return new MigrationTasksDao();
+		return new MigrationTasksDao(mock(CassandraClient.class));
 	}
 
 	@Test(expected=NullPointerException.class)
