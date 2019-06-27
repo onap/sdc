@@ -10,6 +10,7 @@ import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,8 +23,9 @@ public class OperationalEnvironmentDao extends CassandraDao {
     private static Logger logger = Logger.getLogger(OperationalEnvironmentDao.class.getName());
     private OperationalEnvironmentsAccessor operationalEnvironmentsAccessor;
 
-    public OperationalEnvironmentDao() {
-        super();
+    @Autowired
+    public OperationalEnvironmentDao(CassandraClient cassandraClient) {
+        super(cassandraClient);
     }
 
     @PostConstruct

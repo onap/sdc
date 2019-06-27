@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 
+import static org.mockito.Mockito.mock;
+
 public class ImportTableConfigTest {
 
 	private ImportTableConfig createTestSubject() {
@@ -27,6 +29,6 @@ public class ImportTableConfigTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.operationalEnvironmentDao();
+		result = testSubject.operationalEnvironmentDao(mock(CassandraClient.class));
 	}
 }

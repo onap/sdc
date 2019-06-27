@@ -9,6 +9,7 @@ import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -87,6 +89,6 @@ public class SpringBeansMigrationResolverTest {
 	}
 
 	private SpringBeansMigrationResolver createTestSubject() {
-		return new SpringBeansMigrationResolver(null, null, new SdcRepoService(new MigrationTasksDao()));
+		return new SpringBeansMigrationResolver(null, null, new SdcRepoService(new MigrationTasksDao(mock(CassandraClient.class))));
 	}
 }

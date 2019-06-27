@@ -16,6 +16,8 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 
+import static org.mockito.Mockito.mock;
+
 public class ValidationToolConfigurationTest {
 
 	private ValidationToolConfiguration createTestSubject() {
@@ -89,7 +91,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.artifactCassandraDao();
+		result = testSubject.artifactCassandraDao(mock(CassandraClient.class));
 	}
 
 	@Test

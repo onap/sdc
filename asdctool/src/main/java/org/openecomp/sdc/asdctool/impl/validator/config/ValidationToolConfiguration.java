@@ -64,8 +64,8 @@ public class ValidationToolConfiguration {
     public ReportManager reportManager() { return new ReportManager();}
 
     @Bean(name = "artifact-cassandra-dao")
-    public ArtifactCassandraDao artifactCassandraDao() {
-        return new ArtifactCassandraDao();
+    public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {
+        return new ArtifactCassandraDao(cassandraClient);
     }
 
     @Bean

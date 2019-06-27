@@ -6,6 +6,8 @@ import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 
+import static org.mockito.Mockito.mock;
+
 public class EsToCassandraDataMigrationConfigTest {
 
 	private EsToCassandraDataMigrationConfig createTestSubject() {
@@ -29,7 +31,7 @@ public class EsToCassandraDataMigrationConfigTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.artifactCassandraDao();
+		result = testSubject.artifactCassandraDao(mock(CassandraClient.class));
 	}
 
 	@Test
@@ -39,7 +41,7 @@ public class EsToCassandraDataMigrationConfigTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.auditCassandraDao();
+		result = testSubject.auditCassandraDao(mock(CassandraClient.class));
 	}
 
 	@Test
@@ -59,6 +61,6 @@ public class EsToCassandraDataMigrationConfigTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.sdcSchemaFilesCassandraDao();
+		result = testSubject.sdcSchemaFilesCassandraDao(mock(CassandraClient.class));
 	}
 }
