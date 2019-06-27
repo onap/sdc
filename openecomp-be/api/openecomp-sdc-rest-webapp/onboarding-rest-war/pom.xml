@@ -1,283 +1,293 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openecomp.sdc.onboarding</groupId>
-    <artifactId>onboarding-be</artifactId>
-    <name>onboarding-rest-war</name>
-    <packaging>war</packaging>
+  <groupId>org.openecomp.sdc.onboarding</groupId>
+  <artifactId>onboarding-be</artifactId>
+  <name>onboarding-rest-war</name>
+  <packaging>war</packaging>
 
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc-rest-webapp</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>openecomp-sdc-rest-webapp</artifactId>
+    <version>1.5.0-SNAPSHOT</version>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>item-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>vendor-license-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-notification-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-	    <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-notification-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-	<dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>vnf-repository-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>vendor-software-products-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>validation-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>healthcheck-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>conflict-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>item-permissions-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>notifications-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>application-config-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>togglz-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>action-library-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>unique-type-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>externaltesting-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- JSON -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>${org.codehaus.jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>${org.codehaus.jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>${javax.inject.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>${jetty.servlets.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-application-config-manager</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjtools</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-servlet</artifactId>
-            <version>${togglz.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-security-util</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>item-rest-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-security-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>vendor-license-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>openecomp-sdc-notification-api</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>openecomp-sdc-notification-core</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>vnf-repository-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>vendor-software-products-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>validation-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>healthcheck-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>conflict-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>item-permissions-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>notifications-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>application-config-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>togglz-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>action-library-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>unique-type-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc.onboarding</groupId>-->
+    <!--      <artifactId>externaltesting-rest-services</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet-api.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- JSON -->
+    <!--    <dependency>-->
+    <!--      <groupId>org.codehaus.jackson</groupId>-->
+    <!--      <artifactId>jackson-jaxrs</artifactId>-->
+    <!--      <version>${org.codehaus.jackson.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.codehaus.jackson</groupId>-->
+    <!--      <artifactId>jackson-core-asl</artifactId>-->
+    <!--      <version>${org.codehaus.jackson.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>javax.inject</groupId>-->
+    <!--      <artifactId>javax.inject</artifactId>-->
+    <!--      <version>${javax.inject.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.eclipse.jetty</groupId>-->
+    <!--      <artifactId>jetty-servlets</artifactId>-->
+    <!--      <version>${jetty.servlets.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>openecomp-sdc-application-config-manager</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.codehaus.groovy</groupId>-->
+    <!--      <artifactId>groovy</artifactId>-->
+    <!--      <version>${groovy.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>ch.qos.logback</groupId>-->
+    <!--      <artifactId>logback-classic</artifactId>-->
+    <!--      <version>${logback.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>ch.qos.logback</groupId>-->
+    <!--      <artifactId>logback-core</artifactId>-->
+    <!--      <version>${logback.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.codehaus.janino</groupId>-->
+    <!--      <artifactId>janino</artifactId>-->
+    <!--      <scope>compile</scope>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework</groupId>-->
+    <!--      <artifactId>spring-context</artifactId>-->
+    <!--      <version>${spring.framework.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework</groupId>-->
+    <!--      <artifactId>spring-core</artifactId>-->
+    <!--      <version>${spring.framework.version}</version>-->
+    <!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.framework.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-core</artifactId>
+      <version>${cxf.version}</version>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework</groupId>-->
+    <!--      <artifactId>spring-aop</artifactId>-->
+    <!--      <version>${spring.framework.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.springframework</groupId>-->
+    <!--      <artifactId>spring-webmvc</artifactId>-->
+    <!--      <version>${spring.framework.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.aspectj</groupId>-->
+    <!--      <artifactId>aspectjweaver</artifactId>-->
+    <!--      <version>${aspectj.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.aspectj</groupId>-->
+    <!--      <artifactId>aspectjrt</artifactId>-->
+    <!--      <version>${aspectj.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.aspectj</groupId>-->
+    <!--      <artifactId>aspectjtools</artifactId>-->
+    <!--      <version>${aspectj.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.togglz</groupId>-->
+    <!--      <artifactId>togglz-servlet</artifactId>-->
+    <!--      <version>${togglz.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.openecomp.sdc</groupId>-->
+    <!--      <artifactId>openecomp-sdc-security-util</artifactId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--      <scope>compile</scope>-->
+    <!--    </dependency>-->
+  </dependencies>
 
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${mvn.war.version}</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>${basedir}/target/generated/swagger-ui</directory>
-                            <directory>${basedir}/target</directory>
-                            <includes>
-                                <include>docs/*.*</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <property name="version" value="${project.version}"/>
-                                <mkdir dir="target/docs"/>
-                                <echo file="target/docs/build-info.json">{"Version": "${project.version}"}</echo>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>${mvn.swagger.version}</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <springmvc>false</springmvc>
-                            <locations>org.openecomp.sdcrests</locations>
-                            <schemes>http</schemes>
-                            <basePath>/onboarding-api</basePath>
-                            <info>
-                                <title>Rest API</title>
-                                <version>v1.0, build #${buildNumber}</version>
-                                <description>Rest API Documentation</description>
-                                <termsOfService>
-                                    http://www.github.com/kongchen/swagger-maven-plugin
-                                </termsOfService>
-                            </info>
-                            <swaggerDirectory>${basedir}/target/generated/swagger-ui
-                            </swaggerDirectory>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${mvn.war.version}</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>${basedir}/target/generated/swagger-ui</directory>
+              <directory>${basedir}/target</directory>
+              <includes>
+                <include>docs/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+                <property name="version" value="${project.version}"/>
+                <mkdir dir="target/docs"/>
+                <echo file="target/docs/build-info.json">{"Version": "${project.version}"}</echo>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.kongchen</groupId>
+        <artifactId>swagger-maven-plugin</artifactId>
+        <version>${mvn.swagger.version}</version>
+        <configuration>
+          <apiSources>
+            <apiSource>
+              <springmvc>false</springmvc>
+              <locations>org.openecomp.sdcrests</locations>
+              <schemes>http</schemes>
+              <basePath>/onboarding-api</basePath>
+              <info>
+                <title>Rest API</title>
+                <version>v1.0, build #${buildNumber}</version>
+                <description>Rest API Documentation</description>
+                <termsOfService>
+                  http://www.github.com/kongchen/swagger-maven-plugin
+                </termsOfService>
+              </info>
+              <swaggerDirectory>${basedir}/target/generated/swagger-ui
+              </swaggerDirectory>
+            </apiSource>
+          </apiSources>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
 
-    </build>
+  </build>
 
 </project>
