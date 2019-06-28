@@ -2259,6 +2259,15 @@ tosca.datatypes.nfv.SwImageData:
       entry_schema:
         type: string
 
+### Data types used by Policy PM Mapper for closed loop ###
+
+onap.datatypes.pm-mapper-filter:
+  derived_from: tosca.datatypes.Root
+  properties:
+    filter configuration:
+      type: string
+      description: Filter configuration needs to be applied
+
 ### Data types used by Policy TCA model for closed loop ###
 
 onap.datatypes.monitoring.metricsPerEventName:
