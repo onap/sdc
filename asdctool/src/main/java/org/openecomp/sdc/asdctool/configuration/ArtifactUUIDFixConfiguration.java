@@ -25,12 +25,6 @@ public class ArtifactUUIDFixConfiguration {
         return new ArtifactUuidFix();
     }
     
-
-    @Bean(name = "serviceDistributionArtifactsBuilder")
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
-    }
-
     @Bean(name = "elasticsearchConfig")
     public PropertiesFactoryBean mapper() {
         String configHome = System.getProperty("config.home");

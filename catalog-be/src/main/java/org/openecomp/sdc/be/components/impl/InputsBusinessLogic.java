@@ -60,13 +60,21 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("inputsBusinessLogic")
@@ -82,12 +90,26 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
 
-    @Inject
-    private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
-    @Inject
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    @Inject
-    private DataTypeBusinessLogic dataTypeBusinessLogic;
+    private final PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final DataTypeBusinessLogic dataTypeBusinessLogic;
+
+    @Autowired
+    public InputsBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        PropertyDeclarationOrchestrator propertyDeclarationOrchestrator,
+        ComponentInstanceBusinessLogic componentInstanceBusinessLogic, DataTypeBusinessLogic dataTypeBusinessLogic,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.propertyDeclarationOrchestrator = propertyDeclarationOrchestrator;
+        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
+    }
 
     /**
      * associate inputs to a given component with paging

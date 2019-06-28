@@ -144,7 +144,7 @@ public class PolicyBusinessLogicTest {
     public void initBl() {
         businessLogic.setComponentsUtils(componentsUtils);
         businessLogic.setToscaOperationFacade(toscaOperationFacade);
-        businessLogic.setJanusGraphGenericDao(janusGraphDao);
+        businessLogic.setJanusGraphDao(janusGraphDao);
         businessLogic.setUserValidations(userValidations);
         businessLogic.setGraphLockOperation(graphLockOperation);
         businessLogic.setPolicyTypeOperation(policyTypeOperation);

@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.model.operations.api.TypeOperations;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
@@ -59,6 +60,7 @@ public class CommonImportManager {
     private final ComponentsUtils componentsUtils;
     private final PropertyOperation propertyOperation;
 
+    @Autowired
     public CommonImportManager(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
         this.componentsUtils = componentsUtils;
         this.propertyOperation = propertyOperation;

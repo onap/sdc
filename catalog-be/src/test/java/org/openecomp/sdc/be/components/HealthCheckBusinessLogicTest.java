@@ -16,12 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
@@ -33,7 +37,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 public class HealthCheckBusinessLogicTest {
 
-    HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
+    private final SwitchoverDetector switchoverDetector = Mockito.mock(SwitchoverDetector.class);
+
+    HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic(switchoverDetector);
 
     @Test
     public void checkStausUpdated() {

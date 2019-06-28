@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("componentUtils")
 public class ComponentsUtils {
@@ -84,6 +85,7 @@ public class ComponentsUtils {
     private final AuditingManager auditingManager;
     private final ResponseFormatManager responseFormatManager;
 
+    @Autowired
     public ComponentsUtils(AuditingManager auditingManager) {
         this.auditingManager = auditingManager;
         this.responseFormatManager = ResponseFormatManager.getInstance();

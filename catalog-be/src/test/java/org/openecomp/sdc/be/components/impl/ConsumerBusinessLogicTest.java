@@ -1,3 +1,24 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
+ */
 package org.openecomp.sdc.be.components.impl;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -13,9 +34,15 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -28,8 +55,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-
-public class ConsumerBusinessLogicTest {
+public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 
 	private User user;
 	private ConsumerDefinition consumer;
@@ -55,7 +81,8 @@ public class ConsumerBusinessLogicTest {
 
 	@Before
 	public void setUp(){
-		consumerBusinessLogic = new ConsumerBusinessLogic();
+		consumerBusinessLogic = new ConsumerBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+			interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
 		consumerDataDefinition = new ConsumerDataDefinition();
 		consumer = new ConsumerDefinition();
 		MockitoAnnotations.initMocks(this);

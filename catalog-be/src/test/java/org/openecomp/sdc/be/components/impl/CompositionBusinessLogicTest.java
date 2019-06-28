@@ -16,12 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -36,7 +39,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class CompositionBusinessLogicTest {
-    CompositionBusinessLogic compBl = new CompositionBusinessLogic();
+
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+
+    CompositionBusinessLogic compBl = new CompositionBusinessLogic(componentInstanceBusinessLogic);
 
     @Test
     public void testBuildSpiralPatternPositioningForComponentInstances() {

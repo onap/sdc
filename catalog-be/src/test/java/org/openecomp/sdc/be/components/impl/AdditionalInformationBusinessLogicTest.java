@@ -31,6 +31,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -85,6 +86,15 @@ public class AdditionalInformationBusinessLogicTest {
 
 	NodeTypeEnum nodeType = NodeTypeEnum.Resource;
 	static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+
+	@Before
+	public void setUp() throws Exception {
+		additionalInformationBusinessLogic.setUserValidations(userValidations);
+		additionalInformationBusinessLogic.setJanusGraphDao(janusGraphDao);
+		additionalInformationBusinessLogic.setComponentsUtils(componentsUtils);
+		additionalInformationBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+		additionalInformationBusinessLogic.setGraphLockOperation(graphLockOperation);
+	}
 
 	@Test
 	public void testCreateAdditionalInformation() {

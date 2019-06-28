@@ -48,12 +48,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -66,23 +69,16 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CsarBusinessLogicTest {
+public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
 
-    @InjectMocks
-    private CsarBusinessLogic test;
+    private CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
+    private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+    private ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    private User user = Mockito.mock(User.class);
+    private YamlTemplateParsingHandler yamlHandler = Mockito.mock(YamlTemplateParsingHandler.class);
 
-    @Mock
-    private CsarOperation csarOperation;
-
-    @Mock
-    private ToscaOperationFacade toscaOperationFacade;
-
-    @Mock
-    private ComponentsUtils componentsUtils;
-
-    @Mock
-    private User user;
+    private CsarBusinessLogic test = new CsarBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+        groupBusinessLogic, interfaceOperation,  interfaceLifecycleTypeOperation, yamlHandler, artifactToscaOperation);
 
     private static final String CSAR_UUID = "csarUUID";
     private static final String CSAR_ENTRY = "Definitions/tosca_mock_vf.yaml";
@@ -95,6 +91,13 @@ public class CsarBusinessLogicTest {
 
     private static final String RESOURCE_NAME = "resourceName";
     private static final String PAYLOAD_NAME = "mock_vf.csar";
+
+    @Before
+    public void setUp() throws Exception {
+        test.setCsarOperation(csarOperation);
+        test.setToscaOperationFacade(toscaOperationFacade);
+        test.setComponentsUtils(componentsUtils);
+    }
 
     @Test()
     public void testGetCsarInfo() {

@@ -82,6 +82,9 @@ public class DataTypeBusinessLogicTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        testInstance.setToscaOperationFacade(toscaOperationFacadeMock);
+
         service = new Service();
         service.setUniqueId(COMPONENT_INSTANCE_ID);
         ComponentInstance componentInstance = new ComponentInstance();

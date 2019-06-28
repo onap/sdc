@@ -61,7 +61,14 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -81,11 +88,22 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     private static final String CREATE_INTERFACE_OPERATION = "createInterfaceOperation";
     private static final String UPDATE_INTERFACE_OPERATION = "updateInterfaceOperation";
 
-    @Autowired
-    private ArtifactCassandraDao artifactCassandraDao;
+    private final ArtifactCassandraDao artifactCassandraDao;
+    private final InterfaceOperationValidation interfaceOperationValidation;
 
     @Autowired
-    private InterfaceOperationValidation interfaceOperationValidation;
+    public InterfaceOperationBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactCassandraDao artifactCassandraDao,
+        InterfaceOperationValidation interfaceOperationValidation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.artifactCassandraDao = artifactCassandraDao;
+        this.interfaceOperationValidation = interfaceOperationValidation;
+    }
 
     public Either<List<InterfaceDefinition>, ResponseFormat> deleteInterfaceOperation(String componentId,
             String interfaceId, List<String> operationsToDelete, User user, boolean lock) {
