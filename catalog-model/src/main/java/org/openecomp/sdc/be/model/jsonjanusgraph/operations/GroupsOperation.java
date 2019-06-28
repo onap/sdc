@@ -24,6 +24,7 @@ import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -40,6 +41,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,12 @@ public class GroupsOperation extends BaseOperation {
 
     private static final Logger log = Logger.getLogger(GroupsOperation.class.getName());
 
-	public StorageOperationStatus deleteCalculatedCapabilitiesWithProperties(String componentId, List<GroupDefinition> groupDefinitions) {
+    @Autowired
+    public GroupsOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
+
+    public StorageOperationStatus deleteCalculatedCapabilitiesWithProperties(String componentId, List<GroupDefinition> groupDefinitions) {
 		Optional<StorageOperationStatus> error = groupDefinitions.stream().map(g->removeCalculatedCapabilityFromComponent(componentId, g.getUniqueId())).filter(status-> status!=StorageOperationStatus.OK).findFirst();
 		if(!error.isPresent()){
 			Map<String, MapCapabilityProperty> extractCapabilityPropertiesFromGroups = ModelConverter.extractCapabilityPropertiesFromGroups(groupDefinitions, false);

@@ -28,6 +28,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -51,6 +52,7 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -61,6 +63,11 @@ import java.util.stream.Collectors;
 public class ArtifactsOperations extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
 	private static final Logger log = Logger.getLogger(ArtifactsOperations.class.getName());
+
+    @Autowired
+    public ArtifactsOperations(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, String instanceId) {
 

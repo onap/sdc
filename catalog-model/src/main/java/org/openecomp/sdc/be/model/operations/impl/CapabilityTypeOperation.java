@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -48,13 +49,15 @@ import org.springframework.stereotype.Component;
 
 @Component("capability-type-operation")
 public class CapabilityTypeOperation extends AbstractOperation implements ICapabilityTypeOperation {
-    @Autowired
+
     private PropertyOperation propertyOperation;
-    @Autowired
     private DerivedFromOperation derivedFromOperation;
 
-    public CapabilityTypeOperation() {
-        super();
+    @Autowired
+    public CapabilityTypeOperation(PropertyOperation propertyOperation, DerivedFromOperation derivedFromOperation, HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache) {
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.propertyOperation = propertyOperation;
+        this.derivedFromOperation = derivedFromOperation;
     }
 
     private static final Logger log = Logger.getLogger(CapabilityTypeOperation.class.getName());

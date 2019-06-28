@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -31,12 +32,19 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("interfaces-operation")
 public class InterfaceOperation extends BaseOperation {
 
+
+    @Autowired
+    public InterfaceOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
+
     public Either<List<InterfaceDefinition>, StorageOperationStatus> addInterfaces(String componentId,
-            List<InterfaceDefinition> interfaceDefinitions) {
+                                                                                   List<InterfaceDefinition> interfaceDefinitions) {
         return addOrUpdateInterfaces(false, componentId, interfaceDefinitions);
     }
 

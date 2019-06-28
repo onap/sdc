@@ -26,12 +26,14 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
 import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -45,8 +47,14 @@ import java.util.List;
 public class InputsOperation extends AbstractOperation implements IInputsOperation {
 
     private static final Logger log = Logger.getLogger(InputsOperation.class.getName());
-    @Autowired
+
     PropertyOperation propertyOperation;
+
+    @Autowired
+    public InputsOperation(PropertyOperation propertyOperation, HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache){
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.propertyOperation=propertyOperation;
+    }
 
     public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
 

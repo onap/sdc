@@ -39,8 +39,12 @@ import java.util.Map;
 @Component("derived-resource-resolver")
 public class ByToscaNameDerivedNodeTypeResolver implements DerivedNodeTypeResolver {
 
-    @Autowired
     private JanusGraphDao janusGraphDao;
+
+
+    public ByToscaNameDerivedNodeTypeResolver(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
+    }
 
     @Override
     public Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource) {

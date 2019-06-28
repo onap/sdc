@@ -32,6 +32,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -58,6 +59,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,6 +77,11 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     public static final String VERSION_DELIMITER_REGEXP = "\\.";
 
     private static final Logger log = Logger.getLogger(ToscaElementLifecycleOperation.class);
+
+    @Autowired
+    public ToscaElementLifecycleOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     /**
      * Performs changing a lifecycle state of tosca element from "checked out" or "ready for certification" to "checked in"

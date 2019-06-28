@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -43,6 +44,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -64,7 +66,9 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
     private final GroupTypeOperation groupTypeOperation;
     private final ApplicationDataTypeCache dataTypeCache;
 
-    public GroupOperation(JanusGraphDao janusGraphDao, TopologyTemplateOperation topologyTemplateOperation, PropertyOperation propertyOperation, GroupTypeOperation groupTypeOperation, ApplicationDataTypeCache dataTypeCache) {
+    @Autowired
+    public GroupOperation(JanusGraphDao janusGraphDao, TopologyTemplateOperation topologyTemplateOperation, PropertyOperation propertyOperation, GroupTypeOperation groupTypeOperation, ApplicationDataTypeCache dataTypeCache, HealingJanusGraphGenericDao janusGraphGenericDao) {
+        super(janusGraphGenericDao, dataTypeCache);
         this.janusGraphDao = janusGraphDao;
         this.topologyTemplateOperation = topologyTemplateOperation;
         this.propertyOperation = propertyOperation;

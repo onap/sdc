@@ -46,12 +46,14 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.CapabilityData;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("capability-operation")
@@ -64,7 +66,9 @@ public class CapabilityOperation extends AbstractOperation {
     private final PropertyOperation propertyOperation;
     
 
-    public CapabilityOperation(CapabilityTypeOperation capabilityTypeOperation, PropertyOperation propertyOperation) {
+    @Autowired
+    public CapabilityOperation(CapabilityTypeOperation capabilityTypeOperation, PropertyOperation propertyOperation, HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache) {
+        super(janusGraphGenericDao, applicationDataTypeCache);
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.propertyOperation = propertyOperation;
     }
