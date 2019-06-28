@@ -42,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -121,8 +122,6 @@ public class ComponentInstanceBusinessLogicTest {
     private final static String PROP_NAME = "propName";
     private final static String NON_EXIST_NAME = "nonExistName";
 
-    @InjectMocks
-    private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     @Mock
     private ComponentsUtils componentsUtils;
     @Mock
@@ -145,6 +144,8 @@ public class ComponentInstanceBusinessLogicTest {
     private ArtifactsBusinessLogic artifactBusinessLogic;
     @Mock
     private GraphLockOperation graphLockOperation;
+    @InjectMocks
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     private Component service;
     private Component resource;
@@ -157,6 +158,13 @@ public class ComponentInstanceBusinessLogicTest {
 
     @Before
     public void init() {
+        MockitoAnnotations.initMocks(componentInstanceBusinessLogic);
+        componentInstanceBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        componentInstanceBusinessLogic.setUserValidations(userValidations);
+        componentInstanceBusinessLogic.setComponentsUtils(componentsUtils);
+        componentInstanceBusinessLogic.setGraphLockOperation(graphLockOperation);
+        componentInstanceBusinessLogic.setJanusGraphDao(janusGraphDao);
+
         stubMethods();
         createComponents();
     }
@@ -714,11 +722,10 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         JanusGraphDao mock = Mockito.mock(JanusGraphDao.class);
-        testSubject.setJanusGraphGenericDao(mock);
+        testSubject.setJanusGraphDao(mock);
         result = testSubject.deleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceId,
                 userId);
     }
-
 
     @Test
     public void testDeleteForwardingPaths() {

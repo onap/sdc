@@ -41,7 +41,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "/paths/path-context.xml")
 public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
 
-
     @Test
     public void shouldFailToUpdateForwardingPathSincePathDoesNotExist() {
         Service service = initForwardPath();

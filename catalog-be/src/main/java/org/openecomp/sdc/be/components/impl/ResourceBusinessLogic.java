@@ -22,7 +22,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -127,13 +126,19 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -156,6 +161,7 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -178,54 +184,53 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
     private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
 
-
-    @Autowired
-    private ICapabilityTypeOperation capabilityTypeOperation = null;
-
-    @Autowired
-    private IInterfaceLifecycleOperation interfaceTypeOperation = null;
-
-    @Autowired
+    private ICapabilityTypeOperation capabilityTypeOperation;
+    private IInterfaceLifecycleOperation interfaceTypeOperation;
     private LifecycleBusinessLogic lifecycleBusinessLogic;
 
-    @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ResourceImportManager resourceImportManager;
+    private final InputsBusinessLogic inputsBusinessLogic;
+    private final CompositionBusinessLogic compositionBusinessLogic;
+    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
+    private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
+    private final MergeInstanceUtils mergeInstanceUtils;
+    private final UiComponentDataConverter uiComponentDataConverter;
+    private final CsarBusinessLogic csarBusinessLogic;
 
     @Autowired
-    private ResourceImportManager resourceImportManager;
-
-    @Autowired
-    private InputsBusinessLogic inputsBusinessLogic;
-
-    @Autowired
-    private CompositionBusinessLogic compositionBusinessLogic;
-
-    @Autowired
-    private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
-
-    @Autowired
-    private CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-
-    @Autowired
-    private MergeInstanceUtils mergeInstanceUtils;
-
-    @Autowired
-    private UiComponentDataConverter uiComponentDataConverter;
-
-    @Autowired
-    private CsarBusinessLogic csarBusinessLogic;
-
-    /**
-     * Default constructor
-     */
-    public ResourceBusinessLogic() {
-        log.debug("ResourceBusinessLogic started");
+    public ResourceBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsBusinessLogic artifactsBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBusinessLogic, @Lazy ResourceImportManager resourceImportManager,
+        InputsBusinessLogic inputsBusinessLogic, CompositionBusinessLogic compositionBusinessLogic,
+        ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
+        CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic, MergeInstanceUtils mergeInstanceUtils,
+        UiComponentDataConverter uiComponentDataConverter, CsarBusinessLogic csarBusinessLogic,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation);
+        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+        this.resourceImportManager = resourceImportManager;
+        this.inputsBusinessLogic = inputsBusinessLogic;
+        this.compositionBusinessLogic = compositionBusinessLogic;
+        this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
+        this.csarArtifactsAndGroupsBusinessLogic = csarArtifactsAndGroupsBusinessLogic;
+        this.mergeInstanceUtils = mergeInstanceUtils;
+        this.uiComponentDataConverter = uiComponentDataConverter;
+        this.csarBusinessLogic = csarBusinessLogic;
     }
 
     public LifecycleBusinessLogic getLifecycleBusinessLogic() {
         return lifecycleBusinessLogic;
     }
 
+    @Autowired
     public void setLifecycleManager(LifecycleBusinessLogic lifecycleBusinessLogic) {
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
     }
@@ -234,14 +239,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return elementDao;
     }
 
-    public void setElementDao(IElementOperation elementDao) {
-        this.elementDao = elementDao;
-    }
-
     public IUserBusinessLogic getUserAdmin() {
         return this.userAdmin;
     }
 
+    @Autowired
     public void setUserAdmin(UserBusinessLogic userAdmin) {
         this.userAdmin = userAdmin;
     }
@@ -250,26 +252,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return this.componentsUtils;
     }
 
+    @Autowired
     public void setComponentsUtils(ComponentsUtils componentsUtils) {
         this.componentsUtils = componentsUtils;
-    }
-
-    public ArtifactsBusinessLogic getArtifactsManager() {
-        return artifactsBusinessLogic;
-    }
-
-    public void setArtifactsManager(ArtifactsBusinessLogic artifactsManager) {
-        this.artifactsBusinessLogic = artifactsManager;
     }
 
     public ApplicationDataTypeCache getApplicationDataTypeCache() {
         return applicationDataTypeCache;
     }
 
+    @Autowired
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
     }
 
+    @Autowired
     public void setInterfaceTypeOperation(IInterfaceLifecycleOperation interfaceTypeOperation) {
         this.interfaceTypeOperation = interfaceTypeOperation;
     }
@@ -4877,6 +4874,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return capabilityTypeOperation;
     }
 
+    @Autowired
     public void setCapabilityTypeOperation(ICapabilityTypeOperation capabilityTypeOperation) {
         this.capabilityTypeOperation = capabilityTypeOperation;
     }

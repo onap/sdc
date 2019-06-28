@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.scheduledtasks;
@@ -24,11 +26,19 @@ import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +51,28 @@ import java.util.Map;
 @Component("componentsCleanBusinessLogic")
 public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {
 
-    @Autowired
-    private ResourceBusinessLogic resourceBusinessLogic;
-
-    @Autowired
-    private ServiceBusinessLogic serviceBusinessLogic;
+    private final ResourceBusinessLogic resourceBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
 
     @VisibleForTesting
-    public static final String DELETE_LOCKER = "DELETE_LOCKER";
+    static final String DELETE_LOCKER = "DELETE_LOCKER";
 
     private static final Logger log = Logger.getLogger(ComponentsCleanBusinessLogic.class.getName());
+
+    @Autowired
+    public ComponentsCleanBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ResourceBusinessLogic resourceBusinessLogic,
+        ServiceBusinessLogic serviceBusinessLogic,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.resourceBusinessLogic = resourceBusinessLogic;
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
 
     public Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponents(List<NodeTypeEnum> componentsToClean){
         return cleanComponents(componentsToClean, false);

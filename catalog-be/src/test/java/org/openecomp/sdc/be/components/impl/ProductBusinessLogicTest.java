@@ -33,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.components.validation.ValidationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -48,11 +49,16 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import fj.data.Either;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import static org.junit.Assert.assertEquals;
@@ -65,7 +71,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-public class ProductBusinessLogicTest {
+public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 
 	private Product product;
 	private User user;
@@ -102,11 +108,13 @@ public class ProductBusinessLogicTest {
 	private UserValidations userValidations;
 
 	@Mock
-	private IElementOperation elementOperation;
+	private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
 	@Before
 	public void setUp() {
-		productBusinessLogic = new ProductBusinessLogic();
+		productBusinessLogic = new ProductBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+			groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
+			artifactsBusinessLogic, componentInstanceBusinessLogic, artifactToscaOperation);
 		MockitoAnnotations.initMocks(this);
 		product = new Product();
 		user = new User();
@@ -309,7 +317,7 @@ public class ProductBusinessLogicTest {
 				.thenReturn(Either.left(product));
 		when(toscaOperationFacade.getToscaElement(eq(componentId), any(JsonParseFlagEnum.class)))
 				.thenReturn(Either.left(product));
-		when(elementOperation.getAllProductCategories())
+		when(elementDao.getAllProductCategories())
 				.thenReturn(Either.left(categoryDefinitionList));
 		when(iGraphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
 				.thenReturn(StorageOperationStatus.OK);

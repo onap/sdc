@@ -22,7 +22,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
@@ -73,13 +72,19 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
@@ -154,21 +159,21 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String ARTIFACT_PLACEHOLDER_FILE_EXTENSION = "fileExtension";
 
     private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class);
-    public static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
-    public static final String FAILED_UPDATE_ARTIFACT = "Failed to delete or update the artifact {}. Parent uniqueId is {}";
-    public static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
-    public static final String UPDATE_ARTIFACT_LOCK = "Update Artifact - lock ";
-    public static final String FAILED_DOWNLOAD_ARTIFACT = "Download artifact {} failed";
-    public static final String FAILED_UPLOAD_ARTIFACT_TO_COMPONENT = "Failed to upload artifact to component with type {} and uuid {}. Status is {}. ";
-    public static final String FAILED_UPLOAD_ARTIFACT_TO_INSTANCE = "Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ";
-    public static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
-    public static final String NULL_PARAMETER = "One of the function parameteres is null";
+    private static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
+    private static final String FAILED_UPDATE_ARTIFACT = "Failed to delete or update the artifact {}. Parent uniqueId is {}";
+    private static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
+    private static final String UPDATE_ARTIFACT_LOCK = "Update Artifact - lock ";
+    private static final String FAILED_DOWNLOAD_ARTIFACT = "Download artifact {} failed";
+    private static final String FAILED_UPLOAD_ARTIFACT_TO_COMPONENT = "Failed to upload artifact to component with type {} and uuid {}. Status is {}. ";
+    private static final String FAILED_UPLOAD_ARTIFACT_TO_INSTANCE = "Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ";
+    private static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
+    private static final String NULL_PARAMETER = "One of the function parameteres is null";
     public static final String COMPONENT_INSTANCE_NOT_FOUND = "Component instance {} was not found for component {}";
-    public static final String ROLLBACK = "all changes rollback";
-    public static final String COMMIT = "all changes committed";
-    public static final String ARTIFACT_SAVED = "Artifact saved into ES - {}";
-    public static final String UPDATE_ARTIFACT = "Update Artifact";
-    public static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
+    private static final String ROLLBACK = "all changes rollback";
+    private static final String COMMIT = "all changes committed";
+    private static final String ARTIFACT_SAVED = "Artifact saved into ES - {}";
+    private static final String UPDATE_ARTIFACT = "Update Artifact";
+    private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @javax.annotation.Resource
@@ -180,37 +185,34 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private IElementOperation elementOperation;
 
     @javax.annotation.Resource
-    private ResourceBusinessLogic resourceBusinessLogic;
-
-    @javax.annotation.Resource
-    private ServiceBusinessLogic serviceBusinessLogic;
-
-    @javax.annotation.Resource
     private UserBusinessLogic userAdminManager;
 
     @javax.annotation.Resource
     private IHeatParametersOperation heatParametersOperation;
 
-    @Autowired
-    private ArtifactCassandraDao artifactCassandraDao;
-
-    @Autowired
-    private ToscaExportHandler toscaExportUtils;
-
-    @Autowired
-    private CsarUtils csarUtils;
-
-    @Autowired
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
-
-    @Autowired
-    private IUserBusinessLogic userBusinessLogic;
-
-    @Autowired
+    private final ArtifactCassandraDao artifactCassandraDao;
+    private final ToscaExportHandler toscaExportUtils;
+    private final CsarUtils csarUtils;
+    private final LifecycleBusinessLogic lifecycleBusinessLogic;
+    private final IUserBusinessLogic userBusinessLogic;
+    private final ArtifactsResolver artifactsResolver;
     private NodeTemplateOperation nodeTemplateOperation;
 
     @Autowired
-    private ArtifactsResolver artifactsResolver;
+    public ArtifactsBusinessLogic(ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportUtils,
+        CsarUtils csarUtils, LifecycleBusinessLogic lifecycleBusinessLogic, IUserBusinessLogic userBusinessLogic,
+        ArtifactsResolver artifactsResolver, IElementOperation elementDao, IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.artifactCassandraDao = artifactCassandraDao;
+        this.toscaExportUtils = toscaExportUtils;
+        this.csarUtils = csarUtils;
+        this.lifecycleBusinessLogic = lifecycleBusinessLogic;
+        this.userBusinessLogic = userBusinessLogic;
+        this.artifactsResolver = artifactsResolver;
+    }
 
     public enum ArtifactOperationEnum {
         CREATE, UPDATE, DELETE, DOWNLOAD, LINK;
@@ -5630,7 +5632,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return gson.toJson(json);
     }
 
-    @VisibleForTesting
+    @Autowired
     void setNodeTemplateOperation(NodeTemplateOperation nodeTemplateOperation) {
         this.nodeTemplateOperation = nodeTemplateOperation;
     }

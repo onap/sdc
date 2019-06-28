@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ================================================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -42,10 +45,16 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.RequirementOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -69,7 +78,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class RequirementBusinessLogicTest {
+public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
     private final String componentId = "resourceId1";
     private final String requirementId = "uniqueId1";
 
@@ -84,7 +93,9 @@ public class RequirementBusinessLogicTest {
     private User user = null;
 
     @InjectMocks
-    private RequirementBusinessLogic requirementsBusinessLogicMock = new RequirementBusinessLogic();
+    private RequirementBusinessLogic requirementsBusinessLogicMock = new RequirementBusinessLogic(elementDao,
+        groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+        interfaceLifecycleTypeOperation, artifactToscaOperation);
 
     @Before
     public void setup() {
@@ -126,12 +137,14 @@ public class RequirementBusinessLogicTest {
                 .thenReturn(StorageOperationStatus.OK);
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
-        requirementsBusinessLogicMock = new RequirementBusinessLogic();
+        requirementsBusinessLogicMock = new RequirementBusinessLogic(elementDao,
+            groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+            interfaceLifecycleTypeOperation, artifactToscaOperation);
 
         requirementsBusinessLogicMock.setComponentsUtils(componentsUtils);
         requirementsBusinessLogicMock.setUserAdmin(mockUserAdmin);
         requirementsBusinessLogicMock.setGraphLockOperation(graphLockOperation);
-        requirementsBusinessLogicMock.setJanusGraphGenericDao(mockJanusGraphDao);
+        requirementsBusinessLogicMock.setJanusGraphDao(mockJanusGraphDao);
         requirementsBusinessLogicMock.setToscaOperationFacade(toscaOperationFacade);
         requirementsBusinessLogicMock.setUserValidations(userValidations);
         requirementsBusinessLogicMock.setRequirementOperation(requirementOperation);

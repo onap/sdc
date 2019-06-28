@@ -52,12 +52,6 @@ public class ArtifactUUIDFixConfiguration {
         return new ArtifactUuidFix(janusGraphDao, toscaOperationFacade, toscaExportHandler, artifactCassandraDao, csarUtils);
     }
     
-
-    @Bean(name = "serviceDistributionArtifactsBuilder")
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
-    }
-
     @Bean(name = "elasticsearchConfig")
     public PropertiesFactoryBean mapper() {
         String configHome = System.getProperty("config.home");

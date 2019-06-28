@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -42,6 +44,7 @@ import org.openecomp.sdc.be.MockGenerator;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -84,14 +87,20 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperatio
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -126,7 +135,7 @@ import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
-public class ArtifactsBusinessLogicTest {
+public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
     public static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN",
             System.currentTimeMillis());
@@ -145,7 +154,7 @@ public class ArtifactsBusinessLogicTest {
             ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
     @InjectMocks
-    private static ArtifactsBusinessLogic artifactBL;
+    private ArtifactsBusinessLogic artifactBL;
     private static User user = null;
     private static Resource resourceResponse = null;
     private static ResponseFormatManager responseManager = null;
@@ -172,17 +181,17 @@ public class ArtifactsBusinessLogicTest {
     @Mock
     private NodeTemplateOperation nodeTemplateOperation;
     @Mock
-    private ArtifactsOperations artifactsOperations;
-    @Mock
     private IGraphLockOperation graphLockOperation;
-    @Mock
-    private InterfaceOperation interfaceOperation;
     @Mock
     private UserValidations userValidations;
     @Mock
     private ArtifactsResolver artifactsResolver;
     @Mock
     private CsarUtils csarUtils;
+    @Mock
+    private ToscaExportHandler toscaExportHandler;
+    @Mock
+    private LifecycleBusinessLogic lifecycleBusinessLogic;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static List<ArtifactType> getAllTypes() {
@@ -436,7 +445,7 @@ public class ArtifactsBusinessLogicTest {
         Resource component = new Resource();
         component.setComponentType(ComponentTypeEnum.RESOURCE);
         when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
-        when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
+        when(artifactToscaOperation.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
                 eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
                 .thenReturn(Either.left(new ArtifactDefinition()));
         Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(
@@ -458,7 +467,7 @@ public class ArtifactsBusinessLogicTest {
         Resource component = new Resource();
 
         when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
-        when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
+        when(artifactToscaOperation.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
                 eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
                 .thenReturn(Either.left(new ArtifactDefinition()));
 
@@ -486,7 +495,7 @@ public class ArtifactsBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
                 any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
@@ -505,7 +514,7 @@ public class ArtifactsBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
                 any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
@@ -524,7 +533,7 @@ public class ArtifactsBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
                 any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
@@ -540,7 +549,7 @@ public class ArtifactsBusinessLogicTest {
     }
 
     private ArtifactsBusinessLogic createTestSubject() {
-        return new ArtifactsBusinessLogic();
+        return getTestSubject();
     }
 
     @Test
@@ -651,7 +660,7 @@ public class ArtifactsBusinessLogicTest {
         ArtifactsBusinessLogic testSubject;
         String componentId = "";
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String artifactId = "";
         ArtifactDefinition artifactInfo = buildArtifactPayload();
@@ -754,7 +763,7 @@ public class ArtifactsBusinessLogicTest {
     @Test
     public void testIgnoreUnupdateableFieldsInUpdate() throws Exception {
         ArtifactsBusinessLogic testSubject;
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         ArtifactDefinition currentArtifactInfo = null;
@@ -771,7 +780,7 @@ public class ArtifactsBusinessLogicTest {
         Component component = createResourceObject(true);
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         String parentId = "";
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String artifactId = "";
         Either<ArtifactDefinition, ResponseFormat> result;
@@ -1150,7 +1159,7 @@ public class ArtifactsBusinessLogicTest {
         ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
         final boolean isArtifactMetadataUpdate = false;
-        ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic testSubject = getTestSubject();
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
                 new Object[]{artifactInfo, isArtifactMetadataUpdate});
@@ -1165,7 +1174,7 @@ public class ArtifactsBusinessLogicTest {
         ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
         final boolean isArtifactMetadataUpdate = false;
-        ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
@@ -1183,7 +1192,7 @@ public class ArtifactsBusinessLogicTest {
         ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
         final boolean isArtifactMetadataUpdate = false;
-        ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
@@ -1193,13 +1202,14 @@ public class ArtifactsBusinessLogicTest {
         assertEquals(expectedStatus, status);
     }
 
+
     @Test
     public void testGivenValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsDecodedPayload() {
         final byte[] payload = "heat_template_version: 1.0".getBytes();
         ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
 
         final boolean isArtifactMetadataUpdate = false;
-        ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic testSubject = getTestSubject();
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
                 new Object[]{artifactInfo, isArtifactMetadataUpdate});
@@ -1214,7 +1224,7 @@ public class ArtifactsBusinessLogicTest {
         ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
 
         final boolean isArtifactMetadataUpdate = false;
-        ArtifactsBusinessLogic testSubject = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
@@ -1241,7 +1251,7 @@ public class ArtifactsBusinessLogicTest {
         String componentId = "";
         String artifactId = "";
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         Either<Boolean, ResponseFormat> result;
 
@@ -1255,7 +1265,7 @@ public class ArtifactsBusinessLogicTest {
     @Test
     public void testDetectAuditingType() throws Exception {
         ArtifactsBusinessLogic testSubject;
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String origMd5 = "";
         AuditingActionEnum result;
@@ -1464,7 +1474,7 @@ public class ArtifactsBusinessLogicTest {
         Resource component = createResourceObject(true);
 
         List<ArtifactDefinition> vfcsNewCreatedArtifacts = new ArrayList<>();
-        ArtifactsBusinessLogic arb = new ArtifactsBusinessLogic();
+        ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         boolean shouldLock = false;
         boolean inTransaction = false;
@@ -1547,13 +1557,13 @@ public class ArtifactsBusinessLogicTest {
                 .thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(any()))
                 .thenReturn(Either.left(resource));
-        when(artifactsOperations.getArtifactById(any(), any(), any(), any()))
+        when(artifactToscaOperation.getArtifactById(any(), any(), any(), any()))
                 .thenReturn(Either.left(artifactDefinition));
         when(artifactsResolver.findArtifactOnComponent(any(), any(ComponentTypeEnum.class), anyString()))
                 .thenReturn(artifactDefinition);
         when(graphLockOperation.lockComponent(eq(resource.getUniqueId()), any(NodeTypeEnum.class)))
                 .thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), anyString(), any(NodeTypeEnum.class), any()))
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), anyString(), any(NodeTypeEnum.class), any()))
                 .thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any(ESArtifactData.class)))
                 .thenReturn(CassandraOperationStatus.OK);
@@ -1593,7 +1603,7 @@ public class ArtifactsBusinessLogicTest {
 
         when(csarUtils.createCsar(any(Component.class), anyBoolean(), anyBoolean()))
                 .thenReturn(Either.left(csar));
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), anyString(), anyString(), any(NodeTypeEnum.class), anyString()))
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), anyString(), anyString(), any(NodeTypeEnum.class), anyString()))
                 .thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any(ESArtifactData.class)))
                 .thenReturn(CassandraOperationStatus.OK);
@@ -1610,7 +1620,7 @@ public class ArtifactsBusinessLogicTest {
 
     @Test
     public void testHandleDownloadToscaModelRequest() {
-
+        ArtifactsBusinessLogic testSubject = getTestSubject();
         byte[] generatedCsar = "test.csar".getBytes();
 
         Resource resource = new Resource();
@@ -1625,7 +1635,7 @@ public class ArtifactsBusinessLogicTest {
                 .thenReturn(Either.left(generatedCsar));
 
         Either<ImmutablePair<String, byte[]>, ResponseFormat> result =
-                artifactBL.handleDownloadToscaModelRequest(resource, csarArtifact);
+                testSubject.handleDownloadToscaModelRequest(resource, csarArtifact);
 
         ImmutablePair<String, byte[]> leftResult = result.left().value();
         assertEquals(csarArtifact.getArtifactName(), leftResult.getKey());
@@ -1670,7 +1680,7 @@ public class ArtifactsBusinessLogicTest {
                 .thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(eq(componentId)))
                 .thenReturn(Either.left(resource));
-        when(artifactsOperations.getArtifactById(anyString(), anyString(), any(ComponentTypeEnum.class), anyString()))
+        when(artifactToscaOperation.getArtifactById(anyString(), anyString(), any(ComponentTypeEnum.class), anyString()))
                 .thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.getArtifact(any()))
                 .thenReturn(Either.left(esArtifactData));
@@ -1714,7 +1724,7 @@ public class ArtifactsBusinessLogicTest {
                 .thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(eq(componentId), any(NodeTypeEnum.class)))
                 .thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.getArtifacts(any(), any(NodeTypeEnum.class), any(ArtifactGroupTypeEnum.class), any()))
+        when(artifactToscaOperation.getArtifacts(any(), any(NodeTypeEnum.class), any(ArtifactGroupTypeEnum.class), any()))
                 .thenReturn(Either.left(artifactDefinitionMap));
 
         Either<Map<String, ArtifactDefinition>, ResponseFormat> result =
@@ -1780,9 +1790,9 @@ public class ArtifactsBusinessLogicTest {
                 .thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.getToscaElement(eq(parentId)))
                 .thenReturn(Either.left(resource));
-        when(artifactsOperations.isCloneNeeded(any(), any(ArtifactDefinition.class), any(NodeTypeEnum.class)))
+        when(artifactToscaOperation.isCloneNeeded(any(), any(ArtifactDefinition.class), any(NodeTypeEnum.class)))
                 .thenReturn(Either.left(Boolean.FALSE));
-        when(artifactsOperations.removeArtifactOnGraph(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class), anyBoolean()))
+        when(artifactToscaOperation.removeArtifactOnGraph(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class), anyBoolean()))
                 .thenReturn(Either.left(artifactDataDefinition));
         when(artifactCassandraDao.deleteArtifact(any()))
                 .thenReturn(CassandraOperationStatus.OK);
@@ -1847,5 +1857,11 @@ public class ArtifactsBusinessLogicTest {
         Either<byte[], ResponseFormat> result = artifactBL.downloadRsrcArtifactByNames(serviceName, version, resourceName, version, artifactName);
         byte[] data = result.left().value();
         Assert.assertEquals(esArtifactData.getDataAsArray(), data);
+    }
+
+    private ArtifactsBusinessLogic getTestSubject() {
+        return new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBusinessLogic,
+            userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
     }
 }

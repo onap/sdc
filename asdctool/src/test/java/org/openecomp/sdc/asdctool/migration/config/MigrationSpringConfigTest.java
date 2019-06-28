@@ -83,16 +83,6 @@ public class MigrationSpringConfigTest {
 	}
 
 	@Test
-	public void testServiceDistributionArtifactsBuilder() throws Exception {
-		MigrationSpringConfig testSubject;
-		ServiceDistributionArtifactsBuilder result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.serviceDistributionArtifactsBuilder();
-	}
-
-	@Test
 	public void testMapper() throws Exception {
 		MigrationSpringConfig testSubject;
 		PropertiesFactoryBean result;

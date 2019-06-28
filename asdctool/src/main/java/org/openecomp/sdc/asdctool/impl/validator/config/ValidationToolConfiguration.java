@@ -236,7 +236,7 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
+    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder(ToscaOperationFacade toscaOperationFacade) {
+        return new ServiceDistributionArtifactsBuilder(toscaOperationFacade);
     }
 }

@@ -21,6 +21,8 @@
  */
 package org.openecomp.sdc.be.components.lifecycle;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -42,16 +44,16 @@ import fj.data.Either;
 import mockit.Deencapsulation;
 import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
-import static org.mockito.Mockito.mock;
-
 public class CertificationRequestTransitionTest extends LifecycleTestBase {
 
-	
-	
 	private CertificationRequestTransition createTestSubject() {
 		return new CertificationRequestTransition(
-				new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider())),
-				new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(), new ToscaOperationFacade(), new JanusGraphDao(new JanusGraphClient()));
+			new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider())),
+			new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+			groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
+			distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation, forwardingPathValidator,
+			uiComponentDataConverter, serviceFilterOperation, serviceFilterValidator, artifactToscaOperation), new ToscaOperationFacade(),
+			new JanusGraphDao(new JanusGraphClient()));
 	}
 
 	@Test

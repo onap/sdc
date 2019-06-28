@@ -35,7 +35,14 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -61,10 +68,23 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     private static List<Role> updateRoles;
     private static List<Role> contactsRoles;
 
-    @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    public ProductBusinessLogic() {
+    @Autowired
+    public ProductBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsBusinessLogic artifactsBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation);
+        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+
         creationRoles = new ArrayList<>();
         updateRoles = new ArrayList<>();
         contactsRoles = new ArrayList<>();
@@ -75,7 +95,6 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         // Only PM is allowed to be product contacts
         contactsRoles.add(Role.PRODUCT_MANAGER);
     }
-
 
     public Either<Product, ResponseFormat> createProduct(Product product, User user) {
         AuditingActionEnum actionEnum = AuditingActionEnum.CREATE_RESOURCE;
