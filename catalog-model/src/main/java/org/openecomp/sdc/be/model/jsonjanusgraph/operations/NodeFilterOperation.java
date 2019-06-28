@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -41,11 +42,17 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("service-filter-operations")
 public class NodeFilterOperation extends BaseOperation {
 
     private static Logger logger = Logger.getLogger(NodeFilterOperation.class);
+
+    @Autowired
+    public NodeFilterOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(Service service,
             Set<String> componentInstanceIds) {

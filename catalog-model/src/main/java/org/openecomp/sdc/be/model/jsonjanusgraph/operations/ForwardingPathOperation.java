@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -33,12 +34,18 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
 @org.springframework.stereotype.Component("forwarding-paths-operations")
 public class ForwardingPathOperation extends BaseOperation {
     private static final Logger log = Logger.getLogger(ForwardingPathOperation.class.getName());
+
+    @Autowired
+    public ForwardingPathOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
 
     public Either<Set<String>, StorageOperationStatus> deleteForwardingPath(Service service, Set<String> forwardingPathsToDelete) {
