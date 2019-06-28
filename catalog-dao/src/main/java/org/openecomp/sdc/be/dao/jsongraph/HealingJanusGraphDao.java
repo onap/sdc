@@ -31,13 +31,13 @@ import org.springframework.stereotype.Component;
 @Component("janusgraph-dao")
 public class HealingJanusGraphDao extends JanusGraphDao {
 
-
-    @Autowired
     private HealingPipelineDao healingPipelineDao;
 
 
-    public HealingJanusGraphDao(JanusGraphClient janusGraphClient) {
+    @Autowired
+    public HealingJanusGraphDao(HealingPipelineDao healingPipelineDao, JanusGraphClient janusGraphClient) {
         super(janusGraphClient);
+        this.healingPipelineDao = healingPipelineDao;
     }
 
     @Override

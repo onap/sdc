@@ -212,7 +212,7 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         HealingJanusGraphDao janusGraphDao() {
-            janusGraphDao = new HealingJanusGraphDao(janusGraphClient());
+            janusGraphDao = new HealingJanusGraphDao(healingPipelineDao(), janusGraphClient());
             return janusGraphDao;
         }
 

@@ -232,7 +232,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         HealingJanusGraphDao janusGraphDao() {
-            this.janusGraphDao = new HealingJanusGraphDao(janusGraphClient());
+            this.janusGraphDao = new HealingJanusGraphDao(healingPipelineDao(),janusGraphClient());
             return janusGraphDao;
         }
 
