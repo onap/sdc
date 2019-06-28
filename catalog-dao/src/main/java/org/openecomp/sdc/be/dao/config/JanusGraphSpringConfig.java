@@ -23,8 +23,8 @@ public class JanusGraphSpringConfig {
 
     @Bean(name = "janusgraph-generic-dao")
     @Primary
-    public HealingJanusGraphGenericDao janusGraphGenericDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient) {
-        return new HealingJanusGraphGenericDao(janusGraphClient);
+    public HealingJanusGraphGenericDao janusGraphGenericDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient, @Qualifier("healingPipelineDao") HealingPipelineDao healingPipelineDao) {
+        return new HealingJanusGraphGenericDao(healingPipelineDao, janusGraphClient);
     }
 
     @Bean(name = "janusgraph-client", initMethod = "createGraph")

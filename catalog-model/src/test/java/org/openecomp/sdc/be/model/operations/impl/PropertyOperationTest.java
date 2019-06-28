@@ -26,7 +26,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
@@ -48,10 +48,11 @@ import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class PropertyOperationTest extends ModelTestBase {
 
-    HealingJanusGraphGenericDao janusGraphGenericDao = Mockito.mock(HealingJanusGraphGenericDao.class);
+    HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
 
     PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
 
@@ -512,7 +513,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(mock(HealingPipelineDao.class), new JanusGraphClient()), null);
 	}
 
 	
