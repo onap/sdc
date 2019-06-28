@@ -31,6 +31,7 @@ import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -61,7 +62,6 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Type;
@@ -84,8 +84,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     private static final Gson gson = new Gson();
 
-    @Autowired
     protected CategoryOperation categoryOperation;
+
+    public ToscaElementOperation(CategoryOperation categoryOperation, JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+        this.categoryOperation = categoryOperation;
+    }
 
     protected Gson getGson() {
         return gson;

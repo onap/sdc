@@ -17,6 +17,7 @@
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
@@ -27,6 +28,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +37,11 @@ import java.util.List;
 @org.springframework.stereotype.Component("requirement-operation")
 public class RequirementOperation extends BaseOperation {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequirementOperation.class);
+
+    @Autowired
+    public RequirementOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     public Either<List<RequirementDefinition>, StorageOperationStatus> addRequirement(
             String componentId,

@@ -100,8 +100,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     public static void setup() {
         init();
         janusGraphDao = Mockito.mock(JanusGraphDao.class);
-        operation = new NodeTemplateOperation();
-        operation.setJanusGraphDao(janusGraphDao);
+        operation = new NodeTemplateOperation(janusGraphDao);
         buildDataDefinition();
     }
 

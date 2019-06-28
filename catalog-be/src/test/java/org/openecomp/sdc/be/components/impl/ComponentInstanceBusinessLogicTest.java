@@ -790,7 +790,6 @@ public class ComponentInstanceBusinessLogicTest {
     @Test
     public void testConcatServiceNameToVLINetworkRolePropertiesValues() throws Exception {
         ComponentInstanceBusinessLogic testSubject;
-        ToscaOperationFacade toscaOperationFacade = new ToscaOperationFacade();
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
         String componentId = "";
         String resourceInstanceId = "";
@@ -800,7 +799,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "concatServiceNameToVLINetworkRolePropertiesValues",
-                new Object[] {toscaOperationFacade, componentTypeEnum, componentId, resourceInstanceId, properties});
+                new Object[] {Mockito.mock(ToscaOperationFacade.class), componentTypeEnum, componentId, resourceInstanceId, properties});
     }
 
 

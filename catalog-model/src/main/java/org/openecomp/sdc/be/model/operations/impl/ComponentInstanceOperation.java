@@ -64,21 +64,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("component-instance-operation")
 public class ComponentInstanceOperation extends AbstractOperation implements IComponentInstanceOperation {
-
-    public ComponentInstanceOperation() {
-        super();
-    }
-
     private static final Logger log = Logger.getLogger(ComponentInstanceOperation.class.getName());
 
-    @Autowired
     PropertyOperation propertyOperation;
-
-    @Autowired
     private IInputsOperation inputOperation;
+    private ApplicationDataTypeCache dataTypeCache;
+
 
     @Autowired
-    private ApplicationDataTypeCache dataTypeCache;
+    public ComponentInstanceOperation(HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache, PropertyOperation propertyOperation, IInputsOperation iInputsOperation, ApplicationDataTypeCache dataTypeCache) {
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.propertyOperation = propertyOperation;
+        this.inputOperation = iInputsOperation;
+        this.dataTypeCache = dataTypeCache;
+    }
+
 
     /**
      * FOR TEST ONLY

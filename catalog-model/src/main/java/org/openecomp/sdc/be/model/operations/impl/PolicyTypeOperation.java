@@ -20,16 +20,18 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import fj.data.Either;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -39,7 +41,11 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
@@ -51,12 +57,18 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     private static final String CREATE_FLOW_CONTEXT = "CreatePolicyType";
     private static final String GET_FLOW_CONTEXT = "GetPolicyType";
 
-    @Autowired
+
     private PropertyOperation propertyOperation;
-    @Autowired
     private DerivedFromOperation derivedFromOperation;
-    @Autowired
     private OperationUtils operationUtils;
+
+    @Autowired
+    public PolicyTypeOperation(HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache, PropertyOperation propertyOperation, DerivedFromOperation derivedFromOperation, OperationUtils operationUtils) {
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.propertyOperation = propertyOperation;
+        this.derivedFromOperation = derivedFromOperation;
+        this.operationUtils = operationUtils;
+    }
 
     @Override
     public Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type) {
