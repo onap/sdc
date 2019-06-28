@@ -44,21 +44,19 @@ import static java.util.Collections.emptyMap;
 @Component
 public class ExternalReferencesOperation extends BaseOperation {
 
-    @Autowired
     private IdMapper idMapper;
 
-    @Autowired
     private OperationUtils operationUtils;
 
 
     /**
      * Constructor
      */
-    public ExternalReferencesOperation(JanusGraphDao janusGraphDao, NodeTypeOperation nto, TopologyTemplateOperation tto, IdMapper idMapper){
-        this.janusGraphDao = janusGraphDao;
-        this.topologyTemplateOperation = tto;
-        this.nodeTypeOperation = nto;
+    @Autowired
+    public ExternalReferencesOperation(JanusGraphDao janusGraphDao, IdMapper idMapper, OperationUtils operationUtils){
+        super(janusGraphDao);
         this.idMapper = idMapper;
+        this.operationUtils=operationUtils;
     }
 
     public Either<String, ActionStatus> addExternalReferenceWithCommit(String serviceUuid, String componentInstanceName, String objectType, String reference) {

@@ -54,9 +54,15 @@ public class ToscaElementOperationCatalogTest {
     JanusGraphDao janusGraphDao;
     @Mock
     VertexProperty<Object> property;
+    @Mock
+    private ArchiveOperation archiveOperation;
+    @Mock
+    private CategoryOperation categoryOperation;
+    @Mock
+    private NodeTypeOperation nodeTypeOperation;
 
     @InjectMocks
-    private ToscaElementOperation toscaOperation = new TopologyTemplateOperation();
+    private ToscaElementOperation toscaOperation = new TopologyTemplateOperation(archiveOperation,categoryOperation,janusGraphDao);
 
     @Before
     public void setUp() {

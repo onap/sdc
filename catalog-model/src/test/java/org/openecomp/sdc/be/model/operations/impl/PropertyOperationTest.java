@@ -54,7 +54,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
     HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, null);
 
     @Before
     public void setup() {
@@ -513,7 +513,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(mock(HealingPipelineDao.class), new JanusGraphClient()), null);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, null);
 	}
 
 	

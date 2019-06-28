@@ -30,7 +30,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 public class SdcCatalogMigrationTest {
 
 	private SdcCatalogMigration createTestSubject() {
-		return new SdcCatalogMigration(new TopologyTemplateOperation(), new JanusGraphDao(new JanusGraphClient()));
+		return new SdcCatalogMigration(new TopologyTemplateOperation(null,null,null), new JanusGraphDao(new JanusGraphClient()));
 	}
 
 	@Test
