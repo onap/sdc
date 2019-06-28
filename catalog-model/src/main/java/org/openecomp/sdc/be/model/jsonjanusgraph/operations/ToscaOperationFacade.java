@@ -75,16 +75,21 @@ public class ToscaOperationFacade {
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final String COMPONENT_CREATED_SUCCESSFULLY = "Component created successfully!!!";
     private static final String COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR = "Couldn't fetch component with and unique id {}, error: {}";
-    @Autowired
+
     private NodeTypeOperation nodeTypeOperation;
-    @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
-    @Autowired
     private NodeTemplateOperation nodeTemplateOperation;
-    @Autowired
     private GroupsOperation groupsOperation;
-    @Autowired
     private HealingJanusGraphDao janusGraphDao;
+
+    @Autowired
+    public ToscaOperationFacade(NodeTypeOperation nodeTypeOperation, TopologyTemplateOperation topologyTemplateOperation, NodeTemplateOperation nodeTemplateOperation, GroupsOperation groupsOperation, HealingJanusGraphDao janusGraphDao) {
+        this.nodeTypeOperation = nodeTypeOperation;
+        this.topologyTemplateOperation = topologyTemplateOperation;
+        this.nodeTemplateOperation = nodeTemplateOperation;
+        this.groupsOperation = groupsOperation;
+        this.janusGraphDao = janusGraphDao;
+    }
 
     private static final Logger log = Logger.getLogger(ToscaOperationFacade.class.getName());
     // endregion

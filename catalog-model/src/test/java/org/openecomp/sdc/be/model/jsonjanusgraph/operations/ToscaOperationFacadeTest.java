@@ -113,9 +113,12 @@ public class ToscaOperationFacadeTest {
     @Mock
     private NodeTemplateOperation nodeTemplateOperationMock;
 
+    @Mock
+    private GroupsOperation groupsOperation;
+
     @Before
     public void setUp() throws Exception {
-        testInstance = new ToscaOperationFacade();
+        testInstance = new ToscaOperationFacade(nodeTypeOperation, topologyTemplateOperationMock,nodeTemplateOperationMock,groupsOperation,janusGraphDaoMock);
         MockitoAnnotations.initMocks(this);
     }
 

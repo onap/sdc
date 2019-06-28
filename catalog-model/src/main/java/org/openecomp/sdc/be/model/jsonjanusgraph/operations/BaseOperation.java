@@ -61,6 +61,7 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,14 +84,19 @@ public abstract class BaseOperation {
 	private static final Logger log = Logger.getLogger(BaseOperation.class.getName());
     public static final String VF_MODULE = "org.openecomp.groups.VfModule";
 
-    @Autowired
     protected JanusGraphDao janusGraphDao;
 
     @Autowired
+    @Lazy
     protected NodeTypeOperation nodeTypeOperation;
 
     @Autowired
+    @Lazy
     protected TopologyTemplateOperation topologyTemplateOperation;
+
+    public BaseOperation(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
+    }
 
 //    @Autowired
     protected HealingPipelineDao healingPipelineDao;

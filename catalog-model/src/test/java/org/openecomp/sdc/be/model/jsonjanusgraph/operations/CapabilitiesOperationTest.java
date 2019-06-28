@@ -22,13 +22,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.CapabilityTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
@@ -41,13 +44,17 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class CapabilitiesOperationTest {
-
-    @InjectMocks
-    CapabilitiesOperation operation = new CapabilitiesOperation();
     @Mock
     private  JanusGraphDao mockJanusGraphDao;
     @Mock
     private TopologyTemplateOperation topologyTemplateOperation;
+
+    @Mock
+    private NodeTypeOperation nodeTypeOperation;
+
+    @InjectMocks
+    private CapabilitiesOperation operation = new CapabilitiesOperation(mockJanusGraphDao);
+
 
     @Before
     public void setUp() {
@@ -68,7 +75,6 @@ public class CapabilitiesOperationTest {
 
     @Test
     public void testCreateOrUpdateCapabilitiesProperties() {
-
         Map<String, PropertyDataDefinition> mapToscaDataDefinition = new HashMap<>();
         PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
         propertyDataDefinition.setUniqueId("ComponentInput1_uniqueId");
@@ -78,6 +84,7 @@ public class CapabilitiesOperationTest {
 
         Map<String, MapPropertiesDataDefinition> propertiesMap = new HashMap<>();
         propertiesMap.put(propertyDataDefinition.getUniqueId(), mapPropertiesDataDefinition);
+        when(topologyTemplateOperation.getToscaElement(anyString(),any(ComponentParametersView.class))).thenReturn(Either.left(Mockito.mock(TopologyTemplate.class)));
 
         StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId",
                 propertiesMap);

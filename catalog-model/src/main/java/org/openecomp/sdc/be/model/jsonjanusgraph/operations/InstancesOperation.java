@@ -20,6 +20,15 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("instances-operation")
 public class InstancesOperation extends BaseOperation {
 
+    @Autowired
+    public InstancesOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 }

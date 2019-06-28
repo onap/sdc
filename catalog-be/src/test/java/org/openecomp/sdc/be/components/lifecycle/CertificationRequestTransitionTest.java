@@ -49,10 +49,10 @@ public class CertificationRequestTransitionTest extends LifecycleTestBase {
 	private CertificationRequestTransition createTestSubject() {
 		return new CertificationRequestTransition(
 			new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider())),
-			new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+			new ToscaElementLifecycleOperation(null), new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
 			groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
 			distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation, forwardingPathValidator,
-			uiComponentDataConverter, serviceFilterOperation, serviceFilterValidator, artifactToscaOperation), new ToscaOperationFacade(),
+			uiComponentDataConverter, serviceFilterOperation, serviceFilterValidator, artifactToscaOperation), new ToscaOperationFacade(null,null,null,null,null),
 			new JanusGraphDao(new JanusGraphClient()));
 	}
 
