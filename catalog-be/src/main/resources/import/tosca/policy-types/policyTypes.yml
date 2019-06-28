@@ -130,6 +130,18 @@ onap.policies.monitoring.cdap.tca.hi.lo.app:
       entry_schema:
         type: onap.datatypes.monitoring.tca_policy
 
+## PM Mapper policies for closed loop ##
+
+onap.policy.monitoring.dcae-pm-mapper:
+  derived_from: onap.policies.Monitoring
+  version : 1.0.0
+  properties:
+    pm-mapper-filter:
+      type: map
+      description: PM mapper filter on measInfo, measInfoId, measType, instanceId
+      entry_schema:
+        type: onap.datatypes.monitoring.pm-mapper-filter
+
 ## NFV policies ##
 tosca.policies.nfv.InstantiationLevels:
   derived_from: tosca.policies.Root
