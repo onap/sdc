@@ -57,7 +57,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifacts-operations")
-
 public class ArtifactsOperations extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
 	private static final Logger log = Logger.getLogger(ArtifactsOperations.class.getName());

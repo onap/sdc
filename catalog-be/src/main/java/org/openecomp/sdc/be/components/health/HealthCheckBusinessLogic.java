@@ -87,10 +87,14 @@ public class HealthCheckBusinessLogic {
     private DmaapHealth dmaapHealth;
     @Resource
     private CassandraHealthCheck cassandraHealthCheck;
-    @Autowired
-    private SwitchoverDetector switchoverDetector;
+    private final SwitchoverDetector switchoverDetector;
     private volatile List<HealthCheckInfo> prevBeHealthCheckInfos = null;
     private ScheduledFuture<?> scheduledFuture = null;
+
+    @Autowired
+    public HealthCheckBusinessLogic(SwitchoverDetector switchoverDetector) {
+        this.switchoverDetector = switchoverDetector;
+    }
 
     @PostConstruct
     public void init() {

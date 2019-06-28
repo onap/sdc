@@ -30,6 +30,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -117,6 +118,15 @@ public class GroupBusinessLogicTest {
     private final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
     private final static Configuration configuration = Mockito.mock(Configuration.class);
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+
+    @Before
+    public void setUp() throws Exception {
+        test.setDataTypeCache(dataTypeCache);
+        test.setToscaOperationFacade(toscaOperationFacade);
+        test.setPropertyOperation(propertyOperation);
+        test.setComponentsUtils(componentsUtils);
+        test.setJanusGraphDao(janusGraphDao);
+    }
 
     @Test
     public void testCreateGroups_NoDataType() {

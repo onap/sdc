@@ -7,10 +7,18 @@ import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
-import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -56,11 +64,6 @@ public class MigrationSpringConfig {
         return new MigrationTasksDao();
     }
 
-    @Bean(name = "serviceDistributionArtifactsBuilder")
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
-    }
-
     @Bean(name = "elasticsearchConfig")
     public PropertiesFactoryBean mapper() {
         String configHome = System.getProperty("config.home");
@@ -70,6 +73,19 @@ public class MigrationSpringConfig {
     }
 
     @Bean(name = "componentsCleanBusinessLogic")
-    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic() {return  new ComponentsCleanBusinessLogic(); }
+    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic(
+        IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ResourceBusinessLogic resourceBusinessLogic,
+        ServiceBusinessLogic serviceBusinessLogic,
+        ArtifactsOperations artifactToscaOperation) {
+        return  new ComponentsCleanBusinessLogic(elementDao, groupOperation,
+        groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, resourceBusinessLogic,
+        serviceBusinessLogic, artifactToscaOperation);
+    }
 
 }

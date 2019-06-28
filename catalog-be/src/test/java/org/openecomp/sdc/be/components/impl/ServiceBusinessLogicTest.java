@@ -29,26 +29,39 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
+import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
+import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
+import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
+import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
@@ -77,7 +90,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.eq;
 
-public class ServiceBusinessLogicTest {
+public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
 
     private static final String SERVICE_CATEGORY = "Mobility";
     private static final String INSTANTIATION_TYPE = "A-la-carte";
@@ -85,7 +98,7 @@ public class ServiceBusinessLogicTest {
     private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    private ServiceBusinessLogic bl = new ServiceBusinessLogic();
+    private ServiceBusinessLogic bl;
     private ResponseFormatManager responseManager = null;
     private ComponentsUtils componentsUtils;
     private AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
@@ -100,6 +113,14 @@ public class ServiceBusinessLogicTest {
     private ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     private ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
 
+    private final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    private final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
+    private final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
+
     private User user = null;
     private Resource genericService = null;
 
@@ -107,10 +128,6 @@ public class ServiceBusinessLogicTest {
     private static final String UNCERTIFIED_VERSION = "0.2";
     private static final String COMPONNET_ID = "myUniqueId";
     private static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-
-    public ServiceBusinessLogicTest() {
-
-    }
 
     @Before
     public void setup() {
@@ -161,12 +178,14 @@ public class ServiceBusinessLogicTest {
         when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
 
 
-        bl = new ServiceBusinessLogic();
-        bl.setElementDao(mockElementDao);
+        bl = new ServiceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactBl, componentCache, distributionEngine,
+            componentInstanceBusinessLogic, serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
+            serviceFilterOperation, serviceFilterValidator, artifactToscaOperation);
+
         bl.setUserAdmin(mockUserAdmin);
-        bl.setArtifactBl(artifactBl);
         bl.setGraphLockOperation(graphLockOperation);
-        bl.setJanusGraphGenericDao(mockJanusGraphDao);
+        bl.setJanusGraphDao(mockJanusGraphDao);
         bl.setToscaOperationFacade(toscaOperationFacade);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         bl.setComponentsUtils(componentsUtils);

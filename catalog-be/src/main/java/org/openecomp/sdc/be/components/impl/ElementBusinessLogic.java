@@ -46,9 +46,15 @@ import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
@@ -68,6 +74,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
@@ -81,11 +88,24 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private static final String COMPONENT_TYPE_IS_INVALID = "Component type {} is invalid";
     private static final String VALIDATION_OF_USER_ROLE_FAILED_USER_ID = "Validation of user role failed, userId {}";
 
-    @javax.annotation.Resource
-    private IElementOperation elementOperation;
+    private final IElementOperation elementOperation;
+    private final UserBusinessLogic userAdminManager;
 
-    @javax.annotation.Resource
-    private UserBusinessLogic userAdminManager;
+    @Autowired
+    public ElementBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsOperations artifactToscaOperation, IElementOperation elementOperation,
+        UserBusinessLogic userAdminManager) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.elementOperation = elementOperation;
+        this.userAdminManager = userAdminManager;
+    }
 
     /**
      *
@@ -1261,8 +1281,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
             Map<String, Object> props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
-            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao
-                .getByCriteria(categoryType, props, categoryClazz);
+            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao.getByCriteria(categoryType, props, categoryClazz);
             if (getCategory.isRight()) {
                 return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }

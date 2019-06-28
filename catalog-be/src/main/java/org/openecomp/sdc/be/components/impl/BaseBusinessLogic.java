@@ -91,115 +91,100 @@ public abstract class BaseBusinessLogic {
 
     private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
 
-	private static final Logger log = Logger.getLogger(BaseBusinessLogic.class.getName());
+	  private static final Logger log = Logger.getLogger(BaseBusinessLogic.class.getName());
 
     private static final String EMPTY_VALUE = null;
     private static final String SCHEMA_DOESN_T_EXISTS_FOR_PROPERTY_OF_TYPE = "Schema doesn't exists for property of type {}";
     private static final String PROPERTY_IN_SCHEMA_DEFINITION_INSIDE_PROPERTY_OF_TYPE_DOESN_T_EXIST = "Property in Schema Definition inside property of type {} doesn't exist";
     private static final String ADD_PROPERTY_VALUE = "Add property value";
     private static final String THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID = "The value {} of property from type {} is invalid";
-    @Autowired
+    protected final IGroupTypeOperation groupTypeOperation;
+    protected final InterfaceOperation interfaceOperation;
+    protected final IElementOperation elementDao;
     protected ComponentsUtils componentsUtils;
-
-    @Autowired
     protected IUserBusinessLogic userAdmin;
-
-    @Autowired
     protected IGraphLockOperation graphLockOperation;
-
-    @Autowired
     protected JanusGraphDao janusGraphDao;
-
-    @Autowired
     protected JanusGraphGenericDao janusGraphGenericDao;
-
-    @Autowired
-    protected IElementOperation elementDao;
-
-    @Autowired
-    protected IGroupOperation groupOperation;
-
-    @Autowired
-    IGroupInstanceOperation groupInstanceOperation;
-
-    @Autowired
-    protected IGroupTypeOperation groupTypeOperation;
-
-    @Autowired
-    protected GroupBusinessLogic groupBusinessLogic;
-
-    @Autowired
-    PolicyTypeOperation policyTypeOperation;
-
-    @javax.annotation.Resource
-    protected ArtifactsOperations artifactToscaOperation;
-
-    @Autowired
     protected PropertyOperation propertyOperation;
-
-    @Autowired
     protected ApplicationDataTypeCache applicationDataTypeCache;
-
-    @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
-
-    @Autowired
     protected ApplicationDataTypeCache dataTypeCache;
-
-    @Autowired
-    protected InterfaceOperation interfaceOperation;
-
-    @Autowired
-    protected InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
-
-    @Autowired
-    protected InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
-
-    @javax.annotation.Resource
+    final IGroupOperation groupOperation;
+    final IGroupInstanceOperation groupInstanceOperation;
+    final InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
+    PolicyTypeOperation policyTypeOperation;
+    protected final ArtifactsOperations artifactToscaOperation;
     private UserValidations userValidations;
 
     DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
+    public BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        this.elementDao = elementDao;
+        this.groupOperation = groupOperation;
+        this.groupInstanceOperation = groupInstanceOperation;
+        this.groupTypeOperation = groupTypeOperation;
+        this.interfaceOperation = interfaceOperation;
+        this.interfaceLifecycleTypeOperation = interfaceLifecycleTypeOperation;
+        this.artifactToscaOperation = artifactToscaOperation;
+    }
 
+    @Autowired
     public void setUserAdmin(UserBusinessLogic userAdmin) {
         this.userAdmin = userAdmin;
     }
 
+    @Autowired
     public void setUserValidations(UserValidations userValidations) {
         this.userValidations = userValidations;
     }
 
+    @Autowired
     public void setComponentsUtils(ComponentsUtils componentsUtils) {
         this.componentsUtils = componentsUtils;
     }
 
+    @Autowired
+    public void setJanusGraphDao(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
+    }
+
+    @Autowired
+    public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
+        this.applicationDataTypeCache = applicationDataTypeCache;
+    }
+
+    @Autowired
+    public void setJanusGraphGenericDao(JanusGraphGenericDao janusGraphGenericDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
+    }
+
+    @Autowired
     public void setGraphLockOperation(IGraphLockOperation graphLockOperation) {
         this.graphLockOperation = graphLockOperation;
     }
 
+    @Autowired
     public void setToscaOperationFacade(ToscaOperationFacade toscaOperationFacade) {
         this.toscaOperationFacade = toscaOperationFacade;
     }
 
-    public void setPolicyTypeOperation(PolicyTypeOperation policyTypeOperation) {
+    @Autowired
+    void setPolicyTypeOperation(PolicyTypeOperation policyTypeOperation) {
         this.policyTypeOperation = policyTypeOperation;
     }
 
+    @Autowired
     public void setDataTypeCache(ApplicationDataTypeCache dataTypeCache) {
         this.dataTypeCache = dataTypeCache;
     }
 
+    @Autowired
     public void setPropertyOperation(PropertyOperation propertyOperation) {
         this.propertyOperation = propertyOperation;
     }
-
-    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
-        this.interfaceOperation = interfaceOperation;
-    }
-    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
-        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
-    }
-
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {
         return userValidations.validateUserNotEmpty(user, ecompErrorContext);
@@ -212,11 +197,6 @@ public abstract class BaseBusinessLogic {
     protected void validateUserExist(String userId, String ecompErrorContext) {
       userValidations.validateUserExist(userId, ecompErrorContext);
     }
-
-    public void setGroupTypeOperation(IGroupTypeOperation groupTypeOperation) {
-        this.groupTypeOperation = groupTypeOperation;
-    }
-
 
     Either<User, ActionStatus> validateUserExistsActionStatus(String userId, String ecompErrorContext) {
         return userValidations.validateUserExistsActionStatus(userId, ecompErrorContext);
@@ -429,10 +409,6 @@ public abstract class BaseBusinessLogic {
         return null;
     }
 
-    // For UT
-    public void setJanusGraphGenericDao(JanusGraphDao janusGraphDao) {
-        this.janusGraphDao = janusGraphDao;
-    }
 
     protected Either<Map<String, DataTypeDefinition>, ResponseFormat> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();

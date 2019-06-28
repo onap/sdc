@@ -105,6 +105,11 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Before
     public void setup() {
+        interfaceOperationBusinessLogic.setUserValidations(userValidations);
+        interfaceOperationBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        interfaceOperationBusinessLogic.setGraphLockOperation(graphLockOperation);
+        interfaceOperationBusinessLogic.setJanusGraphDao(janusGraphDao);
+        interfaceOperationBusinessLogic.setComponentsUtils(componentsUtils);
         resource = new ResourceBuilder().setComponentType(ComponentTypeEnum.RESOURCE).setUniqueId(resourceId)
                            .setName(RESOURCE_NAME).build();
         resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceId, operationId,

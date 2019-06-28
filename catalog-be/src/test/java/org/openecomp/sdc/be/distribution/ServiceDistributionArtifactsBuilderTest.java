@@ -22,11 +22,13 @@ package org.openecomp.sdc.be.distribution;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.ArtifactInfoImpl;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
@@ -42,8 +44,10 @@ import static org.junit.Assert.assertTrue;
 
 public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest {
 
+    private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+
     @InjectMocks
-    ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder = new ServiceDistributionArtifactsBuilder();
+    ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder = new ServiceDistributionArtifactsBuilder(toscaOperationFacade);
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test

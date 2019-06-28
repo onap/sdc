@@ -30,10 +30,14 @@ import com.google.gson.JsonElement;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.ArtifactsResolver;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
@@ -49,13 +53,18 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -76,7 +85,8 @@ import static org.mockito.Mockito.*;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
-public class ArtifactBusinessLogicTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
 
     public static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN", System.currentTimeMillis());
     private final static String RESOURCE_INSTANCE_NAME = "Service-111";
@@ -91,7 +101,7 @@ public class ArtifactBusinessLogicTest {
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @InjectMocks
-    private static ArtifactsBusinessLogic artifactBL;
+    private ArtifactsBusinessLogic artifactBL;
     @Mock
     private ArtifactOperation artifactOperation;
     @Mock
@@ -111,8 +121,6 @@ public class ArtifactBusinessLogicTest {
     @Mock
     private NodeTemplateOperation nodeTemplateOperation;
     @Mock
-    private ArtifactsOperations artifactsOperations;
-    @Mock
     private IGraphLockOperation graphLockOperation;
     @Mock
     JanusGraphDao janusGraphDao;
@@ -122,6 +130,14 @@ public class ArtifactBusinessLogicTest {
     private ResponseFormat responseFormat;
     @Mock
     private User user;
+    @Mock
+    private ToscaExportHandler toscaExportHandler;
+    @Mock
+    private CsarUtils csarUtils;
+    @Mock
+    private LifecycleBusinessLogic lifecycleBusinessLogic;
+    @Mock
+    private ArtifactsResolver artifactsResolver;
 
     public static final Resource resource = Mockito.mock(Resource.class);
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -140,22 +156,13 @@ public class ArtifactBusinessLogicTest {
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
         Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(artifactOperation.getArtifacts(Mockito.anyString(), eq(NodeTypeEnum.Service), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
-        when(artifactOperation.getArtifacts(Mockito.anyString(), eq(NodeTypeEnum.Resource), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
-
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> notFoundInterfaces = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(lifecycleOperation.getAllInterfacesOfResource(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(notFoundInterfaces);
-
         Either<User, ActionStatus> getUserResult = Either.left(USER);
 
-        when(userOperation.getUserData("jh0003", false)).thenReturn(getUserResult);
-
         Either<List<ArtifactType>, ActionStatus> getType = Either.left(getAllTypes());
-        when(elementOperation.getAllArtifactTypes()).thenReturn(getType);
 
         when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VFC);
     }
@@ -269,7 +276,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put("DeploymentArtifact", deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
 
         Resource parent = new Resource();
         parent.setUniqueId("uniqueId");
@@ -292,7 +299,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put("DeploymentArtifact", deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getArtifacts(anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getArtifacts(anyString())).thenReturn(artifacts);
 
 
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource =
@@ -322,13 +329,11 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put(deploymentArtifactDefinition2.getArtifactLabel(), deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getArtifacts(anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getArtifacts(anyString())).thenReturn(artifacts);
 
 
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource =
                 Either.left(createInterfaceDefinitionMap("artifactName3.yml"));
-        when(interfaceLifecycleOperation.getAllInterfacesOfResource("componentId", true, true))
-                .thenReturn(allInterfacesOfResource);
 
         Resource parent = new Resource();
         parent.setUniqueId("uniqueId");
@@ -339,7 +344,6 @@ public class ArtifactBusinessLogicTest {
 
     @Test
     public void validateArtifactNameUniqueness_updateName() {
-
         //artifacts with the same name have the same label
         ArtifactDefinition artifactInfo = createArtifactDef("artifactName2.yml", ArtifactGroupTypeEnum.DEPLOYMENT);
         ArtifactDefinition informationArtifactDefinition1 = createArtifactDef("artifactName1.yml",
@@ -354,7 +358,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put(deploymentArtifactDefinition2.getArtifactLabel(), deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
 
         Resource parent = new Resource();
         parent.setUniqueId("uniqueId");
@@ -377,7 +381,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put("DeploymentArtifact", deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
 
         Resource parent = new Resource();
         parent.setUniqueId("uniqueId");
@@ -401,7 +405,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinitionMap.put("DeploymentArtifact", deploymentArtifactDefinition2);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = Either.left(artifactDefinitionMap);
-        when(artifactsOperations.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
+        when(artifactToscaOperation.getAllInstanceArtifacts(anyString(), anyString())).thenReturn(artifacts);
 
         Resource parent = new Resource();
         parent.setUniqueId("uniqueId");
@@ -487,7 +491,7 @@ public class ArtifactBusinessLogicTest {
 
         Resource component = new Resource();
         when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
-        when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class), eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
+        when(artifactToscaOperation.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class), eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
                 .thenReturn(Either.left(new ArtifactDefinition()));
         Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(heatArtifact, HEAT_VF_ENV_NAME, "parentId", NodeTypeEnum.Resource, "parentName", USER, component, Collections.emptyMap());
         assertThat(heatEnvPlaceHolder.isLeft()).isTrue();
@@ -508,8 +512,6 @@ public class ArtifactBusinessLogicTest {
         Resource component = new Resource();
 
         when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
-        when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class), eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
-                .thenReturn(Either.left(new ArtifactDefinition()));
 
         Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(heatArtifact, HEAT_ENV_NAME, "parentId", NodeTypeEnum.ResourceInstance, "parentName", USER, component, Collections.emptyMap());
 
@@ -534,12 +536,22 @@ public class ArtifactBusinessLogicTest {
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         //TODO Remove if passes
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
                 , any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, true);
+    }
+
+    private ArtifactsBusinessLogic getArtifactsBusinessLogic() {
+        ArtifactsBusinessLogic artifactsBusinessLogic = new ArtifactsBusinessLogic(artifactCassandraDao,
+            toscaExportHandler, csarUtils, lifecycleBusinessLogic,
+            userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation,
+            groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        artifactsBusinessLogic.setGraphLockOperation(graphLockOperation);
+        artifactsBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        return artifactsBusinessLogic;
     }
 
     @Test
@@ -554,7 +566,7 @@ public class ArtifactBusinessLogicTest {
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         //TODO Remove if passes
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
                 , any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());

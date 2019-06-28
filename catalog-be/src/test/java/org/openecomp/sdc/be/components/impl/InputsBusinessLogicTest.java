@@ -144,6 +144,14 @@ public class InputsBusinessLogicTest {
         service.setIsDeleted(false);
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
+        testInstance.setUserValidations(userValidations);
+        testInstance.setToscaOperationFacade(toscaOperationFacadeMock);
+        testInstance.setGraphLockOperation(graphLockOperation);
+        testInstance.setComponentsUtils(componentsUtilsMock);
+        testInstance.setJanusGraphDao(janusGraphDao);
+        testInstance.setApplicationDataTypeCache(applicationDataTypeCache);
+        testInstance.setPropertyOperation(propertyOperation);
+
         // add a ComponentInstance
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(COMPONENT_INSTANCE_ID);
