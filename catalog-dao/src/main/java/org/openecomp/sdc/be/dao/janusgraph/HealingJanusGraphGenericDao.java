@@ -36,11 +36,12 @@ import org.springframework.stereotype.Component;
 @Component("janusgraph-generic-dao")
 public class HealingJanusGraphGenericDao extends JanusGraphGenericDao {
 
-    @Autowired
     private HealingPipelineDao healingPipelineDao;
 
-    public HealingJanusGraphGenericDao(JanusGraphClient janusGraphClient) {
+    @Autowired
+    public HealingJanusGraphGenericDao(HealingPipelineDao healingPipelineDao, JanusGraphClient janusGraphClient) {
         super(janusGraphClient);
+        this.healingPipelineDao = healingPipelineDao;
     }
 
     @Override
