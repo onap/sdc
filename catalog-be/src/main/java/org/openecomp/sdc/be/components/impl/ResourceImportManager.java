@@ -73,32 +73,29 @@ import java.util.stream.Collectors;
 
 @Component("resourceImportManager")
 public class ResourceImportManager {
+    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("[\\w\\-\\_\\d\\:]+");
 
     private ServletContext servletContext;
 
-    @Autowired
     private AuditingManager auditingManager;
-
-    @Autowired
     private ResourceBusinessLogic resourceBusinessLogic;
-
-    @Autowired
     private IGraphLockOperation graphLockOperation;
-
-    @Autowired
-    protected ComponentsUtils componentsUtils;
-
-    public static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern
-            .compile("[\\w\\-\\_\\d\\:]+");
-    @Autowired
-    protected CapabilityTypeOperation capabilityTypeOperation;
-    @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
+
+    protected final ComponentsUtils componentsUtils;
+    private final CapabilityTypeOperation capabilityTypeOperation;
 
     private ResponseFormatManager responseFormatManager;
 
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
 
+    @Autowired
+    public ResourceImportManager(ComponentsUtils componentsUtils, CapabilityTypeOperation capabilityTypeOperation) {
+        this.componentsUtils = componentsUtils;
+        this.capabilityTypeOperation = capabilityTypeOperation;
+    }
+
+    @Autowired
     public void setToscaOperationFacade(ToscaOperationFacade toscaOperationFacade) {
         this.toscaOperationFacade = toscaOperationFacade;
     }
@@ -979,6 +976,7 @@ public class ResourceImportManager {
         return resourceBusinessLogic;
     }
 
+    @Autowired
     public void setResourceBusinessLogic(ResourceBusinessLogic resourceBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
     }
@@ -987,6 +985,7 @@ public class ResourceImportManager {
         return graphLockOperation;
     }
 
+    @Autowired
     public void setGraphLockOperation(IGraphLockOperation graphLockOperation) {
         this.graphLockOperation = graphLockOperation;
     }
@@ -995,6 +994,7 @@ public class ResourceImportManager {
         this.servletContext = servletContext;
     }
 
+    @Autowired
     public void setAuditingManager(AuditingManager auditingManager) {
         this.auditingManager = auditingManager;
     }

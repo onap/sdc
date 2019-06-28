@@ -52,7 +52,14 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTargetDTO;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -456,13 +463,31 @@ public class PolicyServletTest extends JerseySpringBaseTest{
         businessLogic = Mockito.mock(PolicyBusinessLogic.class);
         businessLogic.setPropertyDeclarationOrchestrator(propertyDeclarationOrchestrator);
         businessLogic.setToscaOperationFacade(toscaOperationFacade);
-
-        baseBusinessLogic = Mockito.spy(BaseBusinessLogic.class);
-        baseBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        BaseBusinessLogic bbl = new BaseBusinessLogicTest(Mockito.mock(IElementOperation.class),
+            Mockito.mock(IGroupOperation.class),
+            Mockito.mock(IGroupInstanceOperation.class), Mockito.mock(IGroupTypeOperation.class),
+            Mockito.mock(InterfaceOperation.class), Mockito.mock(InterfaceLifecycleOperation.class), Mockito.mock(
+            ArtifactsOperations.class));
+        PolicyServletTest.baseBusinessLogic = Mockito.spy(bbl);
+        PolicyServletTest.baseBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
 
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         servletUtils = Mockito.mock(ServletUtils.class);
         responseFormat = Mockito.mock(ResponseFormat.class);
+    }
+
+    private static class BaseBusinessLogicTest extends BaseBusinessLogic {
+
+        BaseBusinessLogicTest(IElementOperation elementDao,
+            IGroupOperation groupOperation,
+            IGroupInstanceOperation groupInstanceOperation,
+            IGroupTypeOperation groupTypeOperation,
+            InterfaceOperation interfaceOperation,
+            InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+            ArtifactsOperations artifactToscaOperation) {
+            super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+                interfaceLifecycleTypeOperation, artifactToscaOperation);
+        }
     }
     
 }

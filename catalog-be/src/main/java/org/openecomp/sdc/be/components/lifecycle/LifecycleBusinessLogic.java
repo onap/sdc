@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.context.annotation.Lazy;
 
 @org.springframework.stereotype.Component("lifecycleBusinessLogic")
 public class LifecycleBusinessLogic {
@@ -66,9 +67,6 @@ public class LifecycleBusinessLogic {
 
     @Autowired
     private IGraphLockOperation graphLockOperation = null;
-
-    @Autowired
-    private ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Autowired
     private JanusGraphDao janusGraphDao;
@@ -83,19 +81,20 @@ public class LifecycleBusinessLogic {
 
     @javax.annotation.Resource
     private ToscaElementLifecycleOperation lifecycleOperation;
-    @javax.annotation.Resource
-    ArtifactsBusinessLogic artifactsManager;
 
     @javax.annotation.Resource
     private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
 
-    @javax.annotation.Resource
+    @Autowired
+    @Lazy
     private ServiceBusinessLogic serviceBusinessLogic;
 
-    @javax.annotation.Resource
+    @Autowired
+    @Lazy
     private ResourceBusinessLogic resourceBusinessLogic;
 
-    @javax.annotation.Resource
+    @Autowired
+    @Lazy
     private ProductBusinessLogic productBusinessLogic;
 
     @Autowired
@@ -135,7 +134,6 @@ public class LifecycleBusinessLogic {
 
         UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
             janusGraphDao);
-        undoCheckoutOp.setArtifactsBusinessLogic(artifactsBusinessLogic);
         stateTransitions.put(undoCheckoutOp.getName().name(), undoCheckoutOp);
 
         LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
@@ -160,7 +158,6 @@ public class LifecycleBusinessLogic {
 
         CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade,
             janusGraphDao);
-        successCertification.setArtifactsManager(artifactsBusinessLogic);
         successCertification.setNodeTemplateOperation(nodeTemplateOperation);
         stateTransitions.put(successCertification.getName().name(), successCertification);
     }

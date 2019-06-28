@@ -33,10 +33,17 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CapabilitiesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -62,17 +69,32 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
     private static final String GET_CAPABILITIES = "getCapabilities";
     private static final String EXCEPTION_OCCURRED_DURING_CAPABILITIES = "Exception occurred during {}. Response is {}";
 
-    @Autowired
-    private CapabilitiesOperation capabilitiesOperation;
-    @Autowired
-    private CapabilitiesValidation capabilitiesValidation;
-    @Autowired
-    private ICapabilityTypeOperation capabilityTypeOperation;
+    private final ICapabilityTypeOperation capabilityTypeOperation;
 
+    private CapabilitiesOperation capabilitiesOperation;
+    private CapabilitiesValidation capabilitiesValidation;
+
+    @Autowired
+    public CapabilitiesBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ICapabilityTypeOperation capabilityTypeOperation,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.capabilityTypeOperation = capabilityTypeOperation;
+    }
+
+    @Autowired
     public void setCapabilitiesValidation(CapabilitiesValidation capabilitiesValidation) {
         this.capabilitiesValidation = capabilitiesValidation;
     }
 
+    @Autowired
     public void setCapabilitiesOperation(CapabilitiesOperation capabilitiesOperation) {
         this.capabilitiesOperation = capabilitiesOperation;
     }

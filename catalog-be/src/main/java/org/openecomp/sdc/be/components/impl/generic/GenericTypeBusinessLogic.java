@@ -25,11 +25,14 @@ public class GenericTypeBusinessLogic {
 
     private final static Logger log = Logger.getLogger(GenericTypeBusinessLogic.class);
 
-    @Autowired
-    private ComponentsUtils componentsUtils;
+    private final ComponentsUtils componentsUtils;
+    private final ToscaOperationFacade toscaOperationFacade;
 
     @Autowired
-    private ToscaOperationFacade toscaOperationFacade;
+    public GenericTypeBusinessLogic(ComponentsUtils componentsUtils, ToscaOperationFacade toscaOperationFacade) {
+        this.componentsUtils = componentsUtils;
+        this.toscaOperationFacade = toscaOperationFacade;
+    }
 
     /**
      * @param component the component of which to fetch its generic type

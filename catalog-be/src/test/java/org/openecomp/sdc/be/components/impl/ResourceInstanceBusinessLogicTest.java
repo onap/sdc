@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -23,15 +25,19 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
+import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -55,7 +61,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class ResourceInstanceBusinessLogicTest {
+public class ResourceInstanceBusinessLogicTest extends BaseBusinessLogicMock {
 
     private static final String RESOURCE_ID_WITH_HEAT_PARAMS = "MyResourceId";
     private static final String RESOURCE_ID_NO_PAYLOAD = "NoHeatPayload";
@@ -67,24 +73,30 @@ public class ResourceInstanceBusinessLogicTest {
     private static final String USER_ID = "jh0003";
     private static final long ARTIFACT_CREATION_TIME = System.currentTimeMillis();
 
-    static User adminUser = new User("John", "Doh", USER_ID, "", "ADMIN", null);
+    private final IComponentInstanceOperation componentInstanceOperation = Mockito.mock(IComponentInstanceOperation.class);
+    private final ArtifactsBusinessLogic artifactBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
+    private final ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL = Mockito.mock(ComponentInstanceMergeDataBusinessLogic.class);
+    private final ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator = Mockito.mock(ComponentInstanceChangeOperationOrchestrator.class);
+    private final ForwardingPathOperation forwardingPathOperation = Mockito.mock(ForwardingPathOperation.class);
+    private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
 
-    @InjectMocks
-    static ComponentInstanceBusinessLogic bl = new ComponentInstanceBusinessLogic();
-
-    public static final ArtifactsBusinessLogic artifactBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
-    public static final UserBusinessLogic userAdminManager = Mockito.mock(UserBusinessLogic.class);
-//    public static final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
+    private static final UserBusinessLogic userAdminManager = Mockito.mock(UserBusinessLogic.class);
     public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
     public static final IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
     public static final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 
+    static User adminUser = new User("John", "Doh", USER_ID, "", "ADMIN", null);
+
+    private ComponentInstanceBusinessLogic bl = new ComponentInstanceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+        groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+        componentInstanceOperation, artifactBusinessLogic, compInstMergeDataBL, onChangeInstanceOperationOrchestrator,
+        forwardingPathOperation, serviceFilterOperation, artifactToscaOperation);
+
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
-    // @BeforeClass
-    public static void setup() {
-
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getDeploymentResourceInstanceArtifacts();
         Map<String, Object> placeHolderData = (Map<String, Object>) deploymentResourceArtifacts.get(ArtifactsBusinessLogic.HEAT_ENV_NAME);
 
@@ -109,7 +121,7 @@ public class ResourceInstanceBusinessLogicTest {
         Either<ArtifactDefinition, ResponseFormat> eitherPlaceHolder = Either.left(getArtifactPlaceHolder(RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL));
         Mockito.when(artifactBusinessLogic.createArtifactPlaceHolderInfo(RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL.toLowerCase(), placeHolderData, USER_ID, ArtifactGroupTypeEnum.DEPLOYMENT, false)).thenReturn(eitherPlaceHolder);
 
-     //   Mockito.when(artifactBusinessLogic.createArtifactAuditingFields(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString())).thenReturn(new EnumMap<AuditingFieldsKey, Object>(AuditingFieldsKey.class));
+        //   Mockito.when(artifactBusinessLogic.createArtifactAuditingFields(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString())).thenReturn(new EnumMap<AuditingFieldsKey, Object>(AuditingFieldsKey.class));
 
         Either<ArtifactDefinition, StorageOperationStatus> eitherArtifact = Either.left(getHeatArtifactDefinition(USER_ID, RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL, ARTIFACT_CREATION_TIME, true, false));
         Mockito.when(artifactBusinessLogic.addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(eitherArtifact);
@@ -121,12 +133,12 @@ public class ResourceInstanceBusinessLogicTest {
         Either<Object, StorageOperationStatus> eitherLightService = Either.left(lightService);
 
         Mockito.doNothing().when(componentsUtils).auditComponent(Mockito.any(ResponseFormat.class), Mockito.any(User.class), Mockito.any(Component.class), Mockito.any(AuditingActionEnum.class),
-                Mockito.any(ResourceCommonInfo.class), Mockito.any(ResourceVersionInfo.class));
+            Mockito.any(ResourceCommonInfo.class), Mockito.any(ResourceVersionInfo.class));
 
         Either<ArtifactDefinition, ResponseFormat> heatEnvEither = Either.left(getHeatArtifactDefinition(USER_ID, RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL, ARTIFACT_CREATION_TIME, true, false));
 
         Mockito.when(artifactBusinessLogic.createHeatEnvPlaceHolder(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString(), Mockito.any(User.class),
-                Mockito.any(Component.class), Mockito.any())).thenReturn(heatEnvEither);
+            Mockito.any(Component.class), Mockito.any())).thenReturn(heatEnvEither);
 
         Either<List<GroupInstance>, StorageOperationStatus>  groupInstanceEitherLeft = Either.left(new ArrayList<>());
         Mockito.when(groupInstanceOperation.getAllGroupInstances(Mockito.anyString(),  Mockito.any(NodeTypeEnum.class))).thenReturn(groupInstanceEitherLeft);
@@ -137,13 +149,6 @@ public class ResourceInstanceBusinessLogicTest {
         Mockito.when(toscaOperationFacade.addDeploymentArtifactsToInstance(Mockito.any(String.class), Mockito.any(ComponentInstance.class), Mockito.any(Map.class))).thenReturn(status);
         Mockito.when(toscaOperationFacade.addInformationalArtifactsToInstance(Mockito.any(String.class), Mockito.any(ComponentInstance.class), Mockito.any())).thenReturn(status);
         Mockito.when(toscaOperationFacade.addGroupInstancesToComponentInstance(Mockito.any(Component.class), Mockito.any(ComponentInstance.class), Mockito.any(), Mockito.any(Map.class))).thenReturn(status);
-
-    }
-
-    @Before
-    public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-        setup();
     }
 
     @Test

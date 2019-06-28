@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,10 +43,10 @@ public class CapabilityTypeImportManager {
     private final CapabilityTypeOperation capabilityTypeOperation;
     private final CommonImportManager commonImportManager;
 
+    @Autowired
     public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager) {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.commonImportManager = commonImportManager;
-
     }
 
     public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(String capabilityTypesYml) {

@@ -21,20 +21,38 @@
  */
 package org.openecomp.sdc.be.components.lifecycle;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
+import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
+import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -42,16 +60,16 @@ import fj.data.Either;
 import mockit.Deencapsulation;
 import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
-import static org.mockito.Mockito.mock;
-
 public class CertificationRequestTransitionTest extends LifecycleTestBase {
 
-	
-	
 	private CertificationRequestTransition createTestSubject() {
 		return new CertificationRequestTransition(
-				new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider())),
-				new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(), new ToscaOperationFacade(), new JanusGraphDao(new JanusGraphClient()));
+			new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(mock(CassandraClient.class)), new TestConfigurationProvider())),
+			new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+			groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
+			componentCache, distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation, forwardingPathValidator,
+			uiComponentDataConverter, serviceFilterOperation, serviceFilterValidator, artifactToscaOperation), new ToscaOperationFacade(),
+			new JanusGraphDao(new JanusGraphClient()));
 	}
 
 	@Test
