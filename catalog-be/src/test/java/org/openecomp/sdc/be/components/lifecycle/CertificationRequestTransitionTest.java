@@ -48,7 +48,7 @@ public class CertificationRequestTransitionTest extends LifecycleTestBase {
 	private CertificationRequestTransition createTestSubject() {
 		return new CertificationRequestTransition(
 				new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao(), new TestConfigurationProvider())),
-				new ToscaElementLifecycleOperation(), new ServiceBusinessLogic(), new ToscaOperationFacade(), new JanusGraphDao(new JanusGraphClient()));
+				new ToscaElementLifecycleOperation(null), new ServiceBusinessLogic(), new ToscaOperationFacade(null,null,null,null,null ), new JanusGraphDao(new JanusGraphClient()));
 	}
 
 	@Test

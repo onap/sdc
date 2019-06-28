@@ -10,6 +10,7 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class PolicyOperation {
     private TopologyTemplateOperation topologyTemplateOperation;
     private JanusGraphDao janusGraphDao;
 
+    @Autowired
     public PolicyOperation(TopologyTemplateOperation topologyTemplateOperation, JanusGraphDao janusGraphDao) {
         this.topologyTemplateOperation = topologyTemplateOperation;
         this.janusGraphDao = janusGraphDao;

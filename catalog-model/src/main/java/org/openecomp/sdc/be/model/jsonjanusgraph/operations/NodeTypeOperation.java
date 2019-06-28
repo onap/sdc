@@ -25,6 +25,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -44,6 +45,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
@@ -57,8 +59,9 @@ public class NodeTypeOperation extends ToscaElementOperation {
     private static final Logger log = Logger.getLogger(NodeTypeOperation.class);
     private DerivedNodeTypeResolver derivedResourceResolver;
 
-    
-    public NodeTypeOperation(@Qualifier("derived-resource-resolver") DerivedNodeTypeResolver derivedNodeTypeResolver) {
+    @Autowired
+    public NodeTypeOperation(@Qualifier("derived-resource-resolver") DerivedNodeTypeResolver derivedNodeTypeResolver, JanusGraphDao janusGraphDao, CategoryOperation categoryOperation) {
+        super(categoryOperation, janusGraphDao);
         this.derivedResourceResolver = derivedNodeTypeResolver;
     }
 

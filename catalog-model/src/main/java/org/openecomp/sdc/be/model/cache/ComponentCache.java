@@ -62,11 +62,15 @@ public class ComponentCache {
 
 	private static final Logger log = Logger.getLogger(ComponentCache.class);
 
-    @Autowired
     ComponentCassandraDao componentCassandraDao;
 
-    @Autowired
     ToscaOperationFacade toscaOperationFacade;
+
+    @Autowired
+    public ComponentCache(ComponentCassandraDao componentCassandraDao, ToscaOperationFacade toscaOperationFacade) {
+        this.componentCassandraDao = componentCassandraDao;
+        this.toscaOperationFacade = toscaOperationFacade;
+    }
 
     private Map<ComponentTypeEnum, Map<String, Component>> catalogInMemoryCache = new HashMap<>();
     private final ReentrantReadWriteLock rwCatalogLock = new ReentrantReadWriteLock();

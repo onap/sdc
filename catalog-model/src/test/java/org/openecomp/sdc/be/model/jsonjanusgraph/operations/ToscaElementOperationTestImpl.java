@@ -2,18 +2,25 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by cb478c on 6/13/2017.
  */
 @org.springframework.stereotype.Component("test-tosca-element-operation")
 public class ToscaElementOperationTestImpl extends ToscaElementOperation {
+
+    @Autowired
+    public ToscaElementOperationTestImpl(CategoryOperation categoryOperation, JanusGraphDao janusGraphDao) {
+        super(categoryOperation, janusGraphDao);
+    }
 
     @Override
     protected <T extends ToscaElement> Either<T, StorageOperationStatus> getLightComponent(GraphVertex vertexComponent, ComponentTypeEnum nodeType, ComponentParametersView parametersFilter) {

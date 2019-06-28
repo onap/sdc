@@ -34,15 +34,16 @@ public class ArchiveOperation extends BaseOperation {
 
     private static final Logger log = Logger.getLogger(ArchiveOperation.class.getName());
 
-    @Autowired
+
     private IGraphLockOperation graphLockOperation;
 
     public enum Action {
         ARCHIVE, RESTORE;
     }
 
-    public ArchiveOperation(JanusGraphDao janusGraphDao, IGraphLockOperation graphLockOperation){
-        this.janusGraphDao = janusGraphDao;
+    @Autowired
+    public ArchiveOperation(JanusGraphDao janusGraphDao, IGraphLockOperation graphLockOperation) {
+        super(janusGraphDao);
         this.graphLockOperation = graphLockOperation;
     }
 

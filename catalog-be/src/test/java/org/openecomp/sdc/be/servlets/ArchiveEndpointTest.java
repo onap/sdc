@@ -182,27 +182,27 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ToscaOperationFacade toscaOperationFacade() {
-            return new ToscaOperationFacade();
+            return new ToscaOperationFacade(nodeTypeOpertaion(),topologyTemplateOperation(),nodeTemplateOperation(),groupsOperation(),janusGraphDao());
         }
 
         @Bean
         TopologyTemplateOperation topologyTemplateOperation() {
-            return new TopologyTemplateOperation();
+            return new TopologyTemplateOperation(archiveOperation(),categoryOperation(),janusGraphDao());
         }
 
         @Bean
         NodeTypeOperation nodeTypeOpertaion() {
-            return new NodeTypeOperation(null);
+            return new NodeTypeOperation(null, janusGraphDao(),categoryOperation());
         }
 
         @Bean
         NodeTemplateOperation nodeTemplateOperation() {
-            return new NodeTemplateOperation();
+            return new NodeTemplateOperation(janusGraphDao());
         }
 
         @Bean
         GroupsOperation groupsOperation() {
-            return new GroupsOperation();
+            return new GroupsOperation(janusGraphDao());
         }
 
         @Bean
@@ -228,7 +228,7 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         CategoryOperation categoryOperation() {
-            return new CategoryOperation();
+            return new CategoryOperation(janusGraphDao());
         }
 
         @Bean

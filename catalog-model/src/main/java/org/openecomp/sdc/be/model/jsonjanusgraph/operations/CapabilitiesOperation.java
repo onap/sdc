@@ -19,6 +19,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -37,6 +38,7 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,12 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component("capabilities-operation")
 public class CapabilitiesOperation extends BaseOperation {
+
+    @Autowired
+    public CapabilitiesOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CapabilitiesOperation.class);
 
     public Either<List<CapabilityDefinition>, StorageOperationStatus> addCapabilities(String componentId,

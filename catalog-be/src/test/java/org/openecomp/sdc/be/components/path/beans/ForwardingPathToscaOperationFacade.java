@@ -1,15 +1,27 @@
 package org.openecomp.sdc.be.components.path.beans;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
 public class ForwardingPathToscaOperationFacade extends ToscaOperationFacade {
     protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
+
+    @Autowired
+    public ForwardingPathToscaOperationFacade(NodeTypeOperation nodeTypeOperation, TopologyTemplateOperation topologyTemplateOperation, NodeTemplateOperation nodeTemplateOperation, GroupsOperation groupsOperation, HealingJanusGraphDao janusGraphDao) {
+        super(nodeTypeOperation, topologyTemplateOperation, nodeTemplateOperation, groupsOperation, janusGraphDao);
+    }
+
     @Override
     public Either<Resource, StorageOperationStatus> getLatestCertifiedNodeTypeByToscaResourceName(String toscaResourceName) {
 

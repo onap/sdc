@@ -27,6 +27,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -79,6 +80,7 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -99,8 +101,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private static final Logger log = Logger.getLogger(TopologyTemplateOperation.class);
     private Set<OriginTypeEnum> nodeTypeSet = new HashSet<>(Arrays.asList(OriginTypeEnum.VFC, OriginTypeEnum.CP, OriginTypeEnum.VL, OriginTypeEnum.Configuration, OriginTypeEnum.VFCMT));
 
-    @Autowired
     private ArchiveOperation archiveOperation;
+
+    @Autowired
+    public TopologyTemplateOperation(ArchiveOperation archiveOperation, CategoryOperation categoryOperation, JanusGraphDao janusGraphDao) {
+        super(categoryOperation, janusGraphDao);
+        this.archiveOperation = archiveOperation;
+    }
 
     public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {
         Either<TopologyTemplate, StorageOperationStatus> result = null;

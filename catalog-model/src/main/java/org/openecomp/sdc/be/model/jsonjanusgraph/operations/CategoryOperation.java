@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,11 @@ import java.util.Map;
 public class CategoryOperation extends BaseOperation{
 
     private static final Logger log = Logger.getLogger(CategoryOperation.class.getName());
+
+    @Autowired
+    public CategoryOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     /**
      *

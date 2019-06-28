@@ -7,7 +7,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 public class DaoInfoTest {
 
 	private DaoInfo createTestSubject() {
-		return new DaoInfo(new ToscaOperationFacade(), new ComponentCache());
+		return new DaoInfo(new ToscaOperationFacade(null,null,null,null,null), new ComponentCache(null,null));
 	}
 	
 	@Test

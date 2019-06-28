@@ -20,6 +20,13 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @org.springframework.stereotype.Component("tosca-data-operation")
 public class ToscaDataOperation extends BaseOperation {
+    @Autowired
+    public ToscaDataOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 }

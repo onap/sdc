@@ -10,11 +10,13 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.PropertyData;
@@ -26,11 +28,15 @@ import org.springframework.stereotype.Component;
 @Component("relationship-type-operation")
 public class RelationshipTypeOperation extends AbstractOperation {
 
-    @Autowired
     private PropertyOperation propertyOperation;
+    private DerivedFromOperation derivedFromOperation;
 
     @Autowired
-    private DerivedFromOperation derivedFromOperation;
+    public  RelationshipTypeOperation(PropertyOperation propertyOperation, DerivedFromOperation derivedFromOperation,HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache){
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.propertyOperation=propertyOperation;
+        this.derivedFromOperation=derivedFromOperation;
+    }
 
     private static final Logger logger = Logger.getLogger(RelationshipTypeOperation.class.getName());
     private static final String RELATIONSHIP_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS = "Relationship type {} cannot be "

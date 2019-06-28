@@ -109,7 +109,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.jsonGroupsOperation();
+		result = testSubject.jsonGroupsOperation(null);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.toscaOperationFacade();
+		result = testSubject.toscaOperationFacade(null,null,null,null,null);
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.nodeTypeOperation(migrationDerivedNodeTypeResolver);
+		result = testSubject.nodeTypeOperation(migrationDerivedNodeTypeResolver,null,null);
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.topologyTemplateOperation();
+		result = testSubject.topologyTemplateOperation(null, null,null);
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.migrationDerivedNodeTypeResolver();
+		result = testSubject.migrationDerivedNodeTypeResolver(null);
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.categoryOperation();
+		result = testSubject.categoryOperation(null);
 	}
 
 	@Test
@@ -201,7 +201,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.artifactsOperation();
+		result = testSubject.artifactsOperation(null);
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.toscaDataOperation();
+		result = testSubject.toscaDataOperation(null);
 	}
 
 	@Test
@@ -221,7 +221,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.toscaElementLifecycleOperation();
+		result = testSubject.toscaElementLifecycleOperation(null);
 	}
 
 	@Test
