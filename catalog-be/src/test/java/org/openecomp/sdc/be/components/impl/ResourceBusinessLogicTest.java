@@ -32,9 +32,19 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.ArtifactsResolver;
+import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
+import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
+import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
@@ -68,15 +78,22 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -108,22 +125,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
-public class ResourceBusinessLogicTest {
+public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceBusinessLogicTest.class);
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
@@ -142,7 +152,7 @@ public class ResourceBusinessLogicTest {
     private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
 
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    IElementOperation mockElementDao;
+    IElementOperation mockElementDao = new ElementOperationMock();
     JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
@@ -157,9 +167,27 @@ public class ResourceBusinessLogicTest {
     UserValidations userValidations = Mockito.mock(UserValidations.class);
     WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
+    ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
 
-    @InjectMocks
-    ResourceBusinessLogic bl = new ResourceBusinessLogic();
+    CsarUtils csarUtils = Mockito.mock(CsarUtils.class);
+    IUserBusinessLogic userBusinessLogic = Mockito.mock(IUserBusinessLogic.class);
+    IGroupOperation groupOperation = Mockito.mock(IGroupOperation.class);
+    IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
+    IGroupTypeOperation groupTypeOperation = Mockito.mock(IGroupTypeOperation.class);
+    GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+    InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
+    ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
+    ArtifactsResolver artifactsResolver = Mockito.mock(ArtifactsResolver.class);
+    InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
+    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
+    InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
+    CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
+    ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
+    CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
+    MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
+    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+
     ResponseFormatManager responseManager = null;
     GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     User user = null;
@@ -169,14 +197,15 @@ public class ResourceBusinessLogicTest {
     Resource genericVFC = null;
     Resource genericPNF = null;
     ComponentsUtils componentsUtils;
-    ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
+    ArtifactsBusinessLogic artifactManager;
     CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
     @InjectMocks
-    CsarBusinessLogic csarBusinessLogic = new CsarBusinessLogic();
+    CsarBusinessLogic csarBusinessLogic;
     Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
     List<Resource> reslist;
+    ResourceBusinessLogic bl;
 
     public ResourceBusinessLogicTest() {
     }
@@ -194,8 +223,7 @@ public class ResourceBusinessLogicTest {
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
 
-        // Elements
-        mockElementDao = new ElementOperationMock();
+        ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
 
         // User data and management
         user = new User();
@@ -245,17 +273,24 @@ public class ResourceBusinessLogicTest {
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         // BL object
+        artifactManager = new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBl, userBusinessLogic,
+            artifactsResolver, mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+            interfaceLifecycleTypeOperation, artifactToscaOperation);
+
+        bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactManager, componentCache, componentInstanceBusinessLogic,
+            resourceImportManager, inputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
+            csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
+            artifactToscaOperation);
+
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
-        bl = new ResourceBusinessLogic();
-        bl.setElementDao(mockElementDao);
         bl.setUserAdmin(mockUserAdmin);
         bl.setCapabilityTypeOperation(capabilityTypeOperation);
         bl.setComponentsUtils(componentsUtils);
         bl.setLifecycleManager(lifecycleBl);
         bl.setGraphLockOperation(graphLockOperation);
-        bl.setArtifactsManager(artifactManager);
         bl.setPropertyOperation(propertyOperation);
-        bl.setJanusGraphGenericDao(mockJanusGraphDao);
+        bl.setJanusGraphDao(mockJanusGraphDao);
         bl.setApplicationDataTypeCache(applicationDataTypeCache);
         bl.setCacheManagerOperation(cacheManager);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);

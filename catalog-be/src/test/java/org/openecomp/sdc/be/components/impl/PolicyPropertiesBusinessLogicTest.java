@@ -90,7 +90,7 @@ public class PolicyPropertiesBusinessLogicTest {
     @Before
     public void setUp() throws Exception {
         testInstance.setUserValidations(userValidations);
-        testInstance.setJanusGraphGenericDao(janusGraphDao);
+        testInstance.setJanusGraphDao(janusGraphDao);
         testInstance.setToscaOperationFacade(toscaOperationFacade);
         testInstance.setComponentsUtils(componentsUtils);
 

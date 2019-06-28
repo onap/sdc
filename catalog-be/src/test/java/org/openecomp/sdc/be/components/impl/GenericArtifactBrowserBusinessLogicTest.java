@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -27,8 +29,14 @@ import java.io.IOException;
 import org.junit.Test;
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 
-public class GenericArtifactBrowserBusinessLogicTest {
+public class GenericArtifactBrowserBusinessLogicTest extends BaseBusinessLogicMock {
 
     private static String content = "event: {presence: required, action: [ any, any, alarm003,RECO-rebuildVnf ],\n"
         + "        structure: {\n"
@@ -106,7 +114,9 @@ public class GenericArtifactBrowserBusinessLogicTest {
 
     @Test
     public void testShouldCorrectlyParseResponse() throws IOException {
-        GenericArtifactBrowserBusinessLogic genericArtifactBrowserBusinessLogic = new GenericArtifactBrowserBusinessLogic();
+        GenericArtifactBrowserBusinessLogic genericArtifactBrowserBusinessLogic = new GenericArtifactBrowserBusinessLogic(
+            elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
         String result = genericArtifactBrowserBusinessLogic.searchFor(
                 new GABQuery(ImmutableSet.of("event.presence", "event.action[0]"),
                 content, GABQueryType.CONTENT));

@@ -47,24 +47,24 @@ public class CsarValidationUtils {
     private static final String CSAR_VERSION = "CSAR-Version";
     private static final String CREATED_BY = "Created-By";
     private static final String NEW_LINE_DELM = "\n";
-    public static final String TOSCA_METADATA = "TOSCA-Metadata";
-    public static final String TOSCA_FILE = "TOSCA.meta";
-    public static final String DEL_PATTERN = "([/\\\\]+)";
-    public static final String TOSCA_METADATA_PATH_PATTERN = TOSCA_METADATA +
+    private static final String TOSCA_METADATA = "TOSCA-Metadata";
+    private static final String TOSCA_FILE = "TOSCA.meta";
+    private static final String DEL_PATTERN = "([/\\\\]+)";
+    private static final String TOSCA_METADATA_PATH_PATTERN = TOSCA_METADATA +
             // Artifact Group (i.e Deployment/Informational)
             DEL_PATTERN + TOSCA_FILE;
 
-    public static final String TOSCA_META_ENTRY_DEFINITIONS = "Entry-Definitions";
+    private static final String TOSCA_META_ENTRY_DEFINITIONS = "Entry-Definitions";
     private static final String[] TOSCA_METADATA_FIELDS = { TOSCA_META_FILE_VERSION, CSAR_VERSION, CREATED_BY, TOSCA_META_ENTRY_DEFINITIONS };
-    public static final String ARTIFACTS_METADATA_FILE = "HEAT.meta";
-    public static final String TOSCA_CSAR_EXTENSION = ".csar";
-    public static final String TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID = "TOSCA-Metadata/TOSCA.meta file is not in expected key-value form in csar, csar ID {}";
-    public static final String TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID = "TOSCA-Metadata/TOSCA.meta file not in expected key-value form in CSAR with id ";
-    public static final String CSAR_INTERNALS_ARE_INVALID = "CSAR internals are invalid";
-    public static final String ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID = "Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file, csar ID {}";
-    public static final String FILE_NOT_FOUND_IN_CSAR_WITH_ID = " file not found in CSAR with id ";
-    public static final String CSAR_STRUCTURE_IS_INVALID = "CSAR structure is invalid";
-    public static final String ENTRY_DEFINITIONS = "Entry-Definitions ";
+    private static final String ARTIFACTS_METADATA_FILE = "HEAT.meta";
+    private static final String TOSCA_CSAR_EXTENSION = ".csar";
+    private static final String TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID = "TOSCA-Metadata/TOSCA.meta file is not in expected key-value form in csar, csar ID {}";
+    private static final String TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID = "TOSCA-Metadata/TOSCA.meta file not in expected key-value form in CSAR with id ";
+    private static final String CSAR_INTERNALS_ARE_INVALID = "CSAR internals are invalid";
+    private static final String ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID = "Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file, csar ID {}";
+    private static final String FILE_NOT_FOUND_IN_CSAR_WITH_ID = " file not found in CSAR with id ";
+    private static final String CSAR_STRUCTURE_IS_INVALID = "CSAR structure is invalid";
+    private static final String ENTRY_DEFINITIONS = "Entry-Definitions ";
     private static final Pattern floatPattern = Pattern.compile("^\\d{1}[.]\\d{1}$");
 
     /**

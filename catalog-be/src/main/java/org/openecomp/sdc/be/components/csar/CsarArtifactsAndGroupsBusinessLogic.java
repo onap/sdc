@@ -12,6 +12,7 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOpera
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -28,7 +29,14 @@ import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.MergedArtifactInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -53,16 +61,31 @@ import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
 public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(CsarArtifactsAndGroupsBusinessLogic.class.getName());
-    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME = "Artifact  file is not in expected formatr, fileName  {}";
-    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME = "Artifact  file is not in expected format, fileName  {}";
-    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 = "Artifact  file is not in expected formatr, fileName ";
-    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 = "Artifact  file is not in expected format, fileName ";
-    public static final String ARTIFACT_INTERNALS_ARE_INVALID = "Artifact internals are invalid";
-    public static final String ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE = "Artifact with name {} and type {} already exist with type  {}";
+    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME = "Artifact  file is not in expected formatr, fileName  {}";
+    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME = "Artifact  file is not in expected format, fileName  {}";
+    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 = "Artifact  file is not in expected formatr, fileName ";
+    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 = "Artifact  file is not in expected format, fileName ";
+    private static final String ARTIFACT_INTERNALS_ARE_INVALID = "Artifact internals are invalid";
+    private static final String ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE = "Artifact with name {} and type {} already exist with type  {}";
     private final Gson gson = new Gson();
     private static final Pattern pattern = Pattern.compile("\\..(.*?)\\..");
+    protected final ArtifactsBusinessLogic artifactsBusinessLogic;
+    private final GroupBusinessLogic groupBusinessLogic;
+
     @Autowired
-    protected ArtifactsBusinessLogic artifactsBusinessLogic;
+    public CsarArtifactsAndGroupsBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsBusinessLogic artifactsBusinessLogic, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
+        this.groupBusinessLogic = groupBusinessLogic;
+    }
 
     public Either<Resource, ResponseFormat> createResourceArtifactsFromCsar(CsarInfo csarInfo, Resource resource,
             String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,

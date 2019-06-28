@@ -59,7 +59,6 @@ public class CertificationChangeTransition extends LifeCycleTransition {
     private LifecycleStateEnum nextState;
     private LifeCycleTransitionEnum name;
     private AuditingActionEnum auditingAction;
-    private ArtifactsBusinessLogic artifactsManager;
     private NodeTemplateOperation nodeTemplateOperation;
 
     public CertificationChangeTransition(LifeCycleTransitionEnum name, ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
@@ -101,14 +100,6 @@ public class CertificationChangeTransition extends LifeCycleTransition {
     @Override
     public AuditingActionEnum getAuditingAction() {
         return auditingAction;
-    }
-
-    public ArtifactsBusinessLogic getArtifactsManager() {
-        return artifactsManager;
-    }
-
-    public void setArtifactsManager(ArtifactsBusinessLogic artifactsManager) {
-        this.artifactsManager = artifactsManager;
     }
 
     public NodeTemplateOperation getNodeTemplateOperation() {

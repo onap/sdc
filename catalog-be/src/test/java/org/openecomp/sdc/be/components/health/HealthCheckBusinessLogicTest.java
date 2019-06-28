@@ -4,6 +4,7 @@ import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
@@ -16,8 +17,10 @@ import java.util.List;
 
 public class HealthCheckBusinessLogicTest extends BeConfDependentTest{
 
+	private final SwitchoverDetector switchoverDetector = Mockito.mock(SwitchoverDetector.class);
+
 	private HealthCheckBusinessLogic createTestSubject() {
-		HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
+		HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic(switchoverDetector);
 		DmaapHealth dmaapHealth = new DmaapHealth();
 		ReflectionTestUtils.setField(healthCheckBusinessLogic, "dmaapHealth", dmaapHealth);
 		DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();

@@ -50,9 +50,14 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -67,7 +72,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ElementBusinessLogicTest {
+public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 
 	private User user;
 
@@ -77,28 +82,29 @@ public class ElementBusinessLogicTest {
 	@Mock
 	private UserBusinessLogic userAdminManager;
 
-    @Mock
+	@Mock
 	private JanusGraphDao janusGraphDao;
 
-    @Mock
+	@Mock
 	private UserValidations userValidations;
 
-    @Mock
+	@Mock
 	private ToscaOperationFacade toscaOperationFacade;
 
-    @Mock
-	private IElementOperation elementOperation;
-
-    @InjectMocks
-    ElementBusinessLogic elementBusinessLogic;
+  @InjectMocks
+	ElementBusinessLogic elementBusinessLogic;
 
     @Before
 	public void setUp() {
-
-    	elementBusinessLogic = new ElementBusinessLogic();
     	MockitoAnnotations.initMocks(this);
-		user = new User();
-		user.setUserId("admin");
+    	elementBusinessLogic = new ElementBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+				groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, elementDao, userAdminManager);
+    	elementBusinessLogic.setComponentsUtils(componentsUtils);
+    	elementBusinessLogic.setJanusGraphDao(janusGraphDao);
+    	elementBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+    	elementBusinessLogic.setUserValidations(userValidations);
+			user = new User();
+			user.setUserId("admin");
 	}
 
     @Test
@@ -231,7 +237,7 @@ public class ElementBusinessLogicTest {
     	categoryDefinitionList.add(new CategoryDefinition());
 
 		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean())).thenReturn(user);
-		when(elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+		when(elementDao.getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
 				.thenReturn(Either.left(categoryDefinitionList));
 		Assert.assertTrue(elementBusinessLogic.getAllCategories(ComponentTypeEnum.RESOURCE_PARAM_NAME, user.getUserId())
 		.isLeft());
@@ -245,7 +251,7 @@ public class ElementBusinessLogicTest {
 
     	when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
 				.thenReturn(user);
-    	when(elementOperation.getAllCategories(any(NodeTypeEnum.class), anyBoolean()))
+    	when(elementDao.getAllCategories(any(NodeTypeEnum.class), anyBoolean()))
 				.thenReturn(Either.left(dummyCategoryDefinitionList));
 
     	Assert.assertTrue(elementBusinessLogic.getAllCategories(user.getUserId()).isLeft());
@@ -254,7 +260,7 @@ public class ElementBusinessLogicTest {
 	@Test
 	public void testDeleteCategory_givenValidComponentTypeAndCategoryId_thenReturnsSuccessful() {
 
-    	when(elementOperation.deleteCategory(any(NodeTypeEnum.class), anyString()))
+    	when(elementDao.deleteCategory(any(NodeTypeEnum.class), anyString()))
 				.thenReturn(Either.left(new CategoryDefinition()));
 
     	Assert.assertTrue(elementBusinessLogic.deleteCategory("cat1", "resources", user.getUserId()).isLeft());
@@ -268,13 +274,13 @@ public class ElementBusinessLogicTest {
 
 		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
 				.thenReturn(user);
-		when(elementOperation.getCategory(any(NodeTypeEnum.class), anyString()))
+		when(elementDao.getCategory(any(NodeTypeEnum.class), anyString()))
 				.thenReturn(Either.left(new CategoryDefinition()));
-		when(elementOperation.isSubCategoryUniqueForCategory(any(NodeTypeEnum.class), anyString(), anyString()))
+		when(elementDao.isSubCategoryUniqueForCategory(any(NodeTypeEnum.class), anyString(), anyString()))
 				.thenReturn(Either.left(Boolean.TRUE));
-		when(elementOperation.getSubCategoryUniqueForType(any(NodeTypeEnum.class), anyString()))
+		when(elementDao.getSubCategoryUniqueForType(any(NodeTypeEnum.class), anyString()))
 				.thenReturn(Either.left(subCatDef));
-		when(elementOperation.createSubCategory(anyString(), any(SubCategoryDefinition.class), any(NodeTypeEnum.class)))
+		when(elementDao.createSubCategory(anyString(), any(SubCategoryDefinition.class), any(NodeTypeEnum.class)))
 				.thenReturn(Either.left(subCatDef));
 
 		Assert.assertTrue(elementBusinessLogic.createSubCategory(subCatDef, "resources",

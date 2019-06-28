@@ -11,6 +11,7 @@ import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionAr
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -56,11 +57,6 @@ public class MigrationSpringConfig {
         return new MigrationTasksDao();
     }
 
-    @Bean(name = "serviceDistributionArtifactsBuilder")
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
-    }
-
     @Bean(name = "elasticsearchConfig")
     public PropertiesFactoryBean mapper() {
         String configHome = System.getProperty("config.home");
@@ -68,8 +64,5 @@ public class MigrationSpringConfig {
         bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
         return bean;
     }
-
-    @Bean(name = "componentsCleanBusinessLogic")
-    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic() {return  new ComponentsCleanBusinessLogic(); }
 
 }

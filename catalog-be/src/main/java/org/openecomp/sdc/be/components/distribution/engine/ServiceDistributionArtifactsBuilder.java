@@ -56,8 +56,12 @@ public class ServiceDistributionArtifactsBuilder {
     @javax.annotation.Resource
     IArtifactOperation artifactOperation;
 
+    private final ToscaOperationFacade toscaOperationFacade;
+
     @Autowired
-    ToscaOperationFacade toscaOperationFacade;
+    public ServiceDistributionArtifactsBuilder(ToscaOperationFacade toscaOperationFacade) {
+        this.toscaOperationFacade = toscaOperationFacade;
+    }
 
     public InterfaceLifecycleOperation getInterfaceLifecycleOperation() {
         return interfaceLifecycleOperation;

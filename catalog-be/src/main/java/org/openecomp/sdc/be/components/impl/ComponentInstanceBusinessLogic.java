@@ -76,13 +76,20 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -122,38 +129,46 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class.getName());
     private static final String VF_MODULE = "org.openecomp.groups.VfModule";
-    public static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
+    private static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
     private static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
     private static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
                                                                 {"charts", "day0", "configtemplate"} /*cloud specific sub type*/};
-    public static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
-    public static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
-    public static final String INVALID_COMPONENT_TYPE = "invalid component type";
-    public static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
-    public static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
-    public static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
-    public static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
-    public static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
+    private static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
+    private static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
+    private static final String INVALID_COMPONENT_TYPE = "invalid component type";
+    private static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
+    private static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
+    private static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
+    private static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
+    private static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
+
+    private final IComponentInstanceOperation componentInstanceOperation;
+    private final ArtifactsBusinessLogic artifactBusinessLogic;
+    private final ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
+    private final ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
+    private final ForwardingPathOperation forwardingPathOperation;
+    private final NodeFilterOperation serviceFilterOperation;
 
     @Autowired
-    private IComponentInstanceOperation componentInstanceOperation;
-
-    @Autowired
-    private ArtifactsBusinessLogic artifactBusinessLogic;
-
-    @Autowired
-    private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
-
-    @Autowired
-    private ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
-
-    @Autowired
-    private ForwardingPathOperation forwardingPathOperation;
-
-    @Autowired
-    private NodeFilterOperation serviceFilterOperation;
-
-    public ComponentInstanceBusinessLogic() {
+    public ComponentInstanceBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        IComponentInstanceOperation componentInstanceOperation, ArtifactsBusinessLogic artifactBusinessLogic,
+        ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL,
+        ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator,
+        ForwardingPathOperation forwardingPathOperation, NodeFilterOperation serviceFilterOperation,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.componentInstanceOperation = componentInstanceOperation;
+        this.artifactBusinessLogic = artifactBusinessLogic;
+        this.compInstMergeDataBL = compInstMergeDataBL;
+        this.onChangeInstanceOperationOrchestrator = onChangeInstanceOperationOrchestrator;
+        this.forwardingPathOperation = forwardingPathOperation;
+        this.serviceFilterOperation = serviceFilterOperation;
     }
 
     public Either<ComponentInstance, ResponseFormat> createComponentInstance(String containerComponentParam,

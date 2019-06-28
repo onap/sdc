@@ -116,13 +116,20 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
@@ -160,34 +167,49 @@ import javax.servlet.http.HttpServletRequest;
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private static final String CHANGE_SERVICE_DISTRIBUTION = "Change Service Distribution";
-	private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
-	private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
-	private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
-	private static final Logger log = Logger.getLogger(ServiceBusinessLogic.class);
+    private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
+    private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
+    private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
+    private static final Logger log = Logger.getLogger(ServiceBusinessLogic.class);
     private static final String INITIAL_VERSION = "0.1";
     private static final String STATUS_SUCCESS_200 = "200";
-	private static final String STATUS_DEPLOYED = "DEPLOYED";
-    @Autowired
-    private IDistributionEngine distributionEngine;
-    @Autowired
-    private AuditCassandraDao auditCassandraDao;
-    @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    @Autowired
+	  private static final String STATUS_DEPLOYED = "DEPLOYED";
+
+    private ForwardingPathOperation forwardingPathOperation;
     private ICacheMangerOperation cacheManagerOperation;
-    @Autowired
-    private ServiceDistributionValidation serviceDistributionValidation;
+    private AuditCassandraDao auditCassandraDao;
+
+    private final IDistributionEngine distributionEngine;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ServiceDistributionValidation serviceDistributionValidation;
+    private final ForwardingPathValidator forwardingPathValidator;
+    private final UiComponentDataConverter uiComponentDataConverter;
+    private final NodeFilterOperation serviceFilterOperation;
+    private final NodeFilterValidator serviceFilterValidator;
 
     @Autowired
-    private ForwardingPathOperation forwardingPathOperation;
-    @Autowired
-    private ForwardingPathValidator forwardingPathValidator;
-    @Autowired
-    private UiComponentDataConverter uiComponentDataConverter;
-    @Autowired
-    private NodeFilterOperation serviceFilterOperation;
-    @Autowired
-    private NodeFilterValidator serviceFilterValidator;
+    public ServiceBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsBusinessLogic artifactsBusinessLogic, ComponentCache componentCache,
+        IDistributionEngine distributionEngine, ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+        ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
+        UiComponentDataConverter uiComponentDataConverter, NodeFilterOperation serviceFilterOperation,
+        NodeFilterValidator serviceFilterValidator, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, componentCache, artifactToscaOperation);
+        this.distributionEngine = distributionEngine;
+        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+        this.serviceDistributionValidation = serviceDistributionValidation;
+        this.forwardingPathValidator = forwardingPathValidator;
+        this.uiComponentDataConverter = uiComponentDataConverter;
+        this.serviceFilterOperation = serviceFilterOperation;
+        this.serviceFilterValidator = serviceFilterValidator;
+    }
 
     public Either<Service, ResponseFormat> changeServiceDistributionState(String serviceId, String state, LifecycleChangeInfoWithAction commentObj, User user) {
 
@@ -1025,20 +1047,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.right(responseFormat);
     }
 
-    public void setElementDao(IElementOperation elementDao) {
-        this.elementDao = elementDao;
-    }
-
+    @Autowired
     public void setCassandraAuditingDao(AuditCassandraDao auditingDao) {
         this.auditCassandraDao = auditingDao;
     }
 
     public ArtifactsBusinessLogic getArtifactBl() {
         return artifactsBusinessLogic;
-    }
-
-    public void setArtifactBl(ArtifactsBusinessLogic artifactBl) {
-        this.artifactsBusinessLogic = artifactBl;
     }
 
     public Either<Service, ResponseFormat> updateServiceMetadata(String serviceId, Service serviceUpdate, User user) {
@@ -2444,18 +2459,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return cacheManagerOperation;
     }
 
+    @Autowired
     public void setCacheManagerOperation(ICacheMangerOperation cacheManagerOperation) {
         this.cacheManagerOperation = cacheManagerOperation;
     }
 
+    @Autowired
     public void setForwardingPathOperation(ForwardingPathOperation forwardingPathOperation) {
         this.forwardingPathOperation = forwardingPathOperation;
     }
 
-    @Override
-    public void setToscaOperationFacade(ToscaOperationFacade toscaOperationFacade) {
-        this.toscaOperationFacade = toscaOperationFacade;
-    }/**
+    /**
      * updates group instance with new property values in case of successful update of group instance related component instance will be updated with new modification time and related service will be updated with new last update date
      *
      */
@@ -2949,4 +2963,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         return Either.left(serviceFilterResult);
     }
+
+
+
+
 }
