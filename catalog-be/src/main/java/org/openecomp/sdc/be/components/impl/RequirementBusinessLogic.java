@@ -25,8 +25,15 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.RequirementOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,16 +60,27 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
     private static final String EXCEPTION_OCCURRED_DURING_REQUIREMENTS
             = "Exception occurred during {}. Response is {}";
 
-    @Autowired
     private RequirementOperation requirementOperation;
-    @Autowired
     private RequirementValidation requirementValidation;
 
+    @Autowired
+    public RequirementBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    }
 
+    @Autowired
     public void setRequirementOperation(RequirementOperation requirementOperation) {
         this.requirementOperation = requirementOperation;
     }
 
+    @Autowired
     public void setRequirementValidation(RequirementValidation requirementValidation) {
         this.requirementValidation = requirementValidation;
     }

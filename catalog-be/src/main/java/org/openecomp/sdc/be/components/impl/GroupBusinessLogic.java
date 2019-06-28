@@ -31,7 +31,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.impl.policy.PolicyTargetsUpdateHandler;
 import org.openecomp.sdc.be.components.utils.Utils;
@@ -54,10 +53,17 @@ import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.PropertyDefinition.GroupInstancePropertyValueUpdateBehavior;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -92,15 +98,29 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private static final String DELETE_GROUP = "DeleteGroup";
 
     private static final Logger log = Logger.getLogger(GroupBusinessLogic.class);
-    @Autowired
-    private AccessValidations accessValidations;
+
+    private final AccessValidations accessValidations;
+    private final PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
 
     @javax.annotation.Resource
-    @Autowired
-    private GroupsOperation groupsOperation;
+    private final GroupsOperation groupsOperation;
+
 
     @Autowired
-    PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
+    public GroupBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, AccessValidations accessValidations,
+        GroupsOperation groupsOperation, PolicyTargetsUpdateHandler policyTargetsUpdateHandler,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.accessValidations = accessValidations;
+        this.groupsOperation = groupsOperation;
+        this.policyTargetsUpdateHandler = policyTargetsUpdateHandler;
+    }
 
     private String getComponentTypeForResponse(org.openecomp.sdc.be.model.Component component) {
         String componentTypeForResponse = "SERVICE";

@@ -27,11 +27,18 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
+import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
+import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
+import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -40,6 +47,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
@@ -62,7 +70,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-public class LifecycleTestBase {
+public class LifecycleTestBase extends ComponentBusinessLogicMock {
     private static final Logger log = LoggerFactory.getLogger(LifecycleTestBase.class);
     @InjectMocks
     protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
@@ -79,6 +87,13 @@ public class LifecycleTestBase {
     protected JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
     protected ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     protected static ComponentsUtils componentsUtils;
+    protected final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
+    protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    protected final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    protected final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    protected final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    protected final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
+    protected final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
     @BeforeClass
     public static void setupClass() {

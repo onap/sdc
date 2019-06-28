@@ -29,7 +29,6 @@ import org.openecomp.sdc.be.utils.TypeUtils;
 
 public class NodeFilterUploadCreator {
 
-
     public UploadNodeFilterInfo createNodeFilterData(Object obj) {
         if (!(obj instanceof Map)) {
             return null;

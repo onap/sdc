@@ -24,8 +24,18 @@ import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
+import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
+import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -34,14 +44,27 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CheckoutTest extends LifecycleTestBase {
 
     private CheckoutTransition checkoutObj = null;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    private final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
+    private final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
+    private final CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
+    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
+    private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
+    private final MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
+    private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private final CsarBusinessLogic csarBusinessLogic = Mockito.mock(CsarBusinessLogic.class);
+
     @InjectMocks
-    ResourceBusinessLogic bl = new ResourceBusinessLogic();
+    ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+        groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
+        componentInstanceBusinessLogic, resourceImportManager, inputsBusinessLogic, compositionBusinessLogic,
+        resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
+        uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation);
 
     @Before
     public void setup() {

@@ -28,6 +28,13 @@ import org.openecomp.sdc.be.info.DistributionStatusInfo;
 import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.info.DistributionStatusOfServiceInfo;
 import org.openecomp.sdc.be.info.DistributionStatusOfServiceListResponce;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
@@ -52,11 +59,20 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
 
+    private final AuditCassandraDao cassandraDao;
 
     @Autowired
-    private AuditCassandraDao cassandraDao;
-
-    public DistributionMonitoringBusinessLogic() {
+    public DistributionMonitoringBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        AuditCassandraDao cassandraDao,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.cassandraDao = cassandraDao;
     }
 
     public Either<DistributionStatusListResponse, ResponseFormat> getListOfDistributionStatus(String did, String userId) {

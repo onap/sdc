@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -46,6 +47,7 @@ public class DefaultDerivedFromOperation implements DerivedFromOperation {
     private static final Logger log = Logger.getLogger(DefaultDerivedFromOperation.class.getName());
     private JanusGraphGenericDao janusGraphGenericDao;
 
+    @Autowired
     public DefaultDerivedFromOperation(JanusGraphGenericDao janusGraphGenericDao) {
         this.janusGraphGenericDao = janusGraphGenericDao;
     }

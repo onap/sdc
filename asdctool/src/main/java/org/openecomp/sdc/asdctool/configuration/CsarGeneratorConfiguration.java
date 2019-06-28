@@ -58,10 +58,5 @@ public class CsarGeneratorConfiguration {
         bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
         return bean;
     }
-    @Bean(name = "serviceDistributionArtifactsBuilder")
-    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
-        return new ServiceDistributionArtifactsBuilder();
-    }
-
 
 }

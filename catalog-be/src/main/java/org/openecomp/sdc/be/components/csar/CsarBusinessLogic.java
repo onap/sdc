@@ -25,6 +25,7 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -33,9 +34,16 @@ import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -51,12 +59,25 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private static final String CREATING_RESOURCE_FROM_CSAR_FETCHING_CSAR_WITH_ID = "Creating resource from CSAR: fetching CSAR with id ";
     private static final String FAILED = " failed";
 
-    @Autowired
+    private final YamlTemplateParsingHandler yamlHandler;
     private CsarOperation csarOperation;
 
     @Autowired
-    private YamlTemplateParsingHandler yamlHandler;
+    public CsarBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        YamlTemplateParsingHandler yamlHandler,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.yamlHandler = yamlHandler;
+    }
 
+    @Autowired
     public void setCsarOperation(CsarOperation csarOperation) {
         this.csarOperation = csarOperation;
     }

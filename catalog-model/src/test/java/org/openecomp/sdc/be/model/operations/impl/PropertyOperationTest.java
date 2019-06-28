@@ -513,7 +513,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(mock(HealingPipelineDao.class), new JanusGraphClient()), null);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
 	}
 
 	

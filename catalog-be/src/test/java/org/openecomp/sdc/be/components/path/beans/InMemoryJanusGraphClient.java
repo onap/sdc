@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -52,16 +53,10 @@ public class InMemoryJanusGraphClient extends JanusGraphClient {
 
     private static final String OK = "GOOD";
 
-    public InMemoryJanusGraphClient() {
-    }
-
-
     private JanusGraph graph;
-    JanusGraphClientStrategy janusGraphClientStrategy;
 
-    public InMemoryJanusGraphClient(JanusGraphClientStrategy janusGraphClientStrategy) {
+    public InMemoryJanusGraphClient() {
         super();
-        this.janusGraphClientStrategy = janusGraphClientStrategy;
         logger.info("** JanusGraphClient created");
     }
 

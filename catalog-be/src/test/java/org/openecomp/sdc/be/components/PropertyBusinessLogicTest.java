@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components;
@@ -27,6 +29,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
+import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -59,7 +63,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-public class PropertyBusinessLogicTest {
+public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyBusinessLogicTest.class);
     @Mock
@@ -84,14 +88,14 @@ public class PropertyBusinessLogicTest {
     JanusGraphDao janusGraphDao;
 
     @InjectMocks
-    private PropertyBusinessLogic bl = new PropertyBusinessLogic();
+    private PropertyBusinessLogic bl = new PropertyBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+        groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
     private User user = null;
     private String resourceId = "resourceforproperty.0.1";
     private String serviceId = "serviceForProperty.0.1";
     private static final String interfaceType = "interfaceType";
     private static final String operationType = "operationType";
     private static final String operationId = "operationId";
-    private static final String operationId2 = "operationId2";
 
     @Before
     public void setup() {

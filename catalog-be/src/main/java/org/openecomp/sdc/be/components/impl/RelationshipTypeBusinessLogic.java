@@ -32,11 +32,15 @@ import org.springframework.stereotype.Component;
 @Component("relationshipTypeBusinessLogic")
 public class RelationshipTypeBusinessLogic {
 
-    @Autowired
-    private RelationshipTypeOperation relationshipTypeOperation;
+    private final RelationshipTypeOperation relationshipTypeOperation;
+    protected final ComponentsUtils componentsUtils;
 
     @Autowired
-    protected ComponentsUtils componentsUtils;
+    public RelationshipTypeBusinessLogic(RelationshipTypeOperation relationshipTypeOperation,
+        ComponentsUtils componentsUtils) {
+        this.relationshipTypeOperation = relationshipTypeOperation;
+        this.componentsUtils = componentsUtils;
+    }
 
     public Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> getAllRelationshipTypes() {
         Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> allRelationshipTypes =

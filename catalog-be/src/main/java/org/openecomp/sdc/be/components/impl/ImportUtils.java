@@ -43,6 +43,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlProcessor;
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -60,23 +61,22 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.openecomp.sdc.be.components.impl.ResourceImportManager.PROPERTY_NAME_PATTERN_IGNORE_LENGTH;
 import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsName;
 
-
+@Component
 public final class ImportUtils {
-
 
     private static final CustomResolver customResolver = new CustomResolver();
     private static final Yaml strictYamlLoader =  new YamlLoader().getStrictYamlLoader();
 
-    @Autowired
     protected static ComponentsUtils componentsUtils;
-
-    @Autowired
-    private ExceptionUtils exceptionUtils;
 
     private static final Logger log = Logger.getLogger(ImportUtils.class);
 
     private ImportUtils() {
+    }
 
+    @Autowired
+    public static void setComponentsUtils(ComponentsUtils componentsUtils) {
+        ImportUtils.componentsUtils = componentsUtils;
     }
 
     private static class CustomResolver extends Resolver {

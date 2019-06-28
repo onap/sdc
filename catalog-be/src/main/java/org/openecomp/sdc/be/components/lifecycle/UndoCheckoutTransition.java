@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -46,7 +45,6 @@ import java.util.Arrays;
 
 public class UndoCheckoutTransition extends LifeCycleTransition {
     private static final Logger log = Logger.getLogger(CheckoutTransition.class);
-    private ArtifactsBusinessLogic artifactsManager;
 
     public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
@@ -68,14 +66,6 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
     @Override
     public AuditingActionEnum getAuditingAction() {
         return AuditingActionEnum.UNDO_CHECKOUT_RESOURCE;
-    }
-
-    public ArtifactsBusinessLogic getArtifactsBusinessLogic() {
-        return artifactsManager;
-    }
-
-    public void setArtifactsBusinessLogic(ArtifactsBusinessLogic artifactsBusinessLogic) {
-        this.artifactsManager = artifactsBusinessLogic;
     }
 
     @Override

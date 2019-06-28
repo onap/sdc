@@ -29,6 +29,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("relationshipTypeImportManager")
@@ -36,12 +37,14 @@ public class RelationshipTypeImportManager {
 
     private final RelationshipTypeOperation relationshipTypeOperation;
     private final CommonImportManager commonImportManager;
-    private ComponentsUtils componentsUtils;
+    private final ComponentsUtils componentsUtils;
 
+    @Autowired
     public RelationshipTypeImportManager(RelationshipTypeOperation relationshipTypeOperation,
-                                         CommonImportManager commonImportManager) {
+        CommonImportManager commonImportManager, ComponentsUtils componentsUtils) {
         this.relationshipTypeOperation = relationshipTypeOperation;
         this.commonImportManager = commonImportManager;
+        this.componentsUtils = componentsUtils;
     }
 
     public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(

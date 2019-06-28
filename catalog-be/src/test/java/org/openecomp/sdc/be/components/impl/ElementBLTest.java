@@ -129,6 +129,12 @@ public class ElementBLTest {
         initServicesList();
         initResourceslist();
 
+        elementBusinessLogic.setUserValidations(userValidations);
+        elementBusinessLogic.setComponentsUtils(componentsUtils);
+        elementBusinessLogic.setJanusGraphGenericDao(janusGraphGenericDao);
+        elementBusinessLogic.setJanusGraphDao(janusGraphDao);
+        elementBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
     }
 

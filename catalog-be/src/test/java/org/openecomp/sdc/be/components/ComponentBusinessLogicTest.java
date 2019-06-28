@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components;
@@ -31,6 +33,7 @@ import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -50,14 +53,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ComponentBusinessLogicTest {
+public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
 
     private static final User USER = new User();
     private static final String ARTIFACT_LABEL = "toscaArtifact1";
     private static final String ARTIFACT_LABEL2 = "toscaArtifact2";
 
-    @InjectMocks
-    private ComponentBusinessLogic testInstance = new ComponentBusinessLogic() {
+    private ComponentBusinessLogic testInstance = new ComponentBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+        groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
+        artifactToscaOperation) {
         @Override
         public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
             return null;
@@ -78,9 +82,6 @@ public class ComponentBusinessLogicTest {
             return null;
         }
     };
-
-    @Mock
-    private ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @BeforeClass
     public static void setUp() throws Exception {
