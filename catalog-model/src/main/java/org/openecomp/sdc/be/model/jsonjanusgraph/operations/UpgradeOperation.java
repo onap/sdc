@@ -26,6 +26,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -38,6 +39,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -47,6 +49,11 @@ import java.util.stream.Collectors;
 @Component
 public class UpgradeOperation extends BaseOperation {
     private static final Logger log = Logger.getLogger(UpgradeOperation.class.getName());
+
+    @Autowired
+    public UpgradeOperation(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+    }
 
     public Either<List<ComponentDependency>, StorageOperationStatus> getComponentDependencies(String componentId) {
         Either<GraphVertex, JanusGraphOperationStatus> vertexById = janusGraphDao.getVertexById(componentId);

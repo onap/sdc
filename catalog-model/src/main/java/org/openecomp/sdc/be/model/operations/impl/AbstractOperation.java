@@ -56,21 +56,23 @@ import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractOperation {
 
     private static final Logger log = Logger.getLogger(AbstractOperation.class.getName());
 
-    @Autowired
     protected HealingJanusGraphGenericDao janusGraphGenericDao;
 
     public static final String EMPTY_VALUE = null;
 
     protected Gson gson = new Gson();
 
-    @Autowired
     protected ApplicationDataTypeCache applicationDataTypeCache;
+
+    public AbstractOperation(HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
+        this.applicationDataTypeCache = applicationDataTypeCache;
+    }
 
     protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 

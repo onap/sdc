@@ -171,7 +171,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         ExternalReferencesOperation externalReferencesOperation() {
-            this.externalReferenceOperation = new ExternalReferencesOperation(janusGraphDao(), nodeTypeOpertaion(), topologyTemplateOperation(), idMapper());
+            this.externalReferenceOperation = new ExternalReferencesOperation(janusGraphDao(), idMapper(), operationUtils());
             this.externalReferenceOperation.setHealingPipelineDao(healingPipelineDao());
             GraphTestUtils.clearGraph(janusGraphDao);
             initGraphForTest();
@@ -194,7 +194,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         TopologyTemplateOperation topologyTemplateOperation() {
-           return new TopologyTemplateOperation();
+           return new TopologyTemplateOperation(archiveOperation(),categoryOperation(),janusGraphDao());
         }
 
         @Bean
@@ -209,17 +209,17 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         NodeTypeOperation nodeTypeOpertaion() {
-            return new NodeTypeOperation(null);
+            return new NodeTypeOperation(null, janusGraphDao(),categoryOperation());
         }
 
         @Bean
         NodeTemplateOperation nodeTemplateOperation() {
-            return new NodeTemplateOperation();
+            return new NodeTemplateOperation(janusGraphDao());
         }
 
         @Bean
         GroupsOperation groupsOperation() {
-            return new GroupsOperation();
+            return new GroupsOperation(janusGraphDao());
         }
 
         @Bean
@@ -240,7 +240,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         CategoryOperation categoryOperation() {
-            return new CategoryOperation();
+            return new CategoryOperation(janusGraphDao());
         }
 
         @Bean

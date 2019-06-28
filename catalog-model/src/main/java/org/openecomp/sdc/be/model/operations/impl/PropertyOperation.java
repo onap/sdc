@@ -80,6 +80,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -134,7 +135,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	}
 
 	@Autowired
-	public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation) {
+	public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation, ApplicationDataTypeCache applicationDataTypeCache) {
+		super(janusGraphGenericDao, applicationDataTypeCache);
 		this.janusGraphGenericDao = janusGraphGenericDao;
 		this.derivedFromOperation = derivedFromOperation;
 	}

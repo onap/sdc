@@ -40,7 +40,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 
-import static org.mockito.Mockito.mock;
+
 
 public class ValidationToolConfigurationTest {
 
@@ -142,7 +142,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.jsonGroupsOperation();
+		result = testSubject.jsonGroupsOperation(null);
 	}
 
 	@Test
@@ -172,7 +172,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.toscaOperationFacade();
+		result = testSubject.toscaOperationFacade(null,null,null,null,null);
 	}
 
 	@Test
@@ -183,7 +183,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.nodeTypeOperation(migrationDerivedNodeTypeResolver);
+		result = testSubject.nodeTypeOperation(migrationDerivedNodeTypeResolver,null,null);
 	}
 
 	@Test
@@ -193,7 +193,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.topologyTemplateOperation();
+		result = testSubject.topologyTemplateOperation(null, null,null);
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.migrationDerivedNodeTypeResolver();
+		result = testSubject.migrationDerivedNodeTypeResolver(null);
 	}
 
 	@Test
@@ -219,7 +219,47 @@ public class ValidationToolConfigurationTest {
 	}
 
 	@Test
-	public void testNodeToscaArtifactsValidatorValidator() {
+	public void testCategoryOperation() {
+		ValidationToolConfiguration testSubject;
+		CategoryOperation result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.categoryOperation(null);
+	}
+
+	@Test
+	public void testArtifactsOperation() {
+		ValidationToolConfiguration testSubject;
+		ArtifactsOperations result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.artifactsOperation(null);
+	}
+
+	@Test
+	public void testToscaDataOperation() {
+		ValidationToolConfiguration testSubject;
+		ToscaDataOperation result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.toscaDataOperation(null);
+	}
+
+	@Test
+	public void testToscaElementLifecycleOperation() {
+		ValidationToolConfiguration testSubject;
+		ToscaElementLifecycleOperation result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.toscaElementLifecycleOperation(null);
+	}
+
+	@Test
+	public void testNodeToscaArtifactsValidatorValidator() throws Exception {
 		ValidationToolConfiguration testSubject;
 		NodeToscaArtifactsValidatorExecuter result;
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
