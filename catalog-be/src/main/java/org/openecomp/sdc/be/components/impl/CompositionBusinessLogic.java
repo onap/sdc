@@ -46,8 +46,7 @@ import java.util.stream.Collectors;
  */
 @Component("compositionBusinessLogic")
 public class CompositionBusinessLogic {
-    @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     private static final int VFC_CANVAS_ELEMENT_SIZE = 50;
     private static final int CP_CANVAS_ELEMENT_SIZE = 21;
@@ -55,6 +54,11 @@ public class CompositionBusinessLogic {
     private static final int CANVAS_HEIGHT = 700;
     private static final int SPACE_BETWEEN_ELEMENTS = VFC_CANVAS_ELEMENT_SIZE * 4;
     private static final double CP_RADIUS_FACTOR = 0.4;
+
+    @Autowired
+    public CompositionBusinessLogic(ComponentInstanceBusinessLogic componentInstanceBusinessLogic) {
+        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+    }
 
     enum RelativePosition {
         LEFT, RIGHT, UP, DOWN

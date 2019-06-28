@@ -32,10 +32,18 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Provides specified business logic to create, retrieve, update, delete a policy
@@ -45,20 +53,23 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
 
     private static final String FAILED_TO_VALIDATE_COMPONENT = "#{} - failed to validate the component {} before policy processing. ";
     private static final String DECLARE_PROPERTIES_TO_POLICIES = "declare properties to policies";
-    private static final String EXECUTE_ROLLBACK = "execute rollback";
-    private static final String EXECUTE_COMMIT = "execute commit";
     private static final Logger log = Logger.getLogger(PolicyBusinessLogic.class);
 
-    @Inject
     private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
 
-    public PolicyBusinessLogic() {
+    @Autowired
+    public PolicyBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
     }
 
-    public PolicyBusinessLogic(PropertyDeclarationOrchestrator propertyDeclarationOrchestrator) {
-        this.propertyDeclarationOrchestrator = propertyDeclarationOrchestrator;
-    }
-
+    @Autowired
     public void setPropertyDeclarationOrchestrator(PropertyDeclarationOrchestrator propertyDeclarationOrchestrator) {
         this.propertyDeclarationOrchestrator = propertyDeclarationOrchestrator;
     }

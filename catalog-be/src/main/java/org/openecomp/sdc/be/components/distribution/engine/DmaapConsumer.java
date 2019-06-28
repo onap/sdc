@@ -19,21 +19,22 @@ import java.util.function.Consumer;
  */
 @Service
 public class DmaapConsumer {
+    private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
     private final ExecutorFactory executorFactory;
     private final DmaapClientFactory dmaapClientFactory;
-    private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
-
-    @Autowired
-    private DmaapHealth dmaapHealth;
+    private final DmaapHealth dmaapHealth;
     /**
      * Allows to create an object of type DmaapConsumer
      * @param executorFactory
      * @param dmaapClientFactory
+     * @param dmaapHealth
      */
     @Autowired
-    public DmaapConsumer(ExecutorFactory executorFactory, DmaapClientFactory dmaapClientFactory) {
+    public DmaapConsumer(ExecutorFactory executorFactory, DmaapClientFactory dmaapClientFactory,
+        DmaapHealth dmaapHealth) {
         this.executorFactory = executorFactory;
         this.dmaapClientFactory = dmaapClientFactory;
+        this.dmaapHealth = dmaapHealth;
     }
 
     /**

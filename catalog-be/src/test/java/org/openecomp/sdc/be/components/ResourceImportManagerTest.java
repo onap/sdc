@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components;
@@ -34,8 +36,10 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -67,9 +71,12 @@ public class ResourceImportManagerTest {
     static UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
     static ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
 
+    protected static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    private static final CapabilityTypeOperation capabilityTypeOperation = Mockito.mock(CapabilityTypeOperation.class);
+
     @BeforeClass
-    public static void beforeClass() throws IOException {
-        importManager = new ResourceImportManager();
+    public static void beforeClass() {
+        importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation);
         importManager.setAuditingManager(auditingManager);
         when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);

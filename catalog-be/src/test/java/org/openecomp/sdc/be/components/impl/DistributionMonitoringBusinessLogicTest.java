@@ -35,6 +35,12 @@ import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -49,14 +55,13 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class DistributionMonitoringBusinessLogicTest {
+public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMock {
 
     private String uId;
     private User user;
     private String ditributionId;
     private String serviceId;
 
-    @InjectMocks
     private DistributionMonitoringBusinessLogic businessLogic;
 
     @Mock
@@ -70,8 +75,12 @@ public class DistributionMonitoringBusinessLogicTest {
 
     @Before
     public void setUp() {
-        businessLogic = new DistributionMonitoringBusinessLogic();
         MockitoAnnotations.initMocks(this);
+        businessLogic = new DistributionMonitoringBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+            groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            cassandraDao, artifactToscaOperation);
+        businessLogic.setUserValidations(userValidations);
+        businessLogic.setComponentsUtils(componentsUtils);
 
         user = new User();
         uId = "userId";

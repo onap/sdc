@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ================================================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -46,9 +49,16 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CapabilitiesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -72,7 +82,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class CapabilitiesBusinessLogicTest {
+public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
     private final String componentId = "resourceId1";
     private final String capabilityId = "uniqueId1";
 
@@ -86,8 +96,10 @@ public class CapabilitiesBusinessLogicTest {
     private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     private User user = null;
 
-    @InjectMocks
-    private CapabilitiesBusinessLogic capabilitiesBusinessLogicMock = new CapabilitiesBusinessLogic();
+    private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
+
+    private CapabilitiesBusinessLogic capabilitiesBusinessLogicMock = new CapabilitiesBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+        groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, capabilityTypeOperation, artifactToscaOperation);
 
     @Before
     public void setup() {
@@ -129,11 +141,13 @@ public class CapabilitiesBusinessLogicTest {
                 .thenReturn(StorageOperationStatus.OK);
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
-        capabilitiesBusinessLogicMock = new CapabilitiesBusinessLogic();
+        capabilitiesBusinessLogicMock = new CapabilitiesBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+            groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
+            capabilityTypeOperation, artifactToscaOperation);
         capabilitiesBusinessLogicMock.setComponentsUtils(componentsUtils);
         capabilitiesBusinessLogicMock.setUserAdmin(mockUserAdmin);
         capabilitiesBusinessLogicMock.setGraphLockOperation(graphLockOperation);
-        capabilitiesBusinessLogicMock.setJanusGraphGenericDao(mockJanusGraphDao);
+        capabilitiesBusinessLogicMock.setJanusGraphDao(mockJanusGraphDao);
         capabilitiesBusinessLogicMock.setToscaOperationFacade(toscaOperationFacade);
         capabilitiesBusinessLogicMock.setUserValidations(userValidations);
         capabilitiesBusinessLogicMock.setCapabilitiesOperation(capabilitiesOperation);

@@ -100,6 +100,7 @@ import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -132,6 +133,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
+	@Autowired
 	public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation) {
 		this.janusGraphGenericDao = janusGraphGenericDao;
 		this.derivedFromOperation = derivedFromOperation;

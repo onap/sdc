@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class DmaapConsumerTest  extends BeConfDependentTest{
 
 	private DmaapConsumer createTestSubject() {
-		return new DmaapConsumer(new ExecutorFactory(), new DmaapClientFactory());
+		return new DmaapConsumer(new ExecutorFactory(), new DmaapClientFactory(), new DmaapHealth());
 	}
 
 	@Test

@@ -67,7 +67,14 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
+import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -85,18 +92,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
-    @Autowired
-    protected ArtifactsBusinessLogic artifactsBusinessLogic;
+    protected final ArtifactsBusinessLogic artifactsBusinessLogic;
 
-    @Autowired
-    protected ComponentCache componentCache;
+    protected final ComponentCache componentCache;
 
-    @Autowired
+    protected final GroupBusinessLogic groupBusinessLogic;
+
     private GenericTypeBusinessLogic genericTypeBusinessLogic;
 
-	@Autowired
-	private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    public ComponentBusinessLogic(IElementOperation elementDao,
+        IGroupOperation groupOperation,
+        IGroupInstanceOperation groupInstanceOperation,
+        IGroupTypeOperation groupTypeOperation,
+        GroupBusinessLogic groupBusinessLogic,
+        InterfaceOperation interfaceOperation,
+        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+        ArtifactsBusinessLogic artifactsBusinessLogic,
+        ComponentCache componentCache,
+        ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
+        this.componentCache = componentCache;
+        this.groupBusinessLogic = groupBusinessLogic;
+    }
 
+    @Autowired
     public void setGenericTypeBusinessLogic(GenericTypeBusinessLogic genericTypeBusinessLogic) {
         this.genericTypeBusinessLogic = genericTypeBusinessLogic;
     }

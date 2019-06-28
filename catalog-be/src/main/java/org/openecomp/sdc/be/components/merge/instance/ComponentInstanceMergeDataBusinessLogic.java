@@ -15,6 +15,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import org.springframework.context.annotation.Lazy;
+
 /**
  * Created by chaya on 9/12/2017.
  */
@@ -24,6 +26,7 @@ public class ComponentInstanceMergeDataBusinessLogic {
     private static final Logger log = Logger.getLogger(ComponentInstanceMergeDataBusinessLogic.class);
 
     @Autowired
+    @Lazy
     private List<ComponentInstanceMergeInterface> componentInstancesMergeBLs;
 
     @Autowired
