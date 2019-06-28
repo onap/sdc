@@ -34,6 +34,8 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -71,8 +73,12 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     private int firstRunDelayInSec = 30;
     private int pollingIntervalInSec = 60;
 
-    @Resource
     private PropertyOperation propertyOperation;
+
+    @Autowired
+    public ApplicationDataTypeCache(@Lazy PropertyOperation propertyOperation){
+        this.propertyOperation=propertyOperation;
+    }
 
     @PostConstruct
     public void init() {

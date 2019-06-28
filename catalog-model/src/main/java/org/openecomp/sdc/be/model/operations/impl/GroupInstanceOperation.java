@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -59,14 +60,19 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	private static final String FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS = "Failed to update property value on instance. Status is ";
 	private static final Logger log = Logger.getLogger(GroupInstanceOperation.class.getName());
 
-    @Autowired
-    GroupOperation groupOperation;
+    private GroupOperation groupOperation;
 
-    @Autowired
     PropertyOperation propertyOperation;
 
     @javax.annotation.Resource
     private ApplicationDataTypeCache dataTypeCache;
+
+    @Autowired
+    public GroupInstanceOperation(GroupOperation groupOperation, PropertyOperation propertyOperation, HealingJanusGraphGenericDao janusGraphGenericDao, ApplicationDataTypeCache applicationDataTypeCache) {
+        super(janusGraphGenericDao, applicationDataTypeCache);
+        this.groupOperation = groupOperation;
+        this.propertyOperation = propertyOperation;
+    }
 
 
     @Override
