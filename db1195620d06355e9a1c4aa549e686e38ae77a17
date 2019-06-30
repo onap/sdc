@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39d8ae91_3af0a13e",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/ConfigurationRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-06-30T06:04:28Z",
+      "side": 1,
+      "message": "logger should be org.openecomp.sdc.logging.api.Logging.\nAnd please check the onboarding working properly after changes.\nThis class does not have any unit tests, so it will be good to add unit tests when doing changes in it.",
+      "revId": "db1195620d06355e9a1c4aa549e686e38ae77a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
