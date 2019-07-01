@@ -1,16 +1,22 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 
 public class ArtifactValidationUtilsTest {
 
 	private ArtifactValidationUtils createTestSubject() {
-		return new ArtifactValidationUtils();
+		ArtifactCassandraDao artifactCassandraDao = mock(ArtifactCassandraDao.class);
+		TopologyTemplateOperation topologyTemplateOperation = mock(TopologyTemplateOperation.class);
+		return new ArtifactValidationUtils(artifactCassandraDao, topologyTemplateOperation);
 	}
 
 	@Test(expected=NullPointerException.class)

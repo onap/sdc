@@ -78,10 +78,15 @@ public class DataMigration {
 	private static Logger log = Logger.getLogger(DataMigration.class.getName());
 
 	private ElasticSearchClient elasticSearchClient;
-	@Autowired
 	private AuditCassandraDao auditCassandraDao;
-	@Autowired
 	private ArtifactCassandraDao artifactCassandraDao;
+
+	@Autowired
+	public DataMigration(AuditCassandraDao auditCassandraDao,
+		ArtifactCassandraDao artifactCassandraDao) {
+		this.auditCassandraDao = auditCassandraDao;
+		this.artifactCassandraDao = artifactCassandraDao;
+	}
 
     /**
 	 * the method exports and imports the records from ES to cassandra the flow

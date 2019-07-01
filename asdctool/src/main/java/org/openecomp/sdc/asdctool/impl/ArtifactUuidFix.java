@@ -69,22 +69,25 @@ public class ArtifactUuidFix {
     private static final String FAILED_TO_FETCH_VF_RESOURCES = "Failed to fetch vf resources ";
 
     private static final String UTF8 = "utf-8";
-	
-	@Autowired
+
 	private JanusGraphDao janusGraphDao;
-
-	@Autowired
 	private ToscaOperationFacade toscaOperationFacade;
-	@Autowired
 	private ToscaExportHandler toscaExportUtils;
-	@Autowired
 	private ArtifactCassandraDao artifactCassandraDao;
-
-
-	@Autowired
 	private CsarUtils csarUtils;
 
 	private static Logger log = Logger.getLogger(ArtifactUuidFix.class.getName());
+
+	@Autowired
+	public ArtifactUuidFix(JanusGraphDao janusGraphDao,
+		ToscaOperationFacade toscaOperationFacade, ToscaExportHandler toscaExportUtils,
+		ArtifactCassandraDao artifactCassandraDao, CsarUtils csarUtils) {
+		this.janusGraphDao = janusGraphDao;
+		this.toscaOperationFacade = toscaOperationFacade;
+		this.toscaExportUtils = toscaExportUtils;
+		this.artifactCassandraDao = artifactCassandraDao;
+		this.csarUtils = csarUtils;
+	}
 
 	public boolean doFix(String fixComponent, String runMode) {
 		List<Resource> vfLst = new ArrayList<>();

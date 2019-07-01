@@ -1,5 +1,6 @@
 package org.openecomp.sdc.asdctool.main;
 
+import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
@@ -29,6 +30,7 @@ public class ArtifactValidatorTool {
 	}
 	
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
+      ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
 		return context;
 	}

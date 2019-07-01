@@ -4,7 +4,12 @@ package org.openecomp.sdc.asdctool.configuration;
 import org.openecomp.sdc.asdctool.impl.ArtifactUuidFix;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +26,10 @@ import org.springframework.core.io.FileSystemResource;
 public class ArtifactUUIDFixConfiguration {
 
     @Bean
-    public ArtifactUuidFix artifactUuidFix() {
-        return new ArtifactUuidFix();
+    public ArtifactUuidFix artifactUuidFix(JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade, ToscaExportHandler toscaExportHandler,
+        ArtifactCassandraDao artifactCassandraDao, CsarUtils csarUtils) {
+        return new ArtifactUuidFix(janusGraphDao, toscaOperationFacade, toscaExportHandler, artifactCassandraDao, csarUtils);
     }
     
 

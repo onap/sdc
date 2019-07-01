@@ -25,10 +25,11 @@ import java.util.stream.Collectors;
  */
 public class ModuleJsonTask extends ServiceValidationTask {
 
-    @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
 
-    public ModuleJsonTask() {
+    @Autowired
+    public ModuleJsonTask(TopologyTemplateOperation topologyTemplateOperation) {
+        this.topologyTemplateOperation = topologyTemplateOperation;
         this.name = "Service Module json Validation Task";
     }
 

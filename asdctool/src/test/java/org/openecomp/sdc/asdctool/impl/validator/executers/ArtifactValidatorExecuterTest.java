@@ -1,6 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -10,11 +13,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.testng.Assert;
 
 public class ArtifactValidatorExecuterTest {
 
 	private ArtifactValidatorExecuter createTestSubject() {
-		return new ArtifactValidatorExecuter();
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+
+		return new ArtifactValidatorExecuter(janusGraphDaoMock, toscaOperationFacade);
 	}
 
 	@Test
@@ -48,8 +56,8 @@ public class ArtifactValidatorExecuterTest {
 		testSubject.setName(name);
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testValidate() throws Exception {
+	@Test
+	public void testValidate() {
 		ArtifactValidatorExecuter testSubject;
 		Map<String, List<Component>> vertices = new HashMap<>();
 		LinkedList<Component> linkedList = new LinkedList<Component>();
@@ -60,5 +68,6 @@ public class ArtifactValidatorExecuterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.validate(vertices);
+		Assert.assertFalse(result);
 	}
 }

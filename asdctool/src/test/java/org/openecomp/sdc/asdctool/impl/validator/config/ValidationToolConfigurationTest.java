@@ -1,5 +1,8 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
@@ -26,40 +29,44 @@ public class ValidationToolConfigurationTest {
 	public void testBasicServiceValidator() {
 		ValidationToolConfiguration testSubject;
 		ServiceValidatorExecuter result;
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.basicServiceValidator();
+		result = testSubject.basicServiceValidator(janusGraphDaoMock);
 	}
 
 	@Test
 	public void testVfArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
 		VfArtifactValidationTask result;
+		ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.vfArtifactValidationTask();
+		result = testSubject.vfArtifactValidationTask(artifactValidationUtilsMock);
 	}
 
 	@Test
 	public void testServiceArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
 		ServiceArtifactValidationTask result;
+		ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.serviceArtifactValidationTask();
+		result = testSubject.serviceArtifactValidationTask(artifactValidationUtilsMock);
 	}
 
 	@Test
 	public void testModuleJsonTask() {
 		ValidationToolConfiguration testSubject;
 		ModuleJsonTask result;
+		TopologyTemplateOperation topologyTemplateOperationMock = mock(TopologyTemplateOperation.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.moduleJsonTask();
+		result = testSubject.moduleJsonTask(topologyTemplateOperationMock);
 	}
 
 	@Test
@@ -69,17 +76,18 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.validationToolBL();
+		result = testSubject.validationToolBL(new ArrayList<>());
 	}
 
 	@Test
 	public void testBasicVfValidator() {
 		ValidationToolConfiguration testSubject;
 		VfValidatorExecuter result;
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.basicVfValidator();
+		result = testSubject.basicVfValidator(new ArrayList<>(), janusGraphDaoMock);
 	}
 
 	@Test
@@ -96,10 +104,12 @@ public class ValidationToolConfigurationTest {
 	public void testArtifactValidationUtils() {
 		ValidationToolConfiguration testSubject;
 		ArtifactValidationUtils result;
+		ArtifactCassandraDao artifactCassandraDaoMock = mock(ArtifactCassandraDao.class);
+		TopologyTemplateOperation topologyTemplateOperationMock = mock(TopologyTemplateOperation.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.artifactValidationUtils();
+		result = testSubject.artifactValidationUtils(artifactCassandraDaoMock, topologyTemplateOperationMock);
 	}
 
 	@Test
@@ -181,86 +191,52 @@ public class ValidationToolConfigurationTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.janusGraphDao(janusGraphClient);
+		result = testSubject.healingJanusGraphDao(janusGraphClient);
 	}
 
 	@Test
-	public void testCategoryOperation() {
-		ValidationToolConfiguration testSubject;
-		CategoryOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.categoryOperation();
-	}
-
-	@Test
-	public void testArtifactsOperation() {
-		ValidationToolConfiguration testSubject;
-		ArtifactsOperations result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.artifactsOperation();
-	}
-
-	@Test
-	public void testToscaDataOperation() {
-		ValidationToolConfiguration testSubject;
-		ToscaDataOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toscaDataOperation();
-	}
-
-	@Test
-	public void testToscaElementLifecycleOperation() {
-		ValidationToolConfiguration testSubject;
-		ToscaElementLifecycleOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toscaElementLifecycleOperation();
-	}
-
-	@Test
-	public void testNodeToscaArtifactsValidatorValidator() throws Exception {
+	public void testNodeToscaArtifactsValidatorValidator() {
 		ValidationToolConfiguration testSubject;
 		NodeToscaArtifactsValidatorExecuter result;
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.NodeToscaArtifactsValidatorValidator();
+		result = testSubject.NodeToscaArtifactsValidatorValidator(janusGraphDaoMock, toscaOperationFacade);
 	}
 
 	@Test
-	public void testServiceToscaArtifactsValidator() throws Exception {
+	public void testServiceToscaArtifactsValidator() {
 		ValidationToolConfiguration testSubject;
 		ServiceToscaArtifactsValidatorExecutor result;
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.ServiceToscaArtifactsValidator();
+		result = testSubject.ServiceToscaArtifactsValidator(janusGraphDaoMock, toscaOperationFacade);
 	}
 
 	@Test
-	public void testVFToscaArtifactValidator() throws Exception {
+	public void testVFToscaArtifactValidator() {
 		ValidationToolConfiguration testSubject;
 		VFToscaArtifactValidatorExecutor result;
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.VFToscaArtifactValidator();
+		result = testSubject.VFToscaArtifactValidator(janusGraphDaoMock, toscaOperationFacade);
 	}
 
 	@Test
-	public void testArtifactToolBL() throws Exception {
+	public void testArtifactToolBL() {
 		ValidationToolConfiguration testSubject;
 		ArtifactToolBL result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.artifactToolBL();
+		result = testSubject.artifactToolBL(new ArrayList<>());
 	}
 }

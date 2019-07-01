@@ -10,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ServiceArtifactValidationTask extends ServiceValidationTask {
 
-    @Autowired
     private ArtifactValidationUtils artifactValidationUtils;
 
-
-
-    public ServiceArtifactValidationTask() {
+    @Autowired
+    public ServiceArtifactValidationTask(ArtifactValidationUtils artifactValidationUtils) {
+        this.artifactValidationUtils = artifactValidationUtils;
         this.name = "Service Artifact Validation Task";
     }
 

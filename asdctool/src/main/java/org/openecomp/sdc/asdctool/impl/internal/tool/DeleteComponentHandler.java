@@ -55,20 +55,23 @@ import java.util.Scanner;
 
 @Component("deleteComponentHandler")
 public class DeleteComponentHandler extends CommonInternalTool{
-    @Autowired
     private JanusGraphDao janusGraphDao;
-    @Autowired
     private NodeTypeOperation nodeTypeOperation;
-    @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
-    
-  
+
+    @Autowired
+    public DeleteComponentHandler(JanusGraphDao janusGraphDao,
+        NodeTypeOperation nodeTypeOperation,
+        TopologyTemplateOperation topologyTemplateOperation) {
+        super("delete");
+        this.janusGraphDao = janusGraphDao;
+        this.nodeTypeOperation = nodeTypeOperation;
+        this.topologyTemplateOperation = topologyTemplateOperation;
+    }
+
     private static Logger log = Logger.getLogger(DeleteComponentHandler.class.getName());
 
-    
-    public DeleteComponentHandler(){
-        super("delete");
-    }
+
     public void deleteComponent(String id, Scanner scanner) {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
         GraphVertex metadataVertex = janusGraphDao.getVertexById(id).either(l -> l, r -> null);

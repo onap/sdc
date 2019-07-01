@@ -1,12 +1,16 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 public class TopologyTemplateValidatorExecuterTest {
 
 	private TopologyTemplateValidatorExecuter createTestSubject() {
-		return new TopologyTemplateValidatorExecuter();
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		return new TopologyTemplateValidatorExecuter(janusGraphDaoMock);
 	}
 
 	@Test

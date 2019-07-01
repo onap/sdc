@@ -1,5 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -9,11 +10,14 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 public class NodeToscaArtifactsValidatorExecuter extends ArtifactValidatorExecuter implements IArtifactValidatorExecuter{
 	 protected String name;
 	
-	 public NodeToscaArtifactsValidatorExecuter() {
+	 public NodeToscaArtifactsValidatorExecuter(JanusGraphDao janusGraphDao,
+		 ToscaOperationFacade toscaOperationFacade) {
+		 			super(janusGraphDao, toscaOperationFacade);
 	        setName("RESOURCE_TOSCA_ARTIFACTS");
 	    }
 	@Override

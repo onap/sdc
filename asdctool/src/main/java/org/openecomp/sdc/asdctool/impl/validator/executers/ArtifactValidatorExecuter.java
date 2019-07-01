@@ -13,20 +13,23 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArtifactValidatorExecuter{
-	
-	 @Autowired
-	 protected JanusGraphDao janusGraphDao;
 
-	 @Autowired
-	 private ToscaOperationFacade toscaOperationFacade;
-	 private static Logger log = Logger.getLogger(ArtifactValidatorExecuter.class.getName());
+	 protected JanusGraphDao janusGraphDao;
+	protected ToscaOperationFacade toscaOperationFacade;
+
+	public ArtifactValidatorExecuter(JanusGraphDao janusGraphDao,
+		ToscaOperationFacade toscaOperationFacade) {
+		this.janusGraphDao = janusGraphDao;
+		this.toscaOperationFacade = toscaOperationFacade;
+	}
+
+	private static Logger log = Logger.getLogger(ArtifactValidatorExecuter.class.getName());
 	 
 	 protected String name;
 

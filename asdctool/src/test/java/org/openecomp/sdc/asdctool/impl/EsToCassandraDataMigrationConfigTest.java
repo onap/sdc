@@ -1,5 +1,7 @@
 package org.openecomp.sdc.asdctool.impl;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -16,10 +18,12 @@ public class EsToCassandraDataMigrationConfigTest {
 	public void testDataMigration() throws Exception {
 		EsToCassandraDataMigrationConfig testSubject;
 		DataMigration result;
+		AuditCassandraDao auditCassandraDaoMock = mock(AuditCassandraDao.class);
+		ArtifactCassandraDao artifactCassandraDaoMock = mock(ArtifactCassandraDao.class);
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.dataMigration();
+		result = testSubject.dataMigration(auditCassandraDaoMock, artifactCassandraDaoMock);
 	}
 
 	@Test

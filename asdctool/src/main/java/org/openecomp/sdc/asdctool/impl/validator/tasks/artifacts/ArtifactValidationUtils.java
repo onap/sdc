@@ -21,11 +21,16 @@ import java.util.*;
  */
 public class ArtifactValidationUtils {
 
-    @Autowired
     private ArtifactCassandraDao artifactCassandraDao;
 
-    @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
+
+    @Autowired
+    public ArtifactValidationUtils(ArtifactCassandraDao artifactCassandraDao,
+        TopologyTemplateOperation topologyTemplateOperation) {
+        this.artifactCassandraDao = artifactCassandraDao;
+        this.topologyTemplateOperation = topologyTemplateOperation;
+    }
 
     public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);

@@ -33,6 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.schema.Table;
 import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
@@ -43,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.common.datastructure.AuditingFieldsKey.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,7 +86,11 @@ public class DataMigrationTest {
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
 
-    private static DataMigration dataMigration = new DataMigration();
+    private static ArtifactCassandraDao artifactCassandraDao = mock(ArtifactCassandraDao.class);
+
+    private static AuditCassandraDao auditCassandraDaoMock = mock(AuditCassandraDao.class);
+
+    private static DataMigration dataMigration = new DataMigration(auditCassandraDaoMock, artifactCassandraDao);
 
     private final static String ES_STRING = "{\"" + AuditingFieldsKey.AUDIT_ACTION + "\":\"%s\", \"" + AuditingFieldsKey.AUDIT_RESOURCE_NAME + "\":\"" + RESOURCE_NAME + "\", \"" + AuditingFieldsKey.AUDIT_RESOURCE_TOSCA_NODE_TYPE + "\":\"" + TOSCA_NODE_TYPE +
             "\", \"" + AuditingFieldsKey.AUDIT_RESOURCE_PREV_VERSION + "\":\"" + PREV_VERSION + "\", \"" + AuditingFieldsKey.AUDIT_RESOURCE_PREV_STATE + "\":\"" + PREV_STATE +

@@ -1,5 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -9,13 +10,19 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@org.springframework.stereotype.Component
 public class ServiceToscaArtifactsValidatorExecutor extends ArtifactValidatorExecuter implements IArtifactValidatorExecuter{
 	 
-		
-	 public ServiceToscaArtifactsValidatorExecutor() {
-	        setName("SERVICE_TOSCA_ARTIFACTS");
-	    }
+		@Autowired
+	 public ServiceToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao,
+			ToscaOperationFacade toscaOperationFacade) {
+			super(janusGraphDao, toscaOperationFacade);
+			setName("SERVICE_TOSCA_ARTIFACTS");
+		}
+
 	@Override
 	public boolean executeValidations() {
 		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();

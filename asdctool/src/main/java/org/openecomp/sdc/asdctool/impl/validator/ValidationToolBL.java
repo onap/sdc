@@ -15,10 +15,15 @@ public class ValidationToolBL {
 
     private static Logger log = Logger.getLogger(ValidationToolBL.class.getName());
 
-    @Autowired
     protected List<ValidatorExecuter> validators;
 
     private boolean allValid = true;
+
+    @Autowired
+    public ValidationToolBL(
+        List<ValidatorExecuter> validators) {
+        this.validators = validators;
+    }
 
     public boolean validateAll() {
         for (ValidatorExecuter validatorExec: validators) {
