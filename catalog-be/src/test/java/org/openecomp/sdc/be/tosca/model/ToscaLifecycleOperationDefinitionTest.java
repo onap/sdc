@@ -14,7 +14,7 @@ public class ToscaLifecycleOperationDefinitionTest {
 	@Test
 	public void testGetImplementation() throws Exception {
 		ToscaLifecycleOperationDefinition testSubject;
-		String result;
+		Object result;
 
 		// default test
 		testSubject = createTestSubject();

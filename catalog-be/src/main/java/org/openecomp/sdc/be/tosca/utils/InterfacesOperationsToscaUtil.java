@@ -46,6 +46,7 @@ public class InterfacesOperationsToscaUtil {
 
     private static final String DERIVED_FROM_STANDARD_INTERFACE = "tosca.interfaces.node.lifecycle.Standard";
     private static final String OPERATIONS_KEY = "operations";
+    private static final String PRIMARY_KEY = "primary";
 
     private static final String DEFAULT = "default";
     private static final String DEFAULT_HAS_UNDERSCORE = "_default";
@@ -123,15 +124,12 @@ public class InterfacesOperationsToscaUtil {
     private static Map<String, Object> getInterfacesMap(Component component,
                                                         Map<String, DataTypeDefinition> dataTypes,
                                                         boolean isAssociatedComponent) {
-        return getInterfacesMap(component, null, component.getInterfaces(), dataTypes, isAssociatedComponent, false);
+        return getInterfacesMap(component, null, component.getInterfaces(), dataTypes, isAssociatedComponent, false, true);
     }
 
-    public static Map<String, Object> getInterfacesMap(Component component,
-                                                       ComponentInstance componentInstance,
-                                                       Map<String, InterfaceDefinition> interfaces,
-                                                       Map<String, DataTypeDefinition> dataTypes,
-                                                       boolean isAssociatedComponent,
-                                                       boolean isServiceProxyInterface) {
+    public static Map<String, Object> getInterfacesMap(Component component, ComponentInstance componentInstance, Map<String, InterfaceDefinition> interfaces,
+            Map<String, DataTypeDefinition> dataTypes, boolean isAssociatedComponent, boolean isServiceProxyInterface,
+            boolean isNodeType) {
         if(MapUtils.isEmpty(interfaces)) {
             return null;
         }
@@ -151,7 +149,7 @@ public class InterfacesOperationsToscaUtil {
                     operationArtifactPath = OperationArtifactUtil
                             .createOperationArtifactPath(component, componentInstance, operationEntry.getValue(),
                                     isAssociatedComponent);
-                    toscaOperation.setImplementation(operationArtifactPath);
+                    handleImplementation(operationArtifactPath, toscaOperation, isNodeType);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());
                 fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaOperation, isServiceProxyInterface);
@@ -173,6 +171,17 @@ public class InterfacesOperationsToscaUtil {
         }
 
         return toscaInterfaceDefinitions;
+    }
+
+    private static void handleImplementation(String operationArtifactPath,
+            ToscaLifecycleOperationDefinition toscaOperation, boolean isNodeType) {
+        if(isNodeType) {
+            toscaOperation.setImplementation(operationArtifactPath);
+        } else {
+            Map<String, String> implementationMap = new HashMap<>();
+            implementationMap.put(PRIMARY_KEY, operationArtifactPath);
+            toscaOperation.setImplementation(implementationMap);
+        }
     }
 
     private static void handleServiceProxyOperationInputValue(Map<String, Object> operationsMap, String parentKey) {

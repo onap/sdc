@@ -787,7 +787,7 @@ public class ToscaExportHandler {
                     .getUniqueId(), instInterface));
 
                 interfaces = InterfacesOperationsToscaUtil
-                                     .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, true, true);
+                                     .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, true, true, false);
             }
         } else {
             interfaces =

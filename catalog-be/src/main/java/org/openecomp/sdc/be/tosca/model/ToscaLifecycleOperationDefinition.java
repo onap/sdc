@@ -27,15 +27,15 @@ import java.util.Objects;
 public class ToscaLifecycleOperationDefinition {
 
     private String description;
-    private String implementation;
+    private Object implementation;
     private Map<String, ToscaProperty> inputs;
 
 
-    public String getImplementation() {
+    public Object getImplementation() {
         return implementation;
     }
 
-    public void setImplementation(String implementation) {
+    public void setImplementation(Object implementation) {
         this.implementation = implementation;
     }
 

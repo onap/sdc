@@ -52,7 +52,7 @@ public class ToscaExportUtils {
         // always available in the proxy node template
         removeOperationImplementationForProxyNodeType(proxyComponentInterfaces);
         return Optional.ofNullable(InterfacesOperationsToscaUtil
-                .getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false, false));
+                .getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false, false, true));
     }
 
     public static Optional<Map<String, ToscaProperty>> getProxyNodeTypeProperties(Component proxyComponent,
