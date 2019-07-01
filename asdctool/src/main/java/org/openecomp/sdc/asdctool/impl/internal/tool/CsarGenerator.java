@@ -55,21 +55,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("csarGenerator")
 public class CsarGenerator extends CommonInternalTool {
-    public CsarGenerator() {
-        super("generate");
-    }
+
+    private JanusGraphDao janusGraphDao;
+    private CsarUtils csarUtils;
+    private ToscaOperationFacade toscaOperationFacade;
+    private ArtifactCassandraDao artifactCassandraDao;
+    private ToscaExportHandler toscaExportHandler;
 
     @Autowired
-    private JanusGraphDao janusGraphDao;
-    @Autowired
-    private CsarUtils csarUtils;
-    @Autowired
-    private ToscaOperationFacade toscaOperationFacade;
-    @Autowired
-    private ArtifactCassandraDao artifactCassandraDao;
-    @Autowired
-    private ToscaExportHandler toscaExportHandler;
-    
+    public CsarGenerator(JanusGraphDao janusGraphDao, CsarUtils csarUtils,
+        ToscaOperationFacade toscaOperationFacade,
+        ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportHandler) {
+        super("generate");
+        this.janusGraphDao = janusGraphDao;
+        this.csarUtils = csarUtils;
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.artifactCassandraDao = artifactCassandraDao;
+        this.toscaExportHandler = toscaExportHandler;
+    }
 
     private static Logger log = Logger.getLogger(CsarGenerator.class.getName());
 

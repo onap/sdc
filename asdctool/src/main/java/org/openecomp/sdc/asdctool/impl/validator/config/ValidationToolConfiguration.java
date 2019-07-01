@@ -20,65 +20,102 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import java.util.List;
+import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.executers.*;
+import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.migration.config.mocks.DistributionEngineMock;
+import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
+import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
+import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.FileSystemResource;
 
 /**
  * Created by chaya on 7/3/2017.
  */
 @Configuration
+@Import({DAOSpringConfig.class, CatalogBESpringConfig.class, CatalogModelSpringConfig.class})
 public class ValidationToolConfiguration {
 
     @Bean
-    public ServiceValidatorExecuter basicServiceValidator() { return new ServiceValidatorExecuter();}
-    
-    @Bean
-    public NodeToscaArtifactsValidatorExecuter NodeToscaArtifactsValidatorValidator() { return new NodeToscaArtifactsValidatorExecuter();}
-    
-    @Bean
-    public ServiceToscaArtifactsValidatorExecutor ServiceToscaArtifactsValidator() { return new ServiceToscaArtifactsValidatorExecutor();}
-    
-    @Bean
-    public VFToscaArtifactValidatorExecutor VFToscaArtifactValidator() { return new VFToscaArtifactValidatorExecutor();}
-
-    @Bean
-    public VfArtifactValidationTask vfArtifactValidationTask() { return new VfArtifactValidationTask(); }
-
-    @Bean
-    public ServiceArtifactValidationTask serviceArtifactValidationTask() { return new ServiceArtifactValidationTask();}
-
-    @Bean
-    public ModuleJsonTask moduleJsonTask() { return new ModuleJsonTask();}
-
-    @Bean
-    public ValidationToolBL validationToolBL() {
-        return new ValidationToolBL();
-    }
-    
-    @Bean
-    public ArtifactToolBL artifactToolBL() {
-        return new ArtifactToolBL();
+    public ServiceValidatorExecuter basicServiceValidator(JanusGraphDao janusGraphDao) {
+        return new ServiceValidatorExecuter(janusGraphDao);
     }
 
     @Bean
-    public VfValidatorExecuter basicVfValidator() { return new VfValidatorExecuter();}
+    public NodeToscaArtifactsValidatorExecuter NodeToscaArtifactsValidatorValidator(JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade) {
+        return new NodeToscaArtifactsValidatorExecuter(janusGraphDao, toscaOperationFacade);
+    }
+
+    @Bean
+    public ServiceToscaArtifactsValidatorExecutor ServiceToscaArtifactsValidator(JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade) {
+        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
+    }
+
+    @Bean
+    public VFToscaArtifactValidatorExecutor VFToscaArtifactValidator(JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade) {
+        return new VFToscaArtifactValidatorExecutor(janusGraphDao, toscaOperationFacade);
+    }
+
+    @Bean
+    public VfArtifactValidationTask vfArtifactValidationTask(ArtifactValidationUtils artifactValidationUtils) {
+        return new VfArtifactValidationTask(artifactValidationUtils);
+    }
+
+    @Bean
+    public ServiceArtifactValidationTask serviceArtifactValidationTask(ArtifactValidationUtils artifactValidationUtils) {
+        return new ServiceArtifactValidationTask(artifactValidationUtils);
+    }
+
+    @Bean
+    public ModuleJsonTask moduleJsonTask(TopologyTemplateOperation topologyTemplateOperation) {
+        return new ModuleJsonTask(topologyTemplateOperation);
+    }
+
+    @Bean
+    public ValidationToolBL validationToolBL(List<ValidatorExecuter> validators) {
+        return new ValidationToolBL(validators);
+    }
+
+    @Bean
+    public ArtifactToolBL artifactToolBL(List<IArtifactValidatorExecuter> validators) {
+        return new ArtifactToolBL(validators);
+    }
+
+    @Bean
+    public VfValidatorExecuter basicVfValidator(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+        return new VfValidatorExecuter(tasks, janusGraphDao);
+    }
 
     @Bean
     public ReportManager reportManager() { return new ReportManager();}
@@ -89,7 +126,10 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public ArtifactValidationUtils artifactValidationUtils() { return new ArtifactValidationUtils();}
+    public ArtifactValidationUtils artifactValidationUtils(ArtifactCassandraDao artifactCassandraDao,
+        TopologyTemplateOperation topologyTemplateOperation) {
+        return new ArtifactValidationUtils(artifactCassandraDao, topologyTemplateOperation);
+    }
 
     @Bean(name = "groups-operation")
     public GroupsOperation jsonGroupsOperation() {
@@ -132,33 +172,65 @@ public class ValidationToolConfiguration {
         return new NodeTemplateOperation();
     }
 
+
     @Bean(name = "mig-derived-resolver")
     public DerivedNodeTypeResolver migrationDerivedNodeTypeResolver() {
         return new ByToscaNameDerivedNodeTypeResolver();
     }
 
+    @Bean
+    public JanusGraphGenericDao janusGraphGenericDao(@Qualifier("migration-janusgraph-client") JanusGraphClient janusGraphClient) {
+        return new JanusGraphGenericDao(janusGraphClient);
+    }
+
+    @Bean(name = "elasticsearchConfig")
+    public PropertiesFactoryBean mapper() {
+        String configHome = System.getProperty("config.home");
+        PropertiesFactoryBean bean = new PropertiesFactoryBean();
+        bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
+        return bean;
+    }
+
+    @Bean
+    public ArchiveOperation archiveOperation(JanusGraphDao janusGraphDao, IGraphLockOperation graphLockOperation) {
+        return new ArchiveOperation(janusGraphDao, graphLockOperation);
+    }
+
+    @Bean
+    public IGraphLockOperation graphLockOperation() {
+        return new GraphLockOperation();
+    }
+
+    @Bean(name = "janusgraph-client")
+    @Primary
+    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy")
+        JanusGraphClientStrategy janusGraphClientStrategy) {
+        return new JanusGraphClient(janusGraphClientStrategy);
+    }
+
+    @Bean(name ="dao-client-strategy")
+    public JanusGraphClientStrategy janusGraphClientStrategy() {
+        return new DAOJanusGraphStrategy();
+    }
+
+    @Bean
+    public VrfObjectFixHandler vrfObjectFixHandler(@Qualifier("janusgraph-dao")
+        JanusGraphDao janusGraphDao){
+        return new VrfObjectFixHandler(janusGraphDao);
+    }
+
     @Bean(name = "janusgraph-dao")
-    public JanusGraphDao janusGraphDao(@Qualifier("migration-janusgraph-client") JanusGraphClient janusGraphClient) {
-        return new JanusGraphDao(janusGraphClient);
+    public HealingJanusGraphDao healingJanusGraphDao(JanusGraphClient janusGraphClient) {
+        return new HealingJanusGraphDao(janusGraphClient);
     }
 
-    @Bean(name = "category-operation")
-    public CategoryOperation categoryOperation() {
-        return new CategoryOperation();
+    @Bean
+    public IDistributionEngine iDistributionEngine() {
+        return new DistributionEngineMock();
     }
 
-    @Bean(name = "artifacts-operation")
-    public ArtifactsOperations artifactsOperation() {
-        return new ArtifactsOperations();
-    }
-
-    @Bean(name = "tosca-data-operation")
-    public ToscaDataOperation toscaDataOperation() {
-        return new ToscaDataOperation();
-    }
-
-    @Bean(name = "tosca-element-lifecycle-operation")
-    public ToscaElementLifecycleOperation toscaElementLifecycleOperation() {
-        return new ToscaElementLifecycleOperation();
+    @Bean
+    public ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder() {
+        return new ServiceDistributionArtifactsBuilder();
     }
 }

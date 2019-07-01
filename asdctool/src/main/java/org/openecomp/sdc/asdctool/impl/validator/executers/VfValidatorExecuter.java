@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,10 +34,12 @@ import java.util.List;
  */
 public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
 
-    @Autowired(required = false)
-    private List<VfValidationTask> tasks = new ArrayList<>();
+    private List<VfValidationTask> tasks;
 
-    public VfValidatorExecuter() {
+    @Autowired(required = false)
+    public VfValidatorExecuter(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+        this.tasks = tasks;
         setName("BASIC_VF_VALIDATOR");
     }
 

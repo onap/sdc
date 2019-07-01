@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -27,10 +29,11 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 public class VfArtifactValidationTaskTest {
 
 	private VfArtifactValidationTask createTestSubject() {
-		return new VfArtifactValidationTask();
+		ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
+		return new VfArtifactValidationTask(artifactValidationUtilsMock);
 	}
 
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testValidate() throws Exception {
 		VfArtifactValidationTask testSubject;
 		GraphVertex vertex = null;

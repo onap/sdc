@@ -43,10 +43,14 @@ public class TopologyTemplateValidatorExecuter {
 
     private static Logger log = Logger.getLogger(VfValidatorExecuter.class.getName());
 
-    @Autowired
     protected JanusGraphDao janusGraphDao;
 
     protected String name;
+
+    @Autowired
+    public TopologyTemplateValidatorExecuter(JanusGraphDao janusGraphDao) {
+        this.janusGraphDao = janusGraphDao;
+    }
 
     public void setName(String name) {
         this.name = name;

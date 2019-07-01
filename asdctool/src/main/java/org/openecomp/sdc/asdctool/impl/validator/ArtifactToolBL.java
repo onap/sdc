@@ -30,12 +30,17 @@ public class ArtifactToolBL {
 	
 	 private static Logger log = Logger.getLogger(ValidationToolBL.class.getName());
 
-	    @Autowired
 	    protected List<IArtifactValidatorExecuter> validators;
 
 	    private boolean allValid = true;
 
-	    public boolean validateAll() {
+	@Autowired
+	public ArtifactToolBL(
+		List<IArtifactValidatorExecuter> validators) {
+		this.validators = validators;
+	}
+
+	public boolean validateAll() {
 	        for (IArtifactValidatorExecuter validatorExec: validators) {
 	            log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
 	            if (!validatorExec.executeValidations()) {

@@ -30,8 +30,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EsToCassandraDataMigrationConfig {
 	@Bean(name = "DataMigrationBean")
-	public DataMigration dataMigration() {
-		return new DataMigration();
+	public DataMigration dataMigration(AuditCassandraDao auditCassandraDao, ArtifactCassandraDao artifactCassandraDao) {
+		return new DataMigration(auditCassandraDao, artifactCassandraDao);
 	}
 
 	@Bean(name = "artifact-cassandra-dao")

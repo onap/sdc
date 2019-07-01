@@ -20,12 +20,19 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 public class ServiceToscaArtifactsValidatorExecutorTest {
 
 	private ServiceToscaArtifactsValidatorExecutor createTestSubject() {
-		return new ServiceToscaArtifactsValidatorExecutor();
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+
+		return new ServiceToscaArtifactsValidatorExecutor(janusGraphDaoMock, toscaOperationFacade);
 	}
 
 	@Test(expected = NullPointerException.class)
