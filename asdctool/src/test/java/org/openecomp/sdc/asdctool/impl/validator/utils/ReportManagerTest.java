@@ -1,10 +1,15 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-
 import java.util.Set;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ReportManager.class})
 public class ReportManagerTest {
 
 	@Test
