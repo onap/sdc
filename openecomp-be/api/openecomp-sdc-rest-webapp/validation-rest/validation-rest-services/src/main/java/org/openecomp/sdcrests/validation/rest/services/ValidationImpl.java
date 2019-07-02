@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.validation.rest.services;
@@ -39,8 +41,13 @@ import java.io.InputStream;
 @Service("validation")
 @Scope(value = "prototype")
 public class ValidationImpl implements Validation {
+
+  private final UploadValidationManager uploadValidationManager;
+
   @Autowired
-  private UploadValidationManager uploadValidationManager;
+  public ValidationImpl(UploadValidationManager uploadValidationManager) {
+    this.uploadValidationManager = uploadValidationManager;
+  }
 
   @Override
   public Response validateFile(String type, InputStream fileToValidate) {
