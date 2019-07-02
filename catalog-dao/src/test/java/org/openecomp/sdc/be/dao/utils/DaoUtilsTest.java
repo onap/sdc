@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,40 +21,41 @@
 
 package org.openecomp.sdc.be.dao.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 public class DaoUtilsTest {
 
-	@Test
-	public void testConvertToJson() throws Exception {
-		Object object = new Object();
-		String result;
+    private static final Map<String, String> TEST_OBJECT = Collections.singletonMap("key", "value");
 
-		// test 1
-		result = DaoUtils.convertToJson(object);
-		Assert.assertEquals("{}", result);
-		
-		assertThatThrownBy(()->DaoUtils.convertToJson(null)).isInstanceOf(RuntimeException.class);
-	}
+    private static final String JSON = "{\"key\":\"value\"}";
+    private static final Class<Map> CLAZZ = Map.class;
 
-	@Test
-	public void testConvertFromJson() throws Exception {
-		Class clazz = Object.class;
-		String json = null;
-		Object result;
+    @Test
+    public void testConvertToJson() {
+        String result = DaoUtils.convertToJson(TEST_OBJECT);
+        Assert.assertEquals(JSON, result);
+    }
 
-		// default test
-		result = DaoUtils.convertFromJson(clazz, json);
-		Assert.assertEquals(null, result);
-		
-		try {
-			result = DaoUtils.convertFromJson(null, json);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @Test(expected = RuntimeException.class)
+    public void testConvertToJsonNullObject() {
+        DaoUtils.convertToJson(null);
+    }
+
+    @Test
+    public void testConvertFromJson() {
+        Map result = DaoUtils.convertFromJson(CLAZZ, JSON);
+        assertEquals(TEST_OBJECT, result);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testConvertFromNullClassTosJson() {
+        DaoUtils.convertFromJson(null, JSON);
+    }
 }
