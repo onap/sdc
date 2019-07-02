@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.externaltesting.rest.services;
@@ -39,7 +42,7 @@ import java.util.stream.Collectors;
 @Scope(value = "prototype")
 public class ExternalTestingImpl implements ExternalTesting {
 
-  private ExternalTestingManager testingManager;
+  private final ExternalTestingManager testingManager;
 
   private static final Logger logger =
       LoggerFactory.getLogger(ExternalTestingImpl.class);

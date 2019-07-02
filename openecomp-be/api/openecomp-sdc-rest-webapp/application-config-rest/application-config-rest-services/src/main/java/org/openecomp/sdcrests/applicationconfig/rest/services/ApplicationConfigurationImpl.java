@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.applicationconfig.rest.services;
@@ -47,8 +49,13 @@ import java.util.Collection;
 @Service("applicationConfiguration")
 @Scope(value = "prototype")
 public class ApplicationConfigurationImpl implements ApplicationConfiguration {
+
+  private final ApplicationConfigManager applicationConfigManager;
+
   @Autowired
-  private ApplicationConfigManager applicationConfigManager;
+  public ApplicationConfigurationImpl(ApplicationConfigManager applicationConfigManager) {
+    this.applicationConfigManager = applicationConfigManager;
+  }
 
   @Override
   public Response insertToTable(String namespace, String key, InputStream fileContainingSchema) {

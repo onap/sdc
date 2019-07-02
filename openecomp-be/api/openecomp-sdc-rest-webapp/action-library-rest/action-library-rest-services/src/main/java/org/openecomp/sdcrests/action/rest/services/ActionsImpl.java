@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.action.rest.services;
@@ -146,8 +148,9 @@ import javax.ws.rs.core.Response;
 public class ActionsImpl implements Actions {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ActionsImpl.class);
-  @Autowired
-  private ActionManager actionManager;
+
+  private final ActionManager actionManager;
+
   private String whitespaceCharacters = "\\s"       /* dummy empty string for homogeneity */
       + "\\u0009" // CHARACTER TABULATION
       + "\\u000A" // LINE FEED (LF)
@@ -179,6 +182,11 @@ public class ActionsImpl implements Actions {
   private String invalidFilenameChars = "#<>$+%!`&*'|{}?\"=/:@\\\\";
   private String whitespaceRegex = ".*[" + whitespaceCharacters + "].*";
   private String invalidFilenameRegex = ".*[" + whitespaceCharacters + invalidFilenameChars + "].*";
+
+  @Autowired
+  public ActionsImpl(ActionManager actionManager) {
+    this.actionManager = actionManager;
+  }
 
   /**
    * Calculate the checksum for a given input

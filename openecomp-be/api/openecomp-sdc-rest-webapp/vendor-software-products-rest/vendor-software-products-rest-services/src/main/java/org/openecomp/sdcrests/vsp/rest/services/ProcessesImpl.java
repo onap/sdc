@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdcrests.vsp.rest.services;
@@ -36,8 +38,12 @@ import javax.ws.rs.core.Response;
 @Scope(value = "prototype")
 public class ProcessesImpl implements Processes {
 
+  private final ComponentProcesses componentProcesses;
+
   @Autowired
-  private ComponentProcesses componentProcesses;
+  public ProcessesImpl(ComponentProcesses componentProcesses) {
+    this.componentProcesses = componentProcesses;
+  }
 
   @Override
   public Response list(String vspId, String versionId, String user) {
