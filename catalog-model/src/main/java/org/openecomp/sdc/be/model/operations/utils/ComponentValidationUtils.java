@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +21,6 @@
 
 package org.openecomp.sdc.be.model.operations.utils;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -29,9 +29,14 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
+import fj.data.Either;
+
 public class ComponentValidationUtils {
 
     private static final Logger log = Logger.getLogger(ComponentValidationUtils.class.getName());
+
+    private ComponentValidationUtils() {
+    }
 
     public static boolean canWorkOnResource(Resource resource, String userId) {
         // verify resource is checked-out
@@ -52,9 +57,11 @@ public class ComponentValidationUtils {
         return true;
     }
 
-    public static boolean canWorkOnComponent(String componentId, ToscaOperationFacade toscaOperationFacade, String userId) {
+    public static boolean canWorkOnComponent(String componentId,
+        ToscaOperationFacade toscaOperationFacade, String userId) {
 
-        Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata);
+        Either<Component, StorageOperationStatus> getResourceResult =
+            toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata);
 
         if (getResourceResult.isRight()) {
             log.debug("Failed to retrieve component, component id {}", componentId);
@@ -69,7 +76,8 @@ public class ComponentValidationUtils {
         return canWorkOnComponent(component.getLifecycleState(), component.getLastUpdaterUserId(), userId);
     }
 
-    private static boolean canWorkOnComponent(LifecycleStateEnum lifecycleState, String lastUpdaterUserId, String userId) {
+    private static boolean canWorkOnComponent(LifecycleStateEnum lifecycleState,
+        String lastUpdaterUserId, String userId) {
         // verify resource is checked-out
         if (lifecycleState != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
             log.debug("resource is not checked-out");
