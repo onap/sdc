@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4706149_c3a23fae",
+        "filename": "catalog-be/src/main/resources/import/tosca/policy-types/policyTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-07-02T11:01:17Z",
+      "side": 1,
+      "message": "property of type string doesn\u0027t need an entry_schema (it\u0027s only meant for map or list)\n\nWhat exactly you tried to define here?\nAlso you have to update the relevant json file with the type you added (policyTypes.json)",
+      "range": {
+        "startLine": 142,
+        "startChar": 6,
+        "endLine": 142,
+        "endChar": 18
+      },
+      "revId": "abb66570267eb7e671787228fb9efa9646348985",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
