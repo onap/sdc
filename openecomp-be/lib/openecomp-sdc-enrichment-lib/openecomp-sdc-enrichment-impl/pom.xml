@@ -15,102 +15,102 @@
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>openecomp-sdc-enrichment-impl</name>
-    <artifactId>openecomp-sdc-enrichment-impl</artifactId>
+  <name>openecomp-sdc-enrichment-impl</name>
+  <artifactId>openecomp-sdc-enrichment-impl</artifactId>
 
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc-lib</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>openecomp-sdc-lib</artifactId>
+    <version>1.5.0-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.sdc.common</groupId>
-            <artifactId>onap-tosca-datatype</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-utilities-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-enrichment-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-model-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-common-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-heat-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-tosca-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-translator-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-config-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-software-product-core</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-model-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <!--        <dependency>-->
+    <!--            <groupId>ch.qos.logback</groupId>-->
+    <!--            <artifactId>logback-classic</artifactId>-->
+    <!--            <version>${logback.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.onap.sdc.common</groupId>
+      <artifactId>onap-tosca-datatype</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.core</groupId>
+      <artifactId>openecomp-utilities-lib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-enrichment-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-model-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.core</groupId>
+      <artifactId>openecomp-common-lib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--        <dependency>-->
+    <!--            <groupId>org.openecomp.sdc.core</groupId>-->
+    <!--            <artifactId>openecomp-heat-lib</artifactId>-->
+    <!--            <version>${project.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.openecomp.sdc.core</groupId>
+      <artifactId>openecomp-tosca-lib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-translator-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!--        <dependency>-->
+    <!--            <groupId>org.openecomp.sdc.core</groupId>-->
+    <!--            <artifactId>openecomp-config-lib</artifactId>-->
+    <!--            <version>${project.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-vendor-software-product-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-model-impl</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 
-    <properties>
-        <useSystemClassLoader>false</useSystemClassLoader>
-    </properties>
+  <properties>
+    <useSystemClassLoader>false</useSystemClassLoader>
+  </properties>
 </project>
