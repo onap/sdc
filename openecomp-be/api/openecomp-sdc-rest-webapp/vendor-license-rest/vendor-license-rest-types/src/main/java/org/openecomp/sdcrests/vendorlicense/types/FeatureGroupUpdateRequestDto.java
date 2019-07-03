@@ -20,11 +20,12 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
-@ApiModel(value = "FeatureGroupUpdateRequest")
+@Schema(description = "FeatureGroupUpdateRequest")
 public class FeatureGroupUpdateRequestDto extends FeatureGroupRequestDto {
 
   private Set<String> removedLicenseKeyGroupsIds;

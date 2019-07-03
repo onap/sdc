@@ -20,12 +20,14 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@ApiModel(value = "VendorLicenseModelRequest")
+@Schema(description = "VendorLicenseModelRequest")
 public class VendorLicenseModelRequestDto {
   @NotNull
   @Size(max = 25)

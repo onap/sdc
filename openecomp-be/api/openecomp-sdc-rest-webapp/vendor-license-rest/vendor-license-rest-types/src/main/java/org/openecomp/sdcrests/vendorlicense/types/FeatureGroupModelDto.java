@@ -20,12 +20,14 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Collection;
 import java.util.Set;
 
-@ApiModel(value = "FeatureGroupModel")
+@Schema(description = "FeatureGroupModel")
 public class FeatureGroupModelDto extends FeatureGroupDescriptorDto {
   private String id;
   private Set<String> referencingLicenseAgreements;

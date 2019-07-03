@@ -16,7 +16,8 @@
 
 package org.openecomp.sdcrests.validation.rest;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,7 +30,7 @@ import java.io.InputStream;
 @Path("/v1.0/validation")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Validation")
+@OpenAPIDefinition(info = @Info(title = ("Validation")))
 @Validated
 
 public interface Validation {

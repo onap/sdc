@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupModelDto;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupRequestDto;
@@ -42,57 +47,54 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor License Model - Feature Groups")
+@OpenAPIDefinition(info = @Info(title = "Vendor License Model - Feature Groups"))
 @Validated
 public interface FeatureGroups {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor feature groups",
-      response = FeatureGroupEntityDto.class,
-      responseContainer = "List")
+  @Operation(description = "List vendor feature groups",responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation =FeatureGroupEntityDto.class)))))
   Response listFeatureGroups(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create vendor feature group")
+  @Operation(description = "Create vendor feature group")
   Response createFeatureGroup(@Valid FeatureGroupRequestDto request,
-                              @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
+                              @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
                                   String vlmId,
-                              @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+                              @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{featureGroupId}")
-  @ApiOperation(value = "Update vendor feature group")
+  @Operation(description = "Update vendor feature group")
   Response updateFeatureGroup(@Valid FeatureGroupUpdateRequestDto request,
-                              @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
+                              @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
                                   String vlmId,
-                              @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+                              @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
                               @PathParam("featureGroupId") String featureGroupId,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{featureGroupId}")
-  @ApiOperation(value = "Get vendor feature group",
-      response = FeatureGroupModelDto.class)
+  @Operation(description = "Get vendor feature group", responses = @ApiResponse(content = @Content(schema = @Schema(implementation =FeatureGroupModelDto.class))))
   Response getFeatureGroup(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("featureGroupId") String featureGroupId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{featureGroupId}")
-  @ApiOperation(value = "Delete vendor feature group")
+  @Operation(description = "Delete vendor feature group")
   Response deleteFeatureGroup(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("featureGroupId") String featureGroupId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 

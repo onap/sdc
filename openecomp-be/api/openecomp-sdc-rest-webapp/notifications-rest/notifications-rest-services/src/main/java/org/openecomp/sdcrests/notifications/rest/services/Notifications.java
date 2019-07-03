@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.notifications.rest.services;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.notifications.types.NotificationsStatusDto;
 import org.openecomp.sdcrests.notifications.types.UpdateNotificationResponseStatus;
 import org.springframework.validation.annotation.Validated;
@@ -39,16 +44,14 @@ import static org.openecomp.sdcrests.common.RestConstants.*;
 @Path("/v1.0/notifications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Notifications")
+@OpenAPIDefinition(info = @Info(title = "Notifications"))
 @Validated
 public interface Notifications {
   String LIMIT_QUERY_PARAM = "NOTIFICATION_ROWS_LIMIT";
   String END_OF_PAGE_QUERY_PARAM = "END_OF_PAGE_EVENT_ID";
 
   @GET
-  @ApiOperation(value = "Retrive all user notifications",
-      response = NotificationsStatusDto.class,
-      responseContainer = "List")
+  @Operation(description = "Retrieve all user notifications", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = NotificationsStatusDto.class)))))
   Response getNotifications(
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user,
       @QueryParam(LAST_DELIVERED_QUERY_PARAM) UUID lastDelvered,
@@ -56,27 +59,23 @@ public interface Notifications {
 
   @PUT
   @Path("/{notificationId}")
-  @ApiOperation(value = "Mark notification as read",
-      response = UpdateNotificationResponseStatus.class)
+  @Operation(description = "Mark notification as read", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UpdateNotificationResponseStatus.class))))
   Response markAsRead(
-      @ApiParam(value = "Notification Id") @PathParam("notificationId") String notificationId,
+      @Parameter(description = "Notification Id") @PathParam("notificationId") String notificationId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws InvocationTargetException, IllegalAccessException;
 
   @PUT
   @Path("/last-seen/{notificationId}")
-  @ApiOperation(value = "Update Last Seen Notification",
-      response = UpdateNotificationResponseStatus.class)
+  @Operation(description = "Update Last Seen Notification", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UpdateNotificationResponseStatus.class))))
   Response updateLastSeenNotification(
-      @ApiParam(value = "Notification Id") @PathParam("notificationId") String notificationId,
+      @Parameter(description = "Notification Id") @PathParam("notificationId") String notificationId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws InvocationTargetException, IllegalAccessException;
 
   @GET
   @Path("/worker")
-  @ApiOperation(value = "Retrive user not delivered notifications",
-      response = NotificationsStatusDto.class,
-      responseContainer = "List")
+  @Operation(description = "Retrive user not delivered notifications",responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = NotificationsStatusDto.class)))))
   Response getNewNotificationsByOwnerId(
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user,
       @QueryParam(LAST_DELIVERED_QUERY_PARAM) String eventId,

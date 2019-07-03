@@ -20,11 +20,16 @@
 
 package org.openecomp.sdcrests.action.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.action.types.ActionResponseDto;
+import org.openecomp.sdcrests.action.types.ListResponseWrapper;
 import org.springframework.validation.annotation.Validated;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +44,7 @@ import javax.ws.rs.core.Response;
 @Path("/workflow/v1.0/actions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Actions")
+@OpenAPIDefinition(info =  @Info(title = "Actions"))
 @Validated
 public interface Actions {
 
@@ -52,7 +57,7 @@ public interface Actions {
    */
   @GET
   @Path("/{actionInvariantUuId}")
-  @ApiOperation(value = "List Actions For Given Action Invariant UuId", responseContainer = "List")
+  @Operation(description = "List Actions For Given Action Invariant UuId", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
   Response getActionsByActionInvariantUuId(
       @PathParam("actionInvariantUuId") String actionInvariantUuId,
       @QueryParam("version") String actionUuId, @Context HttpServletRequest servletRequest);
@@ -64,10 +69,10 @@ public interface Actions {
    * @return List Of Last Major and Last Minor of All Actions based on filter criteria
    */
   @GET
-  @ApiOperation(value = "List Filtered Actions ",
-      notes = "Get list of actions based on a filter criteria | If no filter is sent all actions "
+  @Operation(description = "List Filtered Actions ",
+      summary = "Get list of actions based on a filter criteria | If no filter is sent all actions "
           + "will be returned",
-      responseContainer = "List")
+          responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
   Response getFilteredActions(@QueryParam("vendor") String vendor,
                               @QueryParam("category") String category,
                               @QueryParam("name") String name,
@@ -82,8 +87,7 @@ public interface Actions {
    */
   @GET
   @Path("/components")
-  @ApiOperation(value = "List OPENECOMP Components supported by Action Library",
-      responseContainer = "List")
+  @Operation(description = "List OPENECOMP Components supported by Action Library", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
   Response getOpenEcompComponents(@Context HttpServletRequest servletRequest);
 
   /**
@@ -92,7 +96,7 @@ public interface Actions {
    * @return Metadata object {@link ActionResponseDto ActionResponseDto} object for created Action
    */
   @POST
-  @ApiOperation(value = "Create a new Action")
+  @Operation(description = "Create a new Action")
   Response createAction(String requestJson, @Context HttpServletRequest servletRequest);
 
   /**
@@ -102,7 +106,7 @@ public interface Actions {
    */
   @PUT
   @Path("/{actionInvariantUuId}")
-  @ApiOperation(value = "Update an existing action")
+  @Operation(description = "Update an existing action")
   Response updateAction(@PathParam("actionInvariantUuId") String actionInvariantUuId,
                         String requestJson, @Context HttpServletRequest servletRequest);
 
@@ -115,7 +119,7 @@ public interface Actions {
    */
   @DELETE
   @Path("/{actionInvariantUuId}")
-  @ApiOperation(value = "Delete Action")
+  @Operation(description = "Delete Action")
   Response deleteAction(@PathParam("actionInvariantUuId") String actionInvariantUuId,
                         @Context HttpServletRequest servletRequest);
 
@@ -126,8 +130,8 @@ public interface Actions {
    */
   @POST
   @Path("/{actionInvariantUuId}")
-  @ApiOperation(value = "Actions on a action",
-      notes = "Performs one of the following actions on a action: |"
+  @Operation(description = "Actions on a action",
+      summary = "Performs one of the following actions on a action: |"
           + "Checkout: Locks it for edits by other users. Only the locking user sees the edited "
           + "version.|"
           + "Undo_Checkout: Unlocks it and deletes the edits that were done.|"
@@ -166,14 +170,14 @@ public interface Actions {
   @GET
   @Path("/{actionUuId}/artifacts/{artifactUuId}")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Downloads artifact for action")
+  @Operation(description = "Downloads artifact for action")
   Response downloadArtifact(@PathParam("actionUuId") String actionUuId,
                             @PathParam("artifactUuId") String artifactUuId,
                             @Context HttpServletRequest servletRequest);
 
   @DELETE
   @Path("/{actionInvariantUuId}/artifacts/{artifactUuId}")
-  @ApiOperation(value = "Delete Artifact")
+  @Operation(description = "Delete Artifact")
   Response deleteArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId,
                           @PathParam("artifactUuId") String artifactUuId,
                           @Context HttpServletRequest servletRequest);

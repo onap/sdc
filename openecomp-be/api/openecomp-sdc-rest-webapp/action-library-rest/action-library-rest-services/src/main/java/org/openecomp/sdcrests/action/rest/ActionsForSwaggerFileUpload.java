@@ -21,8 +21,9 @@
 package org.openecomp.sdcrests.action.rest;
 
 import com.sun.jersey.multipart.FormDataParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 
@@ -37,7 +38,7 @@ import java.io.InputStream;
 @Path("/workflow/v1.0/actions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Actions")
+@OpenAPIDefinition(info =  @Info(title = "Actions"))
 @Validated
 public interface ActionsForSwaggerFileUpload {
 
@@ -57,7 +58,7 @@ public interface ActionsForSwaggerFileUpload {
    */
   @POST
   @Path("/{actionInvariantUuId}/artifacts")
-  @ApiOperation(value = "Upload new Artifact")
+  @Operation(description = "Upload new Artifact")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   Response uploadArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId,
                           @Multipart(value = "artifactName", required = false) String artifactName,
@@ -76,7 +77,7 @@ public interface ActionsForSwaggerFileUpload {
 
   @PUT
   @Path("/{actionInvariantUuId}/artifacts/{artifactUuId}")
-  @ApiOperation(value = "Update an existing artifact")
+  @Operation(description = "Update an existing artifact")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   Response updateArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId,
                           @PathParam("artifactUuId") String artifactUuId,

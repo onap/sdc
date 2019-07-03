@@ -17,8 +17,9 @@
 package org.openecomp.sdcrests.validation.rest;
 
 import com.sun.jersey.multipart.FormDataParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.validation.annotation.Validated;
 
 import javax.ws.rs.*;
@@ -30,7 +31,7 @@ import java.io.InputStream;
 @Path("/v1.0/validation")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Validation")
+@OpenAPIDefinition(info = @Info(title="Validation"))
 @Validated
 
 public interface ValidationForSwaggerUsage {
@@ -39,7 +40,7 @@ public interface ValidationForSwaggerUsage {
   @POST
   @Path("{type}/validate")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Validate a package")
+  @Operation(description = "Validate a package")
   Response validateFile(@PathParam("type") String type,
                         @FormDataParam("validate") InputStream fileToValidate);
 }

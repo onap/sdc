@@ -21,12 +21,13 @@
 package org.openecomp.sdcrests.vendorlicense.types;
 
 
-import io.swagger.annotations.ApiModel;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@ApiModel(value = "LicenseAgreementEntity")
+@Schema(description = "LicenseAgreementEntity")
 public class LicenseAgreementEntityDto extends LicenseAgreementDescriptorDto {
   private String id;
   @Size(min = 1)

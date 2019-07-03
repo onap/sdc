@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
@@ -41,91 +46,87 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Component NICs")
+@OpenAPIDefinition(info = @Info(title="Vendor Software Product Component NICs"))
 @Validated
 public interface Nics extends VspEntities {
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product component NICs",
-      response = NicDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+  @Operation(description = "List vendor software product component NICs",responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = NicDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                     String componentId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product NIC")
+  @Operation(description = "Create a vendor software product NIC")
   Response create(@Valid NicRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{nicId}")
-  @ApiOperation(value = "Get vendor software product NIC",
-      response = NicDto.class)
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+  @Operation(description = "Get vendor software product NIC", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = NicDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                    String componentId,
-               @ApiParam(value = "Vendor software product NIC Id") @PathParam("nicId") String nicId,
+               @Parameter(description = "Vendor software product NIC Id") @PathParam("nicId") String nicId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @DELETE
   @Path("/{nicId}")
-  @ApiOperation(value = "Delete vendor software product NIC")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+  @Operation(description = "Delete vendor software product NIC")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
-                  @ApiParam(value = "Vendor software product NIC Id") @PathParam("nicId")
+                  @Parameter(description = "Vendor software product NIC Id") @PathParam("nicId")
                       String nicId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{nicId}")
-  @ApiOperation(value = "Update vendor software product NIC")
+  @Operation(description = "Update vendor software product NIC")
   Response update(@Valid NicRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
-                  @ApiParam(value = "Vendor software product NIC Id") @PathParam("nicId")
+                  @Parameter(description = "Vendor software product NIC Id") @PathParam("nicId")
                       String nicId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{nicId}/questionnaire")
-  @ApiOperation(value = "Get vendor software product component NIC questionnaire",
-      response = QuestionnaireResponseDto.class)
+  @Operation(description = "Get vendor software product component NIC questionnaire", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = QuestionnaireResponseDto.class))))
   Response getQuestionnaire(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
           String componentId,
-      @ApiParam(value = "Vendor software product NIC Id") @PathParam("nicId") String nicId,
+      @Parameter(description = "Vendor software product NIC Id") @PathParam("nicId") String nicId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{nicId}/questionnaire")
-  @ApiOperation(value = "Update vendor software product component NIC questionnaire")
+  @Operation(description = "Update vendor software product component NIC questionnaire")
   Response updateQuestionnaire(@NotNull @IsValidJson String questionnaireData,
-                               @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
+                               @Parameter(description = "Vendor software product Id") @PathParam("vspId")
                                    String vspId,
-                               @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                               @ApiParam(value = "Vendor software product component Id")
+                               @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                               @Parameter(description = "Vendor software product component Id")
                                @PathParam("componentId") String componentId,
-                               @ApiParam(value = "Vendor software product NIC Id")
+                               @Parameter(description = "Vendor software product NIC Id")
                                @PathParam("nicId") String nicId,
                                @NotNull(message = USER_MISSING_ERROR_MSG)
                                @HeaderParam(USER_ID_HEADER_PARAM) String user);

@@ -21,8 +21,12 @@
 package org.openecomp.sdcrests.vsp.rest;
 
 import com.sun.jersey.multipart.FormDataParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.springframework.validation.annotation.Validated;
 
@@ -38,7 +42,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Products")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Products"))
 @Validated
 public interface VendorSoftwareProductsForSwaggerFileUpload {
 
@@ -47,8 +51,7 @@ public interface VendorSoftwareProductsForSwaggerFileUpload {
   @POST
   @Path("/{vspId}/versions/{versionId}/orchestration-template-candidate")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Uploads a HEAT package to translate",
-      response = UploadFileResponseDto.class)
+  @Operation(description = "Uploads a HEAT package to translate",responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UploadFileResponseDto.class))))
   Response uploadOrchestrationTemplateCandidate(@PathParam("vspId") String vspId,
                                                 @PathParam("versionId") String versionId,
                                                 @FormDataParam("upload")

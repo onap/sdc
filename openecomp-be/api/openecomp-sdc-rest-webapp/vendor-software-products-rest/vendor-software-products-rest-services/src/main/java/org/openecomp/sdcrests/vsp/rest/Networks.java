@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkRequestDto;
 import org.springframework.validation.annotation.Validated;
@@ -39,56 +44,53 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/networks")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Networks")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Product Networks"))
 @Validated
 public interface Networks extends VspEntities {
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product networks",
-      response = NetworkDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+  @Operation(description = "List vendor software product networks",responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = NetworkDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product network")
+  @Operation(description = "Create a vendor software product network")
   Response create(@Valid NetworkRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{networkId}")
-  @ApiOperation(value = "Get vendor software product network",
-      response = NetworkDto.class)
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product network Id")
+  @Operation(description = "Get vendor software product network",responses = @ApiResponse(content = @Content(schema = @Schema(implementation = NetworkDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product network Id")
                @PathParam("networkId") String networkId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @DELETE
   @Path("/{networkId}")
-  @ApiOperation(value = "Delete vendor software product network")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product network Id") @PathParam("networkId")
+  @Operation(description = "Delete vendor software product network")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product network Id") @PathParam("networkId")
                       String networkId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{networkId}")
-  @ApiOperation(value = "Update vendor software product network")
+  @Operation(description = "Update vendor software product network")
   Response update(@Valid NetworkRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product network Id") @PathParam("networkId")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product network Id") @PathParam("networkId")
                       String networkId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);

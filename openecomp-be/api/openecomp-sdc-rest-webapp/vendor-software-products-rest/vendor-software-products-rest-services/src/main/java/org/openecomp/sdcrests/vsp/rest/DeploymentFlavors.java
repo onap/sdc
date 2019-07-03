@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorListResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorRequestDto;
@@ -41,43 +46,40 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/deployment-flavors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product deployment-flavors")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Product deployment-flavors"))
 @Validated
 public interface DeploymentFlavors extends VspEntities {
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product Deployment Flavor")
+  @Operation(description = "Create a vendor software product Deployment Flavor")
   Response create(@Valid DeploymentFlavorRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product Deployment Flavor",
-      response = DeploymentFlavorListResponseDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+  @Operation(description = "List vendor software product Deployment Flavor", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = DeploymentFlavorListResponseDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @GET
   @Path("/{deploymentFlavorId}")
-  @ApiOperation(value = "Get vendor software product Deployment Flavor",
-      response = DeploymentFlavorDto.class)
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product Deployment Flavor Id") @PathParam
+  @Operation(description = "Get vendor software product Deployment Flavor",responses = @ApiResponse(content = @Content(schema = @Schema(implementation = DeploymentFlavorDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product Deployment Flavor Id") @PathParam
                    ("deploymentFlavorId") String deploymentFlavorId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @GET
   @Path("/schema")
-  Response getSchema(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String
+  Response getSchema(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String
                         vspId,
                      @PathParam("versionId") String versionId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
@@ -85,21 +87,21 @@ public interface DeploymentFlavors extends VspEntities {
 
   @DELETE
   @Path("/{deploymentFlavorId}")
-  @ApiOperation(value = "Delete vendor software product Deployment Flavor")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product Deployment Flavor Id")
+  @Operation(description = "Delete vendor software product Deployment Flavor")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Deployment Flavor Id")
                   @PathParam("deploymentFlavorId") String deploymentFlavorId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                           String user);
 
   @PUT
   @Path("/{deploymentFlavorId}")
-  @ApiOperation(value = "Update vendor software product Deployment Flavor")
+  @Operation(description = "Update vendor software product Deployment Flavor")
   Response update(@Valid DeploymentFlavorRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product Deployment Flavor Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Deployment Flavor Id")
                   @PathParam("deploymentFlavorId") String deploymentFlavorId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);

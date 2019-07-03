@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyModel;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyResponseDto;
 import org.springframework.validation.annotation.Validated;
@@ -39,60 +44,57 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/component-dependencies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Component Dependencies")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Product Component Dependencies"))
 @Validated
 public interface ComponentDependencies extends VspEntities {
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product component dependency")
+  @Operation( description= "Create a vendor software product component dependency")
   Response create(@Valid ComponentDependencyModel request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/")
-  @ApiOperation(value = "Get component dependencies for vendor software product",
-      response = ComponentDependencyResponseDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId")
+  @Operation(description = "Get component dependencies for vendor software product", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = ComponentDependencyResponseDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Vendor software product version Id") @PathParam("versionId")
                     String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @DELETE
   @Path("/{dependencyId}")
-  @ApiOperation(value = "Delete component dependency for vendor software product")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id")
+  @Operation(description = "Delete component dependency for vendor software product")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id")
                   @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product Component Dependency Id") @PathParam
+                  @Parameter(description = "Vendor software product Component Dependency Id") @PathParam
                       ("dependencyId") String dependencyId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{dependencyId}")
-  @ApiOperation(value = "Update component dependency for vendor software product")
+  @Operation(description = "Update component dependency for vendor software product")
   Response update(@Valid ComponentDependencyModel request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId")
                       String versionId,
-                  @ApiParam(value = "Vendor software product Component Dependency Id") @PathParam
+                  @Parameter(description = "Vendor software product Component Dependency Id") @PathParam
                       ("dependencyId") String dependencyId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{dependencyId}")
-  @ApiOperation(value = "Get component dependency for vendor software product",
-      response = ComponentDependencyResponseDto.class)
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product Component Dependency Id") @PathParam
+  @Operation(description = "Get component dependency for vendor software product", responses = @ApiResponse(content = @Content(schema = @Schema(implementation =ComponentDependencyResponseDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product Component Dependency Id") @PathParam
                    ("dependencyId") String dependencyId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);

@@ -17,12 +17,12 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel("VtpTestSuite")
+@Schema(description = "VtpTestSuite")
 @Data
 @EqualsAndHashCode(callSuper=true)
 class VtpTestCaseOutput extends VtpNameDescriptionPair {

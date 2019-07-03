@@ -17,7 +17,7 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,7 +27,7 @@ import java.io.Serializable;
  */
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel("Body for errors such as http 500")
+@Schema(description = "Body for errors such as http 500")
 @Data
 public class TestErrorBody implements Serializable {
 

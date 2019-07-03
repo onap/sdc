@@ -20,12 +20,12 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 
-@ApiModel(value = "LimitRequest")
+@Schema(description = "LimitRequest")
 public class LimitRequestDto {
 
   @NotBlank(message = "is mandatory and should not be empty")

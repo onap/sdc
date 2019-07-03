@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.MonitoringUploadStatusDto;
@@ -40,44 +45,43 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
     "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/uploads/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Component Uploads")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Product Component Uploads"))
 @Validated
 public interface ComponentMonitoringUploads extends VspEntities {
   @POST
   @Path("types/{type}/")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Upload file for component by type")
+  @Operation(description = "Upload file for component by type")
   Response upload(@Multipart("upload") Attachment attachment,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId")
                       String vspId,
-                  @ApiParam(value = "Vendor software product version Id")
+                  @Parameter(description = "Vendor software product version Id")
                   @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Component Id") @PathParam("componentId") String
+                  @Parameter(description = "Component Id") @PathParam("componentId") String
                       componentId,
-                  @ApiParam(value = "Upload Type") @PathParam("type") String type,
+                  @Parameter(description = "Upload Type") @PathParam("type") String type,
                   @NotNull(message = USER_MISSING_ERROR_MSG)
                   @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
 
   @DELETE
   @Path("types/{type}")
-  @ApiOperation(value = "Delete file uploaded for component")
+  @Operation(description = "Delete file uploaded for component")
   Response delete(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Vendor software product version Id") @PathParam("versionId")
           String versionId,
-      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
-      @ApiParam(value = "Upload Type") @PathParam("type") String type,
+      @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+      @Parameter(description = "Upload Type") @PathParam("type") String type,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws Exception;
 
   @GET
   @Path("")
-  @ApiOperation(value = "Get the filenames of uploaded files by type",
-      response = MonitoringUploadStatusDto.class)
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId")
+  @Operation(description = "Get the filenames of uploaded files by type", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation =MonitoringUploadStatusDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Vendor software product version Id") @PathParam("versionId")
                     String versionId,
-                @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+                @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                     String componentId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);

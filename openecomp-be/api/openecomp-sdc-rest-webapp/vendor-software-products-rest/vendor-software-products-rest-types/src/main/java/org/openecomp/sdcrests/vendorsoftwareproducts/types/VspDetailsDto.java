@@ -16,7 +16,7 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
@@ -25,7 +25,7 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
  */
 
 @Data
-@ApiModel(value = "VspDetails")
+@Schema(description = "VspDetails")
 public class VspDetailsDto extends VspRequestDto {
 
   private String id;

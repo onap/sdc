@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
@@ -41,54 +46,52 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/images")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Images")
+@OpenAPIDefinition(info = @Info(title =  "Vendor Software Product Images"))
 @Validated
 public interface Images extends VspEntities {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product component images",
-      response = ImageDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+  @Operation(description = "List vendor software product component images",responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ImageDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                     String componentId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product component image")
+  @Operation(description = "Create a vendor software product component image")
   Response create(@Valid ImageRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/schema")
-  //@ApiOperation(value = "Get schema for vendor software product component Image" ,
+  //@Operation(description = "Get schema for vendor software product component Image" ,
   // response = QuestionnaireResponseDto.class)
-  Response getImageSchema(@ApiParam(value = "Vendor software product Id") @PathParam("vspId")
+  Response getImageSchema(@Parameter(description = "Vendor software product Id") @PathParam("vspId")
                               String vspId,
-                          @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                          @ApiParam(value = "Vendor software product component Id")
+                          @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                          @Parameter(description = "Vendor software product component Id")
                           @PathParam("componentId") String componentId,@NotNull
                               (message = USER_MISSING_ERROR_MSG) @HeaderParam
                               (USER_ID_HEADER_PARAM) String user);
 
   /*@GET
   @Path("/{imageId}")
-  @ApiOperation(value = "Get vendor software product component Image",
+  @Operation(description = "Get vendor software product component Image",
       response = ImageDto.class,
       responseContainer = "ImageEntityResponse")
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                    String componentId,
-               @ApiParam(value = "Vendor software product image Id") @PathParam("imageId")
+               @Parameter(description = "Vendor software product image Id") @PathParam("imageId")
                    String imageId,
                @Pattern(regexp = Version.VERSION_REGEX,
                    message = Version.VERSION_STRING_VIOLATION_MSG) @QueryParam("version")
@@ -98,14 +101,12 @@ public interface Images extends VspEntities {
 
   @GET
   @Path("/{imageId}")
-  @ApiOperation(value = "Get vendor software product component Image",
-      response = ImageDto.class,
-      responseContainer = "CompositionEntityResponse")
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+  @Operation(description = "Get vendor software product component Image",responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ImageDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
                    String componentId,
-               @ApiParam(value = "Vendor software product Image Id") @PathParam
+               @Parameter(description = "Vendor software product Image Id") @PathParam
                    ("imageId")
                    String imageId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
@@ -113,54 +114,53 @@ public interface Images extends VspEntities {
 
   @DELETE
   @Path("/{imageId}")
-  @ApiOperation(value = "Delete vendor software product Image")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+  @Operation(description = "Delete vendor software product Image")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
-                  @ApiParam(value = "Vendor software product Image Id") @PathParam("imageId")
+                  @Parameter(description = "Vendor software product Image Id") @PathParam("imageId")
                       String imageId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{imageId}")
-  @ApiOperation(value = "Update vendor software product Image")
+  @Operation(description = "Update vendor software product Image")
   Response update(@Valid ImageRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
-                  @ApiParam(value = "Vendor software product Image Id") @PathParam("imageId")
+                  @Parameter(description = "Vendor software product Image Id") @PathParam("imageId")
                       String imageId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{imageId}/questionnaire")
-  @ApiOperation(value = "Update vendor software product component image questionnaire")
+  @Operation(description = "Update vendor software product component image questionnaire")
   Response updateQuestionnaire(@NotNull @IsValidJson String questionnaireData,
-                               @ApiParam(value = "Vendor software product Id")
+                               @Parameter(description = "Vendor software product Id")
                                @PathParam("vspId") String vspId,
-                               @ApiParam(value = "Version Id")
+                               @Parameter(description = "Version Id")
                                @PathParam("versionId") String versionId,
-                               @ApiParam(value = "Vendor software product component Id")
+                               @Parameter(description = "Vendor software product component Id")
                                @PathParam("componentId") String componentId,
-                               @ApiParam(value = "Vendor software product image Id")
+                               @Parameter(description = "Vendor software product image Id")
                                @PathParam ("imageId") String imageId,
                                @NotNull(message = USER_MISSING_ERROR_MSG)
                                @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{imageId}/questionnaire")
-  @ApiOperation(value = "Get vendor software product component image questionnaire",
-      response = QuestionnaireResponseDto.class)
+  @Operation(description = "Get vendor software product component image questionnaire", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = QuestionnaireResponseDto.class))))
   Response getQuestionnaire(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product component Id") @PathParam("componentId")
           String componentId,
-      @ApiParam(value = "Vendor software product image Id") @PathParam
+      @Parameter(description = "Vendor software product image Id") @PathParam
           ("imageId") String imageId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

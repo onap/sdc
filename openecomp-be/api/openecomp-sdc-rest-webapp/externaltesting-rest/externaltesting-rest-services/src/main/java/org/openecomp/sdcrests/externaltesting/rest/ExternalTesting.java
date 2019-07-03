@@ -16,7 +16,8 @@
 
 package org.openecomp.sdcrests.externaltesting.rest;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.openecomp.core.externaltesting.api.ClientConfiguration;
 import org.openecomp.core.externaltesting.api.RemoteTestingEndpointDefinition;
 import org.openecomp.core.externaltesting.api.VtpTestExecutionRequest;
@@ -31,7 +32,7 @@ import java.util.List;
 @Path("/v1.0/externaltesting")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "External-Testing")
+@OpenAPIDefinition(info = @Info(title = "External-Testing"))
 @Validated
 
 public interface ExternalTesting {

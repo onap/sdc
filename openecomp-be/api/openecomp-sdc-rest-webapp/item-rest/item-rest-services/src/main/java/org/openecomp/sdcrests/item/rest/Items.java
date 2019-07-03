@@ -15,9 +15,15 @@
  */
 package org.openecomp.sdcrests.item.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,50 +32,47 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/items")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Items")
+@OpenAPIDefinition(info = @Info(title = "Items"))
 @Validated
 public interface Items {
 
     @GET
     @Path("/")
-    @ApiOperation(value = "Get list of items according to desired filters",
-            responseContainer = "List")
-    Response list(@ApiParam(value = "Filter by item status", allowableValues = "ACTIVE,ARCHIVED")
+    @Operation(description = "Get list of items according to desired filters", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Item.class)))))
+    Response list(@Parameter(description = "Filter by item status", schema = @Schema(type = "string", allowableValues = {"ACTIVE", "ARCHIVED"}))
                   @QueryParam("itemStatus") String itemStatusFilter,
-                  @ApiParam(value = "Filter by version status" , allowableValues = "Certified,Draft")
+                  @Parameter(description = "Filter by version status", schema = @Schema(type = "string", allowableValues = {"Certified", "Draft"}))
                   @QueryParam("versionStatus") String versionStatusFilter,
-                  @ApiParam(value = "Filter by item type" , allowableValues = "vsp,vlm")
+                  @Parameter(description = "Filter by item type", schema = @Schema(type = "string", allowableValues = {"vsp", "vlm"}))
                   @QueryParam("itemType") String itemTypeFilter,
-                  @ApiParam(value = "Filter by user permission" , allowableValues = "Owner,Contributor")
+                  @Parameter(description = "Filter by user permission", schema = @Schema(type = "string", allowableValues = {"Owner", "Contributor"}))
                   @QueryParam("permission") String permissionFilter,
-                  @ApiParam(value = "Filter by onboarding method" , allowableValues = "NetworkPackage,Manual")
+                  @Parameter(description = "Filter by onboarding method", schema = @Schema(type = "string", allowableValues = {"NetworkPackage", "manual"}))
                   @QueryParam("onboardingMethod") String onboardingMethodFilter,
                   @NotNull(message = USER_MISSING_ERROR_MSG)
                   @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
-   @GET
-   @Path("/{itemId}")
-   @ApiOperation(value = "Get details of a item")
-   Response getItem(@PathParam("itemId") String itemId,
+    @GET
+    @Path("/{itemId}")
+    @Operation(description = "Get details of a item")
+    Response getItem(@PathParam("itemId") String itemId,
                      @NotNull(message = USER_MISSING_ERROR_MSG)
                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
-  @PUT
-  @Path("/{itemId}/actions")
-  @ApiOperation(value = "Acts on item version")
-  Response actOn(ItemActionRequestDto request,
-                 @PathParam("itemId") String itemId,
-                 @NotNull(message = USER_MISSING_ERROR_MSG)
-                 @HeaderParam(USER_ID_HEADER_PARAM) String user);
-
-
-
+    @PUT
+    @Path("/{itemId}/actions")
+    @Operation(description = "Acts on item version")
+    Response actOn(ItemActionRequestDto request,
+                   @PathParam("itemId") String itemId,
+                   @NotNull(message = USER_MISSING_ERROR_MSG)
+                   @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
 
 }

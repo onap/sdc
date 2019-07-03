@@ -20,8 +20,12 @@
 
 package org.openecomp.sdcrests.health.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.health.types.HealthInfoDtos;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,14 +39,12 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0/healthcheck")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Health Check")
+@OpenAPIDefinition(info = @Info(title = "Health Check"))
 @Validated
 public interface HealthCheck {
 
   @GET
-  @ApiOperation(value = "Perform health check",
-      response = HealthInfoDtos.class,
-      responseContainer = "List")
+  @Operation(description = "Perform health check", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = HealthInfoDtos.class))))
   Response checkHealth();
 
 }
