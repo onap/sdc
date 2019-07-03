@@ -49,11 +49,11 @@
 		</dependency>
 
 
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging-api</artifactId>
-			<version>1.0.4</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>commons-logging</groupId>-->
+<!--			<artifactId>commons-logging-api</artifactId>-->
+<!--			<version>1.0.4</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -61,26 +61,26 @@
 			<version>2.4</version>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
-			<scope>compile</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>commons-codec</groupId>-->
+<!--			<artifactId>commons-codec</artifactId>-->
+<!--			<version>1.9</version>-->
+<!--			<scope>compile</scope>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-proxy</artifactId>
-			<version>${jetty.version}</version>
-			<scope>compile</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.eclipse.jetty</groupId>-->
+<!--			<artifactId>jetty-proxy</artifactId>-->
+<!--			<version>${jetty.version}</version>-->
+<!--			<scope>compile</scope>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlets</artifactId>
-            <version>${jetty.version}</version>
-			<scope>compile</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.eclipse.jetty</groupId>-->
+<!--			<artifactId>jetty-servlets</artifactId>-->
+<!--            <version>${jetty.version}</version>-->
+<!--			<scope>compile</scope>-->
+<!--		</dependency>-->
 
 		<!-- Proxy servlet -->
 		<dependency>

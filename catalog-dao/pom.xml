@@ -20,375 +20,377 @@ Modifications copyright (c) 2018 Nokia
 ================================================================================
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.openecomp.sdc.be</groupId>
-	<artifactId>catalog-dao</artifactId>
+  <groupId>org.openecomp.sdc.be</groupId>
+  <artifactId>catalog-dao</artifactId>
 
-	<parent>
-		<groupId>org.openecomp.sdc</groupId>
-		<artifactId>sdc-main</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>sdc-main</artifactId>
+    <version>1.5.0-SNAPSHOT</version>
+  </parent>
 
-	<dependencies>
-		<!-- Common of SDC -->
-		<dependency>
-			<groupId>org.openecomp.sdc</groupId>
-			<artifactId>common-app-api</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
+  <dependencies>
+    <!-- Common of SDC -->
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>common-app-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.openecomp.sdc.be</groupId>
-			<artifactId>common-be</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.be</groupId>
+      <artifactId>common-be</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>${elastic-search.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>${elastic-search.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- SPRING -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <!-- SPRING -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.aspectj</groupId>-->
+    <!--      <artifactId>aspectjrt</artifactId>-->
+    <!--      <version>${aspectj.version}</version>-->
+    <!--    </dependency>-->
 
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.aspectj</groupId>-->
+    <!--      <artifactId>aspectjweaver</artifactId>-->
+    <!--      <version>${aspectj.version}</version>-->
+    <!--    </dependency>-->
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+      <scope>compile</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>${json-simple.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-regex</artifactId>
-			<version>${regex.version}</version>
-		</dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.lucene</groupId>-->
+    <!--      <artifactId>lucene-regex</artifactId>-->
+    <!--      <version>${regex.version}</version>-->
+    <!--    </dependency>-->
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-    		<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.jmockit</groupId>
+      <artifactId>jmockit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.google.code.bean-matchers</groupId>
-			<artifactId>bean-matchers</artifactId>
-			<version>${bean-matchers.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.google.code.bean-matchers</groupId>
+      <artifactId>bean-matchers</artifactId>
+      <version>${bean-matchers.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>${snakeyaml.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.functionaljava</groupId>
-			<artifactId>functionaljava</artifactId>
-			<version>${functionaljava.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.functionaljava</groupId>
+      <artifactId>functionaljava</artifactId>
+      <version>${functionaljava.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- http client -->
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <!-- http client -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>${httpcore.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>${httpcore.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- TEST -->
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <!-- TEST -->
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-jci-core</artifactId>
-			<version>${commons-jci-core.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jci-core</artifactId>
+      <version>${commons-jci-core.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.janusgraph</groupId>
-			<artifactId>janusgraph-core</artifactId>
-			<version>${janusgraph.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.json</groupId>
-					<artifactId>json</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-collections</artifactId>
-					<groupId>commons-collections</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>groovy</artifactId>
-					<groupId>org.codehaus.groovy</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependency>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-core</artifactId>
+      <version>${janusgraph.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-collections</artifactId>
+          <groupId>commons-collections</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>groovy</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>org.janusgraph</groupId>
-			<artifactId>janusgraph-cassandra</artifactId>
-			<version>${janusgraph.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependency>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-cassandra</artifactId>
+      <version>${janusgraph.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${lang3.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${lang3.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- CASSANDRA -->
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>${cassandra.driver.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>io.netty</groupId>
-					<artifactId>netty-handler</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-mapping</artifactId>
-			<version>${cassandra.driver.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.cassandraunit</groupId>
-			<artifactId>cassandra-unit</artifactId>
-			<version>${cassandra.unit.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.cassandra</groupId>
-					<artifactId>cassandra-all</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.thrift</groupId>
-					<artifactId>libthrift</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cassandra</groupId>
-			<artifactId>cassandra-all</artifactId>
-			<version>3.11.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.thrift</groupId>
-			<artifactId>libthrift</artifactId>
-			<version>${libthrift.version}</version>
-		</dependency>
-		<!-- CASSANDRA END -->
+    <!-- CASSANDRA -->
+    <dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-core</artifactId>
+      <version>${cassandra.driver.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-handler</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-mapping</artifactId>
+      <version>${cassandra.driver.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.cassandraunit</groupId>
+      <artifactId>cassandra-unit</artifactId>
+      <version>${cassandra.unit.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cassandra</groupId>
+          <artifactId>cassandra-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.thrift</groupId>
+          <artifactId>libthrift</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cassandra</groupId>
+      <artifactId>cassandra-all</artifactId>
+      <version>3.11.3</version>
+      <scope>test</scope>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.thrift</groupId>-->
+    <!--      <artifactId>libthrift</artifactId>-->
+    <!--      <version>${libthrift.version}</version>-->
+    <!--    </dependency>-->
+    <!-- CASSANDRA END -->
 
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-	</dependencies>
+    <!--    <dependency>-->
+    <!--      <groupId>org.codehaus.groovy</groupId>-->
+    <!--      <artifactId>groovy</artifactId>-->
+    <!--    </dependency>-->
+  </dependencies>
 
-	<build>
+  <build>
 
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>fr.fastconnect</groupId>
-										<artifactId>plantuml-maven-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>plant</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>com.github.sylvainlaurent.maven</groupId>
-					<artifactId>yaml-json-validator-maven-plugin</artifactId>
-					<executions>
-						<execution>
-							<id>validate</id>
-							<phase>validate</phase>
-							<goals>
-								<goal>validate</goal>
-							</goals>
-							<configuration>
-								<validationSets>
-									<validationSet>
-										<includes>
-											<include>src/main/resources/**/*.y*ml</include>
-											<include>src/test/resources/**/*.y*ml</include>
-										</includes>
-									</validationSet>
-									<validationSet>
-										<includes>
-											<include>src/main/resources/**/*.json</include>
-											<include>src/test/resources/**/*.json</include>
-										</includes>
-									</validationSet>
-								</validationSets>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings
+          only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>fr.fastconnect</groupId>
+                    <artifactId>plantuml-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>plant</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.sylvainlaurent.maven</groupId>
+          <artifactId>yaml-json-validator-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>validate</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>validate</goal>
+              </goals>
+              <configuration>
+                <validationSets>
+                  <validationSet>
+                    <includes>
+                      <include>src/main/resources/**/*.y*ml</include>
+                      <include>src/test/resources/**/*.y*ml</include>
+                    </includes>
+                  </validationSet>
+                  <validationSet>
+                    <includes>
+                      <include>src/main/resources/**/*.json</include>
+                      <include>src/test/resources/**/*.json</include>
+                    </includes>
+                  </validationSet>
+                </validationSets>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
