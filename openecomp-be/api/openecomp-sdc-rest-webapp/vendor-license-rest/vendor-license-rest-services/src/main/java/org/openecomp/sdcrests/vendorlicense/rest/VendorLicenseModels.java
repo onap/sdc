@@ -17,9 +17,14 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.common.RestConstants;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto;
@@ -39,19 +44,17 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-license-models")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor License Models")
+@OpenAPIDefinition( info = @Info(title = "Vendor License Models"))
 @Validated
 public interface VendorLicenseModels {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor license models",
-      response = ItemDto.class,
-      responseContainer = "List")
-  Response listLicenseModels(@ApiParam(value = "Filter to return only Vendor License Models with at" +
+  @Operation(description = "List vendor license models", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation=ItemDto.class)))))
+  Response listLicenseModels(@Parameter(description = "Filter to return only Vendor License Models with at" +
                             " least one version at this status. Currently supported values: 'Certified' , 'Draft'")
                             @QueryParam("versionFilter") String versionStatus,
-                            @ApiParam(value = "Filter to only return Vendor License Models at this status." +
+                            @Parameter(description = "Filter to only return Vendor License Models at this status." +
                             "Currently supported values: 'ACTIVE' , 'ARCHIVED'." +
                             "Default value = 'ACTIVE'.")
                             @QueryParam("Status") String itemStatus,
@@ -60,37 +63,36 @@ public interface VendorLicenseModels {
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create vendor license model")
+  @Operation(description = "Create vendor license model")
   Response createLicenseModel(@Valid VendorLicenseModelRequestDto request,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{vlmId}")
-  @ApiOperation(value = "Delete vendor license model")
+  @Operation(description = "Delete vendor license model")
   Response deleteLicenseModel(
-            @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+            @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
             @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
                     String user);
 
   @PUT
   @Path("/{vlmId}/versions/{versionId}")
-  @ApiOperation(value = "Update vendor license model")
+  @Operation(description = "Update vendor license model")
   Response updateLicenseModel(@Valid VendorLicenseModelRequestDto request,
-                              @ApiParam(value = "Vendor license model Id")
+                              @Parameter(description = "Vendor license model Id")
                               @PathParam("vlmId") String vlmId,
-                              @ApiParam(value = "Vendor license model version Id")
+                              @Parameter(description = "Vendor license model version Id")
                               @PathParam("versionId") String versionId,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{vlmId}/versions/{versionId}")
-  @ApiOperation(value = "Get vendor license model",
-      response = VendorLicenseModelEntityDto.class)
+  @Operation(description = "Get vendor license model", responses = @ApiResponse(content = @Content(schema = @Schema(implementation=VendorLicenseModelEntityDto.class))))
   Response getLicenseModel(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam
           ("versionId") String versionId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
           String user);
@@ -98,11 +100,11 @@ public interface VendorLicenseModels {
 
   @PUT
   @Path("/{vlmId}/versions/{versionId}/actions")
-  @ApiOperation(value = "Update vendor license model")
+  @Operation(description = "Update vendor license model")
   Response actOnLicenseModel(@Valid VendorLicenseModelActionRequestDto request,
-                             @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
+                             @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
                                  String vlmId,
-                             @ApiParam(value = "Vendor license model version Id") @PathParam
+                             @Parameter(description = "Vendor license model version Id") @PathParam
                                  ("versionId") String versionId,
                              @NotNull(message = USER_MISSING_ERROR_MSG)
                              @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);

@@ -56,7 +56,7 @@
         </dependency>
         <!-- Swagger -->
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-core</artifactId>
             <version>${swagger.version}</version>
             <scope>compile</scope>

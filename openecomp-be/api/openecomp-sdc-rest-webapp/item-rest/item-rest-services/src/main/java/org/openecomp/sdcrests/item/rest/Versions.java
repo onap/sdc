@@ -1,8 +1,13 @@
 package org.openecomp.sdcrests.item.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.item.types.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,22 +22,20 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/items/{itemId}/versions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Item Versions")
+@OpenAPIDefinition(info = @Info(title = "Item Versions"))
 @Validated
 public interface Versions {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "Lists item versions",
-      response = VersionDto.class,
-      responseContainer = "List")
+  @Operation(description = "Lists item versions", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = VersionDto.class)))))
   Response list(@PathParam("itemId") String itemId,
                 @NotNull(message = USER_MISSING_ERROR_MSG)
                 @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/{versionId}")
-  @ApiOperation(value = "Creates a new item version")
+  @Operation(description = "Creates a new item version")
   Response create(VersionRequestDto request,
                   @PathParam("itemId") String itemId,
                   @PathParam("versionId") String versionId,
@@ -41,7 +44,7 @@ public interface Versions {
 
   @GET
   @Path("/{versionId}")
-  @ApiOperation(value = "Gets item version", response = VersionDto.class)
+  @Operation(description = "Gets item version", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = VersionDto.class))))
   Response get(@PathParam("itemId") String itemId,
                @PathParam("versionId") String versionId,
                @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -49,18 +52,15 @@ public interface Versions {
 
   @GET
   @Path("/{versionId}/activity-logs")
-  @ApiOperation(value = "Gets item version activity log",
-      response = ActivityLogDto.class,
-      responseContainer = "List")
-  Response getActivityLog(@ApiParam("Item Id") @PathParam("itemId") String itemId,
-                          @ApiParam("Version Id") @PathParam("versionId") String versionId,
+  @Operation(description = "Gets item version activity log", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = ActivityLogDto.class)))))
+  Response getActivityLog(@Parameter(description = "Item Id") @PathParam("itemId") String itemId,
+                          @Parameter( description = "Version Id") @PathParam("versionId") String versionId,
                           @NotNull(message = USER_MISSING_ERROR_MSG)
                           @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{versionId}/revisions")
-  @ApiOperation(value = "Gets item version revisions", response = RevisionDto.class,
-      responseContainer = "List")
+  @Operation(description = "Gets item version revisions", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = ActivityLogDto.class)))))
   Response listRevisions(@PathParam("itemId") String itemId,
                          @PathParam("versionId") String versionId,
                          @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -68,7 +68,7 @@ public interface Versions {
 
   @PUT
   @Path("/{versionId}/actions")
-  @ApiOperation(value = "Acts on item version")
+  @Operation(description = "Acts on item version")
   Response actOn(VersionActionRequestDto request,
                  @PathParam("itemId") String itemId,
                  @PathParam("versionId") String versionId,

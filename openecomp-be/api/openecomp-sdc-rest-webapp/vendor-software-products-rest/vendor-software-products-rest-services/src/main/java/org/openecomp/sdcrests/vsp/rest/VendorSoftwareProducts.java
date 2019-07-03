@@ -17,9 +17,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.IsValidJson;
@@ -32,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
@@ -39,26 +45,24 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Products")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Products"))
 @Validated
 public interface VendorSoftwareProducts extends VspEntities {
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a new vendor software product",
-      response = ItemCreationDto.class)
+  @Operation(description = "Create a new vendor software product",responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class))))
   Response createVsp(@Valid VspRequestDto vspRequestDto,
                      @NotNull(message = USER_MISSING_ERROR_MSG)
                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/")
-  @ApiOperation(value = "Get list of vendor software products and their description",
-      responseContainer = "List")
-  Response listVsps(@ApiParam(value = "Filter to return only Vendor Software Products with at" +
+  @Operation(description = "Get list of vendor software products and their description",responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = VspDetailsDto.class)))))
+  Response listVsps(@Parameter(description = "Filter to return only Vendor Software Products with at" +
                     " least one version at this status. Currently supported values: 'Certified' , 'Draft'")
                     @QueryParam("versionFilter") String versionStatus,
-                    @ApiParam(value = "Filter to only return Vendor Software Products at this status." +
+                    @Parameter(description = "Filter to only return Vendor Software Products at this status." +
                     "Currently supported values: 'ACTIVE' , 'ARCHIVED'." +
                     "Default value = 'ACTIVE'.")
                     @QueryParam("Status") String itemStatus,
@@ -67,7 +71,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @GET
   @Path("/{vspId}/versions/{versionId}")
-  @ApiOperation(value = "Get details of a vendor software product")
+  @Parameter(description = "Get details of a vendor software product")
   Response getVsp(@PathParam("vspId") String vspId,
                   @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -75,7 +79,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @PUT
   @Path("/{vspId}/versions/{versionId}")
-  @ApiOperation(value = "Update an existing vendor software product")
+  @Parameter(description = "Update an existing vendor software product")
   Response updateVsp(@PathParam("vspId") String vspId,
                      @PathParam("versionId") String versionId,
                      @Valid VspDescriptionDto vspDescriptionDto,
@@ -84,30 +88,26 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @DELETE
   @Path("/{vspId}")
-  @ApiOperation(value = "Deletes vendor software product by given id")
+  @Parameter(description = "Deletes vendor software product by given id")
   Response deleteVsp(@PathParam("vspId") String vspId,
                      @NotNull(message = USER_MISSING_ERROR_MSG)
                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/packages")
-  @ApiOperation(value = "Get list of translated CSAR files details",
-      response = PackageInfoDto.class,
-      responseContainer = "List")
-  Response listPackages(@ApiParam("Vendor Software Product status filter. " +
+  @Operation(description = "Get list of translated CSAR files details", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation=PackageInfoDto.class)))))
+  Response listPackages(@Parameter(description = "Vendor Software Product status filter. " +
                         "Currently supported values: 'ACTIVE', 'ARCHIVED'")
                         @QueryParam("Status") String status,
-                        @ApiParam("Category") @QueryParam("category") String category,
-                        @ApiParam("Sub-category") @QueryParam("subCategory") String subCategory,
+                        @Parameter(description = "Category") @QueryParam("category") String category,
+                        @Parameter(description = "Sub-category") @QueryParam("subCategory") String subCategory,
                         @NotNull(message = USER_MISSING_ERROR_MSG)
                         @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{vspId}/versions/{versionId}/orchestration-template")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Get Orchestration Template (HEAT) file",
-      notes = "Downloads the latest HEAT package",
-      response = File.class)
+  @Operation(description = "Get Orchestration Template (HEAT) file", responses = @ApiResponse(content = @Content(schema = @Schema(implementation=File.class))))
   Response getOrchestrationTemplate(
       @PathParam("vspId") String vspId,
       @PathParam("versionId") String versionId,
@@ -122,8 +122,8 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @PUT
   @Path("/{vspId}/versions/{versionId}/actions")
-  @ApiOperation(value = "Actions on a vendor software product",
-      notes = "Performs one of the following actions on a vendor software product: |"
+  @Operation(description = "Actions on a vendor software product",
+      summary = "Performs one of the following actions on a vendor software product: |"
           + "Checkout: Locks it for edits by other users. Only the locking user sees the edited "
           + "version.|"
           + "Undo_Checkout: Unlocks it and deletes the edits that were done.|"
@@ -140,17 +140,15 @@ public interface VendorSoftwareProducts extends VspEntities {
   @GET
   @Path("/packages/{vspId}")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Get translated CSAR file",
-      notes = "Exports translated file to a zip file",
-      response = File.class)
+  @Operation(description = "Get translated CSAR file",
+      summary = "Exports translated file to a zip file", responses = @ApiResponse(content = @Content(schema = @Schema(implementation=File.class))))
   Response getTranslatedFile(@PathParam("vspId") String vspId,
                              @QueryParam("versionId") String versionId,
                              @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{vspId}/versions/{versionId}/questionnaire")
-  @ApiOperation(value = "Get vendor software product questionnaire",
-      response = QuestionnaireResponseDto.class)
+  @Operation(description = "Get vendor software product questionnaire", responses = @ApiResponse(content = @Content(schema = @Schema(implementation=QuestionnaireResponseDto.class))))
   Response getQuestionnaire(@PathParam("vspId") String vspId,
                             @PathParam("versionId") String versionId,
                             @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -158,7 +156,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @PUT
   @Path("/{vspId}/versions/{versionId}/questionnaire")
-  @ApiOperation(value = "Update vendor software product questionnaire")
+  @Operation(description = "Update vendor software product questionnaire")
   Response updateQuestionnaire(@NotNull @IsValidJson String questionnaireData,
                                @PathParam("vspId") String vspId,
                                @PathParam("versionId") String versionId,
@@ -168,8 +166,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @PUT
   @Path("/{vspId}/versions/{versionId}/heal")
-  @ApiOperation(value = "Checkout and heal vendor software product questionnaire",
-      response = QuestionnaireResponseDto.class)
+  @Operation(description = "Checkout and heal vendor software product questionnaire",responses = @ApiResponse(content = @Content(schema = @Schema(implementation=QuestionnaireResponseDto.class))))
   Response heal(@PathParam("vspId") String vspId,
                 @PathParam("versionId") String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -179,8 +176,7 @@ public interface VendorSoftwareProducts extends VspEntities {
   @GET
   @Path("/{vspId}/versions/{versionId}/vspInformationArtifact")
   @Produces(MediaType.TEXT_PLAIN)
-  @ApiOperation(value = "Get vendor software product information artifact for specified version",
-      response = File.class)
+  @Operation(description = "Get vendor software product information artifact for specified version",responses = @ApiResponse(content = @Content(schema = @Schema(implementation=File.class))))
   Response getVspInformationArtifact(@PathParam("vspId") String vspId,
                                      @PathParam("versionId") String versionId,
                                      @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -188,10 +184,8 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @GET
   @Path("/{vspId}/versions/{versionId}/compute-flavors")
-  @ApiOperation(value = "Get list of vendor software product compute-flavors",
-      response = VspComputeDto.class,
-      responseContainer = "List")
-  Response listComputes(@ApiParam(value = "Vendor software product Id")
+  @Operation(description = "Get list of vendor software product compute-flavors", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation=VspComputeDto.class)))))
+  Response listComputes(@Parameter(description = "Vendor software product Id")
                         @PathParam("vspId") String vspId,
                         @PathParam("versionId") String versionId,
                         @NotNull(message = USER_MISSING_ERROR_MSG)

@@ -21,11 +21,11 @@
 package org.openecomp.sdcrests.vendorlicense.types;
 
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
-@ApiModel(value = "EntitlementPoolEntity")
+@Schema(description = "EntitlementPoolEntity")
 public class EntitlementPoolEntityDto extends EntitlementPoolRequestDto {
   private String id;
   private Set<String> referencingFeatureGroups;

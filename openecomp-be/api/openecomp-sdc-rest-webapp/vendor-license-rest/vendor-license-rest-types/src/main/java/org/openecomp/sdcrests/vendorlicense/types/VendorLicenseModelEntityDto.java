@@ -20,9 +20,10 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
 
-@ApiModel(value = "VendorLicenseModelEntity")
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "VendorLicenseModelEntity")
 public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
   private String id;
 

@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRequestDto;
@@ -36,96 +41,92 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.List;
+
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Components")
+@OpenAPIDefinition(info = @Info(title="Vendor Software Product Components"))
 @Validated
 public interface Components extends VspEntities {
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product components",
-      response = ComponentDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+  @Operation(description = "List vendor software product components", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ComponentDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @DELETE
   @Path("/")
-  @ApiOperation(value = "Delete vendor software product components",
-      responseContainer = "List")
+  @Operation(description = "Delete vendor software product components", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = List.class))))
   Response deleteList(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product component")
+  @Operation(description = "Create a vendor software product component")
   Response create(@Valid ComponentRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{componentId}")
-  @ApiOperation(value = "Get vendor software product component",
-      response = ComponentData.class,
-      responseContainer = "CompositionEntityResponse")
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product component Id")
+  @Operation(description = "Get vendor software product component", responses = @ApiResponse(content = @Content(schema = @Schema(implementation =ComponentData.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product component Id")
                @PathParam("componentId") String componentId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @DELETE
   @Path("/{componentId}")
-  @ApiOperation(value = "Delete vendor software product component")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+  @Operation(description = "Delete vendor software product component")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{componentId}")
-  @ApiOperation(value = "Update vendor software product component")
+  @Operation(description = "Update vendor software product component")
   Response update(@Valid ComponentRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product component Id")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product component Id")
                   @PathParam("componentId") String componentId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{componentId}/questionnaire")
-  @ApiOperation(value = "Get vendor software product component questionnaire",
-      response = QuestionnaireResponseDto.class)
+  @Operation(description = "Get vendor software product component questionnaire",responses = @ApiResponse(content = @Content(schema = @Schema(implementation =QuestionnaireResponseDto.class))))
   Response getQuestionnaire(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor software product component Id")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product component Id")
       @PathParam("componentId") String componentId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{componentId}/questionnaire")
-  @ApiOperation(value = "Update vendor software product component questionnaire")
+  @Operation(description = "Update vendor software product component questionnaire")
   Response updateQuestionnaire(@NotNull @IsValidJson String questionnaireData,
-                               @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
+                               @Parameter(description = "Vendor software product Id") @PathParam("vspId")
                                    String vspId,
-                               @ApiParam(value = "Version Id") @PathParam("versionId")
+                               @Parameter(description = "Version Id") @PathParam("versionId")
                                    String versionId,
-                               @ApiParam(value = "Vendor software product component Id")
+                               @Parameter(description = "Vendor software product component Id")
                                @PathParam("componentId") String componentId,
                                @NotNull(message = USER_MISSING_ERROR_MSG)
                                @HeaderParam(USER_ID_HEADER_PARAM) String user);

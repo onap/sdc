@@ -15,7 +15,12 @@
  */
 package org.openecomp.sdcrests.uniquevalue.rest;
 
-import io.swagger.annotations.*;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -29,24 +34,23 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/unique-types")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Unique Types")
+@OpenAPIDefinition(info = @Info(title = "Unique Types"))
 @Validated
 public interface UniqueTypes {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "Lists unique value types")
+  @Operation(description = "Lists unique value types")
   Response listUniqueTypes(@NotNull(message = USER_MISSING_ERROR_MSG)
                            @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{type}/values/{value}")
-  @ApiOperation(value = "Gets unique value")
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Indication whether the unique value is occupied"),
-      @ApiResponse(code = 404, message = "Unsupported unique type")})
+  @Operation(description = "Gets unique value")
+  @ApiResponse(responseCode = "200", description = "Indication whether the unique value is occupied")
+  @ApiResponse(responseCode = "404", description = "Unsupported unique type")
   Response getUniqueValue(
-      @ApiParam("The unique value type, for example: 'VlmName'") @PathParam("type") String type,
-      @ApiParam("The unique value") @PathParam("value") String value,
+      @Parameter(description = "The unique value type, for example: 'VlmName'") @PathParam("type") String type,
+      @Parameter(description = "The unique value") @PathParam("value") String value,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

@@ -20,43 +20,49 @@
 
 package org.openecomp.sdcrests.applicationconfig.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
+import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.validation.annotation.Validated;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.List;
 
 @Path("/v1.0/application-configuration")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Application Configuration")
+@OpenAPIDefinition(info = @Info(title = "Application Configuration"))
 @Validated
 public interface ApplicationConfiguration {
 
   @POST
   @Path("/")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Insert JSON schema into application config table")
+  @Operation(description = "Insert JSON schema into application config table")
   Response insertToTable(@QueryParam("namespace") String namespace, @QueryParam("key") String key,
-                         @Multipart("value") InputStream fileContainingSchema);
+                         @Multipart("description") InputStream fileContainingSchema);
 
 
   @GET
   @Path("/{namespace}/{key}")
-  @ApiOperation(value = "Get JSON schema by namespace and key",
-      response = ConfigurationDataDto.class)
+  @Operation(description = "Get JSON schema by namespace and key", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ConfigurationDataDto.class))))
   Response getFromTable(@PathParam("namespace") String namespace, @PathParam("key") String key);
 
 
   @GET
   @Path("/{namespace}")
-  @ApiOperation(value = "Get List of keys and values by namespace",
-      responseContainer = "List")
+  @Operation(description = "Get List of keys and descriptions by namespace", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ApplicationConfigDto.class)))))
   Response getListOfConfigurationByNamespaceFromTable(@PathParam("namespace") String namespace);
 
 }

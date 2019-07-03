@@ -16,8 +16,13 @@
 
 package org.openecomp.sdcrests.togglz.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.validation.annotation.Validated;
@@ -30,31 +35,28 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0/togglz")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Togglz")
+@OpenAPIDefinition(info = @Info(title = "Togglz"))
 @Validated
 public interface TogglzFeatures {
 
   @GET
-  @ApiOperation(value = "Get TOGGLZ Features",
-      response = FeatureSetDto.class,
-      responseContainer = "List")
+  @Operation(description = "Get TOGGLZ Features", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = FeatureSetDto.class)))))
   Response getFeatures();
 
 
   @PUT
   @Path("/state/{state}")
-  @ApiOperation(value = "Update feature toggle state for all features")
+  @Operation(description = "Update feature toggle state for all features")
   Response setAllFeatures(@PathParam("state") boolean state);
 
 
   @PUT
   @Path("/{featureName}/state/{state}")
-  @ApiOperation(value = "Update feature toggle state")
+  @Operation(description = "Update feature toggle state")
   Response setFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state);
 
   @GET
   @Path("/{featureName}/state")
-  @ApiOperation(value = "Get feature toggle state",
-          response = FeatureDto.class)
+  @Operation(description = "Get feature toggle state", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FeatureDto.class))))
   Response getFeatureState(@PathParam("featureName") String featureName);
 }

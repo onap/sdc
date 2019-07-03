@@ -114,7 +114,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <snakeyaml.version>1.17</snakeyaml.version>
         <spring.framework.version>4.3.18.RELEASE</spring.framework.version>
-        <swagger.version>1.5.3</swagger.version>
+        <swagger.version>2.0.8</swagger.version>
         <testng.version>6.14.3</testng.version>
         <woodstox.version>4.4.1</woodstox.version>
         <ws.rs.version>2.0.1</ws.rs.version>
@@ -288,7 +288,7 @@
                 <version>${commons.lang3.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.swagger</groupId>
+                <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>${swagger.version}</version>
             </dependency>

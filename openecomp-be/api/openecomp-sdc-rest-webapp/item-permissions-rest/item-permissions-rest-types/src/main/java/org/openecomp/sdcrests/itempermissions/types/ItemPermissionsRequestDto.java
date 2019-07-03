@@ -1,6 +1,8 @@
 package org.openecomp.sdcrests.itempermissions.types;
 
-import io.swagger.annotations.ApiModel;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
@@ -8,7 +10,7 @@ import java.util.Set;
  * Created by ayalaben on 6/20/2017.
  */
 
-@ApiModel(value = "ItemPermissionsRequest")
+@Schema(description = "ItemPermissionsRequest")
 public class ItemPermissionsRequestDto {
 
   private Set<String> addedUsersIds;

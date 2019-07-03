@@ -1,8 +1,13 @@
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
 import org.springframework.validation.annotation.Validated;
@@ -20,20 +25,20 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
     "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools/{entitlementPoolId}/limits")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor License Model - Entitlement Pool Limits")
+@OpenAPIDefinition(info = @Info(title = "Vendor License Model - Entitlement Pool Limits"))
 @Validated
 public interface EntitlementPoolLimits {
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create vendor entitlement pool limits")
+  @Operation(description = "Create vendor entitlement pool limits")
   Response createLimit(@Valid LimitRequestDto request,
-                       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
+                       @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
                            String vlmId,
-                       @ApiParam(value = "Vendor license model version Id") @PathParam
+                       @Parameter(description = "Vendor license model version Id") @PathParam
                            ("versionId")
                            String versionId,
-                       @ApiParam(value = "Vendor license model Entitlement Pool Id")
+                       @Parameter(description = "Vendor license model Entitlement Pool Id")
                        @PathParam("entitlementPoolId")
                            String entitlementPoolId,
                        @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -42,26 +47,24 @@ public interface EntitlementPoolLimits {
 
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor entitlement pool limits",
-      response = LimitRequestDto.class,
-      responseContainer = "List")
+  @Operation(description = "List vendor entitlement pool limits", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = LimitRequestDto.class)))))
   Response listLimits(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId")
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId")
           String entitlementPoolId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{limitId}")
-  @ApiOperation(value = "Update vendor entitlement pool limit")
+  @Operation(description = "Update vendor entitlement pool limit")
   Response updateLimit(@Valid LimitRequestDto request,
-                       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
+                       @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
                            String vlmId,
-                       @ApiParam(value = "Vendor license model version Id") @PathParam
+                       @Parameter(description = "Vendor license model version Id") @PathParam
                            ("versionId")
                            String versionId,
-                       @ApiParam(value = "Vendor license model Entitlement Pool Id")
+                       @Parameter(description = "Vendor license model Entitlement Pool Id")
                        @PathParam("entitlementPoolId")
                            String entitlementPoolId,
                        @NotNull(message = USER_MISSING_ERROR_MSG)
@@ -70,24 +73,23 @@ public interface EntitlementPoolLimits {
 
   @GET
   @Path("/{limitId}")
-  @ApiOperation(value = "Get vendor entitlement pool limit",
-      response = LimitEntityDto.class)
+  @Operation(description = "Get vendor entitlement pool limit", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = LimitEntityDto.class))))
   Response getLimit(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor license model Entitlement Pool Id") @PathParam
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam
           ("entitlementPoolId") String entitlementPoolId,
-      @ApiParam(value = "Vendor license model Entitlement Pool Limit Id") @PathParam("limitId")
+      @Parameter(description = "Vendor license model Entitlement Pool Limit Id") @PathParam("limitId")
           String limitId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{limitId}")
-  @ApiOperation(value = "Delete vendor entitlement pool limit")
+  @Operation(description = "Delete vendor entitlement pool limit")
   Response deleteLimit(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor license model Entitlement pool Id") @PathParam("entitlementPoolId")
+      @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor license model Entitlement pool Id") @PathParam("entitlementPoolId")
           String entitlementPoolId,
       @PathParam("limitId") String limitId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);

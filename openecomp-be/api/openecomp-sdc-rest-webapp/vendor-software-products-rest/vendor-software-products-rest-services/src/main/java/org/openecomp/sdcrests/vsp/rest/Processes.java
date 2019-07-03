@@ -20,9 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessEntityDto;
@@ -35,71 +40,69 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.List;
+
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "Vendor Software Product Processes")
+@OpenAPIDefinition(info = @Info(title = "Vendor Software Product Processes"))
 @Validated
 public interface Processes {
   @GET
   @Path("/")
-  @ApiOperation(value = "List vendor software product processes",
-      response = ProcessEntityDto.class,
-      responseContainer = "List")
-  Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+  @Operation(description = "List vendor software product processes", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProcessEntityDto.class)))))
+  Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @DELETE
   @Path("/")
-  @ApiOperation(value = "Delete vendor software product processes",
-      responseContainer = "List")
+  @Operation(description = "Delete vendor software product processes", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = List.class))))
   Response deleteList(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
-  @ApiOperation(value = "Create a vendor software product process")
+  @Operation(description = "Create a vendor software product process")
   Response create(@Valid ProcessRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
   @Path("/{processId}")
-  @ApiOperation(value = "Get vendor software product process",
-      response = ProcessEntityDto.class)
-  Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-               @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-               @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
+  @Operation(description = "Get vendor software product process", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ProcessEntityDto.class))))
+  Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+               @Parameter(description = "Vendor software product process Id") @PathParam("processId")
                    String processId,
                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @DELETE
   @Path("/{processId}")
-  @ApiOperation(value = "Delete vendor software product process")
-  Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
+  @Operation(description = "Delete vendor software product process")
+  Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product process Id") @PathParam("processId")
                       String processId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
   @Path("/{processId}")
-  @ApiOperation(value = "Update vendor software product process")
+  @Operation(description = "Update vendor software product process")
   Response update(@Valid ProcessRequestDto request,
-                  @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
+                  @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @Parameter(description = "Vendor software product process Id") @PathParam("processId")
                       String processId,
                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
@@ -107,32 +110,32 @@ public interface Processes {
   @GET
   @Path("/{processId}/upload")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Get vendor software product process uploaded file")
+  @Operation(description = "Get vendor software product process uploaded file")
   Response getUploadedFile(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product process Id") @PathParam("processId")
           String processId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{processId}/upload")
-  @ApiOperation(value = "Delete vendor software product process uploaded file")
+  @Operation(description = "Delete vendor software product process uploaded file")
   Response deleteUploadedFile(
-      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-      @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
+      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @Parameter(description = "Vendor software product process Id") @PathParam("processId")
           String processId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/{processId}/upload")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Update vendor software product process upload")
+  @Operation(description = "Update vendor software product process upload")
   Response uploadFile(@Multipart("upload") Attachment attachment,
-                      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                      @ApiParam(value = "Vendor software product process Id")
+                      @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
+                      @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                      @Parameter(description = "Vendor software product process Id")
                       @PathParam("processId") String processId,
                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                           String user);

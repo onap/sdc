@@ -20,7 +20,8 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import io.swagger.annotations.ApiModel;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
@@ -30,7 +31,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@ApiModel(value = "EntitlementPoolRequest")
+@Schema(description = "EntitlementPoolRequest")
 @JsonIgnoreProperties({"time", "aggregationFunction", "entitlementMetric"})
 public class EntitlementPoolRequestDto {
 
