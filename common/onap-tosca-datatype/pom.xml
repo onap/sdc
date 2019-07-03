@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.17</version>
+			<version>${snakeyaml.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
