@@ -35,7 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 
@@ -114,6 +117,11 @@ public class ArtifactValidationUtilsTest {
         when(vertex.getUniqueId()).thenReturn(UNIQUE_ID_VERTEX);
     }
 
+    @After
+    public void clean() {
+        ReportManagerHelper.cleanReports();
+    }
+
     @Test
     public void testValidateArtifactsAreInCassandra() {
         // given
@@ -124,9 +132,12 @@ public class ArtifactValidationUtilsTest {
         ArtifactsVertexResult result =
             testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
 
+        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+
         // then
         assertTrue(result.getStatus());
         assertEquals(0, result.notFoundArtifacts.size());
+        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
     }
 
     @Test
@@ -139,11 +150,20 @@ public class ArtifactValidationUtilsTest {
         // when
         ArtifactsVertexResult result =
             testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
+        ReportManager.reportEndOfToolRun();
+
+        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
 
         // then
         assertFalse(result.getStatus());
         assertEquals(1, result.notFoundArtifacts.size());
         assertEquals(UNIQUE_ID, result.notFoundArtifacts.iterator().next());
+
+        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+        assertEquals("Artifact " + ES_ID_NOT_IN_CASS + " doesn't exist in Cassandra",
+            reportOutputFile.get(3));
+        assertEquals("Task: " + TASK_NAME, reportOutputFile.get(5));
+        assertEquals("FailedVertices: [" + UNIQUE_ID_VERTEX + "]", reportOutputFile.get(6));
     }
 
     @Test
@@ -208,9 +228,14 @@ public class ArtifactValidationUtilsTest {
         ArtifactsVertexResult result =
             testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME);
 
+        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+
         // then
-		assertTrue(result.getStatus());
-		assertEquals(0, result.notFoundArtifacts.size());
+        assertTrue(result.getStatus());
+        assertEquals(0, result.notFoundArtifacts.size());
+
+        IntStream.range(2, reportOutputFile.size()).forEach(
+            i -> assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(i)));
     }
 
     @Test
