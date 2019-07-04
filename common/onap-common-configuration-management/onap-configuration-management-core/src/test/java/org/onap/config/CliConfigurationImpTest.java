@@ -16,18 +16,18 @@
 
 package org.onap.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
+
 import org.junit.Test;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.impl.CliConfigurationImpl;
 import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestImplementationConfiguration;
 
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class CliConfigurtationImpTest {
+public class CliConfigurationImpTest {
 
     private static final String NAMESPACE = "CLIConfiguration";
     private static final String TENANT = "OPENECOMP";
@@ -35,14 +35,15 @@ public class CliConfigurtationImpTest {
     private static final String SERVICE_CONF = "testService";
 
     @Test
-    public void testGenerateAndPopulateMap() throws Exception {
+    public void testGenerateAndPopulateMap() {
 
         // given
         ConfigurationManager conf = new CliConfigurationImpl();
         // when
-        Map outputMap = conf.generateMap(TENANT,  NAMESPACE, ConfigTestConstant.ARTIFACT);
-        TestImplementationConfiguration testServiceImpl = conf.populateMap(TENANT, NAMESPACE, IMPL_KEY,
-                TestImplementationConfiguration.class).get(SERVICE_CONF);
+        Map outputMap = conf.generateMap(TENANT, NAMESPACE, ConfigTestConstant.ARTIFACT);
+        TestImplementationConfiguration testServiceImpl =
+            conf.populateMap(TENANT, NAMESPACE, IMPL_KEY, TestImplementationConfiguration.class)
+                .get(SERVICE_CONF);
 
         // then
         validateCliMapConfig(outputMap);
@@ -50,43 +51,40 @@ public class CliConfigurtationImpTest {
         assertEquals("org.junit.Test", testServiceImpl.getImplementationClass());
     }
 
-    private void validateCliMapConfig(Map outputMap){
-        assertEquals("appc", outputMap.get(
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_CONSUMER)));
-        assertEquals("6", extract(outputMap,
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_MINLENGTH)));
-        assertEquals("true", outputMap.get(
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_ENCODED)));
-        assertEquals("14", extract(outputMap,
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH)));
-        assertEquals("pdf", outputMap.get(
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_EXT)));
-        assertEquals("Base64", outputMap.get(
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_ENC)));
-        assertEquals("a-zA-Z_0-9", extract(outputMap,
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_UPPER)));
-        assertEquals("deleted", outputMap.get(
-                withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_STATUS)));
+    private void validateCliMapConfig(Map outputMap) {
+        assertEquals("appc",
+            outputMap.get(withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_CONSUMER)));
+        assertEquals("6",
+            extract(outputMap, withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_MINLENGTH)));
+        assertEquals("true",
+            outputMap.get(withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_ENCODED)));
+        assertEquals("14",
+            extract(outputMap, withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH)));
+        assertEquals("pdf", outputMap.get(withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_EXT)));
+        assertEquals("Base64",
+            outputMap.get(withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_ENC)));
+        assertEquals("a-zA-Z_0-9",
+            extract(outputMap, withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_NAME_UPPER)));
+        assertEquals("deleted",
+            outputMap.get(withoutArtifactPrefix(ConfigTestConstant.ARTIFACT_STATUS)));
 
     }
 
-    public String withoutArtifactPrefix(String key){
+    private String withoutArtifactPrefix(String key) {
         return key.replace(ConfigTestConstant.ARTIFACT + ".", "");
     }
 
-    public String extract(Map map, String keys) {
+    private String extract(Map map, String keys) {
 
         String[] keysList = keys.split("\\.");
         Map recursive = (Map) map.get(keysList[0]);
 
         for (int i = 1; i < keysList.length; i++) {
             if (i == keysList.length - 1) {
-                return  (String) recursive.get(keysList[i]);
+                return (String) recursive.get(keysList[i]);
             }
             recursive = (Map) recursive.get(keysList[i]);
         }
         return null;
     }
-
-
 }
