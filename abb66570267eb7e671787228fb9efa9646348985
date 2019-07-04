@@ -22,6 +22,30 @@
       "revId": "abb66570267eb7e671787228fb9efa9646348985",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6382383c_6b32929a",
+        "filename": "catalog-be/src/main/resources/import/tosca/policy-types/policyTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 4719
+      },
+      "writtenOn": "2019-07-04T09:47:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4706149_c3a23fae",
+      "range": {
+        "startLine": 142,
+        "startChar": 6,
+        "endLine": 142,
+        "endChar": 18
+      },
+      "revId": "abb66570267eb7e671787228fb9efa9646348985",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
