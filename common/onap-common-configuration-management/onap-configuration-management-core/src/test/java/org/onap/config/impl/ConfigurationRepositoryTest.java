@@ -30,8 +30,13 @@ import org.apache.commons.configuration2.BaseConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onap.config.Constants;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ConfigurationRepository.class)
 public class ConfigurationRepositoryTest {
 
     private static final String[] EMPTY_ARRAY_OF_STRING = new String[0];
@@ -71,9 +76,9 @@ public class ConfigurationRepositoryTest {
 
         // when
         repository.populateConfiguration(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER
-                + Constants.DEFAULT_NAMESPACE, inputConfig);
-        final Configuration outputConfig = repository.getConfigurationFor(Constants.DEFAULT_TENANT,
-                Constants.DEFAULT_NAMESPACE);
+            + Constants.DEFAULT_NAMESPACE, inputConfig);
+        final Configuration outputConfig =
+            repository.getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DEFAULT_NAMESPACE);
 
         // then
         assertEquals(inputConfig, outputConfig);
