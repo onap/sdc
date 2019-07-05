@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 
 public class OnboardingToscaMetadata implements ToscaMetadata{
@@ -66,7 +66,7 @@ public class OnboardingToscaMetadata implements ToscaMetadata{
       if (line.isEmpty()) {
         return meta;
       }
-      String[] entry = line.split(SEPERATOR_MF_ATTRIBUTE);
+      String[] entry = line.split(SEPARATOR_MF_ATTRIBUTE);
       //No empty keys allowed, no empty values allowed
       if (entry.length < 2 || entry[0].isEmpty()) {
         meta.errors.add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(

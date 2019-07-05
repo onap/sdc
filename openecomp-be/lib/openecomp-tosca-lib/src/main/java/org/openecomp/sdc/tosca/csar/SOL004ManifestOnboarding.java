@@ -29,7 +29,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.CMD_END;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.CMS_BEGIN;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.HASH_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_MANO_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
 
 public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
@@ -43,12 +43,12 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         if(isEmptyLine(iterator, line)){
             return;
         }
-        String[] metaSplit = line.split(SEPERATOR_MF_ATTRIBUTE);
+        String[] metaSplit = line.split(SEPARATOR_MF_ATTRIBUTE);
         if (isInvalidLine(line, metaSplit)) {
             return;
         }
         if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE) && !metaSplit[0].equals(NON_MANO_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPERATOR_MF_ATTRIBUTE).length()).trim();
+            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
             metadata.put(metaSplit[0].trim(),value.trim());
             processMetadata(iterator);
         } else {
@@ -61,11 +61,11 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             if(iterator.hasNext()){
                 processSourcesAndNonManoSources(iterator, iterator.next());
             }
-        } else if(prevLine.startsWith(SOURCE_MF_ATTRIBUTE+SEPERATOR_MF_ATTRIBUTE)){
+        } else if(prevLine.startsWith(SOURCE_MF_ATTRIBUTE+ SEPARATOR_MF_ATTRIBUTE)){
             processSource(iterator, prevLine);
         }
-        else if(prevLine.startsWith(ALGORITHM_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE) ||
-                prevLine.startsWith(HASH_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)){
+        else if(prevLine.startsWith(ALGORITHM_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE) ||
+                prevLine.startsWith(HASH_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
             processSourcesAndNonManoSources(iterator, iterator.next());
         }else if(prevLine.startsWith(CMS_BEGIN)){
             String line = iterator.next();
@@ -74,7 +74,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             }
             processSourcesAndNonManoSources(iterator, iterator.next());
         }
-        else if(prevLine.startsWith(NON_MANO_MF_ATTRIBUTE+SEPERATOR_MF_ATTRIBUTE)){
+        else if(prevLine.startsWith(NON_MANO_MF_ATTRIBUTE+ SEPARATOR_MF_ATTRIBUTE)){
             //non mano should be the last bit in manifest file,
             // all sources after non mano will be placed to the last non mano
             // key, if any other structure met error reported
@@ -85,7 +85,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
     }
 
     private void processSource(Iterator<String> iterator, String prevLine) {
-        String value = prevLine.substring((SOURCE_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE).length()).trim();
+        String value = prevLine.substring((SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE).length()).trim();
         sources.add(value);
         if(iterator.hasNext()) {
             processSourcesAndNonManoSources(iterator, iterator.next());
@@ -93,16 +93,16 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
     }
 
     private void processNonManoInputs(Iterator<String> iterator, String prevLine) {
-        if(prevLine.trim().equals(SOURCE_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)){
+        if(prevLine.trim().equals(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
             reportError(prevLine);
             return;
         }
-        if(!prevLine.contains(SEPERATOR_MF_ATTRIBUTE)){
+        if(!prevLine.contains(SEPARATOR_MF_ATTRIBUTE)){
             reportError(prevLine);
             return;
         }
 
-        String[] metaSplit = prevLine.trim().split(SEPERATOR_MF_ATTRIBUTE);
+        String[] metaSplit = prevLine.trim().split(SEPARATOR_MF_ATTRIBUTE);
         if (metaSplit.length > 1){
             reportError(prevLine);
             return;
@@ -122,8 +122,8 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         String line = iterator.next();
         if(line.isEmpty()){
             processNonManoSource(iterator, key, sources);
-        }else if(line.trim().startsWith(SOURCE_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)){
-            String value = line.replace(SOURCE_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE, "").trim();
+        }else if(line.trim().startsWith(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
+            String value = line.replace(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE, "").trim();
             sources.add(value);
             processNonManoSource(iterator, key, sources);
         }else {

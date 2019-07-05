@@ -17,9 +17,10 @@
 
 package org.openecomp.sdc.tosca.csar;
 
+import static com.google.common.collect.ImmutableSet.of;
+
 import com.google.common.collect.ImmutableSet;
 
-import static com.google.common.collect.ImmutableSet.of;
 public class CSARConstants {
 
     public static final ImmutableSet<String> ELIGBLE_FOLDERS = of("Artifacts/","Definitions/",
@@ -39,10 +40,21 @@ public class CSARConstants {
     public static final String TOSCA_META_ETSI_ENTRY_CERTIFICATE = "ETSI-Entry-Certificate";
     public static final ImmutableSet<String> ELIGIBLE_FILES =
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
+
+    public static final String PNFD_PROVIDER = "pnfd_provider";
+    public static final String PNFD_NAME = "pnfd_name";
+    public static final String PNFD_RELEASE_DATE_TIME = "pnfd_release_date_time";
+    public static final String PNFD_ARCHIVE_VERSION = "pnfd_archive_version";
     public static final ImmutableSet<String> MANIFEST_PNF_METADATA =
-            of("pnfd_provider", "pnfd_name", "pnfd_release_date_time", "pnfd_archive_version");
+        of(PNFD_PROVIDER, PNFD_NAME, PNFD_RELEASE_DATE_TIME, PNFD_ARCHIVE_VERSION);
+
+    public static final String VNF_PROVIDER_ID = "vnf_provider_id";
+    public static final String VNF_PRODUCT_NAME = "vnf_product_name";
+    public static final String VNF_RELEASE_DATE_TIME = "vnf_release_date_time";
+    public static final String VNF_PACKAGE_VERSION = "vnf_package_version";
     public static final ImmutableSet<String> MANIFEST_VNF_METADATA =
-            of("vnf_provider_id", "vnf_product_name", "vnf_release_date_time", "vnf_package_version");
+            of(VNF_PROVIDER_ID, VNF_PRODUCT_NAME, VNF_RELEASE_DATE_TIME, VNF_PACKAGE_VERSION);
+
     public static final int MANIFEST_METADATA_LIMIT = 4;
     public static final String METADATA_MF_ATTRIBUTE = "metadata";
     public static final String SOURCE_MF_ATTRIBUTE = "Source";
@@ -50,7 +62,7 @@ public class CSARConstants {
     public static final String HASH_MF_ATTRIBUTE = "Hash";
     public static final String CMS_BEGIN = "----BEGIN CMS-----";
     public static final String CMD_END = "----END CMS-----";
-    public static final String SEPERATOR_MF_ATTRIBUTE = ":";
+    public static final String SEPARATOR_MF_ATTRIBUTE = ":";
     public static final String NON_MANO_MF_ATTRIBUTE = "non_mano_artifact_sets";
     public static final String TOSCA_META_ORIG_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta.original";
 

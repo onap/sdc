@@ -98,6 +98,7 @@ public enum Messages {
   MISSING_NESTED_FILE("Missing nested file - %s"),
   MISSING_ARTIFACT("Missing artifact - %s"),
   MISSING_MANIFEST_SOURCE("%s artifact %s referenced in manifest file does not exist"),
+  MISSING_MANIFEST_REFERENCE("'%s' artifact is not being referenced in manifest file"),
   MISSING_METADATA_FILES("%s file referenced in TOSCA.meta does not exist"),
   WRONG_HEAT_FILE_EXTENSION("Wrong HEAT file extension - %s"),
   WRONG_ENV_FILE_EXTENSION("Wrong ENV file extension - %s"),
