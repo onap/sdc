@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import { tabsMapping as onboardTabsMapping } from '../OnboardConstants.js';
 import { actionTypes } from './FilterConstants.js';
 
-import Panel from 'sdc-ui/lib/react/Panel.js';
+import { Panel } from 'onap-ui-react';
 import {
     ItemStatus,
     ByVendorView,

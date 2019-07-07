@@ -16,13 +16,11 @@
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import union from 'lodash/union.js';
-import Button from 'sdc-ui/lib/react/Button.js';
-// import Checkbox from 'sdc-ui/lib/react/Checkbox.js';
+import { Button, SVGIcon, Radio } from 'onap-ui-react';
+// import Checkbox from 'onap-ui-react/Checkbox.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Radio from 'sdc-ui/lib/react/Radio.js';
 import equal from 'deep-equal';
 import { ResolutionTypes } from './MergeEditorConstants.js';
 

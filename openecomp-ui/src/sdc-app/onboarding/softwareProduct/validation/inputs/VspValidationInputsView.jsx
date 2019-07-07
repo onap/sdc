@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';

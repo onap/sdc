@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { default as SDCTabs } from 'sdc-ui/lib/react/Tabs.js';
+import { Tabs as SDCTabs } from 'onap-ui-react';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 

@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import classnames from 'classnames';
 import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
 

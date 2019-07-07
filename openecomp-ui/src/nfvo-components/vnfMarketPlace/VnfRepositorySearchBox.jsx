@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 
 function VNFBrowse({ onBrowseVNF, isReadOnlyMode }) {
     if (!Configuration.get('showBrowseVNF')) {

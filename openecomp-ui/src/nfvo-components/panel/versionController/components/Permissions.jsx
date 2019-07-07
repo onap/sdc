@@ -16,7 +16,7 @@
 
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 
 const Contributor = ({ name, role, id, userInfo }) => {
     const selected = id === userInfo.userId ? 'selected' : '';

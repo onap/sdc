@@ -16,7 +16,7 @@
 import React from 'react';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Select from 'nfvo-components/input/SelectInput.jsx';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';

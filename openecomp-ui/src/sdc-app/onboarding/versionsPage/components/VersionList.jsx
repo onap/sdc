@@ -18,7 +18,7 @@ import React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 
 const formatTime = time => {
     if (!time) {

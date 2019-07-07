@@ -16,7 +16,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import {
     fileTypes,

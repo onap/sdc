@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 const AddOrDeleteVolumeFiles = ({

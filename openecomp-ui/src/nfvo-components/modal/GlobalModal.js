@@ -24,7 +24,7 @@ import {
     ModalTitle,
     ModalBody,
     ModalFooter
-} from 'sdc-ui/lib/react';
+} from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { modalContentComponents } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { actionTypes, typeEnum } from './GlobalModalConstants.js';

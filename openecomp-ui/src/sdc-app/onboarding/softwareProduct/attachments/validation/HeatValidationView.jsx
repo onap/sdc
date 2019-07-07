@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {
     mouseActions,

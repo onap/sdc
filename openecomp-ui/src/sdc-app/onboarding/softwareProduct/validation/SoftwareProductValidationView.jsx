@@ -17,8 +17,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Button from 'sdc-ui/lib/react/Button.js';
-import { Tab, Tabs } from 'sdc-ui/lib/react';
+import { Button } from 'onap-ui-react';
+import { Tab, Tabs } from 'onap-ui-react';
 import { tabsMapping } from './SoftwareProductValidationConstants.js';
 import VspValidationInputs from './inputs/VspValidationInputs.js';
 import VspValidationSetup from './setup/VspValidationSetup.js';

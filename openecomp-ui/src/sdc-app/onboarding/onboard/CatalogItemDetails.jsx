@@ -26,7 +26,7 @@ import {
     TileInfoLine,
     TileFooter,
     TileFooterCell
-} from 'sdc-ui/lib/react';
+} from 'onap-ui-react';
 import { TooltipWrapper } from './onboardingCatalog/Tooltip.jsx';
 
 const ITEM_TYPE_MAP = {

@@ -19,7 +19,7 @@ import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import { TabsForm as Form } from 'nfvo-components/input/validation/Form.jsx';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
-import Tab from 'sdc-ui/lib/react/Tab.js';
+import { Tab } from 'onap-ui-react';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import DualListboxView from 'nfvo-components/input/dualListbox/DualListboxView.jsx';

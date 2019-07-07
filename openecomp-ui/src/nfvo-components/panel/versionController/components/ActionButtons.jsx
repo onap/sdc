@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ClickOutsideWrapper from 'nfvo-components/clickOutsideWrapper/ClickOutsideWrapper.jsx';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import Overlay from 'nfvo-components/overlay/Overlay.jsx';
 import Permissions from './Permissions.jsx';
 

@@ -16,7 +16,7 @@
 import React, { Component } from 'react';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import { Collapse } from 'react-bootstrap';
 /**
  * parsing and showing the following Java Response object

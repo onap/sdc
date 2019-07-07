@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import NameEditInput from './NameEditInput.js';
 import SelectWithFileType from './SelectWithFileType';
 import { fileTypes } from '../HeatSetupConstants.js';

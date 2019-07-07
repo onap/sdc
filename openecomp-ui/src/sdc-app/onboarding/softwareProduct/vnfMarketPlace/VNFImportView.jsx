@@ -19,8 +19,8 @@ import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { SVGIcon } from 'onap-ui-react';
+import { Button } from 'onap-ui-react';
 import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
 
 function VNFAction({

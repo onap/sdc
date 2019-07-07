@@ -16,8 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { selectedButton } from '../LicenseModelOverviewConstants.js';
-import Tabs from 'sdc-ui/lib/react/Tabs.js';
-import Tab from 'sdc-ui/lib/react/Tab.js';
+import { Tab, Tabs } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function ListButtons({ onTabSelect, selectedTab, hasOrphans, hasLicensing }) {

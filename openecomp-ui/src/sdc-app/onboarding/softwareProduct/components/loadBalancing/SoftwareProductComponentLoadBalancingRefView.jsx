@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import Form from 'nfvo-components/input/validation/Form.jsx';

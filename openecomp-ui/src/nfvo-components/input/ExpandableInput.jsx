@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
 const ExpandableInputClosed = ({ iconType, onClick }) => (

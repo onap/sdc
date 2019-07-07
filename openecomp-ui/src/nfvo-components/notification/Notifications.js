@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Portal, Notification } from 'sdc-ui/lib/react/';
+import { Portal, Notification } from 'onap-ui-react';
 import { connect } from 'react-redux';
 import { notificationActions } from './NotificationsConstants.js';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
