@@ -1,0 +1,11 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Piotr Darosz <piotr.darosz@nokia.com>
+Code-Review+1: Adam Krysiak <adam.krysiak@nokia.com>
+Code-Review+1: Idan Agam <idan.agam@att.com>
+Code-Review+1: Bartosz Gardziejewski <bartosz.gardziejewski@nokia.com>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Sun, 07 Jul 2019 08:22:32 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/90582
+Project: sdc
+Branch: refs/heads/master
