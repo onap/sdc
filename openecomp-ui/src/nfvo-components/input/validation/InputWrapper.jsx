@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import Checkbox from 'react-bootstrap/lib/Checkbox.js';
-import Radio from 'sdc-ui/lib/react/Radio.js';
+import { Radio } from 'onap-ui-react';
 import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 

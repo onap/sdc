@@ -6,7 +6,7 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import { LIMITS_FORM_NAME, selectValues } from './LimitEditorConstants.js';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import Validator from 'nfvo-utils/Validator.js';
 import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';

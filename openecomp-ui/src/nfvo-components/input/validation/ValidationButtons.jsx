@@ -23,8 +23,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Button from 'sdc-ui/lib/react/Button.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { Button, SVGIcon } from 'onap-ui-react';
 
 class ValidationButtons extends React.Component {
     static propTypes = {

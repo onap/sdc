@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function ActivityLogSortableCellHeader({ isHeader, data, isDes, onSort }) {

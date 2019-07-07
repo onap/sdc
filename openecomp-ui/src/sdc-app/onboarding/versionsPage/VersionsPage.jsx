@@ -17,8 +17,8 @@ import React from 'react';
 import VersionList from './components/VersionList.jsx';
 import PermissionsView from './components/PermissionsView.jsx';
 import Tree from 'nfvo-components/tree/Tree.jsx';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Button from 'sdc-ui/lib/react/Button.js';
+import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
+import { Button } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (

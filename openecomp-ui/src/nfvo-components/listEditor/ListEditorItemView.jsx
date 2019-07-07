@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
 import store from 'sdc-app/AppStore.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 

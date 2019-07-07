@@ -26,7 +26,7 @@ import {
     TileFooter,
     TileFooterCell,
     Button
-} from 'sdc-ui/lib/react';
+} from 'onap-ui-react';
 
 import VSPOverlay from './VSPOverlay.jsx';
 import { TooltipWrapper } from './Tooltip.jsx';

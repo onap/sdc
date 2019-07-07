@@ -19,7 +19,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import SortableListItem from './SortableListItem.js';
 import { fileTypes } from '../HeatSetupConstants.js';
 
-import Button from 'sdc-ui/lib/react/Button.js';
+import { Button } from 'onap-ui-react';
 import ModuleFile from './ModuleFile.js';
 
 class SortableModuleFileList extends React.Component {

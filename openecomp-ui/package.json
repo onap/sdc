@@ -29,9 +29,12 @@
         "intl-relativeformat": "^1.2.0",
         "lodash": "^4.13.1",
         "md5": "^2.1.0",
+        "onap-ui-react": "^1.0.0",
+        "onap-ui-common": "^1.0.101",
         "prop-types": "^15.6.2",
         "react": "^16.4.2",
         "react-bootstrap": "^0.32.1",
+        "react-checkbox-tree": "1.4.1",
         "react-click-outside": "^3.0.1",
         "react-datepicker": "^0.61.0",
         "react-dnd": "^2.5.4",
@@ -45,10 +48,8 @@
         "react-sortable": "^1.2.1",
         "react-transition-group": "^2.4.0",
         "redux": "^3.7.2",
-        "sdc-ui": "1.6.62",
         "uuid-js": "^0.7.5",
-        "validator": "^4.3.0",
-        "react-checkbox-tree": "1.4.1"
+        "validator": "^4.3.0"
     },
     "devDependencies": {
         "babel-core": "^6.24.0",
@@ -116,7 +117,7 @@
             "\\.(css|scss)$": "<rootDir>/test-utils/styleMock.js",
             "\\.worker\\.js$": "<rootDir>/test-utils/workerMock.js",
             "^nfvo-utils/RestAPIUtil.js$": "<rootDir>/test-utils/MockRest.js",
-            "^sdc-ui/lib/react/SVGIcon.js$": "<rootDir>/test-utils/MockSVGIcon.js",
+            "^onap-ui-react/lib/components/SVGIcon.js$": "<rootDir>/test-utils/MockSVGIcon.js",
             "^react-show-more$": "<rootDir>/test-utils/ShowMore.js",
             "^nfvo-utils(.*)$": "<rootDir>/src/nfvo-utils$1",
             "^nfvo-components(.*)$": "<rootDir>/src/nfvo-components$1",

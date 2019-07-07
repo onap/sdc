@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import licenseModelOverviewActionHelper from '../licenseModelOverviewActionHelper.js';
 import LicenseModelActionHelper from '../../LicenseModelActionHelper.js';

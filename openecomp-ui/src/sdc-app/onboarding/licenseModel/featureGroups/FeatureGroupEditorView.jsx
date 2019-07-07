@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
-import Tab from 'sdc-ui/lib/react/Tab.js';
+import { Tab } from 'onap-ui-react';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import { TabsForm as Form } from 'nfvo-components/input/validation/Form.jsx';

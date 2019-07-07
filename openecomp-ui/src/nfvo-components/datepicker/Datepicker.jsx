@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
 
 class CustomInput extends React.Component {
     static propTypes = {

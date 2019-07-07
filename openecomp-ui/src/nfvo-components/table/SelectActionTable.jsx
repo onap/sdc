@@ -1,7 +1,6 @@
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Button from 'sdc-ui/lib/react/Button.js';
+import { SVGIcon, Button } from 'onap-ui-react';
 import uuid from 'uuid-js';
 
 export default class SelectActionTable extends React.Component {

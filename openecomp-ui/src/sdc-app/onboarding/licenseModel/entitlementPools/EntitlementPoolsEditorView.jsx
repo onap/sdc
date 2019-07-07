@@ -20,7 +20,6 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 
 import Form from 'nfvo-components/input/validation/Form.jsx';
-import Button from 'sdc-ui/lib/react/Button.js';
 import ModalButtons from 'sdc-app/onboarding/licenseModel/components/ModalButtons.jsx';
 
 import {
@@ -32,8 +31,7 @@ import {
     thresholdValueValidation
 } from '../LicenseModelValidations.js';
 
-import Tabs from 'sdc-ui/lib/react/Tabs.js';
-import Tab from 'sdc-ui/lib/react/Tab.js';
+import { Tabs, Tab, Button } from 'onap-ui-react';
 import EntitlementPoolsLimits from './EntitlementPoolsLimits.js';
 import {
     limitType,

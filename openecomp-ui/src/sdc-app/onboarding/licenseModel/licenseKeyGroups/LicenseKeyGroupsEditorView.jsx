@@ -18,10 +18,8 @@ import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 
-import Tabs from 'sdc-ui/lib/react/Tabs.js';
-import Tab from 'sdc-ui/lib/react/Tab.js';
+import { Tabs, Tab, Button } from 'onap-ui-react';
 
-import Button from 'sdc-ui/lib/react/Button.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 //import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import { LKG_FORM_NAME, tabIds } from './LicenseKeyGroupsConstants.js';

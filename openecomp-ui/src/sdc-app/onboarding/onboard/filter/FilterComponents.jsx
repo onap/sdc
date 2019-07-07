@@ -21,9 +21,7 @@ import {
     itemPermissions,
     itemOnboardingProcedure
 } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
-import Accordion from 'sdc-ui/lib/react/Accordion.js';
-import Checklist from 'sdc-ui/lib/react/Checklist.js';
-import Checkbox from 'sdc-ui/lib/react/Checkbox.js';
+import { Accordion, Checklist, Checkbox } from 'onap-ui-react';
 
 export const ItemStatus = ({ data, onDataChanged, byVendorView }) => (
     <Input

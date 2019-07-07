@@ -16,12 +16,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import accept from 'attr-accept';
-import { SVGIcon, Tab, Tabs } from 'sdc-ui/lib/react';
+import { SVGIcon, Tab, Tabs, Button } from 'onap-ui-react';
 import { tabsMapping } from './SoftwareProductAttachmentsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import HeatValidation from './validation/HeatValidation.js';
 import { onboardingOriginTypes } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
-import Button from 'sdc-ui/lib/react/Button.js';
 
 class HeatScreenView extends Component {
     static propTypes = {

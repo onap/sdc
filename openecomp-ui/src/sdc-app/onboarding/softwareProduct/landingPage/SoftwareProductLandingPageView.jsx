@@ -23,7 +23,7 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import VnfRepositorySearchBox from 'nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx';
 
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
 
 const SoftwareProductPropType = PropTypes.shape({

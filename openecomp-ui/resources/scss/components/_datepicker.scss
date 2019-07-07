@@ -92,11 +92,11 @@
         }
         .react-datepicker__navigation--previous::before {
             left: 0;
-            content: url(../../node_modules/sdc-ui/assets/icons/angleLeft.svg);
+            content: url(~onap-ui-common/lib/icons/angleLeft.svg);
         }
         .react-datepicker__navigation--next::before {
             right: 0;
-            content: url(../../node_modules/sdc-ui/assets/icons/angleRight.svg);
+            content: url(~onap-ui-common/lib/icons/angleRight.svg);
         }
 
         .react-datepicker__navigation--previous,

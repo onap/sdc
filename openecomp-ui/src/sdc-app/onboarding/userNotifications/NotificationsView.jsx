@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { SVGIcon } from 'onap-ui-react';
 import Overlay from 'nfvo-components/overlay/Overlay.jsx';
 import UserNotifications from 'sdc-app/onboarding/userNotifications/UserNotifications.jsx';
 import UserNotificationsActionHelper from 'sdc-app/onboarding/userNotifications/UserNotificationsActionHelper.js';

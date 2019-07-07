@@ -7591,6 +7591,25 @@ on-headers@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/on-headers/-/on-headers-1.0.1.tgz#928f5d0f470d49342651ea6794b0857c100693f7"
 
+onap-ui-common@1.0.100:
+  version "1.0.100"
+  resolved "https://registry.yarnpkg.com/onap-ui-common/-/onap-ui-common-1.0.100.tgz#c0dae1d3d1c3fd2b866340d27a1179ed10a3a860"
+  integrity sha512-d+eaYgVgrj9B8/3iVDlkxO2jiE7wXFrvMogxxHsyM8E0Fa7wXGEGwohA4JD5nGydT84dU2vPzwkby7SZNgGpKA==
+
+onap-ui-react@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/onap-ui-react/-/onap-ui-react-0.1.1.tgz#3640bdb9fb10f85104ad9dd57a9f320b0703abf3"
+  integrity sha512-hax7WzSMIPll9fHvKVjFbn2dIOh39fWuiy0VQKONq/ccU3f/y08Y6EzJo7rzWcwjt8bp2KDhqNZky0HwIquc6w==
+  dependencies:
+    "@storybook/react" "^3.1.5"
+    http-loader "0.0.1"
+    onap-ui-common "1.0.100"
+    prop-types "^15.6.0"
+    react "15.6.2"
+    react-dom "15.6.2"
+    reflect-metadata "^0.1.3"
+    svg-react-loader "^0.4.4"
+
 once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"

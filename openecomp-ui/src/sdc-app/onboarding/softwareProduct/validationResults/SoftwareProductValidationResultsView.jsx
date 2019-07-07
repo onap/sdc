@@ -15,8 +15,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Accordion from 'sdc-ui/lib/react/Accordion.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import { Accordion } from 'onap-ui-react';
+import { SVGIcon } from 'onap-ui-react';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
