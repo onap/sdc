@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa2fbca1_28cf803f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-07-07T13:00:58Z",
+      "side": 1,
+      "message": "input stream is closeable . It should be handled try close block.",
+      "revId": "1ca458c41a703ef5c62aa7bc604923b71c0e8694",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
