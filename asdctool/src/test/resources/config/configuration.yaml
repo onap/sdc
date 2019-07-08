@@ -1,0 +1,14 @@
+# Default imports
+defaultImports:
+   - nodes:
+        file: nodes.yml
+   - datatypes:
+        file: data.yml
+   - capabilities:
+        file: capabilities.yml
+   - relationships:
+        file: relationships.yml
+   - groups:
+        file: groups.yml
+   - policies:
+        file: policies.yml
