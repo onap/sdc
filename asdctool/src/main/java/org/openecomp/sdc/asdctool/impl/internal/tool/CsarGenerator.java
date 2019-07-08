@@ -79,7 +79,6 @@ public class CsarGenerator extends CommonInternalTool {
     private ArtifactCassandraDao artifactCassandraDao;
     @Autowired
     private ToscaExportHandler toscaExportHandler;
-    
 
     private static Logger log = Logger.getLogger(CsarGenerator.class.getName());
 
@@ -91,14 +90,14 @@ public class CsarGenerator extends CommonInternalTool {
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 
-        List<GraphVertex> byCriterria = janusGraphDao
+        List<GraphVertex> byCriteria = janusGraphDao
             .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props).either(l -> l, r -> null);
-        if (byCriterria != null && !byCriterria.isEmpty()) {
-            if (byCriterria.size() > 1) {
+        if (byCriteria != null && !byCriteria.isEmpty()) {
+            if (byCriteria.size() > 1) {
                 ConsoleWriter.dataLine("Warning ! More that 1 certified service with uuid", uuid);
                 // TBD
             } else {
-                GraphVertex metadataV = byCriterria.get(0);
+                GraphVertex metadataV = byCriteria.get(0);
 
                 printComponentInfo(metadataV.getMetadataProperties());
                 ConsoleWriter.dataLine("\nGenerate CSAR (yes/no)?");
@@ -109,7 +108,7 @@ public class CsarGenerator extends CommonInternalTool {
                 }
             }
         } else {
-            ConsoleWriter.dataLine("No certified service with UUID", uuid);
+            ConsoleWriter.dataLine("No certified service with UUID ", uuid);
         }
         if (status == JanusGraphOperationStatus.OK) {
             janusGraphDao.commit();
@@ -138,14 +137,14 @@ public class CsarGenerator extends CommonInternalTool {
             }
            
         } else {
-            ConsoleWriter.dataLine("Failed to fetch certified service with UUID", uuid);
+            ConsoleWriter.dataLine("Failed to fetch certified service with UUID ", uuid);
         }
         return status;
     }
 
     private JanusGraphOperationStatus generateArtifact(Component component, ArtifactTypeEnum artifactType, Supplier<byte[]> supplier){
         JanusGraphOperationStatus status = JanusGraphOperationStatus.GENERAL_ERROR;
-        ArtifactDefinition csarArtifact = null;
+        ArtifactDefinition csarArtifact;
         Optional<ArtifactDefinition> op = component.getToscaArtifacts().values().stream().filter(p -> p.getArtifactType().equals(artifactType.getType())).findAny();
         if (op.isPresent()) {
             csarArtifact = op.get();
@@ -169,7 +168,7 @@ public class CsarGenerator extends CommonInternalTool {
             ConsoleWriter.dataLine("create artifact failed ", csarArtifact.getArtifactLabel());
             return JanusGraphOperationStatus.GENERAL_ERROR;
         }
-        ConsoleWriter.dataLine("createartifact  success ", csarArtifact.getArtifactLabel());
+        ConsoleWriter.dataLine("create artifact  success ", csarArtifact.getArtifactLabel());
         csarArtifact.setPayload(payload);
         byte[] decodedPayload = csarArtifact.getPayloadData();
 
