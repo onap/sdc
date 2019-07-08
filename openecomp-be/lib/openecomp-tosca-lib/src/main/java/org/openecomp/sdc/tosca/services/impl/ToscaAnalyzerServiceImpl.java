@@ -169,80 +169,15 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     }
 
     void loadToscaYamlFile(ToscaServiceModel toscaServiceModel, ToscaExtensionYamlUtil toscaExtensionYamlUtil,
-            byte[] fileContent, String fileFullName) {
+                           byte[] fileContent, String fileFullName) {
         try {
-            String serviceTemplateYamlString = convertServiceTemplateImport(toscaExtensionYamlUtil, fileContent);
             ServiceTemplate serviceTemplate =
-                    toscaExtensionYamlUtil.yamlToObject(serviceTemplateYamlString, ServiceTemplate.class);
+                    toscaExtensionYamlUtil.yamlToObject(new String(fileContent), ServiceTemplate.class);
             toscaServiceModel.addServiceTemplate(fileFullName, serviceTemplate);
 
         } catch (Exception exc) {
             throw new CoreException(new InvalidToscaFile(fileFullName, exc.getMessage()).build());
         }
-    }
-
-    String convertServiceTemplateImport(ToscaExtensionYamlUtil toscaExtensionYamlUtil, byte[] fileContent) {
-        Map serviceTemplateMap = toscaExtensionYamlUtil.yamlToObject(new String(fileContent), Map.class);
-        convertToscaImports(serviceTemplateMap, toscaExtensionYamlUtil);
-        return toscaExtensionYamlUtil.objectToYaml(serviceTemplateMap);
-    }
-
-    private void convertToscaImports(Map serviceTemplateMap, ToscaExtensionYamlUtil toscaExtensionYamlUtil) {
-        List<Map<String, Import>> convertedImport = new ArrayList<>();
-        Object importObj = serviceTemplateMap.get(IMPORTS);
-        if (Objects.nonNull(importObj) && !(importObj instanceof List)) {
-            throw new SdcRuntimeException(new IllegalStateException("Invalid TOSCA import section"));
-        }
-        List<Object> imports = (List) importObj;
-        if (CollectionUtils.isEmpty(imports)) {
-            return;
-        }
-        for (Object importEntry : imports) {
-            convertToscaImportEntry(convertedImport, importEntry, toscaExtensionYamlUtil);
-        }
-        serviceTemplateMap.remove(IMPORTS);
-        serviceTemplateMap.put(IMPORTS, convertedImport);
-    }
-
-    private void convertToscaImportEntry(List<Map<String, Import>> convertedImport, Object importEntry,
-            ToscaExtensionYamlUtil toscaExtensionYamlUtil) {
-        if (importEntry instanceof String) {
-            convertImportShortNotation(convertedImport, importEntry.toString());
-        } else if (importEntry instanceof Map) {
-            if (((Map) importEntry).containsKey("file")) {
-                Import importObject = toscaExtensionYamlUtil
-                                              .yamlToObject(toscaExtensionYamlUtil.objectToYaml(importEntry),
-                                                      Import.class);
-                convertImportExtendNotation(convertedImport, importObject);
-            } else {
-                convertedImport.add((Map<String, Import>) importEntry);
-            }
-        }
-    }
-
-    private void convertImportExtendNotation(List<Map<String, Import>> convertedImport, Import importEntry) {
-        Map<String, Import> importMap = new HashMap();
-        importMap.put(FileUtils.getFileWithoutExtention(getFileName(importEntry.getFile()).replaceAll("/", "_")),
-                importEntry);
-        convertedImport.add(importMap);
-    }
-
-    private void convertImportShortNotation(List<Map<String, Import>> convertImport, String fileFullName) {
-        Import importObject = new Import();
-        importObject.setFile(fileFullName);
-        Map<String, Import> importMap = new HashMap();
-        importMap
-                .put((FileUtils.getFileWithoutExtention(getFileName(fileFullName)).replaceAll("/", "_")), importObject);
-        convertImport.add(importMap);
-    }
-
-    private static String getFileName(String relativeFileName) {
-        if (relativeFileName.contains("../")) {
-            return relativeFileName.replace("../", "");
-        } else {
-            return relativeFileName;
-        }
-
     }
 
     private static boolean isFile(String currentEntryName) {

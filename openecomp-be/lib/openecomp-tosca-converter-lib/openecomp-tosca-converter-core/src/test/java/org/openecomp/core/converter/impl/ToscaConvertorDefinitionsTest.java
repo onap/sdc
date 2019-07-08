@@ -44,8 +44,8 @@ public class ToscaConvertorDefinitionsTest {
         assertNotNull(serviceTemplate.getImports());
         assertFalse(serviceTemplate.getImports().isEmpty());
         assertEquals(1 ,serviceTemplate.getImports().size());
-        assertTrue(serviceTemplate.getImports().get(0).containsKey(HEAT_INDEX));
-        assertTrue(serviceTemplate.getImports().get(0).containsKey(ONAP_INDEX));
+        assertTrue(((Map) serviceTemplate.getImports().get(0)).containsKey(HEAT_INDEX));
+        assertTrue(((Map) serviceTemplate.getImports().get(0)).containsKey(ONAP_INDEX));
 
         assertEquals(DEFININTION_VERSION, serviceTemplate.getTosca_definitions_version());
 

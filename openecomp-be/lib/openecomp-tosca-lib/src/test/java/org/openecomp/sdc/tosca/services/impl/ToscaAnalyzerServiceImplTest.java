@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.StringContains;
 import org.junit.Assert;
@@ -62,7 +63,6 @@ import org.onap.sdc.tosca.datatypes.model.Status;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.tosca.TestUtil;
@@ -1174,57 +1174,6 @@ public class ToscaAnalyzerServiceImplTest {
         String fileNameForImport = toscaAnalyzerServiceImpl
                                            .fetchFullFileNameForImport(importFile, null, mainServiceTemplate, toscaServiceModel);
         assertEquals("Definitions/types/global/ImportedServiceTemplate", fileNameForImport);
-    }
-
-    @Test
-    public void testConvertToscaImport() throws Exception {
-        String inputResourceName = "/mock/analyzerService/importConvertTest.yml";
-        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
-
-        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
-        String convertServiceTemplateImport =
-                toscaAnalyzerServiceImpl.convertServiceTemplateImport(toscaExtensionYamlUtil, uploadedFileData);
-
-        Assert.assertNotNull(convertServiceTemplateImport);
-        ServiceTemplate serviceTemplate =
-                new YamlUtil().yamlToObject(convertServiceTemplateImport, ServiceTemplate.class);
-        Assert.assertNotNull(serviceTemplate.getImports().get(0).get("data"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(1).get("artifacts"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(2).get("capabilities"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(3).get("api_interfaces"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(4).get("api_util_relationships"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(5).get("common"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(6).get("api_util"));
-        Assert.assertNotNull(serviceTemplate.getImports().get(7).get("relationshipsExt"));
-    }
-
-    @Test
-    public void testConvertToscaImportForEmptyImport() throws Exception {
-        String inputResourceName = "/mock/analyzerService/importConvertTestNoImport.yml";
-        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
-
-        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
-        String convertServiceTemplateImport =
-                toscaAnalyzerServiceImpl.convertServiceTemplateImport(toscaExtensionYamlUtil, uploadedFileData);
-
-        Assert.assertNotNull(convertServiceTemplateImport);
-        ServiceTemplate serviceTemplate =
-                new YamlUtil().yamlToObject(convertServiceTemplateImport, ServiceTemplate.class);
-        Assert.assertNull(serviceTemplate.getImports());
-    }
-
-    @Test
-    public void testInvalidToscaImportSection() throws Exception {
-        thrown.expect(SdcRuntimeException.class);
-        thrown.expectMessage("Invalid TOSCA import section");
-        String inputResourceName = "/mock/analyzerService/invalidToscaImport.yml";
-        byte[] uploadedFileData = IOUtils.toByteArray(this.getClass().getResource(inputResourceName));
-
-        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-        ToscaAnalyzerServiceImpl toscaAnalyzerServiceImpl = new ToscaAnalyzerServiceImpl();
-        toscaAnalyzerServiceImpl.convertServiceTemplateImport(toscaExtensionYamlUtil, uploadedFileData);
     }
 
     @Test

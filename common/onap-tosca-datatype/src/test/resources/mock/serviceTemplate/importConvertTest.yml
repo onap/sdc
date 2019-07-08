@@ -9,6 +9,11 @@ imports:
     file: api/common.yaml
 - file: api/util.yaml
 - relationshipsExt.yml
+- some_definition_file: api/util.yaml
+- file: site/index.yml
+  repository: nexus_repo
+  namespace_uri: http://namespace_uri
+  namespace_prefix: ns_prefix
 node_types:
   tosca.nodes.Root:
     description: The TOSCA Node Type all other TOSCA base Node Types derive from

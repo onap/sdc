@@ -16,10 +16,13 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
+import static org.onap.sdc.tosca.services.DataModelConvertUtil.convertToscaImports;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationType;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
@@ -84,12 +87,12 @@ public class ServiceTemplate implements Template {
         this.description = description;
     }
 
-    public List<Map<String, Import>> getImports() {
+    public List getImports() {
         return imports;
     }
 
-    public void setImports(List<Map<String, Import>> imports) {
-        this.imports = imports;
+    public void setImports(List imports) {
+        this.imports = convertToscaImports(imports);
     }
 
     public Map<String, ArtifactType> getArtifact_types() {
