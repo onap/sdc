@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -180,12 +181,11 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
     }
 
     private void convertImports(ServiceTemplate serviceTemplate) {
-        serviceTemplate.setImports(new ArrayList<>());
-        serviceTemplate.getImports()
-                .add(createImportMap(openecompHeatIndex, HEAT_INDEX_IMPORT_FILE));
-        serviceTemplate.getImports().add(createImportMap(ONAP_INDEX, ONAP_INDEX_IMPORT_FILE));
-        serviceTemplate.getImports().add(createImportMap(globalSubstitution, globalStName));
-
+        List<Map<String, Import>> imports = new ArrayList<>();
+        imports.add(createImportMap(openecompHeatIndex, HEAT_INDEX_IMPORT_FILE));
+        imports.add(createImportMap(ONAP_INDEX, ONAP_INDEX_IMPORT_FILE));
+        imports.add(createImportMap(globalSubstitution, globalStName));
+        serviceTemplate.setImports(imports);
     }
 
     private Map<String, Import> createImportMap(String key, String fileName) {
