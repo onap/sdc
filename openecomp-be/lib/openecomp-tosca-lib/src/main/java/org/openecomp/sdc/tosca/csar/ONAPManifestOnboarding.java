@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
 import org.openecomp.sdc.common.errors.Messages;
 import java.util.Iterator;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
 
 public class ONAPManifestOnboarding extends AbstractOnboardingManifest implements Manifest {
@@ -46,16 +46,16 @@ public class ONAPManifestOnboarding extends AbstractOnboardingManifest implement
         if(isEmptyLine(iterator, line)) {
             return;
         }
-        String[] metaSplit = line.split(SEPERATOR_MF_ATTRIBUTE);
+        String[] metaSplit = line.split(SEPARATOR_MF_ATTRIBUTE);
         if (isInvalidLine(line, metaSplit)) {
             return;
         }
         if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPERATOR_MF_ATTRIBUTE).length()).trim();
+            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
             metadata.put(metaSplit[0].trim(),value.trim());
             processMetadata(iterator);
         }else if(metaSplit[0].startsWith(SOURCE_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPERATOR_MF_ATTRIBUTE).length()).trim();
+            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
             sources.add(value);
             processMetadata(iterator);
         }

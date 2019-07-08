@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
@@ -54,7 +54,7 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenNonSOL004MetaDirectoryCompliantMetaFile_thenONAPCSARValidatorIsReturned() throws IOException{
         metaFile = metaFile +
-                TOSCA_META_ENTRY_DEFINITIONS + SEPERATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH;
+                TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH;
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(ONAPCsarValidator.class, ValidatorFactory.getValidator(handler).getClass());
@@ -64,9 +64,9 @@ public class ValidatorFactoryTest {
     public void testGivenSOL004MetaDirectoryCompliantMetafile_thenONAPCsarValidatorIsReturned() throws IOException{
 
         metaFile = metaFile +
-                TOSCA_META_ENTRY_DEFINITIONS + SEPERATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH + "\n"
-                + TOSCA_META_ETSI_ENTRY_MANIFEST + SEPERATOR_MF_ATTRIBUTE + TOSCA_MANIFEST_FILEPATH + "\n"
-                + TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPERATOR_MF_ATTRIBUTE + TOSCA_CHANGELOG_FILEPATH + "\n";
+                TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + TOSCA_DEFINITION_FILEPATH + "\n"
+                + TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE + TOSCA_MANIFEST_FILEPATH + "\n"
+                + TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + TOSCA_CHANGELOG_FILEPATH + "\n";
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
        assertEquals(SOL004MetaDirectoryValidator.class, ValidatorFactory.getValidator(handler).getClass());

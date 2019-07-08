@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import java.util.Collection;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -282,8 +283,8 @@ class SOL004MetaDirectoryValidator implements Validator{
     }
 
     private void validateManifestFile(FileContentHandler contentHandler, String filePath){
-        final Set<String> exitingFiles = contentHandler.getFileList();
-        if(verifyFileExists(exitingFiles, filePath)) {
+        final Set<String> existingFiles = contentHandler.getFileList();
+        if(verifyFileExists(existingFiles, filePath)) {
             Manifest onboardingManifest = new SOL004ManifestOnboarding();
             onboardingManifest.parse(contentHandler.getFileContent(filePath));
             if(onboardingManifest.isValid()){
@@ -293,7 +294,7 @@ class SOL004MetaDirectoryValidator implements Validator{
                    reportError(ErrorLevel.ERROR, e.getMessage());
                    LOGGER.error(e.getMessage(), e);
                 }
-                verifySourcesExists(exitingFiles, onboardingManifest);
+                verifyManifestSources(existingFiles, onboardingManifest);
             }else{
                 List<String> manifestErrors = onboardingManifest.getErrors();
                 for(String error: manifestErrors){
@@ -345,13 +346,42 @@ class SOL004MetaDirectoryValidator implements Validator{
         }
     }
 
-    private void verifySourcesExists(Set<String> exitingFiles, Manifest onboardingManifest) {
-        List<String> sources = filterSources(onboardingManifest.getSources());
-        Map<String, List<String>> nonManoArtifacts = onboardingManifest.getNonManoSources();
-        verifyFilesExist(exitingFiles, sources, MANIFEST_SOURCE);
-        for (Map.Entry entry : nonManoArtifacts.entrySet()) {
-            verifyFilesExist(exitingFiles, filterSources((List)entry.getValue()), MANIFEST_NON_MANO_SOURCE);
-        }
+    /**
+     * Checks if all manifest sources exists within the package and if all package files are being referred.
+     *
+     * @param packageFiles          The package file path list
+     * @param onboardingManifest    The manifest
+     */
+    private void verifyManifestSources(final Set<String> packageFiles, final Manifest onboardingManifest) {
+        final List<String> sources = filterSources(onboardingManifest.getSources());
+        verifyFilesExist(packageFiles, sources, MANIFEST_SOURCE);
+
+        final Map<String, List<String>> nonManoArtifacts = onboardingManifest.getNonManoSources();
+        final List<String> nonManoFiles = nonManoArtifacts.values().stream()
+            .map(this::filterSources)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+        verifyFilesExist(packageFiles, nonManoFiles, MANIFEST_NON_MANO_SOURCE);
+
+        final Set<String> allReferredFiles = new HashSet<>();
+        allReferredFiles.addAll(sources);
+        allReferredFiles.addAll(nonManoFiles);
+        verifyFilesBeingReferred(allReferredFiles, packageFiles);
+    }
+
+    /**
+     * Checks if all package files are referred in manifest.
+     * Reports missing references.
+     *
+     * @param referredFileSet   the list of referred files path
+     * @param packageFileSet    the list of package file path
+     */
+    private void verifyFilesBeingReferred(final Set<String> referredFileSet, final Set<String> packageFileSet) {
+        packageFileSet.forEach(filePath -> {
+            if (!referredFileSet.contains(filePath)) {
+                reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_MANIFEST_REFERENCE.getErrorMessage(), filePath));
+            }
+        });
     }
 
     private List<String> filterSources(List<String> source){

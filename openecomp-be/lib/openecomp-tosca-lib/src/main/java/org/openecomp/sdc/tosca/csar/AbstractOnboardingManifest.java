@@ -39,7 +39,7 @@ import java.util.Optional;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.METADATA_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 
  abstract class AbstractOnboardingManifest implements Manifest{
 
@@ -118,7 +118,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPERATOR_MF_ATTRIBUTE;
      }
 
      protected boolean isMetadata(String line) {
-         if(line.trim().equals(METADATA_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)){
+         if(line.trim().equals(METADATA_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
              return true;
          }
          reportError(line);
