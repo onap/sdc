@@ -33,7 +33,7 @@ import java.util.Random;
 
 public class Passwords {
 
-	private static Logger log = LoggerFactory.getLogger( Passwords.class.getName());
+	private static Logger log = LoggerFactory.getLogger( Passwords.class);
 	private static final Random RANDOM = new SecureRandom();
 	private static final int SALT = 0;
 	private static final int HASH = 1;

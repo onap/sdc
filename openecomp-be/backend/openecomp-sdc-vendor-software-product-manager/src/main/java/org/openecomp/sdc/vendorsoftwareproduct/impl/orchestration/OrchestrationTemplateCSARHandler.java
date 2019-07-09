@@ -1,5 +1,4 @@
 /*
-
  * Copyright (c) 2018 AT&T Intellectual Property.
 
   * Modifications Copyright (c) 2018 Verizon Property.
