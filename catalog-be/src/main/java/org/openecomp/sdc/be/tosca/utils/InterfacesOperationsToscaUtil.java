@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 public class InterfacesOperationsToscaUtil {
 
     private static final String DERIVED_FROM_STANDARD_INTERFACE = "tosca.interfaces.node.lifecycle.Standard";
+    private static final String DERIVED_FROM_BASE_DEFAULT = "org.openecomp.interfaces.node.lifecycle.";
     private static final String OPERATIONS_KEY = "operations";
 
     private static final String DEFAULT = "default";
@@ -53,6 +54,7 @@ public class InterfacesOperationsToscaUtil {
     private static final String DEFAULTP = "defaultp";
 
     public static final String SELF = "SELF";
+    private static final String LOCAL_INTERFACE_TYPE = "Local";
 
     private InterfacesOperationsToscaUtil() {
     }
@@ -91,7 +93,7 @@ public class InterfacesOperationsToscaUtil {
                 Map<String, Object> operationsMap = (Map<String, Object>) interfacesAsMap.remove(OPERATIONS_KEY);
                 interfacesAsMap.putAll(operationsMap);
 
-                toscaInterfaceTypes.put(interfaceDefinition.getType(), interfacesAsMap);
+                toscaInterfaceTypes.put(getInterfaceType(component, LOCAL_INTERFACE_TYPE), interfacesAsMap);
             }
         }
         return MapUtils.isNotEmpty(toscaInterfaceTypes) ? toscaInterfaceTypes : null;
@@ -139,7 +141,12 @@ public class InterfacesOperationsToscaUtil {
         Map<String, Object> toscaInterfaceDefinitions = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceDefinition toscaInterfaceDefinition = new ToscaInterfaceDefinition();
-            final String interfaceType = interfaceDefinition.getType();
+            String interfaceType;
+            if(componentInstance != null && LOCAL_INTERFACE_TYPE.equals(interfaceDefinition.getType())) {
+                interfaceType = DERIVED_FROM_BASE_DEFAULT + componentInstance.getSourceModelName();
+            } else {
+                interfaceType = getInterfaceType(component, interfaceDefinition.getType());
+            }
             toscaInterfaceDefinition.setType(interfaceType);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
@@ -280,6 +287,16 @@ public class InterfacesOperationsToscaUtil {
             toscaInputValue = gson.toJson(consumptionValue);
         }
         return toscaInputValue;
+    }
+
+    private static String getInterfaceType(Component component, String interfaceType) {
+        if (LOCAL_INTERFACE_TYPE.equals(interfaceType)) {
+            return DERIVED_FROM_BASE_DEFAULT
+                    + component.getComponentMetadataDefinition()
+                    .getMetadataDataDefinition().getSystemName();
+        }
+
+        return interfaceType;
     }
 
     private static Map<String, Object> getObjectAsMap(Object obj) {

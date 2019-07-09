@@ -292,18 +292,6 @@ public class InterfaceOperationValidationTest {
     }
 
     @Test
-    public void shouldFailValidateAllowedOperationCountOnLocalInterfaceType() {
-        InterfaceDefinition inputInterfaceDefinition =
-                InterfaceOperationTestUtils.createMockInterface(interfaceType1
-                , operationId, operationType1);
-        Assert.assertTrue(interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(inputInterfaceDefinition, component,
-                        component.getInterfaces().get(interfaceType1),
-                        InterfaceOperationTestUtils.createMockInterfaceTypeMap(
-                                interfaceType2, operationType1), false).isRight());
-    }
-
-    @Test
     public void shouldFailValidateAllowedOperationsOnGlobalInterfaceType() {
         InterfaceDefinition inputInterfaceDefinition =
                 InterfaceOperationTestUtils.createMockInterface(interfaceType1

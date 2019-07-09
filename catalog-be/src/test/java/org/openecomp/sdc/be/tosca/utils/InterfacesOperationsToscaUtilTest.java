@@ -25,11 +25,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +48,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
@@ -77,8 +80,11 @@ public class InterfacesOperationsToscaUtilTest {
     public void addInterfaceTypeElementToResource() {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
+        component.setMetadataDefinition(new ServiceMetadataDefinition());
+        component.getComponentMetadataDefinition().getMetadataDataDefinition().setName("NodeTypeName");
+        component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setType("interface.types.test_resource_name");
+        addedInterface.setType("Local");
         addOperationsToInterface(component, addedInterface, 5, 3, true, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
@@ -92,15 +98,18 @@ public class InterfacesOperationsToscaUtilTest {
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("interface.types.test_resource_name"));
+        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("NodeTypeName"));
     }
 
     @Test
     public void addInterfaceTypeElementToService() {
         Component component = new Service();
         component.setNormalizedName("normalizedServiceComponentName");
+        component.setMetadataDefinition(new ServiceMetadataDefinition());
+        component.getComponentMetadataDefinition().getMetadataDataDefinition().setName("NodeTypeName");
+        component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
-        addedInterface.setType("interface.types.test_service_name");
+        addedInterface.setType("Local");
         addOperationsToInterface(component, addedInterface, 5, 3, true, false);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
@@ -114,7 +123,7 @@ public class InterfacesOperationsToscaUtilTest {
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("interface.types.test_service_name"));
+        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("NodeTypeName"));
     }
 
     @Test
@@ -212,36 +221,6 @@ public class InterfacesOperationsToscaUtilTest {
         Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
         Assert.assertTrue(mainYaml.contains("com.some.resource.or.other.resourceName"));
     }
-
-//    @Test
-//    public void addInterfaceDefinitionElementToService() {
-//        Component component = new Service();
-//        component.setNormalizedName("normalizedServiceComponentName");
-//        InterfaceDefinition addedInterface = new InterfaceDefinition();
-//        addedInterface.setToscaResourceName("com.some.service.or.other.serviceName");
-//
-//        addOperationsToInterface(addedInterface, 3, 2, true);
-//        final String interfaceType = "normalizedServiceComponentName-interface";
-//        component.setInterfaces(new HashMap<>());
-//        component.getInterfaces().put(interfaceType, addedInterface);
-//        ToscaNodeType nodeType = new ToscaNodeType();
-//        InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType);
-//
-//        ToscaExportHandler handler = new ToscaExportHandler();
-//        ToscaTemplate template = new ToscaTemplate("testService");
-//        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-//        nodeTypes.put("test", nodeType);
-//        template.setNode_types(nodeTypes);
-//        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-//
-//        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("serviceName:"));
-//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("inputs:"));
-//        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
-//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("has description"));
-//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("naming_function_"));
-//        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("com.some.service.or.other.serviceName"));
-//    }
 
     @Test
     public void addInterfaceDefinitionElement_noInputs() {
@@ -520,5 +499,35 @@ public class InterfacesOperationsToscaUtilTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testAddInterfaceTypeElementGetCorrectLocalInterfaceName() {
+        Service service = new Service();
+        service.setMetadataDefinition(new ServiceMetadataDefinition());
+        service.getComponentMetadataDefinition().getMetadataDataDefinition().setName("LocalInterface");
+        service.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("LocalInterface");
+        service.setInterfaces(Collections.singletonMap("Local", new InterfaceDefinition("Local", null, new HashMap<>())));
+
+        Map<String, Object> resultMap = InterfacesOperationsToscaUtil.addInterfaceTypeElement(service,
+                Collections.singletonList("org.openecomp.interfaces.node.lifecycle.Standard"));
+
+        Assert.assertTrue(MapUtils.isNotEmpty(resultMap)
+                && resultMap.containsKey("org.openecomp.interfaces.node.lifecycle.LocalInterface"));
+    }
+
+    @Test
+    public void testAddInterfaceTypeElementNoTypeChangeIfNotLocal() {
+        Service service = new Service();
+        service.setMetadataDefinition(new ServiceMetadataDefinition());
+        service.getComponentMetadataDefinition().getMetadataDataDefinition().setName("LocalInterface");
+        service.setInterfaces(Collections.singletonMap("NotLocal", new InterfaceDefinition("NotLocal", null,
+                new HashMap<>())));
+
+        Map<String, Object> resultMap = InterfacesOperationsToscaUtil.getInterfacesMap(service, null,
+                service.getInterfaces(), null, false, false);
+
+        Assert.assertTrue(MapUtils.isNotEmpty(resultMap)
+                && resultMap.containsKey("NotLocal"));
     }
 }

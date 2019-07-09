@@ -66,13 +66,6 @@ public class InterfaceOperationValidation {
             InterfaceDefinition storedInterfaceDefinition, Map<String, InterfaceDefinition> globalInterfaceTypes,
             boolean isUpdate) {
 
-        Either<Boolean, ResponseFormat> validateAllowedOperationCountOnLocalInterfaceType =
-                validateAllowedOperationCountOnLocalInterfaceType(inputInterfaceDefinition, storedInterfaceDefinition,
-                        globalInterfaceTypes, isUpdate);
-        if (validateAllowedOperationCountOnLocalInterfaceType.isRight()) {
-            return validateAllowedOperationCountOnLocalInterfaceType;
-        }
-
         Either<Boolean, ResponseFormat> validateAllowedOperationsOnGlobalInterfaceType =
                 validateAllowedOperationsOnGlobalInterfaceType(inputInterfaceDefinition, globalInterfaceTypes);
         if (validateAllowedOperationsOnGlobalInterfaceType.isRight()) {

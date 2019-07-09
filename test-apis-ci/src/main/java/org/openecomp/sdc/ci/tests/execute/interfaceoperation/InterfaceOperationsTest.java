@@ -15,6 +15,7 @@ import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -31,6 +32,7 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.InterfaceOperationsRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -278,6 +280,38 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
                         pnfResourceOperationUniqueId, user);
         logger.info("deleteInterfaceOperationsFromPNFResource Response Code:" + restResponse.getErrorCode());
         Assert.assertEquals((int) restResponse.getErrorCode(), BaseRestUtils.STATUS_CODE_SUCCESS);
+    }
+
+    @Test
+    public void testCreateOperationWithLocalInterfaceAndDownloadArtifact() throws Exception{
+        Either<Service, RestResponse> createDefaultServiceEither =
+                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+        if (createDefaultServiceEither.isRight()) {
+            fail("Error creating default service");
+        }
+        Service service = createDefaultServiceEither.left().value();
+        String serviceUniqueId = service.getUniqueId();
+        Operation operation = new Operation();
+        operation.setName("LocalOper");
+        operation.setWorkflowAssociationType("NONE");
+        Map<String, Object> interfaceOperationMap = buildInterfaceDefinitionMap(operation, "Local", null, null);
+
+        RestResponse restResponse = InterfaceOperationsRestUtils.addInterfaceOperations(service, interfaceOperationMap,
+                user);
+
+        Integer responseCode = restResponse.getErrorCode();
+        Integer expectedCode = 200;
+        Assert.assertEquals(responseCode, expectedCode);
+
+        service = ResponseParser.convertServiceResponseToJavaObject(
+                ServiceRestUtils.getServiceToscaArtifacts(service.getUniqueId()).getResponse());
+        service.setUniqueId(serviceUniqueId);
+        service.setComponentType(ComponentTypeEnum.SERVICE);
+        service.setLastUpdaterUserId(user.getUserId());
+        Either<String, RestResponse> responseEither = AtomicOperationUtils
+                .getComponenetArtifactPayload(service, "assettoscacsar");
+
+        Assert.assertTrue(responseEither.isLeft());
     }
 
     @Test

@@ -16,6 +16,7 @@
           <include name="getInterfaceOperationsFromService"/>
           <include name="updateInterfaceOperationsOnService"/>
           <include name="deleteInterfaceOperationsFromService"/>
+          <include name="testCreateOperationWithLocalInterfaceAndDownloadArtifact"/>
         </methods>
       </class>
         </classes> 

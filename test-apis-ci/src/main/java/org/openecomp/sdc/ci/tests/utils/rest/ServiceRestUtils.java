@@ -136,6 +136,14 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return getServiceFromUrl(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), false);
 	}
 
+    public static RestResponse getServiceToscaArtifacts(String serviceId) throws IOException {
+
+        Config config = Utils.getConfig();
+        String url = String.format(Urls.GET_INSTANCE_TOSCA_ARTIFACTS, config.getCatalogBeHost(),
+                config.getCatalogBePort(), "services", serviceId);
+        return getServiceFromUrl(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), false);
+    }
+
 	public static RestResponse getService(ServiceReqDetails serviceReqDetails, User sdncModifierDetails)
 			throws IOException {
 
