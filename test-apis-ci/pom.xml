@@ -12,8 +12,9 @@
     </parent>
 	
 	<properties>
-		<sonar.skip>true</sonar.skip>
-    <mockserver.netty.version>5.5.4</mockserver.netty.version>
+      <sonar.skip>true</sonar.skip>
+      <mockserver.netty.version>5.5.4</mockserver.netty.version>
+      <jacoco.skip>true</jacoco.skip>
 	</properties>
 	
     <dependencies>

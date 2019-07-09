@@ -28,6 +28,14 @@ Modifications copyright (c) 2018-2019 Nokia
     <version>1.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>sdc</name>
+
+    <parent>
+        <groupId>org.onap.oparent</groupId>
+        <artifactId>oparent</artifactId>
+        <version>2.0.0</version>
+        <relativePath/>
+    </parent>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -398,6 +406,221 @@ Modifications copyright (c) 2018-2019 Nokia
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <!--
+                Replace phase "none" with "process-sources" to enable.
+                Set organizationName as desired.
+                Then run `mvn license:check-file-header`, or even `mvn
+                license:update-file-header`.
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.17</version>
+
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <!-- replace phase "none" with "process-sources" to enable -->
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <canUpdateCopyright>false</canUpdateCopyright>
+                    <canUpdateDescription>false</canUpdateDescription>
+                    <licenseName>apache_v2</licenseName>
+                    <processStartTag>============LICENSE_START=======================================================</processStartTag>
+                    <processEndTag>============LICENSE_END=========================================================</processEndTag>
+                    <sectionDelimiter>================================================================================</sectionDelimiter>
+                    <projectName>SDC</projectName>
+                    <inceptionYear>2019</inceptionYear>
+                    <organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
+                    <canUpdateLicense>true</canUpdateLicense>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
+                    <verbose>false</verbose>
+
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+
+                    <roots>
+                        <root>asdctool/src/main</root>
+                        <root>asdctool/src/test</root>
+
+                        <root>catalog-be/src/main</root>
+                        <root>catalog-be/src/test</root>
+
+                        <root>catalog-dao/src/main</root>
+                        <root>catalog-dao/src/test</root>
+
+                        <root>catalog-fe/src/main</root>
+                        <root>catalog-fe/src/test</root>
+
+                        <root>catalog-model/src/main</root>
+                        <root>catalog-model/src/test</root>
+
+                        <root>catalog-ui/src/main</root>
+                        <root>catalog-ui/src/test</root>
+
+                        <root>catalog-ui/src/main</root>
+                        <root>catalog-ui/src/test</root>
+
+                        <root>common/onap-common-configuration-management/onap-configuration-management-api/src/main</root>
+                        <root>common/onap-common-configuration-management/onap-configuration-management-core/src/main</root>
+                        <root>common/onap-common-configuration-management/onap-configuration-management-test/src/main</root>
+                        <root>common/onap-common-configuration-management/onap-configuration-management-api/src/test</root>
+                        <root>common/onap-common-configuration-management/onap-configuration-management-core/src/test</root>
+                        <root>common/onap-common-configuration-management/onap-configuration-management-test/src/test</root>
+                        <root>common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/main</root>
+                        <root>common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/main</root>
+                        <root>common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/src/test</root>
+                        <root>common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/src/test</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-api/src/main</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-core/src/main</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-test/src/main</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-api/src/test</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-core/src/test</root>
+                        <root>common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-test/src/test</root>
+                        <root>common/onap-tosca-datatype/src/main</root>
+                        <root>common/onap-tosca-datatype/src/test</root>
+
+                        <root>common-app-api/src/main</root>
+                        <root>common-app-api/src/test</root>
+
+                        <root>common-be/src/main</root>
+                        <root>common-be/src/test</root>
+
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/action-library-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/application-config-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/healthcheck-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/item-permissions-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/notifications-fe/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/notifications-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/sequence-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/unique-type-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/validation-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/src/main</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/src/main</root>
+
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/action-library-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/application-config-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/healthcheck-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/item-permissions-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/notifications-fe/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/notifications-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/sequence-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/unique-type-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/validation-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/src/test</root>
+                        <root>openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/src/test</root>
+
+                        <root>openecomp-be/backend/openecomp-sdc-action-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-activity-log-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-application-config-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-conflict-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-healthcheck-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-security-util/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-validation-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/main</root>
+                        <root>openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main</root>
+
+                        <root>openecomp-be/backend/openecomp-sdc-action-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-activity-log-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-application-config-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-conflict-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-healthcheck-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-security-util/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-validation-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test</root>
+                        <root>openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test</root>
+
+                        <root>openecomp-be/lib/openecomp-common-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-conflict-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-core-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-healing-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-heat-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-item-permissions-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-action-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-activity-log-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-datatypes-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-enrichment-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-externaltesting-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-logging-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-model-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-notification-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-tosca-generator-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-translator-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-validation-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-vendor-license-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-sdc-versioning-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-tosca-converter-lib/src/main</root>
+                        <root>openecomp-be/lib/openecomp-tosca-lib/src/main</root>
+
+                        <root>openecomp-be/lib/openecomp-common-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-conflict-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-core-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-healing-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-heat-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-item-permissions-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-action-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-activity-log-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-datatypes-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-enrichment-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-externaltesting-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-logging-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-model-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-notification-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-tosca-generator-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-translator-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-validation-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-vendor-license-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-sdc-versioning-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-tosca-converter-lib/src/test</root>
+                        <root>openecomp-be/lib/openecomp-tosca-lib/src/test</root>
+
+                        <root>openecomp-be/tools/zusammen-tools/src/main</root>
+                        <root>openecomp-be/tools/zusammen-tools/src/test</root>
+
+                        <root>security-utils/src/main</root>
+                        <root>security-utils/src/test</root>
+
+                        <root>test-apis-ci/src/main</root>
+                        <root>test-apis-ci/src/test</root>
+
+                        <root>ui-ci/src/main</root>
+                        <root>ui-ci/src/test</root>
+
+                        <root>utils/DmaapPublisher/src/main</root>
+                        <root>utils/DmaapPublisher/src/test</root>
+
+                        <root>utils/webseal-simulator/src/main</root>
+                        <root>utils/webseal-simulator/src/test</root>
+
+                    </roots>
+
+                </configuration>
             </plugin>
 
             <!-- Java Code Coverage -->

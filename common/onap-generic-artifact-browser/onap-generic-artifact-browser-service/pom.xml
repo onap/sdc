@@ -16,7 +16,6 @@
     <lombok.version>1.18.2</lombok.version>
     <snakeyaml.version>1.21</snakeyaml.version>
     <jsurfer.version>1.4.3</jsurfer.version>
-    <jacoco.skip>false</jacoco.skip>
   </properties>
 
   <dependencies>
