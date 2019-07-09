@@ -1,4 +1,3 @@
-
 /*
  *
  *  Copyright © 2017-2018 European Support Limited
