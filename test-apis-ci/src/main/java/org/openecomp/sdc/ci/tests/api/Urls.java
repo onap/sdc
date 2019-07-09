@@ -424,4 +424,6 @@ public interface Urls {
 
 	//VSP Validation Operation
 	final String VSP_VALIDATION_CONFIGURATION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/externaltesting/config";
+	final String GET_INSTANCE_TOSCA_ARTIFACTS = SDC_HTTP_METHOD
+			+ "://%s:%s/sdc2/rest/v1/catalog/%s/%s/filteredDataByParams?include=toscaArtifacts";
 }
