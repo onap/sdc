@@ -12,7 +12,7 @@
   "run_list": [
     "recipe[cassandra-actions::01-createCsUser]",
     "recipe[cassandra-actions::03-schemaCreation]",
-    "recipe[cassandra-actions::04-importComformance]"
+    "recipe[cassandra-actions::04-importConformance]"
   ],
 
   "env_run_lists": {

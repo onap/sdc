@@ -4,7 +4,7 @@ printf("\033[33mcl_release=[%s]\n\033[0m", cl_release)
 
 
 
-bash "import-Comformance" do
+bash "import-Conformance" do
   cwd "#{working_directory}"
   code <<-EOH
     conf_dir=/tmp/sdctool/config
