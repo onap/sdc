@@ -18,12 +18,12 @@ template "janusgraph.properties" do
   source "janusgraph.properties.erb"
   mode "0755"
   variables({
-     :DC_NAME      => node['cassandra']['datacenter_name'],
-     :cassandra_ip  => node['Nodes']['CS'].first,
-     :cassandra_pwd => node['cassandra'][:cassandra_password],
-     :cassandra_usr => node['cassandra'][:cassandra_user],
+     :DC_NAME                       => node['cassandra']['datacenter_name'],
+     :cassandra_ip                  => node['Nodes']['CS'].first,
+     :cassandra_pwd                 => node['cassandra'][:cassandra_password],
+     :cassandra_usr                 => node['cassandra'][:cassandra_user],
      :janusgraph_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
-     :replication_factor => node['cassandra']['replication_factor']
+     :replication_factor            => node['cassandra']['replication_factor']
   })
 end
 
@@ -58,7 +58,7 @@ template "/tmp/sdctool/config/elasticsearch.yml" do
   })
 end
 
-bash "excuting-schema-creation" do
+bash "executing-schema-creation" do
    code <<-EOH
      cd /tmp
      chmod +x /tmp/sdctool/scripts/schemaCreation.sh
@@ -66,7 +66,7 @@ bash "excuting-schema-creation" do
    EOH
 end
 
-bash "excuting-janusGraphSchemaCreation.sh" do
+bash "executing-janusGraphSchemaCreation.sh" do
   code <<-EOH
      chmod +x /tmp/sdctool/scripts/janusGraphSchemaCreation.sh
      /tmp/sdctool/scripts/janusGraphSchemaCreation.sh /tmp/sdctool/config
