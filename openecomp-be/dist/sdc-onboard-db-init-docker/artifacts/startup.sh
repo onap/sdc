@@ -18,21 +18,21 @@ echo "[Info] Going to initialize sdc onboard cassandra: user=$SDC_USER; host=$CS
 echo "[Info] Initializing onboard keyspaces"
 date;
 cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_keyspaces.cql $CS_HOST $CS_PORT
+rc=$?
 date;
 
-rc=$?
-if [[ $rc != 0 ]]; then 
-	echo "[Error] Failed to initialize onboard keyspaces"; 
-	exit $rc; 
+if [[ $rc != 0 ]]; then
+	echo "[Error] Failed to initialize onboard keyspaces";
+	exit $rc;
 fi
 
 echo "[Info] Initializing onboard schemas"
 date;
 cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_schemas.cql $CS_HOST $CS_PORT
+rc=$?
 date;
 
-rc=$?
-if [[ $rc != 0 ]]; then 
-	echo "[Error] Failed to initialize onboard schemas"; 
-	exit $rc; 
+if [[ $rc != 0 ]]; then
+	echo "[Error] Failed to initialize onboard schemas";
+	exit $rc;
 fi
