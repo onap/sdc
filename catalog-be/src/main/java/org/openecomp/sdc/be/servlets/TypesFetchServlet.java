@@ -26,23 +26,31 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -73,6 +81,29 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(TypesFetchServlet.class);
     private static final String FAILED_TO_GET_ALL_NON_ABSTRACT = "failed to get all non abstract {}";
+    private final PropertyBusinessLogic propertyBusinessLogic;
+    private final RelationshipTypeBusinessLogic relationshipTypeBusinessLogic;
+    private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
+    private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+    private final ResourceBusinessLogic resourceBusinessLogic;
+
+    @Inject
+    public TypesFetchServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        PropertyBusinessLogic propertyBusinessLogic,
+        RelationshipTypeBusinessLogic relationshipTypeBusinessLogic,
+        CapabilitiesBusinessLogic capabilitiesBusinessLogic,
+        InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
+        ResourceBusinessLogic resourceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.propertyBusinessLogic = propertyBusinessLogic;
+        this.relationshipTypeBusinessLogic = relationshipTypeBusinessLogic;
+        this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
+        this.resourceBusinessLogic = resourceBusinessLogic;
+    }
 
     @GET
     @Path("dataTypes")
@@ -85,8 +116,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        ServletContext context = request.getSession().getServletContext();
-
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
@@ -95,8 +124,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
 
-                PropertyBusinessLogic businessLogic = getPropertyBL(context);
-                Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = businessLogic.getAllDataTypes();
+                Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes =
+                    propertyBusinessLogic.getAllDataTypes();
 
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all dara types. Reason - {}", allDataTypes.right().value());
@@ -137,7 +166,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        ServletContext context = request.getSession().getServletContext();
 
         try {
             validateUserExist(responseWrapper, userWrapper, userId);
@@ -146,9 +174,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.info("Start handle request of {} | modifier id is {}", url, userId);
 
-                InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
                 Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes =
-                    businessLogic.getAllInterfaceLifecycleTypes();
+                    interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
 
                 if (allInterfaceLifecycleTypes.isRight()) {
                     log.info("Failed to get all interface lifecycle types. Reason - {}",
@@ -186,7 +213,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        ServletContext context = request.getSession().getServletContext();
 
         try {
             init();
@@ -196,9 +222,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
 
-                CapabilitiesBusinessLogic businessLogic = getCapabilitiesBL(context);
                 Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes =
-                        businessLogic.getAllCapabilityTypes();
+                    capabilitiesBusinessLogic.getAllCapabilityTypes();
 
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all capability types. Reason - {}", allDataTypes.right().value());
@@ -240,7 +265,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        ServletContext context = request.getSession().getServletContext();
 
         try {
             init();
@@ -250,9 +274,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
 
-                RelationshipTypeBusinessLogic businessLogic = getRelationshipTypeBL(context);
                 Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> allDataTypes =
-                        businessLogic.getAllRelationshipTypes();
+                    relationshipTypeBusinessLogic.getAllRelationshipTypes();
 
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all relationship types. Reason - {}", allDataTypes.right().value());
@@ -304,14 +327,13 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
 
-                ComponentBusinessLogic resourceBL = getComponentBL(ComponentTypeEnum.RESOURCE, context);
-                response = getComponent(resourceBL, true, userId);
+                response = getComponent(resourceBusinessLogic, true, userId);
                 if (response.isRight()) {
                     return response.right().value();
                 }
                 componentMap = new HashMap<>(response.left().value());
 
-                response = getComponent(resourceBL, false, userId);
+                response = getComponent(resourceBusinessLogic, false, userId);
                 if (response.isRight()) {
                     return response.right().value();
                 }

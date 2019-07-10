@@ -20,19 +20,30 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.User;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class LifecycleServletTest {
 
 	private LifecycleServlet createTestSubject() {
-		return new LifecycleServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+
+		return new LifecycleServlet(userBusinessLogic, componentsUtils, lifecycleBusinessLogic);
 	}
 
 	

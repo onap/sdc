@@ -23,7 +23,10 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -31,6 +34,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.Tag;
@@ -70,6 +74,20 @@ import java.util.Map;
 public class ElementServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(ElementServlet.class);
+    private final ComponentsCleanBusinessLogic componentsCleanBusinessLogic;
+    private final ElementBusinessLogic elementBusinessLogic;
+    private final UserBusinessLogic userBusinessLogic;
+
+    @Inject
+    public ElementServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ComponentsCleanBusinessLogic componentsCleanBusinessLogic,
+        ElementBusinessLogic elementBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.componentsCleanBusinessLogic = componentsCleanBusinessLogic;
+        this.elementBusinessLogic = elementBusinessLogic;
+        this.userBusinessLogic = userBusinessLogic;
+    }
 
     /*
      ******************************************************************************
@@ -94,8 +112,7 @@ public class ElementServlet extends BeGenericServlet {
             + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true) @PathParam(value = "componentType") final String componentType, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<CategoryDefinition>, ResponseFormat> either = elementBL .getAllCategories(componentType, userId);
+            Either<List<CategoryDefinition>, ResponseFormat> either = elementBusinessLogic.getAllCategories(componentType, userId);
             if (either.isRight()) {
                 log.debug("No categories were found for type {}", componentType);
                 return buildErrorResponse(either.right().value());
@@ -119,8 +136,8 @@ public class ElementServlet extends BeGenericServlet {
     public Response getAllCategories(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<UiCategories, ResponseFormat> either = elementBL.getAllCategories(userId);
+            Either<UiCategories, ResponseFormat> either = elementBusinessLogic
+                .getAllCategories(userId);
             if (either.isRight()) {
                 log.debug("No categories were found");
                 return buildErrorResponse(either.right().value());
@@ -147,10 +164,10 @@ public class ElementServlet extends BeGenericServlet {
                     + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true) @PathParam(value = "componentType") final String componentType,
             @ApiParam(value = "Category to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             CategoryDefinition category = RepresentationUtils.fromRepresentation(data, CategoryDefinition.class);
 
-            Either<CategoryDefinition, ResponseFormat> createResourceCategory = elementBL.createCategory(category, componentType, userId);
+            Either<CategoryDefinition, ResponseFormat> createResourceCategory =
+                elementBusinessLogic.createCategory(category, componentType, userId);
             if (createResourceCategory.isRight()) {
                 return buildErrorResponse(createResourceCategory.right().value());
             }
@@ -177,8 +194,8 @@ public class ElementServlet extends BeGenericServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<CategoryDefinition, ResponseFormat> createResourceCategory = elementBL.deleteCategory(categoryUniqueId, componentType, userId);
+            Either<CategoryDefinition, ResponseFormat> createResourceCategory =
+                elementBusinessLogic.deleteCategory(categoryUniqueId, componentType, userId);
 
             if (createResourceCategory.isRight()) {
                 return buildErrorResponse(createResourceCategory.right().value());
@@ -215,10 +232,10 @@ public class ElementServlet extends BeGenericServlet {
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             SubCategoryDefinition subCategory = RepresentationUtils.fromRepresentation(data, SubCategoryDefinition.class);
 
-            Either<SubCategoryDefinition, ResponseFormat> createSubcategory = elementBL.createSubCategory(subCategory, componentType, categoryId, userId);
+            Either<SubCategoryDefinition, ResponseFormat> createSubcategory = elementBusinessLogic
+                .createSubCategory(subCategory, componentType, categoryId, userId);
             if (createSubcategory.isRight()) {
                 return buildErrorResponse(createSubcategory.right().value());
             }
@@ -244,8 +261,8 @@ public class ElementServlet extends BeGenericServlet {
             @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory = elementBL.deleteSubCategory(subCategoryUniqueId, componentType, userId);
+            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory =
+                elementBusinessLogic.deleteSubCategory(subCategoryUniqueId, componentType, userId);
             if (deleteSubResourceCategory.isRight()) {
                 return buildErrorResponse(deleteSubResourceCategory.right().value());
             }
@@ -276,10 +293,10 @@ public class ElementServlet extends BeGenericServlet {
             @ApiParam(value = "Parent sub-category unique ID", required = true) @PathParam(value = "subCategoryId") final String parentSubCategoryId, @ApiParam(value = "Subcategory to be created", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             GroupingDefinition grouping = RepresentationUtils.fromRepresentation(data, GroupingDefinition.class);
 
-            Either<GroupingDefinition, ResponseFormat> createGrouping = elementBL.createGrouping(grouping, componentType, grandParentCategoryId, parentSubCategoryId, userId);
+            Either<GroupingDefinition, ResponseFormat> createGrouping = elementBusinessLogic
+                .createGrouping(grouping, componentType, grandParentCategoryId, parentSubCategoryId, userId);
             if (createGrouping.isRight()) {
                 return buildErrorResponse(createGrouping.right().value());
             }
@@ -306,8 +323,8 @@ public class ElementServlet extends BeGenericServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<GroupingDefinition, ResponseFormat> deleteGrouping = elementBL.deleteGrouping(groupingUniqueId, componentType, userId);
+            Either<GroupingDefinition, ResponseFormat> deleteGrouping = elementBusinessLogic
+                .deleteGrouping(groupingUniqueId, componentType, userId);
             if (deleteGrouping.isRight()) {
                 return buildErrorResponse(deleteGrouping.right().value());
             }
@@ -335,8 +352,7 @@ public class ElementServlet extends BeGenericServlet {
         log.debug("(getTags) Start handle request of {}", url);
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<Tag>, ActionStatus> either = elementBL.getAllTags(userId);
+            Either<List<Tag>, ActionStatus> either = elementBusinessLogic.getAllTags(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No tags were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -363,8 +379,7 @@ public class ElementServlet extends BeGenericServlet {
         log.debug("(getPropertyScopes) Start handle request of {}", url);
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<PropertyScope>, ActionStatus> either = elementBL.getAllPropertyScopes(userId);
+            Either<List<PropertyScope>, ActionStatus> either = elementBusinessLogic.getAllPropertyScopes(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No property scopes were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -391,8 +406,7 @@ public class ElementServlet extends BeGenericServlet {
         log.debug("(GET - getArtifactTypes) Start handle request of {}", url);
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<ArtifactType>, ActionStatus> either = elementBL.getAllArtifactTypes(userId);
+            Either<List<ArtifactType>, ActionStatus> either = elementBusinessLogic.getAllArtifactTypes(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No artifact types were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -425,11 +439,10 @@ public class ElementServlet extends BeGenericServlet {
         log.debug("(getConfiguration) Start handle request of {}", url);
 
         try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<ArtifactType>, ActionStatus> otherEither = elementBL.getAllArtifactTypes(userId);
-            Either<Integer, ActionStatus> defaultHeatTimeout = elementBL.getDefaultHeatTimeout();
-            Either<Map<String, Object>, ActionStatus> deploymentEither = elementBL.getAllDeploymentArtifactTypes();
-            Either<Map<String, String>, ActionStatus> resourceTypesMap = elementBL.getResourceTypesMap();
+            Either<List<ArtifactType>, ActionStatus> otherEither = elementBusinessLogic.getAllArtifactTypes(userId);
+            Either<Integer, ActionStatus> defaultHeatTimeout = elementBusinessLogic.getDefaultHeatTimeout();
+            Either<Map<String, Object>, ActionStatus> deploymentEither = elementBusinessLogic.getAllDeploymentArtifactTypes();
+            Either<Map<String, String>, ActionStatus> resourceTypesMap = elementBusinessLogic.getResourceTypesMap();
 
             if (otherEither.isRight() || otherEither.left().value() == null) {
                 log.debug("No other artifact types were found");
@@ -451,8 +464,8 @@ public class ElementServlet extends BeGenericServlet {
                 artifacts.put("deployment", deploymentEither.left().value());
                 configuration.put("artifacts", artifacts);
                 configuration.put("defaultHeatTimeout", defaultHeatTimeout.left().value());
-                configuration.put("componentTypes", elementBL.getAllComponentTypesParamNames());
-                configuration.put("roles", elementBL.getAllSupportedRoles());
+                configuration.put("componentTypes", elementBusinessLogic.getAllComponentTypesParamNames());
+                configuration.put("roles", elementBusinessLogic.getAllSupportedRoles());
                 configuration.put("resourceTypes", resourceTypesMap.left().value());
                 configuration.put("environmentContext", ConfigurationManager.getConfigurationManager().getConfiguration().getEnvironmentContext());
                 configuration.put("gab", ConfigurationManager.getConfigurationManager().getConfiguration().getGabConfig());
@@ -483,10 +496,9 @@ public class ElementServlet extends BeGenericServlet {
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {}", url);
-            UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
 
             // Getting the user
-            Either<User, ActionStatus> either = userAdminManager.getUser(userId, false);
+            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
             if (either.isRight()) {
                 // Couldn't find or otherwise fetch the user
                 return buildErrorResponse(getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
@@ -494,7 +506,8 @@ public class ElementServlet extends BeGenericServlet {
 
             if (either.left().value() != null) {
                 userData = either.left().value();
-                Either<Map<String, List<? extends Component>>, ResponseFormat> followedResourcesServices = getElementBL(request.getSession().getServletContext()).getFollowed(userData);
+                Either<Map<String, List<? extends Component>>, ResponseFormat> followedResourcesServices =
+                    elementBusinessLogic.getFollowed(userData);
                 if (followedResourcesServices.isRight()) {
                     log.debug("failed to get followed resources services ");
                     return buildErrorResponse(followedResourcesServices.right().value());
@@ -528,7 +541,8 @@ public class ElementServlet extends BeGenericServlet {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {}", url);
 
-			Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext()).getCatalogComponents(userId, excludeTypes);
+			Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = elementBusinessLogic
+          .getCatalogComponents(userId, excludeTypes);
 
             if (catalogData.isRight()) {
                 log.debug("failed to get catalog data");
@@ -548,9 +562,6 @@ public class ElementServlet extends BeGenericServlet {
     @DELETE
     @Path("/inactiveComponents/{componentType}")
     public Response deleteMarkedResources(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request) {
-
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -571,8 +582,7 @@ public class ElementServlet extends BeGenericServlet {
         List<NodeTypeEnum> componentsList = new ArrayList<>();
         componentsList.add(nodeType);
         try {
-            ComponentsCleanBusinessLogic businessLogic = getComponentCleanerBL(context);
-            Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponentsResult = businessLogic.cleanComponents(componentsList);
+            Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponentsResult = componentsCleanBusinessLogic.cleanComponents(componentsList);
             Either<List<String>, ResponseFormat> cleanResult = cleanComponentsResult.get(nodeType);
 
             if (cleanResult.isRight()) {

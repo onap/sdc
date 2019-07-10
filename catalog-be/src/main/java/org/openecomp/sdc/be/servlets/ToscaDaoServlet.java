@@ -20,44 +20,32 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.ServletJsonResponse;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.core.Response;
 
 public abstract class ToscaDaoServlet extends BeGenericServlet {
     public abstract Logger getLogger();
+    protected final IResourceUploader resourceUploader;
+    protected final DownloadArtifactLogic logic;
 
-    protected IResourceUploader getResourceUploader(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-
-        if (webApplicationContextWrapper == null) {
-            getLogger().error("Failed to get web application context from context.");
-            return null;
-        }
-
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-
-        return webApplicationContext.getBean(IResourceUploader.class);
-
-    }
-
-
-    protected DownloadArtifactLogic getLogic(ServletContext context) {
-        DownloadArtifactLogic downloadLogic = (DownloadArtifactLogic) context.getAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR);
-
-        if (downloadLogic == null) {
-            BeEcompErrorManager.getInstance().logBeInitializationError("DownloadArtifactLogic from context");
-            return null;
-        }
-        return downloadLogic;
+    @Inject
+    public ToscaDaoServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        IResourceUploader resourceUploader,
+        DownloadArtifactLogic logic) {
+        super(userBusinessLogic, componentsUtils);
+        this.resourceUploader = resourceUploader;
+        this.logic = logic;
     }
 
     protected Response buildResponse(int status, String errorMessage) {

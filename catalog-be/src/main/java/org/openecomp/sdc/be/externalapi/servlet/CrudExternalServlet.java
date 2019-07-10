@@ -24,13 +24,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Strings;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
@@ -44,6 +48,8 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -55,6 +61,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -85,6 +92,26 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     private static final Logger log = Logger.getLogger(CrudExternalServlet.class);
+    private final ElementBusinessLogic elementBusinessLogic;
+    private final AssetMetadataConverter assetMetadataUtils;
+    private final LifecycleBusinessLogic lifecycleBusinessLogic;
+    private final ResourceBusinessLogic resourceBusinessLogic;
+
+    @Inject
+    public CrudExternalServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ElementBusinessLogic elementBusinessLogic,
+        AssetMetadataConverter assetMetadataUtils,
+        LifecycleBusinessLogic lifecycleBusinessLogic,
+        ResourceBusinessLogic resourceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.elementBusinessLogic = elementBusinessLogic;
+        this.assetMetadataUtils = assetMetadataUtils;
+        this.lifecycleBusinessLogic = lifecycleBusinessLogic;
+        this.resourceBusinessLogic = resourceBusinessLogic;
+    }
 
     /**
      * Creates a new Resource
@@ -144,7 +171,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
 
         ServletContext context = request.getSession().getServletContext();
-        ResourceBusinessLogic resourceBL = getResourceBL(context);
         try {
             // Validate X-ECOMP-InstanceID Header
             if (responseWrapper.isEmpty()) {
@@ -203,7 +229,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             }
             // Create the resource in the dataModel
             if (responseWrapper.isEmpty()) {
-                resource = resourceBL.createResource(resource, null,
+                resource = resourceBusinessLogic.createResource(resource, null,
                         modifier, null, null);
                 return buildCreatedResourceResponse(resource, context, responseWrapper);
             } else {
@@ -272,7 +298,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 
         //get the business logic
         ServletContext context = request.getSession().getServletContext();
-        LifecycleBusinessLogic businessLogic = getLifecycleBL(context);
 
         Wrapper<ResponseFormat> responseWrapper = runValidations(assetType);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -297,7 +322,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 modifier = eitherGetUser.left().value();
 
                 //get the component id from the uuid
-                Either<Component, ResponseFormat> latestVersion = businessLogic.getLatestComponentByUuid(componentType, uuid);
+                Either<Component, ResponseFormat> latestVersion = lifecycleBusinessLogic.getLatestComponentByUuid(componentType, uuid);
                 if (latestVersion.isRight()) {
                     ResponseFormat responseFormat = latestVersion.right().value();
                     responseWrapper.setInnerElement(responseFormat);
@@ -332,7 +357,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
 
                 //execute business logic
-                Either<? extends Component, ResponseFormat> actionResponse = businessLogic.changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
+                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
+                    .changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
                 if (actionResponse.isRight()) {
                     log.info("failed to change resource state");
                     ResponseFormat responseFormat = actionResponse.right().value();
@@ -369,7 +395,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             Wrapper<ResponseFormat> responseWrapper) throws IOException {
         ResponseFormat responseFormat;
         Response response;
-        AssetMetadataConverter assetMetadataUtils = getAssetUtils(context);
         Either<? extends AssetMetadata, ResponseFormat> resMetadata = assetMetadataUtils
                 .convertToSingleAssetMetadata(resource, request.getRequestURL().toString(),
                         true);
@@ -405,9 +430,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                         ActionStatus.COMPONENT_MISSING_SUBCATEGORY));
             }
             if (responseWrapper.isEmpty()) {
-                ElementBusinessLogic elementLogic = getElementBL(context);
                 // get All Categories
-                Either<List<CategoryDefinition>, ActionStatus> allResourceCategories = elementLogic
+                Either<List<CategoryDefinition>, ActionStatus> allResourceCategories = elementBusinessLogic
                         .getAllResourceCategories();
                 // Error fetching categories
                 if (allResourceCategories.isRight()) {

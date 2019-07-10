@@ -20,15 +20,21 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
@@ -36,7 +42,10 @@ import fj.data.Either;
 public class ConsumerServletTest {
 
 	private ConsumerServlet createTestSubject() {
-		return new ConsumerServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		ConsumerBusinessLogic consumerBusinessLogic = mock(ConsumerBusinessLogic.class);
+		return new ConsumerServlet(userBusinessLogic, componentsUtils, consumerBusinessLogic);
 	}
 
 	

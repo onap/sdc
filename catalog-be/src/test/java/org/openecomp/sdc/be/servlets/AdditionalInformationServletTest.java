@@ -20,16 +20,28 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 
 public class AdditionalInformationServletTest {
 
 	private AdditionalInformationServlet createTestSubject() {
-		return new AdditionalInformationServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		AdditionalInformationBusinessLogic additionalInformationBusinessLogic =
+			mock(AdditionalInformationBusinessLogic.class);
+		return new AdditionalInformationServlet(userBusinessLogic, componentsUtils,
+			additionalInformationBusinessLogic);
 	}
 
 	

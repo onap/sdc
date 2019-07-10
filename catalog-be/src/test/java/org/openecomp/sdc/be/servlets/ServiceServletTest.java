@@ -20,14 +20,20 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import com.google.common.base.Equivalence.Wrapper;
@@ -38,7 +44,16 @@ import fj.data.Either;
 public class ServiceServletTest {
 
 	private ServiceServlet createTestSubject() {
-		return new ServiceServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		ServletUtils servletUtils = mock(ServletUtils.class);
+		ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+		ServiceBusinessLogic serviceBusinessLogic = mock(ServiceBusinessLogic.class);
+		ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
+
+		return new ServiceServlet(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils,
+			resourceImportManager, serviceBusinessLogic, resourceBusinessLogic);
 	}
 
 	

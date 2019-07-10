@@ -23,22 +23,28 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.GroupCompositionMixin;
 import org.openecomp.sdc.be.mixin.PolicyCompositionMixin;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.ServletContext;
@@ -69,7 +75,11 @@ public class ComponentServlet extends BeGenericServlet {
 
     private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
 
-    public ComponentServlet(ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+    @Inject
+    public ComponentServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+        super(userBusinessLogic, componentsUtils);
         this.componentBusinessLogicProvider = componentBusinessLogicProvider;
     }
 
@@ -82,14 +92,13 @@ public class ComponentServlet extends BeGenericServlet {
     public Response conformanceLevelValidation(@PathParam("componentType") final String componentType, @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Response response;
-        ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum != null) {
-            ComponentBusinessLogic compBL = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic compBL = componentBusinessLogicProvider.getInstance(componentTypeEnum);
             Either<Boolean, ResponseFormat> eitherConformanceLevel = compBL.validateConformanceLevel(componentUuid, componentTypeEnum, userId);
             if (eitherConformanceLevel.isRight()) {
                 response = buildErrorResponse(eitherConformanceLevel.right().value());
@@ -112,7 +121,6 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Response response;
-        ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -120,7 +128,7 @@ public class ComponentServlet extends BeGenericServlet {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum != null) {
             try {
-                ComponentBusinessLogic compBL = getComponentBL(componentTypeEnum, context);
+                ComponentBusinessLogic compBL = componentBusinessLogicProvider.getInstance(componentTypeEnum);
                 Either<CapReqDef, ResponseFormat> eitherRequirementsAndCapabilities = compBL.getRequirementsAndCapabilities(componentId, componentTypeEnum, userId);
                 if (eitherRequirementsAndCapabilities.isRight()) {
                     response = buildErrorResponse(eitherRequirementsAndCapabilities.right().value());
@@ -148,8 +156,6 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getLatestVersionNotAbstractCheckoutComponents(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
             @QueryParam("componentUids") List<String> componentUids, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
         Response response = null;
@@ -157,7 +163,7 @@ public class ComponentServlet extends BeGenericServlet {
         try {
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
 
             log.debug("Received componentUids size is {}", componentUids == null ? 0 : componentUids.size());
 
@@ -189,8 +195,6 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getLatestVersionNotAbstractCheckoutComponentsByBody(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "Consumer Object to be created", required = true) List<String> data) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
         Response response = null;
@@ -198,7 +202,7 @@ public class ComponentServlet extends BeGenericServlet {
         try {
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
             if (log.isDebugEnabled()) {
                 log.debug("Received componentUids size is {}", data == null ? 0 : data.size());
             }
@@ -234,13 +238,12 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "uid list", required = true) String data) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
         Response response = null;
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
 
             Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponentsMetadata(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum, internalComponentType, userId);
             if (actionResponse.isRight()) {
@@ -269,13 +272,12 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getComponentInstancesFilteredByPropertiesAndInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
             @QueryParam("searchText") String searchText, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "uid" + " " + "list", required = true) String data) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
         Response response = null;
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
 
             Either<List<ComponentInstance>, ResponseFormat> actionResponse = businessLogic.getComponentInstancesFilteredByPropertiesAndInputs(componentId, userId);
             if (actionResponse.isRight()) {
@@ -365,14 +367,13 @@ public class ComponentServlet extends BeGenericServlet {
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         User user = new User();
         user.setUserId(userId);
         log.debug("User Id is {}" , userId);
         Response response;
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
             Map<FilterKeyEnum, List<String>> filters = new EnumMap<>(FilterKeyEnum.class);
             List<String> propertyNameFragments = new ArrayList<>();
             propertyNameFragments.add(propertyNameFragment);

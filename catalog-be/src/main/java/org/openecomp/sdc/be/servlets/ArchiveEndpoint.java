@@ -25,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -51,6 +52,7 @@ public class ArchiveEndpoint {
 
     private final ArchiveBusinessLogic archiveBusinessLogic;
 
+    @Inject
     public ArchiveEndpoint(ArchiveBusinessLogic archiveBusinessLogic) {
         this.archiveBusinessLogic = archiveBusinessLogic;
     }

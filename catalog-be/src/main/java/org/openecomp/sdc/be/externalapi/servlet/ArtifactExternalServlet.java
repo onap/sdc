@@ -36,18 +36,25 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -87,9 +94,22 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Context
     private HttpServletRequest request;
 
+    private final ArtifactsBusinessLogic artifactsBusinessLogic;
+
     private static final Logger log = LoggerFactory.getLogger(ArtifactExternalServlet.class);
 
     private static String startLog = "Start handle request of ";
+
+    @Inject
+    public ArtifactExternalServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ArtifactsBusinessLogic artifactsBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
+    }
+
 
     @POST
     @Path("/{assetType}/{uuid}/interfaces/{interfaceUUID}/operations/{operationUUID}/artifacts/{artifactUUID}")
@@ -145,12 +165,10 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
                         .updateArtifactOnInterfaceOperationByResourceUUID(data, request, ComponentTypeEnum
                                         .findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
-                        resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
@@ -247,10 +265,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
-                        resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
+                    .uploadArtifactToComponentByUUID(data, request, componentType, uuid,
+                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug("failed to upload artifact");
                     responseWrapper.setInnerElement(uploadArtifactEither.right().value());
@@ -349,10 +366,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
-                        artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
+                    .uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
+                    artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug("failed to upload artifact");
                     responseFormat = uploadArtifactEither.right().value();
@@ -453,10 +469,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
+                    .updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
+                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
@@ -553,10 +568,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
-                         artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
+                    .updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
+                    artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
@@ -647,10 +661,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
+                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug("failed to delete artifact");
                     responseFormat = uploadArtifactEither.right().value();
@@ -742,10 +754,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
-                         artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
+                    artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug("failed to delete artifact");
                     responseFormat = uploadArtifactEither.right().value();
@@ -825,9 +835,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<byte[], ResponseFormat> downloadComponentArtifactEither = artifactsLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
+                Either<byte[], ResponseFormat> downloadComponentArtifactEither = artifactsBusinessLogic
+                    .downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
                 if (downloadComponentArtifactEither.isRight()) {
                     responseFormat = downloadComponentArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
@@ -902,9 +911,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                ServletContext context = request.getSession().getServletContext();
-                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-                Either<byte[], ResponseFormat> downloadResourceArtifactEither = artifactsLogic.downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
+                Either<byte[], ResponseFormat> downloadResourceArtifactEither = artifactsBusinessLogic
+                    .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
                 if (downloadResourceArtifactEither.isRight()) {
                     responseFormat = downloadResourceArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
