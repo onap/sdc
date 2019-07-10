@@ -20,16 +20,32 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
+import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.resources.api.IResourceUploader;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 
 public class CsarBuildServletTest {
 
 	private CsarBuildServlet createTestSubject() {
-		return new CsarBuildServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		IResourceUploader resourceUploader = mock(IResourceUploader.class);
+		DownloadArtifactLogic logic = mock(DownloadArtifactLogic.class);
+
+		return new CsarBuildServlet(userBusinessLogic, componentsUtils, resourceUploader,
+			logic);
 	}
 
 	

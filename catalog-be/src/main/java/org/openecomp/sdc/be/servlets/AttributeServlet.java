@@ -25,11 +25,18 @@ import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -55,6 +62,14 @@ import javax.ws.rs.core.Response;
 @Singleton
 public class AttributeServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(AttributeServlet.class);
+
+    @Inject
+    public AttributeServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+    }
 
     /**
      * Creates new Attribute on a resource with given resource ID

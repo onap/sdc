@@ -21,14 +21,24 @@
 package org.openecomp.sdc.be.servlets;
 
 import fj.data.Either;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Application;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.grizzly.http.util.HttpStatus;
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -43,8 +53,11 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -64,7 +77,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class InputsServletTest extends JerseySpringBaseTest {
+public class InputsServletTest extends JerseyTest {
 
     /* Constants */
     private static final String RESOURCE_ID = "serviceId";
@@ -79,61 +92,77 @@ public class InputsServletTest extends JerseySpringBaseTest {
     private static final String LISTINPUT_PROP2_NAME = "prop2";
     private static final String LISTINPUT_PROP2_TYPE = "integer";
 
-    /* Test subject */
-    private InputsServletForTest testSubject;
-
     /* Mocks */
-    private InputsBusinessLogic inputsBusinessLogic;
-    private DataTypeBusinessLogic dataTypeBusinessLogic;
-    private HttpSession httpSession;
-    private ServletContext servletContext;
-    private WebApplicationContext webApplicationContext;
-    private ComponentsUtils componentsUtils;
-    private ServletUtils servletUtils;
+    private static UserBusinessLogic userBusinessLogic;
+    private static InputsBusinessLogic inputsBusinessLogic;
+    private static DataTypeBusinessLogic dataTypeBusinessLogic;
+    private static GroupBusinessLogic groupBL;
+    private static ComponentInstanceBusinessLogic componentInstanceBL;
+    private static HttpSession httpSession;
+    private static ServletContext servletContext;
+    private static WebApplicationContext webApplicationContext;
+    private static ComponentsUtils componentsUtils;
+    private static ServletUtils servletUtils;
+    private static ResourceImportManager resourceImportManager;
+    private static HttpServletRequest request;
 
-    /**
-     * This class extends the original InputsServlet
-     * and provides methods to inject mocks
-     */
-    class InputsServletForTest extends InputsServlet {
-        public void setComponentsUtils(ComponentsUtils componentsUtils) {
-            this.componentsUtils = componentsUtils;
-        }
-
-        public void setServletUtils(ServletUtils servletUtils) {
-            this.servletUtils = servletUtils;
-        }
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    @BeforeClass
+    public static void configureMocks() {
+        request = mock(HttpServletRequest.class);
+        userBusinessLogic = mock(UserBusinessLogic.class);
         inputsBusinessLogic = mock(InputsBusinessLogic.class);
+        groupBL = mock(GroupBusinessLogic.class);
+        componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
         dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
         servletContext = mock(ServletContext.class);
         httpSession = mock(HttpSession.class);
         webApplicationContext = mock(WebApplicationContext.class);
         componentsUtils = mock(ComponentsUtils.class);
         servletUtils = mock(ServletUtils.class);
+        resourceImportManager = mock(ResourceImportManager.class);
+    }
+
+    @Before
+    public void resetMocks() {
+        Mockito.reset(resourceImportManager);
+        Mockito.reset(servletUtils);
+        Mockito.reset(componentsUtils);
+        Mockito.reset(webApplicationContext);
+        Mockito.reset(httpSession);
+        Mockito.reset(servletContext);
+        Mockito.reset(dataTypeBusinessLogic);
+        Mockito.reset(componentInstanceBL);
+        Mockito.reset(groupBL);
+        Mockito.reset(inputsBusinessLogic);
+        Mockito.reset(userBusinessLogic);
+        Mockito.reset(request);
+
         when(request.getSession()).thenReturn(httpSession);
         when(httpSession.getServletContext()).thenReturn(servletContext);
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(new WebAppContextWrapper());
+        when(servletContext.getAttribute(
+            Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(new WebAppContextWrapper());
         when(servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)).thenReturn(webApplicationContext);
-        when(webApplicationContext.getBean(InputsBusinessLogic.class)).thenReturn(inputsBusinessLogic);
-        when(webApplicationContext.getBean(DataTypeBusinessLogic.class)).thenReturn(dataTypeBusinessLogic);
-        testSubject.setComponentsUtils(componentsUtils);
-        testSubject.setServletUtils(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
     }
 
-
     @Override
-    protected ResourceConfig configure() {
-        testSubject = new InputsServletForTest();
-        return super.configure().register(testSubject);
-    }
+    protected Application configure() {
+        InputsServlet inputsServlet = new InputsServlet(userBusinessLogic, inputsBusinessLogic,
+            componentInstanceBL, componentsUtils,
+            servletUtils, resourceImportManager, dataTypeBusinessLogic);
+        ResourceConfig resourceConfig = new ResourceConfig()
+            .register(inputsServlet)
+            .register(new AbstractBinder() {
+                @Override
+                protected void configure() {
+                    bind(request).to(HttpServletRequest.class);
+                }
+            });
 
+        ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        resourceConfig.property("contextConfig", context);
+        return resourceConfig;
+    }
 
     private InputDefinition setUpListInput() {
         InputDefinition listInput = new InputDefinition();
@@ -184,15 +213,14 @@ public class InputsServletTest extends JerseySpringBaseTest {
         ComponentInstListInput requestBodyObj = setUpCreateListInputParams();
         Entity<ComponentInstListInput> entity = Entity.entity(requestBodyObj, MediaType.APPLICATION_JSON);
 
-        // for parseToComponentInstListInput
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
-                eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE)))
-                .thenReturn(Either.left(requestBodyObj));
+        doReturn(Either.left(requestBodyObj)).when(componentsUtils).convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
+            eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE));
 
-        when(inputsBusinessLogic.createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
-                any(), eq(true), eq(false)))
-                .thenReturn(Either.left(Collections.emptyList()));
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+        doReturn(Either.left(Collections.emptyList())).when(inputsBusinessLogic).createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
+            any(), eq(true), eq(false));
+
+        ResponseFormat responseFormat = new ResponseFormat(HttpStatus.OK_200.getStatusCode());
+        doReturn(responseFormat).when(componentsUtils).getResponseFormat(ActionStatus.OK);
 
         Response response = buildCreateListInputCall().post(entity);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200.getStatusCode());
@@ -379,9 +407,11 @@ public class InputsServletTest extends JerseySpringBaseTest {
 
     @Test
     public void test_deleteInput_failure_deleteInput() throws Exception {
-        when(inputsBusinessLogic.deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME))
-                .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+        doReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()))).when(inputsBusinessLogic)
+            .deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME);
+
+        ResponseFormat responseFormat = new ResponseFormat(HttpStatus.OK_200.getStatusCode());
+        doReturn(responseFormat).when(componentsUtils).getResponseFormat(ActionStatus.OK);
 
         // invoke delete call
         Response response = target("/v1/catalog/services/{id}/delete/{inputId}/input")

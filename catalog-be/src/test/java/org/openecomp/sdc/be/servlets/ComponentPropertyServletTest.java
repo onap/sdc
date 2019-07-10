@@ -111,12 +111,7 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
     }
 
     private static void initMockitoStubbings() {
-        when(request.getSession()).thenReturn(session);
-        when(session.getServletContext()).thenReturn(context);
-        when(context.getAttribute(eq(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))).thenReturn(wrapper);
-        when(wrapper.getWebAppContext(any())).thenReturn(webAppContext);
-        when(webAppContext.getBean(eq(PropertyBusinessLogic.class))).thenReturn(propertyBl);
-        when(webAppContext.getBean(eq(ComponentsUtils.class))).thenReturn(componentsUtils);
+
     }
 
     private String getValidProperty() {

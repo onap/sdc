@@ -21,12 +21,16 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import fj.data.Either;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
@@ -42,12 +46,14 @@ import java.util.Map;
 public class ExternalRefsServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(ExternalRefsServlet.class);
-    private final ComponentsUtils componentsUtils;
     private final ExternalRefsBusinessLogic businessLogic;
 
-    public ExternalRefsServlet(ExternalRefsBusinessLogic businessLogic, ComponentsUtils componentsUtils){
-        this.businessLogic = businessLogic;
-        this.componentsUtils = componentsUtils;
+    @Inject
+    public ExternalRefsServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ExternalRefsBusinessLogic externalRefsBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.businessLogic = externalRefsBusinessLogic;
     }
 
     @GET

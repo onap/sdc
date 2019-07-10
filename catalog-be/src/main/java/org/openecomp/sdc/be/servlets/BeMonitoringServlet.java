@@ -28,19 +28,23 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
@@ -60,6 +64,18 @@ public class BeMonitoringServlet extends BeGenericServlet {
     Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final Logger log = Logger.getLogger(ConfigServlet.class);
+    private final HealthCheckBusinessLogic healthCheckBusinessLogic;
+    private final MonitoringBusinessLogic monitoringBusinessLogic;
+
+    @Inject
+    public BeMonitoringServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        HealthCheckBusinessLogic healthCheckBusinessLogic,
+        MonitoringBusinessLogic monitoringBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.healthCheckBusinessLogic = healthCheckBusinessLogic;
+        this.monitoringBusinessLogic = monitoringBusinessLogic;
+    }
 
     @GET
     @Path("/healthCheck")
@@ -69,7 +85,6 @@ public class BeMonitoringServlet extends BeGenericServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "SDC BE components are all up"), @ApiResponse(code = 500, message = "One or more SDC BE components are down") })
     public Response getHealthCheck(@Context final HttpServletRequest request) {
         try {
-            HealthCheckBusinessLogic healthCheckBusinessLogic = getHealthCheckBL(request.getSession().getServletContext());
             Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus = healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
             Boolean aggregateStatus = beHealthCheckInfosStatus.getLeft();
             ActionStatus status = aggregateStatus ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
@@ -103,9 +118,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
                 return buildErrorResponse(getComponentsUtils().getResponseFormatAdditionalProperty(ActionStatus.GENERAL_ERROR));
             }
             log.trace("Received monitoring metrics: {}", monitoringEvent);
-            ServletContext context = request.getSession().getServletContext();
-            MonitoringBusinessLogic bl = getMonitoringBL(context);
-            Either<Boolean, ResponseFormat> result = bl.logMonitoringEvent(monitoringEvent);
+            Either<Boolean, ResponseFormat> result = monitoringBusinessLogic.logMonitoringEvent(monitoringEvent);
             if (result.isRight()) {
                 return buildErrorResponse(result.right().value());
             }
@@ -164,12 +177,6 @@ public class BeMonitoringServlet extends BeGenericServlet {
         }
 
         return object;
-    }
-
-    private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
 }
