@@ -24,17 +24,21 @@ import com.google.gson.Gson;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
@@ -53,6 +57,15 @@ public class ConsumerServlet extends BeGenericServlet {
     private static final String MODIFIER_ID_IS = "modifier id is {}";
 	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
 	private static final Logger log = Logger.getLogger(ConsumerServlet.class);
+    private ConsumerBusinessLogic businessLogic;
+
+	  @Inject
+    public ConsumerServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ConsumerBusinessLogic businessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.businessLogic = businessLogic;
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -71,8 +84,6 @@ public class ConsumerServlet extends BeGenericServlet {
         log.debug(MODIFIER_ID_IS, userId);
 
         try {
-            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
-
             Either<ConsumerDefinition, ResponseFormat> convertionResponse = convertJsonToObject(data, modifier, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
 
             if (convertionResponse.isRight()) {
@@ -119,8 +130,6 @@ public class ConsumerServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
-
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.getConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
@@ -157,8 +166,6 @@ public class ConsumerServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
-
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.deleteConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
@@ -174,12 +181,6 @@ public class ConsumerServlet extends BeGenericServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 
         }
-    }
-
-    private ConsumerBusinessLogic getConsumerBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ConsumerBusinessLogic.class);
     }
 
     public Either<ConsumerDefinition, ResponseFormat> convertJsonToObject(String data, User user, AuditingActionEnum actionEnum) {

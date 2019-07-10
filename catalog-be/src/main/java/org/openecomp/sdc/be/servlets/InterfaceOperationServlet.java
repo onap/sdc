@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -44,19 +45,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -67,6 +75,17 @@ import org.slf4j.LoggerFactory;
 public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
     private static final Logger log = LoggerFactory.getLogger(InterfaceOperationServlet.class);
+    private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+
+    @Inject
+    public InterfaceOperationServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -88,7 +107,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
     private Response createOrUpdate(String data, ComponentTypeEnum componentType, String componentId,
             HttpServletRequest request, String userId, boolean isUpdate) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -97,16 +115,17 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
             List<InterfaceDefinition> mappedInterfaceData = getMappedInterfaceData(data, modifier, componentType);
             Either<List<InterfaceDefinition>, ResponseFormat> actionResponse;
             if (isUpdate) {
                 actionResponse =
-                        businessLogic.updateInterfaceOperation(componentIdLower, mappedInterfaceData, modifier, true);
+                    interfaceOperationBusinessLogic
+                        .updateInterfaceOperation(componentIdLower, mappedInterfaceData, modifier, true);
             } else {
                 actionResponse =
-                        businessLogic.createInterfaceOperation(componentIdLower, mappedInterfaceData, modifier, true);
+                    interfaceOperationBusinessLogic
+                        .createInterfaceOperation(componentIdLower, mappedInterfaceData, modifier, true);
             }
 
             if (actionResponse.isRight()) {
@@ -175,7 +194,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     private Response delete(String interfaceId, String operationId, String componentId, HttpServletRequest request,
             String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -184,8 +202,8 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
-            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse = businessLogic.deleteInterfaceOperation(
+            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse =
+                interfaceOperationBusinessLogic.deleteInterfaceOperation(
                     componentIdLower, interfaceId, Collections.singletonList(operationId), modifier, true);
             if (actionResponse.isRight()) {
                 log.error("failed to delete interface operation");
@@ -221,7 +239,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
     private Response get(String interfaceId, String operationId, String componentId, HttpServletRequest request,
             String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -230,8 +247,8 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
-            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse = businessLogic.getInterfaceOperation(
+            Either<List<InterfaceDefinition>, ResponseFormat> actionResponse =
+                interfaceOperationBusinessLogic.getInterfaceOperation(
                     componentIdLower, interfaceId, Collections.singletonList(operationId), modifier, true);
             if (actionResponse.isRight()) {
                 log.error("failed to get interface operation");

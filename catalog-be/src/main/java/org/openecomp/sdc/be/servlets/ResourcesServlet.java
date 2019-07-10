@@ -23,22 +23,29 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -63,6 +70,17 @@ import java.util.Map;
 public class ResourcesServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ResourcesServlet.class);
+    private final ResourceBusinessLogic resourceBusinessLogic;
+
+    @Inject
+    public ResourcesServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ResourceBusinessLogic resourceBusinessLogic,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.resourceBusinessLogic = resourceBusinessLogic;
+    }
 
     @POST
     @Path("/resources")
@@ -75,8 +93,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
-
-        ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
@@ -97,8 +113,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             // UI Create
             else {
 
-                ResourceBusinessLogic businessLogic = getResourceBL(context);
-
                 Either<Resource, ResponseFormat> convertResponse = parseToResource(data, modifier);
                 if (convertResponse.isRight()) {
                     log.debug("failed to parse resource");
@@ -107,7 +121,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 }
 
                 Resource resource = convertResponse.left().value();
-                Resource createdResource = businessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
+                Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
                 Object representation = RepresentationUtils.toRepresentation(createdResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
@@ -189,8 +203,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         try {
             String resourceIdLower = resourceId.toLowerCase();
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
-            ResponseFormat actionResponse = businessLogic.deleteResource(resourceIdLower, modifier);
+            ResponseFormat actionResponse = resourceBusinessLogic.deleteResource(resourceIdLower, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete resource");
@@ -225,8 +238,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}" , userId);
 
         Response response;
-        ResourceBusinessLogic businessLogic = getResourceBL(context);
-        ResponseFormat actionResponse = businessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
+        ResponseFormat actionResponse = resourceBusinessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
 
         if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
             log.debug("failed to delete resource");
@@ -259,9 +271,8 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         try {
             String resourceIdLower = resourceId.toLowerCase();
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
             log.trace("get resource with id {}", resourceId);
-            Either<Resource, ResponseFormat> actionResponse = businessLogic.getResource(resourceIdLower, modifier);
+            Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic.getResource(resourceIdLower, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get resource");
@@ -295,8 +306,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}" , userId);
         Response response;
         try {
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
-            Either<Resource, ResponseFormat> actionResponse = businessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
+            Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
@@ -328,7 +338,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug("modifier id is {}" , userId);
         Response response;
-        ResourceBusinessLogic businessLogic = getResourceBL(context);
 
         if (resourceType != null && !ResourceTypeEnum.containsName(resourceType)) {
             log.debug("invalid resource type received");
@@ -340,7 +349,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         if (resourceType != null) {
             typeEnum = ResourceTypeEnum.valueOf(resourceType);
         }
-        Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateResourceNameExists(resourceName, typeEnum, userId);
+        Either<Map<String, Boolean>, ResponseFormat> actionResponse = resourceBusinessLogic.validateResourceNameExists(resourceName, typeEnum, userId);
 
         if (actionResponse.isRight()) {
             log.debug("failed to validate resource name");
@@ -355,13 +364,10 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCertifiedAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}" , url);
         try {
-            List<Resource> resources = getResourceBL(context)
+            List<Resource> resources = resourceBusinessLogic
                     .getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, userId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(resources));
 
@@ -377,12 +383,10 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}" , url);
         try {
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
-            List<Resource> resouces = businessLogic.getAllCertifiedResources(false, HighestFilterEnum.ALL, userId);
+            List<Resource> resouces = resourceBusinessLogic.getAllCertifiedResources(false, HighestFilterEnum.ALL, userId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(resouces));
 
         } catch (IOException e) {
@@ -402,8 +406,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId, @ApiParam(value = "Resource metadata to be updated", required = true) String data, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
 
@@ -413,7 +415,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}", userId);
         Response response;
         try {
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
             String resourceIdLower = resourceId.toLowerCase();
             Either<Resource, ResponseFormat> updateInfoResource = getComponentsUtils().convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.RESOURCE);
             if (updateInfoResource.isRight()) {
@@ -421,7 +422,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 response = buildErrorResponse(updateInfoResource.right().value());
                 return response;
             }
-            Resource updatedResource = businessLogic.updateResourceMetadata(resourceIdLower, updateInfoResource.left().value(), null, modifier, false);
+            Resource updatedResource = resourceBusinessLogic.updateResourceMetadata(resourceIdLower, updateInfoResource.left().value(), null, modifier, false);
             Object resource = RepresentationUtils.toRepresentation(updatedResource);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), resource);
         } catch (IOException e) {
@@ -445,7 +446,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
         // get modifier id
@@ -459,14 +459,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             if (isUIImport(data)) {
                 performUIImport(responseWrapper, data, request, userId, resourceId);
             } else {
-                ResourceBusinessLogic businessLogic = getResourceBL(context);
                 Either<Resource, ResponseFormat> convertResponse = parseToLightResource(data, modifier);
                 if (convertResponse.isRight()) {
                     log.debug("failed to parse resource");
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-                Resource updatedResource = businessLogic.validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
+                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
                 Object representation = RepresentationUtils.toRepresentation(updatedResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
                 responseWrapper.setInnerElement(response);
@@ -491,8 +490,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         init();
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
 
@@ -507,9 +504,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         try {
 
-            ResourceBusinessLogic businessLogic = getResourceBL(context);
-
-            Either<Resource, ResponseFormat> eitherResource = businessLogic.getLatestResourceFromCsarUuid(csarUUID, user);
+            Either<Resource, ResponseFormat> eitherResource = resourceBusinessLogic.getLatestResourceFromCsarUuid(csarUUID, user);
 
             // validate response
             if (eitherResource.isRight()) {

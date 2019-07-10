@@ -20,17 +20,27 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class DistributionServiceServletTest {
 
 	private DistributionServiceServlet createTestSubject() {
-		return new DistributionServiceServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		DistributionMonitoringBusinessLogic distributionMonitoringLogic = mock(DistributionMonitoringBusinessLogic.class);
+		return new DistributionServiceServlet(userBusinessLogic, componentsUtils,
+			distributionMonitoringLogic);
 	}
 
 	

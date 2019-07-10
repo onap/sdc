@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -31,11 +34,13 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -47,6 +52,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -55,6 +61,16 @@ import javax.ws.rs.core.Response;
 public class LifecycleServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(LifecycleServlet.class);
+    private final LifecycleBusinessLogic lifecycleBusinessLogic;
+
+    @Inject
+    public LifecycleServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        LifecycleBusinessLogic lifecycleBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.lifecycleBusinessLogic = lifecycleBusinessLogic;
+    }
+
 
     @POST
     @Path("/{componentCollection}/{componentId}/lifecycleState/{lifecycleOperation}")
@@ -68,9 +84,6 @@ public class LifecycleServlet extends BeGenericServlet {
             @ApiParam(allowableValues = "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
             @ApiParam(value = "id of component to be changed") @PathParam(value = "componentId") final String componentId, @Context final HttpServletRequest request,
             @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
-        ServletContext context = request.getSession().getServletContext();
-        LifecycleBusinessLogic businessLogic = getLifecycleBL(context);
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -112,7 +125,8 @@ public class LifecycleServlet extends BeGenericServlet {
             LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
             ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(componentCollection);
             if (componentType != null) {
-                Either<? extends Component, ResponseFormat> actionResponse = businessLogic.changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
+                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
+                    .changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
 
                 if (actionResponse.isRight()) {
                     log.info("failed to change resource state");

@@ -23,14 +23,20 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -56,6 +62,16 @@ public class GroupServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(GroupServlet.class);
     public static final String START_HANDLE_REQUEST = "Start handle request of {}";
+    private final GroupBusinessLogic groupBL;
+
+    @Inject
+    public GroupServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.groupBL = groupBL;
+    }
 
     @POST
     @Path("/{containerComponentType}/{componentId}/groups/{groupType}")
@@ -72,13 +88,11 @@ public class GroupServlet extends AbstractValidationsServlet {
                                 @PathParam("groupType") final String type,
                                 @Context final HttpServletRequest request,
                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(post) Start handle request of {}", url);
 
-        GroupBusinessLogic businessLogic = getGroupBL(context);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = businessLogic
+        GroupDefinition groupDefinition = groupBL
                 .createGroup(componentId, componentTypeEnum, type, userId);
 
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
@@ -95,15 +109,13 @@ public class GroupServlet extends AbstractValidationsServlet {
                                  @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
                                  @Context final HttpServletRequest request,
                                  @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
 
         try {
 
-            GroupBusinessLogic businessLogic = this.getGroupBL(context);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            Either<GroupDefinitionInfo, ResponseFormat> actionResponse = businessLogic
+            Either<GroupDefinitionInfo, ResponseFormat> actionResponse = groupBL
                     .getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
 
             if (actionResponse.isRight()) {
@@ -137,12 +149,10 @@ public class GroupServlet extends AbstractValidationsServlet {
                                 @PathParam("groupUniqueId") final String groupId,
                                 @Context final HttpServletRequest request,
                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
-        GroupBusinessLogic businessLogic = this.getGroupBL(context);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = businessLogic
+        GroupDefinition groupDefinition = groupBL
                 .deleteGroup(componentId, componentTypeEnum, groupId, userId);
 
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), groupDefinition.getUniqueId());
@@ -162,10 +172,8 @@ public class GroupServlet extends AbstractValidationsServlet {
                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                 @ApiParam(value = "GroupDefinition", required = true) GroupDefinition groupData,
                                 @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
-        GroupBusinessLogic businessLogic = this.getGroupBL(context);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition updatedGroup = businessLogic.updateGroup(componentId, componentTypeEnum, groupId, userId, groupData);
+        GroupDefinition updatedGroup = groupBL.updateGroup(componentId, componentTypeEnum, groupId, userId, groupData);
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), updatedGroup);
     }
 
@@ -184,7 +192,6 @@ public class GroupServlet extends AbstractValidationsServlet {
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
 
@@ -195,8 +202,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            GroupBusinessLogic businessLogic = getGroupBL(context);
-
             Either<GroupDefinition, ResponseFormat> convertResponse = parseToObject(data, () -> GroupDefinition.class);
             if (convertResponse.isRight()) {
                 log.debug("failed to parse group");
@@ -207,7 +212,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 
             // Update GroupDefinition
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            Either<GroupDefinition, ResponseFormat> actionResponse = businessLogic
+            Either<GroupDefinition, ResponseFormat> actionResponse = groupBL
                     .validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true ,true);
 
             if (actionResponse.isRight()) {

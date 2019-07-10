@@ -23,17 +23,20 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
@@ -50,6 +53,15 @@ import javax.ws.rs.core.Response;
 public class AdditionalInformationServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(AdditionalInformationServlet.class);
+    private AdditionalInformationBusinessLogic businessLogic;
+
+    @Inject
+    public AdditionalInformationServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        AdditionalInformationBusinessLogic businessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.businessLogic = businessLogic;
+    }
 
     /**
      *
@@ -297,9 +309,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             // convert json to AdditionalInfoParameterInfo
             AdditionalInfoParameterInfo additionalInfoParameterInfo = gson.fromJson(data, AdditionalInfoParameterInfo.class);
 
-            // create the new property
-            AdditionalInformationBusinessLogic businessLogic = getBL(context);
-
             Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.createAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
@@ -346,9 +355,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         try {
             // convert json to AdditionalInfoParameterInfo
             AdditionalInfoParameterInfo additionalInfoParameterInfo = gson.fromJson(data, AdditionalInfoParameterInfo.class);
-
-            // create the new property
-            AdditionalInformationBusinessLogic businessLogic = getBL(context);
 
             additionalInfoParameterInfo.setUniqueId(labelId);
 
@@ -397,8 +403,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
         try {
 
-            AdditionalInformationBusinessLogic businessLogic = getBL(context);
-
             AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
             additionalInfoParameterInfo.setUniqueId(labelId);
 
@@ -446,9 +450,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
         try {
 
-            // create the new property
-            AdditionalInformationBusinessLogic businessLogic = getBL(context);
-
             AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
             additionalInfoParameterInfo.setUniqueId(labelId);
 
@@ -495,9 +496,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         log.debug("modifier id is {}", userId);
 
         try {
-
-            AdditionalInformationBusinessLogic businessLogic = getBL(context);
-
             Either<AdditionalInformationDefinition, ResponseFormat> either = businessLogic.getAllAdditionalInformation(nodeType, uniqueId, userId);
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
@@ -519,12 +517,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             return buildErrorResponse(responseFormat);
         }
 
-    }
-
-    private AdditionalInformationBusinessLogic getBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(AdditionalInformationBusinessLogic.class);
     }
 
 }

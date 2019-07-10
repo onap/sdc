@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
@@ -58,7 +59,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
@@ -67,6 +67,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.UploadArtifactInfo;
@@ -76,7 +77,6 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.Yaml;
 
 public abstract class AbstractValidationsServlet extends BeGenericServlet {
@@ -87,25 +87,20 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
 
     protected ServletUtils servletUtils;
-
     protected ResourceImportManager resourceImportManager;
+    protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    protected ComponentsUtils componentsUtils;
 
-    protected void init() {
-        initSpringFromContext();
+    public AbstractValidationsServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+        ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
+        super(userBusinessLogic, componentsUtils);
+        this.servletUtils = servletUtils;
+        this.resourceImportManager = resourceImportManager;
+        this.componentInstanceBusinessLogic = componentInstanceBL;
     }
 
-    private synchronized void initSpringFromContext() {
-        if (servletUtils == null) {
-            ServletContext context = servletRequest.getSession().getServletContext();
-            WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
-                    .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-            WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-            servletUtils = webApplicationContext.getBean(ServletUtils.class);
-            resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);
-            componentsUtils = webApplicationContext.getBean(ComponentsUtils.class);
-        }
+    protected void init() {
     }
 
     protected void validateResourceDoesNotExist(Wrapper<Response> responseWrapper, User user, String resourceName) {
@@ -297,7 +292,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     public ServletUtils getServletUtils() {
-        initSpringFromContext();
         return servletUtils;
     }
 
@@ -790,12 +784,11 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     protected void validateComponentInstanceBusinessLogic(HttpServletRequest request, String containerComponentType, Wrapper<ComponentInstanceBusinessLogic> blWrapper, Wrapper<ResponseFormat> errorWrapper) {
         ServletContext context = request.getSession().getServletContext();
-        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-        if (componentInstanceLogic == null) {
+        if (componentInstanceBusinessLogic == null) {
             log.debug("Unsupported component type {}", containerComponentType);
             errorWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
         } else {
-            blWrapper.setInnerElement(componentInstanceLogic);
+            blWrapper.setInnerElement(componentInstanceBusinessLogic);
         }
     }
 

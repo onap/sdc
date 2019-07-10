@@ -26,20 +26,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.info.DistributionStatusOfServiceListResponce;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Resource;
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -56,7 +57,14 @@ import javax.ws.rs.core.Response;
 public class DistributionServiceServlet extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(DistributionServiceServlet.class);
 
-    @Resource
+    @Inject
+    public DistributionServiceServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        DistributionMonitoringBusinessLogic distributionMonitoringLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.distributionMonitoringLogic = distributionMonitoringLogic;
+    }
+
     private DistributionMonitoringBusinessLogic distributionMonitoringLogic;
 
     @GET
@@ -67,7 +75,6 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
     public Response getServiceById(@PathParam("serviceUUID") final String serviceUUID, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
         Response response = null;
@@ -107,7 +114,6 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Status not found") })
     public Response getListOfDistributionStatuses(@PathParam("did") final String did, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
         Response response = null;
@@ -140,18 +146,6 @@ public class DistributionServiceServlet extends BeGenericServlet {
             return response;
         }
 
-    }
-
-    private void init(HttpServletRequest request) {
-        if (distributionMonitoringLogic == null) {
-            distributionMonitoringLogic = getDistributionBL(request.getSession().getServletContext());
-        }
-    }
-
-    private DistributionMonitoringBusinessLogic getDistributionBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(DistributionMonitoringBusinessLogic.class);
     }
 
 }
