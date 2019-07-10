@@ -135,11 +135,10 @@ public class ExternalRefServletTest extends JerseyTest {
         private GraphVertex resourceVertex;
         private ExternalReferencesOperation externalReferenceOperation;
         private HealingJanusGraphDao janusGraphDao;
-        private OperationUtils operationUtils;
 
         @Bean
         ExternalRefsServlet externalRefsServlet() {
-            return new ExternalRefsServlet(externalRefsBusinessLogic(), componentUtils);
+            return new ExternalRefsServlet(userAdmin, componentUtils, externalRefsBusinessLogic());
         }
 
         @Bean

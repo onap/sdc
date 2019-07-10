@@ -36,16 +36,20 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.OperationInput;
 import org.openecomp.sdc.be.model.User;
@@ -53,6 +57,7 @@ import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.types.ServiceConsumptionSource;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -79,6 +84,18 @@ import javax.ws.rs.core.Response;
 public class ServiceConsumptionServlet extends BeGenericServlet {
 
   private static final Logger log = LoggerFactory.getLogger(ServiceConsumptionServlet.class);
+  private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
+
+    @Inject
+    public ServiceConsumptionServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
+        ServiceBusinessLogic serviceBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
 
   @POST
   @Path("/services/{serviceId}/consumption/{serviceInstanceId}")
@@ -110,12 +127,11 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
       }
 
       Map<String, List<ServiceConsumptionData>> serviceConsumptionDataMap = dataFromJson.left().value();
-      ServiceBusinessLogic serviceBL = getServiceBL(context);
 
       for(Entry<String, List<ServiceConsumptionData>> consumptionEntry : serviceConsumptionDataMap.entrySet()) {
         List<ServiceConsumptionData> consumptionList = consumptionEntry.getValue();
         Either<List<Operation>, ResponseFormat> operationEither =
-            serviceBL.addServiceConsumptionData(serviceId, serviceInstanceId,
+            serviceBusinessLogic.addServiceConsumptionData(serviceId, serviceInstanceId,
                 consumptionEntry.getKey(), consumptionList, userId);
         if (operationEither.isRight()) {
           return buildErrorResponse(operationEither.right().value());
@@ -145,24 +161,21 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
                                            @Context final HttpServletRequest request,
                                            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    ServletContext context = request.getSession().getServletContext();
-
     String url = request.getMethod() + " " + request.getRequestURI();
     log.debug("Start handle request of {} modifier id is {}", url, userId);
     User user = new User();
     user.setUserId(userId);
 
     try {
-      InterfaceOperationBusinessLogic interfaceOperationBL = getInterfaceOperationBL(context);
       Either<List<OperationInputDefinition>, ResponseFormat> inputsEither =
-          interfaceOperationBL.getInputsListForOperation(serviceId, serviceInstanceId, interfaceId, operationId, user);
+          interfaceOperationBusinessLogic.getInputsListForOperation(serviceId, serviceInstanceId, interfaceId, operationId, user);
 
       if(inputsEither.isRight()) {
         return buildErrorResponse(inputsEither.right().value());
       }
 
       List<OperationInputDefinition> inputs = inputsEither.left().value();
-		return buildOkResponse(updateOperationInputListForUi(inputs, interfaceOperationBL));
+		return buildOkResponse(updateOperationInputListForUi(inputs, interfaceOperationBusinessLogic));
     }
     catch (Exception e) {
       BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Operation Inputs");

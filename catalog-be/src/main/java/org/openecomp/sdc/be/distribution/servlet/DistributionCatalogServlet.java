@@ -24,10 +24,14 @@ import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -43,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This Servlet serves external users to download artifacts.
@@ -60,6 +65,16 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     private static final String DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION = "download artifact failed with exception";
 	private static final String MISSING_X_ECOMP_INSTANCE_ID_HEADER = "Missing X-ECOMP-InstanceID header";
 	private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
+	private final ArtifactsBusinessLogic artifactsBusinessLogic;
+
+	  @Autowired
+    public DistributionCatalogServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ArtifactsBusinessLogic artifactsBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
+    }
+
     @Context
     private HttpServletRequest request;
 
@@ -111,9 +126,8 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            ServletContext context = request.getSession().getServletContext();
-            ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsLogic.downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
+            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
+                .downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
@@ -188,9 +202,8 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            ServletContext context = request.getSession().getServletContext();
-            ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsLogic.downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
+            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
+                .downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
@@ -263,9 +276,8 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            ServletContext context = request.getSession().getServletContext();
-            ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsLogic.downloadRsrcInstArtifactByNames(serviceName, serviceVersion, resourceInstanceName, artifactName);
+            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
+                .downloadRsrcInstArtifactByNames(serviceName, serviceVersion, resourceInstanceName, artifactName);
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));

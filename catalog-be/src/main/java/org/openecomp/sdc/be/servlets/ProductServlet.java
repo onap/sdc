@@ -23,11 +23,16 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -47,6 +52,15 @@ import java.util.Map;
 @Singleton
 public class ProductServlet extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(ProductServlet.class);
+    private final ProductBusinessLogic productBusinessLogic;
+
+    @Inject
+    public ProductServlet(UserBusinessLogic userBusinessLogic,
+        ProductBusinessLogic productBusinessLogic,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, componentsUtils);
+        this.productBusinessLogic = productBusinessLogic;
+    }
 
     @POST
     @Path("/products")
@@ -58,7 +72,6 @@ public class ProductServlet extends BeGenericServlet {
     public Response createProduct(@ApiParam(value = "Product object to be created", required = true) String data, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of product strategist user", required = true) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -68,9 +81,8 @@ public class ProductServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            ProductBusinessLogic businessLogic = getProductBL(context);
             Product product = RepresentationUtils.fromRepresentation(data, Product.class);
-            Either<Product, ResponseFormat> actionResponse = businessLogic.createProduct(product, modifier);
+            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.createProduct(product, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("Failed to create product");
@@ -99,7 +111,6 @@ public class ProductServlet extends BeGenericServlet {
             @ApiResponse(code = 500, message = "Internal Server Error"), @ApiResponse(code = 404, message = "Product not found"), })
     public Response getProductById(@PathParam("productId") final String productId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -110,9 +121,8 @@ public class ProductServlet extends BeGenericServlet {
         Response response = null;
 
         try {
-            ProductBusinessLogic businessLogic = getProductBL(context);
             log.trace("get product with id {}", productId);
-            Either<Product, ResponseFormat> actionResponse = businessLogic.getProduct(productId, modifier);
+            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.getProduct(productId, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("Failed to get product");
@@ -140,7 +150,6 @@ public class ProductServlet extends BeGenericServlet {
     public Response getServiceByNameAndVersion(@PathParam("productName") final String productName, @PathParam("productVersion") final String productVersion, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
@@ -148,8 +157,7 @@ public class ProductServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            ProductBusinessLogic businessLogic = getProductBL(context);
-            Either<Product, ResponseFormat> actionResponse = businessLogic.getProductByNameAndVersion(productName, productVersion, userId);
+            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.getProductByNameAndVersion(productName, productVersion, userId);
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -173,8 +181,6 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products/{productId}")
     public Response deleteProduct(@PathParam("productId") final String productId, @Context final HttpServletRequest request) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -187,9 +193,8 @@ public class ProductServlet extends BeGenericServlet {
         Response response = null;
 
         try {
-            ProductBusinessLogic businessLogic = getProductBL(context);
             log.trace("delete product with id {}", productId);
-            Either<Product, ResponseFormat> actionResponse = businessLogic.deleteProduct(productId, modifier);
+            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.deleteProduct(productId, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("Failed to delete product");
@@ -219,7 +224,6 @@ public class ProductServlet extends BeGenericServlet {
     public Response updateProductMetadata(@PathParam("productId") final String productId, @ApiParam(value = "Product object to be Updated", required = true) String data, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -230,9 +234,8 @@ public class ProductServlet extends BeGenericServlet {
 
         try {
             String productIdLower = productId.toLowerCase();
-            ProductBusinessLogic businessLogic = getProductBL(context);
             Product updatedProduct = RepresentationUtils.fromRepresentation(data, Product.class);
-            Either<Product, ResponseFormat> actionResponse = businessLogic.updateProductMetadata(productIdLower, updatedProduct, modifier);
+            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.updateProductMetadata(productIdLower, updatedProduct, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update product");
@@ -258,7 +261,6 @@ public class ProductServlet extends BeGenericServlet {
     @ApiOperation(value = "validate product name", httpMethod = "GET", notes = "checks if the chosen product name is available ", response = Response.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation") })
     public Response validateServiceName(@PathParam("productName") final String productName, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -267,9 +269,7 @@ public class ProductServlet extends BeGenericServlet {
         log.debug("modifier id is {}", userId);
         Response response = null;
         try {
-            ProductBusinessLogic businessLogic = getProductBL(context);
-
-            Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateProductNameExists(productName, userId);
+            Either<Map<String, Boolean>, ResponseFormat> actionResponse = productBusinessLogic.validateProductNameExists(productName, userId);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get validate service name");

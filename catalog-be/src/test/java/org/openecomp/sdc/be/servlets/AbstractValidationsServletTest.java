@@ -23,8 +23,16 @@ package org.openecomp.sdc.be.servlets;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -40,9 +48,18 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class AbstractValidationsServletTest {
-    private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};
+    private static UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+    private static ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+    private static ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+    private static ServletUtils servletUtils = mock(ServletUtils.class);
+    private static ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+    private static ArtifactsBusinessLogic artifactsBusinessLogic = mock(ArtifactsBusinessLogic.class);
+
+    private static AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
+            componentInstanceBL, componentsUtils, servletUtils,  resourceImportManager, artifactsBusinessLogic);
 
     private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
 

@@ -24,16 +24,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import org.apache.http.HttpStatus;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -42,7 +66,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -58,6 +81,20 @@ import java.util.Map;
 public class ServiceServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ServiceServlet.class);
+    private final ServiceBusinessLogic serviceBusinessLogic;
+    private final ResourceBusinessLogic resourceBusinessLogic;
+
+    @Inject
+    public ServiceServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ServiceBusinessLogic serviceBusinessLogic,
+        ResourceBusinessLogic resourceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.serviceBusinessLogic = serviceBusinessLogic;
+        this.resourceBusinessLogic = resourceBusinessLogic;
+    }
 
     @POST
     @Path("/services")
@@ -68,7 +105,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 409, message = "Service already exist") })
     public Response createService(@ApiParam(value = "Service object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -78,7 +114,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
                 log.debug("failed to parse service");
@@ -87,7 +122,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             }
 
             Service service = convertResponse.left().value();
-            Either<Service, ResponseFormat> actionResponse = businessLogic.createService(service, modifier);
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("Failed to create service");
@@ -118,7 +153,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @ApiOperation(value = "validate service name", httpMethod = "GET", notes = "checks if the chosen service name is available ", response = Response.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation") })
     public Response validateServiceName(@PathParam("serviceName") final String serviceName, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -128,9 +162,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}", userId);
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-
-            Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateServiceNameExists(serviceName, userId);
+            Either<Map<String, Boolean>, ResponseFormat> actionResponse = serviceBusinessLogic.validateServiceNameExists(serviceName, userId);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get validate service name");
@@ -178,7 +210,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             }
 
             if (responseWrapper.isEmpty()) {
-                Either<List<Map<String, Object>>, ResponseFormat> eitherServiceAudit = getServiceBL(context).getComponentAuditRecords(versionWrapper.getInnerElement(), uuidWrapper.getInnerElement(), userId);
+                Either<List<Map<String, Object>>, ResponseFormat> eitherServiceAudit = serviceBusinessLogic.getComponentAuditRecords(versionWrapper.getInnerElement(), uuidWrapper.getInnerElement(), userId);
 
                 if (eitherServiceAudit.isRight()) {
                     Response errorResponse = buildErrorResponse(eitherServiceAudit.right().value());
@@ -203,7 +235,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
     private void fillUUIDAndVersion(Wrapper<Response> responseWrapper, Wrapper<String> uuidWrapper, Wrapper<String> versionWrapper, User user, final ComponentTypeEnum componentTypeEnum, final String componentUniqueId, ServletContext context) {
 
         if (componentTypeEnum == ComponentTypeEnum.RESOURCE) {
-            Either<Resource, ResponseFormat> eitherResource = getResourceBL(context).getResource(componentUniqueId, user);
+            Either<Resource, ResponseFormat> eitherResource = resourceBusinessLogic.getResource(componentUniqueId, user);
             if (eitherResource.isLeft()) {
                 uuidWrapper.setInnerElement(eitherResource.left().value().getUUID());
                 versionWrapper.setInnerElement(eitherResource.left().value().getVersion());
@@ -212,7 +244,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             }
 
         } else {
-            Either<Service, ResponseFormat> eitherService = getServiceBL(context).getService(componentUniqueId, user);
+            Either<Service, ResponseFormat> eitherService = serviceBusinessLogic.getService(componentUniqueId, user);
             if (eitherService.isLeft()) {
                 uuidWrapper.setInnerElement(eitherService.left().value().getUUID());
                 versionWrapper.setInnerElement(eitherService.left().value().getVersion());
@@ -226,7 +258,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/services/{serviceId}")
     public Response deleteService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -240,8 +271,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            ResponseFormat actionResponse = businessLogic.deleteService(serviceIdLower, modifier);
+            ResponseFormat actionResponse = serviceBusinessLogic.deleteService(serviceIdLower, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete service");
@@ -263,7 +293,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/services/{serviceName}/{version}")
     public Response deleteServiceByNameAndVersion(@PathParam("serviceName") final String serviceName, @PathParam("version") final String version, @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -276,8 +305,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            ResponseFormat actionResponse = businessLogic.deleteServiceByNameAndVersion(serviceName, version, modifier);
+            ResponseFormat actionResponse = serviceBusinessLogic.deleteServiceByNameAndVersion(serviceName, version, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete service");
@@ -317,7 +345,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
@@ -326,7 +353,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 return response;
             }
             Service updatedService = convertResponse.left().value();
-            Either<Service, ResponseFormat> actionResponse = businessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update service");
@@ -367,7 +394,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         Response response = null;
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -375,7 +401,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug("modifier id is {}",userId);
 
-        ServiceBusinessLogic businessLogic;
         Either<List<GroupInstanceProperty>, ResponseFormat> actionResponse = null;
         try {
             List<GroupInstanceProperty> updatedProperties;
@@ -386,8 +411,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             }
             if(actionResponse == null){
                 log.debug("Start handle update group instance property values request. Received group instance is {}", groupInstanceId);
-                businessLogic = getServiceBL(context);
-                actionResponse = businessLogic.updateGroupInstancePropertyValues(modifier, serviceId, componentInstanceId, groupInstanceId, newProperties);
+                actionResponse = serviceBusinessLogic.updateGroupInstancePropertyValues(modifier, serviceId, componentInstanceId, groupInstanceId, newProperties);
                 if(actionResponse.isRight()){
                     actionResponse = Either.right(actionResponse.right().value());
                 }
@@ -416,7 +440,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
     public Response getServiceById(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -428,9 +451,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         Response response = null;
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
             log.debug("get service with id {}", serviceId);
-            Either<Service, ResponseFormat> actionResponse = businessLogic.getService(serviceIdLower, modifier);
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.getService(serviceIdLower, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get service");
@@ -460,7 +482,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response getServiceByNameAndVersion(@PathParam("serviceName") final String serviceName, @PathParam("serviceVersion") final String serviceVersion, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
@@ -468,8 +489,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Either<Service, ResponseFormat> actionResponse = businessLogic.getServiceByNameAndVersion(serviceName, serviceVersion, userId);
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.getServiceByNameAndVersion(serviceName, serviceVersion, userId);
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -499,7 +519,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response updateServiceDistributionState(@ApiParam(value = "DistributionChangeInfo - get comment out of body", required = true) LifecycleChangeInfoWithAction jsonChangeInfo, @PathParam("serviceId") final String serviceId,
             @ApiParam(allowableValues = "approve, reject", required = true) @PathParam("state") final String state, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -509,8 +528,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Either<Service, ResponseFormat> actionResponse = businessLogic.changeServiceDistributionState(serviceId, state, jsonChangeInfo, modifier);
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.changeServiceDistributionState(serviceId, state, jsonChangeInfo, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to Update Service Distribution State");
@@ -538,7 +556,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
     public Response activateDistribution(@PathParam("serviceId") final String serviceId, @PathParam("env") final String env, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -548,8 +565,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Either<Service, ResponseFormat> distResponse = businessLogic.activateDistribution(serviceId, env, modifier, request);
+            Either<Service, ResponseFormat> distResponse = serviceBusinessLogic.activateDistribution(serviceId, env, modifier, request);
 
             if (distResponse.isRight()) {
                 log.debug("failed to activate service distribution");
@@ -576,7 +592,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 400, message = "Invalid content / Missing content"), @ApiResponse(code = 404, message = "Requested service was not found"), @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
     public Response markDistributionAsDeployed(@PathParam("serviceId") final String serviceId, @PathParam("did") final String did, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -586,8 +601,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response = null;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Either<Service, ResponseFormat> distResponse = businessLogic.markDistributionAsDeployed(serviceId, did, modifier);
+            Either<Service, ResponseFormat> distResponse = serviceBusinessLogic.markDistributionAsDeployed(serviceId, did, modifier);
 
             if (distResponse.isRight()) {
                 log.debug("failed to mark distribution as deployed");
@@ -622,9 +636,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
         Response response;
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Service service = (businessLogic.getService(serviceId, modifier)).left().value();
-            Either<Service, ResponseFormat> res = businessLogic.updateDistributionStatusForActivation(service, modifier, DistributionStatusEnum.DISTRIBUTED);
+            Service service = (serviceBusinessLogic.getService(serviceId, modifier)).left().value();
+            Either<Service, ResponseFormat> res = serviceBusinessLogic.updateDistributionStatusForActivation(service, modifier, DistributionStatusEnum.DISTRIBUTED);
 
             if (res.isRight()) {
                 response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -647,7 +660,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
     public Response getServiceComponentRelationMap(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -659,9 +671,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         Response response = null;
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
             log.debug("get service components relations with id {}", serviceId);
-            Either<ServiceRelations, ResponseFormat> actionResponse = businessLogic.getServiceComponentsRelations(serviceIdLower, modifier);
+            Either<ServiceRelations, ResponseFormat> actionResponse = serviceBusinessLogic.getServiceComponentsRelations(serviceIdLower, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get service relations data");

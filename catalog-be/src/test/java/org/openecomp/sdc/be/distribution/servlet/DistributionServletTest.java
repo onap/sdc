@@ -20,8 +20,18 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -33,13 +43,17 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.distribution.AuditHandler;
 import org.openecomp.sdc.be.distribution.DistributionBusinessLogic;
 import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -47,18 +61,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class DistributionServletTest extends JerseyTest {
 
@@ -84,7 +86,6 @@ public class DistributionServletTest extends JerseyTest {
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
-        when(webApplicationContext.getBean(DistributionBusinessLogic.class)).thenReturn(distributionBusinessLogic);
         when(distributionBusinessLogic.getDistributionEngine()).thenReturn(distributionEngine);
         when(distributionEngine.isEnvironmentAvailable(ENV_NAME)).thenReturn(StorageOperationStatus.OK);
         when(distributionEngine.isEnvironmentAvailable()).thenReturn(StorageOperationStatus.OK);
@@ -145,6 +146,11 @@ public class DistributionServletTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+        GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+        ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+        ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(DistributionServlet.class)
@@ -153,6 +159,11 @@ public class DistributionServletTest extends JerseyTest {
                     @Override
                     protected void configure() {
                         bind(request).to(HttpServletRequest.class);
+                        bind(userBusinessLogic).to(UserBusinessLogic.class);
+                        bind(groupBusinessLogic).to(GroupBusinessLogic.class);
+                        bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
+                        bind(componentsUtils).to(ComponentsUtils.class);
+                        bind(distributionBusinessLogic).to(DistributionBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);

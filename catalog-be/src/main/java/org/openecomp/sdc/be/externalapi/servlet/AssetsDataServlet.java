@@ -22,10 +22,24 @@ package org.openecomp.sdc.be.externalapi.servlet;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -33,21 +47,22 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -75,6 +90,23 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     private static final Logger log = Logger.getLogger(AssetsDataServlet.class);
+    private final ElementBusinessLogic elementBusinessLogic;
+    private final AssetMetadataConverter assetMetadataConverter;
+    private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
+
+    @Inject
+    public AssetsDataServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ElementBusinessLogic elementBusinessLogic,
+        AssetMetadataConverter assetMetadataConverter,
+        ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.elementBusinessLogic = elementBusinessLogic;
+        this.assetMetadataConverter = assetMetadataConverter;
+        this.componentBusinessLogicProvider = componentBusinessLogicProvider;
+    }
 
     /**
      *
@@ -133,10 +165,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         }
 
         try {
-            ServletContext context = request.getSession().getServletContext();
-            ElementBusinessLogic elementLogic = getElementBL(context);
-
-            AssetMetadataConverter assetMetadataUtils = getAssetUtils(context);
             Map<FilterKeyEnum, String> filters = new EnumMap<>(FilterKeyEnum.class);
 
             if (category != null) {
@@ -159,7 +187,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeEnum.name());
             }
 
-            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementLogic.getFilteredCatalogComponents(assetType, filters, query);
+            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic.getFilteredCatalogComponents(assetType, filters, query);
 
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
@@ -168,7 +196,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(responseFormat);
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
-                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataUtils.convertToAssetMetadata(assetTypeData.left().value(), requestURI, false);
+                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
+                    .convertToAssetMetadata(assetTypeData.left().value(), requestURI, false);
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
                     responseFormat = resMetadata.right().value();
@@ -239,11 +268,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         }
 
         try {
-            ServletContext context = request.getSession().getServletContext();
-            ElementBusinessLogic elementLogic = getElementBL(context);
-            AssetMetadataConverter assetMetadataUtils = getAssetUtils(context);
-
-            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementLogic.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
+            Either<List<? extends Component>, ResponseFormat> assetTypeData =
+                elementBusinessLogic.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
 
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
@@ -255,7 +281,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             }
             resourceCommonInfo.setResourceName(assetTypeData.left().value().iterator().next().getName());
             log.debug("getAssetList: Asset Fetching Success");
-            Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataUtils.convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
+            Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
+                .convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
             if (resMetadata.isRight()) {
                 log.debug("getAssetList: Asset conversion Failed");
                 responseFormat = resMetadata.right().value();
@@ -313,7 +340,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         log.debug("Start handle request of {} {}", request.getMethod(), url);
         Response response = null;
         ResponseFormat responseFormat = null;
-        ServletContext context = request.getSession().getServletContext();
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_TOSCA_MODEL;
 
@@ -329,7 +355,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         }
 
         try {
-            ComponentBusinessLogic componentBL = getComponentBL(componentType, context);
+            ComponentBusinessLogic componentBL = componentBusinessLogicProvider.getInstance(componentType);
 
 
             Either<ImmutablePair<String, byte[]>, ResponseFormat> csarArtifact = componentBL.getToscaModelByComponentUuid(componentType, uuid, resourceCommonInfo);

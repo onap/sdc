@@ -27,10 +27,12 @@ import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -39,10 +41,13 @@ import org.openecomp.sdc.be.datamodel.ForwardingPaths;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -87,6 +92,22 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 	private static final Logger log = Logger.getLogger(ComponentInstanceServlet.class);
     private static final Type PROPERTY_CONSTRAINT_TYPE = new TypeToken<PropertyConstraint>() {}.getType();
     private static final Gson gsonDeserializer = new GsonBuilder().registerTypeAdapter(PROPERTY_CONSTRAINT_TYPE, new PropertyConstraintDeserialiser()).create();
+    private final GroupBusinessLogic groupBL;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
+
+
+    @Inject
+    public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ServiceBusinessLogic serviceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.groupBL = groupBL;
+        this.componentInstanceBusinessLogic = componentInstanceBL;
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
 
     @POST
     @Path("/{containerComponentType}/{componentId}/resourceInstance")
@@ -105,12 +126,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentInstance componentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
             componentInstance.setInvariantName(null);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -134,7 +154,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
                     + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -155,8 +174,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             String data = new String(bytes);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -169,7 +187,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             ComponentInstance resourceInstance = convertResponse.left().value();
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.updateComponentInstanceMetadata(containerComponentType, componentId, componentInstanceId, userId, resourceInstance);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.updateComponentInstanceMetadata(containerComponentType, componentId, componentInstanceId, userId, resourceInstance);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -178,8 +196,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
                 boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null && resourceInstance.getDirectives().contains(
                         DirectivesUtils.SELECTABLE);
-                ServiceBusinessLogic
-                        serviceBusinessLogic = (ServiceBusinessLogic) getComponentBL(componentTypeEnum, context);
 
                 if(shouldCreateServiceFilter) {
                     Either<CINodeFilterDataDefinition, ResponseFormat> either =
@@ -238,8 +254,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             String userId = request.getHeader(Constants.USER_ID_HEADER);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -255,7 +270,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             List<ComponentInstance> componentInstanceList = convertResponse.left().value();
 
-            Either<List<ComponentInstance>, ResponseFormat> actionResponse = componentInstanceLogic.updateComponentInstance(containerComponentType, componentId, userId, componentInstanceList, true);
+            Either<List<ComponentInstance>, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+                .updateComponentInstance(containerComponentType, componentId, userId, componentInstanceList, true);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -287,13 +303,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
             String userId = request.getHeader(Constants.USER_ID_HEADER);
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.deleteComponentInstance(containerComponentType, componentId, resourceInstanceId, userId);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deleteComponentInstance(containerComponentType, componentId, resourceInstanceId, userId);
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -320,7 +335,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @ApiParam(value = "allowed values are resources /services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
                     + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true) @PathParam("containerComponentType") final String containerComponentType,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "RelationshipInfo", required = true) String data, @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -331,8 +345,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             log.debug(START_HANDLE_REQUEST_OF, url);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -347,7 +360,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             } else {
                 RequirementCapabilityRelDef requirementDef = regInfoW.left().value();
                 requirementDef.setOriginUI(true);
-                resultOp = componentInstanceLogic.associateRIToRI(componentId, userId, requirementDef, componentTypeEnum);
+                resultOp = componentInstanceBusinessLogic.associateRIToRI(componentId, userId, requirementDef, componentTypeEnum);
             }
 
             Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = resultOp;
@@ -387,8 +400,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             log.debug(START_HANDLE_REQUEST_OF, url);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -401,7 +413,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             RequirementCapabilityRelDef requirementDef = regInfoW.left().value();
-            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = componentInstanceLogic.dissociateRIFromRI(componentId, userId, requirementDef, componentTypeEnum);
+            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = componentInstanceBusinessLogic.dissociateRIFromRI(componentId, userId, requirementDef, componentTypeEnum);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -447,8 +459,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             String data = new String(bytes);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -464,7 +475,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             CreateAndAssotiateInfo createAndAssotiateInfo = convertStatus.left().value();
             RequirementCapabilityRelDef requirementDef = createAndAssotiateInfo.getAssociate();
             requirementDef.setOriginUI(true);
-            Either<CreateAndAssotiateInfo, ResponseFormat> actionResponse = componentInstanceLogic.createAndAssociateRIToRI(containerComponentType, componentId, userId, createAndAssotiateInfo);
+            Either<CreateAndAssotiateInfo, ResponseFormat> actionResponse = componentInstanceBusinessLogic.createAndAssociateRIToRI(containerComponentType, componentId, userId, createAndAssotiateInfo);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -512,13 +523,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ServletContext context = request.getSession().getServletContext();
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
-            Either<List<ComponentInstanceProperty>, ResponseFormat> actionResponse = componentInstanceLogic.createOrUpdatePropertiesValues(componentTypeEnum, componentId, componentInstanceId, propertiesToUpdate, userId);
+            Either<List<ComponentInstanceProperty>, ResponseFormat> actionResponse =
+                componentInstanceBusinessLogic.createOrUpdatePropertiesValues(componentTypeEnum, componentId, componentInstanceId, propertiesToUpdate, userId);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -570,14 +581,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ServletContext context = request.getSession().getServletContext();
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
             Either<List<ComponentInstanceInput>, ResponseFormat> actionResponse =
-                    componentInstanceLogic.createOrUpdateInstanceInputValues(componentTypeEnum, componentId, componentInstanceId, inputsToUpdate, userId);
+                componentInstanceBusinessLogic.createOrUpdateInstanceInputValues(componentTypeEnum, componentId, componentInstanceId, inputsToUpdate, userId);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -668,20 +678,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "property id") @PathParam("propertyId") final String propertyId,
             @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         try {
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
-            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceLogic.deletePropertyValue(componentTypeEnum, componentId, componentInstanceId, propertyId, userId);
+            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deletePropertyValue(componentTypeEnum, componentId, componentInstanceId, propertyId, userId);
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
@@ -720,8 +727,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             String data = new String(bytes);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -735,7 +741,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             ComponentInstance newResourceInstance = convertResponse.left().value();
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.changeComponentInstanceVersion(containerComponentType, componentId, componentInstanceId, userId, newResourceInstance);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.changeComponentInstanceVersion(containerComponentType, componentId, componentInstanceId, userId, newResourceInstance);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -786,13 +792,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ServletContext context = request.getSession().getServletContext();
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
-            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceLogic.createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, componentInstanceId, groupInstanceId, property, userId);
+            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceBusinessLogic.createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, componentInstanceId, groupInstanceId, property, userId);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -818,15 +823,15 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "group found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Group not found") })
     public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("componentId") final String componentId, @PathParam("componentInstanceId") final String componentInstanceId,
             @PathParam("groupInstId") final String groupInstId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
         try {
 
-            GroupBusinessLogic businessLogic = this.getGroupBL(context);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            Either<GroupDefinitionInfo, ResponseFormat> actionResponse = businessLogic.getGroupInstWithArtifactsById(componentTypeEnum, componentId, componentInstanceId, groupInstId, userId, false);
+            Either<GroupDefinitionInfo, ResponseFormat> actionResponse = groupBL
+                .getGroupInstWithArtifactsById(componentTypeEnum, componentId, componentInstanceId,
+                    groupInstId, userId, false);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get all non abstract {}", containerComponentType);
@@ -859,9 +864,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceBL = getComponentInstanceBL(context);
 
-            Either<List<ComponentInstanceProperty>, ResponseFormat> componentInstancePropertiesById = componentInstanceBL.getComponentInstancePropertiesById(containerComponentType, containerComponentId, componentInstanceUniqueId, userId);
+            Either<List<ComponentInstanceProperty>, ResponseFormat> componentInstancePropertiesById = componentInstanceBusinessLogic.getComponentInstancePropertiesById(containerComponentType, containerComponentId, componentInstanceUniqueId, userId);
 
             if (componentInstancePropertiesById.isRight()) {
                 log.debug(FAILED_TO_GET_PROPERTIES_OF_COMPONENT_INSTANCE_ID_IN_WITH_ID, componentInstanceUniqueId, containerComponentType, containerComponentId);
@@ -894,9 +898,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceBL = getComponentInstanceBL(context);
 
-            Either<List<ComponentInstanceProperty>, ResponseFormat> componentInstancePropertiesById = componentInstanceBL.getComponentInstanceCapabilityPropertiesById(containerComponentType, containerComponentId, componentInstanceUniqueId,
+            Either<List<ComponentInstanceProperty>, ResponseFormat> componentInstancePropertiesById = componentInstanceBusinessLogic.getComponentInstanceCapabilityPropertiesById(containerComponentType, containerComponentId, componentInstanceUniqueId,
                     capabilityType, capabilityName, ownerId, userId);
 
             if (componentInstancePropertiesById.isRight()) {
@@ -944,9 +947,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceBL = getComponentInstanceBL(context);
 
-            Either<List<ComponentInstanceProperty>, ResponseFormat> updateCICapProperty = componentInstanceBL.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, propertiesToUpdate, userId);
+            Either<List<ComponentInstanceProperty>, ResponseFormat> updateCICapProperty = componentInstanceBusinessLogic.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, propertiesToUpdate, userId);
 
             if (updateCICapProperty.isRight()) {
                 log.debug(FAILED_TO_GET_PROPERTIES_OF_COMPONENT_INSTANCE_ID_IN_WITH_ID, componentInstanceUniqueId, containerComponentType, containerComponentId);
@@ -982,12 +984,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 log.debug("Unsupported container component type {}", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.createServiceProxy();
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.createServiceProxy();
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -1017,13 +1018,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
             String userId = request.getHeader(Constants.USER_ID_HEADER);
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.deleteServiceProxy();
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deleteServiceProxy();
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -1056,12 +1056,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             String userId = request.getHeader(Constants.USER_ID_HEADER);
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.changeServiceProxyVersion();
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.changeServiceProxyVersion();
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -1102,9 +1101,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
 
-            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = componentInstanceLogic.getRelationById(componentId, relationId, userId, componentTypeEnum);
+            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = componentInstanceBusinessLogic.getRelationById(componentId, relationId, userId, componentTypeEnum);
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
@@ -1213,8 +1211,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-        if (componentInstanceLogic == null) {
+        if (componentInstanceBusinessLogic == null) {
             log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
         }
@@ -1226,7 +1223,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             log.error("missing component id");
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.MISSING_DATA));
         }
-        Either<Set<String>,ResponseFormat> actionResponse= componentInstanceLogic.forwardingPathOnVersionChange(
+        Either<Set<String>,ResponseFormat> actionResponse= componentInstanceBusinessLogic.forwardingPathOnVersionChange(
             containerComponentType,componentId,oldComponentInstanceId,newComponentInstance);
         if (actionResponse.isRight()) {
             return buildErrorResponse(actionResponse.right().value());
@@ -1259,12 +1256,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentInstance inputComponentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
             inputComponentInstance.setInvariantName(null);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(CNTAINER_CMPT_TYPE);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, componentTypeEnum);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, "services"));
             }
-            Either<Map<String, ComponentInstance>, ResponseFormat> copyComponentInstance = componentInstanceLogic.copyComponentInstance(
+            Either<Map<String, ComponentInstance>, ResponseFormat> copyComponentInstance = componentInstanceBusinessLogic.copyComponentInstance(
                     inputComponentInstance, containerComponentId, componentInstanceId, userId);
 
             if (copyComponentInstance.isRight()) {
@@ -1298,7 +1294,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId,
             @Context final HttpServletRequest request,
             @ApiParam(value = "Component Instance Id List", required = true) final String componentInstanceIdLisStr) {
-        ServletContext context = request.getSession().getServletContext();
         try {
             if (componentInstanceIdLisStr == null || componentInstanceIdLisStr.isEmpty()) {
                 log.error("Empty JSON List was sent",componentInstanceIdLisStr);
@@ -1306,8 +1301,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
 
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.error("Unsupported component type {}", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -1323,7 +1317,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             String userId = request.getHeader(Constants.USER_ID_HEADER);
             List<String> componentInstanceIdList = convertResponse.left().value();
             log.debug("batchDeleteResourceInstances componentInstanceIdList is {}", componentInstanceIdList);
-            Map<String, List<String>> deleteErrorMap = componentInstanceLogic.batchDeleteComponentInstance(containerComponentType,
+            Map<String, List<String>> deleteErrorMap = componentInstanceBusinessLogic.batchDeleteComponentInstance(containerComponentType,
                     componentId, componentInstanceIdList, userId);
 
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteErrorMap);
@@ -1353,7 +1347,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @ApiParam(value = "RelationshipInfo", required = true) String data,
             @Context final HttpServletRequest request) {
-        ServletContext context = request.getSession().getServletContext();
 
         try {
             if (data == null || data.length() == 0) {
@@ -1362,9 +1355,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
 
-            if (componentInstanceLogic == null) {
+            if (componentInstanceBusinessLogic == null) {
                 log.debug("Unsupported component type {}", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
@@ -1378,7 +1370,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             List<RequirementCapabilityRelDef> requirementDefList = regInfoWs.left().value();
-            List<RequirementCapabilityRelDef> delOkResult = componentInstanceLogic.batchDissociateRIFromRI(
+            List<RequirementCapabilityRelDef> delOkResult = componentInstanceBusinessLogic.batchDissociateRIFromRI(
                     componentId, userId, requirementDefList, componentTypeEnum);
 
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), delOkResult);

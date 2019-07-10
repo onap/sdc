@@ -30,6 +30,7 @@ import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -42,7 +43,13 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.GenericArtifactQueryInfo;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.owasp.esapi.ESAPI;
@@ -57,6 +64,18 @@ import org.springframework.stereotype.Controller;
 public class GenericArtifactBrowserServlet extends BeGenericServlet {
 
     private static final Logger LOGGER = Logger.getLogger(GenericArtifactBrowserServlet.class);
+    private final GenericArtifactBrowserBusinessLogic gabLogic;
+    private final ArtifactsBusinessLogic artifactsBusinessLogic;
+
+    @Inject
+    public GenericArtifactBrowserServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        ArtifactsBusinessLogic artifactsBusinessLogic,
+        GenericArtifactBrowserBusinessLogic gabLogic) {
+        super(userBusinessLogic, componentsUtils);
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
+        this.gabLogic = gabLogic;
+    }
 
     @POST
     @Path("/searchFor")
@@ -68,12 +87,11 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
         @ApiParam(value = "Generic Artifact search model", required = true) GenericArtifactQueryInfo query,
         @Context final HttpServletRequest request) {
         try {
-            ServletContext context = request.getSession().getServletContext();
-            Either<ImmutablePair<String, byte[]>, ResponseFormat> immutablePairResponseFormatEither = getArtifactBL(context)
+            Either<ImmutablePair<String, byte[]>, ResponseFormat> immutablePairResponseFormatEither = artifactsBusinessLogic
                 .downloadArtifact(ESAPI.encoder().canonicalize(query.getParentId()), ESAPI.encoder().canonicalize(query.getArtifactUniqueId()));
             if (immutablePairResponseFormatEither.isLeft()){
                 GABQuery gabQuery = prepareGabQuery(query, immutablePairResponseFormatEither);
-                return buildOkResponse(getGenericArtifactBrowserBL(context).searchFor(gabQuery));
+                return buildOkResponse(gabLogic.searchFor(gabQuery));
             }else{
                 throw new IOException(immutablePairResponseFormatEither.right().value().getFormattedMessage());
             }
@@ -89,5 +107,4 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
         Set<String> queryFields = query.getFields().stream().map(ESAPI.encoder()::canonicalize).collect(Collectors.toSet());
         return new GABQuery(queryFields, new String(content), GABQueryType.CONTENT);
     }
-
 }

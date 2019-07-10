@@ -33,9 +33,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -47,6 +49,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -65,7 +68,6 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class AssetsDataServletTest extends JerseyTest {
@@ -85,9 +87,10 @@ public class AssetsDataServletTest extends JerseyTest {
     public static final CategoryDefinition categoryDefinition = Mockito.mock(CategoryDefinition.class);
     public static final SubCategoryDefinition subCategoryDefinition = Mockito.mock(SubCategoryDefinition.class);
     public static final AssetMetadataConverter assetMetadataConverter = Mockito.mock(AssetMetadataConverter.class);
-//    public static final ResourceAssetMetadata resourceAssetMetadata = Mockito.mock(ResourceAssetMetadata.class);
-    public static final ResourceAssetMetadata resourceAssetMetadata = new ResourceAssetMetadata();;
-
+    public static final ResourceAssetMetadata resourceAssetMetadata = new ResourceAssetMetadata();
+    public static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+    public static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    public static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
 
 
 
@@ -157,7 +160,7 @@ public class AssetsDataServletTest extends JerseyTest {
         final JSONObject createRequest = buildCreateJsonRequest();
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId").header(Constants.USER_ID_HEADER, "mockAttID")
                 .post(Entity.json(createRequest.toJSONString()), Response.class);
-        assertEquals(response.getStatus(), HttpStatus.SC_CREATED);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
     }
     private static final String BASIC_CREATE_REQUEST = "{\r\n" +
@@ -191,6 +194,15 @@ public class AssetsDataServletTest extends JerseyTest {
                     @Override
                     protected void configure() {
                         bind(request).to(HttpServletRequest.class);
+                        bind(userBusinessLogic).to(UserBusinessLogic.class);
+                        bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
+                        bind(componentsUtils).to(ComponentsUtils.class);
+                        bind(servletUtils).to(ServletUtils.class);
+                        bind(resourceImportManager).to(ResourceImportManager.class);
+                        bind(elementBusinessLogic).to(ElementBusinessLogic.class);
+                        bind(assetMetadataConverter).to(AssetMetadataConverter.class);
+                        bind(lifecycleBusinessLogic).to(LifecycleBusinessLogic.class);
+                        bind(resourceBusinessLogic).to(ResourceBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);

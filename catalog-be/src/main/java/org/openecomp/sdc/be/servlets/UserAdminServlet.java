@@ -23,8 +23,12 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -43,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
 @Api(value = "User Administration", description = "User admininstarator operations")
@@ -53,6 +58,14 @@ public class UserAdminServlet extends BeGenericServlet {
 	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
 	private static final String ROLE_DELIMITER = ",";
     private static final Logger log = Logger.getLogger(UserAdminServlet.class);
+    private final UserBusinessLogic userBusinessLogic;
+
+    @Inject
+    public UserAdminServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, componentsUtils);
+        this.userBusinessLogic = userBusinessLogic;
+    }
 
     /***************************************
      * API start
@@ -74,10 +87,8 @@ public class UserAdminServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
 
-        UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
-
         try {
-            Either<User, ActionStatus> either = userAdminManager.getUser(userId, false);
+            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
 
             if (either.isRight()) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
@@ -107,10 +118,8 @@ public class UserAdminServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getRole) Start handle request of {}", url);
 
-        UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
-
         try {
-            Either<User, ActionStatus> either = userAdminManager.getUser(userId, false);
+            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
             if (either.isRight()) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
             } else {
@@ -140,8 +149,6 @@ public class UserAdminServlet extends BeGenericServlet {
     public Response updateUserRole(@ApiParam(value = "userId of user to get", required = true) @PathParam("userId") final String userIdUpdateUser, @Context final HttpServletRequest request,
             @ApiParam(value = "json describe the update role", required = true) String data, @HeaderParam(value = Constants.USER_ID_HEADER) String modifierUserId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -153,9 +160,8 @@ public class UserAdminServlet extends BeGenericServlet {
         Response response = null;
 
         try {
-            UserBusinessLogic businessLogic = getUserAdminManager(context);
             User updateInfoUser = getComponentsUtils().convertJsonToObject(data, modifier, User.class, AuditingActionEnum.UPDATE_USER).left().value();
-            Either<User, ResponseFormat> updateUserResponse = businessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
+            Either<User, ResponseFormat> updateUserResponse = userBusinessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
 
             if (updateUserResponse.isRight()) {
                 log.debug("failed to update user role");
@@ -185,8 +191,6 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(code = 405, message = "Method Not Allowed"), @ApiResponse(code = 409, message = "User already exists"), @ApiResponse(code = 500, message = "Internal Server Error") })
     public Response createUser(@Context final HttpServletRequest request, @ApiParam(value = "json describe the user", required = true) String newUserData, @HeaderParam(value = Constants.USER_ID_HEADER) String modifierAttId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -198,9 +202,8 @@ public class UserAdminServlet extends BeGenericServlet {
         Response response = null;
 
         try {
-            UserBusinessLogic businessLogic = getUserAdminManager(context);
             User newUserInfo = getComponentsUtils().convertJsonToObject(newUserData, modifier, User.class, AuditingActionEnum.ADD_USER).left().value();
-            Either<User, ResponseFormat> createUserResponse = businessLogic.createUser(modifier, newUserInfo);
+            Either<User, ResponseFormat> createUserResponse = userBusinessLogic.createUser(modifier, newUserInfo);
 
             if (createUserResponse.isRight()) {
                 log.debug("failed to create user");
@@ -247,7 +250,6 @@ public class UserAdminServlet extends BeGenericServlet {
             return buildErrorResponse(errorResponseWrapper);
         }
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -260,8 +262,7 @@ public class UserAdminServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            UserBusinessLogic userAdminManager = getUserAdminManager(context);
-            Either<User, ResponseFormat> authorize = userAdminManager.authorize(authUser);
+            Either<User, ResponseFormat> authorize = userBusinessLogic.authorize(authUser);
 
             if (authorize.isRight()) {
                 log.debug("authorize user failed");
@@ -290,10 +291,8 @@ public class UserAdminServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
 
-        UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
-
         try {
-            Either<List<User>, ResponseFormat> either = userAdminManager.getAllAdminUsers();
+            Either<List<User>, ResponseFormat> either = userBusinessLogic.getAllAdminUsers();
 
             if (either.isRight()) {
                 log.debug("Failed to get all admin users");
@@ -322,7 +321,6 @@ public class UserAdminServlet extends BeGenericServlet {
     public Response getUsersList(@Context final HttpServletRequest request, @ApiParam(value = "Any active user's USER_ID ") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
             @ApiParam(value = "TESTER,DESIGNER,PRODUCT_STRATEGIST,OPS,PRODUCT_MANAGER,GOVERNOR, ADMIN OR all users by not typing anything") @QueryParam("roles") final String roles) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {} modifier id is {}", url, userId);
 
@@ -335,8 +333,7 @@ public class UserAdminServlet extends BeGenericServlet {
         }
 
         try {
-            UserBusinessLogic userAdminManager = getUserAdminManager(context);
-            Either<List<User>, ResponseFormat> either = userAdminManager.getUsersList(userId, rolesList, roles);
+            Either<List<User>, ResponseFormat> either = userBusinessLogic.getUsersList(userId, rolesList, roles);
 
             if (either.isRight()) {
                 log.debug("Failed to get ASDC users");
@@ -363,7 +360,6 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(code = 404, message = "User not found"), @ApiResponse(code = 405, message = "Method Not Allowed"), @ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 500, message = "Internal Server Error") })
     public Response deActivateUser(@ApiParam(value = "userId of user to get", required = true) @PathParam("userId") final String userId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userIdHeader) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {} modifier id is {}", url, userIdHeader);
 
@@ -372,8 +368,7 @@ public class UserAdminServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            UserBusinessLogic userAdminManager = getUserAdminManager(context);
-            Either<User, ResponseFormat> deactiveUserResponse = userAdminManager.deActivateUser(modifier, userId);
+            Either<User, ResponseFormat> deactiveUserResponse = userBusinessLogic.deActivateUser(modifier, userId);
 
             if (deactiveUserResponse.isRight()) {
                 log.debug("Failed to deactivate user");
