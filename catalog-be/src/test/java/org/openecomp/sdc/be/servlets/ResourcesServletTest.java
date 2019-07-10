@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import com.google.common.base.Equivalence.Wrapper;
@@ -39,7 +48,16 @@ import fj.data.Either;
 public class ResourcesServletTest {
 
 	private ResourcesServlet createTestSubject() {
-		return new ResourcesServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		GroupBusinessLogic groupBL = mock(GroupBusinessLogic.class);
+		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+		ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		ServletUtils servletUtils = mock(ServletUtils.class);
+		ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+
+		return new ResourcesServlet(userBusinessLogic, groupBL, componentInstanceBL, resourceBusinessLogic, componentsUtils, servletUtils,
+			resourceImportManager);
 	}
 
 	

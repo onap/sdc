@@ -65,7 +65,6 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
-import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -92,12 +91,21 @@ import org.springframework.web.context.WebApplicationContext;
 
 public class BeGenericServlet extends BasicServlet {
 
+    public BeGenericServlet(UserBusinessLogic userAdminManager,
+        ComponentsUtils componentsUtils) {
+        this.userAdminManager = userAdminManager;
+        this.componentsUtils = componentsUtils;
+    }
+
     @Context
     protected HttpServletRequest servletRequest;
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);
 
     private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_]+";
+
+    private UserBusinessLogic userAdminManager;
+    protected ComponentsUtils componentsUtils;
 
     /******************** New error response mechanism
      * @param requestErrorWrapper **************/
@@ -146,7 +154,7 @@ public class BeGenericServlet extends BasicServlet {
 
     /*******************************************************************************************************/
     protected Either<User, ResponseFormat> getUser(final HttpServletRequest request, String userId) {
-        Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
+        Either<User, ActionStatus> eitherCreator = userAdminManager.getUser(userId, false);
         if (eitherCreator.isRight()) {
             log.info("createResource method - user is not listed. userId= {}", userId);
             ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
@@ -159,34 +167,8 @@ public class BeGenericServlet extends BasicServlet {
 
     }
 
-    UserBusinessLogic getUserAdminManager(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
-    }
-
-    protected GenericArtifactBrowserBusinessLogic getGenericArtifactBrowserBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> GenericArtifactBrowserBusinessLogic.class);
-    }
-
     protected ResourceBusinessLogic getResourceBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
-    }
-
-    protected InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
-    }
-
-    protected CapabilitiesBusinessLogic getCapabilitiesBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> CapabilitiesBusinessLogic.class);
-    }
-
-    protected RelationshipTypeBusinessLogic getRelationshipTypeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> RelationshipTypeBusinessLogic.class);
-    }
-    protected RequirementBusinessLogic getRequirementBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> RequirementBusinessLogic.class);
-    }
-    ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
     }
 
     protected ServiceBusinessLogic getServiceBL(ServletContext context) {
@@ -197,54 +179,14 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
     }
 
-    protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
-    }
-    protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
-    }
-
-    protected ElementBusinessLogic getElementBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
-    }
-
-    MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> MonitoringBusinessLogic.class);
-    }
-
-    protected AssetMetadataConverter getAssetUtils(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
-    }
-
-    protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
-    }
-
     <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(businessLogicClassGen.get());
     }
 
-    GroupBusinessLogic getGroupBL(ServletContext context) {
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(GroupBusinessLogic.class);
-    }
-
-    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
-    }
-
     protected ComponentsUtils getComponentsUtils() {
-        ServletContext context = this.servletRequest.getSession().getServletContext();
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentsUtils.class);
+        return componentsUtils;
     }
 
     /**
@@ -470,13 +412,6 @@ public class BeGenericServlet extends BasicServlet {
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
 
-    }
-
-    protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
-        return propertytBl;
     }
 
     protected InputsBusinessLogic getInputBL(ServletContext context) {

@@ -25,18 +25,25 @@ import com.google.common.collect.Sets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -60,6 +67,17 @@ import java.util.Set;
 public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ServiceForwardingPathServlet.class);
+    private final ServiceBusinessLogic serviceBusinessLogic;
+
+    @Inject
+    public ServiceForwardingPathServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ServiceBusinessLogic serviceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,7 +118,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     }
 
     private Response createOrUpdate( String data, String serviceId, HttpServletRequest request, String userId, boolean isUpdate) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -112,7 +129,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
@@ -123,9 +139,9 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
             Service updatedService = convertResponse.left().value();
             Either<Service, ResponseFormat> actionResponse ;
             if (isUpdate) {
-                actionResponse = businessLogic.updateForwardingPath(serviceIdLower, updatedService, modifier, true);
+                actionResponse = serviceBusinessLogic.updateForwardingPath(serviceIdLower, updatedService, modifier, true);
             } else {
-                actionResponse = businessLogic.createForwardingPath(serviceIdLower, updatedService, modifier, true);
+                actionResponse = serviceBusinessLogic.createForwardingPath(serviceIdLower, updatedService, modifier, true);
             }
 
             if (actionResponse.isRight()) {
@@ -163,7 +179,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
             @ApiParam(value = "Forwarding Path Id") @PathParam("forwardingPathId") String forwardingPathId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -173,8 +188,7 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
 
         try {
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
-            Either<UiComponentDataTransfer, ResponseFormat> serviceResponse = businessLogic.getComponentDataFilteredByParams(serviceId, modifier, Collections.singletonList(ComponentFieldsEnum.FORWARDING_PATHS.getValue()));
+            Either<UiComponentDataTransfer, ResponseFormat> serviceResponse = serviceBusinessLogic.getComponentDataFilteredByParams(serviceId, modifier, Collections.singletonList(ComponentFieldsEnum.FORWARDING_PATHS.getValue()));
             if (serviceResponse.isRight()) {
                 return buildErrorResponse(serviceResponse.right().value());
             }
@@ -210,7 +224,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
             @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -222,9 +235,8 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
-            Either<Set<String>, ResponseFormat> actionResponse = businessLogic.deleteForwardingPaths(serviceIdLower, Sets.newHashSet(forwardingPathId), modifier, true);
+            Either<Set<String>, ResponseFormat> actionResponse = serviceBusinessLogic.deleteForwardingPaths(serviceIdLower, Sets.newHashSet(forwardingPathId), modifier, true);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to delete paths");

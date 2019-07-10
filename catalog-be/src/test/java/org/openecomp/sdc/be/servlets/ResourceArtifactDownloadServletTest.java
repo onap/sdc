@@ -20,17 +20,33 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
 import ch.qos.logback.classic.Logger;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
+import org.openecomp.sdc.be.resources.api.IResourceUploader;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class ResourceArtifactDownloadServletTest {
 
 	private ResourceArtifactDownloadServlet createTestSubject() {
-		return new ResourceArtifactDownloadServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		GroupBusinessLogic groupBL = mock(GroupBusinessLogic.class);
+		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		IResourceUploader resourceUploader = mock(IResourceUploader.class);
+		DownloadArtifactLogic downloadArtifactLogic = mock(DownloadArtifactLogic.class);
+
+		return new ResourceArtifactDownloadServlet(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils,
+			resourceUploader, downloadArtifactLogic);
 	}
 
 	

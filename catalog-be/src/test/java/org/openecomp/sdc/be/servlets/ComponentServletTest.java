@@ -27,11 +27,15 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 
 import javax.ws.rs.client.Invocation;
@@ -51,6 +55,10 @@ public class ComponentServletTest extends JerseySpringBaseTest{
     private static final String USER_ID = "userId";
     private static final String RESOURCE_ID = "resourceId";
     private ResourceBusinessLogic resourceBusinessLogic;
+    private UserBusinessLogic userBusinessLogic;
+    private GroupBusinessLogic groupBL;
+    private ComponentInstanceBusinessLogic componentInstanceBL;
+    private ComponentsUtils componentsUtils;
     private PolicyDefinition policy1, policy2;
 
     @Override
@@ -64,7 +72,13 @@ public class ComponentServletTest extends JerseySpringBaseTest{
     @Override
     protected ResourceConfig configure() {
         resourceBusinessLogic = mock(ResourceBusinessLogic.class);
-        ComponentServlet componentServlet = new ComponentServlet(new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
+        userBusinessLogic = mock(UserBusinessLogic.class);
+        groupBL = mock(GroupBusinessLogic.class);
+        componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+        componentsUtils = mock(ComponentsUtils.class);
+        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, groupBL, componentInstanceBL,
+            componentsUtils,
+            new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
         return super.configure().register(componentServlet);
     }
 

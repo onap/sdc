@@ -30,6 +30,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.Arrays;
 import java.util.List;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -45,13 +46,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
@@ -63,10 +67,10 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.ComponentInstListInput;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Api(value = "Input Catalog", description = "Input Servlet")
@@ -77,6 +81,22 @@ import org.springframework.web.context.WebApplicationContext;
 public class InputsServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(InputsServlet.class);
+
+    private final DataTypeBusinessLogic businessLogic;
+    private final InputsBusinessLogic inputsBusinessLogic;
+
+    @Inject
+    public InputsServlet(UserBusinessLogic userBusinessLogic,
+        InputsBusinessLogic inputsBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        DataTypeBusinessLogic dataTypeBusinessLogic) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.inputsBusinessLogic = inputsBusinessLogic;
+        this.businessLogic = dataTypeBusinessLogic;
+    }
 
     @POST
     @Path("/{containerComponentType}/{componentId}/update/inputs")
@@ -110,13 +130,12 @@ public class InputsServlet extends AbstractValidationsServlet {
             ServletContext context = request.getSession().getServletContext();
             ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(containerComponentType);
 
-            InputsBusinessLogic businessLogic = getInputBL(context);
             if (businessLogic == null) {
                 log.debug("Unsupported component type {}", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR));
             }
 
-            Either<List<InputDefinition>, ResponseFormat> actionResponse = businessLogic.updateInputsValue(componentType, componentId, inputsToUpdate, userId, true, false);
+            Either<List<InputDefinition>, ResponseFormat> actionResponse = inputsBusinessLogic.updateInputsValue(componentType, componentId, inputsToUpdate, userId, true, false);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
@@ -148,9 +167,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response;
 
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
-            Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = businessLogic.getComponentInstanceInputs(userId, componentId, instanceId);
+            Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = inputsBusinessLogic.getComponentInstanceInputs(userId, componentId, instanceId);
             if (inputsResponse.isRight()) {
                 log.debug("failed to get component instance inputs {}", componentType);
                 return buildErrorResponse(inputsResponse.right().value());
@@ -180,9 +197,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
-            Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = businessLogic.getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
+            Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic.getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
             if (inputPropertiesRes.isRight()) {
                 log.debug("failed to get properties of input: {}, with instance id: {}", inputId, instanceId);
                 return buildErrorResponse(inputPropertiesRes.right().value());
@@ -211,9 +226,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         log.debug("(get) Start handle request of {}", url);
         Response response;
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
-            Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes = businessLogic.getInputsForComponentInput(userId, componentId, inputId);
+            Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes = inputsBusinessLogic.getInputsForComponentInput(userId, componentId, inputId);
 
             if (inputsRes.isRight()) {
                 log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
@@ -244,9 +257,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response;
 
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
-            Either<InputDefinition, ResponseFormat> inputsRes = businessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
+            Either<InputDefinition, ResponseFormat> inputsRes = inputsBusinessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
 
             if (inputsRes.isRight()) {
                 log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
@@ -310,8 +321,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-
             // get modifier id
             User modifier = new User();
             modifier.setUserId(userId);
@@ -332,7 +341,7 @@ public class InputsServlet extends AbstractValidationsServlet {
                 log.debug("parsed componentInstInputsMap={}", ReflectionToStringBuilder.toString(componentInstInputsMap));
             }
 
-            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = businessLogic.createListInput(
+            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic.createListInput(
                 userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
             if (inputPropertiesRes.isRight()) {
                 log.debug("failed to create list input for service: {}", componentId);
@@ -368,8 +377,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            InputsBusinessLogic businessLogic = getInputBL(context);
-            Either<InputDefinition, ResponseFormat> deleteInput = businessLogic.deleteInput(componentId, userId, inputId);
+            Either<InputDefinition, ResponseFormat> deleteInput = inputsBusinessLogic.deleteInput(componentId, userId, inputId);
             if (deleteInput.isRight()){
                 ResponseFormat deleteResponseFormat = deleteInput.right().value();
                 response = buildErrorResponse(deleteResponseFormat);
@@ -407,14 +415,12 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("dataTypeName") final String dataTypeName,
             @Context final HttpServletRequest request
     ) {
-        ServletContext context = request.getSession().getServletContext();
         ComponentsUtils componentsUtils = getComponentsUtils();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getDataType) Start handle request of {}", url);
         Response response;
 
         try {
-            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
             Either<DataTypeDefinition, StorageOperationStatus> getResult = businessLogic.getPrivateDataType(componentId, dataTypeName);
             if (getResult.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getResult.right().value());
@@ -457,7 +463,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response;
 
         try {
-            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
             Either<List<DataTypeDefinition>, StorageOperationStatus> getResult = businessLogic.getPrivateDataTypes(componentId);
             if (getResult.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getResult.right().value());
@@ -502,7 +507,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response;
 
         try {
-            DataTypeBusinessLogic businessLogic = getDataTypeBL(context);
             Either<DataTypeDefinition, StorageOperationStatus> deleteResult = businessLogic.deletePrivateDataType(componentId, dataTypeName);
             if (deleteResult.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteResult.right().value());
@@ -516,11 +520,5 @@ public class InputsServlet extends AbstractValidationsServlet {
             response = buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
         }
-    }
-
-    private DataTypeBusinessLogic getDataTypeBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(DataTypeBusinessLogic.class);
     }
 }

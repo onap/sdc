@@ -36,6 +36,8 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -46,6 +48,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
@@ -264,6 +267,10 @@ public class ComponentInstanceServletTest extends JerseyTest {
 
     @Override
     protected ResourceConfig configure() {
+        UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+        GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+        ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
+
         forceSet(TestProperties.CONTAINER_PORT, "0");
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         return new ResourceConfig(ComponentInstanceServlet.class)
@@ -271,6 +278,12 @@ public class ComponentInstanceServletTest extends JerseyTest {
                     @Override
                     protected void configure() {
                         bind(request).to(HttpServletRequest.class);
+                        bind(userBusinessLogic).to(UserBusinessLogic.class);
+                        bind(groupBusinessLogic).to(GroupBusinessLogic.class);
+                        bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
+                        bind(componentsUtils).to(ComponentsUtils.class);
+                        bind(servletUtils).to(ServletUtils.class);
+                        bind(resourceImportManager).to(ResourceImportManager.class);
                     }
                 })
                 .property("contextConfig", context);

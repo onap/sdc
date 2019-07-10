@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -52,11 +56,14 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -77,6 +84,17 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     private static final String NODE_FILTER_CREATION_OR_UPDATE = "Node Filter Creation or update";
     private static final String CREATE_OR_UPDATE_NODE_FILTER_WITH_AN_ERROR =
             "create or update node filter with an error";
+    private final ServiceBusinessLogic serviceBusinessLogic;
+
+    @Inject
+    public ServiceFilterServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ServiceBusinessLogic serviceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -104,7 +122,6 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
             Either<UIConstraint, ResponseFormat> convertResponse = parseToConstraint(data, modifier);
             if (convertResponse.isRight()) {
@@ -120,7 +137,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
             }
             Either<CINodeFilterDataDefinition, ResponseFormat> actionResponse;
             String constraint = new ConstraintConvertor().convert(uiConstraint);
-            actionResponse = businessLogic
+            actionResponse = serviceBusinessLogic
                                      .addOrDeleteServiceFilter(serviceIdLower, ciId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
                                              constraint, -1, modifier, true);
 
@@ -168,7 +185,6 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
             Either<List, ResponseFormat> convertResponse = parseToConstraints(data, modifier);
             if (convertResponse.isRight()) {
@@ -192,7 +208,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
             }
             Either<CINodeFilterDataDefinition, ResponseFormat> actionResponse;
             List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
-            actionResponse = businessLogic.updateServiceFilter(serviceIdLower, ciId, constraints, modifier, true);
+            actionResponse = serviceBusinessLogic.updateServiceFilter(serviceIdLower, ciId, constraints, modifier, true);
 
             if (actionResponse.isRight()) {
                 log.debug(FAILED_TO_UPDATE_OR_CREATE_NODE_FILTER);
@@ -227,7 +243,6 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
             @ApiParam(value = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
             @ApiParam(value = "Constraint Index") @PathParam("constraintIndex") int index,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -239,10 +254,9 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
-            ServiceBusinessLogic businessLogic = getServiceBL(context);
 
             Either<CINodeFilterDataDefinition, ResponseFormat> actionResponse;
-            actionResponse = businessLogic
+            actionResponse = serviceBusinessLogic
                                      .addOrDeleteServiceFilter(serviceIdLower, ciId, NodeFilterConstraintAction.DELETE,
                                              null, null,  index, modifier, true);
 

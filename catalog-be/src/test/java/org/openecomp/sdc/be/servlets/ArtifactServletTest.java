@@ -20,16 +20,27 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 
 public class ArtifactServletTest {
 
 	private ArtifactServlet createTestSubject() {
-		return new ArtifactServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		GroupBusinessLogic groupBL = mock(GroupBusinessLogic.class);
+		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		return new ArtifactServlet(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
 	}
 
 	

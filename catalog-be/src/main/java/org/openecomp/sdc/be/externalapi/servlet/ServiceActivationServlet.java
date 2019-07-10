@@ -24,16 +24,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionRespInfo;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -61,6 +68,18 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     private static final Logger log = Logger.getLogger(ServiceActivationServlet.class);
+    private final ServiceBusinessLogic serviceBusinessLogic;
+
+    @Inject
+    public ServiceActivationServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        ServiceBusinessLogic serviceBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
+
 
     /**
      * Activates a service on a specific environment
@@ -107,7 +126,6 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
 
-        ServletContext context = request.getSession().getServletContext();
         User modifier = new User();
 
         try {
@@ -118,9 +136,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                 modifier.setUserId(userId);
                 log.debug("modifier id is {}", userId);
 
-                ServiceBusinessLogic businessLogic = getServiceBL(context);
                 ServiceDistributionReqInfo reqMetadata = convertJsonToActivationMetadata(data);
-                Either<String, ResponseFormat> distResponse = businessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
+                Either<String, ResponseFormat> distResponse = serviceBusinessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
 
                 if (distResponse.isRight()) {
                     log.debug("failed to activate service distribution");
