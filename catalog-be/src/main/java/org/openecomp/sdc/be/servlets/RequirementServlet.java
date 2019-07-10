@@ -23,14 +23,21 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -61,6 +68,17 @@ import java.util.Optional;
 @Singleton
 public class RequirementServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = Logger.getLogger(RequirementServlet.class);
+    private final RequirementBusinessLogic requirementBusinessLogic;
+
+    @Inject
+    public RequirementServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        RequirementBusinessLogic requirementBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.requirementBusinessLogic = requirementBusinessLogic;
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -213,7 +231,6 @@ public class RequirementServlet extends AbstractValidationsServlet {
     private Response createOrUpdate (String data, String componentType, String componentId,
                                      HttpServletRequest request, String userId,
                                      boolean isUpdate, String errorContext) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -222,7 +239,6 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            RequirementBusinessLogic businessLogic = getRequirementBL(context);
 
             Either<List<RequirementDefinition>, ResponseFormat> mappedRequirementDataEither =
                     getMappedRequirementData(data, modifier, ComponentTypeEnum.findByParamName(componentType));
@@ -233,10 +249,10 @@ public class RequirementServlet extends AbstractValidationsServlet {
             List<RequirementDefinition> mappedRequirementData = mappedRequirementDataEither.left().value();
             Either<List<RequirementDefinition>, ResponseFormat> actionResponse;
             if(isUpdate) {
-                actionResponse = businessLogic.updateRequirements(componentIdLower, mappedRequirementData, modifier,
+                actionResponse = requirementBusinessLogic.updateRequirements(componentIdLower, mappedRequirementData, modifier,
                         errorContext, true);
             } else {
-                actionResponse = businessLogic.createRequirements(componentIdLower, mappedRequirementData, modifier,
+                actionResponse = requirementBusinessLogic.createRequirements(componentIdLower, mappedRequirementData, modifier,
                         errorContext, true);
             }
 
@@ -256,7 +272,6 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
     private Response get (String requirementIdToGet,  String componentId,
                           HttpServletRequest request, String userId){
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -265,9 +280,7 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            RequirementBusinessLogic businessLogic = getRequirementBL(context);
-
-            Either<RequirementDefinition, ResponseFormat> actionResponse = businessLogic
+            Either<RequirementDefinition, ResponseFormat> actionResponse = requirementBusinessLogic
                     .getRequirement(componentIdLower, requirementIdToGet, modifier, true);
             if (actionResponse.isRight()) {
                 LOGGER.error("failed to get requirements");
@@ -284,8 +297,6 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
     private Response delete (String requirementId, String componentId, HttpServletRequest
                                         request, String userId){
-
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -294,9 +305,8 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
         try {
             String componentIdLower = componentId.toLowerCase();
-            RequirementBusinessLogic businessLogic = getRequirementBL(context);
 
-            Either<RequirementDefinition, ResponseFormat> actionResponse = businessLogic
+            Either<RequirementDefinition, ResponseFormat> actionResponse = requirementBusinessLogic
                     .deleteRequirement(componentIdLower, requirementId, modifier, true);
             if (actionResponse.isRight()) {
                 LOGGER.error("failed to delete requirements");

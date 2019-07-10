@@ -23,13 +23,17 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import org.apache.http.HttpStatus;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.info.ArtifactAccessInfo;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
@@ -49,6 +53,12 @@ public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
 
     private static final Logger log = Logger.getLogger(ResourceArtifactDownloadServlet.class);
 
+    public ResourceArtifactDownloadServlet(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        IResourceUploader resourceUploader, DownloadArtifactLogic logic) {
+        super(userBusinessLogic, componentsUtils, resourceUploader, logic);
+    }
+
     @GET
     @Path("/{resourceName}/{resourceVersion}/artifacts/{artifactName}")
     // @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -62,18 +72,8 @@ public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
             // get the artifact data
             String artifactId = String.format(Constants.ARTIFACT_ID_FORMAT, resourceName, resourceVersion, artifactName);
 
-            IResourceUploader resouceUploader = getResourceUploader(request.getSession().getServletContext());
-            if (resouceUploader == null) {
-                return buildResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "");
+            Either<ESArtifactData, ResourceUploadStatus> getArtifactStatus = resourceUploader.getArtifact(artifactId);
 
-            }
-            Either<ESArtifactData, ResourceUploadStatus> getArtifactStatus = resouceUploader.getArtifact(artifactId);
-
-            DownloadArtifactLogic logic = getLogic(request.getSession().getServletContext());
-            if (logic == null) {
-                return buildResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "");
-
-            }
             response = logic.downloadArtifact(artifactName, getArtifactStatus, artifactId);
 
             log.info("Finish handle request of {} | result = {}", url, response.getStatus());
@@ -98,15 +98,9 @@ public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
 
         Response response = null;
         try {
-            IResourceUploader resourceDao = getResourceUploader(request.getSession().getServletContext());
-            if (resourceDao == null) {
-                log.error("resource dao cannot be found");
-                response = buildResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Resource dao cannot be found");
-                return response;
-            }
 
             String artifactId = String.format(Constants.ARTIFACT_ID_FORMAT, resourceName, resourceVersion, artifactName);
-            Either<ESArtifactData, ResourceUploadStatus> getArtifactStatus = resourceDao.getArtifact(artifactId);
+            Either<ESArtifactData, ResourceUploadStatus> getArtifactStatus = resourceUploader.getArtifact(artifactId);
 
             if (getArtifactStatus.isRight()) {
                 ResourceUploadStatus status = getArtifactStatus.right().value();

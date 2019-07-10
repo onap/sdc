@@ -22,21 +22,24 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -58,6 +61,14 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     public static final String CSAR_TYPE_RESOURCE = "csar";
     public static final String USER_TYPE_RESOURCE = "user-resource";
     public static final String USER_TYPE_RESOURCE_UI_IMPORT = "user-resource-ui-import";
+
+    @Inject
+    public ResourceUploadServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+    }
 
     public enum ResourceAuthorityTypeEnum {
         NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true, true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false, true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
@@ -110,7 +121,6 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             // updateResourse Query Parameter if false checks if already exist
             @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) {
 
-        init(request.getSession().getServletContext());
         try {
 
             Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -152,12 +162,4 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     }
 
     /********************************************************************************************************************/
-
-    private void init(ServletContext context) {
-        init();
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);
-        resourceImportManager.init(context);
-    }
 }

@@ -27,6 +27,8 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+
 @Component
 public class ComponentBusinessLogicProvider {
 
@@ -34,6 +36,7 @@ public class ComponentBusinessLogicProvider {
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final ProductBusinessLogic productBusinessLogic;
 
+    @Inject
     public ComponentBusinessLogicProvider(ResourceBusinessLogic resourceBusinessLogic, ServiceBusinessLogic serviceBusinessLogic, ProductBusinessLogic productBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,6 +46,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -58,6 +61,7 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTargetDTO;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -78,11 +82,14 @@ public class PolicyServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(PolicyServlet.class);
     private final PolicyBusinessLogic policyBusinessLogic;
 
-    public PolicyServlet(PolicyBusinessLogic policyBusinessLogic, ServletUtils servletUtils, ResourceImportManager resourceImportManager, ComponentsUtils componentsUtils) {
+    @Inject
+    public PolicyServlet(UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        PolicyBusinessLogic policyBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.policyBusinessLogic = policyBusinessLogic;
-        this.servletUtils = servletUtils;
-        this.resourceImportManager = resourceImportManager;
-        this.componentsUtils = componentsUtils;
     }
 
     @POST

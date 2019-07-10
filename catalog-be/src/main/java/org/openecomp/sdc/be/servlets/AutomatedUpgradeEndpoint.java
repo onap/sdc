@@ -22,12 +22,17 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeRequest;
 import org.openecomp.sdc.be.components.upgrade.UpgradeStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
@@ -50,11 +55,14 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
 
     private final UpgradeBusinessLogic businessLogic;
 
-    public AutomatedUpgradeEndpoint(UpgradeBusinessLogic businessLogic) {
+    @Inject
+    public AutomatedUpgradeEndpoint(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils,
+        UpgradeBusinessLogic businessLogic) {
+        super(userBusinessLogic, componentsUtils);
         this.businessLogic = businessLogic;
     }
-    
-    
+
     @POST
     @Path("/{componentType}/{componentId}/automatedupgrade")
     @Consumes(MediaType.APPLICATION_JSON)

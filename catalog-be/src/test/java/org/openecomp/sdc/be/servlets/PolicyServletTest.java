@@ -467,7 +467,8 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Override
     protected ResourceConfig configure() {
         return super.configure()
-                .register(new PolicyServlet(businessLogic, servletUtils, null, componentsUtils));
+                .register(new PolicyServlet(null, null, componentsUtils,
+                    servletUtils, null, businessLogic));
     }
 
     private static void createMocks() {
