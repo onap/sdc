@@ -23,7 +23,10 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -31,6 +34,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.Tag;
@@ -70,6 +74,14 @@ import java.util.Map;
 public class ElementServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(ElementServlet.class);
+
+    @Inject
+    public ElementServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+    }
 
     /*
      ******************************************************************************

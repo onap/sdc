@@ -65,7 +65,6 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
-import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -92,12 +91,26 @@ import org.springframework.web.context.WebApplicationContext;
 
 public class BeGenericServlet extends BasicServlet {
 
+    public BeGenericServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils) {
+        this.userBusinessLogic = userBusinessLogic;
+        this.groupBL = groupBL;
+        this.componentInstanceBL = componentInstanceBL;
+        this.componentsUtils = componentsUtils;
+    }
+
     @Context
     protected HttpServletRequest servletRequest;
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);
 
     private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_]+";
+
+    private UserBusinessLogic userBusinessLogic;
+    private GroupBusinessLogic groupBL;
+    private ComponentInstanceBusinessLogic componentInstanceBL;
+    protected ComponentsUtils componentsUtils;
 
     /******************** New error response mechanism
      * @param requestErrorWrapper **************/
@@ -160,7 +173,7 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     UserBusinessLogic getUserAdminManager(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
+        return userBusinessLogic;
     }
 
     protected GenericArtifactBrowserBusinessLogic getGenericArtifactBrowserBL(ServletContext context) {
@@ -200,9 +213,6 @@ public class BeGenericServlet extends BasicServlet {
     protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
     }
-    protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
-    }
 
     protected ElementBusinessLogic getElementBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
@@ -227,24 +237,15 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     GroupBusinessLogic getGroupBL(ServletContext context) {
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(GroupBusinessLogic.class);
+        return groupBL;
     }
 
     protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
+        return componentInstanceBL;
     }
 
     protected ComponentsUtils getComponentsUtils() {
-        ServletContext context = this.servletRequest.getSession().getServletContext();
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentsUtils.class);
+        return componentsUtils;
     }
 
     /**

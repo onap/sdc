@@ -23,6 +23,9 @@ package org.openecomp.sdc.be.distribution.servlet;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.AuditHandler;
@@ -31,21 +34,19 @@ import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.ServerListResponse;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
 import org.openecomp.sdc.be.distribution.api.client.TopicUnregistrationResponse;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.HttpUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Resource;
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -67,10 +68,18 @@ public class DistributionServlet extends BeGenericServlet {
 
     private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
 	private static final Logger log = Logger.getLogger(DistributionServlet.class);
-    @Resource
-    private DistributionBusinessLogic distributionLogic;
+    private final DistributionBusinessLogic distributionLogic;
     @Context
     private HttpServletRequest request;
+
+    @Inject
+    public DistributionServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, DistributionBusinessLogic distributionLogic) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+        this.distributionLogic = distributionLogic;
+    }
 
     /**
      *
@@ -102,7 +111,6 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
 
-        init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
@@ -178,7 +186,6 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam( hidden = true) String requestJson) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        init(request);
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<RegistrationRequest> registrationRequestWrapper = new Wrapper<>();
@@ -228,7 +235,6 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
-        init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
@@ -286,7 +292,6 @@ public class DistributionServlet extends BeGenericServlet {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        init(request);
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<RegistrationRequest> unRegistrationRequestWrapper = new Wrapper<>();
@@ -324,12 +329,6 @@ public class DistributionServlet extends BeGenericServlet {
 
     }
 
-    private void init(HttpServletRequest request) {
-        if (distributionLogic == null) {
-            distributionLogic = getDistributionBL(request.getSession().getServletContext());
-        }
-    }
-
     private void validateHeaders(Wrapper<Response> responseWrapper, HttpServletRequest request, AuditingActionEnum auditingAction) {
         if (request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER) == null) {
             Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID));
@@ -365,12 +364,6 @@ public class DistributionServlet extends BeGenericServlet {
             }
         }
 
-    }
-
-    private DistributionBusinessLogic getDistributionBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(DistributionBusinessLogic.class);
     }
 
     private AuditHandler buildAuditHandler(HttpServletRequest request, RegistrationRequest registrationRequest) {

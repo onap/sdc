@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,14 +41,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.EntryData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -60,8 +65,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Singleton
 public class ComponentPropertyServlet extends BeGenericServlet {
 
-	@Autowired
-	ApplicationDataTypeCache applicationDataTypeCache;
+  private final PropertyBusinessLogic propertyBusinessLogic;
+  private final ApplicationDataTypeCache applicationDataTypeCache;
+
+	@Inject
+  public ComponentPropertyServlet(UserBusinessLogic userBusinessLogic,
+      GroupBusinessLogic groupBL,
+      ComponentInstanceBusinessLogic componentInstanceBL,
+      ComponentsUtils componentsUtils,
+      ApplicationDataTypeCache applicationDataTypeCache,
+      PropertyBusinessLogic propertyBusinessLogic) {
+    super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+    this.applicationDataTypeCache = applicationDataTypeCache;
+    this.propertyBusinessLogic = propertyBusinessLogic;
+  }
 
   private static final Logger log = LoggerFactory.getLogger(ComponentPropertyServlet.class);
   private static final String CREATE_PROPERTY = "Create Property";
@@ -207,13 +224,10 @@ public class ComponentPropertyServlet extends BeGenericServlet {
   }
 
   private Response createProperty(String componentId, String data,  HttpServletRequest request,String userId) {
-    ServletContext context = request.getSession().getServletContext();
-
     String url = request.getMethod() + " " + request.getRequestURI();
     log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
 
     try{
-      PropertyBusinessLogic propertyBL = getPropertyBL(context);
       Either<Map<String, PropertyDefinition>, ActionStatus> propertyDefinition =
               getPropertyModel(componentId, data);
       if (propertyDefinition.isRight()) {
@@ -234,7 +248,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
       String propertyName = newPropertyDefinition.getName();
 
       Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyEither =
-              propertyBL.addPropertyToComponent(componentId, propertyName, newPropertyDefinition, userId);
+              propertyBusinessLogic.addPropertyToComponent(componentId, propertyName, newPropertyDefinition, userId);
 
       if(addPropertyEither.isRight()) {
         return buildErrorResponse(addPropertyEither.right().value());

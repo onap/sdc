@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -46,6 +47,7 @@ public class GroupEndpoint {
 
     private final GroupBusinessLogicNew groupBusinessLogic;
 
+    @Inject
     public GroupEndpoint(GroupBusinessLogicNew groupBusinessLogic) {
         this.groupBusinessLogic = groupBusinessLogic;
     }

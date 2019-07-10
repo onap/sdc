@@ -24,10 +24,14 @@ import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -43,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This Servlet serves external users to download artifacts.
@@ -60,6 +65,15 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     private static final String DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION = "download artifact failed with exception";
 	private static final String MISSING_X_ECOMP_INSTANCE_ID_HEADER = "Missing X-ECOMP-InstanceID header";
 	private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
+
+	  @Autowired
+    public DistributionCatalogServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+    }
+
     @Context
     private HttpServletRequest request;
 

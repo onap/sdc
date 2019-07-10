@@ -23,17 +23,22 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -46,6 +51,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+
 /**
  * Root resource (exposed at "/" path)
  */
@@ -54,6 +60,13 @@ import java.util.Map;
 @Api(value = "Resource Artifact Servlet", description = "Resource Artifact Servlet")
 @Singleton
 public class ArtifactServlet extends BeGenericServlet {
+
+    @Inject
+    public ArtifactServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+    }
 
     private static final Logger log = Logger.getLogger(ArtifactServlet.class);
 

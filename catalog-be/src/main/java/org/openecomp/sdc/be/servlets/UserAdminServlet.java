@@ -23,8 +23,12 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -43,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
 @Api(value = "User Administration", description = "User admininstarator operations")
@@ -53,6 +58,14 @@ public class UserAdminServlet extends BeGenericServlet {
 	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
 	private static final String ROLE_DELIMITER = ",";
     private static final Logger log = Logger.getLogger(UserAdminServlet.class);
+
+    @Inject
+    public UserAdminServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils);
+    }
 
     /***************************************
      * API start

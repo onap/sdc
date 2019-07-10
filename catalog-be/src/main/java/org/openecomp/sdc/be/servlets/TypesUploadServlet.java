@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import javax.inject.Inject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.*;
@@ -31,12 +32,15 @@ import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -75,9 +79,19 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private final PolicyTypeImportManager policyTypeImportManager;
     private final RelationshipTypeImportManager relationshipTypeImportManager;
 
-    public TypesUploadServlet(CapabilityTypeImportManager capabilityTypeImportManager, InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager, CategoriesImportManager categoriesImportManager, DataTypeImportManager dataTypeImportManager,
-                              GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager,
-                              RelationshipTypeImportManager relationshipTypeImportManager) {
+    @Inject
+    public TypesUploadServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        CapabilityTypeImportManager capabilityTypeImportManager,
+        InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
+        CategoriesImportManager categoriesImportManager,
+        DataTypeImportManager dataTypeImportManager,
+        GroupTypeImportManager groupTypeImportManager,
+        PolicyTypeImportManager policyTypeImportManager,
+        RelationshipTypeImportManager relationshipTypeImportManager) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
         this.categoriesImportManager = categoriesImportManager;

@@ -112,7 +112,7 @@ public class TypesUploadServletTest extends JerseyTest {
 
         Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
-        assertEquals(response.getStatus(), HttpStatus.CREATED_201);
+        assertEquals(HttpStatus.CREATED_201, response.getStatus());
 
     }
 
@@ -124,8 +124,14 @@ public class TypesUploadServletTest extends JerseyTest {
     @Override
     protected ResourceConfig configure() {
 
+
+
+        TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, null, componentUtils,
+            servletUtils, null, importManager, null,
+            null, null,
+            null, null, null);
         ResourceConfig resourceConfig = new ResourceConfig()
-        .register(new TypesUploadServlet(importManager, null, null, null, null, null, null));
+        .register(typesUploadServlet);
 
         resourceConfig.register(MultiPartFeature.class);
         resourceConfig.register(new AbstractBinder() {

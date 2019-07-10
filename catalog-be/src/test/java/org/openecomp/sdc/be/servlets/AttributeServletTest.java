@@ -20,11 +20,19 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import com.google.common.base.Equivalence.Wrapper;
@@ -32,7 +40,15 @@ import com.google.common.base.Equivalence.Wrapper;
 public class AttributeServletTest {
 
 	private AttributeServlet createTestSubject() {
-		return new AttributeServlet();
+		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+		GroupBusinessLogic groupBL = mock(GroupBusinessLogic.class);
+		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+		ServletUtils servletUtils = mock(ServletUtils.class);
+		ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+
+		return new AttributeServlet(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils, servletUtils,
+			resourceImportManager);
 	}
 
 	

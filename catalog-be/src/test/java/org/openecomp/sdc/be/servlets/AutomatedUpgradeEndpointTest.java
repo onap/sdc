@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.upgrade.ServiceInfo;
@@ -47,6 +48,7 @@ import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -111,7 +113,14 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         AutomatedUpgradeEndpoint automatedUpgradeEndpoint() {
-            return new AutomatedUpgradeEndpoint(upgradeBusinessLogic());
+
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            GroupBusinessLogic groupBL = mock(GroupBusinessLogic.class);
+            ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+
+            return new AutomatedUpgradeEndpoint(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils,
+                upgradeBusinessLogic());
         }
 
         @Bean

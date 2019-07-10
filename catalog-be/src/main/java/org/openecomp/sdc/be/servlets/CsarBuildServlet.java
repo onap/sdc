@@ -21,7 +21,14 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
+import javax.inject.Inject;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
+import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +43,16 @@ import javax.ws.rs.core.Response;
 public class CsarBuildServlet extends ToscaDaoServlet {
 
     private static final Logger log = Logger.getLogger(CsarBuildServlet.class);
+
+    @Inject
+    public CsarBuildServlet(UserBusinessLogic userBusinessLogic,
+        GroupBusinessLogic groupBL,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils,
+        IResourceUploader resourceUploader,
+        DownloadArtifactLogic logic) {
+        super(userBusinessLogic, groupBL, componentInstanceBL, componentsUtils, resourceUploader, logic);
+    }
 
     @GET
     @Path("/{serviceName}/{serviceVersion}")
