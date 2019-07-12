@@ -368,11 +368,6 @@ Modifications copyright (c) 2018-2019 Nokia
                     <version>3.8.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
-                </plugin>
-                <plugin>
                     <groupId>com.github.sylvainlaurent.maven</groupId>
                     <artifactId>yaml-json-validator-maven-plugin</artifactId>
                     <version>1.0.1</version>
@@ -386,19 +381,6 @@ Modifications copyright (c) 2018-2019 Nokia
         </pluginManagement>
 
         <plugins>
-
-            <!-- Staging Plugin -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <nexusUrl>${nexus.proxy}</nexusUrl>
-                    <stagingProfileId>${staging.profile.id}</stagingProfileId>
-                    <serverId>ecomp-staging</serverId>
-                </configuration>
-            </plugin>
-
             <!-- plugin for parsing the project version -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
