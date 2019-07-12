@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 package org.openecomp.sdc.common.errors;
-
 
 public enum Messages {
   CANT_LOAD_HEALING_CLASS("Can't load healing class %s."),
@@ -111,8 +109,8 @@ public enum Messages {
 
   /*definition errors*/
   MISSING_DEFINITION_FILE("Definition file %s referenced in TOSCA.meta does not exist"),
-  MISSING_IMPORT_FILE("Package must contain the referenced import file %s in %s directory"),
-  INVALID_IMPORT_STATEMENT("Definition file contains an invalid import statement in %s"),
+  MISSING_IMPORT_FILE("Package must contain the referenced import file '%s'"),
+  INVALID_IMPORT_STATEMENT("Definition file '%s' contains an invalid import statement: '%s'"),
 
   /* content errors*/
   INVALID_YAML_FORMAT("Invalid YAML format - %s"),
@@ -194,12 +192,23 @@ public enum Messages {
 
   private String errorMessage;
 
-  Messages(String errorMessage) {
+  Messages(final String errorMessage) {
     this.errorMessage = errorMessage;
   }
 
   public String getErrorMessage() {
     return errorMessage;
+  }
+
+  /**
+   * Formats the message with the given parameters.
+   *
+   * @param params  The message string parameters to apply
+   * @return
+   *  The formatted message.
+   */
+  public String formatMessage(final String... params) {
+    return String.format(errorMessage, params);
   }
 
 }

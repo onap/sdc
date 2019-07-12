@@ -23,8 +23,6 @@
 package org.openecomp.core.impl;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -35,12 +33,10 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_FILE_IMPORT_ATTRIBUTES;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
@@ -68,8 +64,7 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
                                            GlobalSubstitutionServiceTemplate gsst, String mServiceDefinitionFileName) {
         if (mServiceDefinitionFileName != null) {
             handleServiceTemplate(getSimpleName(mServiceDefinitionFileName), mServiceDefinitionFileName, csarFiles, serviceTemplates);
-            String parentDir = mServiceDefinitionFileName.substring(0, mServiceDefinitionFileName.lastIndexOf("/"));
-            handleImportDefinitions(mServiceDefinitionFileName, csarFiles, parentDir, gsst);
+            handleImportDefinitions(mServiceDefinitionFileName, csarFiles, gsst);
         }
     }
 
@@ -86,39 +81,16 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
         }
     }
 
-    private void handleImportDefinitions(String fileName, Map<String, byte[]> csarFiles, String parentDir, GlobalSubstitutionServiceTemplate gsst) {
-        handledDefinitionFilesList.add(fileName);
-        ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(csarFiles.get(fileName));
-        List<Object> imports = (readerService).getImports();
-        for (Object o : imports) {
-            String importPath = getImportedFilePath(o, parentDir);
-            if (importPath != null && !handledDefinitionFilesList.contains(importPath)) {
-                handleDefintionTemplate(importPath, csarFiles, gsst);
-                if (importPath.contains("/")) {
-                    parentDir = importPath.substring(0, importPath.lastIndexOf("/"));
-                }
-                handleImportDefinitions(importPath, csarFiles, parentDir, gsst);
-            }
+    private void handleImportDefinitions(final String fileName, final Map<String, byte[]> csarFiles
+        , final GlobalSubstitutionServiceTemplate gsst) {
+        final ToscaDefinitionImportHandler toscaDefinitionImportHandler = new ToscaDefinitionImportHandler(csarFiles, fileName);
+        if (toscaDefinitionImportHandler.hasError()) {
+            throw new InvalidToscaDefinitionImportException(toscaDefinitionImportHandler.getErrors());
         }
-        return;
-    }
-
-    private String getImportedFilePath(Object o, String parentDir) {
-        if (o instanceof String) {
-            String fileName = (String) o;
-            if (!fileName.contains("/")) {
-                fileName = parentDir + "/" + fileName;
-            }
-            return fileName;
-        } else if (o instanceof Map) {
-            Map<String, Object> o1 = (Map) o;
-            for (Map.Entry<String, Object> entry : o1.entrySet()) {
-                if (NON_FILE_IMPORT_ATTRIBUTES.stream().noneMatch(attr -> entry.getKey().equals(attr))) {
-                    getImportedFilePath(entry.getValue(), parentDir);
-                }
-            }
+        handledDefinitionFilesList.addAll(toscaDefinitionImportHandler.getHandledDefinitionFilesList());
+        for (final String file : handledDefinitionFilesList) {
+            handleDefintionTemplate(file, csarFiles, gsst);
         }
-        return null;
     }
 
     private String getMainServiceDefinitionFileName(FileContentHandler contentHandler) throws IOException {
@@ -134,7 +106,7 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
 
     private String getSimpleName(String path) {
         if (path != null && path.contains("/")) {
-            path = path.substring(path.lastIndexOf("/") + 1);
+            path = path.substring(path.lastIndexOf('/') + 1);
         }
         return path;
     }

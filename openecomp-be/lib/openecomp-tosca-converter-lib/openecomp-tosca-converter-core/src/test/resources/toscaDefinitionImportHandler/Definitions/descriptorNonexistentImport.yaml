@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: ETSI NFV SOL 001 pnfd types definitions version 2.5.1
+
+imports:
+  - validPath1: /Artifacts/descriptorCyclicReference.yaml
+  - invalidPath1: descriptorCyclicReference.yaml
+  - validPath2: ../Artifacts/descriptorCyclicReference.yaml
+  - invalidPath2: /Definitions/descriptorCyclicReference.yaml
+  - invalidPath3: ../Definitions/descriptorCyclicReference.yaml
