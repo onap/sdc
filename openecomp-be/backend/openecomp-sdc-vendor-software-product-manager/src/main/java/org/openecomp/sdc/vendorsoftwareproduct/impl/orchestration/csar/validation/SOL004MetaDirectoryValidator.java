@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import java.util.Collection;
-import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.core.impl.ToscaDefinitionImportHandler;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.Messages;
@@ -38,6 +37,7 @@ import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions.InvalidManifestMetadataException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,7 +52,6 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_1;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_METADATA_LIMIT;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_VNF_METADATA;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_FILE_IMPORT_ATTRIBUTES;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_MANIFEST_FILE_EXT;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CERTIFICATE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_FILE_VERSION_ENTRY;
@@ -71,17 +70,14 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_VNF;
 /**
  * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure
  * as defined in ETSI GS NFV-SOL 004 v2.6.1.
- *
  */
-
-class SOL004MetaDirectoryValidator implements Validator{
+class SOL004MetaDirectoryValidator implements Validator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOL004MetaDirectoryValidator.class);
 
     private static final String MANIFEST_SOURCE = "Source";
     private static final String MANIFEST_NON_MANO_SOURCE = "Non-MANO Source";
     private final List<ErrorMessage> errorsByFile = new ArrayList<>();
-    private final Set<String> verifiedImports = new HashSet<>();
 
     @Override
     public Map<String, List<ErrorMessage>> validateContent(FileContentHandler contentHandler, List<String> folderList) {
@@ -119,11 +115,11 @@ class SOL004MetaDirectoryValidator implements Validator{
     }
 
     public String getFileExtension(String filePath){
-        return filePath.substring(filePath.lastIndexOf(".") + 1);
+        return filePath.substring(filePath.lastIndexOf('.') + 1);
     }
 
     private String getFileName(String filePath){
-        return filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
+        return filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
     }
 
     private boolean hasETSIMetadata(ToscaMetadata toscaMetadata){
@@ -213,78 +209,28 @@ class SOL004MetaDirectoryValidator implements Validator{
                 || CSAR_VERSION_1_0.equals(version));
     }
 
-    private void validateDefinitionFile(FileContentHandler contentHandler, String filePath) {
-        Set<String> existingFiles = contentHandler.getFileList();
+    private void validateDefinitionFile(final FileContentHandler contentHandler, final String filePath) {
+        final Set<String> existingFiles = contentHandler.getFileList();
 
         if (verifyFileExists(existingFiles, filePath)) {
-            byte[] definitionFile = getFileContent(filePath, contentHandler);
-            handleImports(contentHandler, filePath, existingFiles, definitionFile);
-        }else{
+            final ToscaDefinitionImportHandler toscaDefinitionImportHandler =
+                new ToscaDefinitionImportHandler(contentHandler.getFiles(), filePath);
+            final List<ErrorMessage> validationErrorList = toscaDefinitionImportHandler.getErrors();
+            if (CollectionUtils.isNotEmpty(validationErrorList)) {
+                errorsByFile.addAll(validationErrorList);
+            }
+        } else {
             reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_DEFINITION_FILE.getErrorMessage(), filePath));
         }
-    }
-
-    private void handleImports(FileContentHandler contentHandler, String filePath, Set<String> existingFiles,
-                               byte[] definitionFile) {
-        try {
-            ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(definitionFile);
-            List<Object> imports = (readerService).getImports();
-            for (Object o : imports) {
-                String rootDir = "/";
-                if (filePath.contains("/")) {
-                    rootDir = filePath.substring(0, filePath.lastIndexOf("/"));
-                }
-                String verifiedFile = verifyImport(existingFiles, o, rootDir);
-                if (verifiedFile != null && !verifiedImports.contains(verifiedFile)) {
-                    verifiedImports.add(verifiedFile);
-                    handleImports(contentHandler, verifiedFile, existingFiles, getFileContent(verifiedFile,
-                            contentHandler));
-                }
-            }
-        }
-        catch (Exception  e){
-            reportError(ErrorLevel.ERROR, String.format(Messages.INVALID_YAML_FORMAT.getErrorMessage(), e.getMessage()));
-            LOGGER.error("{}", Messages.INVALID_YAML_FORMAT_REASON, e.getMessage(), e);
-        }
-    }
-
-    private String verifyImport(Set<String> existingFiles, Object o, String parentDir) {
-        if(o instanceof String){
-            String filePath = ((String) o);
-            if(!filePath.contains("/")){
-                filePath = parentDir + "/" + filePath;
-            }
-            if(!verifyFileExists(existingFiles, filePath)){
-                reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(), filePath,
-                        parentDir));
-                return null;
-            }
-            return filePath;
-        } else if(o instanceof Map){
-            Map<String, Object> o1 = (Map)o;
-            for(Map.Entry<String, Object> entry: o1.entrySet()){
-                if(NON_FILE_IMPORT_ATTRIBUTES.stream().noneMatch(attr -> entry.getKey().equals(attr))){
-                    verifyImport(existingFiles, entry.getValue(), parentDir);
-                }
-            }
-        }else {
-            reportError(ErrorLevel.ERROR, String.format(Messages.INVALID_IMPORT_STATEMENT.getErrorMessage(), parentDir));
-        }
-        return null;
     }
 
     private boolean verifyFileExists(Set<String> existingFiles, String filePath){
         return existingFiles.contains(filePath);
     }
 
-    private byte[] getFileContent(String filename, FileContentHandler contentHandler){
-        Map<String, byte[]> files = contentHandler.getFiles();
-        return files.get(filename);
-    }
-
     private void validateManifestFile(FileContentHandler contentHandler, String filePath){
         final Set<String> existingFiles = contentHandler.getFileList();
-        if(verifyFileExists(existingFiles, filePath)) {
+        if (verifyFileExists(existingFiles, filePath)) {
             Manifest onboardingManifest = new SOL004ManifestOnboarding();
             onboardingManifest.parse(contentHandler.getFileContent(filePath));
             if(onboardingManifest.isValid()){
@@ -419,7 +365,7 @@ class SOL004MetaDirectoryValidator implements Validator{
         }
     }
 
-    private void reportError(ErrorLevel errorLevel, String errorMessage){
+    private void reportError(final ErrorLevel errorLevel, final String errorMessage) {
         errorsByFile.add(new ErrorMessage(errorLevel, errorMessage));
     }
 

@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -33,10 +34,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_PROVIDER;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_ARCHIVE_VERSION;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_RELEASE_DATE_TIME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CERTIFICATE;
@@ -45,10 +55,6 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_L
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_TESTS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_PROVIDER;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_ARCHIVE_VERSION;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_RELEASE_DATE_TIME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PRODUCT_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PROVIDER_ID;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PACKAGE_VERSION;
@@ -57,6 +63,8 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_RELEASE_DATE_TIME;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.*;
 
 public class SOL004MetaDirectoryValidatorTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOL004MetaDirectoryValidatorTest.class);
 
     private SOL004MetaDirectoryValidator sol004MetaDirectoryValidator;
     private FileContentHandler handler;
@@ -225,7 +233,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml", sampleDefinitionFile2);
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml");
 
-        final byte [] sampleDefinitionFile3 = getResourceBytes("/validation.files/definition/sampleDefinitionFile3.yaml");
+        final byte [] sampleDefinitionFile3 = getResourceBytes("/validation.files/definition/sampleDefinitionFile1.yaml");
         handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml", sampleDefinitionFile3);
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml");
 
@@ -487,7 +495,7 @@ public class SOL004MetaDirectoryValidatorTest {
     @Test
     public void testGivenManifestFile_withValidVnfMetadata_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
-        
+
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -675,6 +683,80 @@ public class SOL004MetaDirectoryValidatorTest {
 
     }
 
+    /**
+     * Tests an imported descriptor with a missing imported file.
+     */
+    @Test
+    public void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() throws IOException {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        handler.addFile(SAMPLE_SOURCE, "".getBytes());
+        manifestBuilder.withSource(SAMPLE_SOURCE);
+
+        final String definitionImportOne = "Definitions/importOne.yaml";
+        handler.addFile(definitionImportOne, getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml"));
+        manifestBuilder.withSource(definitionImportOne);
+
+        final String definitionFileWithValidImports = "/validation.files/definition/definitionFileWithOneImport.yaml";
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(definitionFileWithValidImports));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
+
+        final List<ErrorMessage> expectedErrorList = new ArrayList<>();
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.MISSING_IMPORT_FILE.formatMessage("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml"))
+        );
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+    }
+
+    /**
+     * Tests an imported descriptor with invalid import statement.
+     */
+    @Test
+    public void testGivenDefinitionFileWithImportedDescriptor_whenInvalidImportStatementExistInImportedDescriptor_thenInvalidImportErrorOccur() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        handler.addFile(SAMPLE_SOURCE, "".getBytes());
+        manifestBuilder.withSource(SAMPLE_SOURCE);
+
+        final String definitionImportOne = "Definitions/importOne.yaml";
+        handler.addFile(definitionImportOne, getResourceBytes("/validation.files/definition/definitionFileWithInvalidImport.yaml"));
+        manifestBuilder.withSource(definitionImportOne);
+
+        final String definitionFileWithValidImports = "/validation.files/definition/definitionFileWithOneImport.yaml";
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(definitionFileWithValidImports));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
+
+        final List<ErrorMessage> expectedErrorList = new ArrayList<>();
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.INVALID_IMPORT_STATEMENT.formatMessage(definitionImportOne, "null"))
+        );
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+    }
+
     private void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
@@ -697,8 +779,9 @@ public class SOL004MetaDirectoryValidatorTest {
         try {
             return ValidatorUtil.getFileResource(resourcePath);
         } catch (final IOException e) {
-            fail(String.format("Could not load resource '%s'", resourcePath));
-            e.printStackTrace();
+            final String errorMsg = String.format("Could not load resource '%s'", resourcePath);
+            LOGGER.error(errorMsg, e);
+            fail(errorMsg);
         }
 
         return null;
@@ -719,4 +802,19 @@ public class SOL004MetaDirectoryValidatorTest {
             .withMetaData(VNF_PACKAGE_VERSION, "1.0")
             .withMetaData(VNF_RELEASE_DATE_TIME, "2019-03-11T11:25:00+00:00");
     }
+
+    private void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {
+        if (actualErrorList == null) {
+            actualErrorList = new ArrayList<>();
+        }
+
+        assertThat("The actual error list should have the same size as the expected error list"
+            , actualErrorList, hasSize(expectedErrorList.size())
+        );
+
+        assertThat("The actual error and expected error lists should be the same"
+            , actualErrorList, containsInAnyOrder(expectedErrorList.toArray(new ErrorMessage[0]))
+        );
+    }
+
 }

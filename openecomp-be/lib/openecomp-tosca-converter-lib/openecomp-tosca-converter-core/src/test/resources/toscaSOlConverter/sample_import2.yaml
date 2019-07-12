@@ -3,4 +3,4 @@ description: ETSI NFV SOL 001 pnfd types definitions version 2.5.1
 
 imports:
   - sample_import2.yaml
-  - Artifacts/sample_import3.yaml
+  - ../Artifacts/sample_import3.yaml
