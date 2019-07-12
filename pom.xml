@@ -39,7 +39,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <tosca.datatype.version>1.3.2-SNAPSHOT</tosca.datatype.version>
+        <tosca.datatype.version>${project.version}</tosca.datatype.version>
 
         <!-- 3rd parties versions -->
         <bean-matcher.version>0.11</bean-matcher.version>
