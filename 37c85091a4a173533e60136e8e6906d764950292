@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6e1569a_4dcbe583",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/configuration/CsarGeneratorConfiguration.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5571
+      },
+      "writtenOn": "2019-07-14T10:50:46Z",
+      "side": 1,
+      "message": "Please do not comment out unwanted code - delete it",
+      "revId": "37c85091a4a173533e60136e8e6906d764950292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
