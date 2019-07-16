@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,7 @@ public enum EcompLoggerErrorCode {
     BUSINESS_PROCESS_ERROR(500),
     UNKNOWN_ERROR(900);
 
+    public static final int ERROR_CODE_SUBSTRING = 3;
     private int errorCode;
 
     EcompLoggerErrorCode(int errorCode) {
@@ -47,7 +48,7 @@ public enum EcompLoggerErrorCode {
 
     public static EcompLoggerErrorCode getByValue(String ecompErrorCode) {
         String errorPrefix = parseCode(ecompErrorCode);
-        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v->isCode(v, errorPrefix)).findFirst();
+        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v -> isCode(v, errorPrefix)).findFirst();
         return optionalCode.orElse(UNKNOWN_ERROR);
     }
 
@@ -57,7 +58,7 @@ public enum EcompLoggerErrorCode {
 
     private static String parseCode(String errorCode) {
         try {
-            return errorCode.substring("E_".length(), 3);
+            return errorCode.substring("E_".length(), ERROR_CODE_SUBSTRING);
         } catch (StringIndexOutOfBoundsException ex) {
             return UNKNOWN_ERROR.name();
         }

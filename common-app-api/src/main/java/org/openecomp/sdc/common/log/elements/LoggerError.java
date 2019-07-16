@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,7 +75,7 @@ public class LoggerError extends LoggerBase {
                     EcompLoggerErrorCode errorCodeEnum,
                     String serviceName,
                     String targetEntity,
-                    String message, Object...params) {
+                    String message, Object... params) {
         fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName, targetEntity);
         super.log(logLevel, message, params);
     }
@@ -105,7 +105,7 @@ public class LoggerError extends LoggerBase {
     public void log(LogLevel logLevel,
                     EcompLoggerErrorCode errorCodeEnum,
                     String serviceName,
-                    String message, Object...params) {
+                    String message, Object... params) {
         log(logLevel, errorCodeEnum, serviceName, null, message, params);
     }
 
@@ -117,7 +117,7 @@ public class LoggerError extends LoggerBase {
     }
 
     @Override
-    public void log(LogLevel logLevel, String message, Object...params) {
+    public void log(LogLevel logLevel, String message, Object... params) {
         log(logLevel, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, defaultServiceName, null, message, params);
     }
 
@@ -134,7 +134,7 @@ public class LoggerError extends LoggerBase {
     }
 
     private LogLevel convertFromSeverityErrorLevel(EcompErrorConfiguration.EcompErrorSeverity severityLevel) {
-        switch(severityLevel) {
+        switch (severityLevel) {
             case INFO:
                 return LogLevel.INFO;
             case FATAL:
@@ -143,8 +143,9 @@ public class LoggerError extends LoggerBase {
                 return LogLevel.ERROR;
             case WARN:
                 return LogLevel.WARN;
+            default:
+                return LogLevel.ERROR;
         }
-        return LogLevel.ERROR;
     }
 
 }

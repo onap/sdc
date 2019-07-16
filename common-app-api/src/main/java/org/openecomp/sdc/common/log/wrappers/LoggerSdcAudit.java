@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,13 +35,13 @@ import javax.ws.rs.core.Response;
 
 /**
  * Created by dd4296 on 12/19/2017.
- *
+ * <p>
  * audit log for asdc using the log library
  * this is adapted for filter classes
  */
 public class LoggerSdcAudit extends LoggerSdcUtilBase {
 
-    private static String AUDIT_ON = "auditOn";
+    private static final String AUDIT_ON = "auditOn";
     private String className;
     private final LoggerAudit ecompLoggerAudit;
 
@@ -68,7 +68,7 @@ public class LoggerSdcAudit extends LoggerSdcUtilBase {
     }
 
     //this function clears the MDC data that relevant for this class
-    public void clearMyData(){
+    public void clearMyData() {
         ecompLoggerAudit.clear();
     }
 
@@ -81,8 +81,8 @@ public class LoggerSdcAudit extends LoggerSdcUtilBase {
 
         try {
 
-            String msg = ecompLoggerAudit.getAuditMessage() == null ?
-                    message : ecompLoggerAudit.getAuditMessage();
+            String msg = ecompLoggerAudit.getAuditMessage() == null
+                    ? message : ecompLoggerAudit.getAuditMessage();
             ecompLoggerAudit.stopTimer()
                     .setRemoteHost(remoteAddress)
                     .setResponseCode(convertHttpCodeToErrorCode(statusInfo.getStatusCode()))
@@ -95,12 +95,10 @@ public class LoggerSdcAudit extends LoggerSdcUtilBase {
                     .setOptCustomField1(requestContext.getMethod() + ": " + getUrl(requestContext))
                     .setOptCustomField2(Integer.toString(statusInfo.getStatusCode()))
                     .log(logLevel, msg);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Failed to write to Audit Log. Original Message: {}", message, e);
-        }
-        finally {
-            MDC.put(AUDIT_ON,"false");
+        } finally {
+            MDC.put(AUDIT_ON, "false");
         }
     }
 }

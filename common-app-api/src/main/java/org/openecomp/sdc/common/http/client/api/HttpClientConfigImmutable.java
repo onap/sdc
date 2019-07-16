@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,14 +36,14 @@ final class HttpClientConfigImmutable {
     private final ClientCertificate clientCertificate;
     private final Timeouts timeouts;
     /*
-     * use ComparableHttpRequestRetryHandler.compare instead of default generated equals 
+     * use ComparableHttpRequestRetryHandler.compare instead of default generated equals
      */
     private final ComparableHttpRequestRetryHandler retryHandler;
     private final int numOfRetries;
-    
+
     static HttpClientConfigImmutable getOrCreate(HttpClientConfig httpClientConfig) {
         // TODO: retrieve from a pool if exist, otherwise create new
-        return new HttpClientConfigImmutable(httpClientConfig); 
+        return new HttpClientConfigImmutable(httpClientConfig);
     }
 
     HttpClientConfigImmutable(HttpClientConfig httpClientConfig) {
@@ -62,7 +62,7 @@ final class HttpClientConfigImmutable {
     int getNumOfRetries() {
         return numOfRetries;
     }
-    
+
     String getBasicAuthPassword() {
         return basicAuthorization != null ? basicAuthorization.getPassword() : null;
     }
@@ -82,7 +82,7 @@ final class HttpClientConfigImmutable {
     ClientCertificate getClientCertificate() {
         return clientCertificate != null ? new ClientCertificate(clientCertificate) : null;
     }
-    
+
     int getReadTimeoutMs() {
         return timeouts.getReadTimeoutMs();
     }
@@ -113,43 +113,51 @@ final class HttpClientConfigImmutable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         HttpClientConfigImmutable other = (HttpClientConfigImmutable) obj;
         if (basicAuthorization == null) {
-            if (other.basicAuthorization != null)
+            if (other.basicAuthorization != null) {
                 return false;
-        }
-        else if (!basicAuthorization.equals(other.basicAuthorization))
+            }
+        } else if (!basicAuthorization.equals(other.basicAuthorization)) {
             return false;
+        }
         if (clientCertificate == null) {
-            if (other.clientCertificate != null)
+            if (other.clientCertificate != null) {
                 return false;
-        }
-        else if (!clientCertificate.equals(other.clientCertificate))
+            }
+        } else if (!clientCertificate.equals(other.clientCertificate)) {
             return false;
+        }
         if (headers == null) {
-            if (other.headers != null)
+            if (other.headers != null) {
                 return false;
-        }
-        else if (!headers.equals(other.headers))
+            }
+        } else if (!headers.equals(other.headers)) {
             return false;
+        }
         if (retryHandler == null) {
-            if (other.retryHandler != null)
+            if (other.retryHandler != null) {
                 return false;
-        }
-        else if (!retryHandler.compare(other.retryHandler))
+            }
+        } else if (!retryHandler.compare(other.retryHandler)) {
             return false;
+        }
         if (timeouts == null) {
-            if (other.timeouts != null)
+            if (other.timeouts != null) {
                 return false;
-        }
-        else if (!timeouts.equals(other.timeouts))
+            }
+        } else if (!timeouts.equals(other.timeouts)) {
             return false;
+        }
         return true;
     }
 
