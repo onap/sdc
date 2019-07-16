@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,9 +33,9 @@ public class HttpClientConfig {
     private Map<String, String> headers;
     private int numOfRetries;
 
-    public HttpClientConfig() {    
+    public HttpClientConfig() {
     }
-    
+
     public HttpClientConfig(Timeouts timeouts) {
         setTimeouts(timeouts);
     }
@@ -81,11 +81,11 @@ public class HttpClientConfig {
     public void setClientCertificate(ClientCertificate clientCertificate) {
         this.clientCertificate = clientCertificate;
     }
-    
+
     public Map<String, String> getHeaders() {
         return headers;
     }
-    
+
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
@@ -93,7 +93,7 @@ public class HttpClientConfig {
     public int getNumOfRetries() {
         return numOfRetries;
     }
-    
+
     public void setNumOfRetries(int numOfRetries) {
         this.numOfRetries = numOfRetries;
     }

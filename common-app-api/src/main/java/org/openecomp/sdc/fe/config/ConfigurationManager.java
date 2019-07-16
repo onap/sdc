@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,100 +35,100 @@ import java.util.Map;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
-	ConfigurationSource configurationSource = null;
-	private static ConfigurationManager instance;
-	private static Logger log = LoggerFactory.getLogger(ConfigurationManager.class.getName());
+    private ConfigurationSource configurationSource = null;
+    private static ConfigurationManager instance;
+    private static Logger logger = LoggerFactory.getLogger(ConfigurationManager.class.getName());
 
-	public ConfigurationManager(ConfigurationSource configurationSource) {
-		super();
-		this.configurationSource = configurationSource;
-		loadConfigurationFiles();
-		instance = this;
-	}
+    public ConfigurationManager(ConfigurationSource configurationSource) {
+        super();
+        this.configurationSource = configurationSource;
+        loadConfigurationFiles();
+        instance = this;
+    }
 
-	Map<String, Object> configurations = new HashMap<>();
+    private Map<String, Object> configurations = new HashMap<>();
 
-	private void loadConfigurationFiles() {
+    private void loadConfigurationFiles() {
 
-		loadConfigurationClass(Configuration.class);
-		loadConfigurationClass(RestConfigurationInfo.class);
-		loadConfigurationClass(EcompErrorConfiguration.class);
-		loadConfigurationClass(PluginsConfiguration.class);
+        loadConfigurationClass(Configuration.class);
+        loadConfigurationClass(RestConfigurationInfo.class);
+        loadConfigurationClass(EcompErrorConfiguration.class);
+        loadConfigurationClass(PluginsConfiguration.class);
 
-	}
+    }
 
-	private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
-		ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
-		
-		log.info("created listener for class {}: {}", clazz.getName(), configurationListener);
+    private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
+        ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
 
-		T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
+        logger.info("created listener for class {}: {}", clazz.getName(), configurationListener);
 
-		configurations.put(getKey(clazz), object);
-	}
+        T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
 
-	private <T> String getKey(Class<T> class1) {
+        configurations.put(getKey(clazz), object);
+    }
 
-		return class1.getSimpleName();
+    private <T> String getKey(Class<T> class1) {
 
-	}
+        return class1.getSimpleName();
 
-	public Configuration getConfiguration() {
+    }
 
-		return (Configuration) configurations.get(getKey(Configuration.class));
+    public Configuration getConfiguration() {
 
-	}
+        return (Configuration) configurations.get(getKey(Configuration.class));
 
-	public RestConfigurationInfo getRestClientConfiguration() {
+    }
 
-		return (RestConfigurationInfo) configurations.get(getKey(RestConfigurationInfo.class));
+    public RestConfigurationInfo getRestClientConfiguration() {
 
-	}
+        return (RestConfigurationInfo) configurations.get(getKey(RestConfigurationInfo.class));
 
-	@Override
-	public EcompErrorConfiguration getEcompErrorConfiguration() {
+    }
 
-		return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
+    @Override
+    public EcompErrorConfiguration getEcompErrorConfiguration() {
 
-	}
-	
-	public PluginsConfiguration getPluginsConfiguration() {
-		
-		log.info("requested plugins configuration and got this:{}", configurations.get(getKey(PluginsConfiguration.class)));
-		
-		return (PluginsConfiguration) configurations.get(getKey(PluginsConfiguration.class));
-	}
+        return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
 
-	public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
+    }
 
-		if (configurationListener != null) {
+    public PluginsConfiguration getPluginsConfiguration() {
 
-			configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
+        logger.info("requested plugins configuration and got this:{}", configurations.get(getKey(PluginsConfiguration.class)));
 
-		}
-		return (Configuration) configurations.get(getKey(Configuration.class));
+        return (PluginsConfiguration) configurations.get(getKey(PluginsConfiguration.class));
+    }
 
-	}
+    public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
 
-	public void reconfigure(BasicConfiguration obj) {
-		//
-		// if (obj != null) {
-		//
-		// if (obj instanceof Configuration) {
-		// configurations.put(getKey(Configuration.class), obj);
-		// }
-		//
-		// if (obj instanceof EcompErrorConfiguration) {
-		// configurations.put(getKey(EcompErrorConfiguration.class), obj);
-		// }
-		// }
-	}
+        if (configurationListener != null) {
 
-	public static ConfigurationManager getConfigurationManager() {
-		return instance;
-	}
-	
-	public static void setTestInstance(ConfigurationManager configurationManagerInstance) {
-		instance = configurationManagerInstance;
-	}
+            configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
+
+        }
+        return (Configuration) configurations.get(getKey(Configuration.class));
+
+    }
+
+    public void reconfigure(BasicConfiguration obj) {
+        //
+        // if (obj != null) {
+        //
+        // if (obj instanceof Configuration) {
+        // configurations.put(getKey(Configuration.class), obj);
+        // }
+        //
+        // if (obj instanceof EcompErrorConfiguration) {
+        // configurations.put(getKey(EcompErrorConfiguration.class), obj);
+        // }
+        // }
+    }
+
+    public static ConfigurationManager getConfigurationManager() {
+        return instance;
+    }
+
+    public static void setTestInstance(ConfigurationManager configurationManagerInstance) {
+        instance = configurationManagerInstance;
+    }
 }

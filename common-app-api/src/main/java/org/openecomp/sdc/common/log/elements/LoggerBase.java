@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +43,8 @@ import java.util.List;
 public abstract class LoggerBase implements ILogger {
     private final Logger myLogger;
     private final Marker myMarker;
-    protected final ILogFieldsHandler ecompLogFieldsHandler;
-    private final static String missingLogFieldsMsg = "mandatory parameters for ECOMP logging, missing fields: %s, original message: %s";
+    final ILogFieldsHandler ecompLogFieldsHandler;
+    private static final String MISSING_LOG_FIELDS_MESSAGE = "mandatory parameters for ECOMP logging, missing fields: %s, original message: %s";
 
     LoggerBase(ILogFieldsHandler ecompLogFieldsHandler, Marker marker, Logger logger) {
         this.ecompLogFieldsHandler = ecompLogFieldsHandler;
@@ -53,18 +53,19 @@ public abstract class LoggerBase implements ILogger {
         setKeyRequestIdIfNotSetYet();
     }
 
-    protected void setKeyRequestIdIfNotSetYet() {
+    void setKeyRequestIdIfNotSetYet() {
         if (StringUtils.isEmpty(ecompLogFieldsHandler.getKeyRequestId())) {
             setKeyRequestId(ThreadLocalsHolder.getUuid());
         }
     }
+
     private void validateMandatoryFields(String originMsg) {
         // this method only checks if the mandatory fields have been initialized
         String filedNameThatHasNotBeenInitialized = checkMandatoryFieldsExistInMDC();
 
         if (myLogger.isDebugEnabled() && !"".equalsIgnoreCase(filedNameThatHasNotBeenInitialized)) {
             myLogger.debug(MarkerFactory.getMarker(LogMarkers.DEBUG_MARKER.text()),
-                    String.format(missingLogFieldsMsg, filedNameThatHasNotBeenInitialized, originMsg));
+                    String.format(MISSING_LOG_FIELDS_MESSAGE, filedNameThatHasNotBeenInitialized, originMsg));
         }
     }
 
@@ -94,10 +95,10 @@ public abstract class LoggerBase implements ILogger {
     }
 
     @Override
-    public void log(LogLevel logLevel, String message, Object...params) {
+    public void log(LogLevel logLevel, String message, Object... params) {
         validateMandatoryFields(message);
 
-        switch(logLevel) {
+        switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
                 myLogger.error(myMarker, message, params);
@@ -123,7 +124,7 @@ public abstract class LoggerBase implements ILogger {
     public void log(LogLevel logLevel, String message, Throwable throwable) {
         validateMandatoryFields(message);
 
-        switch(logLevel) {
+        switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
                 myLogger.error(myMarker, createErrorMessage(message, throwable));
@@ -145,7 +146,7 @@ public abstract class LoggerBase implements ILogger {
         }
     }
 
-    protected String createErrorMessage(String message, Throwable throwable) {
+    String createErrorMessage(String message, Throwable throwable) {
         return String.format("%s: %s", message, throwable.getLocalizedMessage());
     }
 
