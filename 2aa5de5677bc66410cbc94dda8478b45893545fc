@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2db7d63_83d2a9ad",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-16T11:04:09Z",
+      "side": 1,
+      "message": "should be Poland/Warsaw",
+      "revId": "2aa5de5677bc66410cbc94dda8478b45893545fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
