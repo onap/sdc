@@ -288,9 +288,9 @@ public class Configuration extends BasicConfiguration {
 
     public static class FeMonitoringConfig {
 
-        Boolean enabled;
-        Boolean isProxy;
-        Integer probeIntervalInSeconds;
+        private Boolean enabled;
+        private Boolean isProxy;
+        private Integer probeIntervalInSeconds;
 
         public Boolean getEnabled() {
             return enabled;
@@ -322,13 +322,13 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class OnboardingConfig {
-        String protocolFe = "http";
-        String hostFe;
-        Integer portFe;
-        String protocolBe = "http";
-        String hostBe;
-        Integer portBe;
-        String healthCheckUriFe;
+        private String protocolFe = "http";
+        private String hostFe;
+        private Integer portFe;
+        private String protocolBe = "http";
+        private String hostBe;
+        private Integer portBe;
+        private String healthCheckUriFe;
 
         public String getProtocolFe() {
             return protocolFe;
@@ -389,10 +389,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class DcaeConfig {
 
-        String protocol = "http";
-        String host;
-        Integer port;
-        String healthCheckUri;
+        private String protocol = "http";
+        private String host;
+        private Integer port;
+        private String healthCheckUri;
 
         public String getProtocol() {
             return protocol;

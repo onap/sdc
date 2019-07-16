@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,25 +29,41 @@ import javax.ws.rs.container.ContainerRequestContext;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
+import static java.net.HttpURLConnection.HTTP_CONFLICT;
+import static java.net.HttpURLConnection.HTTP_ENTITY_TOO_LARGE;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_GONE;
+import static java.net.HttpURLConnection.HTTP_LENGTH_REQUIRED;
+import static java.net.HttpURLConnection.HTTP_NOT_ACCEPTABLE;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.HttpURLConnection.HTTP_PAYMENT_REQUIRED;
+import static java.net.HttpURLConnection.HTTP_PRECON_FAILED;
+import static java.net.HttpURLConnection.HTTP_PROXY_AUTH;
+import static java.net.HttpURLConnection.HTTP_REQ_TOO_LONG;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.net.HttpURLConnection.HTTP_UNSUPPORTED_TYPE;
 
 /**
  * Created by dd4296 on 12/20/2017.
- *
+ * <p>
  * base class for metric and audit log logging
  * holding the specific logic for data extraction
  */
 public class LoggerSdcUtilBase {
 
+    private static final int SUCCESS_ERROR_CODE_LIMIT = 399;
+    private static final int BUSINESS_PROCESS_ERROR_BOUNDRY = 499;
     protected static Logger log = LoggerFactory.getLogger(LoggerSdcUtilBase.class.getName());
 
     String getRequestIDfromHeaders(List<Object> requestHeader) {
         // this method gets list of type object.
         // toString method returns the RequestId with brackets.
         String requestHeaderString = requestHeader.toString();
-        return requestHeaderString.replace("[","").replace("]","");
+        return requestHeaderString.replace("[", "").replace("]", "");
     }
-
 
 
     // this method translates http error code to ECOMP Logger Error code
@@ -98,9 +114,10 @@ public class LoggerSdcUtilBase {
             case HTTP_BAD_METHOD:
             case HTTP_PROXY_AUTH:
                 return true;
-        }
 
-        return false;
+            default:
+                return false;
+        }
     }
 
     private boolean isDataError(int httpResponseCode) {
@@ -113,9 +130,10 @@ public class LoggerSdcUtilBase {
             case HTTP_ENTITY_TOO_LARGE:
             case HTTP_UNSUPPORTED_TYPE:
                 return true;
-        }
 
-        return false;
+            default:
+                return false;
+        }
     }
 
     private boolean isSchemaError(int httpResponseCode) {
@@ -123,11 +141,11 @@ public class LoggerSdcUtilBase {
     }
 
     private boolean isSuccessError(int httpResponseCode) {
-        return httpResponseCode < 399;
+        return httpResponseCode < SUCCESS_ERROR_CODE_LIMIT;
     }
 
     private boolean isBusinessProcessError(int httpResponseCode) {
-        return httpResponseCode > 499;
+        return httpResponseCode > BUSINESS_PROCESS_ERROR_BOUNDRY;
     }
 
     protected String getPartnerName(String userAgent, String userId, String url) {
@@ -138,13 +156,15 @@ public class LoggerSdcUtilBase {
 
         String urlUser = getUserIdFromUrl(url);
 
-        if (!StringUtils.isEmpty(urlUser))
+        if (!StringUtils.isEmpty(urlUser)) {
             return urlUser;
+        }
 
         String userAgentName = getUserIdFromUserAgent(userAgent);
 
-        if (!StringUtils.isEmpty(userAgentName))
+        if (!StringUtils.isEmpty(userAgentName)) {
             return userAgentName;
+        }
 
         return "";
     }

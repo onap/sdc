@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.openecomp.sdc.common.log.api.ILogConfiguration.*;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_ALERT_SEVERITY;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_CLASS_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_ELAPSED_TIME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_END_TIMESTAMP;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_INSTANCE_UUID;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_KEY_REQUEST_ID;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_METRIC_BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_OPT_FIELD1;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_OPT_FIELD2;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_OPT_FIELD3;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_OPT_FIELD4;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_PARTNER_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_PROCESS_KEY;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_REMOTE_HOST;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_RESPONSE_CODE;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_RESPONSE_DESC;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVER_FQDN;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVER_IP_ADDRESS;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVICE_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_STATUS_CODE;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_TARGET_ENTITY;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_TARGET_SERVICE_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_TARGET_VIRTUAL_ENTITY;
 
 
 public class LoggerMetric extends LoggerBase {
@@ -76,7 +99,7 @@ public class LoggerMetric extends LoggerBase {
                     LogLevel logLevel,
                     Severity securityLevel,
                     String message) {
-        log(statusInfo,className, logLevel, securityLevel, message);
+        log(statusInfo, className, logLevel, securityLevel, message);
     }
 
     @Override
@@ -224,8 +247,6 @@ public class LoggerMetric extends LoggerBase {
         ecompLogFieldsHandler.setTargetVirtualEntity(targetVirtualEntity);
         return this;
     }
-
-
 
 
 }
