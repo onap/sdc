@@ -355,7 +355,23 @@ const OnboardingActionHelper = {
             );
         });
     },
-
+    viewSoftwareProductAttachmentsValidationTab(
+        dispatch,
+        { softwareProductId, version, status }
+    ) {
+        SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {
+            softwareProductId,
+            version
+        });
+        SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {
+            activeTab: attachmentsTabsMapping.VALIDATION
+        });
+        setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {
+            softwareProductId,
+            version,
+            status
+        });
+    },
     navigateToSoftwareProductProcesses(
         dispatch,
         { softwareProductId, version, status }
