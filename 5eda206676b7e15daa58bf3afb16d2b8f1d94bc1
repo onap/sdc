@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6067045a_a0820dbc",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/validation/DeploymentArtifactHeatConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-16T13:59:21Z",
+      "side": 1,
+      "message": "please remove it",
+      "revId": "5eda206676b7e15daa58bf3afb16d2b8f1d94bc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
