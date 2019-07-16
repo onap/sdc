@@ -46,27 +46,28 @@ public class ConfigurationManagerTest {
     @Test
     public void testGetConfiguration() {
         assertEquals(configurationManager.getConfiguration(),
-                ConfigurationManager.getConfigurationManager().configurations.get(Configuration.class.getSimpleName()));
+                ConfigurationManager.getConfigurationManager().getConfigurations()
+                        .get(Configuration.class.getSimpleName()));
     }
 
     @Test
     public void testGetErrorConfiguration() {
         assertEquals(configurationManager.getErrorConfiguration(),
-                ConfigurationManager.getConfigurationManager().configurations
+                ConfigurationManager.getConfigurationManager().getConfigurations()
                         .get(ErrorConfiguration.class.getSimpleName()));
     }
 
     @Test
     public void testGetEcompErrorConfiguration() {
         assertEquals(configurationManager.getEcompErrorConfiguration(),
-                ConfigurationManager.getConfigurationManager().configurations
+                ConfigurationManager.getConfigurationManager().getConfigurations()
                         .get(EcompErrorConfiguration.class.getSimpleName()));
     }
 
     @Test
     public void testGetDistributionEngineConfiguration() {
         assertEquals(configurationManager.getDistributionEngineConfiguration(),
-                ConfigurationManager.getConfigurationManager().configurations
+                ConfigurationManager.getConfigurationManager().getConfigurations()
                         .get(DistributionEngineConfiguration.class.getSimpleName()));
     }
 
