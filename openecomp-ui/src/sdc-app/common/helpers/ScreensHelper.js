@@ -179,6 +179,13 @@ const ScreensHelper = {
                             vspProps
                         );
                         break;
+                    case enums.SCREEN
+                        .SOFTWARE_PRODUCT_ATTACHMENTS_VIEW_VALIDATION:
+                        OnboardingActionHelper.viewSoftwareProductAttachmentsValidationTab(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
                         OnboardingActionHelper.navigateToSoftwareProductProcesses(
                             dispatch,

@@ -576,7 +576,7 @@ const mapActionsToProps = (
                             ) {
                                 nextScreen =
                                     enums.SCREEN
-                                        .SOFTWARE_PRODUCT_ATTACHMENTS_VALIDATION;
+                                        .SOFTWARE_PRODUCT_ATTACHMENTS_VIEW_VALIDATION;
                             }
                         }
                         ScreensHelper.loadScreen(dispatch, {
