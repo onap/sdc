@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response.Status;
 @Path("/config")
 public class ConfigServlet extends LoggingServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigServlet.class.getName());
 
 
     @GET
@@ -67,7 +67,7 @@ public class ConfigServlet extends LoggingServlet {
             return response;
         } catch (Exception e) {
             FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            log.error("Unexpected FE response logging error :", e);
+            LOGGER.error("Unexpected FE response logging error :", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
 
@@ -88,7 +88,7 @@ public class ConfigServlet extends LoggingServlet {
             String result = pluginStatusBL.getPluginAvailability(pluginId);
 
             if (result == null) {
-                log.debug("Plugin with pluginId: {} was not found in the configuration", pluginId);
+                LOGGER.debug("Plugin with pluginId: {} was not found in the configuration", pluginId);
                 return Response.status(Status.NOT_FOUND).entity("Plugin with pluginId:\"" + pluginId + "\" was not found in the configuration").build();
             }
 
@@ -99,13 +99,13 @@ public class ConfigServlet extends LoggingServlet {
             return response;
         } catch (Exception e) {
             FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            log.error("Unexpected FE response logging error :", e);
+            LOGGER.error("Unexpected FE response logging error :", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
     }
 
     protected void inHttpRequest(HttpServletRequest httpRequest) {
-        log.info("{} {} {}", httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getProtocol());
+        LOGGER.info("{} {} {}", httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getProtocol());
     }
 
     /**
@@ -114,6 +114,6 @@ public class ConfigServlet extends LoggingServlet {
      * @param response http response
      */
     protected void outHttpResponse(Response response) {
-        log.info("SC=\"{}\"", response.getStatus());
+        LOGGER.info("SC=\"{}\"", response.getStatus());
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,10 +34,11 @@ import javax.servlet.ServletException;
 
 public abstract class SSLProxyServlet extends ProxyServlet {
 
-	private static final long serialVersionUID = 1L;
-	private static Logger log = LoggerFactory.getLogger(SSLProxyServlet.class.getName());
+    private static final long serialVersionUID = 1L;
+    public static final int TIMEOUT = 600000;
+    private static Logger log = LoggerFactory.getLogger(SSLProxyServlet.class.getName());
 
-	//TODO If no problems will arise remove in next merge
+    //TODO If no problems will arise remove in next merge
     /*@Override
     protected void sendProxyRequest(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Request proxyRequest) {
         // Add Missing Headers to proxy request
@@ -57,37 +58,37 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         super.sendProxyRequest(clientRequest, proxyResponse, proxyRequest);
     }*/
 
-	@Override
-	protected HttpClient createHttpClient() throws ServletException {
-		Configuration config = ((ConfigurationManager) getServletConfig().getServletContext()
-				.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
-		boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
-		HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
-		setTimeout(600000);
-		client.setIdleTimeout(600000);
-		client.setStopTimeout(600000);
+    @Override
+    protected HttpClient createHttpClient() throws ServletException {
+        Configuration config = ((ConfigurationManager) getServletConfig().getServletContext()
+                .getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
+        boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
+        HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
+        setTimeout(TIMEOUT);
+        client.setIdleTimeout(TIMEOUT);
+        client.setStopTimeout(TIMEOUT);
 
-		return client;
-	}
+        return client;
+    }
 
-	private HttpClient getSecureHttpClient() throws ServletException {
-		// Instantiate and configure the SslContextFactory
-		SslContextFactory sslContextFactory = new SslContextFactory(true);
+    private HttpClient getSecureHttpClient() throws ServletException {
+        // Instantiate and configure the SslContextFactory
+        SslContextFactory sslContextFactory = new SslContextFactory(true);
 
-		// Instantiate HttpClient with the SslContextFactory
-		HttpClient httpClient = new HttpClient(sslContextFactory);
+        // Instantiate HttpClient with the SslContextFactory
+        HttpClient httpClient = new HttpClient(sslContextFactory);
 
-		// Configure HttpClient, for example:
-		httpClient.setFollowRedirects(false);
+        // Configure HttpClient, for example:
+        httpClient.setFollowRedirects(false);
 
-		// Start HttpClient
-		try {
-			httpClient.start();
-		} catch (Exception x) {
+        // Start HttpClient
+        try {
+            httpClient.start();
+        } catch (Exception x) {
             log.error("Exception thrown while starting httpClient {}", x);
-			throw new ServletException(x);
-		}
+            throw new ServletException(x);
+        }
 
         return httpClient;
-	}
+    }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,46 +43,46 @@ import javax.ws.rs.core.MediaType;
 @Path("/configmgr")
 public class ConfigMgrServlet extends BasicServlet {
 
-	private static Logger log = LoggerFactory.getLogger(ConfigMgrServlet.class.getName());
+    private static Logger log = LoggerFactory.getLogger(ConfigMgrServlet.class.getName());
 
-	@GET
-	@Path("/get")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getConfig(@Context final HttpServletRequest request, @QueryParam("type") String type) {
+    @GET
+    @Path("/get")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getConfig(@Context final HttpServletRequest request, @QueryParam("type") String type) {
 
-		String result = null;
+        String result = null;
 
-		ServletContext context = request.getSession().getServletContext();
+        ServletContext context = request.getSession().getServletContext();
 
-		ConfigurationManager configurationManager = (ConfigurationManager) context
-				.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
+        ConfigurationManager configurationManager = (ConfigurationManager) context
+                .getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
 
-		if (type == null || type.equals("configuration")) {
+        if (type == null || type.equals("configuration")) {
 
-			Configuration configuration = configurationManager.getConfiguration();
-			if (configuration == null) {
-				log.warn("Configuration of type {} was not found", Configuration.class);
-			} else {
-				log.info("The value returned from getConfig is {}", configuration);
+            Configuration configuration = configurationManager.getConfiguration();
+            if (configuration == null) {
+                log.warn("Configuration of type {} was not found", Configuration.class);
+            } else {
+                log.info("The value returned from getConfig is {}", configuration);
 
-				result = gson.toJson(configuration);
+                result = gson.toJson(configuration);
 
-			}
-		} else if (type.equals("rest")) {
+            }
+        } else if (type.equals("rest")) {
 
-			RestConfigurationInfo configuration = configurationManager.getRestClientConfiguration();
-			if (configuration == null) {
-				log.warn("Configuration of type {} was not found", RestConfigurationInfo.class);
-			} else {
-				log.info("The value returned from getConfig is {}", configuration);
+            RestConfigurationInfo configuration = configurationManager.getRestClientConfiguration();
+            if (configuration == null) {
+                log.warn("Configuration of type {} was not found", RestConfigurationInfo.class);
+            } else {
+                log.info("The value returned from getConfig is {}", configuration);
 
-				result = gson.toJson(configuration);
+                result = gson.toJson(configuration);
 
-			}
+            }
 
-		}
-		return result;
+        }
+        return result;
 
-	}
+    }
 
 }

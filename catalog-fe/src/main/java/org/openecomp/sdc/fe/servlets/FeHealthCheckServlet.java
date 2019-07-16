@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,10 +35,10 @@ import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/healthCheck")
 public class FeHealthCheckServlet extends BasicServlet {
-	@GET
-	public Response getFEandBeHealthCheck(@Context final HttpServletRequest request) {
-		ServletContext context = request.getSession().getServletContext();
-		HealthCheckService hcs = ((HealthCheckService) context.getAttribute(HEALTH_CHECK_SERVICE_ATTR));
-		return hcs.getFeHealth();
-	}
+    @GET
+    public Response getFEandBeHealthCheck(@Context final HttpServletRequest request) {
+        ServletContext context = request.getSession().getServletContext();
+        HealthCheckService hcs = ((HealthCheckService) context.getAttribute(HEALTH_CHECK_SERVICE_ATTR));
+        return hcs.getFeHealth();
+    }
 }
