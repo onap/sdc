@@ -52,8 +52,18 @@ import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.openecomp.sdc.common.api.Constants.*;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.*;
+import static org.openecomp.sdc.common.api.Constants.CONFIGURATION_MANAGER_ATTR;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DISTRIBUTION_ENGINE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_FE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_JANUSGRAPH;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
+import static org.openecomp.sdc.common.api.Constants.HTTPS;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UNKNOWN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
 import static org.openecomp.sdc.common.http.client.api.HttpRequest.get;
 import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -61,6 +71,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class HealthCheckService {
 
     private static final String URL = "%s://%s:%s/sdc2/rest/healthCheck";
+    private static final int HEALTH_STATUS_CODE = 500;
     private static Logger healthLogger = getLogger("asdc.fe.healthcheck");
     private static Logger log = getLogger(HealthCheckService.class.getName());
     private final List<String> healthCheckFeComponents = asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_DCAE);
@@ -69,14 +80,14 @@ public class HealthCheckService {
     /**
      * This executor will execute the health check task.
      */
-    ScheduledExecutorService healthCheckExecutor = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
+    private ScheduledExecutorService healthCheckExecutor = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
 
     public void setTask(HealthCheckScheduledTask task) {
         this.task = task;
     }
 
-    private HealthCheckScheduledTask task ;
-    private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
+    private HealthCheckScheduledTask task;
+    private HealthStatus lastHealthStatus = new HealthStatus(HEALTH_STATUS_CODE, "{}");
     private ServletContext context;
 
     public HealthCheckService(ServletContext context) {
@@ -85,7 +96,7 @@ public class HealthCheckService {
     }
 
     public void start(int interval) {
-        this.healthCheckExecutor.scheduleAtFixedRate( getTask() , 0, interval, TimeUnit.SECONDS);
+        this.healthCheckExecutor.scheduleAtFixedRate(getTask(), 0, interval, TimeUnit.SECONDS);
     }
 
     /**
@@ -105,6 +116,7 @@ public class HealthCheckService {
     public HealthStatus getLastHealthStatus() {
         return lastHealthStatus;
     }
+
     public HealthCheckScheduledTask getTask() {
         return task;
     }
@@ -130,6 +142,10 @@ public class HealthCheckService {
     }
 
     protected class HealthCheckScheduledTask implements Runnable {
+
+        public static final int READ_TIMEOUT_DEFAULT_VAL = 5000;
+        public static final int CONNECT_TIMEOUT_MS = 3000;
+
         @Override
         public void run() {
             healthLogger.trace("Executing FE Health Check Task - Start");
@@ -163,8 +179,8 @@ public class HealthCheckService {
             }
 
             StringBuilder description = new StringBuilder("");
-            int connectTimeoutMs = 3000;
-            int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(5000);
+            int connectTimeoutMs = CONNECT_TIMEOUT_MS;
+            int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(READ_TIMEOUT_DEFAULT_VAL);
 
             if (healthCheckUrl != null) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -191,11 +207,11 @@ public class HealthCheckService {
 
         private void logFeAlarm(int lastFeStatus) {
             switch (lastFeStatus) {
-                case 200:
+                case SC_OK:
                     FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckRecovery, "FE Health Recovered");
                     FeEcompErrorManager.getInstance().logFeHealthCheckRecovery("FE Health Recovered");
                     break;
-                case 500:
+                case SC_INTERNAL_SERVER_ERROR:
                     FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckError, "Connection with ASDC-BE is probably down");
                     FeEcompErrorManager.getInstance().logFeHealthCheckError("Connection with ASDC-BE is probably down");
                     break;
@@ -212,8 +228,8 @@ public class HealthCheckService {
                 String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeHost(),
                         HTTPS.equals(config.getBeProtocol()) ? config.getBeSslPort() : config.getBeHttpPort());
 
-                int connectTimeoutMs = 3000;
-                int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(5000);
+                int connectTimeoutMs = CONNECT_TIMEOUT_MS;
+                int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(READ_TIMEOUT_DEFAULT_VAL);
 
                 HealthCheckWrapper feAggHealthCheck;
                 try {
@@ -232,14 +248,14 @@ public class HealthCheckService {
                 boolean aggregateFeStatus = (response != null && response.getStatusCode() == SC_INTERNAL_SERVER_ERROR) ? false : healthCheckUtil.getAggregateStatus(feAggHealthCheck.getComponentsInfo(), config.getHealthStatusExclude());
                 return new HealthStatus(aggregateFeStatus ? SC_OK : SC_INTERNAL_SERVER_ERROR, gson.toJson(feAggHealthCheck));
             } catch (Exception e) {
-                FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT,EcompErrorEnum.FeHealthCheckGeneralError, "Unexpected FE Health check error");
+                FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckGeneralError, "Unexpected FE Health check error");
                 FeEcompErrorManager.getInstance().logFeHealthCheckGeneralError("Unexpected FE Health check error");
                 log.error("Unexpected FE health check error {}", e.getMessage());
                 return new HealthStatus(SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
         }
 
-        protected Configuration getConfig(){
+        protected Configuration getConfig() {
             return ((ConfigurationManager) context.getAttribute(CONFIGURATION_MANAGER_ATTR))
                     .getConfiguration();
         }
@@ -263,7 +279,7 @@ public class HealthCheckService {
                         baseComponentHCInfo.setComponentsInfo(new ArrayList<>());
                     }
                     baseComponentHCInfo.getComponentsInfo().addAll(feComponentsInfo);
-                    boolean status = healthCheckUtil.getAggregateStatus(baseComponentHCInfo.getComponentsInfo() ,config.getHealthStatusExclude());
+                    boolean status = healthCheckUtil.getAggregateStatus(baseComponentHCInfo.getComponentsInfo(), config.getHealthStatusExclude());
                     baseComponentHCInfo.setHealthCheckStatus(status ? UP : DOWN);
 
                     String componentsDesc = healthCheckUtil.getAggregateDescription(baseComponentHCInfo.getComponentsInfo(), baseComponentHCInfo.getDescription());
