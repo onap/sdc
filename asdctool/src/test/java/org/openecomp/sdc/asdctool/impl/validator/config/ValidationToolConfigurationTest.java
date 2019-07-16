@@ -34,6 +34,7 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
@@ -209,11 +210,12 @@ public class ValidationToolConfigurationTest {
 	public void testJanusGraphDao() {
 		ValidationToolConfiguration testSubject;
 		JanusGraphClient janusGraphClient = null;
+		HealingPipelineDao healingPipelineDao = null;
 		JanusGraphDao result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.healingJanusGraphDao(janusGraphClient);
+		result = testSubject.healingJanusGraphDao(healingPipelineDao, janusGraphClient);
 	}
 
 	@Test

@@ -40,6 +40,7 @@ import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
@@ -219,9 +220,14 @@ public class ValidationToolConfiguration {
         return new VrfObjectFixHandler(janusGraphDao);
     }
 
+    @Bean(name = "healingPipelineDao")
+    public HealingPipelineDao healingPipelineDao(){
+        return new HealingPipelineDao();
+    }
+
     @Bean(name = "janusgraph-dao")
-    public HealingJanusGraphDao healingJanusGraphDao(JanusGraphClient janusGraphClient) {
-        return new HealingJanusGraphDao(janusGraphClient);
+    public HealingJanusGraphDao healingJanusGraphDao(HealingPipelineDao healingPipelineDao, JanusGraphClient janusGraphClient) {
+        return new HealingJanusGraphDao(healingPipelineDao, janusGraphClient);
     }
 
     @Bean
