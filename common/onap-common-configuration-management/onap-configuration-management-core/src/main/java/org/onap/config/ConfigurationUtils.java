@@ -433,12 +433,13 @@ public class ConfigurationUtils {
         Pattern pattern = Pattern.compile("^.*\\$\\{(.*)\\}.*");
         Matcher matcher = pattern.matcher(data);
         if (matcher.matches()) {
+            final int substringStartIndex = 4;
             String key = matcher.group(1);
             String value;
             if (key.toUpperCase().startsWith("ENV:")) {
-                value = System.getenv(key.substring(4));
+                value = System.getenv(key.substring(substringStartIndex));
             } else if (key.toUpperCase().startsWith("SYS:")) {
-                value = System.getProperty(key.substring(4));
+                value = System.getProperty(key.substring(substringStartIndex));
             } else {
                 value = ConfigurationUtils.getCollectionString(
                         ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key).toString());
@@ -513,8 +514,8 @@ public class ConfigurationUtils {
         if (List.class.isAssignableFrom(clazz)) {
             return getConcreteCollection(List.class);
         }
-        throw new IllegalArgumentException("Only corresponding array classes and any are allowed as argument." +
-                "assignable from TransferQueue, BlockingQueue, Deque, Queue, SortedSet, Set, List class");
+        throw new IllegalArgumentException("Only corresponding array classes and any are allowed as argument."
+                + "assignable from TransferQueue, BlockingQueue, Deque, Queue, SortedSet, Set, List class");
     }
 
     public static Collection getConcreteCollection(Class clazz) {
@@ -535,8 +536,8 @@ public class ConfigurationUtils {
             case "java.util.concurrent.BlockingQueue":
                 return new LinkedBlockingQueue<>();
             default:
-                throw new IllegalArgumentException("Only corresponding array classes and any are allowed as argument." +
-                        "assignable from TransferQueue, BlockingQueue, Deque, Queue, SortedSet, Set, List class");
+                throw new IllegalArgumentException("Only corresponding array classes and any are allowed as argument."
+                        + "assignable from TransferQueue, BlockingQueue, Deque, Queue, SortedSet, Set, List class");
         }
     }
 

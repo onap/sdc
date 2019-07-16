@@ -53,7 +53,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class YamlParser implements AutoCloseable {
 
-    private static Logger LOGGER = Logger.getLogger(YamlParser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(YamlParser.class.getName());
 
     private Stream<Object> parsedYamlContent;
     private InputStream inputStream;
@@ -121,7 +121,7 @@ public class YamlParser implements AutoCloseable {
     List<List<SimpleEntry<String, ? extends Collection<Object>>>> collect() throws IOException {
         try {
             return parsedYamlContent.map(containsKeys).filter(notEmptyListPredicate()).collect(Collectors.toList());
-        } catch(Exception e){
+        } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Unexpected document content. Please check body of the yaml file.", e);
             throw new IOException("Unexpected document content");
         }

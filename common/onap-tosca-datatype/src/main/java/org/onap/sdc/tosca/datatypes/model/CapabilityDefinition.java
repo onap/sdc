@@ -25,7 +25,7 @@ import org.onap.sdc.tosca.services.DataModelCloneUtil;
 import java.util.List;
 import java.util.Map;
 
-public class CapabilityDefinition implements Cloneable{
+public class CapabilityDefinition implements Cloneable {
 
   private String type;
   private String description;

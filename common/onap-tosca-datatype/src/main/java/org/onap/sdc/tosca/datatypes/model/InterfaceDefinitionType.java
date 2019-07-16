@@ -19,6 +19,7 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
@@ -70,27 +71,18 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof InterfaceDefinitionType)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         InterfaceDefinitionType that = (InterfaceDefinitionType) o;
-
-        if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) {
-            return false;
-        }
-        if (getInputs() != null ? !getInputs().equals(that.getInputs()) : that.getInputs() != null) {
-            return false;
-        }
-        return getOperations() != null ? getOperations().equals(that.getOperations()) : that.getOperations() == null;
+        return Objects.equals(type, that.type)
+                && Objects.equals(inputs, that.inputs)
+                && Objects.equals(operations, that.operations);
     }
 
     @Override
     public int hashCode() {
-        int result = getType() != null ? getType().hashCode() : 0;
-        result = 31 * result + (getInputs() != null ? getInputs().hashCode() : 0);
-        result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
-        return result;
+        return Objects.hash(type, inputs, operations);
     }
 
     @Override

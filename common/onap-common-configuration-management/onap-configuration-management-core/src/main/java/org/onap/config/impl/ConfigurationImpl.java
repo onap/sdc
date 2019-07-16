@@ -44,7 +44,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
 
-    private static final NonConfigResource nonConfigResource = new NonConfigResource();
+    private static final NonConfigResource NON_CONFIG_RESOURCE = new NonConfigResource();
 
     static {
 
@@ -70,7 +70,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
                 moduleConfig.addConfig(url);
             } else {
-                nonConfigResource.add(url);
+                NON_CONFIG_RESOURCE.add(url);
             }
         }
         String configLocation = System.getProperty("config.location");
@@ -88,7 +88,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                     }
                     moduleConfig.addConfig(file);
                 } else {
-                    nonConfigResource.add(file);
+                    NON_CONFIG_RESOURCE.add(file);
                 }
             }
         }
@@ -397,13 +397,17 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                             clazzToInstantiate = field.getType();
                         }
                         Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
+
                         if (construct != null) {
                             construct.setAccessible(true);
                             field.set(objToReturn, construct.newInstance(list));
-                        } else if ((construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
-                                Boolean.class, Collection.class)) != null) {
-                            construct.setAccessible(true);
-                            field.set(objToReturn, construct.newInstance(list.size(), true, list));
+                        } else {
+                            construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
+                                    Boolean.class, Collection.class);
+                            if (construct != null) {
+                                construct.setAccessible(true);
+                                field.set(objToReturn, construct.newInstance(list.size(), true, list));
+                            }
                         }
                     }
                 } else if (Map.class.isAssignableFrom(field.getType())) {
@@ -454,7 +458,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         if (String.class.equals(clazz)) {
             if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
                 String contents = ConfigurationUtils.getFileContents(
-                        nonConfigResource.locate(obj.toString().substring(1).trim()));
+                        NON_CONFIG_RESOURCE.locate(obj.toString().substring(1).trim()));
                 if (contents == null) {
                     contents = ConfigurationUtils.getFileContents(obj.toString().substring(1).trim());
                 }

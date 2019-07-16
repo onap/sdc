@@ -35,7 +35,7 @@ public class GABQuery {
      * PATH - when provided path to the yaml file
      * CONTENT - when provided yaml file content
      */
-    public enum GABQueryType{
+    public enum GABQueryType {
         PATH, CONTENT
     }
 

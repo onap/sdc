@@ -27,7 +27,7 @@ public class DataType {
 
   private String derived_from;
   private String version;
-  Map<String, String> metadata;
+  private Map<String, String> metadata;
   private String description;
   private List<Constraint> constraints;
   private Map<String, PropertyDefinition> properties;

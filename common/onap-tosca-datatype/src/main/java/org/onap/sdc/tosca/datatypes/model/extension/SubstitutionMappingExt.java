@@ -41,8 +41,8 @@ public class SubstitutionMappingExt extends SubstitutionMapping {
 
         SubstitutionMappingExt that = (SubstitutionMappingExt) o;
 
-        return getSubstitution_filter() != null ? getSubstitution_filter().equals(that.getSubstitution_filter()) :
-                       that.getSubstitution_filter() == null;
+        return getSubstitution_filter() != null ? getSubstitution_filter().equals(that.getSubstitution_filter())
+                : that.getSubstitution_filter() == null;
     }
 
     @Override

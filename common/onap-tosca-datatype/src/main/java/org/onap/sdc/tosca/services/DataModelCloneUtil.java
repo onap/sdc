@@ -165,7 +165,7 @@ public class DataModelCloneUtil {
             } else if (mapEntry.getValue() instanceof List) {
                 List cloneObj = yamlUtil.yamlToObject(yamlUtil.objectToYaml(mapEntry.getValue()), List.class);
                 cloneMap.put(mapEntry.getKey(), cloneObj);
-            } else if (mapEntry.getValue() instanceof Cloneable){
+            } else if (mapEntry.getValue() instanceof Cloneable) {
                 throw new ToscaRuntimeException("Clone Not Supported Exception");
             } else {
                 cloneMap.put(mapEntry.getKey(), mapEntry.getValue());

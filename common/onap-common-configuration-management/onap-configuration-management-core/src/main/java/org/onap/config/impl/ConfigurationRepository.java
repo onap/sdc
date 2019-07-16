@@ -35,7 +35,7 @@ import org.onap.config.Constants;
 
 public final class ConfigurationRepository {
 
-    private static final ConfigurationRepository repo = new ConfigurationRepository();
+    private static final ConfigurationRepository REPO = new ConfigurationRepository();
 
     private final Set<String> tenants = Collections.synchronizedSet(new HashSet<>());
 
@@ -63,7 +63,7 @@ public final class ConfigurationRepository {
     }
 
     public static ConfigurationRepository lookup() {
-        return repo;
+        return REPO;
     }
 
     public Set<String> getTenants() {
@@ -119,20 +119,20 @@ public final class ConfigurationRepository {
 
         private final Map<String, FileBasedConfigurationBuilder<FileBasedConfiguration>> overrideConfiguration =
                 new LinkedHashMap<>();
-        BasicConfigurationBuilder<Configuration> builder;
-        Timestamp lastConfigurationBuildTime;
-        Configuration config;
-        Configuration composite;
+        private BasicConfigurationBuilder<Configuration> builder;
+        private Timestamp lastConfigurationBuildTime;
+        private Configuration config;
+        private Configuration composite;
 
-        public ConfigurationHolder(BasicConfigurationBuilder builder) {
+        ConfigurationHolder(BasicConfigurationBuilder builder) {
             this.builder = builder;
         }
 
-        public ConfigurationHolder(Configuration builder) {
+        ConfigurationHolder(Configuration builder) {
             this.config = builder;
         }
 
-        public void addOverrideConfiguration(String path, BasicConfigurationBuilder<FileBasedConfiguration> builder) {
+        void addOverrideConfiguration(String path, BasicConfigurationBuilder<FileBasedConfiguration> builder) {
             overrideConfiguration.put(path.toUpperCase(), (FileBasedConfigurationBuilder) builder);
             getEffectiveConfiguration(config, overrideConfiguration.values());
         }

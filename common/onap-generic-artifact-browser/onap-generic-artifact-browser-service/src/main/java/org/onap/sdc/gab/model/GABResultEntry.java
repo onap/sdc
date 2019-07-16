@@ -23,7 +23,6 @@ package org.onap.sdc.gab.model;
 import com.google.common.base.MoreObjects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.onap.sdc.gab.GABService;
 
 /**
  * See GABResultEntry.{@link #path}, GABResultEntry.{@link #data}
