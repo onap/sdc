@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c22fbfdb_fa152d1b",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/LoggingServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-07-16T16:21:26Z",
+      "side": 1,
+      "message": "unused, remove it.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 95
+      },
+      "revId": "0684bfe24e78f16e3cf9f5eb34cd55013e4182fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "946b6ecd_aada6426",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/PortalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-07-16T16:21:26Z",
+      "side": 1,
+      "message": "do not loose exception, log it.",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 35
+      },
+      "revId": "0684bfe24e78f16e3cf9f5eb34cd55013e4182fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8fc2a52_7d9ab97b",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/PortalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-07-16T16:21:26Z",
+      "side": 1,
+      "message": "commented since 10/10/18, could be removed?",
+      "range": {
+        "startLine": 288,
+        "startChar": 12,
+        "endLine": 290,
+        "endChar": 92
+      },
+      "revId": "0684bfe24e78f16e3cf9f5eb34cd55013e4182fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
