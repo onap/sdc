@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,52 +37,54 @@ import java.util.concurrent.Executors;
 
 public class FEAppContextListener extends AppContextListener implements ServletContextListener {
 
-	private static Logger log = LoggerFactory.getLogger(FEAppContextListener.class.getName());
+    private static final int HEALTH_CHECHK_INTERVALE = 5;
+    private static final int PROBE_INTERVALE = 15;
+    private static Logger log = LoggerFactory.getLogger(FEAppContextListener.class.getName());
 
-	public void contextInitialized(ServletContextEvent context) {
+    public void contextInitialized(ServletContextEvent context) {
 
-		super.contextInitialized(context);
+        super.contextInitialized(context);
 
-		ConfigurationManager configurationManager = new ConfigurationManager(
-				ExternalConfiguration.getConfigurationSource());
-		log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(),
-				ExternalConfiguration.getAppName());
-		context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
-		
-		PluginStatusBL pbl = new PluginStatusBL();
-		context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
+        ConfigurationManager configurationManager = new ConfigurationManager(
+                ExternalConfiguration.getConfigurationSource());
+        log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(),
+                ExternalConfiguration.getAppName());
+        context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
 
-		// Health Check service
-		HealthCheckService hcs = new HealthCheckService(context.getServletContext());
-		hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(5));
-		context.getServletContext().setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
+        PluginStatusBL pbl = new PluginStatusBL();
+        context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
 
-		// Monitoring service
-		FeMonitoringService fms = new FeMonitoringService(context.getServletContext());
-		fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
+        // Health Check service
+        HealthCheckService hcs = new HealthCheckService(context.getServletContext());
+        hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(HEALTH_CHECHK_INTERVALE));
+        context.getServletContext().setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
 
-		if (configurationManager.getConfiguration() == null) {
-			log.debug("ERROR: configuration was not properly loaded");
-			return;
-		}
+        // Monitoring service
+        FeMonitoringService fms = new FeMonitoringService(context.getServletContext());
+        fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(PROBE_INTERVALE));
 
-		ExecutorService executorPool = Executors
-				.newFixedThreadPool(configurationManager.getConfiguration().getThreadpoolSize());
-		context.getServletContext().setAttribute(Constants.THREAD_EXECUTOR_ATTR, executorPool);
+        if (configurationManager.getConfiguration() == null) {
+            log.debug("ERROR: configuration was not properly loaded");
+            return;
+        }
 
-		log.debug("After executing {}", this.getClass());
-	}
+        ExecutorService executorPool = Executors
+                .newFixedThreadPool(configurationManager.getConfiguration().getThreadpoolSize());
+        context.getServletContext().setAttribute(Constants.THREAD_EXECUTOR_ATTR, executorPool);
 
-	public void contextDestroyed(ServletContextEvent context) {
+        log.debug("After executing {}", this.getClass());
+    }
 
-		ExecutorService executorPool = (ExecutorService) context.getServletContext()
-				.getAttribute(Constants.THREAD_EXECUTOR_ATTR);
-		if (executorPool != null) {
-			executorPool.shutdown();
-		}
+    public void contextDestroyed(ServletContextEvent context) {
 
-		super.contextDestroyed(context);
+        ExecutorService executorPool = (ExecutorService) context.getServletContext()
+                .getAttribute(Constants.THREAD_EXECUTOR_ATTR);
+        if (executorPool != null) {
+            executorPool.shutdown();
+        }
 
-	}
+        super.contextDestroyed(context);
+
+    }
 
 }
