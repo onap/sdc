@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -155,8 +155,8 @@ public class Configuration extends BasicConfiguration {
 
     private Map<String, List<String>> resourcesForUpgrade;
     private DmaapConsumerConfiguration dmaapConsumerConfiguration;
-	private boolean skipUpgradeFailedVfs;
-	private boolean skipUpgradeVSPs;
+    private boolean skipUpgradeFailedVfs;
+    private boolean skipUpgradeVSPs;
     private DmeConfiguration dmeConfiguration;
 
     private boolean supportAllottedResourcesAndProxy;
@@ -202,9 +202,14 @@ public class Configuration extends BasicConfiguration {
     public void setDmeConfiguration(DmeConfiguration dmeConfiguration) {
         this.dmeConfiguration = dmeConfiguration;
     }
-    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
 
-    public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
+    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) {
+        this.skipUpgradeVSPs = skipUpgradeVSPs;
+    }
+
+    public boolean getSkipUpgradeVSPsFlag() {
+        return skipUpgradeVSPs;
+    }
 
     public boolean getSkipUpgradeFailedVfs() {
         return skipUpgradeFailedVfs;
@@ -629,7 +634,7 @@ public class Configuration extends BasicConfiguration {
 
     public static class ElasticSearchConfig {
 
-        List<IndicesTimeFrequencyEntry> indicesTimeFrequency;
+        private List<IndicesTimeFrequencyEntry> indicesTimeFrequency;
 
         public List<IndicesTimeFrequencyEntry> getIndicesTimeFrequency() {
             return indicesTimeFrequency;
@@ -641,8 +646,8 @@ public class Configuration extends BasicConfiguration {
 
         public static class IndicesTimeFrequencyEntry {
 
-            String indexPrefix;
-            String creationPeriod;
+            private String indexPrefix;
+            private String creationPeriod;
 
             public String getIndexPrefix() {
                 return indexPrefix;
@@ -665,23 +670,27 @@ public class Configuration extends BasicConfiguration {
     public static class CassandrConfig {
         private static final Integer CASSANDRA_DEFAULT_PORT = 9042;
 
-        List<String> cassandraHosts;
-        Integer cassandraPort;
-        String localDataCenter;
-        Long reconnectTimeout;
-		Integer socketReadTimeout;
-		Integer socketConnectTimeout;
-        List<KeyspaceConfig> keySpaces;
-        boolean authenticate;
-        String username;
-        String password;
-        boolean ssl;
-        String truststorePath;
-        String truststorePassword;
+        private List<String> cassandraHosts;
+        private Integer cassandraPort;
+        private String localDataCenter;
+        private Long reconnectTimeout;
+        private Integer socketReadTimeout;
+        private Integer socketConnectTimeout;
+        private List<KeyspaceConfig> keySpaces;
+        private boolean authenticate;
+        private String username;
+        private String password;
+        private boolean ssl;
+        private String truststorePath;
+        private String truststorePassword;
 
-        public Integer getCassandraPort() { return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT; }
+        public Integer getCassandraPort() {
+            return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT;
+        }
 
-        public void setCassandraPort(Integer cassandraPort) { this.cassandraPort = cassandraPort; }
+        public void setCassandraPort(Integer cassandraPort) {
+            this.cassandraPort = cassandraPort;
+        }
 
         public String getLocalDataCenter() {
             return localDataCenter;
@@ -747,13 +756,21 @@ public class Configuration extends BasicConfiguration {
             this.reconnectTimeout = reconnectTimeout;
         }
 
-		public Integer getSocketReadTimeout() { return socketReadTimeout; }
+        public Integer getSocketReadTimeout() {
+            return socketReadTimeout;
+        }
 
-		public void setSocketReadTimeout(Integer socketReadTimeout) { this.socketReadTimeout = socketReadTimeout;}
+        public void setSocketReadTimeout(Integer socketReadTimeout) {
+            this.socketReadTimeout = socketReadTimeout;
+        }
 
-		public Integer getSocketConnectTimeout() {	return socketConnectTimeout;}
+        public Integer getSocketConnectTimeout() {
+            return socketConnectTimeout;
+        }
 
-		public void setSocketConnectTimeout(Integer socketConnectTimeout) { this.socketConnectTimeout = socketConnectTimeout; 	}
+        public void setSocketConnectTimeout(Integer socketConnectTimeout) {
+            this.socketConnectTimeout = socketConnectTimeout;
+        }
 
         public List<String> getCassandraHosts() {
             return cassandraHosts;
@@ -773,9 +790,9 @@ public class Configuration extends BasicConfiguration {
 
         public static class KeyspaceConfig {
 
-            String name;
-            String replicationStrategy;
-            List<String> replicationInfo;
+            private String name;
+            private String replicationStrategy;
+            private List<String> replicationInfo;
 
             public String getName() {
                 return name;
@@ -805,19 +822,19 @@ public class Configuration extends BasicConfiguration {
 
     public static class SwitchoverDetectorConfig {
 
-        String gBeFqdn;
-        String gFeFqdn;
-        String beVip;
-        String feVip;
-        int beResolveAttempts;
-        int feResolveAttempts;
-        Boolean enabled;
-        long interval;
-        String changePriorityUser;
-        String changePriorityPassword;
-        String publishNetworkUrl;
-        String publishNetworkBody;
-        Map<String, GroupInfo> groups;
+        private String gBeFqdn;
+        private String gFeFqdn;
+        private String beVip;
+        private String feVip;
+        private int beResolveAttempts;
+        private int feResolveAttempts;
+        private Boolean enabled;
+        private long interval;
+        private String changePriorityUser;
+        private String changePriorityPassword;
+        private String publishNetworkUrl;
+        private String publishNetworkBody;
+        private Map<String, GroupInfo> groups;
 
         public String getgBeFqdn() {
             return gBeFqdn;
@@ -925,8 +942,8 @@ public class Configuration extends BasicConfiguration {
 
         public static class GroupInfo {
 
-            String changePriorityUrl;
-            String changePriorityBody;
+            private String changePriorityUrl;
+            private String changePriorityBody;
 
             public String getChangePriorityUrl() {
                 return changePriorityUrl;
@@ -949,9 +966,9 @@ public class Configuration extends BasicConfiguration {
 
     public static class BeMonitoringConfig {
 
-        Boolean enabled;
-        Boolean isProxy;
-        Integer probeIntervalInSeconds;
+        private Boolean enabled;
+        private Boolean isProxy;
+        private Integer probeIntervalInSeconds;
 
         public Boolean getEnabled() {
             return enabled;
@@ -984,8 +1001,8 @@ public class Configuration extends BasicConfiguration {
 
     public static class ArtifactTypeConfig {
 
-        List<String> acceptedTypes;
-        List<String> validForResourceTypes;
+        private List<String> acceptedTypes;
+        private List<String> validForResourceTypes;
 
         public List<String> getValidForResourceTypes() {
             return validForResourceTypes;
@@ -1006,11 +1023,11 @@ public class Configuration extends BasicConfiguration {
 
     public static class OnboardingConfig {
 
-        String protocol = "http";
-        String host;
-        Integer port;
-        String downloadCsarUri;
-        String healthCheckUri;
+        private String protocol = "http";
+        private String host;
+        private Integer port;
+        private String downloadCsarUri;
+        private String healthCheckUri;
 
         public String getProtocol() {
             return protocol;
@@ -1070,10 +1087,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class DcaeConfig {
 
-        String protocol = "http";
-        String host;
-        Integer port;
-        String healthCheckUri;
+        private String protocol = "http";
+        private String host;
+        private Integer port;
+        private String healthCheckUri;
 
         public String getProtocol() {
             return protocol;
@@ -1129,7 +1146,7 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheConfig {
 
-        ApplicationL1CacheInfo datatypes;
+        private ApplicationL1CacheInfo datatypes;
 
         public ApplicationL1CacheInfo getDatatypes() {
             return datatypes;
@@ -1148,10 +1165,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL2CacheConfig {
 
-        boolean enabled;
-        ApplicationL1CacheCatalogInfo catalogL1Cache;
+        private boolean enabled;
+        private ApplicationL1CacheCatalogInfo catalogL1Cache;
 
-        QueueInfo queue;
+        private QueueInfo queue;
 
         public boolean isEnabled() {
             return enabled;
@@ -1205,9 +1222,9 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheInfo {
 
-        Boolean enabled;
-        Integer firstRunDelay;
-        Integer pollIntervalInSec;
+        private Boolean enabled;
+        private Integer firstRunDelay;
+        private Integer pollIntervalInSec;
 
         public Boolean getEnabled() {
             return enabled;
@@ -1242,10 +1259,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheCatalogInfo {
 
-        Boolean enabled;
-        Integer resourcesSizeInCache;
-        Integer servicesSizeInCache;
-        Integer productsSizeInCache;
+        private Boolean enabled;
+        private Integer resourcesSizeInCache;
+        private Integer servicesSizeInCache;
+        private Integer productsSizeInCache;
 
         public Boolean getEnabled() {
             return enabled;
@@ -1289,9 +1306,9 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class QueueInfo {
-        Integer numberOfCacheWorkers;
-        Integer waitOnShutDownInMinutes;
-        Integer syncIntervalInSecondes;
+        private Integer numberOfCacheWorkers;
+        private Integer waitOnShutDownInMinutes;
+        private Integer syncIntervalInSecondes;
 
         public Integer getWaitOnShutDownInMinutes() {
             return waitOnShutDownInMinutes;
@@ -1326,8 +1343,8 @@ public class Configuration extends BasicConfiguration {
 
     public static class EnvironmentContext {
 
-        String defaultValue;
-        List<String> validValues;
+        private String defaultValue;
+        private List<String> validValues;
 
         public String getDefaultValue() {
             return defaultValue;
@@ -1345,7 +1362,6 @@ public class Configuration extends BasicConfiguration {
             this.validValues = validValues;
         }
     }
-
 
 
     public CleanComponentsConfiguration getCleanComponentsConfiguration() {
@@ -1369,7 +1385,7 @@ public class Configuration extends BasicConfiguration {
                 .append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
                 .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
                 .append(format("JanusGraph reconnect interval seconds: %s%n",
-                    janusGraphReconnectIntervalInSeconds))
+                        janusGraphReconnectIntervalInSeconds))
                 .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
                 .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
                 .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
@@ -1383,9 +1399,9 @@ public class Configuration extends BasicConfiguration {
                 .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
                 .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
                 .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
-				.append(format("onboarding: %s%n", onboarding))
-				.append(format("tosca conformance level: %s%n", toscaConformanceLevel))
-				.toString();
+                .append(format("onboarding: %s%n", onboarding))
+                .append(format("tosca conformance level: %s%n", toscaConformanceLevel))
+                .toString();
     }
 
     public List<String> getUnLoggedUrls() {
@@ -1552,15 +1568,19 @@ public class Configuration extends BasicConfiguration {
     public static class VfModuleProperty {
         private String forBaseModule;
         private String forNonBaseModule;
+
         public String getForBaseModule() {
             return forBaseModule;
         }
+
         public void setForBaseModule(String forBaseModule) {
             this.forBaseModule = forBaseModule;
         }
+
         public String getForNonBaseModule() {
             return forNonBaseModule;
         }
+
         public void setForNonBaseModule(String forNonBaseModule) {
             this.forNonBaseModule = forNonBaseModule;
         }
@@ -1583,7 +1603,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K,V> Map<K,V> safeGetCapsInsensitiveMap(Map<K,V> map) {
+    public static <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
         return map == null ? emptyMap() : new CaseInsensitiveMap(map);
     }
 

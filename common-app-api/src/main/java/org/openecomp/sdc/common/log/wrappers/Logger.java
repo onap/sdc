@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,12 +73,17 @@ public class Logger implements org.slf4j.Logger {
         return logger.isTraceEnabled();
     }
 
-    public boolean isErrorEnabled() { return logger.isErrorEnabled(); }
+    public boolean isErrorEnabled() {
+        return logger.isErrorEnabled();
+    }
 
-    public boolean isWarnEnabled() { return logger.isWarnEnabled(); }
+    public boolean isWarnEnabled() {
+        return logger.isWarnEnabled();
+    }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}  **/
     public void warn(String msg) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg);
@@ -86,7 +91,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(String msg, Object o) {
 
         if (isWarnEnabled()) {
@@ -94,7 +100,9 @@ public class Logger implements org.slf4j.Logger {
         }
     }
 
-    public boolean isInfoEnabled() { return logger.isInfoEnabled(); }
+    public boolean isInfoEnabled() {
+        return logger.isInfoEnabled();
+    }
 
     @Override
     public void info(String msg) {
@@ -316,15 +324,17 @@ public class Logger implements org.slf4j.Logger {
         }
     }
 
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
-    public void warn(String msg, Object... params){
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    public void warn(String msg, Object... params) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, params);
         }
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(String msg, Object o, Object o1) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, o, o1);
@@ -332,7 +342,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(String msg, Throwable throwable) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, throwable);
@@ -345,7 +356,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(Marker marker, String msg) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg);
@@ -353,7 +365,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(Marker marker, String msg, Object o) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, o);
@@ -361,7 +374,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(Marker marker, String msg, Object o, Object o1) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, o, o1);
@@ -369,7 +383,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(Marker marker, String msg, Object... objects) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, objects);
@@ -377,22 +392,25 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
+    @Deprecated
+    /** Please use method {@link #warn(EcompLoggerErrorCode, String, String)}   **/
     public void warn(Marker marker, String msg, Throwable throwable) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, msg, throwable);
         }
     }
 
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
-    public void error(String msg, Object... params){
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    public void error(String msg, Object... params) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, params);
         }
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(String msg, Throwable throwable) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, throwable);
@@ -405,7 +423,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(Marker marker, String msg) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg);
@@ -413,7 +432,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(Marker marker, String msg, Object o) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, o);
@@ -421,7 +441,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(Marker marker, String msg, Object o, Object o1) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, o, o1);
@@ -429,7 +450,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(Marker marker, String msg, Object... params) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, params);
@@ -437,22 +459,25 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(Marker marker, String msg, Throwable throwable) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, throwable);
         }
     }
 
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
-    public void error(String msg){
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    public void error(String msg) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg);
         }
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(String msg, Object o) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, o);
@@ -460,7 +485,8 @@ public class Logger implements org.slf4j.Logger {
     }
 
     @Override
-    @Deprecated /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
+    @Deprecated
+    /** Please use method {@link #error(EcompLoggerErrorCode, String, String)}  **/
     public void error(String msg, Object o, Object o1) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, msg, o, o1);
@@ -469,17 +495,18 @@ public class Logger implements org.slf4j.Logger {
 
     /**
      * Writes out ERROR logging level message to the application error log
-     * @param errorLevel code representing the error severity level
-     * @param serviceName name of the API invoked at the logging component
-     * @param targetEntity name of the ECOMP component or sub-component, or external entity at which the error occurred or null
+     *
+     * @param errorLevel       code representing the error severity level
+     * @param serviceName      name of the API invoked at the logging component
+     * @param targetEntity     name of the ECOMP component or sub-component, or external entity at which the error occurred or null
      * @param errorDescription a human readable description of the error condition
-     * @param params optional parameters of a given error description
+     * @param params           optional parameters of a given error description
      */
     public void error(EcompErrorConfiguration.EcompErrorSeverity errorLevel,
                       EcompLoggerErrorCode errorCodeEnum,
                       String serviceName,
                       String targetEntity,
-                      String errorDescription, Object...params) {
+                      String errorDescription, Object... params) {
         if (isErrorEnabled()) {
             error.log(errorLevel, errorCodeEnum, serviceName, targetEntity, errorDescription, params);
         }
@@ -487,16 +514,17 @@ public class Logger implements org.slf4j.Logger {
 
     /**
      * Writes out ERROR logging level message to the application error log
-     * @param errorCodeEnum code representing the error condition
-     * @param serviceName name of the API invoked at the logging component
-     * @param targetEntity name of the ECOMP component or sub-component, or external entity at which the error occurred or null
+     *
+     * @param errorCodeEnum    code representing the error condition
+     * @param serviceName      name of the API invoked at the logging component
+     * @param targetEntity     name of the ECOMP component or sub-component, or external entity at which the error occurred or null
      * @param errorDescription a human readable description of the error condition
-     * @param params optional parameters of a given error description
+     * @param params           optional parameters of a given error description
      */
     public void error(EcompLoggerErrorCode errorCodeEnum,
                       String serviceName,
                       String targetEntity,
-                      String errorDescription, Object...params) {
+                      String errorDescription, Object... params) {
         if (isErrorEnabled()) {
             error.log(LogLevel.ERROR, errorCodeEnum, serviceName, targetEntity, errorDescription, params);
         }
@@ -504,16 +532,17 @@ public class Logger implements org.slf4j.Logger {
 
     /**
      * Writes out WARN logging level message to the application error log
-     * @param errorCodeEnum code representing the error condition
-     * @param serviceName name of the API invoked at the logging component
-     * @param targetEntity name of the ECOMP component or sub-component, or external entity at which the error occurred or null
+     *
+     * @param errorCodeEnum    code representing the error condition
+     * @param serviceName      name of the API invoked at the logging component
+     * @param targetEntity     name of the ECOMP component or sub-component, or external entity at which the error occurred or null
      * @param errorDescription a human readable description of the error condition
-     * @param params optional parameters of a given error description
+     * @param params           optional parameters of a given error description
      */
     public void warn(EcompLoggerErrorCode errorCodeEnum,
-                      String serviceName,
-                      String targetEntity,
-                      String errorDescription, Object...params) {
+                     String serviceName,
+                     String targetEntity,
+                     String errorDescription, Object... params) {
         if (isWarnEnabled()) {
             error.log(LogLevel.WARN, errorCodeEnum, serviceName, targetEntity, errorDescription, params);
         }
@@ -521,25 +550,21 @@ public class Logger implements org.slf4j.Logger {
 
     /**
      * Writes out FATAL logging level message to the application error log
-     * @param errorCodeEnum code representing the error condition
-     * @param serviceName name of the API invoked at the logging component
-     * @param targetEntity name of the ECOMP component or sub-component, or external entity at which the error occurred or null
+     *
+     * @param errorCodeEnum    code representing the error condition
+     * @param serviceName      name of the API invoked at the logging component
+     * @param targetEntity     name of the ECOMP component or sub-component, or external entity at which the error occurred or null
      * @param errorDescription a human readable description of the error condition
-     * @param params optional parameters of a given error description
+     * @param params           optional parameters of a given error description
      */
     public void fatal(EcompLoggerErrorCode errorCodeEnum,
                       String serviceName,
                       String targetEntity,
-                      String errorDescription, Object...params) {
+                      String errorDescription, Object... params) {
         if (isErrorEnabled()) {
             error.log(LogLevel.FATAL, errorCodeEnum, serviceName, targetEntity, errorDescription, params);
         }
     }
-
-
-    
-
-
 
 
 }

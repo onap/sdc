@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LoggerAudit extends LoggerBase {
+    private static final int STATUS_MAJOR_PART_MASK = 100;
     private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
             ILogConfiguration.MDC_AUDIT_BEGIN_TIMESTAMP,
             ILogConfiguration.MDC_END_TIMESTAMP,
@@ -63,7 +64,7 @@ public class LoggerAudit extends LoggerBase {
             ILogConfiguration.MDC_OPT_FIELD4));
 
     LoggerAudit(ILogFieldsHandler ecompMdcWrapper, Logger logger) {
-        super (ecompMdcWrapper, MarkerFactory.getMarker(LogMarkers.AUDIT_MARKER.text()), logger);
+        super(ecompMdcWrapper, MarkerFactory.getMarker(LogMarkers.AUDIT_MARKER.text()), logger);
         //put the remote host and FQDN values from another thread if they are set
         ecompMdcWrapper.setServerIPAddressInternally();
         ecompMdcWrapper.setServerFQDNInternally();
@@ -140,7 +141,7 @@ public class LoggerAudit extends LoggerBase {
 
     public LoggerAudit setStatusCode(String statusCode) {
         // status code is either success (COMPLETE) or failure (ERROR) of the request.
-        String respStatus = Integer.parseInt(statusCode) / 100 == 2 ? StatusCode.COMPLETE.getStatusCodeEnum() : StatusCode.ERROR.getStatusCodeEnum();
+        String respStatus = Integer.parseInt(statusCode) / STATUS_MAJOR_PART_MASK == 2 ? StatusCode.COMPLETE.getStatusCodeEnum() : StatusCode.ERROR.getStatusCodeEnum();
         ecompLogFieldsHandler.setStatusCode(respStatus);
         return this;
     }

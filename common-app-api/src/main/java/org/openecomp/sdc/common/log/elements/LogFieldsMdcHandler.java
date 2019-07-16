@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,10 +45,10 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
         return instanceMdcWrapper;
     }
 
-    private final static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSSz";
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
+    private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSSz";
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN);
     protected static Logger log = LoggerFactory.getLogger(LogFieldsMdcHandler.class.getName());
-    protected static String hostAddress;
+    static String hostAddress;
     protected static String fqdn;
 
     static {
@@ -261,52 +261,52 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
     }
 
     @Override
-    public void removePartnerName(){
+    public void removePartnerName() {
         MDC.remove(ILogConfiguration.MDC_PARTNER_NAME);
     }
 
     @Override
-    public void removeResponseCode(){
+    public void removeResponseCode() {
         MDC.remove(ILogConfiguration.MDC_RESPONSE_CODE);
     }
 
     @Override
-    public void removeResponseDesc(){
+    public void removeResponseDesc() {
         MDC.remove(ILogConfiguration.MDC_RESPONSE_DESC);
     }
 
     @Override
-    public void removeServiceInstanceId(){
+    public void removeServiceInstanceId() {
         MDC.remove(ILogConfiguration.MDC_SERVICE_INSTANCE_ID);
     }
 
     @Override
-    public void removeTargetEntity(){
+    public void removeTargetEntity() {
         MDC.remove(ILogConfiguration.MDC_TARGET_ENTITY);
     }
 
     @Override
-    public void removeTargetServiceName(){
+    public void removeTargetServiceName() {
         MDC.remove(ILogConfiguration.MDC_TARGET_SERVICE_NAME);
     }
 
     @Override
-    public void removeTargetVirtualEntity(){
+    public void removeTargetVirtualEntity() {
         MDC.remove(ILogConfiguration.MDC_TARGET_VIRTUAL_ENTITY);
     }
 
     @Override
-    public void removeErrorCode(){
+    public void removeErrorCode() {
         MDC.remove(ILogConfiguration.MDC_ERROR_CODE);
     }
 
     @Override
-    public void removeErrorCategory(){
+    public void removeErrorCategory() {
         MDC.remove(ILogConfiguration.MDC_ERROR_CATEGORY);
     }
 
     @Override
-    public void removeErrorDescription(){
+    public void removeErrorDescription() {
         MDC.remove(ILogConfiguration.MDC_ERROR_DESC);
     }
 
@@ -328,8 +328,8 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
             MDC.put(ILogConfiguration.MDC_ELAPSED_TIME, String.valueOf(timeDifference.toMillis()));
 
-        } catch(Exception ex) {
-            log.error("failed to calculate elapsed time",ex);
+        } catch (Exception ex) {
+            log.error("failed to calculate elapsed time", ex);
         }
     }
 
