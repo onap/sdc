@@ -22,8 +22,6 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -31,17 +29,19 @@ import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class KibanaServlet extends ProxyServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(KibanaServlet.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(KibanaServlet.class.getName());
 
     @Override
     public String rewriteTarget(HttpServletRequest request) {
         String originalUrl = request.getRequestURI();
         String redirectedUrl = getModifiedUrl(request);
 
-        log.debug("KibanaServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
+        LOGGER.debug("KibanaServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
 
         return redirectedUrl;
     }
@@ -50,7 +50,7 @@ public class KibanaServlet extends ProxyServlet {
         Configuration config = getConfiguration(request);
 
         if (config == null) {
-            log.error("Failed to retrieve configuration.");
+            LOGGER.error("Failed to retrieve configuration.");
             throw new NullPointerException("Failed to retrieve configuration.");
         }
 

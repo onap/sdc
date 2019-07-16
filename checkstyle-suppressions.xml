@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+   ============LICENSE_START=======================================================
+   SDC
+   ================================================================================
+   Copyright (C) 2019 Nokia. All rights reserved.
+   ================================================================================
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ============LICENSE_END=========================================================
+  -->
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.0//EN"
+        "https://checkstyle.org/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+    <suppress checks=".*" files="\.java" lines="1-20"/>
+    <suppress checks=".*" files="\.properties"/>
+    <suppress checks="javadoc" files="\.java"/>
+    <suppress checks="LineLength" files="\.java"/>
+    <suppress checks="HiddenField" files="\.java"/>
+    <suppress checks="FinalClass" files="\.java"/>
+    <suppress checks="FinalParameters" files="\.java"/>
+    <suppress checks="AvoidInlineConditionals" files="\.java"/>
+    <suppress checks="DesignForExtension" files="\.java"/>
+    <suppress checks="ImportOrder" files="\.java"/>
+    <suppress checks="LocalVariableName" files="\.java"/>
+    <suppress checks="AbbreviationAsWordInName" files="\.java"/>
+</suppressions>
