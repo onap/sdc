@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68aabebc_d1cecfb4",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-07-16T14:24:01Z",
+      "side": 1,
+      "message": "replace with \"try-with-resource\" to avoid \"Thread-Leak\".",
+      "range": {
+        "startLine": 51,
+        "startChar": 8,
+        "endLine": 52,
+        "endChar": 77
+      },
+      "revId": "07e5e5e758acef3dee2e064ce32657e571d9c44c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "138fdf00_c69b483c",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-07-16T14:24:01Z",
+      "side": 1,
+      "message": "Please format the code according to the ONAP community standard",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 58
+      },
+      "revId": "07e5e5e758acef3dee2e064ce32657e571d9c44c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
