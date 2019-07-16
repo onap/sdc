@@ -22,7 +22,7 @@ import java.util.Objects;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 
-public class Implementation implements Cloneable{
+public class Implementation implements Cloneable {
 
     private String primary;
     private List<String> dependencies;

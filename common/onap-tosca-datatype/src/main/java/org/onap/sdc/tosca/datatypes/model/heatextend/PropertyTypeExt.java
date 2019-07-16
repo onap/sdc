@@ -34,7 +34,7 @@ public enum PropertyTypeExt {
    */
   JSON("json");
 
-  private static final Map<String, PropertyTypeExt> mMap =
+  private static final Map<String, PropertyTypeExt> M_MAP =
       Collections.unmodifiableMap(initializeMapping());
   private String displayName;
 
@@ -63,8 +63,8 @@ public enum PropertyTypeExt {
    * @return the property type by display name
    */
   public static PropertyTypeExt getPropertyTypeByDisplayName(String displayName) {
-    if (mMap.containsKey(displayName)) {
-      return mMap.get(displayName);
+    if (M_MAP.containsKey(displayName)) {
+      return M_MAP.get(displayName);
     }
     return null;
   }

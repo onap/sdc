@@ -65,7 +65,7 @@ public class InterfaceType extends Interface {
                 throw new ToscaRuntimeException(CONVERT_INTERFACE_TYPE_OBJECT_ERROR + toscaInterfaceTypeObj.toString());
             }
         } catch (Exception exc) {
-            throw new ToscaRuntimeException(CONVERT_INTERFACE_TYPE_OBJECT_ERROR + toscaInterfaceTypeObj.toString(),exc);
+            throw new ToscaRuntimeException(CONVERT_INTERFACE_TYPE_OBJECT_ERROR + toscaInterfaceTypeObj.toString(), exc);
         }
 
     }

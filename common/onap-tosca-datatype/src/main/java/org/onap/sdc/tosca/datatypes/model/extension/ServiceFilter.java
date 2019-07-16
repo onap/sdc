@@ -21,7 +21,7 @@ import org.onap.sdc.tosca.datatypes.model.NodeFilter;
 
 public class ServiceFilter extends NodeFilter {
 
-    Object tosca_id;
+    private Object tosca_id;
 
     public Object getTosca_id() {
         return tosca_id;

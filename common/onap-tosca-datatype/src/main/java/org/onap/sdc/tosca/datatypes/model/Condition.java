@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 public class Condition {
 
-    private Map<String,Constraint> constraint;
+    private Map<String, Constraint> constraint;
     private String period;
     private Integer evaluations;
     private String method;

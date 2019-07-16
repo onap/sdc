@@ -52,8 +52,8 @@ public abstract class InterfaceDefinition extends Interface {
         for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
             Optional<Map.Entry<String, ? extends OperationDefinition>> operationDefinition =
                     createOperation(entry.getKey(), entry.getValue(), fieldNames,
-                            interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
-                                    OperationDefinitionTemplate.class);
+                            interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class
+                                    : OperationDefinitionTemplate.class);
             operationDefinition
                     .ifPresent(operation -> interfaceDefinition.addOperation(operation.getKey(), operation.getValue()));
         }

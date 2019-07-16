@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Objects;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
-public class DefinitionOfDataType implements Cloneable{
+public class DefinitionOfDataType implements Cloneable {
 
-  protected String type;
-  protected String description;
-  protected Object value;
-  protected Boolean required;
-  protected Object _default;
-  protected Status status;
-  protected List<Constraint> constraints;
-  protected EntrySchema entry_schema;
+  private String type;
+  private String description;
+  private Object value;
+  private Boolean required;
+  private Object _default;
+  private Status status;
+  private List<Constraint> constraints;
+  private EntrySchema entry_schema;
 
   public String getType() {
     return type;

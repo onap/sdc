@@ -30,9 +30,9 @@ public enum PropertyType {
   SCALAR_UNIT_SIZE("scalar-unit.size"),
   SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
 
-  private static final Map<String, PropertyType> mMap =
+  private static final Map<String, PropertyType> M_MAP =
       Collections.unmodifiableMap(initializeMapping());
-  private static final Set<String> simplePropertyTypes =
+  private static final Set<String> SIMPLE_PROPERTY_TYPES =
       Collections.unmodifiableSet(initializeSimplePropertyTypes());
   private String displayName;
 
@@ -59,14 +59,15 @@ public enum PropertyType {
    * @return PropertyType
    */
   public static PropertyType getPropertyTypeByDisplayName(String displayName) {
-    if (mMap.containsKey(displayName)) {
-      return mMap.get(displayName);
+    if (M_MAP.containsKey(displayName)) {
+      return M_MAP.get(displayName);
     }
     return null;
   }
 
   private static Set<String> initializeSimplePropertyTypes() {
-    Set<String> simplePropertyTypes = new HashSet<>(4);
+    final int setSize = 4;
+    Set<String> simplePropertyTypes = new HashSet<>(setSize);
     simplePropertyTypes.add(STRING.getDisplayName().toLowerCase());
     simplePropertyTypes.add(INTEGER.getDisplayName().toLowerCase());
     simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
@@ -75,12 +76,11 @@ public enum PropertyType {
   }
 
   public static Set<String> getSimplePropertyTypes() {
-    return simplePropertyTypes;
+    return SIMPLE_PROPERTY_TYPES;
   }
 
   public String getDisplayName() {
     return displayName;
   }
-
 
 }

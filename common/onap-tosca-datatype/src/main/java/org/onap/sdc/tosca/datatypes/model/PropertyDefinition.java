@@ -39,8 +39,8 @@ package org.onap.sdc.tosca.datatypes.model;
 public class PropertyDefinition extends DefinitionOfDataType {
 
   public PropertyDefinition() {
-    this.status = Status.SUPPORTED;
-    this.required = true;
+    setStatus(Status.SUPPORTED);
+    setRequired(true);
   }
 
   @Override

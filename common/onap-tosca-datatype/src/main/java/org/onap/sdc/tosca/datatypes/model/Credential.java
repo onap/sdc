@@ -29,7 +29,7 @@ public class Credential {
   private Map<String, String> keys;
   private String user;
 
-  public Credential(){
+  public Credential() {
     this.token_type = "password";
   }
 

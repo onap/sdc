@@ -27,6 +27,9 @@ import java.util.ServiceLoader;
  */
 class ConfigurationLoader {
 
+    private ConfigurationLoader() {
+    }
+
     static Configuration load() {
 
         ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);

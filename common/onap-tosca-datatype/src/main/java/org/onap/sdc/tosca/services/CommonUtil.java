@@ -35,7 +35,7 @@ import org.apache.commons.beanutils.BeanUtils;
 public class CommonUtil {
 
     private static final String DEFAULT = "default";
-    private static final String _DEFAULT = "_default";
+    private static final String UNDERSCORE_DEFAULT = "_default";
     private static ImmutableSet<Class<?>> complexClassType = ImmutableSet.of(Map.class, String.class, Integer.class, Float.class,
             Double.class, Set.class, Object.class, List.class);
 
@@ -85,7 +85,7 @@ public class CommonUtil {
         if (objectAsMap.containsKey(DEFAULT)) {
             Object defaultValue = objectAsMap.get(DEFAULT);
             objectAsMap.remove(DEFAULT);
-            objectAsMap.put(_DEFAULT, defaultValue);
+            objectAsMap.put(UNDERSCORE_DEFAULT, defaultValue);
         }
         return objectAsMap;
     }

@@ -31,7 +31,7 @@ public enum Status {
   EXPERIMENTAL("experimental"),
   experimental("experimental"),
   DEPRECATED("deprecated"),
-  deprecated("deprecated"),;
+  deprecated("deprecated");
   private String displayName;
 
   Status(String displayName) {

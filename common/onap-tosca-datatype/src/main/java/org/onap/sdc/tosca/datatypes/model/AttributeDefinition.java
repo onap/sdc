@@ -26,7 +26,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AttributeDefinition implements Cloneable{
+public class AttributeDefinition implements Cloneable {
 
   private String type;
   private String description;
