@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,11 +35,13 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class LoggingServlet extends BasicServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(BasicServlet.class.getName());
-    private static final Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicServlet.class.getName());
+    public static final int EXPIRE_DURATION = 10;
+    private static final Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(EXPIRE_DURATION, TimeUnit.SECONDS).build();
 
     /**
      * log incoming requests
+     *
      * @param httpRequest the http request
      */
     protected void logFeRequest(HttpServletRequest httpRequest) {
@@ -65,7 +67,8 @@ public abstract class LoggingServlet extends BasicServlet {
 
     /**
      * log response
-     * @param request orig request
+     *
+     * @param request  orig request
      * @param response returned response
      */
     protected void logFeResponse(HttpServletRequest request, Response response) {
@@ -76,7 +79,7 @@ public abstract class LoggingServlet extends BasicServlet {
             MdcData mdcData = mdcDataCache.getIfPresent(uuid);
             if (mdcData != null) {
                 Long transactionStartTime = mdcData.getTransactionStartTime();
-                if (transactionStartTime != null) {// should'n ever be null, but
+                if (transactionStartTime != null) { // should'n ever be null, but
                     // just to be defensive
                     transactionRoundTime = Long.toString(System.currentTimeMillis() - transactionStartTime);
                 }
@@ -90,24 +93,27 @@ public abstract class LoggingServlet extends BasicServlet {
 
     /**
      * Extracted for purpose of clear method name, for logback %M parameter
+     *
      * @param httpRequest http request
      */
-    protected abstract void inHttpRequest(HttpServletRequest httpRequest) ;
+    protected abstract void inHttpRequest(HttpServletRequest httpRequest);
 
 
     /**
      * Extracted for purpose of clear method name, for logback %M parameter
+     *
      * @param response http response
      */
     protected abstract void outHttpResponse(Response response);
 
     /**
      * update mdc with values from the request
-     * @param uuid service uuid
-     * @param serviceInstanceID serviceInstanceID
-     * @param userId userId
-     * @param remoteAddr remoteAddr
-     * @param localAddr localAddr
+     *
+     * @param uuid                 service uuid
+     * @param serviceInstanceID    serviceInstanceID
+     * @param userId               userId
+     * @param remoteAddr           remoteAddr
+     * @param localAddr            localAddr
      * @param transactionStartTime transactionStartTime
      */
     private void updateMdc(String uuid, String serviceInstanceID, String userId, String remoteAddr, String localAddr, String transactionStartTime) {
