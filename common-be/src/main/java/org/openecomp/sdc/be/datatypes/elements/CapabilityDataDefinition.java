@@ -59,15 +59,13 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
 
         if (other.getValidSourceTypes() == null) {
             this.setValidSourceTypes(Lists.newArrayList());
-        }
-        else {
+        } else {
             this.setValidSourceTypes(Lists.newArrayList(other.getValidSourceTypes()));
         }
 
         if (other.getCapabilitySources() == null) {
             this.setCapabilitySources(Lists.newArrayList());
-        }
-        else {
+        } else {
             this.setCapabilitySources(Lists.newArrayList(other.getCapabilitySources()));
         }
 
@@ -80,26 +78,26 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
 
         if (other.getPath() == null) {
             this.setPath(Lists.newArrayList());
-        }
-        else {
+        } else {
             this.setPath(Lists.newArrayList(other.getPath()));
         }
 
         this.setSource(other.getSource());
-		this.setOwnerType(other.getOwnerType());
-	}
+        this.setOwnerType(other.getOwnerType());
+    }
 
-	public CapabilityDataDefinition(CapabilityTypeDataDefinition other) {
-		super();
-		this.setUniqueId(other.getUniqueId());
-		this.setType(other.getType());
-		this.setDescription(other.getDescription());
+    public CapabilityDataDefinition(CapabilityTypeDataDefinition other) {
+        super();
+        this.setUniqueId(other.getUniqueId());
+        this.setType(other.getType());
+        this.setDescription(other.getDescription());
         this.setOwnerId(other.getOwnerId());
-		if(other.getValidSourceTypes() == null)
-			this.setValidSourceTypes(Lists.newArrayList());
-		else
-			this.setValidSourceTypes(Lists.newArrayList(other.getValidSourceTypes()));
-		this.setOwnerId(other.getOwnerId());
+        if (other.getValidSourceTypes() == null) {
+            this.setValidSourceTypes(Lists.newArrayList());
+        } else {
+            this.setValidSourceTypes(Lists.newArrayList(other.getValidSourceTypes()));
+        }
+        this.setOwnerId(other.getOwnerId());
     }
 
     @Override
@@ -120,14 +118,15 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.OWNER_NAME, ownerName);
     }
 
-	public OwnerType getOwnerType() {
-		return OwnerType.getByValue((String) getToscaPresentationValue(JsonPresentationFields.OWNER_TYPE));
-	}
+    public OwnerType getOwnerType() {
+        return OwnerType.getByValue((String) getToscaPresentationValue(JsonPresentationFields.OWNER_TYPE));
+    }
 
-	public void setOwnerType(OwnerType ownerType) {
-		if(ownerType != null)
-			setToscaPresentationValue(JsonPresentationFields.OWNER_TYPE, ownerType.getValue());
-	}
+    public void setOwnerType(OwnerType ownerType) {
+        if (ownerType != null) {
+            setToscaPresentationValue(JsonPresentationFields.OWNER_TYPE, ownerType.getValue());
+        }
+    }
 
     public String getMinOccurrences() {
         return (String) getToscaPresentationValue(JsonPresentationFields.MIN_OCCURRENCES);
@@ -321,107 +320,91 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
             if (other.getCapabilitySources() != null) {
                 return false;
             }
-        }
-        else if (!capabilitySources.equals(other.getCapabilitySources())) {
+        } else if (!capabilitySources.equals(other.getCapabilitySources())) {
             return false;
         }
         if (description == null) {
             if (other.getDescription() != null) {
                 return false;
             }
-        }
-        else if (!description.equals(other.getDescription())) {
+        } else if (!description.equals(other.getDescription())) {
             return false;
         }
         if (maxOccurrences == null) {
             if (other.getMaxOccurrences() != null) {
                 return false;
             }
-        }
-        else if (!maxOccurrences.equals(other.getMaxOccurrences())) {
+        } else if (!maxOccurrences.equals(other.getMaxOccurrences())) {
             return false;
         }
         if (minOccurrences == null) {
             if (other.getMinOccurrences() != null) {
                 return false;
             }
-        }
-        else if (!minOccurrences.equals(other.getMinOccurrences())) {
+        } else if (!minOccurrences.equals(other.getMinOccurrences())) {
             return false;
         }
         if (name == null) {
             if (other.getName() != null) {
                 return false;
             }
-        }
-        else if (!name.equals(other.getName())) {
+        } else if (!name.equals(other.getName())) {
             return false;
         }
         if (ownerId == null) {
             if (other.getOwnerId() != null) {
                 return false;
             }
-        }
-        else if (!ownerId.equals(other.getOwnerId())) {
+        } else if (!ownerId.equals(other.getOwnerId())) {
             return false;
         }
         if (ownerName == null) {
             if (other.getOwnerName() != null) {
                 return false;
             }
-        }
-        else if (!ownerName.equals(other.getOwnerName())) {
+        } else if (!ownerName.equals(other.getOwnerName())) {
             return false;
         }
         if (type == null) {
             if (other.getType() != null) {
                 return false;
             }
-        }
-        else if (!type.equals(other.getType())) {
+        } else if (!type.equals(other.getType())) {
             return false;
         }
         if (uniqueId == null) {
             if (other.getUniqueId() != null) {
                 return false;
             }
-        }
-        else if (!uniqueId.equals(other.getUniqueId())) {
+        } else if (!uniqueId.equals(other.getUniqueId())) {
             return false;
         }
         if (validSourceTypes == null) {
             if (other.getValidSourceTypes() != null) {
                 return false;
             }
-        }
-        else if (!validSourceTypes.equals(other.getValidSourceTypes())) {
+        } else if (!validSourceTypes.equals(other.getValidSourceTypes())) {
             return false;
         }
         if (leftOccurrences == null) {
             if (other.getLeftOccurrences() != null) {
                 return false;
             }
-        }
-        else if (!leftOccurrences.equals(other.getLeftOccurrences())) {
+        } else if (!leftOccurrences.equals(other.getLeftOccurrences())) {
             return false;
         }
         if (path == null) {
             if (other.getPath() != null) {
                 return false;
             }
-        }
-        else if (!path.equals(other.getPath())) {
+        } else if (!path.equals(other.getPath())) {
             return false;
         }
         if (source == null) {
-            if (other.getSource() != null) {
-                return false;
-            }
+            return other.getSource() == null;
+        } else {
+            return source.equals(other.getSource());
         }
-        else if (!source.equals(other.getSource())) {
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -444,29 +427,31 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
                 + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
                 + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
                 + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
-	}
+    }
 
-	public enum OwnerType{
-		GROUP("group"),
-		COMPONENT_INSTANCE("component instance"),
-		RESOURCE("resource");
+    public enum OwnerType {
+        GROUP("group"),
+        COMPONENT_INSTANCE("component instance"),
+        RESOURCE("resource");
 
-		private String value;
+        private String value;
 
-		private OwnerType(String value) {
-			this.value = value;
-		}
+        OwnerType(String value) {
+            this.value = value;
+        }
 
-		public String getValue() {
-			return value;
-		}
+        public String getValue() {
+            return value;
+        }
 
-		public static OwnerType getByValue(String value){
-			for(OwnerType type : values())
-				if(type.getValue().equals(value))
+        public static OwnerType getByValue(String value) {
+            for (OwnerType type : values()) {
+                if (type.getValue().equals(value)) {
                     return type;
-			return null;
-		}
+                }
+            }
+            return null;
+        }
 
     }
 

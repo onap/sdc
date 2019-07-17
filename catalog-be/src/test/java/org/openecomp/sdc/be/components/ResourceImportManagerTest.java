@@ -355,7 +355,7 @@ public class ResourceImportManagerTest {
     }
 
     private void testSetConstantMetaData(Resource resource) {
-        assertEquals(resource.getVersion(), TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+        assertEquals(resource.getVersion(), TypeUtils.getFirstCertifiedVersionVersion());
         assertSame(resource.getLifecycleState(), ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE);
         assertEquals((boolean) resource.isHighestVersion(), ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
         assertEquals(resource.getVendorName(), ImportUtils.Constants.VENDOR_NAME);

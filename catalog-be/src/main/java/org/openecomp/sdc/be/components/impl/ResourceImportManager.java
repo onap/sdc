@@ -800,7 +800,7 @@ public class ResourceImportManager {
     private void auditErrorImport(UploadResourceInfo resourceMetaData, User user, ResponseFormat errorResponseWrapper, boolean isNormative) {
         String version, lifeCycleState;
         if (isNormative) {
-            version = TypeUtils.FIRST_CERTIFIED_VERSION_VERSION;
+            version = TypeUtils.getFirstCertifiedVersionVersion();
             lifeCycleState = LifecycleStateEnum.CERTIFIED.name();
         }
         else {
@@ -861,7 +861,7 @@ public class ResourceImportManager {
         String version;
         LifecycleStateEnum state;
         if (shouldBeCertified) {
-            version = TypeUtils.FIRST_CERTIFIED_VERSION_VERSION;
+            version = TypeUtils.getFirstCertifiedVersionVersion();
             state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE;
         }
         else {

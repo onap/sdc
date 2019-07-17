@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,167 +21,188 @@
 package org.openecomp.sdc.be.datatypes.components;
 
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition {
-	public static final String EMPTY_STR = "";
+    private static final String EMPTY_STR = "";
 
-	private String distributionStatus;
-	private String serviceType;
-	private String serviceRole;
-	private String instantiationType = EMPTY_STR;
+    private String distributionStatus;
+    private String serviceType;
+    private String serviceRole;
+    private String instantiationType = EMPTY_STR;
 
-	private Boolean ecompGeneratedNaming = true;
+    private Boolean ecompGeneratedNaming = true;
 
-	private String namingPolicy = EMPTY_STR;
+    private String namingPolicy = EMPTY_STR;
 
-	private String environmentContext;
+    private String environmentContext;
 
-	public ServiceMetadataDataDefinition() {
-		super();
-		serviceType = "";
-		serviceRole = "";
-	}
+    public ServiceMetadataDataDefinition() {
+        super();
+        serviceType = "";
+        serviceRole = "";
+    }
 
-	public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
-		super(other);
-		serviceType = other.getServiceType();
-		serviceRole = other.getServiceRole();
-	}
+    public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
+        super(other);
+        serviceType = other.getServiceType();
+        serviceRole = other.getServiceRole();
+    }
 
-	public String getDistributionStatus() {
-		return distributionStatus;
-	}
+    public String getDistributionStatus() {
+        return distributionStatus;
+    }
 
-	public void setDistributionStatus(String distributionStatus) {
-		this.distributionStatus = distributionStatus;
-	}
-	
-	public String getServiceType(){
-		return serviceType;
-	}
-	
-	public void setServiceType(String serviceType){
-		this.serviceType = serviceType;
-	}
+    public void setDistributionStatus(String distributionStatus) {
+        this.distributionStatus = distributionStatus;
+    }
 
-	public String getServiceRole(){
-		return serviceRole;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public String getInstantiationType() {
-		return instantiationType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public void setInstantiationType(String instantiationType){
-		this.instantiationType = instantiationType;
-	}
+    public String getServiceRole() {
+        return serviceRole;
+    }
 
-	public void setServiceRole(String serviceRole){
-		this.serviceRole = serviceRole;
-	}
+    public String getInstantiationType() {
+        return instantiationType;
+    }
 
-	public Boolean isEcompGeneratedNaming() {
-		return ecompGeneratedNaming;
-	}
+    public void setInstantiationType(String instantiationType) {
+        this.instantiationType = instantiationType;
+    }
 
-	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-		this.ecompGeneratedNaming = ecompGeneratedNaming;
-	}
+    public void setServiceRole(String serviceRole) {
+        this.serviceRole = serviceRole;
+    }
 
-	public String getNamingPolicy() {
-		return namingPolicy;
-	}
+    public Boolean isEcompGeneratedNaming() {
+        return ecompGeneratedNaming;
+    }
 
-	public void setNamingPolicy(String namingPolicy) {
-		this.namingPolicy = namingPolicy;
-	}
+    public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+        this.ecompGeneratedNaming = ecompGeneratedNaming;
+    }
 
-	public String getEnvironmentContext() { return environmentContext;  }
+    public String getNamingPolicy() {
+        return namingPolicy;
+    }
 
-	public void setEnvironmentContext(String environmentContext) { this.environmentContext = environmentContext;  }
+    public void setNamingPolicy(String namingPolicy) {
+        this.namingPolicy = namingPolicy;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceMetadataDataDefinition{" +
-				"distributionStatus='" + distributionStatus + '\'' +
-				", serviceType='" + serviceType + '\'' +
-				", serviceRole='" + serviceRole + '\'' +
-				", ecompGeneratedNaming=" + ecompGeneratedNaming +
-				", namingPolicy='" + namingPolicy + '\'' +
-				", environmentContext='" + environmentContext + '\'' +
-				", instantiationType='" + instantiationType + '\'' +
-				'}';
-	}
+    public String getEnvironmentContext() {
+        return environmentContext;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((distributionStatus == null) ? 0 : distributionStatus.hashCode());
-		result = prime * result + ((ecompGeneratedNaming == null) ? 0 : ecompGeneratedNaming.hashCode());
-		result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
-		result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
-		result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
-		result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
-		result = prime * result + ((instantiationType == null) ? 0 : instantiationType.hashCode());
-		return result;
-	}
+    public void setEnvironmentContext(String environmentContext) {
+        this.environmentContext = environmentContext;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof ComponentMetadataDataDefinition)) {
-			return false;
-		}
-		if (!super.equals(obj)) {
-			return false;
-		}
-		if (getClass() != obj.getClass())
-			return false;
-		ServiceMetadataDataDefinition other = (ServiceMetadataDataDefinition) obj;
-		if (distributionStatus == null) {
-			if (other.distributionStatus != null)
-				return false;
-		} else if (!distributionStatus.equals(other.distributionStatus))
-			return false;
-		if (ecompGeneratedNaming == null) {
-			if (other.ecompGeneratedNaming != null)
-				return false;
-		} else if (!ecompGeneratedNaming.equals(other.ecompGeneratedNaming))
-			return false;
-		if (namingPolicy == null) {
-			if (other.namingPolicy != null)
-				return false;
-		} else if (!namingPolicy.equals(other.namingPolicy))
-			return false;
-		if (serviceType == null){
-			if (other.serviceType != null)
-				return false;
-		} else if (!serviceType.equals(other.serviceType))
-			return false;
-		if (serviceRole == null){
-			if (other.serviceRole != null)
-				return false;
-		} else if (!serviceRole.equals(other.serviceRole))
-			return false;
-		if (environmentContext == null){
-			if (other.environmentContext != null)
-				return false;
-		} else if (!environmentContext.equals(other.environmentContext))
-			return false;
-		if (instantiationType == null) {
-			if (other.instantiationType != null)
-				return false;
-		} else if (!instantiationType.equals(other.instantiationType))
-			return false;
-		return super.equals(obj);
-	}
+    @Override
+    public String toString() {
+        return "ServiceMetadataDataDefinition{"
+                + "distributionStatus='" + distributionStatus + '\''
+                + ", serviceType='" + serviceType + '\''
+                + ", serviceRole='" + serviceRole + '\''
+                + ", ecompGeneratedNaming=" + ecompGeneratedNaming
+                + ", namingPolicy='" + namingPolicy + '\''
+                + ", environmentContext='" + environmentContext + '\''
+                + ", instantiationType='" + instantiationType + '\''
+                + '}';
+    }
 
-	@Override
-	public String getActualComponentType() {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((distributionStatus == null) ? 0 : distributionStatus.hashCode());
+        result = prime * result + ((ecompGeneratedNaming == null) ? 0 : ecompGeneratedNaming.hashCode());
+        result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
+        result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
+        result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
+        result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
+        result = prime * result + ((instantiationType == null) ? 0 : instantiationType.hashCode());
+        return result;
+    }
 
-		return componentType != null ? componentType.getValue() : "";
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof ComponentMetadataDataDefinition)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ServiceMetadataDataDefinition other = (ServiceMetadataDataDefinition) obj;
+        if (distributionStatus == null) {
+            if (other.distributionStatus != null) {
+                return false;
+            }
+        } else if (!distributionStatus.equals(other.distributionStatus)) {
+            return false;
+        }
+        if (ecompGeneratedNaming == null) {
+            if (other.ecompGeneratedNaming != null) {
+                return false;
+            }
+        } else if (!ecompGeneratedNaming.equals(other.ecompGeneratedNaming)) {
+            return false;
+        }
+        if (namingPolicy == null) {
+            if (other.namingPolicy != null) {
+                return false;
+            }
+        } else if (!namingPolicy.equals(other.namingPolicy)) {
+            return false;
+        }
+        if (serviceType == null) {
+            if (other.serviceType != null) {
+                return false;
+            }
+        } else if (!serviceType.equals(other.serviceType)) {
+            return false;
+        }
+        if (serviceRole == null) {
+            if (other.serviceRole != null) {
+                return false;
+            }
+        } else if (!serviceRole.equals(other.serviceRole)) {
+            return false;
+        }
+        if (environmentContext == null) {
+            if (other.environmentContext != null) {
+                return false;
+            }
+        } else if (!environmentContext.equals(other.environmentContext)) {
+            return false;
+        }
+        if (instantiationType == null) {
+            if (other.instantiationType != null) {
+                return false;
+            }
+        } else if (!instantiationType.equals(other.instantiationType)) {
+            return false;
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public String getActualComponentType() {
+
+        return componentType != null ? componentType.getValue() : "";
+    }
 
 }

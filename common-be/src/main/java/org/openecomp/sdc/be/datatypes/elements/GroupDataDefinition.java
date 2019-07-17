@@ -160,6 +160,7 @@ public class GroupDataDefinition extends ToscaDataDefinition {
     public Map<String, String> getMembers() {
         return (Map<String, String>) getToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER);
     }
+
     //this is used by GroupCompositionMixin
     public Map<String, String> resolveMembersList() {
         Map<String, String> members = getMembers();

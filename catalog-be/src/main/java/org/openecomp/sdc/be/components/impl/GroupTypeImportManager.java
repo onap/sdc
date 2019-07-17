@@ -137,7 +137,7 @@ public class GroupTypeImportManager {
 
             groupType.setHighestVersion(true);
 
-            groupType.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+            groupType.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
         }
         return groupType;
     }
