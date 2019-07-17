@@ -16,6 +16,24 @@
       "revId": "b3587570e425a1e90921d30cad1b166a7577102e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a86725a_799fdd14",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/SSLProxyServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2019-07-17T07:10:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fc0b007_327a81fa",
+      "revId": "b3587570e425a1e90921d30cad1b166a7577102e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
