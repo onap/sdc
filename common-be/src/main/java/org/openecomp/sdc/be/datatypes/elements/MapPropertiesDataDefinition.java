@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,58 +21,58 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 
-
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataDefinition>{
-		
-	private String parentName;
-	
-	public MapPropertiesDataDefinition(MapDataDefinition cdt, String parentName) {
-		super(cdt);
-		this.parentName = parentName;
-	}
-	
-	@JsonCreator
-	public MapPropertiesDataDefinition(Map<String, PropertyDataDefinition > mapToscaDataDefinition) {
-		super(mapToscaDataDefinition);
-	}
+public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataDefinition> {
 
-	/**
-	 * Copy Constructor
-	 */
-	public MapPropertiesDataDefinition(MapPropertiesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition){
-		this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
-		this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
-		this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
-	}
-	public MapPropertiesDataDefinition() {
-		super();
-		
-	}
-	@JsonValue
-	@Override
-	public Map<String, PropertyDataDefinition> getMapToscaDataDefinition() {
-		return mapToscaDataDefinition;
-	}
+    private String parentName;
 
-	
-	public void setMapToscaDataDefinition(Map<String, PropertyDataDefinition> mapToscaDataDefinition) {
-		this.mapToscaDataDefinition = mapToscaDataDefinition;
-	}
+    public MapPropertiesDataDefinition(MapDataDefinition cdt, String parentName) {
+        super(cdt);
+        this.parentName = parentName;
+    }
 
-	public String getParentName() {
-		return parentName;
-	}
+    @JsonCreator
+    public MapPropertiesDataDefinition(Map<String, PropertyDataDefinition> mapToscaDataDefinition) {
+        super(mapToscaDataDefinition);
+    }
 
-	public void setParentName(String parentName) {
-		this.parentName = parentName;
-	}
-	
+    /**
+     * Copy Constructor
+     */
+    public MapPropertiesDataDefinition(MapPropertiesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition) {
+        this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
+        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
+    }
+
+    public MapPropertiesDataDefinition() {
+        super();
+
+    }
+
+    @JsonValue
+    @Override
+    public Map<String, PropertyDataDefinition> getMapToscaDataDefinition() {
+        return mapToscaDataDefinition;
+    }
+
+
+    public void setMapToscaDataDefinition(Map<String, PropertyDataDefinition> mapToscaDataDefinition) {
+        this.mapToscaDataDefinition = mapToscaDataDefinition;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
 
 }

@@ -107,7 +107,7 @@ public abstract class ToscaDataDefinition {
 
     public static <T extends ToscaDataDefinition> Map<String, T> listToMapByName(List<T> dataList) {
         return null == dataList ? new HashMap<>() : dataList.stream()
-                                                            .collect(Collectors.toMap(p -> (String) p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
+                .collect(Collectors.toMap(p -> (String) p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
     }
 
     public boolean findUidMatch(String uid) {
