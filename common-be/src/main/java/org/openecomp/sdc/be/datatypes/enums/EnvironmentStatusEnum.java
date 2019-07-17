@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum EnvironmentStatusEnum {
@@ -23,19 +23,24 @@ public enum EnvironmentStatusEnum {
 
     private final String name;
 
-    private EnvironmentStatusEnum(String name){
+    EnvironmentStatusEnum(String name) {
         this.name = name;
     }
 
     public String getName() {
         return name;
     }
-    public static EnvironmentStatusEnum getByName(final String name){
-        switch(name){
-            case ("in_progress") : return IN_PROGRESS;
-            case ("failed") : return FAILED;
-            case ("completed") : return COMPLETED;
-            default: return UNKNOWN;
+
+    public static EnvironmentStatusEnum getByName(final String name) {
+        switch (name) {
+            case ("in_progress"):
+                return IN_PROGRESS;
+            case ("failed"):
+                return FAILED;
+            case ("completed"):
+                return COMPLETED;
+            default:
+                return UNKNOWN;
         }
     }
 

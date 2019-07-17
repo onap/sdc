@@ -17,7 +17,6 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 
@@ -38,12 +37,12 @@ public class OperationInputDefinition extends InputDataDefinition {
         setSourceProperty(sourceProperty);
     }
 
-	public OperationInputDefinition(OperationInputDefinition oid) {
-		super(oid);
-		setName(oid.getName());
-		setSource(oid.getSource());
-		setSourceProperty(oid.getSourceProperty());
-	}
+    public OperationInputDefinition(OperationInputDefinition oid) {
+        super(oid);
+        setName(oid.getName());
+        setSource(oid.getSource());
+        setSourceProperty(oid.getSourceProperty());
+    }
 
     public OperationInputDefinition(String name, String property, Boolean mandatory, String type) {
         super();

@@ -120,7 +120,7 @@ public enum JsonPresentationFields {
     CAPABILITY_SOURCES("capabilitySources", null),
     MAX_OCCURRENCES("maxOccurrences", null),
     MIN_OCCURRENCES("minOccurrences", null),
-    OWNER_TYPE("ownerType",null),
+    OWNER_TYPE("ownerType", null),
     OWNER_NAME("ownerName", null),
     OWNER_ID("ownerId", null),
     LEFT_OCCURRENCES("leftOccurences", null),
@@ -137,14 +137,14 @@ public enum JsonPresentationFields {
     REQUIREMENT_ID("requirementId", null),
     PARENT_NAME("parentName", null),
     PREVIOUS_NAME("previousName", null),
-    NODE_FILTER_CAPABILITIES("capabilities",null),
-    PROPERTY_FILTER_NAME("propertyName",null),
-    PROPERTY_FILTER_CONSTRAINT("propertyFilterConstraint",null),
-    EQUAL_CONSTRAINT("equal",null),
-    CONSTRAINT_VALUE("constraintValue",null),
-    CONSTRAINT_FUNCTION("constraintFunction",null),
-    NODE_FILTER("nodeFilter",null),
-    TOSCA_ID("tosca_id",null),
+    NODE_FILTER_CAPABILITIES("capabilities", null),
+    PROPERTY_FILTER_NAME("propertyName", null),
+    PROPERTY_FILTER_CONSTRAINT("propertyFilterConstraint", null),
+    EQUAL_CONSTRAINT("equal", null),
+    CONSTRAINT_VALUE("constraintValue", null),
+    CONSTRAINT_FUNCTION("constraintFunction", null),
+    NODE_FILTER("nodeFilter", null),
+    TOSCA_ID("tosca_id", null),
 
     //Relation
     CAPABILTY_OWNER_ID("capabilityOwnerId", null),
@@ -152,7 +152,7 @@ public enum JsonPresentationFields {
     FROM_ID("fromId", null),
     TO_ID("toId", null),
     REQUIREMENT("requirement", null),
-    ORIGIN_UI("originUI",null),
+    ORIGIN_UI("originUI", null),
 
     //Groups
 
@@ -228,8 +228,8 @@ public enum JsonPresentationFields {
     //Interface
     INTERFACES("interfaces", null),
     OPERATIONS("operations", null),
-    OPERATION_IMPLEMENTATION("implementation",null),
-    OPERATION_INPUTS("inputs",null),
+    OPERATION_IMPLEMENTATION("implementation", null),
+    OPERATION_INPUTS("inputs", null),
     OPERATION_OUTPUTS("outputs", null),
     INPUTS("inputs", null),
 

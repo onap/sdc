@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class ForwardingPathElementDataDefinition extends ToscaDataDefinition {
         super();
     }
 
-    public ForwardingPathElementDataDefinition(String fromNode, String toNode, String fromCPName, String toCPName , String fromCPOriginId, String toCPOriginId) {
+    public ForwardingPathElementDataDefinition(String fromNode, String toNode, String fromCPName, String toCPName, String fromCPOriginId, String toCPOriginId) {
         super();
         setFromNode(fromNode);
         setToNode(toNode);
@@ -103,16 +103,20 @@ public class ForwardingPathElementDataDefinition extends ToscaDataDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ForwardingPathElementDataDefinition that = (ForwardingPathElementDataDefinition) o;
         return Objects.equals(getFromNode(), that.getFromNode()) && Objects.equals(getToNode(), that.getToNode())
-                && Objects.equals(getFromCPOriginId(), that.getFromCPOriginId())  && Objects.equals(getToCPOriginId(), that.getToCPOriginId());
+                && Objects.equals(getFromCPOriginId(), that.getFromCPOriginId()) && Objects.equals(getToCPOriginId(), that.getToCPOriginId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFromNode(), getToNode(), getFromCP(),getToCP(), getFromCPOriginId(), getToCPOriginId());
+        return Objects.hash(getFromNode(), getToNode(), getFromCP(), getToCP(), getFromCPOriginId(), getToCPOriginId());
     }
 
     @Override

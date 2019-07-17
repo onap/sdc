@@ -145,7 +145,7 @@ public class PolicyTypeImportManager {
 
             policyType.setHighestVersion(true);
 
-            policyType.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+            policyType.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
         }
         return policyType;
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 
-
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -31,43 +29,43 @@ import java.util.Map;
 
 public class MapListRequirementDataDefinition extends MapDataDefinition<ListRequirementDataDefinition> {
 
-	public MapListRequirementDataDefinition(MapListRequirementDataDefinition cdt) {
-		super(cdt);
+    public MapListRequirementDataDefinition(MapListRequirementDataDefinition cdt) {
+        super(cdt);
 
-	}
+    }
 
-	@JsonCreator
-	public MapListRequirementDataDefinition(Map<String, ListRequirementDataDefinition> mapToscaDataDefinition) {
-		super(mapToscaDataDefinition);
-	}
+    @JsonCreator
+    public MapListRequirementDataDefinition(Map<String, ListRequirementDataDefinition> mapToscaDataDefinition) {
+        super(mapToscaDataDefinition);
+    }
 
-	public MapListRequirementDataDefinition() {
-		super();
+    public MapListRequirementDataDefinition() {
+        super();
 
-	}
+    }
 
-	@JsonValue
-	@Override
-	public Map<String, ListRequirementDataDefinition> getMapToscaDataDefinition() {
-		return mapToscaDataDefinition;
-	}
+    @JsonValue
+    @Override
+    public Map<String, ListRequirementDataDefinition> getMapToscaDataDefinition() {
+        return mapToscaDataDefinition;
+    }
 
-	public void add(String key, RequirementDataDefinition value) {
-		if (mapToscaDataDefinition == null) {
-			mapToscaDataDefinition = new HashMap<>();
-			ListRequirementDataDefinition newList = new ListRequirementDataDefinition();
-			newList.add(value);
-			put(key, newList);
-		} else {
-			ListRequirementDataDefinition existValue = mapToscaDataDefinition.get(key);
-			if (existValue == null) {
-				ListRequirementDataDefinition newList = new ListRequirementDataDefinition();
-				newList.add(value);
-				put(key, newList);
-			} else {
-				existValue.getListToscaDataDefinition().add(value);
-			}
-		}
-	}
+    public void add(String key, RequirementDataDefinition value) {
+        if (mapToscaDataDefinition == null) {
+            mapToscaDataDefinition = new HashMap<>();
+            ListRequirementDataDefinition newList = new ListRequirementDataDefinition();
+            newList.add(value);
+            put(key, newList);
+        } else {
+            ListRequirementDataDefinition existValue = mapToscaDataDefinition.get(key);
+            if (existValue == null) {
+                ListRequirementDataDefinition newList = new ListRequirementDataDefinition();
+                newList.add(value);
+                put(key, newList);
+            } else {
+                existValue.getListToscaDataDefinition().add(value);
+            }
+        }
+    }
 
 }

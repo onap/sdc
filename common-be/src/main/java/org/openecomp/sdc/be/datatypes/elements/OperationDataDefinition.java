@@ -20,14 +20,15 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
+
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ASSOCIATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import java.io.Serializable;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
