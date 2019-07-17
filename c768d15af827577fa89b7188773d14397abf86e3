@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fbd97bb2_0e8e6758",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-07-17T11:12:44Z",
+      "side": 1,
+      "message": "Please follow onap codestyle. * not allowed",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6388e91f_75c135a3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-07-17T11:12:44Z",
+      "side": 1,
+      "message": "Please follow onap code style",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2dc2567d_ce4be217",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ComponentPropertyServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-07-17T11:12:44Z",
+      "side": 1,
+      "message": "can the empty function be removed?",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
