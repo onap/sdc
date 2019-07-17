@@ -1,0 +1,8 @@
+Code-Review+1: Idan Agam <idan.agam@att.com>
+Code-Review+2: Tomasz Golabek <tomasz.golabek@nokia.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Tomasz Golabek <tomasz.golabek@nokia.com>
+Submitted-at: Wed, 17 Jul 2019 11:07:56 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/91149
+Project: sdc
+Branch: refs/heads/master
