@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fe30c99_5d5c2b48",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-07-17T15:58:23Z",
+      "side": 1,
+      "message": "Can you remove the wildcard?",
+      "range": {
+        "startLine": 24,
+        "startChar": 17,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "d035841a8e22af1f6b587bcd4ba4dc9e5a328622",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
