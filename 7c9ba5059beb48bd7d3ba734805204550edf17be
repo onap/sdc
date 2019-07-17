@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c69afd70_6596098f",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/log/enums/EcompLoggerErrorCode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T07:31:17Z",
+      "side": 1,
+      "message": "private??",
+      "revId": "7c9ba5059beb48bd7d3ba734805204550edf17be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d1fa5e7_ce289cac",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/monitoring/MonitoringMetricsFetcher.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T07:31:17Z",
+      "side": 1,
+      "message": "typo and should be private",
+      "revId": "7c9ba5059beb48bd7d3ba734805204550edf17be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcadf402_fb0e6929",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/GeneralUtility.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T07:31:17Z",
+      "side": 1,
+      "message": "private",
+      "revId": "7c9ba5059beb48bd7d3ba734805204550edf17be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d2e3dc7c_f44ac012",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T07:31:17Z",
+      "side": 1,
+      "message": "private",
+      "revId": "7c9ba5059beb48bd7d3ba734805204550edf17be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "792fabaf_a6d6989c",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/exception/ResponseFormat.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T07:31:17Z",
+      "side": 1,
+      "message": "please remove \u003cp\u003e",
+      "revId": "7c9ba5059beb48bd7d3ba734805204550edf17be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
