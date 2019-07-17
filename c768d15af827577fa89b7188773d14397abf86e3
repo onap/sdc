@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "863f61ef_9e843f0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-07-17T11:50:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fbd97bb2_0e8e6758",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6388e91f_75c135a3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "4158f29b_0b5dc955",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-07-17T11:50:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6388e91f_75c135a3",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2dc2567d_ce4be217",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ComponentPropertyServletTest.java",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2019-07-17T11:12:44Z",
       "side": 1,
       "message": "can the empty function be removed?",
+      "revId": "c768d15af827577fa89b7188773d14397abf86e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc66f75d_1c0369fb",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ComponentPropertyServletTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-07-17T11:50:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2dc2567d_ce4be217",
       "revId": "c768d15af827577fa89b7188773d14397abf86e3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
