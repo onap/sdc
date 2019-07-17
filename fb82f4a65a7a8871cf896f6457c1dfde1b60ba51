@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98e5c9d0_d4fe276b",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/utils/DaoUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T10:20:14Z",
+      "side": 1,
+      "message": "I really like idea to test only fail cases here, but recommend to change name of tests to be more descriptive.",
+      "revId": "fb82f4a65a7a8871cf896f6457c1dfde1b60ba51",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4cb09a8a_3f52fd9d",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/utils/DaoUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T10:20:14Z",
+      "side": 1,
+      "message": "Also it would be probably better to use org.junit.rules.ExpectedException rule here.",
+      "revId": "fb82f4a65a7a8871cf896f6457c1dfde1b60ba51",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
