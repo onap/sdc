@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6c4d88be_dae2e664",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/validation/DeploymentArtifactHeatConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2019-07-17T07:09:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6067045a_a0820dbc",
+      "revId": "5eda206676b7e15daa58bf3afb16d2b8f1d94bc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3fc242cf_6008fafb",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/config/EcompErrorConfiguration.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-16T14:04:28Z",
       "side": 1,
       "message": "private??",
+      "revId": "5eda206676b7e15daa58bf3afb16d2b8f1d94bc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d2dcdd0_1295d032",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/config/EcompErrorConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2019-07-17T07:09:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fc242cf_6008fafb",
       "revId": "5eda206676b7e15daa58bf3afb16d2b8f1d94bc1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
