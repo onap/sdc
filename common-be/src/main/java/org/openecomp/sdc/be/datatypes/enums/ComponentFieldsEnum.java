@@ -46,13 +46,12 @@ public enum ComponentFieldsEnum {
     NON_EXCLUDED_POLICIES("nonExcludedPolicies"),
     NODE_FILTER("nodeFilter"),
     COMPONENT_INSTANCES_INTERFACES("componentInstancesInterfaces"),
-    DATA_TYPES("dataTypes")
-    ;
+    DATA_TYPES("dataTypes");
 
 
     private String value;
 
-    private ComponentFieldsEnum(String value) {
+    ComponentFieldsEnum(String value) {
         this.value = value;
     }
 

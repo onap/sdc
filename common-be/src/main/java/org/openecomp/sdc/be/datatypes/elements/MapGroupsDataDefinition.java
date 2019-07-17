@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,48 +21,48 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 
-
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Map;
 
-public class MapGroupsDataDefinition extends MapDataDefinition<GroupInstanceDataDefinition>{
-		
-	private String parentName;
-	
-	public MapGroupsDataDefinition(MapDataDefinition<GroupInstanceDataDefinition> cdt, String parentName) {
-		super(cdt);
-		this.parentName = parentName;
-	}
-	
-	@JsonCreator
-	public MapGroupsDataDefinition(Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition) {
-		super(mapToscaDataDefinition);
-	}
-	public MapGroupsDataDefinition() {
-		super();
-		
-	}
-	@JsonValue
-	@Override
-	public Map<String, GroupInstanceDataDefinition> getMapToscaDataDefinition() {
-		return mapToscaDataDefinition;
-	}
+public class MapGroupsDataDefinition extends MapDataDefinition<GroupInstanceDataDefinition> {
 
-	
-	public void setMapToscaDataDefinition(Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition) {
-		this.mapToscaDataDefinition = mapToscaDataDefinition;
-	}
+    private String parentName;
 
-	public String getParentName() {
-		return parentName;
-	}
+    public MapGroupsDataDefinition(MapDataDefinition<GroupInstanceDataDefinition> cdt, String parentName) {
+        super(cdt);
+        this.parentName = parentName;
+    }
 
-	public void setParentName(String parentName) {
-		this.parentName = parentName;
-	}
-	
+    @JsonCreator
+    public MapGroupsDataDefinition(Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition) {
+        super(mapToscaDataDefinition);
+    }
+
+    public MapGroupsDataDefinition() {
+        super();
+
+    }
+
+    @JsonValue
+    @Override
+    public Map<String, GroupInstanceDataDefinition> getMapToscaDataDefinition() {
+        return mapToscaDataDefinition;
+    }
+
+
+    public void setMapToscaDataDefinition(Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition) {
+        this.mapToscaDataDefinition = mapToscaDataDefinition;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
 
 }

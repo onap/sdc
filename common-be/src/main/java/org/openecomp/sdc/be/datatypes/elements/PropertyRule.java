@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,106 +27,106 @@ import java.util.List;
 
 public class PropertyRule extends ToscaDataDefinition {
 
-	public final static String FORCE_ALL = "FORCE_ALL";
-	public final static String ALL = "ALL";
-	public final static String RULE_ANY_MATCH = ".+";
+    public static final String FORCE_ALL = "FORCE_ALL";
+    public static final String ALL = "ALL";
+    public static final String RULE_ANY_MATCH = ".+";
 
-	List<String> rule;
-	String value;
+    private List<String> rule;
+    private String value;
 
-	public PropertyRule() {
-		super();
-	}
+    public PropertyRule() {
+        super();
+    }
 
-	public PropertyRule(List<String> rule, String value) {
-		super();
-		this.rule = rule;
-		this.value = value;
-	}
+    public PropertyRule(List<String> rule, String value) {
+        super();
+        this.rule = rule;
+        this.value = value;
+    }
 
-	public List<String> getRule() {
-		return rule;
-	}
+    public List<String> getRule() {
+        return rule;
+    }
 
-	public void setRule(List<String> rule) {
-		this.rule = rule;
-	}
+    public void setRule(List<String> rule) {
+        this.rule = rule;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@JsonIgnore
-	public String getFirstToken() {
-		return getToken(1);
-	}
+    @JsonIgnore
+    public String getFirstToken() {
+        return getToken(1);
+    }
 
-	public String getToken(int tokenNumber) {
+    public String getToken(int tokenNumber) {
 
-		int index = tokenNumber - 1;
-		if (rule == null || index >= rule.size() || index < 0) {
-			return null;
-		}
+        int index = tokenNumber - 1;
+        if (rule == null || index >= rule.size() || index < 0) {
+            return null;
+        }
 
-		return rule.get(index);
-	}
+        return rule.get(index);
+    }
 
-	@JsonIgnore
-	public int getRuleSize() {
-		if (rule == null) {
-			return 0;
-		}
-		return rule.size();
-	}
+    @JsonIgnore
+    public int getRuleSize() {
+        if (rule == null) {
+            return 0;
+        }
+        return rule.size();
+    }
 
-	@Override
-	public String toString() {
-		return "PropertyRule [rule=" + rule + ", value=" + value + "]";
-	}
+    @Override
+    public String toString() {
+        return "PropertyRule [rule=" + rule + ", value=" + value + "]";
+    }
 
-	public boolean compareRule(PropertyRule comparedPropertyRule) {
+    public boolean compareRule(PropertyRule comparedPropertyRule) {
 
-		if (comparedPropertyRule == null) {
-			return false;
-		}
+        if (comparedPropertyRule == null) {
+            return false;
+        }
 
-		List<String> comparedRule = comparedPropertyRule.getRule();
-		if (rule == null && comparedRule == null) {
-			return true;
-		}
+        List<String> comparedRule = comparedPropertyRule.getRule();
+        if (rule == null && comparedRule == null) {
+            return true;
+        }
 
-		if (rule != null && comparedRule != null) {
-			if (rule.size() != comparedRule.size()) {
-				return false;
-			} else {
-				int size = rule.size();
-				boolean isEqual = true;
-				for (int i = 0; i < size; i++) {
-					String item = rule.get(i);
-					String comparedItem = comparedRule.get(i);
-					if (item == null || !item.equals(comparedItem)) {
-						isEqual = false;
-						break;
-					}
-				}
-				return isEqual;
-			}
-		} else {
-			return false;
-		}
+        if (rule != null && comparedRule != null) {
+            if (rule.size() != comparedRule.size()) {
+                return false;
+            } else {
+                int size = rule.size();
+                boolean isEqual = true;
+                for (int i = 0; i < size; i++) {
+                    String item = rule.get(i);
+                    String comparedItem = comparedRule.get(i);
+                    if (item == null || !item.equals(comparedItem)) {
+                        isEqual = false;
+                        break;
+                    }
+                }
+                return isEqual;
+            }
+        } else {
+            return false;
+        }
 
-	}
+    }
 
-	public void replaceFirstToken(String token) {
+    public void replaceFirstToken(String token) {
 
-		if (rule != null && rule.size() > 0) {
-			rule.set(0, token);
-		}
+        if (rule != null && rule.size() > 0) {
+            rule.set(0, token);
+        }
 
-	}
+    }
 
 }
