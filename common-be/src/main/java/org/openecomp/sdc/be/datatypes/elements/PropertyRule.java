@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,106 +27,119 @@ import java.util.List;
 
 public class PropertyRule extends ToscaDataDefinition {
 
-	public final static String FORCE_ALL = "FORCE_ALL";
-	public final static String ALL = "ALL";
-	public final static String RULE_ANY_MATCH = ".+";
+    private static final String FORCE_ALL = "FORCE_ALL";
+    private static final String ALL = "ALL";
+    private static final String RULE_ANY_MATCH = ".+";
 
-	List<String> rule;
-	String value;
+    public static String getForceAll() {
+        return FORCE_ALL;
+    }
 
-	public PropertyRule() {
-		super();
-	}
+    public static String getALL() {
+        return ALL;
+    }
 
-	public PropertyRule(List<String> rule, String value) {
-		super();
-		this.rule = rule;
-		this.value = value;
-	}
+    public static String getRuleAnyMatch() {
+        return RULE_ANY_MATCH;
+    }
 
-	public List<String> getRule() {
-		return rule;
-	}
 
-	public void setRule(List<String> rule) {
-		this.rule = rule;
-	}
+    private List<String> rule;
+    private String value;
 
-	public String getValue() {
-		return value;
-	}
+    public PropertyRule() {
+        super();
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public PropertyRule(List<String> rule, String value) {
+        super();
+        this.rule = rule;
+        this.value = value;
+    }
 
-	@JsonIgnore
-	public String getFirstToken() {
-		return getToken(1);
-	}
+    public List<String> getRule() {
+        return rule;
+    }
 
-	public String getToken(int tokenNumber) {
+    public void setRule(List<String> rule) {
+        this.rule = rule;
+    }
 
-		int index = tokenNumber - 1;
-		if (rule == null || index >= rule.size() || index < 0) {
-			return null;
-		}
+    public String getValue() {
+        return value;
+    }
 
-		return rule.get(index);
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@JsonIgnore
-	public int getRuleSize() {
-		if (rule == null) {
-			return 0;
-		}
-		return rule.size();
-	}
+    @JsonIgnore
+    public String getFirstToken() {
+        return getToken(1);
+    }
 
-	@Override
-	public String toString() {
-		return "PropertyRule [rule=" + rule + ", value=" + value + "]";
-	}
+    public String getToken(int tokenNumber) {
 
-	public boolean compareRule(PropertyRule comparedPropertyRule) {
+        int index = tokenNumber - 1;
+        if (rule == null || index >= rule.size() || index < 0) {
+            return null;
+        }
 
-		if (comparedPropertyRule == null) {
-			return false;
-		}
+        return rule.get(index);
+    }
 
-		List<String> comparedRule = comparedPropertyRule.getRule();
-		if (rule == null && comparedRule == null) {
-			return true;
-		}
+    @JsonIgnore
+    public int getRuleSize() {
+        if (rule == null) {
+            return 0;
+        }
+        return rule.size();
+    }
 
-		if (rule != null && comparedRule != null) {
-			if (rule.size() != comparedRule.size()) {
-				return false;
-			} else {
-				int size = rule.size();
-				boolean isEqual = true;
-				for (int i = 0; i < size; i++) {
-					String item = rule.get(i);
-					String comparedItem = comparedRule.get(i);
-					if (item == null || !item.equals(comparedItem)) {
-						isEqual = false;
-						break;
-					}
-				}
-				return isEqual;
-			}
-		} else {
-			return false;
-		}
+    @Override
+    public String toString() {
+        return "PropertyRule [rule=" + rule + ", value=" + value + "]";
+    }
 
-	}
+    public boolean compareRule(PropertyRule comparedPropertyRule) {
 
-	public void replaceFirstToken(String token) {
+        if (comparedPropertyRule == null) {
+            return false;
+        }
 
-		if (rule != null && rule.size() > 0) {
-			rule.set(0, token);
-		}
+        List<String> comparedRule = comparedPropertyRule.getRule();
+        if (rule == null && comparedRule == null) {
+            return true;
+        }
 
-	}
+        if (rule != null && comparedRule != null) {
+            if (rule.size() != comparedRule.size()) {
+                return false;
+            } else {
+                int size = rule.size();
+                boolean isEqual = true;
+                for (int i = 0; i < size; i++) {
+                    String item = rule.get(i);
+                    String comparedItem = comparedRule.get(i);
+                    if (item == null || !item.equals(comparedItem)) {
+                        isEqual = false;
+                        break;
+                    }
+                }
+                return isEqual;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
+    public void replaceFirstToken(String token) {
+
+        if (rule != null && rule.size() > 0) {
+            rule.set(0, token);
+        }
+
+    }
 
 }

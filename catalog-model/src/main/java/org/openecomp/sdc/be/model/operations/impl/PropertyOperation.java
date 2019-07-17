@@ -1344,7 +1344,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		List<String> rule = new ArrayList<>();
 		rule.add(componentInstanceId);
 		for (int i = 0; i < size - 1; i++) {
-			rule.add(PropertyRule.RULE_ANY_MATCH);
+			rule.add(PropertyRule.getRuleAnyMatch());
 		}
 		PropertyRule propertyRule = new PropertyRule(rule, value);
 		rules.add(propertyRule);
@@ -1377,7 +1377,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				}
 
 				String secondToken = rule.getToken(2);
-				if (secondToken != null && (secondToken.equals(PropertyRule.FORCE_ALL) || secondToken.equals(PropertyRule.ALL))) {
+				if (secondToken != null && (secondToken.equals(PropertyRule.getForceAll()) || secondToken.equals(PropertyRule.getALL()))) {
 					propertyRule = rule;
 					break;
 				}

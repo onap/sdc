@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,13 @@ package org.openecomp.sdc.be.datatypes.elements;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.*;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_DESTINATION_PORT_NUMBER;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_ELEMENT_LIST;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_PROTOCOL;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
 
 public class ForwardingPathDataDefinition extends ToscaDataDefinition {
 
@@ -98,7 +104,7 @@ public class ForwardingPathDataDefinition extends ToscaDataDefinition {
     }
 
     public String getToscaResourceName() {
-           return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
+        return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
     }
 
     public void setToscaResourceName(String toscaResourceName) {

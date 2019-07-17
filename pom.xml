@@ -389,7 +389,6 @@ Modifications copyright (c) 2018-2019 Nokia
                     <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                 </configuration>
             </plugin>
-
             <!-- plugin for parsing the project version -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

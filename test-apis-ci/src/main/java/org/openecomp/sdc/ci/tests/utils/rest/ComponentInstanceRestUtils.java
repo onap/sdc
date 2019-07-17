@@ -203,6 +203,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 		Config config = Utils.getConfig();
 
 		Map<String, String> headersMap = new HashMap<>();
+
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());

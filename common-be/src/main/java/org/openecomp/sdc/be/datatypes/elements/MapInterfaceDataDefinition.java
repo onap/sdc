@@ -23,18 +23,18 @@ import java.util.Map;
 
 public class MapInterfaceDataDefinition extends MapDataDefinition<InterfaceDataDefinition> {
 
-  public MapInterfaceDataDefinition() {
+    public MapInterfaceDataDefinition() {
 
-  }
+    }
 
-  @JsonCreator
-  public MapInterfaceDataDefinition(Map<String, InterfaceDataDefinition > mapToscaDataDefinition) {
-    super(mapToscaDataDefinition);
-  }
+    @JsonCreator
+    public MapInterfaceDataDefinition(Map<String, InterfaceDataDefinition> mapToscaDataDefinition) {
+        super(mapToscaDataDefinition);
+    }
 
-  @JsonValue
-  @Override
-  public Map<String, InterfaceDataDefinition> getMapToscaDataDefinition() {
-    return mapToscaDataDefinition;
-  }
+    @JsonValue
+    @Override
+    public Map<String, InterfaceDataDefinition> getMapToscaDataDefinition() {
+        return mapToscaDataDefinition;
+    }
 }

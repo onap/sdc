@@ -16,9 +16,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
 
 public class RequirementNodeFilterCapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 

@@ -202,7 +202,7 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
         initialAnnotationDefinition = buildAnnotationDefinition(DESCRIPTION,
                 TYPE,
                 prop1);
-        initialAnnotationDefinition.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+        initialAnnotationDefinition.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
     }
 
     private AnnotationTypeDefinition buildAnnotationDefinition(String description, String type, PropertyDefinition ... properties) {
