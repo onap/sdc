@@ -113,7 +113,7 @@ public class TypesUploadEndpoint {
 
     private static <T extends ToscaDataDefinition> T buildAnnotationFromFieldMap(String typeName, Map<String, Object> toscaJson) {
         AnnotationTypeDefinition annotationType = new AnnotationTypeDefinition();
-        annotationType.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+        annotationType.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
         annotationType.setHighestVersion(true);
         annotationType.setType(typeName);
         TypeUtils.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, annotationType::setDescription);

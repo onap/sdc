@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,108 +30,115 @@ import java.util.Map;
  */
 public class SchemaDefinition extends ToscaDataDefinition {
 
-	private String derivedFrom;
-	private List<String> constraints;
-	private Map<String, PropertyDataDefinition> properties;
+    private String derivedFrom;
+    private List<String> constraints;
+    private Map<String, PropertyDataDefinition> properties;
 
-	private PropertyDataDefinition property;
+    private PropertyDataDefinition property;
 
-	
 
-	public SchemaDefinition() {
-	}
+    public SchemaDefinition() {
+    }
 
-	public SchemaDefinition(String derivedFrom, List<String> constraints,
-			Map<String, PropertyDataDefinition> properties) {
-		this.setDerivedFrom(derivedFrom);
-		this.setConstraints( constraints);
-		this.setProperties( properties);
-		
-	}
+    public SchemaDefinition(String derivedFrom, List<String> constraints,
+                            Map<String, PropertyDataDefinition> properties) {
+        this.setDerivedFrom(derivedFrom);
+        this.setConstraints(constraints);
+        this.setProperties(properties);
 
-	public String getDerivedFrom() {
-		return derivedFrom;
-	}
+    }
 
-	public void setProperty(PropertyDataDefinition property) {
-		this.property = property;
-	}
+    public String getDerivedFrom() {
+        return derivedFrom;
+    }
 
-	public PropertyDataDefinition getProperty() {
-		return this.property;
-	}
+    public void setProperty(PropertyDataDefinition property) {
+        this.property = property;
+    }
 
-	public void setDerivedFrom(String derivedFrom) {
-		this.derivedFrom = derivedFrom;
-	}
+    public PropertyDataDefinition getProperty() {
+        return this.property;
+    }
 
-	public List<String> getConstraints() {
-		return constraints;
-	}
+    public void setDerivedFrom(String derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
 
-	public void setConstraints(List<String> constraints) {
-		this.constraints = constraints;
-	}
+    public List<String> getConstraints() {
+        return constraints;
+    }
 
-	public Map<String, PropertyDataDefinition> getProperties() {
-		return properties;
-	}
+    public void setConstraints(List<String> constraints) {
+        this.constraints = constraints;
+    }
 
-	public void setProperties(Map<String, PropertyDataDefinition> properties) {
-		this.properties = properties;
-	}
+    public Map<String, PropertyDataDefinition> getProperties() {
+        return properties;
+    }
 
-	public void addProperty(String key, PropertyDataDefinition property) {
+    public void setProperties(Map<String, PropertyDataDefinition> properties) {
+        this.properties = properties;
+    }
 
-		properties.put(key, property);
-	}
+    public void addProperty(String key, PropertyDataDefinition property) {
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((constraints == null) ? 0 : constraints.hashCode());
-		result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
-		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-		result = prime * result + ((property == null) ? 0 : property.hashCode());
-		return result;
-	}
+        properties.put(key, property);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SchemaDefinition other = (SchemaDefinition) obj;
-		if (constraints == null) {
-			if (other.constraints != null)
-				return false;
-		} else if (!constraints.equals(other.constraints))
-			return false;
-		if (derivedFrom == null) {
-			if (other.derivedFrom != null)
-				return false;
-		} else if (!derivedFrom.equals(other.derivedFrom))
-			return false;
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
-		if (property == null) {
-			if (other.property != null)
-				return false;
-		} else if (!property.equals(other.property))
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((constraints == null) ? 0 : constraints.hashCode());
+        result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
+        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+        result = prime * result + ((property == null) ? 0 : property.hashCode());
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "SchemaDefinition [" + "derivedFrom='" + derivedFrom + ", constraints=" + constraints + ", properties="
-				+ properties + ", property=" + property + ']';
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SchemaDefinition other = (SchemaDefinition) obj;
+        if (constraints == null) {
+            if (other.constraints != null) {
+                return false;
+            }
+        } else if (!constraints.equals(other.constraints)) {
+            return false;
+        }
+        if (derivedFrom == null) {
+            if (other.derivedFrom != null) {
+                return false;
+            }
+        } else if (!derivedFrom.equals(other.derivedFrom)) {
+            return false;
+        }
+        if (properties == null) {
+            if (other.properties != null) {
+                return false;
+            }
+        } else if (!properties.equals(other.properties)) {
+            return false;
+        }
+        if (property == null) {
+            return other.property == null;
+        } else {
+            return property.equals(other.property);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "SchemaDefinition [" + "derivedFrom='" + derivedFrom + ", constraints=" + constraints + ", properties="
+                + properties + ", property=" + property + ']';
+    }
 }
