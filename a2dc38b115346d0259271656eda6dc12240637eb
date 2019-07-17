@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2011b45_0a859318",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/listen/FEAppContextListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T08:06:26Z",
+      "side": 1,
+      "message": "private",
+      "revId": "a2dc38b115346d0259271656eda6dc12240637eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7491c601_887b2214",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/listen/FEAppContextListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T08:06:26Z",
+      "side": 1,
+      "message": "private",
+      "revId": "a2dc38b115346d0259271656eda6dc12240637eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41b64a11_22a68196",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T08:06:26Z",
+      "side": 1,
+      "message": "private",
+      "revId": "a2dc38b115346d0259271656eda6dc12240637eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10c67ac8_65b8a39c",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/HealthCheckService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T08:06:26Z",
+      "side": 1,
+      "message": "private",
+      "revId": "a2dc38b115346d0259271656eda6dc12240637eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f65de034_39fe4450",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/SSLProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-17T08:06:26Z",
+      "side": 1,
+      "message": "private",
+      "revId": "a2dc38b115346d0259271656eda6dc12240637eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
