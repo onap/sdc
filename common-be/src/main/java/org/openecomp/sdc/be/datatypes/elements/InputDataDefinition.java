@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,51 +23,51 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.util.Map;
 
 public class InputDataDefinition extends PropertyDataDefinition {
-	
-	String label;
-	Boolean hidden;
-	Boolean immutable;
-	
-	public InputDataDefinition(){
-		super();
-	}
 
-	public InputDataDefinition(Map<String, Object> pr) {
-		super(pr);
-	}
+    private String label;
+    private Boolean hidden;
+    private Boolean immutable;
 
-	public InputDataDefinition(InputDataDefinition p) {		
-		super(p);
-		this.setLabel(p.getLabel());
-		this.setHidden( p.isHidden());
-		this.setImmutable( p.isImmutable());
-	}
-	
-	public InputDataDefinition(PropertyDataDefinition p) {		
-		super(p);
-	}
-	
-	public Boolean isHidden() {
-		return hidden;
-	}
+    InputDataDefinition() {
+        super();
+    }
 
-	public void setHidden(Boolean hidden) {
-		this.hidden = hidden;
-	}
+    InputDataDefinition(Map<String, Object> pr) {
+        super(pr);
+    }
 
-	public Boolean isImmutable() {
-		return immutable;
-	}
+    InputDataDefinition(InputDataDefinition p) {
+        super(p);
+        this.setLabel(p.getLabel());
+        this.setHidden(p.isHidden());
+        this.setImmutable(p.isImmutable());
+    }
 
-	public void setImmutable(Boolean immutable) {
-		this.immutable = immutable;
-	}
+    InputDataDefinition(PropertyDataDefinition p) {
+        super(p);
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public Boolean isHidden() {
+        return hidden;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public Boolean isImmutable() {
+        return immutable;
+    }
+
+    public void setImmutable(Boolean immutable) {
+        this.immutable = immutable;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }

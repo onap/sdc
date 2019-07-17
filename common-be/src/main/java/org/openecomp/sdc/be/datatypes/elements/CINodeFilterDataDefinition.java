@@ -16,9 +16,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.io.Serializable;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
 
 public class CINodeFilterDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -26,7 +27,7 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
     public CINodeFilterDataDefinition() {
     }
 
-    public CINodeFilterDataDefinition(CINodeFilterDataDefinition inData){
+    public CINodeFilterDataDefinition(CINodeFilterDataDefinition inData) {
         super();
         this.setID(inData.getID());
         this.setName(inData.getName());

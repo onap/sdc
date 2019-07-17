@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ public enum ComponentTypeEnum {
 
     private String value;
 
-    private ComponentTypeEnum(String value) {
+    ComponentTypeEnum(String value) {
         this.value = value;
     }
 
@@ -34,9 +34,9 @@ public enum ComponentTypeEnum {
 
     // Those values cannot be another field in enum, because they are needed
     // as constants for Swagger allowedValues param
-    public static final String RESOURCE_PARAM_NAME = "resources";
-    public static final String SERVICE_PARAM_NAME = "services";
-    public static final String PRODUCT_PARAM_NAME = "products";
+    private static final String RESOURCE_PARAM_NAME = "resources";
+    private static final String SERVICE_PARAM_NAME = "services";
+    private static final String PRODUCT_PARAM_NAME = "products";
 
     public NodeTypeEnum getNodeType() {
 
@@ -85,10 +85,10 @@ public enum ComponentTypeEnum {
 
     public static String findParamByType(ComponentTypeEnum type) {
         String ret = null;
-		if (type == null) {
-			return ret;
-		}
-		
+        if (type == null) {
+            return ret;
+        }
+
         switch (type) {
             case RESOURCE:
                 ret = RESOURCE_PARAM_NAME;
