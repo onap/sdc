@@ -221,6 +221,12 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 		return schema;
 	}
 
+	public void setSchemaType(String schemaType) {
+		if (schema != null && schema.getProperty() != null) {
+			schema.getProperty().setType(schemaType);
+		}
+	}
+
 	public void setSchema(SchemaDefinition entrySchema) {
 		this.schema = entrySchema;
 	}

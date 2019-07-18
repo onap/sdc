@@ -27,7 +27,13 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class PropertyDataDefinitionTest {
@@ -649,5 +655,26 @@ public class PropertyDataDefinitionTest {
 		testSubject = createTestSubject();
 		testSubject.mergeFunction(createTestSubject(), false);
 
+	}
+
+	@Test
+	public void schemaTypeNullWhenSchemaIsNull() {
+		String sampleSchemaType = "sampleSchemaType";
+		PropertyDataDefinition testSubject = createTestSubject();
+		testSubject.setSchemaType(sampleSchemaType);
+		assertNull(testSubject.getSchemaType());
+	}
+
+	@Test
+	public void schemaTypeIsReturnedWhenSchemaisPresent() {
+		String sampleSchemaType = "sampleSchemaType";
+		SchemaDefinition schemaDefinition = new SchemaDefinition();
+		schemaDefinition.setProperty(new PropertyDataDefinition());
+
+		PropertyDataDefinition testSubject = createTestSubject();
+		testSubject.setSchema(schemaDefinition);
+		testSubject.setSchemaType(sampleSchemaType);
+
+		assertThat(testSubject.getSchemaType(), is(equalTo(sampleSchemaType)));
 	}
 }
