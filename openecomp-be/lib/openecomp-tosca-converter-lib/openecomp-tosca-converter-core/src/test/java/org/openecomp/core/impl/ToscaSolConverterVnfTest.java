@@ -54,7 +54,7 @@ public class ToscaSolConverterVnfTest {
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
                 ("TOSCA-Meta-File-Version: 1.0\n " +
                 "CSAR-Version: 1.1\n" +
-                "Created-by: Ericsson\n" +
+                "Created-By: Ericsson\n" +
                 "Entry-Definitions: Definitions/Main.yaml\n" +
                 "Entry-Manifest: Main.mf\n" +
                 "Entry-Change-Log: Artifacts/ChangeLog.txt")
@@ -87,7 +87,7 @@ public class ToscaSolConverterVnfTest {
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
                 ("TOSCA-Meta-File-Version: 1.0\n " +
                         "CSAR-Version: 1.1\n" +
-                        "Created-by: Ericsson\n" +
+                        "Created-By: Ericsson\n" +
                         "Entry-Definitions: Definitions/Main.yaml\n" +
                         "Entry-Manifest: Main.mf\n" +
                         "Entry-Change-Log: Artifacts/ChangeLog.txt")

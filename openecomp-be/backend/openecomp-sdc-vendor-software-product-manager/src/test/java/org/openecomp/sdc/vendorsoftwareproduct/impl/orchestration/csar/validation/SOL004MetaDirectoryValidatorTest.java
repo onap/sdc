@@ -69,7 +69,7 @@ public class SOL004MetaDirectoryValidatorTest {
         metaFile =
                 "TOSCA-Meta-File-Version: 1.0\n"+
                 "CSAR-Version: 1.1\n"+
-                "Created-by: Vendor\n"+
+                "Created-By: Vendor\n"+
                 TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n"+
                 TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.mf\n"+
                 TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text\n";
@@ -144,7 +144,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final String metaFile =
                 "TOSCA-Meta-File-Version: " + Integer.MAX_VALUE +
                 "\nCSAR-Version: " + Integer.MAX_VALUE  +
-                "\nCreated-by: Bilal Iqbal\n" +
+                "\nCreated-By: Bilal Iqbal\n" +
                 TOSCA_META_ENTRY_DEFINITIONS+ SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n" +
                 TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.mf\n"+
                 TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text";
@@ -425,7 +425,7 @@ public class SOL004MetaDirectoryValidatorTest {
         metaFile =
                 "TOSCA-Meta-File-Version: 1.0\n"+
                 "CSAR-Version: 1.1\n"+
-                "Created-by: Vendor\n"+
+                "Created-By: Vendor\n"+
                 TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n"+
                 TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE +"Definitions/MainServiceTemplate2.mf\n"+
                 TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE +"Artifacts/changeLog.text\n";
@@ -457,7 +457,7 @@ public class SOL004MetaDirectoryValidatorTest {
         metaFile =
                 "TOSCA-Meta-File-Version: 1.0\n"+
                 "CSAR-Version: 1.1\n"+
-                "Created-by: Vendor\n"+
+                "Created-By: Vendor\n"+
                 "Entry-Definitions: Definitions/MainServiceTemplate.yaml\n"+
                 TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE +  "Definitions/MainServiceTemplate.txt\n"+
                 TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text\n";

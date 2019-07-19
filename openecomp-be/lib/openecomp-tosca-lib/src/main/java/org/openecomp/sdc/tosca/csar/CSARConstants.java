@@ -31,7 +31,7 @@ public class CSARConstants {
     public static final String TOSCA_META_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta";
     public static final String TOSCA_META_FILE_VERSION_ENTRY = "TOSCA-Meta-File-Version";
     public static final String TOSCA_META_CSAR_VERSION_ENTRY = "CSAR-Version";
-    public static final String TOSCA_META_CREATED_BY_ENTRY = "Created-by";
+    public static final String TOSCA_META_CREATED_BY_ENTRY = "Created-By";
     public static final String TOSCA_META_ENTRY_DEFINITIONS="Entry-Definitions";
     public static final String TOSCA_META_ETSI_ENTRY_MANIFEST ="ETSI-Entry-Manifest";
     public static final String TOSCA_META_ETSI_ENTRY_CHANGE_LOG ="ETSI-Entry-Change-Log";

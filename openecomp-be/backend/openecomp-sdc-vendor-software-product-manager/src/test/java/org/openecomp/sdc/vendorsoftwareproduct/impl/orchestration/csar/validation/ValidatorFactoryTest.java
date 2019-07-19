@@ -47,7 +47,7 @@ public class ValidatorFactoryTest {
         metaFile =
                 "TOSCA-Meta-File-Version: 1.0\n" +
                 "CSAR-Version: 1.1\n" +
-                "Created-by: Bilal Iqbal\n";
+                "Created-By: Bilal Iqbal\n";
     }
 
     @Test(expected = IOException.class)
