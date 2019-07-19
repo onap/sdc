@@ -4,10 +4,16 @@ description: service template of a PNF
 
 topology_template:
   inputs:
-    layer_protocol:
+    role:
       type: string
-      description: IP protocol
-      default: ipv4
+      description: Role
+      default: leaf
+    layer_protocols:
+      type: list
+      description: IP protocols
+      entry_schema:
+        type: string
+      default: [ipv4, ipv6, otherProtocol]
   node_templates:
     pnf_mainPart:
       type: tosca.nodes.nfv.PNF
@@ -33,6 +39,6 @@ topology_template:
       type: tosca.nodes.nfv.PnfExtCp
       properties:
         trunk_mode: false
-        layer_protocols: { get_input: layer_protocol }
-        role: leaf
+        layer_protocols: {get_input: layer_protocols}
+        role: {get_input: role}
         description: External connection point to access this pnf

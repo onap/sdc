@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.Constraint;
@@ -53,12 +52,15 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
     private static final String PNF_EXT_CP_TYPE = "tosca.nodes.nfv.PnfExtCp";
     private static final String EXT_CP_TYPE = "org.openecomp.resource.cp.v2.extCP";
     private static final String LAYER_PROTOCOLS = "layer_protocols";
+    private static final String ASSIGNMENT_METHOD = "assingment_method";
+    private static final String DHCP = "dhcp";
     private static final String IP_V4 = "ipv4";
     private static final String IP_V6 = "ipv6";
     private static final String IP_VERSION = "ip_version";
-    private static final String ASSIGNMENT_METHOD = "assingment_method";
-    private static final String DHCP = "dhcp";
     private static final String IP_REQUIREMENTS = "ip_requirements";
+    private static final String IP_REQUIREMENTS_TYPE = "org.openecomp.datatypes.network.IpRequirements";
+    private ServiceTemplate serviceTemplate;
+    private ServiceTemplateReaderService readerService;
 
     /**
      * For PNF the node templates are converted ETSI node types to ecomp node types. All other data i.e. inputs,
@@ -70,48 +72,50 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
      */
     @Override
     public void convertTopologyTemplate(final ServiceTemplate serviceTemplate,
-        final ServiceTemplateReaderService readerService) {
-        convertNodeTemplatesToEcompTypes(serviceTemplate, readerService);
-        addEmptyNodeTemplatesIfNoneDefined(serviceTemplate);
-        addInputsToEcompTypes(serviceTemplate, readerService);
+            final ServiceTemplateReaderService readerService) {
+        this.serviceTemplate = serviceTemplate;
+        this.readerService = readerService;
+        addInputsToEcompTypes();
+        convertNodeTemplatesToEcompTypes();
+        addEmptyNodeTemplatesIfNoneDefined();
     }
 
-    private void addInputsToEcompTypes(final ServiceTemplate serviceTemplate,
-        final ServiceTemplateReaderService readerService) {
+    private void addInputsToEcompTypes() {
         final Map<String, Object> inputs = readerService.getInputs();
-        if (inputs != null) {
-            inputs.entrySet().stream().forEach(input -> {
-                final String parameterDefinitionId = input.getKey();
-                final Map value = (Map) input.getValue();
-
-                final Object required = value.get(REQUIRED.getElementName());
-                final Object constraints = value.get(CONSTRAINTS.getElementName());
-                final Object entrySchema = value.get(ENTRY_SCHEMA.getElementName());
-                final ParameterDefinition parameterDefinition =
-                    DataModelUtil.createParameterDefinition(
-                        (String) value.get(TYPE.getElementName()),
-                        (String) value.get(DESCRIPTION.getElementName()),
-                        required instanceof Boolean ? (Boolean) required : false,
-                        constraints instanceof List ? (List<Constraint>) constraints : null,
-                        entrySchema instanceof EntrySchema ? (EntrySchema) entrySchema : null,
-                        (String) value.get(DEFAULT_VALUE.getElementName()));
-
-                DataModelUtil
-                    .addInputParameterToTopologyTemplate(serviceTemplate, parameterDefinitionId, parameterDefinition);
-            });
+        if (MapUtils.isEmpty(inputs)) {
+            return;
         }
+        inputs.forEach((parameterDefinitionId, properties) -> {
+            final Map propertyMap = (Map) properties;
+            final Object requiredObj = propertyMap.get(REQUIRED.getElementName());
+            final Object constraintsObj = propertyMap.get(CONSTRAINTS.getElementName());
+            final Object entrySchemaObj = propertyMap.get(ENTRY_SCHEMA.getElementName());
+
+            EntrySchema entrySchema = null;
+            if (entrySchemaObj instanceof Map) {
+                final Map entrySchemaMap = ((Map) entrySchemaObj);
+                entrySchema = parseEntrySchema(entrySchemaMap);
+            }
+            final ParameterDefinition parameterDefinition =
+                DataModelUtil.createParameterDefinition(
+                    (String) propertyMap.get(TYPE.getElementName()),
+                    (String) propertyMap.get(DESCRIPTION.getElementName()),
+                    requiredObj instanceof Boolean ? (Boolean) requiredObj : null,
+                    constraintsObj instanceof List ? (List<Constraint>) constraintsObj : null,
+                    entrySchema,
+                    propertyMap.get(DEFAULT_VALUE.getElementName()));
+
+            DataModelUtil
+                .addInputParameterToTopologyTemplate(serviceTemplate, parameterDefinitionId, parameterDefinition);
+        });
     }
 
     /**
      * PNF only has nfv.PNF and nfv.PnfExtCp types defined in ETSI SOL001 v2.5.1. - The PNF is mapped to the outer
      * Abstract PNF container in ecomp model and hence nfv.PNF is dropped here. - nfv.PnfExtCp is mapped to ecomp
      * v2.extCp type.
-     *
-     * @param serviceTemplate - the service template
-     * @param readerService - the reader service
      */
-    private void convertNodeTemplatesToEcompTypes(final ServiceTemplate serviceTemplate,
-        final ServiceTemplateReaderService readerService) {
+    private void convertNodeTemplatesToEcompTypes() {
         final Map<String, Object> nodeTemplates = readerService.getNodeTemplates();
         if (MapUtils.isEmpty(nodeTemplates)) {
             return;
@@ -137,11 +141,13 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
         final NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(EXT_CP_TYPE);
         final Map<String, Object> properties = (Map<String, Object>) pnfExtCp.get(PROPERTIES.getElementName());
+
         properties.entrySet().stream()
-            .filter(stringObjectEntry -> LAYER_PROTOCOLS.equals(stringObjectEntry.getKey()))
-            .forEach(stringObjectEntry -> {
-                final Object propertyValue = stringObjectEntry.getValue();
+            .filter(propertyMap -> LAYER_PROTOCOLS.equals(propertyMap.getKey()))
+            .forEach(propertyMap -> {
+                final Object propertyValue = propertyMap.getValue();
                 if (propertyValue instanceof List) {
+                    // layer_protocols: [ ipv4, ipv6, ... ]
                     final List<Map<String, Object>> ipRequirements =
                         convertToIpRequirementsProperty((List<String>) propertyValue);
                     if (!ipRequirements.isEmpty()) {
@@ -149,25 +155,58 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
                         convertedProperties.put(IP_REQUIREMENTS, ipRequirements);
                         nodeTemplate.setProperties(convertedProperties);
                     }
-                } else if (propertyValue instanceof AbstractMap &&
-                    ((AbstractMap) propertyValue).containsKey(GET_INPUT.getElementName())) {
-                    final Set entrySet = ((AbstractMap) propertyValue).entrySet();
-                    final Map<String, Object> convertedProperties = new HashMap<>();
-                    convertedProperties.put(IP_REQUIREMENTS, entrySet);
-                    nodeTemplate.setProperties(convertedProperties);
+                } else if (propertyValue instanceof AbstractMap) {
+                    final Map propertyValueMap = (Map) propertyValue;
+                    if (propertyValueMap.containsKey(GET_INPUT.getElementName())) {
+                        // layer_protocols: {get_input: anInputName}
+                        final Map<String, Object> convertedProperties = new HashMap<>();
+                        convertedProperties.put(IP_REQUIREMENTS, propertyValueMap);
+                        nodeTemplate.setProperties(convertedProperties);
+                        final String getInputValue = (String) propertyValueMap.get(GET_INPUT.getElementName());
+                        parseLayerProtocolsInputToIpRequirements(getInputValue);
+                    }
                 }
             });
         return nodeTemplate;
     }
 
+    /**
+     * Parses a layer_protocol input to org.openecomp.datatypes.network.IpRequirements ecomp type.
+     *
+     * @param inputName The name of the input
+     *
+     */
+    private void parseLayerProtocolsInputToIpRequirements(final String inputName) {
+        final TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
+        final ParameterDefinition layerProtocolsInput = topologyTemplate.getInputs().get(inputName);
+        final EntrySchema entrySchema = layerProtocolsInput.getEntry_schema();
+        entrySchema.setType(IP_REQUIREMENTS_TYPE);
+        final List<String> defaultLayerProtocolList = (List<String>) layerProtocolsInput.get_default();
+        layerProtocolsInput.set_default(convertToIpRequirementsProperty(defaultLayerProtocolList));
+    }
+
+    /**
+     * Converts each layer_protocols entry that is either {@link #IP_V4} or {@link #IP_V6} to the ecomp
+     * {@link #IP_REQUIREMENTS_TYPE}, ignoring other entry types.
+     *
+     * @param layerProtocols    the PnfExtCp layer_protocols list
+     * @return
+     *  A list of map representing a {@link #IP_REQUIREMENTS_TYPE} ecomp type
+     */
     private List<Map<String, Object>> convertToIpRequirementsProperty(final List<String> layerProtocols) {
         return layerProtocols.stream()
             .filter(layerProtocol -> IP_V4.equals(layerProtocol) || IP_V6.equals(layerProtocol))
-            .map(this::createIpPropertyElement)
+            .map(this::createIpRequirementsEntry)
             .collect(Collectors.toList());
     }
 
-    private Map<String, Object> createIpPropertyElement(final String ipVersion) {
+    /**
+     * Creates a {@link #IP_REQUIREMENTS_TYPE} based on the ip version
+     * @param ipVersion  the provided ip version, either {@link #IP_V4} or {@link #IP_V6}
+     * @return
+     *  A map representing an {@link #IP_REQUIREMENTS_TYPE} ecomp type
+     */
+    private Map<String, Object> createIpRequirementsEntry(final String ipVersion) {
         final int version = IP_V4.equals(ipVersion) ? 4 : 6;
         final Map<String, Object> result = new HashMap<>();
         result.put(IP_VERSION, version);
@@ -175,7 +214,11 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
         return result;
     }
 
-    private void addEmptyNodeTemplatesIfNoneDefined(final ServiceTemplate serviceTemplate) {
+    /**
+     * Fills missing required entries in the service template. Checks for topology_template entry and
+     * topology_template->node_templates entry.
+     */
+    private void addEmptyNodeTemplatesIfNoneDefined() {
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
         if (Objects.isNull(topologyTemplate)) {
             topologyTemplate = new TopologyTemplate();
@@ -184,6 +227,20 @@ public class ToscaSolConverterPnf extends AbstractToscaSolConverter {
         if (topologyTemplate.getNode_templates() == null) {
             topologyTemplate.setNode_templates(new HashMap<>());
         }
+    }
+
+    /**
+     * Parses an input entry schema
+     *
+     * @param entrySchemaMap    the descriptor input entry schema map
+     * @return
+     *  A parsed entry schema based on the provided map
+     */
+    private EntrySchema parseEntrySchema(Map entrySchemaMap) {
+        return DataModelUtil.createEntrySchema((String) entrySchemaMap.get(TYPE.getElementName())
+            , (String) entrySchemaMap.get(DESCRIPTION.getElementName())
+            , (List<Constraint>) entrySchemaMap.get(CONSTRAINTS.getElementName())
+        );
     }
 
 }
