@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -528,7 +529,7 @@ public class DataModelUtil {
      * @param defaultVal  the default val
      * @return the property definition
      */
-    public static ParameterDefinition createParameterDefinition(String type, String description, boolean required,
+    public static ParameterDefinition createParameterDefinition(String type, String description, Boolean required,
                                                                 List<Constraint> constraints, EntrySchema entrySchema,
                                                                 Object defaultVal) {
         ParameterDefinition paramDef = new ParameterDefinition();
@@ -672,7 +673,7 @@ public class DataModelUtil {
             serviceTemplate.setTopology_template(topologyTemplate);
         }
         if (topologyTemplate.getInputs() == null) {
-            topologyTemplate.setInputs(new HashMap<>());
+            topologyTemplate.setInputs(new LinkedHashMap<>());
         }
         topologyTemplate.getInputs().put(parameterDefinitionId, parameterDefinition);
     }
