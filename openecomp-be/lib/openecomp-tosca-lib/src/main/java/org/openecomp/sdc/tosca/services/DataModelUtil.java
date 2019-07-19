@@ -528,7 +528,7 @@ public class DataModelUtil {
      * @param defaultVal  the default val
      * @return the property definition
      */
-    public static ParameterDefinition createParameterDefinition(String type, String description, boolean required,
+    public static ParameterDefinition createParameterDefinition(String type, String description, Boolean required,
                                                                 List<Constraint> constraints, EntrySchema entrySchema,
                                                                 Object defaultVal) {
         ParameterDefinition paramDef = new ParameterDefinition();
