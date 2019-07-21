@@ -62,7 +62,7 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
   }
 
   private String createTxtArtifact(InformationArtifactData informationArtifactData) {
-    textArtifact = new StringBuilder(TxtInformationArtifactConstants.HEADER);
+    textArtifact = new StringBuilder();
     addVspVlmEntries(informationArtifactData);
     addAvailabilityEntries();
     addDataEntries(informationArtifactData);
@@ -84,7 +84,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
     for (ComponentQuestionnaire componentQuestionnaire : componentQuestionnaires) {
       addRecoveryEntriesPerComponent(componentQuestionnaire);
     }
-    textArtifact.append(TxtInformationArtifactConstants.FOOTER);
     return textArtifact.toString();
 
   }

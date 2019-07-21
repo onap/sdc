@@ -33,12 +33,6 @@ public class TxtInformationArtifactConstants {
   public static final String DELIMITER = ":";
   public static final String FOUR_TABS = TAB + TAB + TAB + TAB;
 
-  public static final String HEADER = "Proprietary information (Restricted)\n"
-      + "For use only by authorized individuals and not for general distribution." + NL + NL + NL;
-
-  public static final String FOOTER = NL + NL + NL + "Proprietary information (Restricted)\n"
-      + "For use only by authorized individuals and not for general distribution.";
-
 
   public static final String TITLE = "1." + TAB + "VSP Details" + DELIMITER;
   public static final String VSP_NAME = "a." + TAB + "Name" + DELIMITER;

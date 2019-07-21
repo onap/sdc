@@ -238,14 +238,6 @@ cleanComponentsConfiguration:
 artifactsIndex: resources
 
 heatEnvArtifactHeader:
-    " # _______________________________________________________________________________________________________________________________________\n
-  #|                                    					    AT&T Proprietary (Restricted)           								 	  |\n
-  #|                                     Only for use by authorized individuals or any above-designated team(s)                            |\n
-  #|                                          within the AT&T companies and not for general distribution      							  |\n
-  #|_______________________________________________________________________________________________________________________________________|\n"
+    ""
 heatEnvArtifactFooter:
-    " # _______________________________________________________________________________________________________________________________________\n
-  #|                                    					    AT&T Proprietary (Restricted)           								 	  |\n
-  #|                                     Only for use by authorized individuals or any above-designated team(s)                            |\n
-  #|                                          within the AT&T companies and not for general distribution      							  |\n
-  #|_______________________________________________________________________________________________________________________________________|\n"
+    ""
