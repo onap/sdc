@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,59 +42,60 @@ import java.util.List;
 
 public class LocalGeneralUtilities {
 
-	public LocalGeneralUtilities() {
-	}
-	public static final String FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\VNFs\\";
-	public static final String Env_FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\Env_files\\";
-	public static String downloadPath = "C:\\Users\\th0695\\Downloads";
+    public LocalGeneralUtilities() {
+    }
 
-public static String getValueFromJsonResponse(String response, String fieldName) {
-	try {
-		JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
-		Object fieldValue = jsonResp.get(fieldName);
-		return fieldValue.toString();
+    public static final String FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\VNFs\\";
+    public static final String Env_FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\Env_files\\";
+    public static String downloadPath = "C:\\Users\\th0695\\Downloads";
 
-	} catch (Exception e) {
-		return null;
-	}
+    public static String getValueFromJsonResponse(String response, String fieldName) {
+        try {
+            JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
+            Object fieldValue = jsonResp.get(fieldName);
+            return fieldValue.toString();
 
-}
+        } catch (Exception e) {
+            return null;
+        }
 
-public static List<String> getValuesFromJsonArray(RestResponse message) throws Exception {
-	List<String> artifactTypesArrayFromApi = new ArrayList<String>();
+    }
 
-	org.json.JSONObject responseObject = new org.json.JSONObject(message.getResponse());
-	JSONArray jArr = responseObject.getJSONArray("componentInstances");
+    public static List<String> getValuesFromJsonArray(RestResponse message) throws Exception {
+        List<String> artifactTypesArrayFromApi = new ArrayList<String>();
 
-	for (int i = 0; i < jArr.length(); i++) {
-		org.json.JSONObject jObj = jArr.getJSONObject(i);
-		String value = jObj.get("uniqueId").toString();
+        org.json.JSONObject responseObject = new org.json.JSONObject(message.getResponse());
+        JSONArray jArr = responseObject.getJSONArray("componentInstances");
 
-		artifactTypesArrayFromApi.add(value);
-	}
-	return artifactTypesArrayFromApi;
-}
+        for (int i = 0; i < jArr.length(); i++) {
+            org.json.JSONObject jObj = jArr.getJSONObject(i);
+            String value = jObj.get("uniqueId").toString();
 
-public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath,User user) throws Exception {
-	AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-	VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
-	String vspName = createVendorSoftwareProduct.getName();
-	HomePage.showVspRepository();
-	OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
-	GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue()).click();
-	GeneralUIUtils.waitForLoader();
-	return vspName;
-}
+            artifactTypesArrayFromApi.add(value);
+        }
+        return artifactTypesArrayFromApi;
+    }
 
-//check if file downloaded successfully.
-public static boolean isFileDownloaded(String downloadPath, String fileName) {
-	boolean flag = false;
-	File dir = new File(downloadPath);
-	File[] dir_contents = dir.listFiles();
-	for (int i = 0; i < dir_contents.length; i++) {
-		if (dir_contents[i].getName().equals(fileName))
-			return flag = true;
-	}
-	return flag;
-}
+    public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath, User user) throws Exception {
+        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
+        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
+        String vspName = createVendorSoftwareProduct.getName();
+        HomePage.showVspRepository();
+        OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue()).click();
+        GeneralUIUtils.waitForLoader();
+        return vspName;
+    }
+
+    //check if file downloaded successfully.
+    public static boolean isFileDownloaded(String downloadPath, String fileName) {
+        File dir = new File(downloadPath);
+        File[] dir_contents = dir.listFiles();
+        for (File dir_content : dir_contents) {
+            if (dir_content.getName().equals(fileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

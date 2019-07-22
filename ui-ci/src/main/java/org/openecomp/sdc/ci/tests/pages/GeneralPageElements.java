@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class GeneralPageElements {
+
+    public static final int WAIT_FOR_ELEMENT_TIME_OUT = 60;
+    public static final int WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER = 10;
 
     public GeneralPageElements() {
         super();
@@ -91,7 +94,7 @@ public class GeneralPageElements {
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.SUMBIT_FOR_TESTING_MESSAGE.getValue()).sendKeys("Submit for testing " + componentName);
         GeneralUIUtils.ultimateWait();
         clickOKButton();
-        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), 60);
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), WAIT_FOR_ELEMENT_TIME_OUT);
         GeneralUIUtils.ultimateWait();
     }
 
@@ -116,7 +119,7 @@ public class GeneralPageElements {
         clickRestoreButton(componentName);
     }
 
-    private static void clickRestoreButton(String componentName){
+    private static void clickRestoreButton(String componentName) {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Going to restore component: %s", componentName));
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.GeneralElementsEnum.RESTORE_BUTTON.getValue());
     }
@@ -131,7 +134,7 @@ public class GeneralPageElements {
         clickArchiveButton(componentName);
     }
 
-    private static void clickArchiveButton(String componentName){
+    private static void clickArchiveButton(String componentName) {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Going to archive component: %s", componentName));
         GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.GeneralElementsEnum.ARCHIVE_BUTTON.getValue());
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.GeneralElementsEnum.ARCHIVE_BUTTON.getValue());
@@ -149,7 +152,7 @@ public class GeneralPageElements {
             clickUpgradeServicesCloseButton();
             GeneralUIUtils.ultimateWait();
             HomePage.navigateToHomePage();
-            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut()/10);
+            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
         } catch (Exception e) {
             throw new Exception("Certification of " + componentName + " failed");
         }
@@ -180,14 +183,14 @@ public class GeneralPageElements {
         }
     }
 
-    public static void clickUpgradeServicesCloseButton(){
+    public static void clickUpgradeServicesCloseButton() {
         WebElement closeButton = null;
         try {
-            closeButton = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.UPGRADE_SERVICES_CANCEL.getValue(), GeneralUIUtils.getTimeOut()/10);
+            closeButton = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.UPGRADE_SERVICES_CANCEL.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
             UpgradeServicesPopup.setUpgradePopupShown(true);
             SetupCDTest.getExtendTest().log(Status.INFO, "Closing Update Services popup with X button ...");
             closeButton.click();
-        }catch (WebDriverException e){
+        } catch (WebDriverException e) {
             // regular flow
             UpgradeServicesPopup.setUpgradePopupShown(false);
             SetupCDTest.getExtendTest().log(Status.INFO, "Update Services popup is not shown, continuing ...");
@@ -199,8 +202,6 @@ public class GeneralPageElements {
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.GeneralElementsEnum.CHECKOUT_BUTTON.getValue());
         GeneralUIUtils.ultimateWait();
     }
-
-
 
 
     public static void clickDeleteVersionButton() throws Exception {
@@ -242,9 +243,9 @@ public class GeneralPageElements {
         SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on TRASH button ...");
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.GeneralElementsEnum.DELETE_VERSION_BUTTON.getValue());
         clickOKButton();
-	}
+    }
 
-    public static void clickBrowseButton() throws InterruptedException{
+    public static void clickBrowseButton() throws InterruptedException {
         SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on Browse button ...");
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.ModalItems.BROWSE_BUTTON.getValue());
     }
@@ -257,13 +258,12 @@ public class GeneralPageElements {
 
     public static void clickDeleteFile() throws Exception {
         SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on delete file X-button ...");
-        GeneralUIUtils.clickOnAreaJS(GeneralUIUtils.getWebElementBy
-                (By.cssSelector("div[class='i-sdc-form-file-upload-x-btn']")));
+        GeneralUIUtils.clickOnAreaJS(GeneralUIUtils.getWebElementBy(By.cssSelector("div[class='i-sdc-form-file-upload-x-btn']")));
         GeneralUIUtils.ultimateWait();
     }
 
-	public static void clickOnHomeButton() {
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
-	}
+    public static void clickOnHomeButton() {
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
+    }
 
 }

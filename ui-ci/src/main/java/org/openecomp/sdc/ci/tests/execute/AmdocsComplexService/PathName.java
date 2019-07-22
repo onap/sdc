@@ -62,8 +62,8 @@ public class PathName extends SetupCDTest {
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
-        String firstPathName = PathUtilities.createPath("Oren",vspName);
-        PathUtilities.createPathWithoutLink(firstPathName,vspName);
+        String firstPathName = PathUtilities.createPath("Oren", vspName);
+        PathUtilities.createPathWithoutLink(firstPathName, vspName);
         try {
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.OK.getValue());
         } catch (Exception e) {
@@ -78,9 +78,9 @@ public class PathName extends SetupCDTest {
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
-        String firstPathName = PathUtilities.createPath("Oren",vspName);
-        String secondPathName = PathUtilities.createPathWithoutLink("blabla",vspName);
-        PathValidations.validateEditToExistingName(firstPathName,secondPathName);
+        String firstPathName = PathUtilities.createPath("Oren", vspName);
+        String secondPathName = PathUtilities.createPathWithoutLink("blabla", vspName);
+        PathValidations.validateEditToExistingName(firstPathName, secondPathName);
     }
 
     // Test#10 Jira issue 6411

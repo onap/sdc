@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,15 @@ import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.ConnectionWizardPopUpObject;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.PortMirrioringConfigurationObject;
+import org.openecomp.sdc.ci.tests.datatypes.PortMirroringEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceContainer;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -48,6 +56,8 @@ import java.io.File;
 import static org.testng.Assert.assertTrue;
 
 public class PortMirroring extends SetupCDTest {
+
+    private static final int THREAD_SLEEP_TIME = 3000;
 
     @Test
     public void createPortMirroringConfigurationServiceProxy() throws Throwable {
@@ -89,15 +99,15 @@ public class PortMirroring extends SetupCDTest {
     }
 
     @Test
-    public void createPortMirroringByPolicyServiceProxy() throws Throwable {    	
+    public void createPortMirroringByPolicyServiceProxy() throws Throwable {
         //Using API onboard and certify 2 zip files Source: vmmme and Collector: Vprobe
         String filePath = FileHandling.getPortMirroringRepositoryPath();
         ServiceContainer serviceContainerVmme_Source = PortMirroringUtils.createServiceFromHeatFile(filePath, "2016-227_vmme_vmme_30_1610_e2e.zip");
 
         // create service with required pnf's and certify it
-        Resource resourceCisco = PortMirroringUtils.GeneratePNFAndUpdateInput(PortMirroringEnum.CISCO_VENDOR_NAME.getValue(), PortMirroringEnum.CISCO_VENDOR_MODEL_NUMBER.getValue(), getUser());
-        Resource resourceAPCON1 = PortMirroringUtils.GeneratePNFAndUpdateInput(PortMirroringEnum.APCON1_VENDOR_NAME.getValue(), PortMirroringEnum.APCON1_VENDOR_MODEL_NUMBER.getValue(), getUser());
-        Resource resourceAPCON2 = PortMirroringUtils.GeneratePNFAndUpdateInput(PortMirroringEnum.APCON2_VENDOR_NAME.getValue(), PortMirroringEnum.APCON2_VENDOR_MODEL_NUMBER.getValue(), getUser());
+        Resource resourceCisco = PortMirroringUtils.generatePNFAndUpdateInput(PortMirroringEnum.CISCO_VENDOR_NAME.getValue(), PortMirroringEnum.CISCO_VENDOR_MODEL_NUMBER.getValue(), getUser());
+        Resource resourceAPCON1 = PortMirroringUtils.generatePNFAndUpdateInput(PortMirroringEnum.APCON1_VENDOR_NAME.getValue(), PortMirroringEnum.APCON1_VENDOR_MODEL_NUMBER.getValue(), getUser());
+        Resource resourceAPCON2 = PortMirroringUtils.generatePNFAndUpdateInput(PortMirroringEnum.APCON2_VENDOR_NAME.getValue(), PortMirroringEnum.APCON2_VENDOR_MODEL_NUMBER.getValue(), getUser());
 
         ServiceReqDetails serviceReqDetailsCollector = ElementFactory.getDefaultService();
         serviceReqDetailsCollector.setServiceType(PortMirroringEnum.SERVICE_TYPE.getValue());
@@ -152,15 +162,15 @@ public class PortMirroring extends SetupCDTest {
         PortMirroringVerificator.validatingProxyServiceNameAndType(vmmeSourceName, "0");
 
         getExtendTest().log(Status.INFO, "Adding properties to PMCP");
-        
-        if(true){
+
+        if (true) {
 //			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
-        	SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
-		}
+            SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
+        }
 
         canvasManager.clickOnCanvaElement(portMirroringConfigurationByPolicyElement);
         CompositionPage.showPropertiesAndAttributesTab();
-        CompositionPage.setSingleProperty(DataTestIdEnum.PortMirroring.COLLECTOR_NODE.getValue(), PortMirroringUtils.createProxyInstanceServiceName(collectorServiceName, "1"));
+        CompositionPage.setSingleProperty(DataTestIdEnum.PortMirroring.COLLECTOR_NODE.getValue(), PortMirroringUtils.createproxyinstanceservicename(collectorServiceName, "1"));
         CompositionPage.setSingleProperty(DataTestIdEnum.PortMirroring.EQUIP_MODEL.getValue(), PortMirroringEnum.CISCO_VENDOR_MODEL_NUMBER.getValue());
         CompositionPage.setSingleProperty(DataTestIdEnum.PortMirroring.EQUIP_VENDOR.getValue(), PortMirroringEnum.CISCO_VENDOR_NAME.getValue());
 
@@ -219,7 +229,7 @@ public class PortMirroring extends SetupCDTest {
 
     @Test
     public void verifyPMCNotExistInVF() throws Exception {
-        Resource resource = PortMirroringUtils.getResourceByType(ResourceTypeEnum.VF, "VF", "VendorModel");
+        Resource resource = PortMirroringUtils.getresourcebytype(ResourceTypeEnum.VF, "VF", "VendorModel");
 
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 
@@ -280,7 +290,7 @@ public class PortMirroring extends SetupCDTest {
 //        GeneralUIUtils.clickOnElementById(DataTestIdEnum.CompositionRightPanel.EDIT_PENCIL.getValue());
 //        GeneralUIUtils.setTextInElementByDataTestID(DataTestIdEnum.CompositionRightPanel.INSTANCE_NAME_TEXTBOX.getValue(), PortMirroringEnum.PMCP_NEWNAME.getValue());
 //        GeneralUIUtils.clickOnElementByTestId("OK");
-        canvasManager.updateElementNameInCanvas(portMirroringConfigurationByPolicyElement,PortMirroringEnum.PMCP_NEWNAME.getValue());
+        canvasManager.updateElementNameInCanvas(portMirroringConfigurationByPolicyElement, PortMirroringEnum.PMCP_NEWNAME.getValue());
 
         PortMirroringVerificator.validateElementName(PortMirroringEnum.PMCP_NEWNAME.getValue());
     }
@@ -337,15 +347,15 @@ public class PortMirroring extends SetupCDTest {
 //                PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC1_SOURCE_CAP.getValue());
 
         ConnectionWizardPopUpObject connectionWizardPopUpObjectVMME = new ConnectionWizardPopUpObject("", "",
-              PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC_SOURCE_CAP.getValue());
-
-        getExtendTest().log(Status.INFO, "Connect VMME to PMC again");
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName,portMirroringConfigurationElement,
-               connectionWizardPopUpObjectVMME);
+                PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC_SOURCE_CAP.getValue());
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMC again");
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationElement,
-               connectionWizardPopUpObjectVMME);
+                connectionWizardPopUpObjectVMME);
+
+        getExtendTest().log(Status.INFO, "Connect VMME to PMC again");
+        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationElement,
+                connectionWizardPopUpObjectVMME);
 
         getExtendTest().log(Status.INFO, "Validating 4 links between elements exist");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 4);
@@ -361,7 +371,7 @@ public class PortMirroring extends SetupCDTest {
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMCP again");
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationByPolicyElement,
-               connectionWizardPopUpObjectVMME_PMCP);
+                connectionWizardPopUpObjectVMME_PMCP);
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMCP again");
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationByPolicyElement,
@@ -472,7 +482,7 @@ public class PortMirroring extends SetupCDTest {
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
 
         getExtendTest().log(Status.INFO, String.format("Change vmme source %s instance to version 2.0", serviceContainerVmme_Source.getName()));
-        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0",false);
+        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0", false);
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
         service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
@@ -523,18 +533,18 @@ public class PortMirroring extends SetupCDTest {
         canvasManager.openLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
 
         getExtendTest().log(Status.INFO, "Fill link properties with data");
-        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NETWORK_ROLE_XPATH.getValue(),PortMirroringEnum.NETWORK_ROLE_VALUE.getValue());
-        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NFC_TYPE_XPATH.getValue(),PortMirroringEnum.NFC_TYPE_VALUE.getValue());
-        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.PPS_CAPACITY_XPATH.getValue(),PortMirroringEnum.PPS_CAPACITY_VALUE.getValue());
-        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NF_TYPE_XPATH.getValue(),PortMirroringEnum.NF_TYPE_VALUE.getValue());
+        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NETWORK_ROLE_XPATH.getValue(), PortMirroringEnum.NETWORK_ROLE_VALUE.getValue());
+        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NFC_TYPE_XPATH.getValue(), PortMirroringEnum.NFC_TYPE_VALUE.getValue());
+        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.PPS_CAPACITY_XPATH.getValue(), PortMirroringEnum.PPS_CAPACITY_VALUE.getValue());
+        GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NF_TYPE_XPATH.getValue(), PortMirroringEnum.NF_TYPE_VALUE.getValue());
         GeneralUIUtils.ultimateWait();
-        
+
 //        if(true){
 //			throw new SkipException("Open bug 373765, Can't  update link property on Port Mirroring connection");
 //		}
 
         canvasManager.clickSaveOnLinkPopup();
-        Thread.sleep(3000); //Temp solution. Don't remove.
+        Thread.sleep(THREAD_SLEEP_TIME); //Temp solution. Don't remove.
         canvasManager.openLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
 
         PortMirroringVerificator.validateLinkProperties();
@@ -563,14 +573,14 @@ public class PortMirroring extends SetupCDTest {
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
 
         getExtendTest().log(Status.INFO, String.format("Changing vmme source %s instance to version 2.0", serviceContainerVmme_Source.getName()));
-        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0",false);
+        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0", false);
 
         getExtendTest().log(Status.INFO, "Validating 1 link exist after change version to the vmme service (Newer version)");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 2);
 
         getExtendTest().log(Status.INFO, String.format("Changing vmme source %s instance to version 1.0", serviceContainerVmme_Source.getName()));
-        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "1.0",false);
-        
+        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "1.0", false);
+
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 2);
     }
 
@@ -602,14 +612,14 @@ public class PortMirroring extends SetupCDTest {
         canvasManager.linkElements(vmmeCanvasElement, vprobeCanvasElement);
 
         getExtendTest().log(Status.INFO, String.format("Changing vmme source %s instance to version 2.0", serviceContainerVmme_Source.getName()));
-        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0",false);
+        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0", false);
 
         getExtendTest().log(Status.INFO, "Validating 1 link exist after change version to the vmme service (Newer version)");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 3);
 
         getExtendTest().log(Status.INFO, String.format("Changing vmme source %s instance to version 1.0", serviceContainerVmme_Source.getName()));
-        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "1.0",false);
-        
+        CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "1.0", false);
+
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 3);
     }
 

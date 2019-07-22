@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,11 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
+import org.openecomp.sdc.ci.tests.pages.HomePage;
+import org.openecomp.sdc.ci.tests.pages.PropertiesAssignmentPage;
+import org.openecomp.sdc.ci.tests.pages.PropertyNameBuilder;
+import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
@@ -42,57 +46,57 @@ import org.testng.annotations.Test;
 
 public class PropertiesAssignment extends SetupCDTest {
 
-	private static String filePath;
-	private static String csarFile = "PCRF_OS_FIXED.csar";
+    private static String filePath;
+    private static String csarFile = "PCRF_OS_FIXED.csar";
     private static String csarFile1 = "437285.csar";
-	
-	@BeforeClass
-	public void beforeClass(){
-		filePath = FileHandling.getFilePath("");
-	}
-	
-	@BeforeMethod
-	public void beforeTest(){
-		System.out.println("File repository is : " + filePath);
-		getExtendTest().log(Status.INFO, "File repository is : " + filePath);
-	}
-	
 
-	//VF - Simple Properties Tests
-	@Test
-	public void declareAndDeleteInputVfTest() throws Exception {
+    @BeforeClass
+    public void beforeClass() {
+        filePath = FileHandling.getFilePath("");
+    }
 
-		String csarTestFile = csarFile;
+    @BeforeMethod
+    public void beforeTest() {
+        System.out.println("File repository is : " + filePath);
+        getExtendTest().log(Status.INFO, "File repository is : " + filePath);
+    }
+
+
+    //VF - Simple Properties Tests
+    @Test
+    public void declareAndDeleteInputVfTest() throws Exception {
+
+        String csarTestFile = csarFile;
 //		String componentName = "abstract_pcm";
         String componentName = "abstract_psm";
 //      String propertyName = "min_instances";
         String propertyName = "service_template_filter";
 
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
-		resourceMetaData.setVersion("0.1");
-		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
-		
+        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        resourceMetaData.setVersion("0.1");
+        ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
-		ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
-		PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-		PropertiesAssignmentPage.findSearchBoxAndClick(propertyName);
-		PropertiesAssignmentPage.clickOnDeclareButton();
+
+        ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
+        PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
+        PropertiesAssignmentPage.findSearchBoxAndClick(propertyName);
+        PropertiesAssignmentPage.clickOnDeclareButton();
         GeneralUIUtils.ultimateWait();
-		AssertJUnit.assertTrue(PropertiesAssignmentPage.isPropertyChecked(propertyName));
-		
-		PropertiesAssignmentPage.clickOnInputTab();
-		PropertiesAssignmentPage.findInput(componentName, propertyName);
-		PropertiesAssignmentPage.clickOnDeleteInputButton();
-		PropertiesAssignmentPage.clickOnDeleteInputDialogConfirmationButton();
-		PropertiesAssignmentPage.clickOnPropertiesTab();
-		PropertiesAssignmentPage.findProperty(propertyName);
-		AssertJUnit.assertFalse(PropertiesAssignmentPage.isPropertyChecked(propertyName));
-		
+        AssertJUnit.assertTrue(PropertiesAssignmentPage.isPropertyChecked(propertyName));
 
-	}
+        PropertiesAssignmentPage.clickOnInputTab();
+        PropertiesAssignmentPage.findInput(componentName, propertyName);
+        PropertiesAssignmentPage.clickOnDeleteInputButton();
+        PropertiesAssignmentPage.clickOnDeleteInputDialogConfirmationButton();
+        PropertiesAssignmentPage.clickOnPropertiesTab();
+        PropertiesAssignmentPage.findProperty(propertyName);
+        AssertJUnit.assertFalse(PropertiesAssignmentPage.isPropertyChecked(propertyName));
 
 
-	@Test
+    }
+
+
+    @Test
     public void editAndSaveSimplePropertyValueTest() throws Exception {
 
         String csarTestFile = csarFile;
@@ -121,8 +125,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyValueInt);
     }
 
     @Test
@@ -151,8 +155,8 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToDeploymentViewScreen();
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameTrue,propertyValueTrue);
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameFalse,propertyValueFalse);
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameTrue, propertyValueTrue);
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameFalse, propertyValueFalse);
     }
 
     @Test
@@ -188,7 +192,7 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnEditButton(propertyName);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(propertyName),propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(propertyName), propertyValue);
 
     }
 
@@ -222,8 +226,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyOrigValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyOrigValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyOrigValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyOrigValueInt);
     }
 
     @Test
@@ -250,8 +254,8 @@ public class PropertiesAssignment extends SetupCDTest {
         PropertiesAssignmentPage.clickOnDialogCancelButton();
 
         //Verify that properties values are not removed
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyValueInt);
 
         PropertiesAssignmentPage.clickOnInputTab();
         PropertiesAssignmentPage.clickOnDialogSaveButton();
@@ -261,8 +265,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyValueInt);
     }
 
 
@@ -292,8 +296,8 @@ public class PropertiesAssignment extends SetupCDTest {
         PropertiesAssignmentPage.clickOnDialogCancelButton();
 
         ///Verify that properties values are not removed
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyValueInt);
 
         PropertiesAssignmentPage.clickOnInputTab();
         PropertiesAssignmentPage.clickOnDialogDiscardButton();
@@ -303,8 +307,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyOrigValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt,propertyOrigValueInt);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyOrigValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameInt, propertyOrigValueInt);
     }
 
 
@@ -347,9 +351,9 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString,propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameFloat,propertyValueFloat);
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameBoolean,propertyValueBoolean);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameString, propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyNameFloat, propertyValueFloat);
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(propertyNameBoolean, propertyValueBoolean);
     }
 
     //VF - List and Map Properties Tests
@@ -374,11 +378,11 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnAddValueToList(propertyName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,1), propertyListValueOne);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 1), propertyListValueOne);
         PropertiesAssignmentPage.clickOnAddValueToList(propertyName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,2), propertyListValueTwo);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 2), propertyListValueTwo);
         PropertiesAssignmentPage.clickOnSaveButton();
-        PropertiesAssignmentPage.clickODeleteValueFromList(propertyName,1);
+        PropertiesAssignmentPage.clickODeleteValueFromList(propertyName, 1);
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Verify that properties values are saved
@@ -387,8 +391,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralPageElements.clickCheckoutButton();
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,0),propertyListValueZero);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,1),propertyListValueTwo);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 0), propertyListValueZero);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 1), propertyListValueTwo);
 
 
         //Declare property as input, delete input
@@ -408,7 +412,7 @@ public class PropertiesAssignment extends SetupCDTest {
     @Test
     public void editAndSaveListOfComplexPropertyValueTest() throws Exception {
 
-	    //External Defect 437285 - PLEASE DON'T DELETE THE TEST!!!!
+        //External Defect 437285 - PLEASE DON'T DELETE THE TEST!!!!
 
         String csarTestFile = csarFile1;
         String componentName = "abstract_cdi";
@@ -425,10 +429,10 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnAddValueToList(propertyName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName,nestedPropertyName,1),propertyListValue);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName, nestedPropertyName, 1), propertyListValue);
         PropertiesAssignmentPage.clickOnSaveButton();
-        PropertiesAssignmentPage.clickOnExpandButton(propertyName,1);
-        PropertiesAssignmentPage.deletePropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName,nestedPropertyName,1));
+        PropertiesAssignmentPage.clickOnExpandButton(propertyName, 1);
+        PropertiesAssignmentPage.deletePropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName, nestedPropertyName, 1));
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Verify that properties values are saved
@@ -436,8 +440,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentPage.clickOnExpandButton(propertyName,1);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName,nestedPropertyName,1),"");
+        PropertiesAssignmentPage.clickOnExpandButton(propertyName, 1);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexListField(propertyName, nestedPropertyName, 1), "");
 
 
     }
@@ -463,19 +467,19 @@ public class PropertiesAssignment extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnAddValueToList(propertyName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,0),propertyMapValueOne);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 0), propertyMapValueOne);
 
 
         //Verify that Save and Declare buttons are disabled when leaving Key value empty
         AssertJUnit.assertTrue(PropertiesAssignmentPage.isButtonDisabled(DataTestIdEnum.PropertiesAssignmentScreen.SAVE_BUTTON.getValue()));
         AssertJUnit.assertTrue(PropertiesAssignmentPage.isButtonDisabled(DataTestIdEnum.PropertiesAssignmentScreen.DECLARE_BUTTON.getValue()));
 
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName,0),propertyMapKeyOne);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName, 0), propertyMapKeyOne);
         PropertiesAssignmentPage.clickOnSaveButton();
         PropertiesAssignmentPage.clickOnAddValueToList(propertyName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName,1),propertyMapKeyTwo);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,1),propertyMapValueTwo);
-        PropertiesAssignmentPage.clickODeleteValueFromList(propertyName,0);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName, 1), propertyMapKeyTwo);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 1), propertyMapValueTwo);
+        PropertiesAssignmentPage.clickODeleteValueFromList(propertyName, 0);
         PropertiesAssignmentPage.clickOnSaveButton();
 
 //        //Verify that properties values are saved
@@ -484,8 +488,8 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralPageElements.clickCheckoutButton();
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName,0),propertyMapKeyTwo);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName,0),propertyMapValueTwo);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedKeyField(propertyName, 0), propertyMapKeyTwo);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIndexedField(propertyName, 0), propertyMapValueTwo);
 
 //        //Declare property as input, delete input
         PropertiesAssignmentPage.findSearchBoxAndClick(propertyName);
@@ -524,9 +528,9 @@ public class PropertiesAssignment extends SetupCDTest {
         //Navigate to Properties Assignment screen, edit simple properties values and save
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameString), propertyValueString);
-        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameInt), propertyValueInt);
-        PropertiesAssignmentPage.selectBooleanPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameBoolean), propertyValueBoolean);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameString), propertyValueString);
+        PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameInt), propertyValueInt);
+        PropertiesAssignmentPage.selectBooleanPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameBoolean), propertyValueBoolean);
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Verify that properties values are saved
@@ -535,49 +539,49 @@ public class PropertiesAssignment extends SetupCDTest {
         GeneralPageElements.clickCheckoutButton();
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameString),propertyValueString);
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameInt),propertyValueInt);
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName,propertyNameBoolean),propertyValueBoolean);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameString), propertyValueString);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameInt), propertyValueInt);
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(PropertyNameBuilder.buildIComplexField(propertyName, propertyNameBoolean), propertyValueBoolean);
 
         //Select complex property and declare as input
         PropertiesAssignmentPage.findSearchBoxAndClick(propertyName);
         PropertiesAssignmentPage.clickOnDeclareButton();
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(propertyName),PropertyNameBuilder.buildVfDeclaredPropValue(componentName, propertyName));
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(propertyName), PropertyNameBuilder.buildVfDeclaredPropValue(componentName, propertyName));
     }
-	
-	
-	//VF - Filter Tests
+
+
+    //VF - Filter Tests
     @Test
-	public void filterAllVfTest() throws Exception {
+    public void filterAllVfTest() throws Exception {
+        final int propertiesCountFilter = 22;
+        int propertiesCountWithoutFilter;
 
-		String csarTestFile = csarFile;
-		String propertyName = "name";
-		String propertyLocation = DataTestIdEnum.PropertiesAssignmentScreen.PROPERTY_NAME_COLUMN.getValue();
-		int propertiesCountFilter = 22;
-		int propertiesCountWithoutFilter = 0;
-		
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
-		resourceMetaData.setVersion("0.1");
-		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
-		
+        String csarTestFile = csarFile;
+        String propertyName = "name";
+        String propertyLocation = DataTestIdEnum.PropertiesAssignmentScreen.PROPERTY_NAME_COLUMN.getValue();
 
-		ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
-		//Count current properties number before filter is applied
-		propertiesCountWithoutFilter = GeneralUIUtils.getWebElementsListByContainsClassName(propertyLocation).size();
-		PropertiesAssignmentPage.clickOnFilterButton();
-		PropertiesAssignmentPage.clickOnFilterAllCheckbox();
-		PropertiesAssignmentPage.findFilterBoxAndClick(propertyName);
-		PropertiesAssignmentPage.clickOnFilterApplyButton();
-		PropertiesAssignmentVerificator.validateFilteredPropertiesCount(propertiesCountFilter, propertyLocation);
+        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        resourceMetaData.setVersion("0.1");
+        ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
-		PropertiesAssignmentPage.clickOnFilterClearAllButton();
-		PropertiesAssignmentVerificator.validateFilteredPropertiesCount(propertiesCountWithoutFilter, propertyLocation);
-	}
 
-	@Override
-	protected UserRoleEnum getRole() {
-		return UserRoleEnum.DESIGNER;
-	}
+        ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
+        //Count current properties number before filter is applied
+        propertiesCountWithoutFilter = GeneralUIUtils.getWebElementsListByContainsClassName(propertyLocation).size();
+        PropertiesAssignmentPage.clickOnFilterButton();
+        PropertiesAssignmentPage.clickOnFilterAllCheckbox();
+        PropertiesAssignmentPage.findFilterBoxAndClick(propertyName);
+        PropertiesAssignmentPage.clickOnFilterApplyButton();
+        PropertiesAssignmentVerificator.validateFilteredPropertiesCount(propertiesCountFilter, propertyLocation);
+
+        PropertiesAssignmentPage.clickOnFilterClearAllButton();
+        PropertiesAssignmentVerificator.validateFilteredPropertiesCount(propertiesCountWithoutFilter, propertyLocation);
+    }
+
+    @Override
+    protected UserRoleEnum getRole() {
+        return UserRoleEnum.DESIGNER;
+    }
 
 }
 
