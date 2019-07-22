@@ -21,13 +21,14 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebElement;
-import org.testng.AssertJUnit;
 
 import java.util.List;
 
 public class VspValidationResultsPage extends GeneralPageElements {
 
-    public VspValidationResultsPage() { super(); }
+    public VspValidationResultsPage() {
+        super();
+    }
 
     public static void navigateToVspValidationResultsPageUsingNavbar() throws Exception {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_NAVBAR);

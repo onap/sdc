@@ -25,13 +25,13 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 
 public interface PathUrls {
 
-    final static String SDC_HTTP_METHOD = Utils.getConfigHandleException() == null ? "http" : Utils.getConfigHandleException().getSdcHttpMethod();
-    final String AMDOCS_HTTP_METHOD = SDC_HTTP_METHOD;
+    String SDC_HTTP_METHOD = Utils.getConfigHandleException() == null ? "http" : Utils.getConfigHandleException().getSdcHttpMethod();
+    String AMDOCS_HTTP_METHOD = SDC_HTTP_METHOD;
 
     // onboard
-    final String CREATE_NEW_ITEM_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/items/%s/versions/%s/";
-    final String UPDATE_VENDOR_SOFTWARE_PRODUCT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
-    final String GET_SERVICE_PATHS = SDC_HTTP_METHOD + "://%s:%s/sdc1/feProxy/rest/v1/catalog/services/%s/filteredDataByParams?include=componentInstancesRelations&include=componentInstances&include=forwardingPaths";
-    final String SERVICE_PATH_LINK_MAP = SDC_HTTP_METHOD + "://%s:%s/sdc1/rest/v1/catalog/services/%s/linksMap";
-    final String SERVICE_FORWARDING_PATHS = SDC_HTTP_METHOD + "://%s:%s/sdc1/rest/v1/catalog/services/%s/filteredDataByParams?include=componentInstancesRelations&include=componentInstances&include=forwardingPaths";
+    String CREATE_NEW_ITEM_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/items/%s/versions/%s/";
+    String UPDATE_VENDOR_SOFTWARE_PRODUCT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
+    String GET_SERVICE_PATHS = SDC_HTTP_METHOD + "://%s:%s/sdc1/feProxy/rest/v1/catalog/services/%s/filteredDataByParams?include=componentInstancesRelations&include=componentInstances&include=forwardingPaths";
+    String SERVICE_PATH_LINK_MAP = SDC_HTTP_METHOD + "://%s:%s/sdc1/rest/v1/catalog/services/%s/linksMap";
+    String SERVICE_FORWARDING_PATHS = SDC_HTTP_METHOD + "://%s:%s/sdc1/rest/v1/catalog/services/%s/filteredDataByParams?include=componentInstancesRelations&include=componentInstances&include=forwardingPaths";
 }

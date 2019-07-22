@@ -22,12 +22,22 @@ package org.openecomp.sdc.ci.tests.execute.AmdocsComplexService;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
+import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
+import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
+import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
+import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
@@ -89,7 +99,7 @@ public class CreatePath extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
-        String  serviceName = PathUtilities.createService(getUser()).getName();
+        String serviceName = PathUtilities.createService(getUser()).getName();
         String pathName = PathUtilities.createPath("Test3", vspName);
 
         // @@ check in @@
@@ -125,7 +135,7 @@ public class CreatePath extends SetupCDTest {
         Pair<String, String> complex = CreatePathComplexServiceFlow(filePath, vnfFiles);
         String serviceName = complex.left;
         String pathName = complex.right;
-        PathValidations.validateServicePath(serviceName,pathName);
+        PathValidations.validateServicePath(serviceName, pathName);
         SetupCDTest.getExtendTest().log(Status.INFO, "path with complex service has been created");
     }
 
