@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,33 +35,32 @@ import static org.testng.Assert.assertTrue;
 
 public class PortMirroringVerificator {
 
-    public static void checkProxyServiceName(String serviceName, String instanceId)
-    {
+    private PortMirroringVerificator() {
+    }
+
+    public static void checkProxyServiceName(String serviceName, String instanceId) {
         String serviceActualName = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel.COMPONENT_TITLE.getValue()).getText();
-        String serviceExpectedName = PortMirroringUtils.createProxyInstanceServiceName(serviceName,instanceId);
+        String serviceExpectedName = PortMirroringUtils.createproxyinstanceservicename(serviceName, instanceId);
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying the instance name is %s", serviceExpectedName));
         assertTrue(serviceActualName.equalsIgnoreCase(serviceExpectedName));
     }
 
-    public static void checkProxyServiceType()
-    {
-        String serviceActualName = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel_GenerInfo.TYPE.getValue()).getText();
+    public static void checkProxyServiceType() {
+        String serviceActualName = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanelGeneralInfo.TYPE.getValue()).getText();
         SetupCDTest.getExtendTest().log(Status.INFO, "Verifying the instance type is Service Proxy");
         assertTrue(serviceActualName.equalsIgnoreCase(PortMirroringEnum.SERVICE_PROXY_TYPE.getValue()));
     }
 
-    public static void validatingProxyServiceNameAndType(String serviceName, String instanceId)
-    {
+    public static void validatingProxyServiceNameAndType(String serviceName, String instanceId) {
         checkProxyServiceName(serviceName, instanceId);
         checkProxyServiceType();
     }
 
-    public static void validateGeneralInfo()
-    {
-        String type = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel_GenerInfo.TYPE.getValue()).getText();
-        String resourceType = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel_GenerInfo.RESOURCE_TYPE.getValue()).getText();
-        String category = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel_GenerInfo.CATEGORY.getValue()).getText();
-        String subCategory = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel_GenerInfo.SUB_CATEGORY.getValue()).getText();
+    public static void validateGeneralInfo() {
+        String type = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanelGeneralInfo.TYPE.getValue()).getText();
+        String resourceType = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanelGeneralInfo.RESOURCE_TYPE.getValue()).getText();
+        String category = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanelGeneralInfo.CATEGORY.getValue()).getText();
+        String subCategory = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanelGeneralInfo.SUB_CATEGORY.getValue()).getText();
 
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying the type equals %s", PortMirroringEnum.TYPE.getValue()));
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying the resource type equals %s", PortMirroringEnum.RESOURCE_TYPE.getValue()));
@@ -74,14 +73,12 @@ public class PortMirroringVerificator {
         assertTrue(subCategory.equalsIgnoreCase(PortMirroringEnum.SUB_CATEGORY.getValue()));
     }
 
-    public static void validateReqsAndCapsTabExist()
-    {
+    public static void validateReqsAndCapsTabExist() {
         SetupCDTest.getExtendTest().log(Status.INFO, "Verifying tab reqs and caps exist for PMC element");
         GeneralUIUtils.getWebElementBy(By.xpath(DataTestIdEnum.CompositionRightPanel.REQS_AND_CAPS_TAB_XPATH.getValue())).click();
     }
 
-    public static void validateElementName(String expectedName)
-    {
+    public static void validateElementName(String expectedName) {
         String serviceActualName = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel.COMPONENT_TITLE.getValue()).getText();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying the instance name is %s", expectedName));
         assertTrue(serviceActualName.equalsIgnoreCase(expectedName));
@@ -99,7 +96,6 @@ public class PortMirroringVerificator {
         assertTrue(actualPpsCapacity.equalsIgnoreCase(PortMirroringEnum.PPS_CAPACITY_VALUE.getValue()));
         assertTrue(actualNfType.equalsIgnoreCase(PortMirroringEnum.NF_TYPE_VALUE.getValue()));
     }
-
 
 
 }

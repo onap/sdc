@@ -23,10 +23,15 @@ package org.openecomp.sdc.ci.tests.execute.AmdocsComplexService;
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
+import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
@@ -57,7 +62,10 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class PathUtilities {
 
-    public static void openPathList() throws Exception {
+    private static final int WAITING_FOR_LOADRE_TIME_OUT = 60 * 10;
+    private static final int NUMBER_OF_LINKS = 3;
+
+    static void openPathList() throws Exception {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_MENU_BUTTON.getValue());
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_LIST_BUTTON.getValue());
     }
@@ -70,14 +78,14 @@ public class PathUtilities {
         return serviceMetadata;
     }
 
-    public static List <CanvasElement> linkVFs(String vspName, int linksNum)throws Exception {
+    public static List<CanvasElement> linkVFs(String vspName, int linksNum) throws Exception {
         CompositionPage.searchForElement(vspName);
         GeneralUIUtils.ultimateWait();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         GeneralUIUtils.ultimateWait();
-        List <CanvasElement> VFs = new  ArrayList<CanvasElement>();
+        List<CanvasElement> VFs = new ArrayList<CanvasElement>();
         VFs.add(canvasManager.createElementOnCanvas(vspName));
-        for (int i = 1; i<linksNum; i++) {
+        for (int i = 1; i < linksNum; i++) {
             VFs.add(canvasManager.createElementOnCanvas(vspName));
             GeneralUIUtils.ultimateWait();
 //            for(int a=0; a<3; a++)
@@ -91,17 +99,16 @@ public class PathUtilities {
         return VFs;
     }
 
-    public static  List <CanvasElement> linkServices(String Service1, String Service2, int linksNum)throws Exception {
+    public static List<CanvasElement> linkServices(String service1, String service2, int linksNum) throws Exception {
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        List <CanvasElement> VFs = new  ArrayList<CanvasElement>();
+        List<CanvasElement> VFs = new ArrayList<CanvasElement>();
 
         // get first service
-        CompositionPage.searchForElement(Service1);
-        VFs.add(canvasManager.createElementOnCanvas(Service1));
+        CompositionPage.searchForElement(service1);
+        VFs.add(canvasManager.createElementOnCanvas(service1));
 
-        String service = Service2;
-        for (int i = 1; i<linksNum; i++)
-        {
+        String service = service2;
+        for (int i = 1; i < linksNum; i++) {
             CompositionPage.searchForElement(service);
             VFs.add(canvasManager.createElementOnCanvas(service));
             GeneralUIUtils.ultimateWait();
@@ -114,13 +121,16 @@ public class PathUtilities {
             GeneralUIUtils.ultimateWait();
 
             // change service to link
-            if (service.equals(Service2)) service = Service1;
-            else service = Service2;
+            if (service.equals(service2)) {
+                service = service1;
+            } else {
+                service = service2;
+            }
         }
         return VFs;
     }
 
-    public static void openCreatePath() throws Exception{
+    public static void openCreatePath() throws Exception {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_MENU_BUTTON.getValue());
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_PATH_MENU_BUTTON.getValue());
     }
@@ -131,57 +141,57 @@ public class PathUtilities {
     }
 
     public static void insertValues(String pathName, String pathProtocol, String pathPortNumbers) throws Exception {
-        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_NAME.getValue(),pathName);
-        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_PROTOCOL.getValue(),pathProtocol);
-        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_PORT_NUMBER.getValue(),pathPortNumbers);
+        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_NAME.getValue(), pathName);
+        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_PROTOCOL.getValue(), pathProtocol);
+        sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_PORT_NUMBER.getValue(), pathPortNumbers);
         GeneralUIUtils.ultimateWait();
     }
 
-    public static void selectFirstLineParam() throws Exception{
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE.getValue()+ "']//option").get(0).click();
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+ DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE_CP.getValue()+"']//option").get(0).click();
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue()+"']//option").get(0).click();
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue()+"']//option").get(0).click();
+    public static void selectFirstLineParam() throws Exception {
+        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE.getValue() + "']//option").get(0).click();
+        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE_CP.getValue() + "']//option").get(0).click();
+        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue() + "']//option").get(0).click();
+        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue() + "']//option").get(0).click();
     }
 
-    public static void editPathName(String pathName, String newName) throws Exception{
-        GeneralUIUtils.findElementsByXpath("//*[text()='"+pathName+"']/parent::*//span").get(0).click();
+    public static void editPathName(String pathName, String newName) throws Exception {
+        GeneralUIUtils.findElementsByXpath("//*[text()='" + pathName + "']/parent::*//span").get(0).click();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ComplexServiceAmdocs.PATH_NAME.getValue()).clear();
         sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_NAME.getValue(), newName);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SAVE.getValue());
     }
 
-    public static void editPathProtocol(String pathName, String newProtocol) throws Exception{
-        GeneralUIUtils.findElementsByXpath("//*[text()='"+pathName+"']/parent::*//span").get(0).click();
+    public static void editPathProtocol(String pathName, String newProtocol) throws Exception {
+        GeneralUIUtils.findElementsByXpath("//*[text()='" + pathName + "']/parent::*//span").get(0).click();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ComplexServiceAmdocs.PATH_PROTOCOL.getValue()).clear();
         sendValue(DataTestIdEnum.ComplexServiceAmdocs.PATH_PROTOCOL.getValue(), newProtocol);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SAVE.getValue());
     }
 
-    public static int deleteLines(int numOfLinesToDelete, int numOfLines)throws Exception{
-        for (int i=0; i<numOfLinesToDelete; i++){
-            GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.REMOVE_LINK.getValue()+"']//span").get(0).click();
+    public static int deleteLines(int numOfLinesToDelete, int numOfLines) throws Exception {
+        for (int i = 0; i < numOfLinesToDelete; i++) {
+            GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.REMOVE_LINK.getValue() + "']//span").get(0).click();
             numOfLines--;
         }
-        if (GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP+"']//option").size()>(numOfLines+1))
+        if (GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP + "']//option").size() > (numOfLines + 1)) {
             throw new Exception("Path element was not deleted");
+        }
         GeneralUIUtils.ultimateWait();
         return numOfLines;
     }
 
     public static String createPath(String pathName, String vspName) throws Exception {
-        linkVFs(vspName, 3);
+        linkVFs(vspName, NUMBER_OF_LINKS);
         openCreatePath();
         insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         selectFirstLineParam();
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
-        SetupCDTest.getExtendTest().log(Status.INFO, "path" +pathName+" has been created");
+        SetupCDTest.getExtendTest().log(Status.INFO, "path" + pathName + " has been created");
         return pathName;
     }
 
-    public static void deleteComponents(List<CanvasElement> elements)throws Exception {
-        for(CanvasElement element: elements)
-        {
+    public static void deleteComponents(List<CanvasElement> elements) throws Exception {
+        for (CanvasElement element : elements) {
             CanvasManager.getCanvasManager().clickOnCanvaElement(element);
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.DELETE_COMPONENT.getValue());
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.OK.getValue());
@@ -190,7 +200,7 @@ public class PathUtilities {
 
     public static void updateVF(String vspName, VendorSoftwareProductObject vendorSoftwareProduct) throws Exception {
         boolean vspFound = HomePage.searchForVSP(vspName);
-        if (vspFound){
+        if (vspFound) {
             List<WebElement> elementsFromTable = HomePage.getElemenetsFromTable();
             elementsFromTable.get(1).click();
             GeneralUIUtils.waitForLoader();
@@ -204,24 +214,25 @@ public class PathUtilities {
             ExtentTestActions.log(Status.INFO, "Clicking create/update VNF");
             String duration = GeneralUIUtils.getActionDuration(() -> waitUntilVnfCreated());
             ExtentTestActions.log(Status.INFO, "Succeeded in importing/updating " + vspName, duration);
+        } else {
+            Assert.fail("Did not find VSP named " + vspName);
         }
-        else Assert.fail("Did not find VSP named " + vspName);
     }
 
     public static void waitUntilVnfCreated() {
         GeneralUIUtils.clickOnElementByTestIdWithoutWait(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue());
-        GeneralUIUtils.waitForLoader(60*10);
+        GeneralUIUtils.waitForLoader(WAITING_FOR_LOADRE_TIME_OUT);
         GeneralUIUtils.waitForAngular();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue());
     }
 
-    public static void deleteComponent(CanvasElement element)throws Exception {
+    public static void deleteComponent(CanvasElement element) throws Exception {
         CanvasManager.getCanvasManager().clickOnCanvaElement(element);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.DELETE_COMPONENT.getValue());
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.OK.getValue());
     }
 
-    public static void submitForTesting(){
+    public static void submitForTesting() {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SUBMIT_FOR_TESTING.getValue());
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ComplexServiceAmdocs.CHANGE_LIFE_CYCLE_MESSAGE.getValue()).sendKeys("new service to certify");
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.OK.getValue());
@@ -232,7 +243,7 @@ public class PathUtilities {
         insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         selectFirstLineParam();
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
-        SetupCDTest.getExtendTest().log(Status.INFO, "path" +pathName+" has been created");
+        SetupCDTest.getExtendTest().log(Status.INFO, "path" + pathName + " has been created");
         return pathName;
     }
 
@@ -240,7 +251,11 @@ public class PathUtilities {
     private static String getServiceUUIDfromCompositionURL() throws Exception {
         String url = SetupCDTest.getDriver().getCurrentUrl();
         String[] result = url.split("/");
-        for(int i = 0; i < result.length; i++) if (result[i].equals("workspace")) return result[i + 1];
+        for (int i = 0; i < result.length; i++) {
+            if (result[i].equals("workspace")) {
+                return result[i + 1];
+            }
+        }
         throw new Exception("service uuid not found in the url");
     }
 
@@ -267,7 +282,7 @@ public class PathUtilities {
     public static RestResponse createServiceAPI(User sdncUserDetails, ServiceReqDetails serviceDetails) throws Exception {
         String serviceBaseVersion = "0.1";
         RestResponse restResponse = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
-        assertEquals("Check API response code for CreateServiceAPI call", 201, restResponse.getErrorCode().intValue());
+        assertEquals("Check API response code for CreateServiceAPI call", HttpStatus.SC_CREATED, restResponse.getErrorCode().intValue());
         return restResponse;
     }
 
@@ -282,7 +297,7 @@ public class PathUtilities {
         // get service
         RestResponse restResponse = ServiceRestUtils.getServiceByNameAndVersion(sdncUserDetails, serviceDetails.getName(),
                 serviceBaseVersion);
-        assertEquals("Check API response code for GetServiceAPI call", 200, restResponse.getErrorCode().intValue());
+        assertEquals("Check API response code for GetServiceAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 
         Service service = ResponseParser.convertServiceResponseToJavaObject(restResponse.getResponse());
         String uniqueId = service.getUniqueId();
@@ -311,7 +326,7 @@ public class PathUtilities {
 
         HttpRequest http = new HttpRequest();
         RestResponse restResponse = http.httpSendGet(url, headersMap);
-        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", 200, restResponse.getErrorCode().intValue());
+        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
         return restResponse;
     }
 
@@ -336,7 +351,7 @@ public class PathUtilities {
 
         HttpRequest http = new HttpRequest();
         RestResponse restResponse = http.httpSendGet(url, headersMap);
-        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", 200, restResponse.getErrorCode().intValue());
+        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
         return restResponse;
     }
 
@@ -359,7 +374,7 @@ public class PathUtilities {
 
         HttpRequest http = new HttpRequest();
         RestResponse restResponse = http.httpSendGet(url, headersMap);
-        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", 200, restResponse.getErrorCode().intValue());
+        assertEquals("Check API response code for GetServiceForwardingPathsAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
         return new Pair<>(restResponse, servicePaths.right);
     }
 

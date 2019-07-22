@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,12 @@ package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
@@ -30,12 +35,12 @@ import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
 import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
 import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -45,6 +50,8 @@ import java.util.stream.Collectors;
 
 
 public class OnboardingUiUtils {
+
+    private static final int WAITING_FOR_LOADER_TIME_OUT = 60 * 10;
 
     private static void importUpdateVSP(VendorSoftwareProductObject vsp, boolean isUpdate, boolean restore) throws Exception {
         String vspName = vsp.getName();
@@ -66,7 +73,7 @@ public class OnboardingUiUtils {
             doCheckOut();
             //Metadata verification
             onboardedVnfMetadataVerification(vsp, isUpdate);
-            String duration = GeneralUIUtils.getActionDuration(() -> waitUntilVnfCreated());
+            String duration = GeneralUIUtils.getActionDuration(OnboardingUiUtils::waitUntilVnfCreated);
             ExtentTestActions.log(Status.INFO, "Succeeded in importing/updating " + vspName, duration);
         } else {
             Assert.fail("Did not find VSP named " + vspName);
@@ -81,11 +88,11 @@ public class OnboardingUiUtils {
         }
     }
 
-    public static boolean getVspValidationCongiguration() throws Exception{
+    public static boolean getVspValidationCongiguration() throws Exception {
         return Boolean.parseBoolean(OnboardingUtils.getVspValidationConfiguration());
     }
 
-    public static boolean putVspValidationCongiguration(boolean value) throws Exception{
+    public static boolean putVspValidationCongiguration(boolean value) throws Exception {
         return Boolean.parseBoolean(OnboardingUtils.putVspValidationConfiguration(value));
     }
 
@@ -108,7 +115,7 @@ public class OnboardingUiUtils {
         ExtentTestActions.log(Status.INFO, "Clicking create/update VNF");
         GeneralUIUtils.ultimateWait();
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue());
-        GeneralUIUtils.waitForLoader(60 * 10);
+        GeneralUIUtils.waitForLoader(WAITING_FOR_LOADER_TIME_OUT);
         GeneralUIUtils.ultimateWait();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue());
     }

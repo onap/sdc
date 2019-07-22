@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,26 +22,26 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 public enum LifeCycleStateEnum {
 
-	CHECKOUT("IN DESIGN CHECK OUT"), 
-	CHECKIN("IN DESIGN CHECK IN"), 
-	READY_FOR_TESTING("READY FOR TESTING"), 
-	IN_TESTING("IN TESTING"), 
-	WAITING_FOR_DISTRIBUTION("WAITING FOR DISTRIBUTION"), 
-	DISTRIBUTION_REJECTED("DISTRIBUTION REJECTED"), 
-	DISTRIBUTION_APPROVED("DISTRIBUTION APPROVED"), 
-	CERTIFIED("CERTIFIED"), 
-	DISTRIBUTED("DISTRIBUTED"),
-	IN_DESIGN("IN DESIGN");
+    CHECKOUT("IN DESIGN CHECK OUT"),
+    CHECKIN("IN DESIGN CHECK IN"),
+    READY_FOR_TESTING("READY FOR TESTING"),
+    IN_TESTING("IN TESTING"),
+    WAITING_FOR_DISTRIBUTION("WAITING FOR DISTRIBUTION"),
+    DISTRIBUTION_REJECTED("DISTRIBUTION REJECTED"),
+    DISTRIBUTION_APPROVED("DISTRIBUTION APPROVED"),
+    CERTIFIED("CERTIFIED"),
+    DISTRIBUTED("DISTRIBUTED"),
+    IN_DESIGN("IN DESIGN");
 
-	private String value;
-	private String value2;
+    private String value;
+    private String value2;
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	private LifeCycleStateEnum(String value) {
-		this.value = value;
-	}
+    LifeCycleStateEnum(String value) {
+        this.value = value;
+    }
 
 }

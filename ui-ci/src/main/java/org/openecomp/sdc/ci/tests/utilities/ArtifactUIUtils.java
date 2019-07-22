@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -248,7 +248,7 @@ public final class ArtifactUIUtils {
 
 
     public static File uploadCreatedUpdateParametersEnvFile(HeatWithParametersDefinition heatEnvDetails, String directoryPath) throws Exception {
-//		created env file to upload
+        //created env file to upload
         File pathToEnvParametersFile = prepareEnvParametersFile(heatEnvDetails, directoryPath);
         ArtifactInfo heatEnvArtifactInfo = new ArtifactInfo(directoryPath, heatEnvDetails.getHeatEnvLabel() + ".env", "heatEnvDesc", heatEnvDetails.getHeatEnvLabel(), heatEnvDetails.getHeatEnvArtifactType());
         ArtifactUIUtils.fillAndAddNewEnvArtifactParameters(heatEnvArtifactInfo, CompositionPage.artifactPopup());
@@ -257,7 +257,7 @@ public final class ArtifactUIUtils {
 
     public static File prepareEnvParametersFile(HeatWithParametersDefinition heatEnvDetails, String directoryPath) throws IOException {
         File pathToEnvParametersFile = FileHandling.createEmptyFile(directoryPath + heatEnvDetails.getHeatEnvLabel() + ".env");
-//		fill file
+        //fill file
         FileHandling.writeToFile(pathToEnvParametersFile, "parameters:", 0);
         for (HeatParameterDataDefinition paramDefinition : heatEnvDetails.getHeatParameterDefinition()) {
             Object data = getDataToWrite(paramDefinition);
@@ -268,6 +268,7 @@ public final class ArtifactUIUtils {
     }
 
     public static Object getDataToWrite(HeatParameterDataDefinition paramDefinition) {
+        final int testNumberParameter = 666;
         Object data = "";
         switch (paramDefinition.getType()) {
             case "string":
@@ -275,7 +276,7 @@ public final class ArtifactUIUtils {
                 data = getFormatedData(paramDefinition.getName(), text);
                 break;
             case "number":
-                data = getFormatedData(paramDefinition.getName(), 666);
+                data = getFormatedData(paramDefinition.getName(), testNumberParameter);
                 break;
             case "json":
                 String jsonText = "{\"param1\":\"param1\", \"param2\":2}";
@@ -300,6 +301,7 @@ public final class ArtifactUIUtils {
 
 
     public static Map<String, Object> getDataToWriteInUI(List<HeatParameterDataDefinition> paramDefinitionFromGetResourceResponse) {
+        final int testNumberParameter = 666;
         Map<String, Object> newValuesToUpdateInUI = new HashMap<>();
         for (HeatParameterDataDefinition param : paramDefinitionFromGetResourceResponse) {
             switch (param.getType()) {
@@ -309,7 +311,7 @@ public final class ArtifactUIUtils {
                     newValuesToUpdateInUI.put(param.getName(), text);
                     break;
                 case "number":
-                    newValuesToUpdateInUI.put(param.getName(), 666);
+                    newValuesToUpdateInUI.put(param.getName(), testNumberParameter);
                     break;
                 case "json":
                     String jsonText = "{\"param1\":\"param1\", \"param2\":2}";
