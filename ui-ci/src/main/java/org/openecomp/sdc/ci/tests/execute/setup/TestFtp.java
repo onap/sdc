@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,67 +30,63 @@ import java.nio.file.Paths;
 
 public class TestFtp {
 
-	public static void main(String[] args) throws IOException {
-		AttFtpClient instance = AttFtpClient.getInstance();
-		
-		 String server = "localhost";
-	      int port = 2121;
-	      String user = "admin";
-	      String pass = "admin";
-	      AttFtpClient.getInstance().init(server, port, user, pass);
-	      
-	      try {
-	    	  AttFtpClient.getInstance().retrieveListOfFile();
-	    	  
-	    	  File retrieveLastModifiedFileFromFTP = instance.retrieveLastModifiedFileFromFTP();
-	    	  String content = new String(Files.readAllBytes(Paths.get(retrieveLastModifiedFileFromFTP.getPath())), StandardCharsets.UTF_8);
-//	    	  instance.deleteFilesFromFTPserver();
-	    	  System.out.println(content);
-	    	  readFile(retrieveLastModifiedFileFromFTP);
-			
-		} finally {
-			instance.terminateClient();
-		}
-	      
-	     
+    public static void main(String[] args) throws IOException {
+        AttFtpClient instance = AttFtpClient.getFtpClient();
 
-	      
-	      
-	      
-		
-	}
-	 public static void readFile(File retrieveLastModifiedFileFromFTP) {
+        String server = "localhost";
+        final int port = 2121;
+        String user = "admin";
+        String pass = "admin";
+        AttFtpClient.getFtpClient().init(server, port, user, pass);
 
-	        StringBuilder sb = new StringBuilder();
-	        BufferedReader br = null;
-	        FileReader fileReader = null;
-	        try {
-	        	fileReader = new FileReader(retrieveLastModifiedFileFromFTP.getPath());
-	            br = new BufferedReader(fileReader);
-	            String line;
-	            while ((line = br.readLine()) != null) {
-	                if (sb.length() > 0) {
-	                    sb.append("\n");
-	                }
-	                sb.append(line);
-	            }
-	        } catch (IOException e) {
-	            System.out.println(e);
-	        } finally {
-	            try {
-	                if (br != null) {
-	                    br.close();
-	                }
-	                if(fileReader != null) {
-	                	fileReader.close();
-	                }
-	            } catch (IOException ex) {
-	                System.out.println(ex);
-	            }
-	        }
-	        String contents = sb.toString();
-	        System.out.println(contents);		
-		 
-	 }
+        try {
+            AttFtpClient.getFtpClient().retrieveListOfFile();
+
+            File retrieveLastModifiedFileFromFTP = instance.retrieveLastModifiedFileFromFTP();
+            String content = new String(Files.readAllBytes(Paths.get(retrieveLastModifiedFileFromFTP.getPath())), StandardCharsets.UTF_8);
+//      instance.deleteFilesFromFTPserver();
+            System.out.println(content);
+            readFile(retrieveLastModifiedFileFromFTP);
+
+        } finally {
+            instance.terminateClient();
+        }
+
+
+    }
+
+    private static void readFile(File retrieveLastModifiedFileFromFTP) {
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(retrieveLastModifiedFileFromFTP.getPath());
+            br = new BufferedReader(fileReader);
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+                if (fileReader != null) {
+                    fileReader.close();
+                }
+            } catch (IOException ex) {
+                System.out.println(ex);
+            }
+        }
+        String contents = sb.toString();
+        System.out.println(contents);
+
+    }
 
 }

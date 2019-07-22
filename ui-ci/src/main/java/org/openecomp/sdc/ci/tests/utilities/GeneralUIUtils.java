@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,14 +26,21 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
@@ -52,10 +59,15 @@ public final class GeneralUIUtils {
     private static final String DATA_TESTS_ID = "//*[@data-tests-id='%1$s' or @data-test-id='%1$s']";
     private static final String COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW = "color: yellow; border: 4px solid yellow;";
 
-    private static int timeOut = (int) (60 * 1.5);
+    private static final int TIME_OUT = (int) (60 * 1.5);
+    private static final int WEB_DRIVER_WAIT_TIME_OUT = 10;
+    private static final int SLEEP_DURATION = 1000;
+    private static final int MAX_WAITING_PERIOD = 10 * 1000;
+    private static final int NAP_PERIOD = 100;
+    private static final int DURATION_FORMATIN = 60;
 
     public static int getTimeOut() {
-        return timeOut;
+        return TIME_OUT;
     }
 
     /**************** DRIVER ****************/
@@ -100,16 +112,16 @@ public final class GeneralUIUtils {
     }
 
     public static WebElement getWebElementByTestID(String dataTestId) {
-        return getWebElementByTestID(dataTestId, timeOut);
+        return getWebElementByTestID(dataTestId, TIME_OUT);
     }
 
     public static WebElement getWebElementByTestID(String dataTestId, int timeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
     }
 
     public static boolean isWebElementExistByTestId(String dataTestId) {
-        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId))).size() != 0;
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId))).size() != 0;
     }
 
     public static boolean isWebElementExistByClass(String className) {
@@ -119,7 +131,7 @@ public final class GeneralUIUtils {
     public static WebElement getInputElement(String dataTestId) {
         try {
             ultimateWait();
-            return getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID,dataTestId)));
+            return getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId)));
         } catch (Exception e) {
             return null;
         }
@@ -127,12 +139,12 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getInputElements(String dataTestId) {
         ultimateWait();
-        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId)));
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId)));
 
     }
 
     public static WebElement getWebElementBy(By by) {
-        return getWebElementBy(by, timeOut);
+        return getWebElementBy(by, TIME_OUT);
     }
 
     public static WebElement getWebElementBy(By by, int timeOut) {
@@ -154,7 +166,7 @@ public final class GeneralUIUtils {
     }
 
     public static List<WebElement> getWebElementsListBy(By by) {
-        return getWebElementsListBy(by, timeOut);
+        return getWebElementsListBy(by, TIME_OUT);
     }
 
     public static List<WebElement> getWebElementsListBy(By by, int timeOut) {
@@ -164,15 +176,15 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getWebElementsListByContainTestID(String dataTestId) {
         try {
-            WebDriverWait wait = new WebDriverWait(getDriver(), 10);
-            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(String.format("//*[contains(@data-tests-id, '%1$s') or contains(@data-test-id, '%1$s')]",dataTestId))));
+            WebDriverWait wait = new WebDriverWait(getDriver(), WEB_DRIVER_WAIT_TIME_OUT);
+            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(String.format("//*[contains(@data-tests-id, '%1$s') or contains(@data-test-id, '%1$s')]", dataTestId))));
         } catch (Exception e) {
             return new ArrayList<WebElement>();
         }
     }
 
     public static List<WebElement> getWebElementsListByContainsClassName(String containedText) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(@class, '" + containedText + "')]")));
     }
 
@@ -181,31 +193,31 @@ public final class GeneralUIUtils {
     }
 
     public static WebElement getWebElementByClassName(String className) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         return wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(className)));
     }
 
     public static List<WebElement> getWebElementsListByTestID(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
     }
 
     public static List<WebElement> getWebElementsListByClassName(String className) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className(className)));
     }
 
 
     public static Boolean isElementInvisibleByTestId(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         return wait.until(
-                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
+                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
     }
 
     public static Boolean isElementVisibleByTestId(String dataTestId) {
         try {
-            WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(String.format(DATA_TESTS_ID,dataTestId))))).isDisplayed();
+            WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(String.format(DATA_TESTS_ID, dataTestId))))).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -217,34 +229,34 @@ public final class GeneralUIUtils {
     }
 
     public static void clickOnElementByTestIdWithoutWait(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).click();
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
     }
 
     public static void clickOnElementByInputTestIdWithoutWait(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId) + "//*"))).click();
     }
 
     public static void clickOnElementByTestId(String dataTestId, int customTimeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), customTimeout);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
     }
 
     public static WebElement waitForElementVisibilityByTestId(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
     }
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId) {
-        return waitForElementInVisibilityByTestId(dataTestId, timeOut);
+        return waitForElementInVisibilityByTestId(dataTestId, TIME_OUT);
     }
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId, int timeOut) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        boolean displayed = getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID,dataTestId))).isEmpty();
+        boolean displayed = getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId))).isEmpty();
         if (!displayed) {
-            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID,dataTestId))));
+            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
             ultimateWait();
             return until;
         }
@@ -252,7 +264,7 @@ public final class GeneralUIUtils {
     }
 
     public static Boolean waitForElementInVisibilityByTestId(By by) {
-        return waitForElementInVisibilityBy(by, timeOut);
+        return waitForElementInVisibilityBy(by, TIME_OUT);
     }
 
 
@@ -261,7 +273,7 @@ public final class GeneralUIUtils {
         boolean displayed = getDriver().findElements(by).isEmpty();
         if (!displayed) {
             Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
-            sleep(1000);
+            sleep(SLEEP_DURATION);
             return until;
         }
         return false;
@@ -292,11 +304,12 @@ public final class GeneralUIUtils {
     }
 
     public static void waitForLoader() {
-        waitForLoader(timeOut);
+        waitForLoader(TIME_OUT);
     }
 
     public static void waitForLoader(int timeOut) {
-        sleep(500);
+        final int sleepDuration = 500;
+        sleep(sleepDuration);
         waitForElementInVisibilityBy(By.className("tlv-loader"), timeOut);
     }
 
@@ -372,12 +385,11 @@ public final class GeneralUIUtils {
     }
 
     public static WebElement getElementfromElementByCSS(WebElement parentElement, String cssString) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
         GeneralUIUtils.waitForLoader();
         return parentElement.findElement(By.cssSelector(cssString));
     }
 
-    public static WebElement HighlightMyElement(WebElement element) {
+    private static WebElement highlightMyElement(WebElement element) {
         JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
         javascript.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
         return element;
@@ -385,22 +397,23 @@ public final class GeneralUIUtils {
 
     public static WebElement getSelectedElementFromDropDown(String dataTestId) {
         GeneralUIUtils.ultimateWait();
-        return new Select(getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID,dataTestId)))).getFirstSelectedOption();
+        return new Select(getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).getFirstSelectedOption();
     }
 
     public static boolean checkElementsCountInTable(int expectedElementsCount, Supplier<List<WebElement>> func) {
-        int maxWaitingPeriodMS = 10 * 1000;
-        int napPeriodMS = 100;
+        int maxWaitingPeriodMS = MAX_WAITING_PERIOD;
+        int napPeriodMS = NAP_PERIOD;
         int sumOfWaiting = 0;
-        List<WebElement> elements = null;
+        List<WebElement> elements;
         boolean isKeepWaiting = false;
         while (!isKeepWaiting) {
             elements = func.get();
             isKeepWaiting = (expectedElementsCount == elements.size());
             sleep(napPeriodMS);
             sumOfWaiting += napPeriodMS;
-            if (sumOfWaiting > maxWaitingPeriodMS)
+            if (sumOfWaiting > maxWaitingPeriodMS) {
                 return false;
+            }
         }
         return true;
     }
@@ -410,12 +423,11 @@ public final class GeneralUIUtils {
         func.run();
         long estimateTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
-        String durationString = String.format("%02d:%02d", duration / 60, duration % 60);
-        return durationString;
+        return String.format("%02d:%02d", duration / DURATION_FORMATIN, duration % DURATION_FORMATIN);
     }
 
     public static WebElement clickOnAreaJS(String areaId) {
-        return clickOnAreaJS(areaId, timeOut);
+        return clickOnAreaJS(areaId, TIME_OUT);
     }
 
 
@@ -424,7 +436,7 @@ public final class GeneralUIUtils {
             ultimateWait();
             WebElement area = getWebElementByTestID(areaId);
             JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
-            //HighlightMyElement(area);
+            //highlightMyElement(area);
             Object executeScript = javascript.executeScript("arguments[0].click();", area, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
             waitForLoader(timeout);
             ultimateWait();
@@ -438,7 +450,7 @@ public final class GeneralUIUtils {
 
     public static WebElement clickOnAreaJS(WebElement areaId) throws InterruptedException {
         JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
-        //HighlightMyElement(area);
+        //highlightMyElement(area);
         javascript.executeScript("arguments[0].click();", areaId, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
         return areaId;
     }
@@ -449,25 +461,26 @@ public final class GeneralUIUtils {
     }
 
     public static void clickOnElementByText(String textInElement) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        HighlightMyElement(wait.until(
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        highlightMyElement(wait.until(
                 ExpectedConditions.elementToBeClickable(findByText(textInElement)))).click();
     }
 
     public static void clickOnElementByText(String textInElement, int customTimeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), customTimeout);
-        HighlightMyElement(wait.until(
+        highlightMyElement(wait.until(
                 ExpectedConditions.elementToBeClickable(findByText(textInElement)))).click();
     }
 
     public static void clickJSOnElementByText(String textInElement) throws Exception {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         clickOnAreaJS(wait.until(
                 ExpectedConditions.elementToBeClickable(findByText(textInElement))));
     }
 
     public static void waitForAngular() {
-        WebDriverWait wait = new WebDriverWait(getDriver(), 90, 100);
+        final int webDriverWaitingTime = 90;
+        WebDriverWait wait = new WebDriverWait(getDriver(), webDriverWaitingTime, NAP_PERIOD);
         wait.until(AdditionalConditions.pageLoadWait());
         wait.until(AdditionalConditions.angularHasFinishedProcessing());
     }
@@ -478,7 +491,7 @@ public final class GeneralUIUtils {
 
     public static boolean isElementReadOnly(WebElement element) {
         try {
-            HighlightMyElement(element).clear();
+            highlightMyElement(element).clear();
             return false;
         } catch (Exception e) {
             return true;
@@ -491,8 +504,8 @@ public final class GeneralUIUtils {
     }
 
     public static boolean isElementDisabled(WebElement element) {
-        return HighlightMyElement(element).getAttribute("class").contains("view-mode") ||
-                element.getAttribute("class").contains("disabled") || element.getAttribute("disabled") != null;
+        return highlightMyElement(element).getAttribute("class").contains("view-mode")
+                || element.getAttribute("class").contains("disabled") || element.getAttribute("disabled") != null;
     }
 
     public static boolean isElementDisabled(String dataTestId) {
@@ -509,7 +522,7 @@ public final class GeneralUIUtils {
 
         long estimateTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
-        if (duration > timeOut) {
+        if (duration > TIME_OUT) {
             SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Delays on page, %d seconds", duration));
         }
     }
@@ -568,7 +581,7 @@ public final class GeneralUIUtils {
     }
 
     public static void clickOnElementByCSS(String cssString) throws Exception {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(cssString))).click();
         ultimateWait();
     }
@@ -579,17 +592,18 @@ public final class GeneralUIUtils {
     }
 
     public static void dragAndDropElementByY(WebElement area, int yOffset) {
+        final int dragAndDropTimeout = 10;
         Actions actions = new Actions(getDriver());
-        actions.dragAndDropBy(area, 10, yOffset).perform();
+        actions.dragAndDropBy(area, dragAndDropTimeout, yOffset).perform();
         ultimateWait();
     }
 
     public static void waitForBackLoader() {
-        waitForBackLoader(timeOut);
+        waitForBackLoader(TIME_OUT);
     }
 
     public static void waitForBackLoader(int timeOut) {
-        sleep(100);
+        sleep(NAP_PERIOD);
         waitForElementInVisibilityBy(By.className("tlv-loader-back"), timeOut);
     }
 
@@ -600,12 +614,14 @@ public final class GeneralUIUtils {
     }
 
     public static boolean checkForDisabledAttributeInHiddenElement(String cssString) {
+        final int numberOfDisableElements = 3;
         boolean isDisabled = false;
-        for (int i = 0; i < 3; i++) {
-            Object elementAttributes = getAllElementAttributes(getWebElementByPresence(By.cssSelector(cssString), timeOut));
+        for (int i = 0; i < numberOfDisableElements; i++) {
+            Object elementAttributes = getAllElementAttributes(getWebElementByPresence(By.cssSelector(cssString), TIME_OUT));
             isDisabled = elementAttributes.toString().contains("disabled");
-            if (isDisabled)
+            if (isDisabled) {
                 break;
+            }
             ultimateWait();
         }
         return isDisabled;
@@ -643,8 +659,8 @@ public final class GeneralUIUtils {
         ultimateWait();
     }
 
-    public static String getTextValueFromWebElementByXpath(String Xpath) {
-        WebElement webElement = getWebElementBy(By.xpath(Xpath));
+    public static String getTextValueFromWebElementByXpath(String xpath) {
+        WebElement webElement = getWebElementBy(By.xpath(xpath));
         return webElement.getAttribute("value");
     }
 
@@ -675,49 +691,49 @@ public final class GeneralUIUtils {
     }
 
     public static Object getElementPositionOnCanvas(String elementName) {
-        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n" +
-                "var n = cy.nodes('[name=\"" + elementName + "\"]');\n" +
-                "var nPos = n.renderedPosition();\n" +
-                "return JSON.stringify({\n" +
-                "\tx: nPos.x,\n" +
-                "\ty: nPos.y\n" +
-                "})";
+        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n"
+                + "var n = cy.nodes('[name=\"" + elementName + "\"]');\n"
+                + "var nPos = n.renderedPosition();\n"
+                + "return JSON.stringify({\n"
+                + "\tx: nPos.x,\n"
+                + "\ty: nPos.y\n"
+                + "})";
         return ((JavascriptExecutor) getDriver()).executeScript(scriptJS);
     }
 
     public static Object getElementGreenDotPositionOnCanvas(String elementName) {
-        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n" +
-                "var cyZoom = cy.zoom();\n" +
-                "var n = cy.nodes('[name=\"" + elementName + "\"]');\n" +
-                "var nPos = n.renderedPosition();\n" +
-                "var nData = n.data();\n" +
-                "var nImgSize = nData.imgWidth;\n" +
-                "var shiftSize = (nImgSize-18)*cyZoom/2;\n" +
-                "return JSON.stringify({\n" +
-                "\tx: nPos.x + shiftSize,\n" +
-                "\ty: nPos.y - shiftSize\n" +
-                "});";
+        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n"
+                + "var cyZoom = cy.zoom();\n"
+                + "var n = cy.nodes('[name=\"" + elementName + "\"]');\n"
+                + "var nPos = n.renderedPosition();\n"
+                + "var nData = n.data();\n"
+                + "var nImgSize = nData.imgWidth;\n"
+                + "var shiftSize = (nImgSize-18)*cyZoom/2;\n"
+                + "return JSON.stringify({\n"
+                + "\tx: nPos.x + shiftSize,\n"
+                + "\ty: nPos.y - shiftSize\n"
+                + "});";
         return ((JavascriptExecutor) getDriver()).executeScript(scriptJS);
-	}
+    }
 
-	public static Long getAndValidateActionDuration (Runnable action, int regularTestRunTime){
-		Long actualTestRunTime = null;
-		try {
-			actualTestRunTime = Utils.getActionDuration(() -> {
-				try {
-					action.run();
-				} catch (Throwable throwable) {
-					throwable.printStackTrace();
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		double factor = 1.5;
+    public static Long getAndValidateActionDuration(Runnable action, int regularTestRunTime) {
+        Long actualTestRunTime = null;
+        try {
+            actualTestRunTime = Utils.getActionDuration(() -> {
+                try {
+                    action.run();
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        final double factor = 1.5;
 
-		assertTrue("Expected test run time should be less than " + regularTestRunTime*factor + ", " +
-				"actual time is " + actualTestRunTime , regularTestRunTime*factor>actualTestRunTime);
-//		SetupCDTest.getExtendTest().log(Status.INFO, "Actual catalog loading time is  " + actualTestRunTime + " seconds");
-		return actualTestRunTime;
+        assertTrue("Expected test run time should be less than " + regularTestRunTime * factor + ", "
+                + "actual time is " + actualTestRunTime, regularTestRunTime * factor > actualTestRunTime);
+         //SetupCDTest.getExtendTest().log(Status.INFO, "Actual catalog loading time is  " + actualTestRunTime + " seconds");
+        return actualTestRunTime;
     }
 }

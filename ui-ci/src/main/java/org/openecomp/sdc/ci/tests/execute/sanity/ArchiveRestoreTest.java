@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,14 +27,31 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.*;
-import org.openecomp.sdc.ci.tests.utilities.*;
-import org.openecomp.sdc.ci.tests.utils.general.*;
+import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
+import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
+import org.openecomp.sdc.ci.tests.pages.HomePage;
+import org.openecomp.sdc.ci.tests.pages.OpsOperationPage;
+import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
+import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+import org.openecomp.sdc.ci.tests.utilities.HomeUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
+import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertTrue;
@@ -92,7 +109,7 @@ public class ArchiveRestoreTest extends SetupCDTest {
         GeneralPageElements.clickSubmitForTestingButton(service.getName());
     }
 
-//    https://sdp.web.att.com/fa3qm1/web/console/Application_Development_Tools_QM_20.20.01#action=com.ibm.rqm.planning.home.actionDispatcher&subAction=viewTestScript&id=896098
+    //    https://sdp.web.att.com/fa3qm1/web/console/Application_Development_Tools_QM_20.20.01#action=com.ibm.rqm.planning.home.actionDispatcher&subAction=viewTestScript&id=896098
     @Test
     public void certifyVF_WhenVSP_Archived() throws Exception {
 
