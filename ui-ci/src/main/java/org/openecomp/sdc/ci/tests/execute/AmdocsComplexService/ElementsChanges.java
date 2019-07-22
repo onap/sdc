@@ -22,13 +22,24 @@ package org.openecomp.sdc.ci.tests.execute.AmdocsComplexService;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
+import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
+import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
+import org.openecomp.sdc.ci.tests.pages.HomePage;
+import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
+import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
@@ -50,6 +61,7 @@ import static org.testng.AssertJUnit.assertNotSame;
 public class
 ElementsChanges extends SetupCDTest {
 
+    private static final int NUMBER_OF_LINKS = 3;
     protected static String filePath = FileHandling.getFilePath("ComplexService");
     private static String fullCompositionFile = "fullComposition.zip";
     private static String test = "test.zip";
@@ -75,7 +87,7 @@ ElementsChanges extends SetupCDTest {
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         ServiceReqDetails serviceMetadata = PathUtilities.createService(getUser());
-        List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 3);
+        List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, NUMBER_OF_LINKS);
         String pathName = PathUtilities.createPathWithoutLink("DeleteComponent", vspName);
         PathUtilities.deleteComponents(VFs);
         PathValidations.validatePathListIsEmpty();
@@ -106,12 +118,12 @@ ElementsChanges extends SetupCDTest {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.HOME_FROM_COMPOSITION.getValue());
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
         ///   GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.ONBOARD_CATALOG.getValue());
-        ResourceUIUtils.clickOnElementByText(vspName,null);
+        ResourceUIUtils.clickOnElementByText(vspName, null);
         ResourceUIUtils.clickOnElementByText("Create New Version", null);
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ComplexServiceAmdocs.NEW_VSP_VERSION_DESCRIPTION.getValue()).sendKeys("new vsap version for service path");
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SUBMIT_NEW_VSP_VERSION_DESCRIPTION.getValue());
 
-       // VendorSoftwareProductObject v = new VendorSoftwareProductObject();
+        // VendorSoftwareProductObject v = new VendorSoftwareProductObject();
         //VendorSoftwareProductRestUtils.uploadHeatPackage(filePath,fullCompositionFile,v,getUser());
 //upload new heat +commit submit
         //go to home
@@ -119,7 +131,7 @@ ElementsChanges extends SetupCDTest {
 
         GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-       // CanvasManager.getCanvasManager().clickOnCanvaElement(vf);
+        // CanvasManager.getCanvasManager().clickOnCanvaElement(vf);
         //update version
         //validate path still exist
         certifyServiceAsTester(serviceMetadata);
@@ -146,13 +158,13 @@ ElementsChanges extends SetupCDTest {
         String pathName = "path1";
         List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 2);
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
         }
         PathUtilities.openCreatePath();
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINKS);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
 
         /////////////////
@@ -160,10 +172,10 @@ ElementsChanges extends SetupCDTest {
         /////////////////
 
         // validate version change has no effect
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             RestResponse ServiceForwardingPathsResponse = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             // change to version with different capabiliteis
-            CompositionPage.changeComponentVersion(canvasManager, element, "3.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "3.0", false);
             // click on warning message
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
@@ -176,7 +188,7 @@ ElementsChanges extends SetupCDTest {
             // validate there are no error messages
             PathValidations.ValidateThereIsNoErrorMessage();
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "1.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
             // validate paths hasn't changed
@@ -219,13 +231,13 @@ ElementsChanges extends SetupCDTest {
         String pathName = "path1";
         List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 2);
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
         }
         PathUtilities.openCreatePath();
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINKS);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
 
         /////////////////
@@ -233,10 +245,10 @@ ElementsChanges extends SetupCDTest {
         /////////////////
 
         // validate version change has no effect
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             RestResponse ServiceForwardingPathsResponse = PathUtilities.getServiceForwardingPathsAPI(service.getName());
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "2.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "2.0", false);
             // validate paths hasn't changed
             RestResponse ServiceForwardingPathsResponse2 = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             assertEquals(
@@ -246,7 +258,7 @@ ElementsChanges extends SetupCDTest {
             // validate there are no error messages
             PathValidations.ValidateThereIsNoErrorMessage();
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "1.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
             // validate paths hasn't changed
             RestResponse ServiceForwardingPathsResponse3 = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             assertEquals(
@@ -287,13 +299,13 @@ ElementsChanges extends SetupCDTest {
         String pathName = "path1";
         List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 2);
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
         }
         PathUtilities.openCreatePath();
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINKS);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
 
         /////////////////
@@ -301,10 +313,10 @@ ElementsChanges extends SetupCDTest {
         /////////////////
 
         // validate version change has no effect
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             RestResponse ServiceForwardingPathsResponse = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             // change to version with different capabiliteis
-            CompositionPage.changeComponentVersion(canvasManager, element, "3.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "3.0", false);
             // click on warning message
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
@@ -317,7 +329,7 @@ ElementsChanges extends SetupCDTest {
             // validate there are no error messages
             PathValidations.ValidateThereIsNoErrorMessage();
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "1.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
             // validate paths hasn't changed
@@ -360,13 +372,13 @@ ElementsChanges extends SetupCDTest {
         String pathName = "path1";
         List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 2);
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
         }
         PathUtilities.openCreatePath();
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINKS);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
 
         /////////////////
@@ -374,10 +386,10 @@ ElementsChanges extends SetupCDTest {
         /////////////////
 
         // validate version change has no effect
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             RestResponse ServiceForwardingPathsResponse = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             // change to version with different capabiliteis
-            CompositionPage.changeComponentVersion(canvasManager, element, "3.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "3.0", false);
             // click on warning message to cancel
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ModalItems.CANCEL.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
@@ -390,7 +402,7 @@ ElementsChanges extends SetupCDTest {
             // validate there are no error messages
             PathValidations.ValidateThereIsNoErrorMessage();
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "3.0",true);
+            CompositionPage.changeComponentVersion(canvasManager, element, "3.0", true);
             // click on warning message
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
@@ -434,13 +446,13 @@ ElementsChanges extends SetupCDTest {
         String pathName = "path1";
         List<CanvasElement> VFs = PathUtilities.linkVFs(vspName, 2);
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
         }
         PathUtilities.openCreatePath();
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINKS);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
 
         // certify Service
@@ -459,10 +471,10 @@ ElementsChanges extends SetupCDTest {
         /////////////////
 
         // validate version change has no effect
-        for (CanvasElement element: VFs) {
+        for (CanvasElement element : VFs) {
             RestResponse ServiceForwardingPathsResponse = PathUtilities.getServiceForwardingPathsAPI(service.getName());
             // change to version with different capabilities
-            CompositionPage.changeComponentVersion(canvasManager, element, "3.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "3.0", false);
             // click on warning message
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
@@ -475,7 +487,7 @@ ElementsChanges extends SetupCDTest {
             // validate there are no error messages
             PathValidations.ValidateThereIsNoErrorMessage();
 
-            CompositionPage.changeComponentVersion(canvasManager, element, "1.0",false);
+            CompositionPage.changeComponentVersion(canvasManager, element, "1.0", false);
             GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.OK.getValue() + "']").get(0).click();
             GeneralUIUtils.ultimateWait();
             // validate paths hasn't changed
@@ -588,7 +600,7 @@ ElementsChanges extends SetupCDTest {
     }
 
     public static List<CanvasElement> createComplexPath(String service) throws Exception {
-        List<CanvasElement> services = PathUtilities.linkServices(service, service, 3);
+        List<CanvasElement> services = PathUtilities.linkServices(service, service, NUMBER_OF_LINKS);
         PathUtilities.createPathWithoutLink("name1", service);
         PathUtilities.createPathWithoutLink("name2", service);
         return services;
@@ -607,7 +619,8 @@ ElementsChanges extends SetupCDTest {
         GeneralUIUtils.ultimateWait();
 
         //tester
-        reloginWithNewRole(UserRoleEnum.TESTER);GeneralUIUtils.findComponentAndClick(serviceMetadata1.getName());
+        reloginWithNewRole(UserRoleEnum.TESTER);
+        GeneralUIUtils.findComponentAndClick(serviceMetadata1.getName());
         TesterOperationPage.certifyComponent(serviceMetadata1.getName());
 
         //governor
@@ -644,14 +657,14 @@ ElementsChanges extends SetupCDTest {
                 vendorSoftwareProduct.getVspId(),
                 vendorSoftwareProduct.getComponentId(),
                 "version with different description", user);
-        assertEquals("did not succeed to create new item version", 200, newItemVersion.left.getErrorCode().intValue());
+        assertEquals("did not succeed to create new item version", HttpStatus.SC_OK, newItemVersion.left.getErrorCode().intValue());
         vendorSoftwareProduct.setVersion(newItemVersion.right.getItemId());
         vendorSoftwareProduct.setComponentId(newItemVersion.right.getItemId());
 
         // update vsp description
         vendorSoftwareProduct.setDescription(descriptionV2);
         RestResponse restResponse = PathUtilities.updateVendorSoftwareProduct(vendorSoftwareProduct, user);
-        assertEquals("did not succeed to update vsp", 200, restResponse.getErrorCode().intValue());
+        assertEquals("did not succeed to update vsp", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 
         // commit & submit vsp
         VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
@@ -678,16 +691,16 @@ ElementsChanges extends SetupCDTest {
                 vendorSoftwareProduct.getVspId(),
                 vendorSoftwareProduct.getVersion(),
                 "version with different heat", user);
-        assertEquals("did not succeed to create new item version", 200, newItemVersion.left.getErrorCode().intValue());
+        assertEquals("did not succeed to create new item version", HttpStatus.SC_OK, newItemVersion.left.getErrorCode().intValue());
         vendorSoftwareProduct.setVersion(newItemVersion.right.getItemId());
         vendorSoftwareProduct.setComponentId(newItemVersion.right.getItemId());
 
         // upload new heat
         RestResponse uploadHeatPackage = VendorSoftwareProductRestUtils.uploadHeatPackage(filepath, vnfFileV3, vendorSoftwareProduct, user);
-        assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
+        assertEquals("did not succeed to upload HEAT package", HttpStatus.SC_OK, uploadHeatPackage.getErrorCode().intValue());
 
         RestResponse validateUpload = VendorSoftwareProductRestUtils.validateUpload(vendorSoftwareProduct, user);
-        assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
+        assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), HttpStatus.SC_OK, validateUpload.getErrorCode().intValue());
 
         // commit & submit vsp
         VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
@@ -708,7 +721,7 @@ ElementsChanges extends SetupCDTest {
         return vendorSoftwareProduct;
     }
 
-    public void certifyServiceAsTester (ServiceReqDetails serviceMetaData) throws Exception{
+    public void certifyServiceAsTester(ServiceReqDetails serviceMetaData) throws Exception {
         PathUtilities.submitForTesting();
         reloginWithNewRole(UserRoleEnum.TESTER);
         GeneralUIUtils.findComponentAndClick(serviceMetaData.getName());
@@ -719,5 +732,4 @@ ElementsChanges extends SetupCDTest {
     protected UserRoleEnum getRole() {
         return UserRoleEnum.DESIGNER;
     }
-
 }

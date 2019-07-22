@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,16 +29,35 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupPropertyDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaInputsTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaServiceGroupsMetadataDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.VfModuleDefinition;
 import org.openecomp.sdc.ci.tests.tosca.model.ToscaMetadataFieldsPresentationEnum;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
@@ -55,7 +74,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static org.testng.Assert.assertFalse;
 
@@ -78,7 +102,7 @@ public class ToscaValidationTest extends SetupCDTest {
 		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(amdocsCsarFileName);
 		toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:\\Users\\al714h\\Downloads\\resource-Civfonboarded2016073VmxBv301072E2eE60f5c15-csar.csar"));
 	*/
-  //      vnfFile = "vRouter for DHV Test_Version_4.zip";
+        //      vnfFile = "vRouter for DHV Test_Version_4.zip";
         setLog(vnfFile);
         List<Boolean> status = new ArrayList<>();
         ISdcCsarHelper fdntCsarHelper;
@@ -287,10 +311,11 @@ public class ToscaValidationTest extends SetupCDTest {
     }
 
     protected String getRandomString() {
+        final int LengthOfRandomString = 18;
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
-        while (salt.length() < 18) { // length of the random string.
+        while (salt.length() < LengthOfRandomString) {
             int index = (int) (rnd.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
@@ -300,11 +325,10 @@ public class ToscaValidationTest extends SetupCDTest {
     }
 
     protected int getRandomInteger() {
+        final int low = 10;
+        final int high = 100;
         Random r = new Random();
-        int low = 10;
-        int high = 100;
-        int integerValue = r.nextInt(high - low) + low;
-        return integerValue;
+        return r.nextInt(high - low) + low;
     }
 
 
@@ -316,8 +340,9 @@ public class ToscaValidationTest extends SetupCDTest {
         //add resource metadata to expected object
         toscaMainAmdocsDefinition = addAndGenerateResourceMetadataToExpectedObject(toscaMainAmdocsDefinition, resourceReqDetails, resource);
         Either<Boolean, Map<String, Object>> resourceToscaMetadataValidator = ToscaValidation.resourceToscaMetadataValidator(toscaMainAmdocsDefinition, toscaMainVfDefinition);
-        if (resourceToscaMetadataValidator.isRight())
+        if (resourceToscaMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -325,8 +350,9 @@ public class ToscaValidationTest extends SetupCDTest {
         reportStartTestPrint("validateResourceNodeTemplateMetadata", vnfFile);
         Map<String, Map<String, String>> generateReosurceNodeTemplateMetadataToExpectedObject = generateResourceNodeTemplateMetadataToExpectedObject(resource);
         Boolean resourceToscaMetadataValidator = ToscaValidation.resourceToscaNodeTemplateMetadataValidator(generateReosurceNodeTemplateMetadataToExpectedObject, toscaMainVfDefinition);
-        if (!resourceToscaMetadataValidator)
+        if (!resourceToscaMetadataValidator) {
             status.add(false);
+        }
         return status;
     }
 
@@ -335,8 +361,9 @@ public class ToscaValidationTest extends SetupCDTest {
         reportStartTestPrint("validateServiceMetadata", vnfFile);
         Map<String, String> generateServiceMetadataToExpectedObject = generateServiceMetadataToExpectedObject(serviceReqDetails, service);
         Either<Boolean, Map<String, Object>> serviceToscaMetadataValidator = ToscaValidation.serviceToscaMetadataValidator(generateServiceMetadataToExpectedObject, toscaMainServiceDefinition);
-        if (serviceToscaMetadataValidator.isRight())
+        if (serviceToscaMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -345,8 +372,9 @@ public class ToscaValidationTest extends SetupCDTest {
         reportStartTestPrint("validateServiceNodeTemplateMetadata", vnfFile);
         Map<String, String> generateServiceNodeTemplateMetadataToExpectedObject = generateServiceNodeTemplateMetadataToExpectedObject(resourceReqDetails, resource, componentInstanceDefinition);
         Either<Boolean, Map<String, Object>> serviceToscaMetadataValidator = ToscaValidation.componentToscaNodeTemplateMetadataValidator(generateServiceNodeTemplateMetadataToExpectedObject, toscaMainServiceDefinition, componentInstanceDefinition.getName(), ComponentTypeEnum.SERVICE, componentInstanceDefinition.getName());
-        if (serviceToscaMetadataValidator.isRight())
+        if (serviceToscaMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -368,8 +396,9 @@ public class ToscaValidationTest extends SetupCDTest {
         String artifactPayload = ArtifactRestUtils.getDecodedArtifactPayloadFromResponse(restResponse);
         Map<String, VfModuleDefinition> actualVfModulesDefinitionObject = ResponseParser.convertVfModuleJsonResponseToJavaObject(artifactPayload);
         Either<Boolean, Map<String, Object>> vfModuleJsonFileValidator = ToscaValidation.vfModuleJsonFileValidator(expectedVfModulesDefinitionObject, actualVfModulesDefinitionObject);
-        if (vfModuleJsonFileValidator.isRight())
+        if (vfModuleJsonFileValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -382,8 +411,9 @@ public class ToscaValidationTest extends SetupCDTest {
             Map<String, String> generateServiceMetadataToExpectedObject = generateServiceMetadataToExpectedObject(serviceReqDetails, service);
             Metadata serviceMetadata = fdntCsarHelper.getServiceMetadata();
             Either<Boolean, Map<String, Object>> serviceToscaMetadataValidatorAgainstParser = ToscaValidation.serviceToscaMetadataValidatorAgainstParser(generateServiceMetadataToExpectedObject, serviceMetadata);
-            if (serviceToscaMetadataValidatorAgainstParser.isRight())
+            if (serviceToscaMetadataValidatorAgainstParser.isRight()) {
                 status.add(false);
+            }
         }
         return status;
     }
@@ -397,8 +427,9 @@ public class ToscaValidationTest extends SetupCDTest {
             List<NodeTemplate> serviceNodeTemplates = fdntCsarHelper.getServiceNodeTemplates();
             Metadata serviceNodeTemplateMetadata = serviceNodeTemplates.get(0).getMetaData();
             Either<Boolean, Map<String, Object>> serviceNodeTemplateToscaMetadataValidatorAgainstParser = ToscaValidation.serviceToscaMetadataValidatorAgainstParser(generateServiceNodeTemplateMetadataToExpectedObject, serviceNodeTemplateMetadata);
-            if (serviceNodeTemplateToscaMetadataValidatorAgainstParser.isRight())
+            if (serviceNodeTemplateToscaMetadataValidatorAgainstParser.isRight()) {
                 status.add(false);
+            }
         }
         return status;
     }
@@ -411,8 +442,9 @@ public class ToscaValidationTest extends SetupCDTest {
         Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputsMap = toscaMainAmdocsDefinition.getTopology_template().getInputs();
         Map<String, ToscaInputsTopologyTemplateDefinition> actualInputsMap = toscaMainVfDefinition.getTopology_template().getInputs();
         Either<Boolean, Map<String, Object>> toscaInputsValidator = ToscaValidation.toscaInputsValidator(expectedInputsMap, actualInputsMap);
-        if (toscaInputsValidator.isRight())
+        if (toscaInputsValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -423,8 +455,9 @@ public class ToscaValidationTest extends SetupCDTest {
         Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputsMap = toscaExpectedMainServiceDefinition.getTopology_template().getInputs();
         Map<String, ToscaInputsTopologyTemplateDefinition> actualInputsMap = toscaMainServiceDefinition.getTopology_template().getInputs();
         Either<Boolean, Map<String, Object>> toscaInputsValidator = ToscaValidation.toscaInputsValidator(expectedInputsMap, actualInputsMap);
-        if (toscaInputsValidator.isRight())
+        if (toscaInputsValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -432,8 +465,9 @@ public class ToscaValidationTest extends SetupCDTest {
         reportStartTestPrint("validateServiceModuleMetadata", vnfFile);
 
         Either<Boolean, Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupMetadataValidator(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition);
-        if (toscaServiceModuleMetadataValidator.isRight())
+        if (toscaServiceModuleMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -441,8 +475,9 @@ public class ToscaValidationTest extends SetupCDTest {
         reportStartTestPrint("validateServiceModuleProperty", vnfFile);
 
         Either<Boolean, Map<String, Object>> toscaServiceModulePropertyValidator = ToscaValidation.serviceToscaGroupPropertyValidator(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition);
-        if (toscaServiceModulePropertyValidator.isRight())
+        if (toscaServiceModulePropertyValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -454,8 +489,9 @@ public class ToscaValidationTest extends SetupCDTest {
             reportStartTestPrint("validateServiceInputsUsingParser", vnfFile);
             Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputsMap = toscaExpectedMainServiceDefinition.getTopology_template().getInputs();
             Either<Boolean, Map<String, Object>> toscaInputsValidator = ToscaValidation.toscaInputsValidatorAgainstParser(expectedInputsMap, fdntCsarHelper);
-            if (toscaInputsValidator.isRight())
+            if (toscaInputsValidator.isRight()) {
                 status.add(false);
+            }
         }
         return status;
     }
@@ -465,8 +501,9 @@ public class ToscaValidationTest extends SetupCDTest {
         String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
         List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
         Either<Boolean, Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupMetadataValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
-        if (toscaServiceModuleMetadataValidator.isRight())
+        if (toscaServiceModuleMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 
@@ -475,8 +512,9 @@ public class ToscaValidationTest extends SetupCDTest {
         String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
         List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
         Either<Boolean, Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupPropertyValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
-        if (toscaServiceModuleMetadataValidator.isRight())
+        if (toscaServiceModuleMetadataValidator.isRight()) {
             status.add(false);
+        }
         return status;
     }
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,40 +23,40 @@ package org.openecomp.sdc.ci.tests.datatypes;
 import java.io.File;
 
 public class HeatAndHeatEnvNamesPair {
-	
-	private File heatFileName;
-	private File heatEnvFileName;
-	
-	public HeatAndHeatEnvNamesPair() {
-		super();
-	}
 
-	public HeatAndHeatEnvNamesPair(File heatFileName, File heatEnvFileName) {
-		super();
-		this.heatFileName = heatFileName;
-		this.heatEnvFileName = heatEnvFileName;
-	}
+    private File heatFileName;
+    private File heatEnvFileName;
 
-	public File getHeatFileName() {
-		return heatFileName;
-	}
+    public HeatAndHeatEnvNamesPair() {
+        super();
+    }
 
-	public void setHeatFileName(File heatFileName) {
-		this.heatFileName = heatFileName;
-	}
+    public HeatAndHeatEnvNamesPair(File heatFileName, File heatEnvFileName) {
+        super();
+        this.heatFileName = heatFileName;
+        this.heatEnvFileName = heatEnvFileName;
+    }
 
-	public File getHeatEnvFileName() {
-		return heatEnvFileName;
-	}
+    public File getHeatFileName() {
+        return heatFileName;
+    }
 
-	public void setHeatEnvFileName(File heatEnvFileName) {
-		this.heatEnvFileName = heatEnvFileName;
-	}
+    public void setHeatFileName(File heatFileName) {
+        this.heatFileName = heatFileName;
+    }
 
-	@Override
-	public String toString() {
-		return "HeatHeatEnvNamesPair [heatFileName=" + heatFileName + ", heatEnvFileName=" + heatEnvFileName + "]";
-	}
-	
+    public File getHeatEnvFileName() {
+        return heatEnvFileName;
+    }
+
+    public void setHeatEnvFileName(File heatEnvFileName) {
+        this.heatEnvFileName = heatEnvFileName;
+    }
+
+    @Override
+    public String toString() {
+        return "HeatHeatEnvNamesPair [heatFileName=" + heatFileName + ", heatEnvFileName=" + heatEnvFileName + "]";
+    }
+
 
 }
