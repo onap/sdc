@@ -22,6 +22,18 @@
 
 package org.openecomp.core.impl;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,22 +44,11 @@ import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-
 @RunWith(Parameterized.class)
 public class ToscaSolConverterPnfTest {
 
-    public static final String INPUT_DIR = "pnfDescriptor/in/";
-    public static final String OUTPUT_DIR = "pnfDescriptor/out/";
+    private static final String INPUT_DIR = "pnfDescriptor/in/";
+    private static final String OUTPUT_DIR = "pnfDescriptor/out/";
     private String inputFilename;
     private YamlUtil yamlUtil = new YamlUtil();
     private ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
@@ -65,49 +66,59 @@ public class ToscaSolConverterPnfTest {
     }
 
     @Test
-    public void testTopologyTemplateConversions() throws IOException {
+    public void testTopologyTemplateConversions() {
         final byte[] descriptor = getInputFileResource(inputFilename);
-        ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
-        ServiceTemplate serviceTemplate = new ServiceTemplate();
-        ToscaSolConverterPnf toscaSolConverter = new ToscaSolConverterPnf();
+        final ServiceTemplateReaderService serviceTemplateReaderService =
+            new ServiceTemplateReaderServiceImpl(descriptor);
+        final ServiceTemplate serviceTemplate = new ServiceTemplate();
+        final ToscaSolConverterPnf toscaSolConverter = new ToscaSolConverterPnf();
         toscaSolConverter.convertTopologyTemplate(serviceTemplate, serviceTemplateReaderService);
 
-        String result = yamlUtil.objectToYaml(serviceTemplate);
-        String expectedResult = getExpectedResultFor(inputFilename);
-        assertEquals(expectedResult, result);
+        final String actualYaml = yamlUtil.objectToYaml(serviceTemplate);
+        final String expectedYaml = getExpectedResultFor(inputFilename);
+        assertThat("Converted PNF descriptor should be the same as the expected topology template", actualYaml,
+            equalTo(expectedYaml));
     }
 
-    private String getExpectedResultFor(String inputFilename) throws IOException {
-        try (InputStream inputStream = getOutputFileResourceCorrespondingTo(inputFilename)) {
-            ServiceTemplate serviceTemplate = toscaExtensionYamlUtil.yamlToObject(inputStream, ServiceTemplate.class);
+    private String getExpectedResultFor(final String inputFilename)  {
+        try (final InputStream inputStream = getOutputFileResourceCorrespondingTo(inputFilename)) {
+            final ServiceTemplate serviceTemplate = toscaExtensionYamlUtil.yamlToObject(inputStream, ServiceTemplate.class);
             return yamlUtil.objectToYaml(serviceTemplate);
+        } catch (final IOException e) {
+            fail(String.format("Could not find file '%s'", inputFilename));
         }
+
+        return null;
     }
 
-    private static Path getPathFromClasspath(String location) {
+    private static Path getPathFromClasspath(final String location) {
         return Paths.get(Thread.currentThread().getContextClassLoader().getResource(location).getPath());
     }
 
-    private byte[] getInputFileResource(String inputFilename) throws IOException {
+    private byte[] getInputFileResource(final String inputFilename) {
         return getFileResource(INPUT_DIR + inputFilename);
     }
 
-    private InputStream getOutputFileResourceCorrespondingTo(String inputFilename) {
-        String outputFilename = getOutputFilenameFrom(inputFilename);
+    private InputStream getOutputFileResourceCorrespondingTo(final String inputFilename) {
+        final String outputFilename = getOutputFilenameFrom(inputFilename);
         return getFileResourceAsInputStream(OUTPUT_DIR + outputFilename);
     }
 
-    private String getOutputFilenameFrom(String inputFilename) {
+    private String getOutputFilenameFrom(final String inputFilename) {
         return inputFilename.replace("pnfDescriptor", "topologyTemplate");
     }
 
-    private byte[] getFileResource(String filePath) throws IOException {
+    private byte[] getFileResource(final String filePath) {
         try (InputStream inputStream = getFileResourceAsInputStream(filePath)) {
             return IOUtils.toByteArray(inputStream);
+        } catch (final IOException e) {
+            fail(String.format("Could not find file '%s'", filePath));
         }
+
+        return null;
     }
 
-    private InputStream getFileResourceAsInputStream(String filePath) {
+    private InputStream getFileResourceAsInputStream(final String filePath) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
     }
 
