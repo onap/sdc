@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2019 Vodafone Group
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,14 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebElement;
-import org.testng.AssertJUnit;
 
 import java.util.List;
 
 public class VspValidationResultsPage extends GeneralPageElements {
 
-    public VspValidationResultsPage() { super(); }
+    public VspValidationResultsPage() {
+        super();
+    }
 
     public static void navigateToVspValidationResultsPageUsingNavbar() throws Exception {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_NAVBAR);

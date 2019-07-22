@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,19 +22,19 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 public enum TopMenuButtonsEnum {
 
-	HOME("main-menu-button-home"),
-	CATALOG("main-menu-button-catalog"),
-	ON_BOARDING("main-menu-button-onboard");
+    HOME("main-menu-button-home"),
+    CATALOG("main-menu-button-catalog"),
+    ON_BOARDING("main-menu-button-onboard");
 
-	private String value;
-	private String value2;
+    private String value;
+    private String value2;
 
-	public String getButton() {
-		return value;
-	}
+    public String getButton() {
+        return value;
+    }
 
-	private TopMenuButtonsEnum(String value) {
-		this.value = value;
-	}
+    TopMenuButtonsEnum(String value) {
+        this.value = value;
+    }
 
 }

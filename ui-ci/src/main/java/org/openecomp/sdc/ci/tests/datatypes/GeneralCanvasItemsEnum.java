@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,18 +21,18 @@
 package org.openecomp.sdc.ci.tests.datatypes;
 
 public enum GeneralCanvasItemsEnum {
-	CANVAS("canvas"), 
-	CANVAS_RIGHT_PANEL("w-sdc-designer-sidebar-head"), 
-	DELETE_INSTANCE_BUTTON("deleteInstance");
+    CANVAS("canvas"),
+    CANVAS_RIGHT_PANEL("w-sdc-designer-sidebar-head"),
+    DELETE_INSTANCE_BUTTON("deleteInstance");
 
-	private String value;
+    private String value;
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	private GeneralCanvasItemsEnum(String value) {
-		this.value = value;
-	}
+    GeneralCanvasItemsEnum(String value) {
+        this.value = value;
+    }
 
 }

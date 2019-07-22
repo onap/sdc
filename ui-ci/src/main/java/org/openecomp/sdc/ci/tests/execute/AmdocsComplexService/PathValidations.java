@@ -54,15 +54,20 @@ import static org.testng.AssertJUnit.assertNotSame;
 
 public class PathValidations {
 
+
+    public static final int NUMBER_OF_LINKS = 5;
+    public static final int NUMBER_OF_LINES = 3;
+    public static final int NUMBER_OF_LINES_TO_DELETE = 1;
+
     public static String[] validateServiceExtendedPath(String vspName) throws Exception {
-        PathUtilities.linkVFs(vspName, 5);
+        PathUtilities.linkVFs(vspName, NUMBER_OF_LINKS);
         PathUtilities.openCreatePath();
         String pathName = "name1";
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(3);
+        PathValidations.extendPath(NUMBER_OF_LINES);
         //delete line
-        PathUtilities.deleteLines(1, 3);
+        PathUtilities.deleteLines(NUMBER_OF_LINES_TO_DELETE, NUMBER_OF_LINES);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
         ExtentTestActions.log(Status.INFO, "path has been created");
         PathValidations.checkPathFilter(pathName, true);
@@ -91,19 +96,18 @@ public class PathValidations {
         SetupCDTest.getExtendTest().log(Status.INFO, "Path has been created");
         // check that path got deleted in the path filter list
         PathValidations.checkPathFilter(newPathName, false);
-        return new String[] {pathName, newPathName};
+        return new String[]{pathName, newPathName};
     }
 
     public static String[] validateComplexExtendedPath(String[] services) throws Exception {
-        PathUtilities.linkServices(services[0], services[1], 5);
+        PathUtilities.linkServices(services[0], services[1], NUMBER_OF_LINKS);
         PathUtilities.openCreatePath();
         String pathName = "name1";
         PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers");
         PathUtilities.selectFirstLineParam();
-        int numOfLines = 3;
-        PathValidations.extendPath(numOfLines);
+        PathValidations.extendPath(NUMBER_OF_LINES);
         //delete line
-        PathUtilities.deleteLines(1, numOfLines);
+        PathUtilities.deleteLines(NUMBER_OF_LINES_TO_DELETE, NUMBER_OF_LINES);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
         ExtentTestActions.log(Status.INFO, "path has been created");
         PathUtilities.openPathList();
@@ -130,12 +134,13 @@ public class PathValidations {
         PathValidations.validateServicePath(services[2], pathName);
         PathValidations.validateServicePath(services[2], newPathName);
         SetupCDTest.getExtendTest().log(Status.INFO, "Paths have been validated");
-        return new String[] {pathName, newPathName};
+        return new String[]{pathName, newPathName};
     }
 
-    public static void createPathNumOfRows(int numOfPathRows)throws Exception{
+    public static void createPathNumOfRows(int numOfPathRows) throws Exception {
+        final int numberOfRandomCharacters = 8;
         PathUtilities.openCreatePath();
-        PathUtilities.insertValues("extended" + RandomStringUtils.randomAlphanumeric(8),"pathProtocol1", "pathPortNumbers1");
+        PathUtilities.insertValues("extended" + RandomStringUtils.randomAlphanumeric(numberOfRandomCharacters), "pathProtocol1", "pathPortNumbers1");
         PathUtilities.selectFirstLineParam();
         extendPath(numOfPathRows);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
@@ -143,15 +148,15 @@ public class PathValidations {
     }
 
     public static void extendPath(int numOfLines) throws Exception {
-        for (int i=0; i < numOfLines; i++) {
+        for (int i = 0; i < numOfLines; i++) {
             String check;
             String index = Integer.toString(i + 2);
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.EXTEND_BUTTON.getValue());
 
-            List<WebElement> linkSrcs =  GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE.getValue()+"']//select");
-            List<WebElement> linkSrcCPs = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE_CP.getValue()+"']//select");
-            List<WebElement> linkTargets = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue()+"']//select");
-            List<WebElement> linkTargetCPs = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue()+"']//select");
+            List<WebElement> linkSrcs = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE.getValue() + "']//select");
+            List<WebElement> linkSrcCPs = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_SOURCE_CP.getValue() + "']//select");
+            List<WebElement> linkTargets = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue() + "']//select");
+            List<WebElement> linkTargetCPs = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue() + "']//select");
             for (int j = 0; j < i + 2; j++) {
                 validateExtendedPathDisabledButtons(linkSrcs, j, "Source should be disabled. open bug to UI team");
                 check = linkSrcCPs.get(j).getAttribute("class");
@@ -163,14 +168,14 @@ public class PathValidations {
                 check = linkTargetCPs.get(j).getAttribute("class");
                 validateElementDisabledAttribute(check, "Target connection point");
             }
-            List <WebElement> choices = GeneralUIUtils.findElementsByXpath("//*[" + index + "]/*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue()+"']//option");
+            List<WebElement> choices = GeneralUIUtils.findElementsByXpath("//*[" + index + "]/*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET.getValue() + "']//option");
             choices.get((new Random()).nextInt(choices.size())).click();
-            choices = GeneralUIUtils.findElementsByXpath("//*[" + index + "]/*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue()+"']//option");
+            choices = GeneralUIUtils.findElementsByXpath("//*[" + index + "]/*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.LINK_TARGET_CP.getValue() + "']//option");
             choices.get((new Random()).nextInt(choices.size())).click();
         }
     }
 
-    public static void validateElementDisabledAttribute(String check, String param) throws Exception{
+    public static void validateElementDisabledAttribute(String check, String param) throws Exception {
         assertEquals(param + " of last lines should be disabled", check.contains("disabled"), true);
     }
 
@@ -183,16 +188,14 @@ public class PathValidations {
         PathUtilities.openPathList();
         try {
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_LIST_DELETE.getValue());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             SetupCDTest.getExtendTest().log(Status.INFO, "path list is empty");
         }
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CLOSE.getValue());
     }
 
-    public static void AssertNameChangeFromPathList(String PathListName1, String PathListName2) throws Exception {
-        assertNotSame("path name is expected to change after edit", PathListName1, PathListName2);
+    public static void AssertNameChangeFromPathList(String pathListName1, String pathListName2) throws Exception {
+        assertNotSame("path name is expected to change after edit", pathListName1, pathListName2);
     }
 
     public static void ValidateAndDeletePathFromPathList(String pathName) throws Exception {
@@ -216,22 +219,28 @@ public class PathValidations {
                     paths_after_deletion++;
                 }
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
         // assert deletion
         assertNotSame("path is expected to be deleted", paths_after_deletion, paths_before_deletion);
     }
 
-    public static void checkPathFilter(String pathName, boolean isFound) throws Exception{
-        List<WebElement> pathFilterList = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='"+DataTestIdEnum.ComplexServiceAmdocs.SERVICE_PATH_SELECTOR.getValue()+"']//option");
+    public static void checkPathFilter(String pathName, boolean isFound) throws Exception {
+        List<WebElement> pathFilterList = GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.SERVICE_PATH_SELECTOR.getValue() + "']//option");
         GeneralUIUtils.ultimateWait();
-        if (isFound) for (int i = 0; i < pathFilterList.size(); i++) {
-            String element_text = pathFilterList.get(i).getText();
-            if (element_text.equals(pathName)) break;
-            assertNotSame("path filter list is missing a path", i, pathFilterList.size() - 1);
-        }
-        else for (WebElement aPathFilterList : pathFilterList) {
-            String element_text = aPathFilterList.getText();
-            assertNotSame("path filter list is has a path that should be deleted", element_text, pathName);
+        if (isFound) {
+            for (int i = 0; i < pathFilterList.size(); i++) {
+                String element_text = pathFilterList.get(i).getText();
+                if (element_text.equals(pathName)) {
+                    break;
+                }
+                assertNotSame("path filter list is missing a path", i, pathFilterList.size() - 1);
+            }
+        } else {
+            for (WebElement aPathFilterList : pathFilterList) {
+                String element_text = aPathFilterList.getText();
+                assertNotSame("path filter list is has a path that should be deleted", element_text, pathName);
+            }
         }
         SetupCDTest.getExtendTest().log(Status.INFO, "path list filter check passed");
     }
@@ -266,8 +275,8 @@ public class PathValidations {
         JSONObject jsonResponse = new JSONObject(response);
         JSONObject forwardingPaths = jsonResponse.getJSONObject("forwardingPaths");
         Boolean validation_complete = Boolean.FALSE;
-        for (Object key : forwardingPaths.keySet()){
-            String keyStr = (String)key;
+        for (Object key : forwardingPaths.keySet()) {
+            String keyStr = (String) key;
             JSONObject forwardingPath = forwardingPaths.getJSONObject(keyStr);
             if (forwardingPath.getString("name").equals(name)) {
                 JSONObject pathElements = forwardingPath.getJSONObject("pathElements");
@@ -292,7 +301,7 @@ public class PathValidations {
         }
     }
 
-    public static void validateEditToExistingName(String firstPathName, String secondPathName)throws Exception {
+    public static void validateEditToExistingName(String firstPathName, String secondPathName) throws Exception {
         PathUtilities.openPathList();
         PathUtilities.editPathName(secondPathName, firstPathName);
         try {
@@ -308,7 +317,7 @@ public class PathValidations {
             throw new Exception("space in beggining or end does not count. when creating another path with duplicate name, expected error did not appear");
         }
         PathUtilities.openPathList();
-        PathUtilities.editPathName(secondPathName,"           " + firstPathName);
+        PathUtilities.editPathName(secondPathName, "           " + firstPathName);
         try {
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.OK.getValue());
         } catch (Exception e) {
@@ -318,7 +327,7 @@ public class PathValidations {
         PathUtilities.editPathProtocol(secondPathName, "pathProtocol2");
     }
 
-    public static void validateNameWithSpaces(String pathName, String vspName) throws Exception{
+    public static void validateNameWithSpaces(String pathName, String vspName) throws Exception {
         PathUtilities.createPath(pathName + "           ", vspName);
         PathUtilities.openPathList();
         PathUtilities.editPathName(pathName, "newName");

@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2019 Vodafone Group
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,16 +20,18 @@ import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.*;
-import static org.testng.AssertJUnit.assertTrue;
-
 
 import java.util.List;
 
+import static org.testng.AssertJUnit.assertTrue;
+
 public class VspValidationPage extends GeneralPageElements {
 
-    public VspValidationPage() { super(); }
+    public VspValidationPage() {
+        super();
+    }
 
     public static void navigateToVspValidationPageUsingNavbar() throws Exception {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_NAVBAR);
@@ -57,19 +59,20 @@ public class VspValidationPage extends GeneralPageElements {
 
     public static void clickCertificationQueryAll() throws Exception {
         List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-certifications-query-checkbox-tree']//label//span[@class='rct-checkbox']");
-        if(checkboxes.size() > 0){
+        if (checkboxes.size() > 0) {
             checkboxes.get(0).click();
-        }
-        else
+        } else {
             assertTrue("Checkbox Not Found", checkboxes.size() > 0);
+        }
     }
 
     public static void clickComplianceChecksAll() throws Exception {
         List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-compliance-checks-checkbox-tree']//label//span[@class='rct-checkbox']");
-        if(checkboxes.size() > 0)
+        if (checkboxes.size() > 0) {
             checkboxes.get(checkboxes.size() - 1).click();
-        else
+        } else {
             assertTrue("Checkbox Not Found", checkboxes.size() > 0);
+        }
     }
 
     public static boolean checkCertificationQueryExists() throws Exception {
