@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,81 +42,80 @@ import static org.testng.AssertJUnit.assertTrue;
 
 
 public class NewArtifactTypeGuide extends SetupCDTest {
-	
-	private String folder ="";
 
-	// US820276
-	// Upload information artifact of type GUIDE to VF
-	@Test
-	public void crudGuideInformationArtifactForVf() throws Exception {
-		String filePath = FileHandling.getFilePath(folder);
+    private String folder = "";
 
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createVF(resourceMetaData, getUser());
-			
-		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
-		
-		ArtifactInfo informationArtifact = new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "GUIDE");
+    // US820276
+    // Upload information artifact of type GUIDE to VF
+    @Test
+    public void crudGuideInformationArtifactForVf() throws Exception {
+        String filePath = FileHandling.getFilePath(folder);
 
-		InformationalArtifactPage.clickAddNewArtifact();
-		ArtifactUIUtils.fillAndAddNewArtifactParameters(informationArtifact);
-		
-		assertTrue("Only created artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
-		
-		String artifactUUID = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText();
-		ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "1", informationArtifact.getArtifactType(), true, true, true, false);
-		
-		InformationalArtifactPage.clickEditArtifact(informationArtifact.getArtifactLabel());
-		UploadArtifactPopup artifactPopup = new UploadArtifactPopup();
-		artifactPopup.loadFile(filePath, "CP.yml");
-		artifactPopup.clickDoneButton();
-		
-		assertTrue("Only updated artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
-		Assert.assertNotEquals(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText(), artifactUUID);
-		ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "2", informationArtifact.getArtifactType(), true, true, true, false);
-		
-		InformationalArtifactPage.clickDeleteArtifact(informationArtifact.getArtifactLabel());
-		InformationalArtifactPage.clickOK();
-	}
-	
-	// US820276
-	// Upload information artifact of type GUIDE to VFC
-	@Test
-	public void crudGuideInformationArtifactForVfc() throws Exception {
-		String filePath = FileHandling.getFilePath(folder);
+        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceUIUtils.createVF(resourceMetaData, getUser());
 
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VFC, getUser());
-		ResourceUIUtils.importVfc(resourceMetaData, filePath, "guidevFW_VFC.yml", getUser());
-			
-		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
-		
-		ArtifactInfo informationArtifact = new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "GUIDE");
+        ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
 
-		InformationalArtifactPage.clickAddNewArtifact();
-		ArtifactUIUtils.fillAndAddNewArtifactParameters(informationArtifact);
-		
-		assertTrue("Only created artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
-		String artifactUUID = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText();
-		ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "1", informationArtifact.getArtifactType(), true, true, true, false);
-		
-		InformationalArtifactPage.clickEditArtifact(informationArtifact.getArtifactLabel());
-		UploadArtifactPopup artifactPopup = new UploadArtifactPopup();
-		artifactPopup.loadFile(filePath, "CP.yml");
-		artifactPopup.clickDoneButton();
-		
-		assertTrue("Only updated artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
-		Assert.assertNotEquals(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText(), artifactUUID);
-		ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "2", informationArtifact.getArtifactType(), true, true, true, false);
-		
-		InformationalArtifactPage.clickDeleteArtifact(informationArtifact.getArtifactLabel());
-		InformationalArtifactPage.clickOK();
-	}
+        ArtifactInfo informationArtifact = new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "GUIDE");
 
-	
+        InformationalArtifactPage.clickAddNewArtifact();
+        ArtifactUIUtils.fillAndAddNewArtifactParameters(informationArtifact);
 
-	@Override
-	protected UserRoleEnum getRole() {
-		return UserRoleEnum.DESIGNER;
-	}
+        assertTrue("Only created artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
+
+        String artifactUUID = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText();
+        ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "1", informationArtifact.getArtifactType(), true, true, true, false);
+
+        InformationalArtifactPage.clickEditArtifact(informationArtifact.getArtifactLabel());
+        UploadArtifactPopup artifactPopup = new UploadArtifactPopup();
+        artifactPopup.loadFile(filePath, "CP.yml");
+        artifactPopup.clickDoneButton();
+
+        assertTrue("Only updated artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
+        Assert.assertNotEquals(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText(), artifactUUID);
+        ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "2", informationArtifact.getArtifactType(), true, true, true, false);
+
+        InformationalArtifactPage.clickDeleteArtifact(informationArtifact.getArtifactLabel());
+        InformationalArtifactPage.clickOK();
+    }
+
+    // US820276
+    // Upload information artifact of type GUIDE to VFC
+    @Test
+    public void crudGuideInformationArtifactForVfc() throws Exception {
+        String filePath = FileHandling.getFilePath(folder);
+
+        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VFC, getUser());
+        ResourceUIUtils.importVfc(resourceMetaData, filePath, "guidevFW_VFC.yml", getUser());
+
+        ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
+
+        ArtifactInfo informationArtifact = new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "GUIDE");
+
+        InformationalArtifactPage.clickAddNewArtifact();
+        ArtifactUIUtils.fillAndAddNewArtifactParameters(informationArtifact);
+
+        assertTrue("Only created artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
+        String artifactUUID = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText();
+        ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "1", informationArtifact.getArtifactType(), true, true, true, false);
+
+        InformationalArtifactPage.clickEditArtifact(informationArtifact.getArtifactLabel());
+        UploadArtifactPopup artifactPopup = new UploadArtifactPopup();
+        artifactPopup.loadFile(filePath, "CP.yml");
+        artifactPopup.clickDoneButton();
+
+        assertTrue("Only updated artifact need to be exist", DeploymentArtifactPage.checkElementsCountInTable(1));
+        Assert.assertNotEquals(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + informationArtifact.getArtifactLabel()).getText(), artifactUUID);
+        ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(informationArtifact.getArtifactLabel(), null, "2", informationArtifact.getArtifactType(), true, true, true, false);
+
+        InformationalArtifactPage.clickDeleteArtifact(informationArtifact.getArtifactLabel());
+        InformationalArtifactPage.clickOK();
+    }
+
+
+    @Override
+    protected UserRoleEnum getRole() {
+        return UserRoleEnum.DESIGNER;
+    }
 
 }

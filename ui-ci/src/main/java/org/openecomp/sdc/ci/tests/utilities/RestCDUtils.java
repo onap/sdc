@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
+import org.apache.http.HttpStatus;
 import org.codehaus.jettison.json.JSONObject;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -35,7 +36,12 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -46,6 +52,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RestCDUtils {
+
+    private static final int SLEEP_DURATION = 1000;
 
     private static void setResourceUniqueIdAndUUID(ComponentReqDetails element, RestResponse getResourceResponse) {
         element.setUniqueId(ResponseParser.getUniqueIdFromResponse(getResourceResponse));
@@ -59,12 +67,12 @@ public class RestCDUtils {
         try {
             ExtentTestActions.log(Status.INFO, getResourceMsg);
             System.out.println(getResourceMsg);
-            GeneralUIUtils.sleep(1000);
+            GeneralUIUtils.sleep(SLEEP_DURATION);
             RestResponse getResourceResponse = null;
             String resourceUniqueId = resource.getUniqueId();
             if (resourceUniqueId != null) {
                 getResourceResponse = ResourceRestUtils.getResource(resourceUniqueId);
-                if (getResourceResponse.getErrorCode().intValue() == 200) {
+                if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                     ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
                     System.out.println(succeedGetResourceMsg);
                 }
@@ -72,7 +80,7 @@ public class RestCDUtils {
             }
             JSONObject getResourceJSONObject = null;
             getResourceResponse = ResourceRestUtils.getResourceByNameAndVersion(user.getUserId(), resource.getName(), resource.getVersion());
-            if (getResourceResponse.getErrorCode().intValue() == 200) {
+            if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(resource, getResourceResponse);
                 ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
                 System.out.println(succeedGetResourceMsg);
@@ -86,11 +94,12 @@ public class RestCDUtils {
     }
 
     public static RestResponse getService(ServiceReqDetails service, User user) {
+        final int threadSleepTime = 3500;
         try {
-            Thread.sleep(3500);
+            Thread.sleep(threadSleepTime);
             RestResponse getServiceResponse = ServiceRestUtils.getServiceByNameAndVersion(user, service.getName(),
                     service.getVersion());
-            if (getServiceResponse.getErrorCode().intValue() == 200) {
+            if (getServiceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(service, getServiceResponse);
             }
             return getServiceResponse;
@@ -106,9 +115,9 @@ public class RestCDUtils {
         try {
             computerName = InetAddress.getLocalHost().getHostAddress().replaceAll("\\.", "&middot;");
             System.out.println(computerName);
-            if (computerName.indexOf(".") > -1)
-                computerName = computerName.substring(0,
-                        computerName.indexOf(".")).toUpperCase();
+            if (computerName.contains(".")) {
+                computerName = computerName.substring(0, computerName.indexOf(".")).toUpperCase();
+            }
         } catch (UnknownHostException e) {
             System.out.println("Uknown hostAddress");
         }

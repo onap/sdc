@@ -20,29 +20,44 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-//import com.sun.xml.internal.bind.v2.TODO;
 import com.aventstack.extentreports.Status;
 import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
+import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
+import org.openecomp.sdc.ci.tests.pages.HeatParamNameBuilder;
+import org.openecomp.sdc.ci.tests.pages.HomePage;
+import org.openecomp.sdc.ci.tests.pages.PropertiesAssignmentPage;
+import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
+import org.openecomp.sdc.ci.tests.pages.PropertyNameBuilder;
+import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utils.general.*;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.PropertiesAssignmentVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.testng.annotations.BeforeClass;
@@ -52,7 +67,9 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.testng.Assert.assertTrue;
 
+//import com.sun.xml.internal.bind.v2.TODO;
 
 
 public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
@@ -60,16 +77,16 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
     private static String filePath;
     private static String origFile = "virc_fe_be.csar";
     private static String origFile1 = "virc.csar";
-    protected User sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+    private User sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 
 
     @BeforeClass
-    public void beforeClass(){
+    public void beforeClass() {
         filePath = FileHandling.getFilePath("");
     }
 
     @BeforeMethod
-    public void beforeTest(){
+    public void beforeTest() {
         System.out.println("File repository is : " + filePath);
 //        SetupCDTest.getExtendTest().log(Status.INFO, "File repository is : " + filePath);
     }
@@ -77,7 +94,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
     //Update VSP tests - validating VF properties/inputs values after updating VF with a new VSP
     @DataProvider(name = "assetFilesInputs", parallel = false)
     public Object[][] createDataInputs() {
-        return new Object[][] {
+        return new Object[][]{
                 {"editInputValueTopChange.csar", ""},
                 {"editInputValueNoTopChange.csar", "Updated-SRE-Mgt"}};
     }
@@ -85,7 +102,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
     /**
      * Topoplogy change in updated file - designer changes in inputs values are not kept after update
      * No topoplogy change in updated file - designer changes in inputs values are kept after update
-     * @param updFileName - csar for update
+     *
+     * @param updFileName     - csar for update
      * @param validationValue - expected property value after update
      * @throws Exception
      */
@@ -130,14 +148,14 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName),validationValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), validationValue);
 
     }
 
 
     @DataProvider(name = "assetFilesProperties", parallel = false)
     public Object[][] createDataProp() {
-        return new Object[][] {
+        return new Object[][]{
                 {"editedPropValueToEmpty.csar", "value-prop-vm_type_tag", "updated_by_designer", "updated_by_designer", false}, //no topology change - simple
                 {"newPropValueToEmpty.csar", "value-prop-high_availablity", "updated_by_designer", "updated_by_designer", false},
                 {"editedPropValueToNew.csar", "value-prop-vm_type_tag", "updated_by_designer", "updated_by_file", false},
@@ -175,12 +193,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
      * prop1=value1   prop1=value2   prop1=value1  prop1=value1
      * prop1=value1   prop1=null     prop1=value1  prop1=value1
      *
-     * @param updFileName - csar for update
-     * @param propertyName 
+     * @param updFileName     - csar for update
+     * @param propertyName
      * @param validationValue - expected property value after update
      * @throws Exception
      */
-    @Test (dataProvider = "assetFilesProperties")
+    @Test(dataProvider = "assetFilesProperties")
     public void updatePropertyDefaultValueTest(String updFileName, String propertyName, String updValue, String validationValue, boolean userDeletesValue) throws Exception {
         setLog(updFileName);
         String origTestFile = origFile;
@@ -196,10 +214,9 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         //Edit or delete Input value
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        if(userDeletesValue) {
+        if (userDeletesValue) {
             PropertiesAssignmentPage.deletePropertyValue(propertyName);
-        }
-        else {
+        } else {
             PropertiesAssignmentPage.editPropertyValue(propertyName, updValue);
         }
         PropertiesAssignmentPage.clickOnSaveButton();
@@ -220,21 +237,20 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         //Validate Input value
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnComponentInComposition(componentName);
-        PropertiesAssignmentVerificator.validatePropertyValue(propertyName,validationValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(propertyName, validationValue);
     }
-
 
 
     //ChangeVersion tests - validating service property values after changing VFi version on service
     @DataProvider(name = "assetFilesServiceProperties", parallel = false)
     public Object[][] createDataServiceProp() {
-        return new Object[][] {
-                {"max_instances", "", "111", "111"} , //edit service prop value, update with original empty value, keep user value after update
+        return new Object[][]{
+                {"max_instances", "", "111", "111"}, //edit service prop value, update with original empty value, keep user value after update
                 {"nfc_naming_code", "virc_fe_be", "updated_by_designer", "virc_fe_be"}}; //edit service prop value, update with original value, set original value after update
     }
 
-    @Test (dataProvider = "assetFilesServiceProperties")
-    public void changeVfiVersionServicePropertyEditValueTest(String propertyName, String origValue, String updValue, String expectedValue) throws Throwable{
+    @Test(dataProvider = "assetFilesServiceProperties")
+    public void changeVfiVersionServicePropertyEditValueTest(String propertyName, String origValue, String updValue, String expectedValue) throws Throwable {
         setLog(propertyName);
         String vnfFile = "vIRC_FE_BE.zip";
         String componentName = "abstract_virc_fe_be_1";
@@ -244,7 +260,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -257,8 +273,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -290,7 +306,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -303,8 +319,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -334,7 +350,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -343,8 +359,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -367,7 +383,6 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
     }
 
 
-
     //ChangeVersion tests - validating service input values after changing VFi version on service
     @Test
     public void changeVfiServiceInputEditValueTest() throws Throwable {
@@ -382,7 +397,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -398,8 +413,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -407,8 +422,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         viewServiceProperties(serviceReqDetails);
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(inputName), propertyValue);
         findAndDeclareServiceProperty(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName,propertyName), propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, update input value and check in - v0.2
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
@@ -427,12 +442,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
         CompositionPage.moveToPropertiesScreen();
         PropertiesAssignmentPage.isPropertyChecked(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
-                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName ));
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
+                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName));
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValueUpd);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValueUpd);
     }
 
     @Test
@@ -447,7 +462,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -456,8 +471,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -470,8 +485,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
         PropertiesAssignmentPage.clickOnDeclareButton();
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldServiceLevel(componentInstance, propertyName),
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldServiceLevel(componentInstance, propertyName),
                         updValue);
 
 //        //Checkout VF and check in - v0.2
@@ -488,8 +503,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                 PropertyNameBuilder.buildServiceDeclaredPropValueServiceLevel(componentInstance, propertyName));
         PropertiesAssignmentPage.isPropertyChecked(propertyName);
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validateBooleanPropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldServiceLevel(componentInstance, propertyName),
+        PropertiesAssignmentVerificator.validateBooleanPropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldServiceLevel(componentInstance, propertyName),
                         origValue);
     }
 
@@ -505,7 +520,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -521,8 +536,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -530,8 +545,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         viewServiceProperties(serviceReqDetails);
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(inputName), propertyValue);
         findAndDeclareServiceProperty(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName,propertyName), propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, update input value and check in - v0.2
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
@@ -549,12 +564,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
         CompositionPage.moveToPropertiesScreen();
         PropertiesAssignmentPage.isPropertyChecked(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
-                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName ));
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
+                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName));
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
     }
 
     @Test
@@ -569,7 +584,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -582,8 +597,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -591,8 +606,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         viewServiceProperties(serviceReqDetails);
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(inputName), "");
         findAndDeclareServiceProperty(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName,propertyName), "");
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), "");
 
         //Checkout VF, update input value and check in - v0.2
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
@@ -610,12 +625,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
         CompositionPage.moveToPropertiesScreen();
         PropertiesAssignmentPage.isPropertyChecked(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
-                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName ));
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServicePropertyValue(componentName, propertyName),
+                        PropertyNameBuilder.buildServiceDeclaredPropertyValue(componentInstance, componentName, propertyName));
         PropertiesAssignmentPage.clickOnInputTab();
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
     }
 
     @Test
@@ -630,7 +645,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -646,8 +661,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
@@ -655,8 +670,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         viewServiceProperties(serviceReqDetails);
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildSimpleField(inputName), propertyValue);
         findAndDeclareServiceProperty(inputName);
-        PropertiesAssignmentVerificator.validatePropertyValue
-                (PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName,propertyName), propertyValue);
+        PropertiesAssignmentVerificator.validatePropertyValue(
+                PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, delete input  and check in - v0.2
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
@@ -678,7 +693,6 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnInputTab();
         assertTrue(GeneralUIUtils.isElementInvisibleByTestId(PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName)));
     }
-
 
 
     //ChangeVersion test - validating VF input values after changing VFCi version on VF
@@ -783,7 +797,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -792,8 +806,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService
-                (serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+                serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         GeneralUIUtils.findComponentAndClick(service.getName());
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -810,7 +824,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
 
         //Checkout and check in VF - v0.2
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        resource = (Resource)  AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Change VFi version on Service canvas - v0.2
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
@@ -828,14 +842,14 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         DeploymentArtifactPage.clickCloseEnvParameters();
 
         //Check out VF, delete heatparam value, check in VF - v0.3
-        resource = (Resource)  AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.findComponentAndClick(resource.getName());
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
         DeploymentArtifactPage.clickEditEnvArtifact(artifactName);
         DeploymentArtifactPage.clickOnDeleteHeatParamValue(heatParamName);
         DeploymentArtifactPage.clickSaveEnvParameters();
-        resource = (Resource)  AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Change VFi version on Service canvas - v0.3
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
@@ -895,6 +909,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.getLeftMenu().moveToPropertiesAssignmentScreen();
         PropertiesAssignmentPage.clickOnInputTab();
     }
+
     @Override
     protected UserRoleEnum getRole() {
         return UserRoleEnum.DESIGNER;

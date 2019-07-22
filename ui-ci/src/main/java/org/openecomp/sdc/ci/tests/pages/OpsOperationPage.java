@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,122 +34,127 @@ import java.util.List;
 
 public class OpsOperationPage {
 
-	public OpsOperationPage() {
-		super();
-	}
+    private static final int WEB_DRIVER_TIME_OUT = 90;
+    private static final int MAX_WAITING_PERIOD_MS = 5 * 60 * 1000;
+    private static final int NAP_PERIOD = 10000;
+    private static final int MAX_WAITING_PERIOF_DIVIDER = 1000;
 
-	public static void distributeService() {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Distributing");
-		clickOnButton(DataTestIdEnum.DistributionChangeButtons.DISTRIBUTE);
-		GeneralUIUtils.waitForLoader();
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.MONITOR.getValue());
-	}
+    private OpsOperationPage() {
+        super();
+    }
 
-	public static void displayMonitor() {
-		GeneralUIUtils.moveToStep(StepsEnum.MONITOR);
-	}
+    public static void distributeService() {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Distributing");
+        clickOnButton(DataTestIdEnum.DistributionChangeButtons.DISTRIBUTE);
+        GeneralUIUtils.waitForLoader();
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.MONITOR.getValue());
+    }
 
-	public static void re_distributeService() {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Redistributing...");
-		clickOnButton(DataTestIdEnum.DistributionChangeButtons.RE_DISTRIBUTE);
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.MONITOR.getValue());
-	}
+    public static void displayMonitor() {
+        GeneralUIUtils.moveToStep(StepsEnum.MONITOR);
+    }
 
-	private static void clickOnButton(DataTestIdEnum.DistributionChangeButtons button) {
-		GeneralUIUtils.getWebElementByTestID(button.getValue()).click();
-		GeneralUIUtils.waitForLoader();
-	}
+    public static void reDistributeService() {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Redistributing...");
+        clickOnButton(DataTestIdEnum.DistributionChangeButtons.RE_DISTRIBUTE);
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.MONITOR.getValue());
+    }
 
-	public static List<WebElement> getRowsFromMonitorTable() {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Counting the rows from the distribution table");
-		GeneralPageElements.checkElementsCountInTable(1, () -> GeneralUIUtils.getWebElementsListByTestID("ditributionTable"));
-		List<WebElement> distributionRecords = GeneralUIUtils.getWebElementsListByTestID("ditributionTable");
-		List<WebElement> findElements = distributionRecords.get(0).findElements(By.className("w-sdc-distribute-parent-block"));
-		return findElements;
-	}
+    private static void clickOnButton(DataTestIdEnum.DistributionChangeButtons button) {
+        GeneralUIUtils.getWebElementByTestID(button.getValue()).click();
+        GeneralUIUtils.waitForLoader();
+    }
 
-	public static void showDistributionStatus(int rowIndex) {
-		GeneralUIUtils.getWebElementByTestID("ShowRecordButton_" + String.valueOf(rowIndex)).click();
-		GeneralUIUtils.waitForLoader();
-	}
+    public static List<WebElement> getRowsFromMonitorTable() {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Counting the rows from the distribution table");
+        GeneralPageElements.checkElementsCountInTable(1, () -> GeneralUIUtils.getWebElementsListByTestID("ditributionTable"));
+        List<WebElement> distributionRecords = GeneralUIUtils.getWebElementsListByTestID("ditributionTable");
+        List<WebElement> findElements = distributionRecords.get(0).findElements(By.className("w-sdc-distribute-parent-block"));
+        return findElements;
+    }
 
-	public static String getTotalArtifactsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("totalArtifacts_" + String.valueOf(rowIndex)).getText();
-	}
+    public static void showDistributionStatus(int rowIndex) {
+        GeneralUIUtils.getWebElementByTestID("ShowRecordButton_" + String.valueOf(rowIndex)).click();
+        GeneralUIUtils.waitForLoader();
+    }
 
-	public static String getNotifiedArtifactsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("notified_" + String.valueOf(rowIndex)).getText();
-	}
+    public static String getTotalArtifactsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("totalArtifacts_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static String getDownloadedArtifactsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("downloaded_" + String.valueOf(rowIndex)).getText();
-	}
+    public static String getNotifiedArtifactsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("notified_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static String getDeployedArtifactsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("deployed_" + String.valueOf(rowIndex)).getText();
-	}
+    public static String getDownloadedArtifactsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("downloaded_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static String getNotNotifiedArtifactsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("NotNotified_" + String.valueOf(rowIndex)).getText();
-	}
+    public static String getDeployedArtifactsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("deployed_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static String getErrorsSum(int rowIndex) {
-		return GeneralUIUtils.getWebElementByTestID("errors_" + String.valueOf(rowIndex)).getText();
-	}
+    public static String getNotNotifiedArtifactsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("NotNotified_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static void clickRefreshTableButton(int rowIndex) {
-		GeneralUIUtils.getWebElementByTestID("refreshButton").click();
-		// wait until total artifacts field disappear
-		WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), 90);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@data-tests-id='" + "totalArtifacts_" + String.valueOf(rowIndex) + "']")));
-	}
+    public static String getErrorsSum(int rowIndex) {
+        return GeneralUIUtils.getWebElementByTestID("errors_" + String.valueOf(rowIndex)).getText();
+    }
 
-	public static void waitUntilArtifactsDistributed(int rowIndex) throws Exception {
-		waitUntilArtifactsDistributed("0", 0);
-	}
+    public static void clickRefreshTableButton(int rowIndex) {
+        GeneralUIUtils.getWebElementByTestID("refreshButton").click();
+        // wait until total artifacts field disappear
+        WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), WEB_DRIVER_TIME_OUT);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@data-tests-id='" + "totalArtifacts_" + String.valueOf(rowIndex) + "']")));
+    }
 
-	public static void waitUntilArtifactsDistributed(String expectedArtifactsSum, int rowIndex) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Waiting until all artifacts are distributed");
-		boolean isKeepWaiting = true;
-		int maxWaitingPeriodMS = 5 * 60 * 1000;
-		int sumWaitingTime = 0;
-		int napPeriod = 10000;
-		while (isKeepWaiting) {
-			showDistributionStatus(rowIndex);
-			String actualTotalArtifactsSize = getTotalArtifactsSum(rowIndex);
-			String actualNotifiedArtifactsSize = getNotifiedArtifactsSum(rowIndex);
-			String actualDownloadedArtifactsSize = getDownloadedArtifactsSum(rowIndex);
-			String actualDeployedArtifactsSize = getDeployedArtifactsSum(rowIndex);
-			String actualNotNotifedArtifactsSize = getNotNotifiedArtifactsSum(rowIndex);
-			isKeepWaiting = !actualTotalArtifactsSize.equals(actualDownloadedArtifactsSize)
-					|| !actualTotalArtifactsSize.equals(actualNotifiedArtifactsSize)
-					|| !actualTotalArtifactsSize.equals(actualDeployedArtifactsSize)
-					|| actualTotalArtifactsSize.equals("0") || actualDownloadedArtifactsSize.equals("0")
-					|| actualNotifiedArtifactsSize.equals("0") || actualDeployedArtifactsSize.equals("0");
-			
-			if (isKeepWaiting) {
+    public static void waitUntilArtifactsDistributed(int rowIndex) throws Exception {
+        waitUntilArtifactsDistributed("0", 0);
+    }
 
-				if (Integer.parseInt(actualNotNotifedArtifactsSize) > 1) {
-					SetupCDTest.getExtendTest().log(Status.INFO, "Some artifacts are not notified");
-					isKeepWaiting = false;
-					throw new Exception("Some artifacts are not notified...");
-				}
+    public static void waitUntilArtifactsDistributed(String expectedArtifactsSum, int rowIndex) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Waiting until all artifacts are distributed");
+        boolean isKeepWaiting = true;
+        int maxWaitingPeriodMS = MAX_WAITING_PERIOD_MS;
+        int sumWaitingTime = 0;
+        int napPeriod = NAP_PERIOD;
+        while (isKeepWaiting) {
+            showDistributionStatus(rowIndex);
+            String actualTotalArtifactsSize = getTotalArtifactsSum(rowIndex);
+            String actualNotifiedArtifactsSize = getNotifiedArtifactsSum(rowIndex);
+            String actualDownloadedArtifactsSize = getDownloadedArtifactsSum(rowIndex);
+            String actualDeployedArtifactsSize = getDeployedArtifactsSum(rowIndex);
+            String actualNotNotifedArtifactsSize = getNotNotifiedArtifactsSum(rowIndex);
+            isKeepWaiting = !actualTotalArtifactsSize.equals(actualDownloadedArtifactsSize)
+                    || !actualTotalArtifactsSize.equals(actualNotifiedArtifactsSize)
+                    || !actualTotalArtifactsSize.equals(actualDeployedArtifactsSize)
+                    || actualTotalArtifactsSize.equals("0") || actualDownloadedArtifactsSize.equals("0")
+                    || actualNotifiedArtifactsSize.equals("0") || actualDeployedArtifactsSize.equals("0");
 
-				GeneralUIUtils.sleep(napPeriod);
-				sumWaitingTime += napPeriod;
+            if (isKeepWaiting) {
 
-				if (sumWaitingTime > maxWaitingPeriodMS) {
-					SetupCDTest.getExtendTest().log(Status.INFO, "Not all artifacts are displayed");
-					isKeepWaiting = false;
-					throw new Exception(String.format("Not all artifacts are displayed withing %s seconds",
-							String.valueOf(maxWaitingPeriodMS / 1000)));
-				}
+                if (Integer.parseInt(actualNotNotifedArtifactsSize) > 1) {
+                    SetupCDTest.getExtendTest().log(Status.INFO, "Some artifacts are not notified");
+                    isKeepWaiting = false;
+                    throw new Exception("Some artifacts are not notified...");
+                }
 
-				clickRefreshTableButton(rowIndex);
-			}
-		}
+                GeneralUIUtils.sleep(napPeriod);
+                sumWaitingTime += napPeriod;
 
-		SetupCDTest.getExtendTest().log(Status.INFO, "All artifacts were successfully distributed");
-	}
+                if (sumWaitingTime > maxWaitingPeriodMS) {
+                    SetupCDTest.getExtendTest().log(Status.INFO, "Not all artifacts are displayed");
+                    isKeepWaiting = false;
+                    throw new Exception(String.format("Not all artifacts are displayed withing %s seconds",
+                            String.valueOf(maxWaitingPeriodMS / MAX_WAITING_PERIOF_DIVIDER)));
+                }
+
+                clickRefreshTableButton(rowIndex);
+            }
+        }
+
+        SetupCDTest.getExtendTest().log(Status.INFO, "All artifacts were successfully distributed");
+    }
 
 }

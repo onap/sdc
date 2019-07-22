@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,80 +31,80 @@ import java.util.List;
 
 public class OnbordingDataProviders {
 
-	protected static String filepath = FileHandling.getVnfRepositoryPath();
+    private static final int NUMBER_OF_RANDOMLY_ONBOARD_VNF = 3;
+    protected static String filepath = FileHandling.getVnfRepositoryPath();
 
-//	-----------------------dataProviders-----------------------------------------	
-	@DataProvider(name = "randomVNF_List", parallel = false)
-	private static final Object[][] randomVnfList() throws Exception {
-		int randomElementNumber = 3; //how many VNFs to onboard randomly
-		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-		List<String> newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
-		System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.size()));
-		return provideData(newRandomFileNamesFromFolder, filepath);
-	}
-	
-	@DataProvider(name = "VNF_List" , parallel = true)
-	private static final Object[][] VnfList() throws Exception {
-		
-		List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+    //	-----------------------dataProviders-----------------------------------------
+    @DataProvider(name = "randomVNF_List", parallel = false)
+    private static Object[][] randomVnfList() throws Exception {
+        int randomElementNumber = NUMBER_OF_RANDOMLY_ONBOARD_VNF; //how many VNFs to onboard randomly
+        List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
+        List<String> newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
+        System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.size()));
+        return provideData(newRandomFileNamesFromFolder, filepath);
+    }
 
-		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
-		return provideData(fileNamesFromFolder, filepath);
-	}
+    @DataProvider(name = "VNF_List", parallel = true)
+    private static Object[][] VnfList() throws Exception {
 
-	@DataProvider(name = "updateList")
-	private static final Object[][] updateList() throws Exception {
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
 
-		Object[][] objectArr = new Object[2][];
+        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, filepath);
+    }
 
-		Object[][] filteredArObject = null;
+    @DataProvider(name = "updateList")
+    private static Object[][] updateList() throws Exception {
 
-		objectArr[0] = new Object[]{ "1-2016-20-visbc3vf-(VOIP)_v2.1.zip", "2-2016-20-visbc3vf-(VOIP)_v2.1_RenameResourceToShay.zip" };
-		objectArr[1] = new Object[]{ "1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip", "2-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0_Added2TestParameters.zip" };
+        Object[][] objectArr = new Object[2][];
 
-		filteredArObject = OnboardingUtils.filterObjectArrWithExcludedVnfs(objectArr);
+        Object[][] filteredArObject = null;
 
-		return filteredArObject;
+        objectArr[0] = new Object[]{"1-2016-20-visbc3vf-(VOIP)_v2.1.zip", "2-2016-20-visbc3vf-(VOIP)_v2.1_RenameResourceToShay.zip"};
+        objectArr[1] = new Object[]{"1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip", "2-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0_Added2TestParameters.zip"};
+
+        filteredArObject = OnboardingUtils.filterObjectArrWithExcludedVnfs(objectArr);
+
+        return filteredArObject;
 
 
-	}
+    }
 
-	//	-----------------------factories-----------------------------------------
+    //	-----------------------factories-----------------------------------------
 //	@Factory(dataProvider = "VNF_List")
 //	public Object[] OnbordingDataProviders(String filepath, String vnfFile){
 //		return new Object[] { new ToscaValidationTest(filepath, vnfFile)};
 //	}
-	
-	
-	
-//	-----------------------methods-----------------------------------------
-	public static Object[][] provideData(List<String> fileNamesFromFolder, String filepath) {
-		
-		Object[][] arObject = new Object[fileNamesFromFolder.size()][];
-		int index = 0;
-		for (Object obj : fileNamesFromFolder) {
-			arObject[index++] = new Object[] { filepath, obj };
-		}
-		return arObject;
-	}
-	
-	public static List<String> getRandomElements(int randomElementNumber, List<String> fileNamesFromFolder) {
-		if(fileNamesFromFolder.size() == 0 || fileNamesFromFolder.size() < randomElementNumber){
-			return null;
-		}else{
-			List<Integer> indexList = new ArrayList<>();
-			List<String> newRandomFileNamesFromFolder = new ArrayList<>(); 
-			for(int i = 0; i < fileNamesFromFolder.size(); i++){
-				indexList.add(i);
-			}
-			Collections.shuffle(indexList);
-			Integer[] randomArray = indexList.subList(0, randomElementNumber).toArray(new Integer[randomElementNumber]);
-			for(int i = 0; i < randomArray.length; i++){
-				newRandomFileNamesFromFolder.add(fileNamesFromFolder.get(randomArray[i]));
-			}
-			return newRandomFileNamesFromFolder;
-		}
-	}
+
+
+    //	-----------------------methods-----------------------------------------
+    static Object[][] provideData(List<String> fileNamesFromFolder, String filepath) {
+
+        Object[][] arObject = new Object[fileNamesFromFolder.size()][];
+        int index = 0;
+        for (Object obj : fileNamesFromFolder) {
+            arObject[index++] = new Object[]{filepath, obj};
+        }
+        return arObject;
+    }
+
+    static List<String> getRandomElements(int randomElementNumber, List<String> fileNamesFromFolder) {
+        if (fileNamesFromFolder.size() == 0 || fileNamesFromFolder.size() < randomElementNumber) {
+            return null;
+        } else {
+            List<Integer> indexList = new ArrayList<>();
+            List<String> newRandomFileNamesFromFolder = new ArrayList<>();
+            for (int i = 0; i < fileNamesFromFolder.size(); i++) {
+                indexList.add(i);
+            }
+            Collections.shuffle(indexList);
+            Integer[] randomArray = indexList.subList(0, randomElementNumber).toArray(new Integer[randomElementNumber]);
+            for (Integer integer : randomArray) {
+                newRandomFileNamesFromFolder.add(fileNamesFromFolder.get(integer));
+            }
+            return newRandomFileNamesFromFolder;
+        }
+    }
 
 
 //	private static String[][] arrangeFilesVersionPairs(List<String> filesArr) {
