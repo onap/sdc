@@ -16,6 +16,24 @@
       "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92921275_fc610575",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-07-23T11:52:28Z",
+      "side": 1,
+      "message": "Yes, you have point here, using pure reflection can cause many errors in the production code.\nOne is that you can\u0027t capture errors in the compilation time, and the code is very sensitive to modification. But in this case reflection is used in the tests suits, so this modification is easier to track and based on working code.\n\nThe main goal of this commit is getting rid of powermock and use only one mocking framework (mockito) - topic start by Ofir in SDC weekly. So I investigated this issue and I see only three-way of clean the static content in the tests suits (to achieve that the tests did not affect to each other):\n1. Using powermock annotation - another framework to use (current solution).\n2. Using reflection - mention errors (this commit).\n3. Have the method in the tested class to clean these variables (future refactoring) - but this assumes changes in production code only for tests and this is in my opinion not a good idea.\n\nBut the task SDC-2473 assumes investigation the options of removes powermock, and this is my proposition.\n\nWhat do you think?",
+      "parentUuid": "4b96ad00_a397bc28",
+      "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
