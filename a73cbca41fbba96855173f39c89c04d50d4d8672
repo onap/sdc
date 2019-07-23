@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7aadd19_a6ac030b",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/impl/FSConfigurationSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-23T06:51:11Z",
+      "side": 1,
+      "message": "if we have a guava package here we could use CaseFormat",
+      "revId": "a73cbca41fbba96855173f39c89c04d50d4d8672",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
