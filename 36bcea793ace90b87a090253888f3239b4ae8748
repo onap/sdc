@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b96ad00_a397bc28",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-23T10:50:26Z",
+      "side": 1,
+      "message": "Using of pure reflection is even worse than using PowerMock itself. Generally most problems of powermock refers to the fact that powermock is based on the dedicated class-loaders and bytecode manipulations to enable mocking of static content. Please consider bigger refactor to avoid use of reflection in any kind.",
+      "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
