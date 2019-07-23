@@ -34,6 +34,24 @@
       "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35e746f4_0ff4cfc6",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-23T13:11:43Z",
+      "side": 1,
+      "message": "Well your point of view seems to be reasonable but I still dont want to agree for such solution. I understand that You try to do small-step here but IMO it looks like we are trying to sidestep of changing bad architecture. I understand that You dont want to modify existing approach but it could be the right and only time to fix these problems (I suppose that fixing bad-designed ValidationConfigManager and ReportManager will be improvement not only for unit tests but also for future refactoring).",
+      "parentUuid": "92921275_fc610575",
+      "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
