@@ -16,10 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.common.impl;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
@@ -32,10 +36,10 @@ import org.openecomp.sdc.common.util.YamlToObjectConverter;
  */
 public class FSConfigurationSource implements ConfigurationSource {
 
-    private YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
+    private final YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
 
-    private ConfigFileChangeListener changeListener = null;
-    private String appConfigDir = null;
+    private final ConfigFileChangeListener changeListener;
+    private final String appConfigDir;
 
     public FSConfigurationSource(ConfigFileChangeListener changeListener, String appConfigDir) {
         super();
@@ -81,34 +85,15 @@ public class FSConfigurationSource implements ConfigurationSource {
      * @param className
      * @return file name based on the class name
      */
-    private static <T> String calculateFileName(Class<T> className) {
-
+    static <T> String calculateFileName(Class<T> className) {
         String[] words = className.getSimpleName().split("(?=\\p{Upper})");
 
-        StringBuilder builder = new StringBuilder();
-
-        // There cannot be a null value returned from "split" - words != null is
-        // redundant
-        // if (words != null) {
-        boolean isFirst = true;
-        for (int i = 0; i < words.length; i++) {
-
-            String word = words[i];
-            if (word != null && !word.isEmpty()) {
-                if (!isFirst) {
-                    builder.append("-");
-                } else {
-                    isFirst = false;
-                }
-                builder.append(words[i].toLowerCase());
-            }
-        }
-        return builder.toString() + Constants.YAML_SUFFIX;
-
-        /*
-         * } else { return className.getSimpleName().toLowerCase() + Constants.YAML_SUFFIX; }
-         */
-
+        return Arrays.stream(words)
+            .map(String::toLowerCase)
+            .collect(Collectors.collectingAndThen(
+                Collectors.joining("-"),
+                str -> str + Constants.YAML_SUFFIX)
+            );
     }
 
 }
