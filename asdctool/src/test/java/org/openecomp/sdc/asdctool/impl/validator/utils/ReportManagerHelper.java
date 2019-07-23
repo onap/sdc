@@ -22,8 +22,10 @@ package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,12 @@ public class ReportManagerHelper {
         return readFileAsList(ValidationConfigManager.getCsvReportFilePath());
     }
 
-    public static void cleanReports() {
+    public static void clean(){
+        cleanReports();
+        resetStatic();
+    }
+
+    private static void cleanReports() {
         cleanFile(ValidationConfigManager.getCsvReportFilePath());
         cleanFile(ValidationConfigManager.getOutputFullFilePath());
     }
@@ -59,6 +66,33 @@ public class ReportManagerHelper {
         try {
             Files.delete(Paths.get(filePath));
         } catch (IOException ignored) {
+
+        }
+    }
+
+    private static void resetStatic() {
+        resetValidationConfigManagerField("csvReportFilePath", "summary.csv");
+        resetValidationConfigManagerField("outputFullFilePath", null);
+        resetReportManagerField("failedVerticesPerTask");
+        resetReportManagerField("resultsPerVertex");
+    }
+
+    private static void resetValidationConfigManagerField(String fieldName, String value) {
+        try {
+            Field field = ValidationConfigManager.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(null, value);
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+
+        }
+    }
+
+    private static void resetReportManagerField(String fieldName) {
+        try {
+            Field field = ReportManager.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(null, new HashMap<>());
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
 
         }
     }

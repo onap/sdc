@@ -21,15 +21,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Properties;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ValidationConfigManagerTest {
 
     @Test

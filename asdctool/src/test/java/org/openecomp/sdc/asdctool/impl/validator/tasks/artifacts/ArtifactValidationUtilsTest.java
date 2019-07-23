@@ -60,13 +60,8 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 import fj.data.Either;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
+@RunWith(MockitoJUnitRunner.class)
 public class ArtifactValidationUtilsTest {
     
     @Mock
@@ -119,7 +114,7 @@ public class ArtifactValidationUtilsTest {
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports();
+        ReportManagerHelper.clean();
     }
 
     @Test

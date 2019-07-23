@@ -40,13 +40,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
+@RunWith(MockitoJUnitRunner.class)
 public class ReportManagerTest {
 
     private static final String VERTEX_1_ID = "testID1";
@@ -91,7 +86,7 @@ public class ReportManagerTest {
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports();
+        ReportManagerHelper.clean();
     }
 
     @Test
