@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Piotr Darosz <piotr.darosz@nokia.com>
+Code-Review+2: Tomasz Golabek <tomasz.golabek@nokia.com>
+Submitted-by: Tomasz Golabek <tomasz.golabek@nokia.com>
+Submitted-at: Wed, 24 Jul 2019 06:28:17 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/91865
+Project: sdc
+Branch: refs/heads/master
