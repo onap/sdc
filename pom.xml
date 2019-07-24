@@ -116,6 +116,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <extentreports.version>3.0.3</extentreports.version>
         <cucumber.version>2.4.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
+        <hamcrest.version>2.1</hamcrest.version>
         <hamcrest-all.version>1.3</hamcrest-all.version>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
         <junit-vintage.version>5.4.0</junit-vintage.version>

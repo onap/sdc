@@ -111,11 +111,15 @@ public enum Messages {
   MISSING_DEFINITION_FILE("Definition file %s referenced in TOSCA.meta does not exist"),
   MISSING_IMPORT_FILE("Package must contain the referenced import file '%s'"),
   INVALID_IMPORT_STATEMENT("Definition file '%s' contains an invalid import statement: '%s'"),
+  INVALID_YAML_EXTENSION("Expecting yaml or yml extension for file: %s"),
+
 
   /* content errors*/
-  INVALID_YAML_FORMAT("Invalid YAML format - %s"),
+  INVALID_YAML_FORMAT("Invalid YAML format: %s"),
+  INVALID_YAML_FORMAT_1("Invalid YAML format in file '%s'. Format error:%n%s"),
   INVALID_YAML_FORMAT_REASON("Invalid YAML format Problem - [%s]"),
   EMPTY_YAML_FILE("empty yaml"),
+  EMPTY_YAML_FILE_1("The yaml file '%s' is empty"),
   GENERAL_YAML_PARSER_ERROR("general parser error"),
   GENERAL_HEAT_PARSER_ERROR("general parser error"),
   INVALID_HEAT_FORMAT_REASON("Invalid HEAT format problem - [%s]"),

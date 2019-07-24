@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -109,8 +111,8 @@ public class ManifestBuilderTest {
         mockManifestSource();
 
         final Map<String, List<String>> expectedNonManoArtifactMap = new TreeMap<>();
-        expectedNonManoArtifactMap.put("onap_ves_events", Arrays.asList("Files/Events/MyPnf_Pnf_v1.yaml"));
-        expectedNonManoArtifactMap.put("onap_pm_dictionary", Arrays.asList("Files/Measurements/PM_Dictionary.yaml"));
+        expectedNonManoArtifactMap.put(ONAP_VES_EVENTS.getType(), Arrays.asList("Files/Events/MyPnf_Pnf_v1.yaml"));
+        expectedNonManoArtifactMap.put(ONAP_PM_DICTIONARY.getType(), Arrays.asList("Files/Measurements/PM_Dictionary.yaml"));
         expectedNonManoArtifactMap.put("onap_yang_modules",
             Arrays.asList("Files/Yang_module/mynetconf.yang", "Files/Yang_module/mynetconf2.yang"));
         expectedNonManoArtifactMap
