@@ -93,6 +93,7 @@ public class ResourceInstanceBusinessLogicTest extends BaseBusinessLogicMock {
         forwardingPathOperation, serviceFilterOperation, artifactToscaOperation);
 
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @Before
     public void setUp() throws Exception {
