@@ -30,6 +30,8 @@ class TestConstants {
     public static final String TOSCA_DEFINITION_FILEPATH = "Definitions/MainServiceTemplate.yaml";
     public static final String TOSCA_MANIFEST_FILEPATH = "Definitions/MainServiceTemplate.mf";
     public static final String TOSCA_CHANGELOG_FILEPATH = "Artifacts/changeLog.text";
+    public static final String EMPTY_YAML_FILE_PATH = "/validation.files/empty.yaml";
+    public static final String INVALID_YAML_FILE_PATH = "/validation.files/invalid.yaml";
 
     private TestConstants(){
 

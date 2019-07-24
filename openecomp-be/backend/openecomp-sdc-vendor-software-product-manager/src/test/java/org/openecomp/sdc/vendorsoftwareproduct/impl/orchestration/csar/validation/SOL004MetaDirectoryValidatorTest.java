@@ -38,6 +38,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -60,6 +61,8 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PROVIDER_ID;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PACKAGE_VERSION;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_RELEASE_DATE_TIME;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.*;
 
 public class SOL004MetaDirectoryValidatorTest {
@@ -130,7 +133,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, folderList);
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     @Test
@@ -141,7 +144,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
         List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         assertTrue(errors.size() == 1 && errorMessages.size() == 1);
-        assertTrue(errorMessages.get(0).getLevel() == ErrorLevel.ERROR);
+        assertSame(ErrorLevel.ERROR, errorMessages.get(0).getLevel());
     }
 
     /**
@@ -209,7 +212,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     @Test
@@ -241,7 +244,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     @Test
@@ -345,14 +348,14 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_DEFINITION_IMPORT_FILE_PATH);
 
         final String nonManoSource = "Artifacts/Deployment/Measurements/PM_Dictionary.yaml";
-        handler.addFile(nonManoSource, "".getBytes());
-        manifestBuilder.withNonManoArtifact("onap_pm_events", nonManoSource);
+        handler.addFile(nonManoSource, getResourceBytes("/validation.files/measurements/pmEvents-valid.yaml"));
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoSource);
 
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     /**
@@ -377,8 +380,8 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_DEFINITION_IMPORT_FILE_PATH);
 
         String nonManoSource = "Artifacts/Deployment/Measurements/PM_Dictionary.yaml";
-        handler.addFile(nonManoSource, "".getBytes());
-        manifestBuilder.withNonManoArtifact("onap_pm_events", nonManoSource);
+        handler.addFile(nonManoSource, getResourceBytes("/validation.files/measurements/pmEvents-valid.yaml"));
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoSource);
 
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
@@ -422,7 +425,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertTrue(errors.size() == 0);
+        assertEquals(0, errors.size());
     }
 
     /**
@@ -687,7 +690,7 @@ public class SOL004MetaDirectoryValidatorTest {
      * Tests an imported descriptor with a missing imported file.
      */
     @Test
-    public void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() throws IOException {
+    public void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
@@ -757,6 +760,150 @@ public class SOL004MetaDirectoryValidatorTest {
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
+    @Test
+    public void givenManifestWithNonManoPmAndVesArtifacts_whenNonManoArtifactsAreValid_thenNoErrorsOccur() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        final String nonManoPmEventsSource = "Artifacts/Deployment/Measurements/PM_Dictionary.yaml";
+        handler.addFile(nonManoPmEventsSource, getResourceBytes("/validation.files/measurements/pmEvents-valid.yaml"));
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoPmEventsSource);
+
+        final String nonManoVesEventsSource = "Artifacts/Deployment/Events/ves_events.yaml";
+        handler.addFile(nonManoVesEventsSource, getResourceBytes("/validation.files/events/vesEvents-valid.yaml"));
+        manifestBuilder.withNonManoArtifact(ONAP_VES_EVENTS.getType(), nonManoVesEventsSource);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
+            .validateContent(handler, Collections.emptyList());
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), Collections.emptyList());
+    }
+
+    @Test
+    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreInvalid_thenInvalidYamlErrorOccur() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        final String nonManoPmEventsSource = "Artifacts/Deployment/Measurements/PM_Dictionary.yaml";
+        handler.addFile(nonManoPmEventsSource, getResourceBytes(INVALID_YAML_FILE_PATH));
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoPmEventsSource);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final List<ErrorMessage> expectedErrorList = new ArrayList<>();
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.INVALID_YAML_FORMAT_1.formatMessage(nonManoPmEventsSource, "while scanning a simple key\n"
+            + " in 'reader', line 2, column 1:\n"
+            + "    key {}\n"
+            + "    ^\n"
+            + "could not find expected ':'\n"
+            + " in 'reader', line 2, column 7:\n"
+            + "    {}\n"
+            + "      ^\n"))
+        );
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
+            .validateContent(handler, Collections.emptyList());
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+    }
+
+    @Test
+    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreEmpty_thenEmptyYamlErrorOccur() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        final String nonManoPmEventsSource = "Artifacts/Deployment/Measurements/PM_Dictionary.yaml";
+        handler.addFile(nonManoPmEventsSource, getResourceBytes(EMPTY_YAML_FILE_PATH));
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoPmEventsSource);
+
+        final String nonManoVesEventsSource = "Artifacts/Deployment/Events/ves_events.yaml";
+        handler.addFile(nonManoVesEventsSource, getResourceBytes(EMPTY_YAML_FILE_PATH));
+        manifestBuilder.withNonManoArtifact(ONAP_VES_EVENTS.getType(), nonManoVesEventsSource);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final List<ErrorMessage> expectedErrorList = new ArrayList<>();
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.EMPTY_YAML_FILE_1.formatMessage(nonManoPmEventsSource))
+        );
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.EMPTY_YAML_FILE_1.formatMessage(nonManoVesEventsSource))
+        );
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
+            .validateContent(handler, Collections.emptyList());
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+    }
+
+    @Test
+    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsHaveNotYamlExtension_thenInvalidYamlExtensionErrorOccur() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        final String nonManoPmEventsSource = "Artifacts/Deployment/Measurements/PM_Dictionary.y1";
+        handler.addFile(nonManoPmEventsSource, "".getBytes());
+        manifestBuilder.withNonManoArtifact(ONAP_PM_DICTIONARY.getType(), nonManoPmEventsSource);
+
+        final String nonManoVesEventsSource = "Artifacts/Deployment/Events/ves_events.y2";
+        handler.addFile(nonManoVesEventsSource, "".getBytes());
+        manifestBuilder.withNonManoArtifact(ONAP_VES_EVENTS.getType(), nonManoVesEventsSource);
+
+        manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final List<ErrorMessage> expectedErrorList = new ArrayList<>();
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.INVALID_YAML_EXTENSION.formatMessage(nonManoPmEventsSource))
+        );
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+            , Messages.INVALID_YAML_EXTENSION.formatMessage(nonManoVesEventsSource))
+        );
+
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
+            .validateContent(handler, Collections.emptyList());
+
+        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+    }
+
     private void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
@@ -769,9 +916,9 @@ public class SOL004MetaDirectoryValidatorTest {
 
     private void printErrorMessages(final List<ErrorMessage> errorMessages) {
         if (CollectionUtils.isNotEmpty(errorMessages)) {
-            errorMessages.forEach(errorMessage -> {
-                System.out.println(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage()));
-            });
+            errorMessages.forEach(errorMessage ->
+                System.out.println(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage()))
+            );
         }
     }
 
@@ -807,6 +954,8 @@ public class SOL004MetaDirectoryValidatorTest {
         if (actualErrorList == null) {
             actualErrorList = new ArrayList<>();
         }
+
+        printErrorMessages(actualErrorList);
 
         assertThat("The actual error list should have the same size as the expected error list"
             , actualErrorList, hasSize(expectedErrorList.size())
