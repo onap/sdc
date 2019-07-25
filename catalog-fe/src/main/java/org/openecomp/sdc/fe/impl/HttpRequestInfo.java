@@ -20,12 +20,17 @@
 
 package org.openecomp.sdc.fe.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
 public class HttpRequestInfo {
+
+    @VisibleForTesting
+    HttpRequestInfo() {
+    }
 
     public HttpRequestInfo(HttpServletRequest request, Map<String, String> headersMap, String data) {
         headers = headersMap;

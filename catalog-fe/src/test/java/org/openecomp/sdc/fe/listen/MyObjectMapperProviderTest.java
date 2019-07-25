@@ -16,33 +16,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.fe.listen;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.Serializable;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class MyObjectMapperProviderTest {
 
-	private MyObjectMapperProvider createTestSubject() {
-		return new MyObjectMapperProvider();
+	private class AnyModel implements Serializable {
+		private String field1;
+
+		AnyModel(String field1) {
+			this.field1 = field1;
+		}
+
+		public String getField1() {
+			return field1;
+		}
 	}
 
-	
 	@Test
-	public void testGetContext() throws Exception {
-		MyObjectMapperProvider testSubject;
-		Class<?> type = null;
-		ObjectMapper result;
+	public void shouldSerializeItPretty() throws JsonProcessingException {
+		String prettyJson = "{\n"
+			+ "  \"field1\" : \"Field1\"\n"
+			+ "}";
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getContext(type);
+		ObjectMapper objectMapper = new MyObjectMapperProvider().getContext(MyObjectMapperProviderTest.class);
+		String serialized = objectMapper.writeValueAsString(new AnyModel("Field1"));
+		Assert.assertEquals(serialized, prettyJson);
 	}
-
-	
-
 }
