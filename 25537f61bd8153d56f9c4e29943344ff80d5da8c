@@ -1,0 +1,531 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7eef00ad_2cce6a62",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/UpgradeServices.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b040ec5_d9ecc5b6",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/Vf.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove it completely",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9559a84f_23292de5",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/VfArtifacts.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove it completely",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1b7855e_d9c5e72b",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/setup/ExtentTestManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove commented lines",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ecdb9e7_6ef23a0a",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/setup/MobProxy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove commented lines",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1360ed3_d4a7e6dc",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/setup/SetupCDTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31114c86_89704536",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/setup/TestFtp.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove this line and in line 52 and 45 use AttFtpClient.getFtpClient()",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "74d01daf_6483e5ff",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/setup/WebDriverThread.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove commented lines",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1bb3ce21_6e9882c0",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/AdminGeneralPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove it",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edf8dff6_ac4e8529",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/CompositionPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "shoudnt be private",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08b54d35_d4739607",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/DeploymentArtifactPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "shoudnt be private?",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05333978_af290267",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/DeploymentPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "shouldnt be private?",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b015046c_6ee6dcab",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GeneralPageElements.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04c6d8ca_a1355e33",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GeneralPageElements.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc423de0_67db3272",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GeneralPageElements.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "shoudnt be private?",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b31f43a_dd36820c",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GovernorOperationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "shouldnt be private",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "808efe13_06202dd7",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/HeatParamNameBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "should have priv constructor",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "514c0659_baafc8c9",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/HomePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c3bd738_92a63c56",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/HomePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df35d6bc_3a6ab6df",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/IconPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6288bc82_17c95955",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/InformationalArtifactPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca90cdbf_43770236",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/InputsPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba05efbb_0c3c3d99",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/OpsOperationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "privs",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cab760a7_33745007",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/OpsOperationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a21ea18_40a70f08",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/ProductGeneralPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "01e8672f_a1a6c4f2",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertiesAssignmentPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv constructor",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5217ff6_cc39e3ad",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertiesPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "private",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6732a1b6_309a850b",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertiesPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "private",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f78ab121_576d01df",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertyNameBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "private constructor",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "adf6f33f_31722880",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertyPopup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "priv",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf6b05bf_0a85114d",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/PropertyPopup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-07-25T09:36:32Z",
+      "side": 1,
+      "message": "please remove it",
+      "revId": "25537f61bd8153d56f9c4e29943344ff80d5da8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
