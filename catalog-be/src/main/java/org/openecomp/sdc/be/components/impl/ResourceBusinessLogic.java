@@ -1125,11 +1125,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String yamlContent = new String(csarInfo.getCsar().get(yamlName));
         Map<String, NodeTypeInfo> newNodeTypesInfo = nodesInfo.entrySet().stream()
                 .collect(toMap(Entry::getKey, e -> e.getValue().getUnmarkedCopy()));
-        CsarInfo.markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
         if (oldComplexVfc == null) {
             handleComplexVfcRes = createResourceFromYaml(newComplexVfc, yamlContent, yamlName, newNodeTypesInfo,
                     csarInfo, nodesArtifactsToHandle, false, true, nodeName);
         } else {
+            CsarInfo.markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
             handleComplexVfcRes = updateResourceFromYaml(oldComplexVfc, newComplexVfc,
                     AuditingActionEnum.UPDATE_RESOURCE_METADATA, createdArtifacts, yamlContent, yamlName, csarInfo,
                     newNodeTypesInfo, nodesArtifactsToHandle, nodeName, true);
