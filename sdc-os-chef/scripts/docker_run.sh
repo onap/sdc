@@ -128,6 +128,20 @@ function probe_docker {
 }
 #
 
+function probe_test_docker {
+    # This expected logging should be output by startup.sh of the
+    # respective test docker container
+    MATCH=`docker logs --tail 30 $1 | grep "Startup completed successfully"`
+    echo MATCH is -- ${MATCH}
+
+    if [ -n "$MATCH" ] ; then
+        echo TEST DOCKER start finished in $2 seconds
+        return ${SUCCESS}
+    fi
+    return ${FAILURE}
+}
+#
+
 
 function probe_es {
     health_Check_http_code=$(curl --noproxy "*" -o /dev/null -w '%{http_code}' http://${IP}:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
@@ -173,7 +187,7 @@ function monitor_docker {
                 status=$? ;
             ;;
             sdc-BE)
-       		    ready_probe ${DOCKER_NAME} ${TIME} ;
+                ready_probe ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
             sdc-FE)
@@ -182,6 +196,14 @@ function monitor_docker {
             ;;
             sdc-onboard-BE)
                 ready_probe ${DOCKER_NAME} ${TIME} ;
+                status=$? ;
+            ;;
+            sdc-api-tests)
+                probe_test_docker ${DOCKER_NAME} ${TIME};
+                status=$? ;
+            ;;
+            sdc-ui-tests)
+                probe_test_docker ${DOCKER_NAME} ${TIME};
                 status=$? ;
             ;;
             *)
