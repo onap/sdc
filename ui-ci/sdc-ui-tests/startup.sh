@@ -8,9 +8,12 @@ chef-solo -c solo.rb -E ${ENVNAME}
 rc=$?
 
 if [[ $rc != 0 ]]; then
-   echo "Sanity failed !!!"
+   echo "Startup failed !!!"
    exit $rc
 else
-   echo "completed successfully :-)"
-#   exit 0
+# Note that the output below is monitored in CSIT by
+# sdc/sdc-os-chef/scripts/docker_run.sh
+# If this text is changed, docker_run.sh check for sdc-ui-tests docker
+# startup must be adjusted accordingly!
+   echo "Startup completed successfully"
 fi
