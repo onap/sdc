@@ -75,6 +75,7 @@ export interface IComponent {
     //Component Instance API
     createComponentInstance(componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     deleteComponentInstance(componentInstanceId:string):ng.IPromise<ComponentInstance>;
+    batchDeleteComponentInstance(componentInstanceIds: Array<string>): ng.IPromise<ComponentInstance>;
     addOrUpdateInstanceArtifact(artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     deleteInstanceArtifact(artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel>;
     uploadInstanceEnvFile(artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
@@ -90,6 +91,7 @@ export interface IComponent {
 
     createRelation(link:RelationshipModel):ng.IPromise<RelationshipModel>;
     deleteRelation(link:RelationshipModel):ng.IPromise<RelationshipModel>;
+    batchDeleteRelation(relations: Array<RelationshipModel>): ng.IPromise<Array<RelationshipModel>> 
     fetchRelation(linkId:string):ng.IPromise<RelationshipModel>;
 
 
@@ -642,6 +644,30 @@ export abstract class Component implements IComponent {
         return deferred.promise;
     };
 
+    public batchDeleteComponentInstance = (componentInstanceIds: Array<string>): ng.IPromise<any> => {
+        let deferred = this.$q.defer();
+        let onSuccess = (res: any): void => {
+            let onSuccess = (component: Component): void => {
+                this.componentInstances = CommonUtils.initComponentInstances(component.componentInstances);
+                this.componentInstancesProperties = new PropertiesGroup(component.componentInstancesProperties);
+                this.componentInstancesAttributes = new AttributesGroup(component.componentInstancesAttributes);
+                this.modules = component.modules;
+                this.componentInstancesRelations = CommonUtils.initComponentInstanceRelations(component.componentInstancesRelations);
+                deferred.resolve();
+
+            };
+            this.getComponent().then(onSuccess);
+            deferred.resolve(res);
+        };
+        let onFailed = (error: any): void => {
+            deferred.reject(error);
+        };
+
+        this.componentService.batchDeleteComponentInstance(this.uniqueId, componentInstanceIds).then(onSuccess, onFailed);
+        return deferred.promise;
+
+    };
+
 
     public syncComponentByRelation(relation:RelationshipModel) {
         relation.relationships.forEach((rel) => {
@@ -714,36 +740,57 @@ export abstract class Component implements IComponent {
         return deferred.promise;
     };
 
-    public deleteRelation = (relation:RelationshipModel):ng.IPromise<RelationshipModel> => {
-        let deferred = this.$q.defer<RelationshipModel>();
-        let onSuccess = (relation:RelationshipModel):void => {
-            console.log("Link Deleted In Server");
-            let relationToDelete = _.find(this.componentInstancesRelations, (item) => {
-                return item.fromNode === relation.fromNode && item.toNode === relation.toNode && _.some(item.relationships, (relationship)=> {
+    private deleteRelationOnSuccess(relation: RelationshipModel) {
+        let relationToDelete = _.find(this.componentInstancesRelations, (item) => {
+            return item.fromNode === relation.fromNode && item.toNode === relation.toNode && _.some(item.relationships, (relationship) => {
+                return angular.equals(relation.relationships[0].relation, relationship.relation);
+            });
+        });
+        let index = this.componentInstancesRelations.indexOf(relationToDelete);
+        if (relationToDelete != undefined && index > -1) {
+            if (relationToDelete.relationships.length == 1) {
+                this.componentInstancesRelations.splice(index, 1);
+            } else {
+                this.componentInstancesRelations[index].relationships =
+                    _.reject(this.componentInstancesRelations[index].relationships, (relationship) => {
                         return angular.equals(relation.relationships[0].relation, relationship.relation);
                     });
-            });
-            let index = this.componentInstancesRelations.indexOf(relationToDelete);
-            if (relationToDelete != undefined && index > -1) {
-                if (relationToDelete.relationships.length == 1) {
-                    this.componentInstancesRelations.splice(index, 1);
-                } else {
-                    this.componentInstancesRelations[index].relationships =
-                        _.reject(this.componentInstancesRelations[index].relationships, (relationship) => {
-                            return angular.equals(relation.relationships[0].relation, relationship.relation);
-                        });
-                }
-            } else {
-                console.error("Error while deleting relation - the return delete relation from server was not found in UI")
             }
-            this.syncComponentByRelation(relation);
+        } else {
+            console.error("Error while deleting relation - the return delete relation from server was not found in UI")
+        }
+        this.syncComponentByRelation(relation);
+    }
+
+    public deleteRelation = (relation: RelationshipModel): ng.IPromise<RelationshipModel> => {
+        let deferred = this.$q.defer<RelationshipModel>();
+        let onSuccess = (relation: RelationshipModel): void => {
+            this.deleteRelationOnSuccess(relation);
             deferred.resolve(relation);
         };
-        let onFailed = (error:any):void => {
+        let onFailed = (error: any): void => {
             console.error("Failed To Delete Link");
             deferred.reject(error);
         };
         this.componentService.deleteRelation(this.uniqueId, relation).then(onSuccess, onFailed);
+        return deferred.promise;
+    };
+
+    public batchDeleteRelation = (relations: Array<RelationshipModel>): ng.IPromise<Array<RelationshipModel>> => {
+        let deferred = this.$q.defer<Array<RelationshipModel>>();
+        let onSuccess = (responseRelations: Array<RelationshipModel>): void => {
+            console.log("Link Batch Deleted In Server");
+            let len = responseRelations.length;
+            for (let i = 0; i < len; i++) {
+                this.deleteRelationOnSuccess(responseRelations[i]);
+            }
+            deferred.resolve(responseRelations);
+        };
+        let onFailed = (error: any): void => {
+            console.error("Failed to batch Delete Link");
+            deferred.reject(error);
+        };
+        this.componentService.batchDeleteRelation(this.uniqueId, relations).then(onSuccess, onFailed);
         return deferred.promise;
     };
 
@@ -1005,8 +1052,20 @@ export abstract class Component implements IComponent {
         return status;
     };
 
-    public abstract setComponentDisplayData():void;
-    public abstract getTypeUrl():string;
+    public pasteMenuComponentInstance = (srcComponentId: string, msg: string): ng.IPromise<string> => {
+        let deferred = this.$q.defer<string>();
+        let onSuccess = (response): void => {
+            deferred.resolve(response);
+        };
+        let onFailed = (error: any): void => {
+            deferred.reject(error);
+        };
+        this.componentService.pasteMenuComponentInstance(this.uniqueId, srcComponentId, msg).then(onSuccess, onFailed);
+        return deferred.promise;
+
+    };
+    public abstract setComponentDisplayData(): void;
+    public abstract getTypeUrl(): string;
 
     public setComponentMetadata(componentMetadata: ComponentMetadata) {
         this.abstract = componentMetadata.abstract;

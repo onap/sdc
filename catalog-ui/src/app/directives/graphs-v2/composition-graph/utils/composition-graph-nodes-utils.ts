@@ -122,6 +122,91 @@ export class CompositionGraphNodesUtils {
     };
 
     /**
+     * Batch delete component instances on server and then removes them from the graph as well
+     * @param cy
+     * @param component
+     * @param nodesToDelete
+     */
+    public batchDeleteNodes(cy:Cy.Instance, component:Component, nodesToDelete:Cy.CollectionNodes):Array<string> {
+        let nodesToDeleteIds:Array<string> = new Array<string>();
+        if(nodesToDelete && nodesToDelete.size() > 0){
+            nodesToDelete.each((i:number, node:Cy.CollectionNodes) => {
+                nodesToDeleteIds.push(node.data('id'));
+            });
+            this.loaderService.showLoader('composition-graph');
+            let componentInstances:Array<ComponentInstance> = component.componentInstances;
+            let onSuccess:(response:any) => void = (deleteFailedIds:any) => {
+                this.removeDeletedNodesOnGraph(cy, nodesToDelete, deleteFailedIds, componentInstances);
+            };
+
+            let onFailed:(response:any) => void = (response:any) => {
+                console.error('batchDeleteNodes failed error is', response);
+            };
+
+            this.GeneralGraphUtils.getGraphUtilsServerUpdateQueue().addBlockingUIActionWithReleaseCallback(
+                () => component.batchDeleteComponentInstance(nodesToDeleteIds).then(onSuccess, onFailed),
+                () => this.loaderService.hideLoader('composition-graph')
+            );
+        }
+
+            return nodesToDeleteIds;
+    };
+
+    private deleteNodeSuccess(cy:Cy.Instance, component:Component, nodeToDelete:Cy.CollectionNodes):void{
+        //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
+        if (nodeToDelete.data().isUcpe) {
+            _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node, nodeToDelete);
+            });
+        }
+
+        //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
+        if (!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
+            let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
+            this.handleConnectedVlsToDelete(connectedVls);
+        }
+
+        // check whether there is a service path going through this node, and if so clean it from the graph.
+        let nodeId = nodeToDelete.data().id;
+        let connectedPathLinks = cy.collection(`[type="${CompositionCiServicePathLink.LINK_TYPE}"][source="${nodeId}"], [type="${CompositionCiServicePathLink.LINK_TYPE}"][target="${nodeId}"]`);
+        _.forEach(connectedPathLinks, (link, key) => {
+            cy.remove(`[pathId="${link.data().pathId}"]`);
+        });
+
+        // update service path list
+        this.serviceService.getComponentCompositionData(component).subscribe((response:ServiceGenericResponse) => {
+            (<Service>component).forwardingPaths = response.forwardingPaths;
+        });
+
+        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE_SUCCESS, nodeId);
+
+        //update UI
+        cy.remove(nodeToDelete);
+    }
+
+    private removeDeletedNodesOnGraph(cy:Cy.Instance, nodesToDelete:Cy.CollectionNodes, deleteFailedIds:Array<string>, componentInstances:Array<ComponentInstance>):void {
+        nodesToDelete.each((j:number, nodeToDelete:Cy.CollectionNodes) => {
+            if(deleteFailedIds.indexOf(nodeToDelete.data('id')) < 0) {
+                //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
+                if (nodeToDelete.data().isUcpe) {
+                    _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
+                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node , nodeToDelete);
+                    });
+                }
+
+                //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
+                if(!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
+                    let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
+                    this.handleConnectedVlsToDelete(connectedVls);
+                }
+
+
+                cy.remove(nodeToDelete);
+            }
+        });
+    }
+ 
+    /**
      * Finds all VLs connected to a single node
      * @param node
      * @returns {Array<Cy.CollectionFirstNode>}

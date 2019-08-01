@@ -72,6 +72,9 @@ export interface IComponentService {
     deleteComponentInput(serviceId:string, inputId:string):ng.IPromise<InputModel>;
     getArtifactByGroupType(componentId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
     getComponentInstanceArtifactsByGroupType(componentId:string, componentInstanceId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
+    batchDeleteComponentInstance(componentId: string, componentInstanceIdList: Array<string>): ng.IPromise<any>;
+    pasteMenuComponentInstance(componentId: string, srcComponentId: string, msg: string): ng.IPromise<string>;
+    batchDeleteRelation(componentId: string, links: Array<RelationshipModel>): ng.IPromise<Array<RelationshipModel>>
 }
 
 export class ComponentService implements IComponentService {
@@ -738,7 +741,57 @@ export class ComponentService implements IComponentService {
         return defer.promise;
     };
 
-    createInputsFromInstancesInputsProperties = (resourceId:string, instancePropertyMap:InstancesInputsPropertiesMap):ng.IPromise<Array<PropertyModel>> => {
+    public batchDeleteComponentInstance = (componentId: string, componentInstanceIdList: Array<string>): ng.IPromise<any> => {
+        let deferred = this.$q.defer();
+        this.restangular.one(componentId).one("batchDeleteResourceInstances").customPOST(JSON.stringify(componentInstanceIdList)).then((response: any) => {
+            deferred.resolve(response.deleteFailedIds);
+        }, (err) => {
+            console.log("Failed to delete componentInstanceIdList. With IDs: " + componentInstanceIdList);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };
+
+    public batchDeleteRelation = (componentId: string, links: Array<RelationshipModel>): ng.IPromise<Array<RelationshipModel>> => {
+        let deferred = this.$q.defer<Array<RelationshipModel>>();
+
+        _.forEach(links, (link: RelationshipModel) => {
+            let linkPayload: RelationshipModel = new RelationshipModel(link);
+            linkPayload.relationships.forEach((rel) => {
+                delete rel.capability;
+                delete rel.requirement;
+            });
+        });
+
+        this.restangular.one(componentId).one("resourceInstance").one("batchDissociate").customPUT(JSON.stringify(links)).then((response: any) => {
+            console.log("Link batch deleted successfully result is ", response);
+            let relationshipModelArray: Array<RelationshipModel> = new Array<RelationshipModel>();
+            _.forEach(response, (relationshipModelObj: RelationshipModel) => {
+                relationshipModelArray.push(new RelationshipModel(relationshipModelObj));
+            });
+            deferred.resolve(relationshipModelArray);
+            //deferred.resolve(response);
+        }, (err) => {
+            console.log("Failed to batch delete links", links);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    }
+
+    public pasteMenuComponentInstance = (componentId: string, srcComponentId: string, msg: string): ng.IPromise<string> => {
+        let deferred = this.$q.defer<string>();
+        this.restangular.one(componentId).one("copyComponentInstance").one(srcComponentId).customPOST(msg).then((response: any) => {
+            deferred.resolve(response);
+        }, (err) => {
+            deferred.reject(err);
+        });
+        return deferred.promise;
+
+    };
+
+
+
+    createInputsFromInstancesInputsProperties = (resourceId: string, instancePropertyMap: InstancesInputsPropertiesMap): ng.IPromise<Array<PropertyModel>> => {
         let defer = this.$q.defer<Array<PropertyModel>>();
         this.restangular.one(resourceId).one("create/properties").customPOST(instancePropertyMap).then((response:any) => {
             let inputsArray:Array<PropertyModel> = new Array<PropertyModel>();

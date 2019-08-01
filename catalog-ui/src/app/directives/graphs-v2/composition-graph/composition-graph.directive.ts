@@ -35,7 +35,7 @@ import {
     NodesFactory,
     Point
 } from "app/models";
-import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS } from "app/utils";
+import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS, GraphUIObjects, ModalsHandler } from "app/utils";
 import { EventListenerService, LoaderService } from "app/services";
 import { CompositionGraphLinkUtils } from "./utils/composition-graph-links-utils";
 import { CompositionGraphGeneralUtils } from "./utils/composition-graph-general-utils";
@@ -128,6 +128,10 @@ export interface ICompositionGraphScope extends ng.IScope {
     deletePathsOnCy(): void;
     drawPathOnCy(data: ForwardingPath): void;
     selectedPathId: string;
+    copyComponentInstance(): void;
+    pasteComponentInstance(event: IDragDropEvent): void;
+
+    origComponentId: string;
 }
 
 export class CompositionGraph implements ng.IDirective {
@@ -135,6 +139,7 @@ export class CompositionGraph implements ng.IDirective {
     private _currentlyCLickedNodePosition: Cy.Position;
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
+    private cyBackgroundClickEvent: any;
 
     constructor(private $q: ng.IQService,
         private $log: ng.ILogService,
@@ -155,7 +160,8 @@ export class CompositionGraph implements ng.IDirective {
         private ModalServiceNg2: ModalService,
         private ConnectionWizardServiceNg2: ConnectionWizardService,
         private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
-        private servicePathGraphUtils: ServicePathGraphUtils) {
+        private servicePathGraphUtils: ServicePathGraphUtils,
+        private ModalsHandler: ModalsHandler) {
 
     }
 
@@ -542,6 +548,131 @@ export class CompositionGraph implements ng.IDirective {
                 this.CompositionGraphLinkUtils.deleteLink(this._cy, scope.component, true, link);
             }
         };
+
+
+        document.onkeydown = (event) => {
+            let isModalExist = document.getElementsByTagName('body')[0].classList.contains('modal-open');
+
+            if (!scope.isViewOnly && !isModalExist) {
+
+                switch (event.keyCode) {
+
+                    case 46: //delete
+                        scope.deleteSelectedElements();
+                        break;
+
+                    case 67: //ctrl+c : copy componentInstance
+                        if (event.ctrlKey && scope.component.isService()) {
+                            scope.copyComponentInstance();
+                        }
+                        break;
+                    case 86: // ctrl+v: paste componentInstance
+                        if (event.ctrlKey && scope.component.isService()) {
+                            let hidePasteObj = $(".w-canvas-content-paste");
+                            hidePasteObj.click();
+                        }
+                        break;
+
+                }
+            }
+        };
+
+        scope.deleteSelectedElements = (): void => {
+            if (this._cy) {
+                let nodesToDelete = this._cy.$('node:selected');
+                let edgesSelected = this._cy.$('edge:selected');
+                if (nodesToDelete.length + edgesSelected.length <= 0) {
+                    return;
+                }
+                let componentInstancetobeDele;
+                let title: string = "Delete Confirmation";
+                let message: string = "Are you sure you would like to delete selected elements?";
+                if (nodesToDelete.size() == 1 && edgesSelected.size() == 0) {
+
+                    componentInstancetobeDele = nodesToDelete[0].data().componentInstance;
+                    let showName = nodesToDelete[0].data().componentInstance.name;
+                    message = "Are you sure you would like to delete" + " " + showName + "?";
+                }
+
+                let onOk = (): void => {
+                    if (nodesToDelete.size() == 1 && edgesSelected.size() == 0) {
+                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, componentInstancetobeDele);
+                    }
+                    else {
+                        this.NodesGraphUtils.batchDeleteNodes(this._cy, scope.component, nodesToDelete);
+                    }
+
+                };
+
+                this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+            }
+
+        };
+
+        scope.copyComponentInstance = (): void => {
+            scope.origComponentId = scope.component.uniqueId;
+            if (scope.component.selectedInstance) {
+                scope.origSelectedInstance = scope.component.selectedInstance;
+            }
+        };
+
+
+        scope.pasteComponentInstance = (event: IDragDropEvent): void => {
+            event.clientX = event.clientX ? event.clientX : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientX : null;
+            event.clientY = event.clientY ? event.clientY : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientY : null;
+
+            if (event.clientX == null || event.clientY == null) {
+                return;
+            }
+            let offsetPosition = {
+                x: event.clientX - GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET,
+                y: event.clientY - GraphUIObjects.DIAGRAM_HEADER_OFFSET
+            };
+
+            let mousePosition = this.commonGraphUtils.HTMLCoordsToCytoscapeCoords(this._cy.extent(), offsetPosition);
+            let newPositionX = mousePosition.x;
+            let newPositionY = mousePosition.y;
+            let origSelectedInstance = scope.origSelectedInstance;
+
+            let copyComponentInstance = `{               
+                "posX":"${newPositionX}",
+                "posY":"${newPositionY}",
+                "name":"${origSelectedInstance.componentName}",
+                "componentVersion":"${origSelectedInstance.componentVersion}",
+                "originType":"${origSelectedInstance.originType}",
+                "icon":"${origSelectedInstance.icon}",
+                "componentUid":"${origSelectedInstance.componentUid}"
+            }`;
+
+            this.isComponentPasteValid(scope, this._cy, event, offsetPosition, origSelectedInstance);
+
+
+            let onSuccess = (response): void => {
+                let success = (component: Component) => {
+                    scope.component.componentInstances = component.componentInstances;
+                    if (component.isService() && component.componentInstances.length > 0) {
+                        _.each(component.componentInstances, (instance) => {
+                            if (instance.uniqueId == response.componentInstance.uniqueId) {
+                                let compositionGraphNode: CompositionCiNodeBase = this.NodesFactory.createNode(instance);
+                                this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, compositionGraphNode);
+                            }
+                        });
+                    }
+                    scope.isLoading = false;
+                };
+                scope.component.getComponent().then(success);
+            };
+            let onFailed = (error: any): void => {
+                console.log(error);
+                scope.isLoading = false;
+            };
+
+            if (scope.pasteValid) {
+                scope.isLoading = true;
+                scope.component.pasteMenuComponentInstance(origSelectedInstance.uniqueId, copyComponentInstance).then(onSuccess, onFailed);
+            }
+        };
+
     }
 
     private registerCytoscapeGraphEvents(scope: ICompositionGraphScope) {
@@ -644,6 +775,7 @@ export class CompositionGraph implements ng.IDirective {
                     }
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED);
                 }
+                this.cyBackgroundClickEvent = event;
                 scope.hideRelationMenu();
             }
 
@@ -877,7 +1009,30 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
     };
+    private isComponentPasteValid(scope: ICompositionGraphScope, cy: Cy.Instance, event: IDragDropEvent, offsetPosition: Cy.Position, origSelectedInstance: ComponentInstance) {
+        let bbox = this._getNodeBBox(cy, event, origSelectedInstance, offsetPosition);
 
+        if (this.GeneralGraphUtils.isPaletteDropValid(cy, bbox, origSelectedInstance)) {
+            scope.pasteValid = true;
+        } else {
+            scope.pasteValid = false;
+        }
+    }
+
+    private _getNodeBBox(cy: Cy.Instance, event: IDragDropEvent, origSelectedInstance: ComponentInstance, position?: Cy.Position) {
+        let bbox = <Cy.BoundingBox>{};
+        if (!position) {
+            position = this.commonGraphUtils.getCytoscapeNodePosition(cy, event);
+        }
+        let cushionWidth: number = 40;
+        let cushionHeight: number = 40;
+
+        bbox.x1 = position.x - cushionWidth / 2;
+        bbox.y1 = position.y - cushionHeight / 2;
+        bbox.x2 = position.x + cushionWidth / 2;
+        bbox.y2 = position.y + cushionHeight / 2;
+        return bbox;
+    }
 
     public static factory = ($q,
         $log,
@@ -898,7 +1053,8 @@ export class CompositionGraph implements ng.IDirective {
         ModalService,
         ConnectionWizardService,
         ComponentInstanceServiceNg2,
-        ServicePathGraphUtils) => {
+        ServicePathGraphUtils,
+        ModalsHandler) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -919,7 +1075,8 @@ export class CompositionGraph implements ng.IDirective {
             ModalService,
             ConnectionWizardService,
             ComponentInstanceServiceNg2,
-            ServicePathGraphUtils);
+            ServicePathGraphUtils,
+            ModalsHandler);
     }
 }
 
@@ -943,5 +1100,6 @@ CompositionGraph.factory.$inject = [
     'ModalServiceNg2',
     'ConnectionWizardServiceNg2',
     'ComponentInstanceServiceNg2',
-    'ServicePathGraphUtils'
+    'ServicePathGraphUtils',
+    'ModalsHandler'
 ];
