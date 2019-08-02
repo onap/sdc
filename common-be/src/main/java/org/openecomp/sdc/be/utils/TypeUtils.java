@@ -53,11 +53,14 @@ public class TypeUtils {
         TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), NODE_TYPES("node_types"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
         SUBSTITUTION_MAPPINGS("substitution_mappings"),  NODE_TYPE("node_type"), DIRECTIVES("directives"),
         // Attributes
-        ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), GET_INPUT("get_input"), ANNOTATIONS("annotations");
+        ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
+        //functions
+        GET_INPUT("get_input");
+
 
         private String elementName;
 
-        ToscaTagNamesEnum(String elementName) {
+        ToscaTagNamesEnum(final String elementName) {
             this.elementName = elementName;
         }
 
