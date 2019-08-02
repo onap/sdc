@@ -2413,3 +2413,112 @@ onap.datatypes.monitoring.thresholds:
       description: "Version number associated with the threshold"
       required: true
       type: string
+
+### Data types used by Policy Restconf Collector ###
+
+onap.datatypes.monitoring.rcc_policy:
+  derived_from: tosca.datatypes.Root
+  properties:
+    controller_name:
+      type: string
+      description: Name of controller
+      required: true
+    controller_restapiUrl:
+      type: string
+      description: Controller's ip and port
+      required: true
+    controller_restapiUser:
+      type: string
+      description: Controller's username
+      required: true
+    controller_restapiPassword:
+      type: string
+      description: Controller's password
+      required: true
+    controller_accessTokenUrl:
+      type: string
+      description: URL to get access token
+      required: true
+    controller_accessTokenFile:
+      type: string
+      description: Access token file path
+      required: true
+    controller_accessTokenMethod:
+      type: string
+      description: Access token method POST/GET/PUT etc
+      required: true
+      constraints:
+        - valid_values: [ post, get, put]
+    controller_subsMethod:
+      type: string
+      description: Subscription method POST/GET/PUT etc
+      required: true
+      default: post
+      constraints:
+        - valid_values: [ post, get, put]
+    controller_subscriptionUrl:
+      type: string
+      description: URL to establish subscription
+      required: true
+    controller_disableSsl:
+      type: boolean
+      description: Option to disable ssl
+      required: true
+      default: true
+    event_details:
+      type: list
+      description: event details
+      required: true
+      entry_schema:
+        type : onap.datatypes.monitoring.rcc_event_details
+
+onap.datatypes.monitoring.rcc_event_details:
+  derived_from: tosca.datatypes.Root
+  properties:
+    event_name:
+      type: string
+      description: event name
+      required: true
+    event_description:
+      type: string
+      description: description of event
+      required: false
+    event_sseventUrlEmbed:
+      type: boolean
+      description: Whether SSE url is embedded in subscription response
+      required: true
+      default: true
+    event_sseventsField:
+      type: string
+      description: Field name to access SSE url in subscription response
+      required: true
+    event_sseventsUrl:
+      type: string
+      description: Explicit SSE url
+      required: true
+    event_subscriptionTemplate:
+      type: string
+      description: Subscription template file path
+      required: true
+    event_unSubscriptionTemplate:
+      type: string
+      description: Unsubscription template file path
+      required: false
+    event_ruleId:
+      type: integer
+      description: Rule Id
+      required: false
+    modifyData:
+      type: boolean
+      description: Whether to modify the received SSE event
+      required: true
+      default: false
+    modifyMethod:
+      type: string
+      description: The java method name to modify data
+      required: false
+    userData:
+      type: string
+      description: The user specific data
+      required: false
+
