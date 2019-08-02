@@ -59,6 +59,10 @@
     "displayName": "PM Mapper",
     "icon": "policy-dcae-pm-mapper"
   },
+  "onap.policy.monitoring.dcae-restconfcollector": {
+    "displayName": "Restconf Collector",
+    "icon": "policy-dcae-restconfcollector"
+  },
   "tosca.policies.nfv.InstantiationLevels": {
     "displayName": "NFV InstantiationLevels",
     "icon": "policy-nfv-instantiationlevels"
