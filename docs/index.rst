@@ -20,3 +20,4 @@ SDC Documentation
    sdcsdks.rst
    dcaedesigner.rst
    workflow.rst
+   onboardingpackages.rst
