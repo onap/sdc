@@ -15,7 +15,7 @@
  */
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 
 
 When('I want to create a VF', function()  {
@@ -27,7 +27,7 @@ When('I want to create a VF', function()  {
 
     var type = "resources";
     let path = '/catalog/' + type;
-    return util.request(this.context, 'POST', path,  inputData, false, 'catalog').then(result => {
+    return util.request(this.context, 'POST', path,  inputData, 'catalog').then(result => {
         this.context.component = {uniqueId : result.data.uniqueId, type : type, id : result.data.inputs[0].uniqueId};
 });
 });
@@ -41,7 +41,7 @@ When('I want to create a Service', function()  {
 
     var type = "services";
     let path = '/catalog/' + type;
-    return util.request(this.context, 'POST', path,  inputData, false, 'catalog').then(result => {
+    return util.request(this.context, 'POST', path,  inputData,  'catalog').then(result => {
         this.context.component = {uniqueId : result.data.uniqueId, type : type, id : result.data.inputs[0].uniqueId};
 });
 });
@@ -68,7 +68,7 @@ When('I want to create an Operation', function()  {
     inputData.interfaces.interface1.operations.delete.outputs.listToscaDataDefinition[0].name = util.random();
     inputData.interfaces.interface1.operations.delete.description = operationName + " description";
 
-    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then(result => {
+    return util.request(this.context, 'POST', path, inputData, 'catalog').then(result => {
             {intOperations = result.data.interfaces[0].operations};
         this.context.interface = {  interfaceUniqueId : result.data.interfaces[0].uniqueId,
                                     interfaceType : result.data.interfaces[0].type,
@@ -86,7 +86,7 @@ When('I want to update an Operation', function () {
     inputData.interfaces.interface1.operations.delete.inputs.listToscaDataDefinition[0].inputId = this.context.component.id;
     inputData.interfaces.interface1.operations.delete.outputs.listToscaDataDefinition[0].name = util.random();
 
-    return util.request(this.context, 'PUT', path, inputData, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'PUT', path, inputData, 'catalog').then((result)=> {
     {intOperations = result.data.interfaces[0].operations};
             this.context.interface =  { interfaceUniqueId : result.data.interfaces[0].uniqueId,
                                         interfaceType : result.data.interfaces[0].type,
@@ -98,7 +98,7 @@ When('I want to update an Operation', function () {
 When('I want to get an Operation by Id', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/interfaces/' +
         this.context.interface.interfaceUniqueId + '/operations/' +this.context.interface.operationUniqueId ;
-    return util.request(this.context, 'GET', path, null, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'GET', path, null, 'catalog').then((result)=> {
 
     {intOperations = result.data.interfaces[0].operations};
     this.context.interface =  { interfaceUniqueId : result.data.interfaces[0].uniqueId,
@@ -111,7 +111,7 @@ When('I want to get an Operation by Id', function () {
 
 When('I want to list Operations', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/filteredDataByParams?include=interfaces';
-    return util.request(this.context, 'GET', path, null, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'GET', path, null, 'catalog').then((result)=> {
     });
 });
 
@@ -119,14 +119,14 @@ When('I want to list Operations', function () {
 When('I want to delete an Operation', function()  {
     let path = '/catalog/'+ this.context.component.type + '/'+ this.context.component.uniqueId +'/interfaces/' +
         this.context.interface.interfaceUniqueId + '/operations/' +this.context.interface.operationUniqueId ;
-    return util.request(this.context, 'DELETE', path, null, false, 'catalog');
+    return util.request(this.context, 'DELETE', path, null, 'catalog');
 });
 
 
 When('I want to checkin this component', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/lifecycleState/CHECKIN' ;
     let inputData = {userRemarks: 'checkin'};
-    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'POST', path, inputData, 'catalog').then((result)=> {
     this.context.component = {uniqueId : result.data.uniqueId, type : this.context.component.type};
 });
 });
@@ -135,7 +135,7 @@ When('I want to checkin this component', function () {
 Then('I want to submit this component', function () {
     let path = '/catalog/'+ this.context.component.type + '/' + this.context.component.uniqueId + '/lifecycleState/certificationRequest' ;
     let inputData = {userRemarks: 'submit'};
-    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'POST', path, inputData, 'catalog').then((result)=> {
     this.context.component = {uniqueId : result.data.uniqueId};
 });
 });
@@ -143,7 +143,7 @@ Then('I want to submit this component', function () {
 Then('I want to certify this component', function () {
     let path = '/catalog/'+ this.context.component.type +'/' + this.context.component.uniqueId + '/lifecycleState/certify' ;
     let inputData = {userRemarks: 'certify'};
-    return util.request(this.context, 'POST', path, inputData, false, 'catalog').then((result)=> {
+    return util.request(this.context, 'POST', path, inputData, 'catalog').then((result)=> {
     this.context.component = {uniqueId : result.data.uniqueId};
 });
 });

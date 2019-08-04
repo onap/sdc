@@ -15,7 +15,7 @@
  */
 const {When} = require('cucumber');
 const _ = require('lodash');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 _.templateSettings.interpolate = /{([\s\S]+?)}/g;
 
 function getPath(path, context) {

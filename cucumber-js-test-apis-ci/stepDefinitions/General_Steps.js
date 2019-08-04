@@ -20,7 +20,7 @@ const normalizeNewline = require('normalize-newline');
 require('node-zip');
 YAML = require('yamljs');
 const fs = require('fs');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 
 function getPath(path, context) {
 	let compiled = _.template(path);

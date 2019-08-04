@@ -15,7 +15,7 @@
  */
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 const _ = require('lodash');
 
 
@@ -107,9 +107,9 @@ Then('I want to add a component', function () {
  * @exampleFile Example_VSP.feature
  * @step I want to get the package for this Item to path {string}
  **/
-When('I want to get the package for this Item to path {string}', function (string, callback) {
+When('I want to get the package for this Item to path {string}', function (string) {
 	let path =  '/vendor-software-products/packages/' + this.context.item.id;
-	return [util.download(this.context, path, string, callback)];
+	return util.download(this.context, path, string);
 });
 
 

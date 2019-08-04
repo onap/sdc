@@ -1,6 +1,9 @@
 #!/bin/bash
 
 cd /var/lib/tests
+
+rm devConfig.json
+
 mkdir resources/downloads
-yarn install
-yarn run test-and-report
+
+npm run test-and-report

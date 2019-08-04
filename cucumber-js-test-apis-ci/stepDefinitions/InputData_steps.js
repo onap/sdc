@@ -17,7 +17,7 @@ const {Then, When, Given} = require('cucumber');
 const assert = require('assert');
 const _ = require('lodash');
 const fs = require('fs');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 
 /**
  * @module InputData

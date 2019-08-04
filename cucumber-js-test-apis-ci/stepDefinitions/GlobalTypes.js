@@ -16,9 +16,9 @@
 
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 
 When('I want to get interface lifecycle types', function () {
     let path = '/catalog/interfaceLifecycleTypes';
-    return util.request(this.context, 'GET', path, null, false, 'catalog');
+    return util.request(this.context, 'GET', path, null, 'catalog');
 });

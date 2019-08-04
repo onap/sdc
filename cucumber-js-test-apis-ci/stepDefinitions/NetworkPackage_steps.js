@@ -15,7 +15,7 @@
  */
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 const _ = require('lodash');
 const fs = require('fs');
 require('node-zip');
@@ -28,7 +28,7 @@ require('node-zip');
  **/
 Then('I want to upload a NetworkPackage for this VSP from path {string}', function (string) {
 	let path =  '/vendor-software-products/' + this.context.item.id + '/versions/' + this.context.item.versionId + '/orchestration-template-candidate';
-	return util.request(this.context, 'POST', path, string, true);
+	return util.requestBinaryFormData(this.context, 'POST', path, string, 'upload');
 });
 
 /**
@@ -37,9 +37,9 @@ Then('I want to upload a NetworkPackage for this VSP from path {string}', functi
  * @exampleFile Example_HEAT.feature
  * @step I want to download the NetworkPackage for this VSP to path {string}
  **/
-When('I want to download the NetworkPackage for this VSP to path {string}', function (string, callback) {
+When('I want to download the NetworkPackage for this VSP to path {string}', function (string) {
 	let path =  '/vendor-software-products/' + this.context.item.id + '/versions/' + this.context.item.versionId + '/orchestration-template-candidate';
-	return [util.download(this.context, path, string, callback)];
+	return util.download(this.context, path, string);
 });
 
 /**

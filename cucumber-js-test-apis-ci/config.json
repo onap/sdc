@@ -1,22 +1,28 @@
 {
-  "protocol" : "http",
-
   "onboarding" : {
+    "protocol" : "http",
     "port" : "onboarding.port",
     "prefix" : "onboarding-api/v1.0",
     "server" : "onboarding.server",
-    "user" : "onboarding.user"
+    "user" : "onboarding.user",
+    "isDefault" : true
   },
   "catalog" : {
+    "protocol" : "http",
     "port" : "CatalogBE.port",
     "prefix" : "sdc2/rest/v1",
     "server" : "CatalogBE.server",
     "user" : "CatalogBE.user"
   },
   "activity_spec" : {
+    "protocol" : "http",
     "port" : "activity-spec.port",
     "prefix" : "activity-spec-api/v1.0",
     "server" : "activity_spec.server",
     "user" : "activity-spec.user"
+  },
+  "initData" : {
+    "vlm" : {"id": null, "versionId": null},
+    "vsp" : {"id": null, "versionId": null}
   }
 }

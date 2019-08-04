@@ -16,7 +16,7 @@
 
 const {Then, When, Given} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 
 
 /**

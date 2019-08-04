@@ -15,7 +15,7 @@
  */
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 const _ = require('lodash');
 
 function getPath(path, context) {

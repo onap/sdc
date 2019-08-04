@@ -7,8 +7,9 @@ The Modules on the left contains all steps for particalar aress and/or explanati
 <li> Copy the config.json to devConfig.json
 <li> Replace the server and user values with the correct values
 <h3>How to run with Maven</h3>
-<li>"mvn clean install -f dev_pom.xml" will install npm if needed, download all modules and create the documentation under the "docs" folder
-<li>"mvn test-and-report" will run all  tests in the features folder and create an HTML report under the "reports" folder
+<li>"mvn clean install" will install npm if needed, download all modules
+<li> run "mvn install -DskipTests=true -P dev" to create the documentation under the "docs" folder
+<li>"mvn test -P dev" will run all tests in the features folder and create an HTML report under the "reports" folder
 <h3>How to develop tests</h3>
 You can open the project in IntelliJ and Webstorm to run and develop scenarios.<br>
 <li><b>You will need to install the Cucumber.Js plugin</b> In order to install, go to "Settings/Plugins". If cucumber.js in not on the list, go to "Browse repositories.." and install .

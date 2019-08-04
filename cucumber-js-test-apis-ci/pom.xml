@@ -26,6 +26,12 @@
             <configuration>
               <filesets>
                 <fileset>
+                  <directory>${basedir}/node_modules</directory>
+                  <includes>
+                    <include>**/*</include>
+                  </includes>
+                </fileset>
+                <fileset>
                   <directory>${basedir}/report</directory>
                   <includes>
                     <include>**/*</include>
@@ -60,6 +66,38 @@
         <configuration>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.6</version>
+
+        <configuration>
+          <installDirectory>${project.parent.parent.basedir}</installDirectory>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v10.15.3</nodeVersion>
+              <npmVersion>6.4.1</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -67,21 +105,83 @@
         <targetPath>${project.build.directory}/docker_assembly</targetPath>
         <filtering>false</filtering>
       </resource>
-      <resource>
-        <directory>${basedir}</directory>
-        <includes>
-          <include>features/**/*</include>
-          <include>stepDefinitions/**/*</include>
-          <include>plugins/**/*</include>
-          <include>resources/**/*</include>
-          <include>*.js*</include>
-        </includes>
-        <targetPath>${project.build.directory}/docker_assembly/cucumber</targetPath>
-        <filtering>false</filtering>
-      </resource>
     </resources>
   </build>
   <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-reporting-folders</id>
+                <phase>initialize</phase>
+                <configuration>
+                  <tasks>
+                    <echo message="Generate reports and downloads folders"/>
+                    <mkdir dir="${basedir}/report"/>
+                    <mkdir dir="${basedir}/resources/downloads"/>
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.6</version>
+
+            <configuration>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <installDirectory>${project.parent.parent.basedir}</installDirectory>
+            </configuration>
+
+            <executions>
+
+              <execution>
+                <id>npm run install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm run cucumber test</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+                  <arguments>run test-and-report</arguments>
+                </configuration>
+                <phase>test</phase>
+              </execution>
+
+              <execution>
+                <id>npm run documentation</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+                  <arguments>run cucumber-docs</arguments>
+                </configuration>
+                <phase>install</phase>
+              </execution>
+
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>docker</id>
       <activation>
@@ -89,6 +189,37 @@
       </activation>
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.0.2</version>
+            <executions>
+              <execution>
+                <id>copy-resources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/docker_assembly/cucumber</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}</directory>
+                      <includes>
+                        <include>features/**/*</include>
+                        <include>stepDefinitions/**/*</include>
+                        <include>plugins/**/*</include>
+                        <include>resources/**/*</include>
+                        <include>node_modules/**/*</include>
+                        <include>cucumber-common/**/*</include>
+                        <include>*.js*</include>
+                      </includes>
+                      <filtering>false</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>

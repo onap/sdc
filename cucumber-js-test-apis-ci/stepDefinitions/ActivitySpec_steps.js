@@ -16,7 +16,7 @@
 
 const {Then, When} = require('cucumber');
 const assert = require('assert');
-const util = require('./Utils.js');
+const util = require('../cucumber-common/utils/Utils.js');
 const _ = require('lodash');
 
 When('I want to create an ActivitySpec', function () {
