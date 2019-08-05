@@ -76,6 +76,7 @@ function _requestRest(context, method, path, data, type) {
 	return _request(context, method, path, options);
 }
 
+
 function _request(context, method, path, options) {
 	console.log('--> Calling REST ' + options.method +' url: ' + options.url);
 	let inputData = options.json;
@@ -94,36 +95,44 @@ function _request(context, method, path, options) {
 	return needle(method, options.url, inputData, needleOptions)
 		.then(function(result) {
 			context.inputData = null;
-			let isExpected = (context.shouldFail) ? (result.statusCode != 200 && result.statusCode != 201) : (result.statusCode == 200 || result.statusCode == 201);
+			let successResult = result.statusCode >= 200 && result.statusCode < 300;
+			let isExpected = context.shouldFail ? !successResult : successResult;
 			data = result.body;
 			if (!isExpected) {
 				console.log('Did not get expected response code');
 				throw  'Status Code was ' + result.statusCode ;
 			}
-			if (context.shouldFail && context.errorCode) {
-				if (typeof data === 'string' && data) {
-					data = JSON.parse(data);
-				}
-				let errorCode = data.errorCode;
-				let contextErrorCode = context.errorCode;
-				context.errorCode = null;
-				if (errorCode !== contextErrorCode) {
-					throw 'Error Code was ' + errorCode + ' instead of ' + contextErrorCode;
-				}
-			}
-			if (context.shouldFail && context.errorMessage) {
-				if (typeof data === 'string' && data) {
-					data = JSON.parse(data);
-				}
-				let errorMessage = data.message;
-				let contextErrorMessage = context.errorMessage;
-				context.errorMessage = null;
-				if (errorMessage !== contextErrorMessage) {
-					throw 'Error Message was ' + errorMessage + ' instead of ' + contextErrorMessage;
+			if (context.statusCode) {
+				let expectedStatusCode = context.statusCode;
+				context.statusCode = null;
+				if (result.statusCode !== expectedStatusCode) {
+					throw 'Response Status Code was ' + result.statusCode + ' instead of ' + expectedStatusCode;
 				}
 			}
 			if (context.shouldFail) {
 				context.shouldFail = false;
+				if (context.errorCode) {
+					if (typeof data === 'string' && data) {
+						data = JSON.parse(data);
+					}
+					let contextErrorCode = context.errorCode;
+					let errorCode = data.errorCode;
+					context.errorCode = null;
+					if (errorCode !== contextErrorCode) {
+						throw 'Error Code was ' + errorCode + ' instead of ' + contextErrorCode;
+					}
+				}
+				if (context.errorMessage) {
+					if (typeof data === 'string' && data) {
+						data = JSON.parse(data);
+					}
+					let errorMessage = data.message;
+					let contextErrorMessage = context.errorMessage;
+					context.errorMessage = null;
+					if (errorMessage !== contextErrorMessage) {
+						throw 'Error Message was ' + errorMessage + ' instead of ' + contextErrorMessage;
+					}
+				}
 				return({statusCode: result.statusCode, data: {}});
 			}
 

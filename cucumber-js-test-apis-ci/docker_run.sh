@@ -13,7 +13,7 @@ then
     fi
     if [ -z "$IMAGES_TAG" ]
     then
-        IMAGES_TAG=1.4-STAGING-latest
+        IMAGES_TAG=1.5-STAGING-latest
     fi
 fi
 echo "Workspace under: $WORKSPACE"
@@ -53,7 +53,6 @@ mv $WORKSPACE/TEST_CI.json $WORKSPACE/data/environments
 
 sed -i "s/8080:8080/$TEST_CI_CATALOG_PORT:8080/g" $WORKSPACE/data/scripts/docker_run.sh
 sed -i "s/:8080\/sdc/:$TEST_CI_CATALOG_PORT\/sdc/g" $WORKSPACE/data/scripts/docker_run.sh
-
 
 echo "getting images for $IMAGES_TAG"
 $WORKSPACE/data/scripts/docker_run.sh -e TEST_CI -r $IMAGES_TAG -p 10001
