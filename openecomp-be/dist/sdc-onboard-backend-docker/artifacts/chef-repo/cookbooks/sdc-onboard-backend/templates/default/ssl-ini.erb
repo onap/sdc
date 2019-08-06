@@ -42,10 +42,10 @@ jetty.ssl.port=<%= @https_port %>
 ## See http://www.eclipse.org/jetty/documentation/current/configuring-security-secure-passwords.html
 
 ## Keystore file path (relative to $jetty.base)
-# jetty.sslContext.keyStorePath=etc/keystore
+jetty.sslContext.keyStorePath=etc/org.onap.sdc.p12
 
 ## Truststore file path (relative to $jetty.base)
-#jetty.sslContext.trustStorePath=etc/truststore
+jetty.sslContext.trustStorePath=etc/org.onap.sdc.trust.jks
 
 ## Keystore password
 # jetty.sslContext.keyStorePassword=OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4

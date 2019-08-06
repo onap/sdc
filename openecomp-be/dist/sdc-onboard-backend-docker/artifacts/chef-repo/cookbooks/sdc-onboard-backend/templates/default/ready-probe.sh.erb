@@ -1,6 +1,6 @@
 #!/bin/bash
 <% if node[:disableHttp] -%>
-health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' -X GET --header "USER_ID: cs0008" --header "Accept: application/json" "http://127.0.0.1:<%= @ssl_port %>/onboarding-api/v1.0/healthcheck")
+health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' -X GET --header "USER_ID: cs0008" --header "Accept: application/json" "https://127.0.0.1:<%= @ssl_port %>/onboarding-api/v1.0/healthcheck")
 <% else %>
 health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' -X GET --header "USER_ID: cs0008" --header "Accept: application/json" "http://127.0.0.1:<%= @onboard_port %>/onboarding-api/v1.0/healthcheck")
 <% end -%>
