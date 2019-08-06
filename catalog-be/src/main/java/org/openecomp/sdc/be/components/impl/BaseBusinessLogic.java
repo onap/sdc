@@ -429,7 +429,7 @@ public abstract class BaseBusinessLogic {
         String type;
         String innerType = null;
         if (!propertyOperation.isPropertyTypeValid(property)) {
-            log.info("Invalid type for property {} type {}", property.getName(), property.getType());
+            log.info("Invalid type for property '{}' type '{}'", property.getName(), property.getType());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
             return Either.right(responseFormat);
         }
@@ -438,13 +438,13 @@ public abstract class BaseBusinessLogic {
             ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
             innerType = propertyInnerTypeValid.getLeft();
             if (!propertyInnerTypeValid.getRight()) {
-                log.info("Invalid inner type for property {} type {}, dataTypeCount {}", property.getName(), property.getType(), dataTypes.size());
+                log.info("Invalid inner type for property '{}' type '{}', dataTypeCount '{}'", property.getName(), property.getType(), dataTypes.size());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
                 return Either.right(responseFormat);
             }
         }
         if (!propertyOperation.isPropertyDefaultValueValid(property, dataTypes)) {
-            log.info("Invalid default value for property {} type {}", property.getName(), property.getType());
+            log.info("Invalid default value for property '{}' type '{}'", property.getName(), property.getType());
             ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
@@ -556,9 +556,10 @@ public abstract class BaseBusinessLogic {
         return Arrays.asList(enumValues).contains(enumFound);
     }
 
-    String validatePropValueBeforeCreate(IPropertyInputCommon property, String value, boolean isValidate, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    String validatePropValueBeforeCreate(IPropertyInputCommon property, String value, boolean isValidate,
+        Map<String, DataTypeDefinition> allDataTypes) {
         String propertyType = property.getType();
-        String updatedInnerType = updateInnerType(property, innerType);
+        String updatedInnerType = updateInnerType(property);
         Either<Object, Boolean> isValid = validateAndUpdatePropertyValue(propertyType, value, isValidate, updatedInnerType, allDataTypes);
         String newValue = value;
         if (isValid.isRight()) {
@@ -583,7 +584,7 @@ public abstract class BaseBusinessLogic {
         return newValue;
     }
 
-    private String updateInnerType(IPropertyInputCommon property, String innerType) {
+    private String updateInnerType(IPropertyInputCommon property) {
         ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
             SchemaDefinition def = property.getSchema();
@@ -598,7 +599,7 @@ public abstract class BaseBusinessLogic {
             }
             return propDef.getType();
         }
-        return innerType;
+        return null;
     }
 
     private void failOnIllegalArgument() {

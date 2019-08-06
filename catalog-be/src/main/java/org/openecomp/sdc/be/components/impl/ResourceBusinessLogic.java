@@ -2481,7 +2481,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
         }
         property.setValue(value);
-        return validatePropValueBeforeCreate(property, value, isValidate, null, allDataTypes);
+        return validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
     }
 
     private Either<Resource, StorageOperationStatus> updateCalculatedCapReqWithSubstitutionMappings(Resource resource,
@@ -2736,7 +2736,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String innerType = null;
         property = new ComponentInstanceInput(curPropertyDef, value, null);
 
-        String validPropertyVAlue = validatePropValueBeforeCreate(property, value, isValidate, innerType, allDataTypes);
+        String validPropertyVAlue = validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
 
         property.setValue(validPropertyVAlue);
 
@@ -2846,7 +2846,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 String innerType = null;
                 property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
-                String validatePropValue = validatePropValueBeforeCreate(property, value, isValidate, innerType, allDataTypes);
+                String validatePropValue = validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
                 property.setValue(validatePropValue);
 
                 if (getInputs != null && !getInputs.isEmpty()) {
