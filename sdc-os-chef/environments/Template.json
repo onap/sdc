@@ -5,7 +5,7 @@
    "chef_type": "environment",
 
    "default_attributes": {
-      "disableHttp": false,
+      "disableHttp": true,
       "CS_VIP": "yyy",
       "BE_VIP": "yyy",
       "ONBOARDING_BE_VIP": "yyy",
