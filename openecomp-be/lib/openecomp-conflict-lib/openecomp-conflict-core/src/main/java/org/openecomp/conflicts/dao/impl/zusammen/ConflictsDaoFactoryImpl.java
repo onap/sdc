@@ -24,11 +24,12 @@ package org.openecomp.conflicts.dao.impl.zusammen;
 import org.openecomp.conflicts.dao.ConflictsDao;
 import org.openecomp.conflicts.dao.ConflictsDaoFactory;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
+import org.openecomp.core.zusammen.api.ZusammenUtil;
 
 public class ConflictsDaoFactoryImpl extends ConflictsDaoFactory {
 
   private static final ConflictsDao INSTANCE = new
-      ConflictsDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+      ConflictsDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface(), ZusammenUtil::createSessionContext);
 
   @Override
   public ConflictsDao createInterface() {
