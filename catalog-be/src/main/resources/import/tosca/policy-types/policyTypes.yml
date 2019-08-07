@@ -144,7 +144,7 @@ onap.policy.monitoring.dcae-pm-mapper:
 
 ## Restconf collector policy for closed loop ##
 
-onap.policies.monitoring.dcae-restconfcollector:
+onap.policy.monitoring.dcae-restconfcollector:
   derived_from: onap.policies.Monitoring
   version: 1.0.0
   properties:
