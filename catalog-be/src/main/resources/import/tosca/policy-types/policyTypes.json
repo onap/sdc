@@ -55,7 +55,7 @@
     "displayName": "TCA",
     "icon": "policy-tca"
   },
-  "onap.policy.monitoring.dcae-pm-mapper": {
+  "onap.policies.monitoring.dcae-pm-mapper": {
     "displayName": "PM Mapper",
     "icon": "policy-dcae-pm-mapper"
   },
