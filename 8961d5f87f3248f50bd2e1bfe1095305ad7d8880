@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aff9971_a3cf1f63",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/errors/NicInternalNetworkErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-07T14:02:56Z",
+      "side": 1,
+      "message": "Please format this commit following the Onap java code style.",
+      "revId": "8961d5f87f3248f50bd2e1bfe1095305ad7d8880",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a4120f4_4b32839f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/errors/NicInternalNetworkErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-07T14:02:56Z",
+      "side": 1,
+      "message": "should be -\u003e // when",
+      "revId": "8961d5f87f3248f50bd2e1bfe1095305ad7d8880",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "308723bd_df4f6e76",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/errors/NicInternalNetworkErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-07T14:02:56Z",
+      "side": 1,
+      "message": "This line is too long (max 120 characters).",
+      "revId": "8961d5f87f3248f50bd2e1bfe1095305ad7d8880",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
