@@ -20,12 +20,17 @@
 
 package org.openecomp.conflicts.types;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.datatypes.model.ElementType;
 
 public class ConflictInfo {
   private String id;
   private ElementType type;
   private String name;
+
+  @VisibleForTesting
+  ConflictInfo() {
+  }
 
   public ConflictInfo(String id, ElementType type, String name) {
     this.id = id;

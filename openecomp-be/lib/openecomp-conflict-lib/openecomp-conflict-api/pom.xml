@@ -13,6 +13,9 @@
 
     <artifactId>openecomp-conflict-api</artifactId>
 
+    <properties>
+        <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -30,8 +33,18 @@
             <artifactId>openecomp-sdc-versioning-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>${bean-matchers.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-
 
 </project>
