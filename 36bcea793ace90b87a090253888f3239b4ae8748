@@ -52,6 +52,24 @@
       "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d666c867_3065f8c0",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-07T11:05:59Z",
+      "side": 1,
+      "message": "Ok, so we should approach to it using option 3 (was I described) and do the refactor ValidationConfigManager and ReportManager.\nI created the SDC-2499 jira task to handle this issue.\nThis change was abandoned and powermockito should be removed solving this task.",
+      "parentUuid": "35e746f4_0ff4cfc6",
+      "revId": "36bcea793ace90b87a090253888f3239b4ae8748",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
