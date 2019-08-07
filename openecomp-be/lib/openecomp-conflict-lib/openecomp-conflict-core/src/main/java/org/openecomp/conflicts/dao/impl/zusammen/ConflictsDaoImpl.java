@@ -29,6 +29,7 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Item;
 import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.Resolution;
+import java.util.function.Supplier;
 import org.openecomp.conflicts.dao.ConflictsDao;
 import org.openecomp.conflicts.types.Conflict;
 import org.openecomp.conflicts.types.ConflictResolution;
@@ -41,20 +42,21 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.*;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class ConflictsDaoImpl implements ConflictsDao {
   private final ZusammenAdaptor zusammenAdaptor;
+  private final Supplier<SessionContext> sessionContextProvider;
 
-  public ConflictsDaoImpl(ZusammenAdaptor zusammenAdaptor) {
+  public ConflictsDaoImpl(ZusammenAdaptor zusammenAdaptor, Supplier<SessionContext> sessionContextProvider) {
     this.zusammenAdaptor = zusammenAdaptor;
+    this.sessionContextProvider = sessionContextProvider;
   }
 
   @Override
   public boolean isConflicted(String itemId, Version version) {
     com.amdocs.zusammen.adaptor.inbound.api.types.item.ItemVersionConflict itemVersionConflict =
         zusammenAdaptor
-            .getVersionConflict(createSessionContext(), new Id(itemId), new Id(version.getId()));
+            .getVersionConflict(sessionContextProvider.get(), new Id(itemId), new Id(version.getId()));
     return !(itemVersionConflict == null
         || (itemVersionConflict.getVersionDataConflict() == null
         && itemVersionConflict.getElementConflictInfos().isEmpty()));
@@ -64,12 +66,12 @@ public class ConflictsDaoImpl implements ConflictsDao {
   public ItemVersionConflict getConflict(String itemId, Version version) {
     return new ItemVersionConflictConvertorFromZusammen().convert(itemId, version,
         zusammenAdaptor
-            .getVersionConflict(createSessionContext(), new Id(itemId), new Id(version.getId())));
+            .getVersionConflict(sessionContextProvider.get(), new Id(itemId), new Id(version.getId())));
   }
 
   @Override
   public Conflict getConflict(String itemId, Version version, String conflictId) {
-    return zusammenAdaptor.getElementConflict(createSessionContext(),
+    return zusammenAdaptor.getElementConflict(sessionContextProvider.get(),
         new ElementContext(new Id(itemId), new Id(version.getId())), new Id(conflictId))
         .map(elementConflict -> convertElementConflict(conflictId, elementConflict))
         .orElse(null);
@@ -78,7 +80,7 @@ public class ConflictsDaoImpl implements ConflictsDao {
   @Override
   public void resolveConflict(String itemId, Version version, String conflictId,
                               ConflictResolution conflictResolution) {
-    SessionContext context = createSessionContext();
+    SessionContext context = sessionContextProvider.get();
     ElementContext elementContext = new ElementContext(new Id(itemId), new Id(version.getId()));
 
     // TODO: 7/31/2017 when 'OTHER' resolution will be supported - populate zusammen element with it
