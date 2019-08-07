@@ -39,4 +39,30 @@ public class NicInternalNetworkErrorBuilderTest {
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("Invalid request, Network Description not allowed for Internal Networks", errorCode.message());
     }
+
+    @Test
+    public void testGetNicNullNetworkIdInternalNetworkIdErrorBuilder() {
+        //when
+        ErrorCode errorCode = NicInternalNetworkErrorBuilder.getNicNullNetworkIdInternalNetworkIdErrorBuilder();
+
+        //then
+        assertEquals(VendorSoftwareProductErrorCodes.NULL_NETWORKID_NOT_ALLOWED, errorCode.id());
+        assertEquals(ErrorCategory.APPLICATION, errorCode.category());
+        assertEquals(
+                "Internal Networks are currently not supported for VSP created Manually, so please fix all the NIC to be of Type External and re-submit the VSP.",
+                errorCode.message());
+
+    }
+
+    @Test
+    public void testGetNetworkTypeErrorBuilder() {
+        //when
+        ErrorCode errorCode = NicInternalNetworkErrorBuilder.getNetworkTypeErrorBuilder();
+
+        //then
+        assertEquals(VendorSoftwareProductErrorCodes.NETWORK_TYPE_UPDATE_NOT_ALLOWED, errorCode.id());
+        assertEquals(ErrorCategory.APPLICATION, errorCode.category());
+        assertEquals("Invalid request, Network Type Update not allowed for a Nic", errorCode.message());
+
+    }
 }
