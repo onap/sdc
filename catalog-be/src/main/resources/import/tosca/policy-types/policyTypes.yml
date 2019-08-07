@@ -132,7 +132,7 @@ onap.policies.monitoring.cdap.tca.hi.lo.app:
 
 ## PM Mapper policies for closed loop ##
 
-onap.policy.monitoring.dcae-pm-mapper:
+onap.policies.monitoring.dcae-pm-mapper:
   derived_from: onap.policies.Monitoring
   version : 1.0.0
   properties:
