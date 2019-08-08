@@ -31,7 +31,7 @@ public class ComponentDependencyModelErrorBuilderTests {
     @Test
     public void testGetCyclicDependencyComponentErrorBuilder() {
         //when
-        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getcyclicDependencyComponentErrorBuilder();
+        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getCyclicDependencyComponentErrorBuilder();
 
         //then
         assertEquals("CYCLIC_DEPENDENCY_IN_COMPONENTS", errorCode.id());

@@ -39,4 +39,17 @@ public class DuplicateComputeInComponentErrorBuilderTest {
         assertEquals("Update of attribute  not allowed for VSP onboarded via HEAT.", errorCode.message());
 
     }
+
+    @Test
+    public void testBuild() {
+        // given
+        DuplicateComputeInComponentErrorBuilder duplicateComputeInComponentErrorBuilder =
+                new DuplicateComputeInComponentErrorBuilder();
+
+        // when
+        ErrorCode errorCode = duplicateComputeInComponentErrorBuilder.build();
+
+        // then
+        assertEquals(errorCode.category(), ErrorCategory.APPLICATION);
+    }
 }

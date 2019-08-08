@@ -38,7 +38,7 @@ public class ComponentDependencyModelErrorBuilder {
 
   }
 
-  public static ErrorCode getcyclicDependencyComponentErrorBuilder() {
+  public static ErrorCode getCyclicDependencyComponentErrorBuilder() {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(CYCLIC_DEPENDENCY_IN_COMPONENTS);
     builder.withCategory(ErrorCategory.APPLICATION);
