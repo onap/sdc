@@ -31,7 +31,7 @@ public class ComponentDependencyModelErrorBuilderTests {
     @Test
     public void testGetCyclicDependencyComponentErrorBuilder() {
         //when
-        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getcyclicDependencyComponentErrorBuilder();
+        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getCyclicDependencyComponentErrorBuilder();
 
         //then
         assertEquals("CYCLIC_DEPENDENCY_IN_COMPONENTS", errorCode.id());
@@ -48,5 +48,27 @@ public class ComponentDependencyModelErrorBuilderTests {
         assertEquals("INVALID_COMPONENT_RELATION_TYPE", errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("Invalid relation type for components.", errorCode.message());
+    }
+
+    @Test
+    public void testGetNoSourceComponentErrorBuilder() {
+        //when
+        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder();
+
+        //then
+        assertEquals("NO_SOURCE_COMPONENT", errorCode.id());
+        assertEquals(ErrorCategory.APPLICATION, errorCode.category());
+        assertEquals("Source component is mandatory.", errorCode.message());
+    }
+
+    @Test
+    public void testGetSourceTargetComponentEqualErrorBuilder() {
+        //when
+        ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder();
+
+        //then
+        assertEquals("SAME_SOURCE_TARGET_COMPONENT", errorCode.id());
+        assertEquals(ErrorCategory.APPLICATION, errorCode.category());
+        assertEquals("Source and target components are same.", errorCode.message());
     }
 }
