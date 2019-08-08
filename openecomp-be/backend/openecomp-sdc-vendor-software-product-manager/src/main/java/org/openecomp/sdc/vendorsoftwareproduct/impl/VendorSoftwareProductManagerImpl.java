@@ -199,7 +199,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     if (validateComponentDependencies(componentDependencies)) {
       vspErrors
-          .add(ComponentDependencyModelErrorBuilder.getcyclicDependencyComponentErrorBuilder());
+          .add(ComponentDependencyModelErrorBuilder.getCyclicDependencyComponentErrorBuilder());
     }
     validationResponse
         .setVspErrors(vspErrors);

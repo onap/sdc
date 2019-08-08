@@ -38,11 +38,11 @@ public class ComponentDependencyModelErrorBuilder {
 
   }
 
-  public static ErrorCode getcyclicDependencyComponentErrorBuilder() {
+  public static ErrorCode getCyclicDependencyComponentErrorBuilder() {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(CYCLIC_DEPENDENCY_IN_COMPONENTS);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(CYCLIC_DEPENDENCY_COMPONENT_MSG));
+    builder.withMessage(CYCLIC_DEPENDENCY_COMPONENT_MSG);
     return builder.build();
   }
 
@@ -50,7 +50,7 @@ public class ComponentDependencyModelErrorBuilder {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(INVALID_COMPONENT_RELATION_TYPE);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(INVALID_REALTION_TYPE_MSG));
+    builder.withMessage(INVALID_REALTION_TYPE_MSG);
     return builder.build();
   }
 
@@ -58,7 +58,7 @@ public class ComponentDependencyModelErrorBuilder {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(NO_SOURCE_COMPONENT);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(NO_SOURCE_COMPONENT_MSG));
+    builder.withMessage(NO_SOURCE_COMPONENT_MSG);
     return builder.build();
   }
 
@@ -66,7 +66,7 @@ public class ComponentDependencyModelErrorBuilder {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(SAME_SOURCE_TARGET_COMPONENT);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(SOURCE_TARGET_COMPONENT_EQUAL_MSG));
+    builder.withMessage(SOURCE_TARGET_COMPONENT_EQUAL_MSG);
     return builder.build();
   }
 }
