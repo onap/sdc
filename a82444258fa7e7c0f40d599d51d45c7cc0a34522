@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "732d6ee6_8684aaf0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-09T08:55:05Z",
+      "side": 1,
+      "message": "Not at all, but has very low test coverage.",
+      "parentUuid": "6637b9b3_b53e2f76",
+      "revId": "a82444258fa7e7c0f40d599d51d45c7cc0a34522",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0ce6747d_e6d0ce37",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/errors/ComponentDependencyModelErrorBuilderTests.java",
         "patchSetId": 1
