@@ -22,6 +22,30 @@
       "revId": "bee5ecfabea5cb02cbccdb6bc66abf216632da9b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10469088_45a3c5e2",
+        "filename": "sdc-os-chef/environments/Template.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-13T14:51:57Z",
+      "side": 1,
+      "message": "This Template.json file isn\u0027t used in the docker/code at all. This is an example how to create the own configuration (e.q AUTO.json). When the integration process will be fully completed, will be good to set up this variable to true (also in the OOM project) but for now this isn\u0027t fully tested and better is do this step by step. So this change is not needed for this commit.",
+      "parentUuid": "b4d0431a_18babe3d",
+      "range": {
+        "startLine": 8,
+        "startChar": 21,
+        "endLine": 8,
+        "endChar": 26
+      },
+      "revId": "bee5ecfabea5cb02cbccdb6bc66abf216632da9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
