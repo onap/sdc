@@ -2264,9 +2264,36 @@ tosca.datatypes.nfv.SwImageData:
 onap.datatypes.monitoring.pm-mapper-filter:
   derived_from: tosca.datatypes.Root
   properties:
-    filter_configuration:
+    filters:
+      type: list
+      description: Filter configuration
+      default: []
+      required: true
+      entry_schema:
+        type: onap.datatypes.monitoring.filters
+
+onap.datatypes.monitoring.filters:
+  derived_from: tosca.datatypes.Root
+  properties:
+    pmDefVsn:
       type: string
-      description: Filter configuration needs to be applied
+      description: PM Dictionary version
+      required: true
+    nfType:
+      type: string
+      description: NF type
+      required: true
+    vendor:
+      type: string
+      description: Vendor name
+      required: true
+    measTypes:
+      type: list
+      description: Measurement types to collect
+      default: []
+      required: true
+      entry_schema:
+        type: string
 
 ### Data types used by Policy TCA model for closed loop ###
 
