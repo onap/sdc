@@ -18,8 +18,8 @@ template "ssl-ini" do
    mode "0755"
    variables({
         :https_port           => "8443",
-        :jetty_keystore_pwd   => "OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4",
-        :jetty_keymanager_pwd => "OBF:1u2u1wml1z7s1z7a1wnl1u2g"
+        :jetty_keystore_pwd   => "rTIS;B4kM]2GHcNK2c3B4&Ng",
+        :jetty_keymanager_pwd => "rTIS;B4kM]2GHcNK2c3B4&Ng"
    })
 end
 
