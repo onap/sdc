@@ -7,14 +7,14 @@ directory "Jetty_etcdir_creation" do
 end
 
 cookbook_file "#{ENV['JETTY_BASE']}/etc/keystore" do
-   source "keystore"
+   source "org.onap.sdc.p12"
    owner "jetty"
    group "jetty"
    mode 0755
 end
 
 cookbook_file "#{ENV['JETTY_BASE']}/etc/truststore" do
-   source "truststore"
+   source "org.onap.sdc.trust.jks"
    owner "jetty"
    group "jetty"
    mode 0755
