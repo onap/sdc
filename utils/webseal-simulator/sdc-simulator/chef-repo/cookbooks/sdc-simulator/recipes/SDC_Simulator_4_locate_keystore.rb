@@ -8,8 +8,8 @@ directory "Jetty_etcdir_creation" do
 	action :create
 end
 
-cookbook_file "/#{jetty_base}/etc/keystore" do
-   source "keystore"
+cookbook_file "/#{jetty_base}/etc/org.onap.sdc.trust.jks" do
+   source "org.onap.sdc.trust.jks"
    owner "jetty"
    group "jetty"
    mode 0755
