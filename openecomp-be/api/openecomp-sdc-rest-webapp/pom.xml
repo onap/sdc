@@ -17,7 +17,6 @@
 		<module>/vendor-license-rest</module>
 		<module>/onboarding-rest-war</module>
 		<module>/vendor-software-products-rest</module>
-		<module>/sequence-rest</module>
 		<module>/validation-rest</module>
 		<module>/action-library-rest</module>
 		<module>/application-config-rest</module>
