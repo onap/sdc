@@ -19,8 +19,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.AbstractToscaSolConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
-import org.openecomp.core.impl.ToscaSolConverterPnf;
 import org.openecomp.core.impl.ToscaSolConverterVnf;
+import org.openecomp.core.impl.ToscaSolModelDrivenConverterPnf;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
@@ -149,7 +149,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
 
   private AbstractToscaSolConverter instantiateToscaConverterFor(ResourceTypeEnum resourceType) {
     if (resourceType == ResourceTypeEnum.PNF) {
-      return new ToscaSolConverterPnf();
+      return new ToscaSolModelDrivenConverterPnf();
     }
     // default is VF
     return new ToscaSolConverterVnf();

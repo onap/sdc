@@ -1,0 +1,4 @@
+topology_template:
+  node_templates:
+    pnfExtCp_1:
+      type: tosca.nodes.nfv.PnfExtCp

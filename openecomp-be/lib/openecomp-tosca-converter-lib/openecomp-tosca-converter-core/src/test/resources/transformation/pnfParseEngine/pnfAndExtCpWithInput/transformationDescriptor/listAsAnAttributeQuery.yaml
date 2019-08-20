@@ -1,0 +1,16 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        - list
+        - as
+        - query
+        - does
+        - not
+        - work
+      to-name: type
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp
+        to: org.openecomp.resource.cp.v2.extCP

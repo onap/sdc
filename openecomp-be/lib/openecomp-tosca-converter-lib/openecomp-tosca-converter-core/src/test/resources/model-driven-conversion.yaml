@@ -1,0 +1,69 @@
+- transformation-for: nodeTemplate #or "region: nodeTemplate"; or "object: nodeTemplate"
+  name: PnfExtCp transformation
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp
+  query: #or "find:"
+    #currently we only support a single attribute and value search. Can be hierarchical like "properties: layer_protocols:".
+    #must have the same structure in the original node_template declaration, otherwise the attribute will not be found.
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query: #attribute query
+        #must have the same structure in the original node_template declaration, otherwise the attribute will not be found.
+        #the value does not matter as we are going to convert it.
+        type:
+      to-name: type #new attribute name. We could have a default strategy to copy the original name (in the query) if this entry is not provided.
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp #could be ignored
+        to: org.openecomp.resource.cp.v2.extCP
+    - query:
+        properties:
+          layer_protocols:
+      to-name: ip_requirements
+      to-value:
+        strategy: replaceInList
+        list:
+          - from: ipv4
+            to:
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6
+            to:
+              assingment_method: dhcp
+              ip_version: 6
+      to-get-input: ipRequirements
+- transformation-for: getInputFunction
+  name: ipRequirements
+  description: converts IpRequirements inputs when called by a get_input TOSCA function
+  conversions:
+    - query:
+        type:
+      to-name: type
+      to-value:
+        strategy: copy
+    - query:
+        description:
+      to-name: description
+      to-value:
+        strategy: copy
+    - query:
+        entry_schema:
+          type:
+      to-name: type
+      to-value:
+        strategy: replace
+        from: string
+        to: org.openecomp.datatypes.network.IpRequirements
+    - query:
+        default:
+      to-name: default
+      to-value:
+        strategy: replaceInList
+        list:
+          - from: ipv4
+            to:
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6
+            to:
+              assingment_method: dhcp
+              ip_version: 6

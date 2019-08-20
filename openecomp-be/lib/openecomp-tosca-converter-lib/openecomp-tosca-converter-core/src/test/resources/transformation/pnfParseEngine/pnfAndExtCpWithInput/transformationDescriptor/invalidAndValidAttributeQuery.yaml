@@ -1,0 +1,16 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query: #attribute query: this attribute does not exists
+        type1:
+      to-name: type
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp
+        to: org.openecomp.resource.cp.v2.extCP
+    - query: #attribute query: this attribute exists
+        type:
+      to-name: type
+      to-value:
+        strategy: copy
