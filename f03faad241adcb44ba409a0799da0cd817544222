@@ -16,6 +16,24 @@
       "revId": "f03faad241adcb44ba409a0799da0cd817544222",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3c9a2fa_d9377903",
+        "filename": "catalog-fe/sdc-frontend/chef-repo/cookbooks/sdc-catalog-fe/templates/default/ssl-ini.erb",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-20T09:58:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9d62879_3d1c03ca",
+      "revId": "f03faad241adcb44ba409a0799da0cd817544222",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
