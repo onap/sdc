@@ -12,4 +12,18 @@
 
     <artifactId>togglz-rest-types</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>${bean-matchers.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>
