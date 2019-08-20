@@ -32,6 +32,13 @@
     </parent>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>${bean-matchers.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
