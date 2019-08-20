@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f95520fc_993745cc",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/ssl-ini.erb",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-20T09:55:05Z",
+      "side": 1,
+      "message": "The jetty.sslContext.keyStorePath and jetty.sslContext.trustStorePath should be uncomment :)",
+      "revId": "568a77303e3a1b74db2a5ea67693eca151d6bdee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
