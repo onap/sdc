@@ -1,0 +1,4 @@
+#this block, nodeTemplate1, is invalid
+- transformation-for: nodeTemplate1
+  query:
+    type: tosca.nodes.nfv.PnfExtCp

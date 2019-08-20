@@ -1,0 +1,7 @@
+type: org.openecomp.resource.cp.v2.extCP
+properties:
+  ip_requirements:
+    - assingment_method: dhcp
+      ip_version: 4
+    - assingment_method: dhcp
+      ip_version: 6
