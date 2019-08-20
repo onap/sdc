@@ -1,0 +1,32 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        type:
+      to-name: type
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp
+        to: org.openecomp.resource.cp.v2.extCP
+    - query:
+        properties:
+          layer_protocols:
+      to-name: ip_requirements
+      to-value:
+        strategy: replaceInList
+        list:
+          - from: ipv4
+            to:
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6
+            to:
+              assingment_method: dhcp
+              ip_version: 6
+    - query:
+        properties:
+          description:
+      to-name: description_converted
+      to-value:
+        strategy: copy

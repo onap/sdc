@@ -1,0 +1,6 @@
+topology_template:
+  node_templates:
+    pnfExtCp_1:
+      properties:
+        anObjectAttribute_copy:
+          anyAttribute: anyAttributeValue

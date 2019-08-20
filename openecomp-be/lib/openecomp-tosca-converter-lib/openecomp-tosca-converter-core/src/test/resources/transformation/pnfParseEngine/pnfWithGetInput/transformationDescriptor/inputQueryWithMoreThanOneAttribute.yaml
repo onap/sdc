@@ -1,0 +1,39 @@
+- transformation-for: nodeTemplate
+  name: PnfExtCp transformation
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          trunk_mode:
+      to-name: trunk_mode_copy
+      to-value:
+        strategy: copy
+    - query:
+        properties:
+          role:
+      to-name: role
+      to-value:
+        strategy: copy
+      to-get-input: stringTransformation
+- transformation-for: getInputFunction
+  name: stringTransformation
+  description: converts a string input
+  conversions:
+    - query:
+        type:
+        invalid-another-attribute: #cannot have two attributes in the attribute query
+      to-name: type
+      to-value:
+        strategy: copy
+    - query:
+        description:
+      to-name: description
+      to-value:
+        strategy: copy
+    - query:
+        default:
+      to-name: default
+      to-value:
+        strategy: copy
