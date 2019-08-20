@@ -74,7 +74,12 @@
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>${bean-matchers.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
 
 </project>
