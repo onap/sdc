@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "659ee832_7d73dce7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/healthcheck-rest/healthcheck-rest-services/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-08-21T07:54:45Z",
+      "side": 1,
+      "message": "please add implicit declaration of scope here",
+      "revId": "e9e9de8c8e80613beef2fdaddcd16e273281acbf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36d86b51_79a86ae3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/healthcheck-rest/healthcheck-rest-types/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-08-21T07:54:45Z",
+      "side": 1,
+      "message": "please add implicit declaration of scope here",
+      "revId": "e9e9de8c8e80613beef2fdaddcd16e273281acbf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
