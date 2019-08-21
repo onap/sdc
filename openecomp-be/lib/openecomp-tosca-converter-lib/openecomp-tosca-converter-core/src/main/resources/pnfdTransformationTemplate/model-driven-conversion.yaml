@@ -1,0 +1,76 @@
+- transformation-for: nodeTemplate #block
+  name: PnfExtCp transformation #transformation name
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp #transformation description
+  query:  # Block query. Searches for node_template(s) with the same attributes. Ignores the node_template name.
+          # Supports recursive structure of key (string): value (new map or string).
+          # Each lvl can contain more than one key that will be treated as an AND.
+          # Must have the same structure in the original node_template declaration, otherwise the node_template will not be found.
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions: # List of conversions/transformations that will be applied to the node_template attributes.
+    - query:  # Attribute query for "type". Finds one attribute inside the node_template(s) found with the block query.
+              # Supports recursive structure of key (string): value (new map or string).
+              # Each lvl can only contain one key.
+              # If the attribute is found, the transformation strategy defined in this element will be applied.
+              # Must have the same structure in the original node_template declaration, otherwise the attribute will not be found.
+        type:
+      to-name: type # New attribute name.
+      to-value:
+        # Replace transformation strategy: replaces the old value for a new one. Must have this structure.
+        strategy: replace # Transformation strategy name.
+        from: tosca.nodes.nfv.PnfExtCp # Original attribute value.
+        to: org.openecomp.resource.cp.v2.extCP # New attribute value.
+    - query: # Another attribute query. This time for "properties/layer_protocols"
+        properties:
+          layer_protocols:
+      to-name: ip_requirements
+      to-value:
+        # Replace in list strategy: replaces specific values of a list for new ones.
+        strategy: replaceInList
+        list: # List of values to be replaced
+          - from: ipv4 # Searches for "ipv4" value and...
+            to: #...replaces for the following map
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6 # Another list value search and replace
+            to:
+              assingment_method: dhcp
+              ip_version: 6
+      # When a TOSCA { get_input: provided-input-name } function is found, the "provided-input-name"
+      # will be converted using the "transformation-for: getInputFunction" with name "ipRequirements".
+      to-get-input: ipRequirements
+- transformation-for: getInputFunction # Transforms inputs called by get_input TOSCA function.
+  name: ipRequirements  # Transformation name, used to be referred by "to-get-input" transformation attribute.
+  description: converts IpRequirements inputs when called by a get_input TOSCA function
+  conversions: #this part works exactly the same as the correspondent node_template transformation declarations.
+    - query:
+        type:
+      to-name: type
+      to-value:
+        strategy: copy
+    - query:
+        description:
+      to-name: description
+      to-value:
+        strategy: copy
+    - query:
+        entry_schema:
+          type:
+      to-name: type
+      to-value:
+        strategy: replace
+        from: string
+        to: org.openecomp.datatypes.network.IpRequirements
+    - query:
+        default:
+      to-name: default
+      to-value:
+        strategy: replaceInList
+        list:
+          - from: ipv4
+            to:
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6
+            to:
+              assingment_method: dhcp
+              ip_version: 6

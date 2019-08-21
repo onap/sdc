@@ -1,0 +1,12 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        type:
+          non-existent-lvl: #this lvl does not exists in the input file
+      to-name: type
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp
+        to: org.openecomp.resource.cp.v2.extCP

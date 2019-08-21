@@ -70,5 +70,10 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-logging-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 	</dependencies>
 </project>
