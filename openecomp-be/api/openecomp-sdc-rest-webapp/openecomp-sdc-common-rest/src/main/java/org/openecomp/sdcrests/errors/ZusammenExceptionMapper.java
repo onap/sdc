@@ -33,15 +33,15 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class ZusammenExceptionMapper implements ExceptionMapper<SdcRuntimeException> {
     private static final String ZUSAMMEN_DB_PREFIX = Module.ZDB + "-";
-    private static final String VLM_VSP_VERSION_ID_DOES_NOT_EXISTS =
+    static final String VLM_VSP_VERSION_ID_DOES_NOT_EXISTS =
             ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode.ZU_ITEM_VERSION_NOT_EXIST;
-    private static final String VLM_VSP_ITEM_ID_DOES_NOT_EXISTS =
+    static final String VLM_VSP_ITEM_ID_DOES_NOT_EXISTS =
             ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode.ZU_ITEM_DOES_NOT_EXIST;
-    private static final String SUB_ENTITY_ID_DOES_NOT_EXISTS =
+    static final String SUB_ENTITY_ID_DOES_NOT_EXISTS =
             ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode.ZU_ELEMENT_GET_INFO;
-    private static final String FAILED_TO_SYNC =
+    static final String FAILED_TO_SYNC =
             ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode.ZU_ITEM_VERSION_SYNC;
-    private static final String FAILED_TO_PUBLISH_OUT_OF_SYNC =
+    static final String FAILED_TO_PUBLISH_OUT_OF_SYNC =
             ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode
                                               .ZU_ITEM_VERSION_PUBLISH_NOT_ALLOWED;
 
