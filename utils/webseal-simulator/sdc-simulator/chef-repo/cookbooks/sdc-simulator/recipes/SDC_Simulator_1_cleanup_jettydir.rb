@@ -1,7 +1,5 @@
-jetty_base="/var/lib/jetty"
-
 directory "SDC_Simulator_tempdir_creation" do
-  path "#{jetty_base}/temp"
+  path "#{ENV['JETTY_BASE']}/temp"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -10,7 +8,7 @@ end
 
 
 directory "SDC_Simulator_create_config_dir" do
-  path "#{jetty_base}/config"
+  path "#{ENV['JETTY_BASE']}/config"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -19,7 +17,7 @@ end
 
 
 directory "SDC_Simulator_create_sdc-simulator" do
-  path "#{jetty_base}/config/sdc-simulator"
+  path "#{ENV['JETTY_BASE']}/config/sdc-simulator"
   owner 'jetty'
   group 'jetty'
   mode '0755'

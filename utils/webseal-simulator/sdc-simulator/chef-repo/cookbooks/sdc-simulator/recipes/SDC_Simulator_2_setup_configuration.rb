@@ -1,5 +1,3 @@
-jetty_base="/var/lib/jetty"
-
 if ENV['FE_URL'] && !ENV['FE_URL'].empty?
     fe_url="#{ENV['FE_URL']}"
 elsif  node['disableHttp']
@@ -10,7 +8,7 @@ end
 
 
 template "webseal.conf" do
-   path "#{jetty_base}/config/sdc-simulator/webseal.conf"
+   path "#{ENV['JETTY_BASE']}/config/sdc-simulator/webseal.conf"
    source "SDC-Simulator-webseal.conf.erb"
    owner "jetty"
    group "jetty"
