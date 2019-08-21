@@ -18,11 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.junit.Test;
 
 import java.util.Base64;
+import org.openecomp.sdc.securityutil.SecurityUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

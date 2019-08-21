@@ -18,11 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.junit.Test;
+import org.openecomp.sdc.securityutil.Passwords;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

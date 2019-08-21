@@ -18,8 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +26,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.sdc.security.filters.ResponceWrapper;
-import org.onap.sdc.security.filters.SampleFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -38,13 +34,17 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.openecomp.sdc.securityutil.AuthenticationCookie;
+import org.openecomp.sdc.securityutil.AuthenticationCookieUtils;
+import org.openecomp.sdc.securityutil.CipherUtilException;
+import org.openecomp.sdc.securityutil.RepresentationUtils;
+import org.openecomp.sdc.securityutil.filters.ResponceWrapper;
+import org.openecomp.sdc.securityutil.filters.SampleFilter;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-//@RunWith(PowerMockRunner.class)
-//@PrepareForTest(fullyQualifiedNames = "org.onap.sdc.security.*")
 public class SessionValidationFilterTest {
 
     @Mock
@@ -126,7 +126,8 @@ public class SessionValidationFilterTest {
         long startTime = authenticationCookie.getMaxSessionTime();
         long timeout = startTime - maxSessionTimeOut - 1000l;
         authenticationCookie.setMaxSessionTime(timeout);
-        Cookie cookie = new Cookie(sessionValidationFilter.getFilterConfiguration().getCookieName(), AuthenticationCookieUtils.getEncryptedCookie(authenticationCookie, sessionValidationFilter.getFilterConfiguration()));
+        Cookie cookie = new Cookie(sessionValidationFilter.getFilterConfiguration().getCookieName(), AuthenticationCookieUtils
+            .getEncryptedCookie(authenticationCookie, sessionValidationFilter.getFilterConfiguration()));
 
         when(request.getCookies()).thenReturn(new Cookie[]{cookie});
         sessionValidationFilter.doFilter(request, response, filterChain);

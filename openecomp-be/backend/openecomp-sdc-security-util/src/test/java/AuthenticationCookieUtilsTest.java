@@ -18,14 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.junit.Test;
-import org.onap.sdc.security.filters.SampleFilter;
 
 import javax.servlet.http.Cookie;
 
 import java.io.IOException;
+import org.openecomp.sdc.securityutil.AuthenticationCookie;
+import org.openecomp.sdc.securityutil.AuthenticationCookieUtils;
+import org.openecomp.sdc.securityutil.CipherUtilException;
+import org.openecomp.sdc.securityutil.ISessionValidationFilterConfiguration;
+import org.openecomp.sdc.securityutil.filters.SampleFilter;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +40,8 @@ public class AuthenticationCookieUtilsTest {
     public void vaildateThatCookieCurrentSessionTimeIncreased() throws IOException, CipherUtilException {
         // original cookie, pojo and servlet cookie
         AuthenticationCookie authenticationCookieOriginal = new AuthenticationCookie("kuku");
-        Cookie cookieWithOriginalTime = new Cookie(filterCfg.getCookieName(), AuthenticationCookieUtils.getEncryptedCookie(authenticationCookieOriginal,filterCfg ));
+        Cookie cookieWithOriginalTime = new Cookie(filterCfg.getCookieName(), AuthenticationCookieUtils
+            .getEncryptedCookie(authenticationCookieOriginal,filterCfg ));
         // cookie with increased time, pojo and servlet cookie
         Cookie cookieWithIncreasedTime = AuthenticationCookieUtils.updateSessionTime(cookieWithOriginalTime, filterCfg);
         AuthenticationCookie authenticationCookieIncreasedTime = AuthenticationCookieUtils.getAuthenticationCookie(cookieWithIncreasedTime, filterCfg);
@@ -58,17 +61,4 @@ public class AuthenticationCookieUtilsTest {
         assertTrue(authenticationCookieOriginal.equals(decriptedAndDeserializedAuthenticationCookie));
     }
 
-
-
-//    @Test
-//    public void getEncryptedCookie() {
-//    }
-//
-//    @Test
-//    public void getAuthenticationCookie() {
-//    }
-//
-//    @Test
-//    public void isSessionExpired() {
-//    }
 }

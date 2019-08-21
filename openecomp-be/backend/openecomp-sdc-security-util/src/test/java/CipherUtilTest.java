@@ -18,15 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
+import org.openecomp.sdc.securityutil.CipherUtil;
+import org.openecomp.sdc.securityutil.CipherUtilException;
 
-import java.util.Random;
-
-import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 import static org.junit.Assert.*;
 
 public class CipherUtilTest {
