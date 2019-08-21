@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.security;
-
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.openecomp.sdc.securityutil.AuthenticationCookie;
+import org.openecomp.sdc.securityutil.RepresentationUtils;
 
 import static org.junit.Assert.assertTrue;
 
