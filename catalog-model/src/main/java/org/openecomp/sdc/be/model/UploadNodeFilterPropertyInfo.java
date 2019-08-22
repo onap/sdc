@@ -42,7 +42,7 @@ public class UploadNodeFilterPropertyInfo {
         return values;
     }
 
-    public void setValue(List<String> values) {
+    public void setValues(List<String> values) {
         this.values = values;
     }
 }
