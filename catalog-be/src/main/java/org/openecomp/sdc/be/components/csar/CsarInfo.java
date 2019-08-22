@@ -167,6 +167,7 @@ public class CsarInfo {
     private ResultStatusEnum handleSubstitutionMappings(Map<String, NodeTypeInfo> nodeTypesInfo, Map.Entry<String, byte[]> entry, Map<String, Object> mappedToscaTemplate, Map<String, Object> substitutionMappings) {
         if (substitutionMappings.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName())) {
             NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
+            nodeTypeInfo.setSubstitutionMapping(true);
             nodeTypeInfo.setType(
                     (String) substitutionMappings.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()));
             nodeTypeInfo.setTemplateFileName(entry.getKey());
@@ -228,7 +229,9 @@ public class CsarInfo {
             String type = (String) nodeTemplate.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
             if (nodeTypesInfo.containsKey(type)) {
                 NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(type);
-                nodeTypeInfo.setNested(true);
+                if (nodeTypeInfo.isSubstitutionMapping() && type.contains(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
+                    nodeTypeInfo.setNested(true);
+                }
             }
         }
     }
