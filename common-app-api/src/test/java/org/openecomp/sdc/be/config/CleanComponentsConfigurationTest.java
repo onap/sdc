@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,50 +21,20 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class CleanComponentsConfigurationTest {
-
-	private CleanComponentsConfiguration createTestSubject() {
-		return new CleanComponentsConfiguration();
-	}
-
-	
 	@Test
-	public void testGetCleanIntervalInMinutes() throws Exception {
-		CleanComponentsConfiguration testSubject;
-		long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCleanIntervalInMinutes();
-	}
-
-	
-
-
-	
-	@Test
-	public void testGetComponentsToClean() throws Exception {
-		CleanComponentsConfiguration testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentsToClean();
-	}
-
-	
-	@Test
-	public void testSetComponentsToClean() throws Exception {
-		CleanComponentsConfiguration testSubject;
-		List<String> componentsToClean = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setComponentsToClean(componentsToClean);
+	public void validateBean() {
+		assertThat(CleanComponentsConfiguration.class, allOf(
+				hasValidBeanConstructor(),
+				hasValidGettersAndSettersExcluding()
+		));
 	}
 }

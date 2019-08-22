@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.config;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -31,6 +32,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
+
+    @VisibleForTesting
+    public ConfigurationManager() {
+        super();
+        instance = this;
+    }
 
     private ConfigurationSource configurationSource = null;
     private static ConfigurationManager instance;
@@ -125,23 +132,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         return instance;
     }
 
-    public void reconfigure(BasicConfiguration obj) {
-
-        // if (obj != null) {
-
-        // if (obj instanceof Configuration) {
-        // configurations.put(getKey(Configuration.class), obj);
-        // }
-        // if (obj instanceof ErrorConfiguration) {
-        // configurations.put(getKey(ErrorConfiguration.class), obj);
-        // }
-        //
-        // if (obj instanceof EcompErrorConfiguration) {
-        // configurations.put(getKey(EcompErrorConfiguration.class), obj);
-        // }
-        // }
-
-    }
+    public void reconfigure(BasicConfiguration obj) { }
 
     /**
      * FOR TEST ONLY
