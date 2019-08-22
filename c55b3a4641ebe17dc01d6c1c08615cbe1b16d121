@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c608537d_7c139009",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/impl/PluginStatusBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-22T12:45:50Z",
+      "side": 1,
+      "message": "mocks should be private",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 24
+      },
+      "revId": "c55b3a4641ebe17dc01d6c1c08615cbe1b16d121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1e4d611_dd750667",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/impl/PluginStatusBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-22T12:45:50Z",
+      "side": 1,
+      "message": "i\u0027d prefer to have empty line before this invocation",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 40
+      },
+      "revId": "c55b3a4641ebe17dc01d6c1c08615cbe1b16d121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ad7e10c_54c6d353",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/impl/PluginStatusBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-22T12:45:50Z",
+      "side": 1,
+      "message": "same here - empty line would be helpful",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 59
+      },
+      "revId": "c55b3a4641ebe17dc01d6c1c08615cbe1b16d121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99ef2693_790903ec",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/servlets/ConfigServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-22T12:45:50Z",
+      "side": 1,
+      "message": "privates",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 34
+      },
+      "revId": "c55b3a4641ebe17dc01d6c1c08615cbe1b16d121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
