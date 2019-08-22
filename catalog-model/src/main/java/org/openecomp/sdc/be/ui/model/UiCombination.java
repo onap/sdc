@@ -18,10 +18,16 @@
 
 package org.openecomp.sdc.be.ui.model;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class UiCombination {
 
     String name;
     String description;
+
+    @VisibleForTesting
+    UiCombination() {
+    }
 
     public UiCombination(String name, String description) {
         this.name = name;
