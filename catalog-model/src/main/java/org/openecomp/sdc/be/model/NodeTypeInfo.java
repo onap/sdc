@@ -28,6 +28,7 @@ public class NodeTypeInfo {
     String templateFileName;
     List<String> derivedFrom;
     boolean isNested;
+    boolean isSubstitutionMapping;
     Map<String, Object> mappedToscaTemplate;
 
     public NodeTypeInfo getUnmarkedCopy(){
@@ -63,6 +64,12 @@ public class NodeTypeInfo {
     }
     public void setNested(boolean isNested) {
         this.isNested = isNested;
+    }
+    public boolean isSubstitutionMapping() {
+        return isSubstitutionMapping;
+    }
+    public void setSubstitutionMapping(boolean isSubstitutionMapping) {
+        this.isSubstitutionMapping = isSubstitutionMapping;
     }
 
     public Map<String, Object> getMappedToscaTemplate() {
