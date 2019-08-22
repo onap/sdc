@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.dao.neo4j;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 
 import java.util.Map;
@@ -29,6 +30,9 @@ public class Neo4jEdge {
 	private GraphEdgeLabels edgeType;
 	private Map<String, Object> properties;
 	private ActionEnum action;
+
+	@VisibleForTesting
+	Neo4jEdge() {}
 
 	public Neo4jEdge(GraphEdgeLabels edgeType, Map<String, Object> properties, ActionEnum actionEnum) {
 		super();
