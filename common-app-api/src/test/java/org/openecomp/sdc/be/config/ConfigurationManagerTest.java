@@ -3,6 +3,7 @@
  * ONAP SDC
  * ================================================================================
  * Copyright (C) 2019 Samsung. All rights reserved.
+ * Modifications Copyright (C) 2019 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +23,28 @@
 
 package org.openecomp.sdc.be.config;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ConfigurationManagerTest {
 
     private ConfigurationManager configurationManager;
 
     @Before
-    public void setConfigurationSource() {
+    public void setUp() {
         String appConfigDir = "src/test/resources/config/common";
         ConfigurationSource configurationSource =
                 new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
@@ -44,31 +52,52 @@ public class ConfigurationManagerTest {
     }
 
     @Test
-    public void testGetConfiguration() {
-        assertEquals(configurationManager.getConfiguration(),
-                ConfigurationManager.getConfigurationManager().getConfigurations()
-                        .get(Configuration.class.getSimpleName()));
+    public void validateBean() {
+        assertThat(ConfigurationManager.class,
+                hasValidGettersAndSettersExcluding(
+                        "distributionEngineConfiguration",
+                        "ecompErrorConfiguration",
+                        "errorConfiguration",
+                        "neo4jErrorsConfiguration"
+                ));
     }
-
+    private class TestErrorConfiguration extends ErrorConfiguration{}
     @Test
-    public void testGetErrorConfiguration() {
-        assertEquals(configurationManager.getErrorConfiguration(),
-                ConfigurationManager.getConfigurationManager().getConfigurations()
-                        .get(ErrorConfiguration.class.getSimpleName()));
+    public void testGetSetErrorConfiguration() {
+        configurationManager.setErrorConfiguration(new TestErrorConfiguration());
+        assertEquals(
+                configurationManager.getErrorConfiguration().getClass(),
+                TestErrorConfiguration.class);
     }
-
+    private class TestEcompErrorConfiguration extends EcompErrorConfiguration{}
     @Test
-    public void testGetEcompErrorConfiguration() {
-        assertEquals(configurationManager.getEcompErrorConfiguration(),
-                ConfigurationManager.getConfigurationManager().getConfigurations()
-                        .get(EcompErrorConfiguration.class.getSimpleName()));
+    public void testGetSetEcompErrorConfiguration() {
+        configurationManager.setEcompErrorConfiguration(new TestEcompErrorConfiguration());
+        assertEquals(
+                configurationManager.getEcompErrorConfiguration().getClass(),
+                TestEcompErrorConfiguration.class);
     }
-
     @Test
     public void testGetDistributionEngineConfiguration() {
         assertEquals(configurationManager.getDistributionEngineConfiguration(),
                 ConfigurationManager.getConfigurationManager().getConfigurations()
                         .get(DistributionEngineConfiguration.class.getSimpleName()));
+    }
+    @Test
+    public void testGetNeo4jErrorsConfiguration() {
+        assertEquals(configurationManager.getNeo4jErrorsConfiguration(),
+                ConfigurationManager.getConfigurationManager().getConfigurations()
+                        .get(Neo4jErrorsConfiguration.class.getSimpleName()));
+    }
+    private class TestConfiguration extends Configuration{}
+    @Test
+    public void testGetConfigurationAndWatch() {
+        ConfigurationListener testListener = Mockito.mock(ConfigurationListener.class);
+        configurationManager.setConfiguration(new TestConfiguration());
+        assertEquals(
+                configurationManager.getConfigurationAndWatch(testListener).getClass(),
+                TestConfiguration.class
+                );
     }
 
 }
