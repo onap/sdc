@@ -59,7 +59,7 @@
     "displayName": "PM Mapper",
     "icon": "policy-dcae-pm-mapper"
   },
-  "onap.policy.monitoring.dcae-restconfcollector": {
+  "onap.policies.monitoring.dcae-restconfcollector": {
     "displayName": "Restconf Collector",
     "icon": "policy-dcae-restconfcollector"
   },
