@@ -14,5 +14,6 @@
     <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory" />
     <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapHealth" />
     <bean class="org.openecomp.sdc.be.impl.ComponentsUtils" />
+    <bean class="org.openecomp.sdc.config.CatalogBESpringConfig" />
 
 </beans>

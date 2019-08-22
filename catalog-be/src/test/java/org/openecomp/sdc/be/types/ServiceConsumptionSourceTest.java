@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,34 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+package org.openecomp.sdc.be.types;
 
-package org.openecomp.sdc.be.dao.neo4j;
+import static org.junit.Assert.assertEquals;
 
-import org.openecomp.sdc.be.dao.graph.datatype.GraphElement;
+import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ServiceConsumptionSourceTest {
 
-public class BatchBuilder {
+    @Test
+    public void shouldReturnSourceValue() {
+        ServiceConsumptionSource serviceInput = ServiceConsumptionSource.getSourceValue("ServiceInput");
+        assertEquals(serviceInput, ServiceConsumptionSource.SERVICE_INPUT);
+    }
 
-	private List<GraphElement> elements;
-
-	protected BatchBuilder() {
-		elements = new ArrayList<>();
-	}
-
-	public static BatchBuilder getBuilder() {
-		return new BatchBuilder();
-	}
-
-	public BatchBuilder add(GraphElement element) {
-		elements.add(element);
-		return this;
-	}
-
-	public List<GraphElement> getElements() {
-		return elements;
-	}
-
-
+    @Test
+    public void shouldReturnSource() {
+        String serviceInput = ServiceConsumptionSource.SERVICE_INPUT.getSource();
+        assertEquals(serviceInput, "ServiceInput");
+    }
 }
