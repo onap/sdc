@@ -27,11 +27,14 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -57,6 +60,9 @@ import static org.mockito.Mockito.when;
 public class ArtifactUuidFixTest {
 	@InjectMocks
 	private ArtifactUuidFix test;
+
+	@Mock
+	private Component component;
 
 	@Mock
 	private JanusGraphDao janusGraphDao;
@@ -214,4 +220,79 @@ public class ArtifactUuidFixTest {
 		result = test.doFix(fixComponent, runMode);
 		assertEquals(false,result);
 	}
+
+
+	@Test
+	public void testDoFixVfWithFixMode() {
+		String fixComponent = "";
+		String runMode = "fix";
+		String uniqueId = "uniqueId";
+		boolean result;
+		fixComponent = "vf_only";
+		Map<GraphPropertyEnum, Object> hasProps1 = new HashMap<>();
+		hasProps1.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+		hasProps1.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+		List<GraphVertex> list = new ArrayList<>();
+		GraphVertex graphVertex = new GraphVertex();
+		graphVertex.setVertex(vertex);
+		graphVertex.setUniqueId(uniqueId);
+		graphVertex.setMetadataProperties(hasProps1);
+		list.add(graphVertex);
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.NODE_TYPE, hasProps1)).thenReturn(Either.left(list));
+
+		Map<GraphPropertyEnum, Object> hasProps2 = new HashMap<>();
+		hasProps2.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+		hasProps2.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
+		hasProps2.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps2)).thenReturn(Either.left(list));
+
+		Map<GraphPropertyEnum, Object> hasProps3 = new HashMap<>();
+		hasProps3.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+		hasProps3.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+		when(janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps3)).thenReturn(Either.left(list));
+
+		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
+		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+		hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF.name());
+		Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
+		hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
+		when(janusGraphDao
+			.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
+		Resource resource = new Resource();
+		resource.setName(uniqueId);
+		Map<String, ArtifactDefinition> deployArtifact = new HashMap<>();
+		ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+		artifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
+		artifactDefinition.setUniqueId("one.two");
+		artifactDefinition.setArtifactUUID("one.two");
+		deployArtifact.put("two", artifactDefinition);
+		resource.setDeploymentArtifacts(deployArtifact);
+		List<GroupDefinition> groups = new ArrayList<>();
+		GroupDefinition groupDefinition = new GroupDefinition();
+		groupDefinition.setType(Constants.DEFAULT_GROUP_VF_MODULE);
+		List<String> artifacts = new ArrayList<>();
+		artifacts.add("one.two");
+		groupDefinition.setArtifacts(artifacts);
+		groupDefinition.setArtifactsUuid(artifacts);
+		groups.add(groupDefinition);
+		resource.setGroups(groups);
+		resource.setUniqueId(uniqueId);
+		resource.setComponentType(ComponentTypeEnum.SERVICE_INSTANCE);
+
+		when(toscaOperationFacade.getToscaElement(graphVertex.getUniqueId())).thenReturn(Either.left(resource));
+		when(toscaOperationFacade.getToscaFullElement(Mockito.anyString())).thenReturn(Either.left(component));
+		when(component.getUniqueId()).thenReturn(uniqueId);
+		when(toscaOperationFacade.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(component));
+		when(janusGraphDao.getVertexById(uniqueId, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
+		when(janusGraphDao.getChildVertex(graphVertex, EdgeLabelEnum.GROUPS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+		when(janusGraphDao.getChildVertex(graphVertex, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+		when(janusGraphDao.getChildVertex(graphVertex, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+
+		List<Service> serviceList = new ArrayList<>();
+		serviceList.add(service);
+
+		result = test.doFix(fixComponent, runMode);
+		assertEquals(true, result);
+	}
+
 }
