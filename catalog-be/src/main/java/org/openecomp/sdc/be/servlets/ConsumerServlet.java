@@ -20,14 +20,22 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.google.gson.Gson;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -38,19 +46,21 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/consumers")
-@Api(value = "Consumer Servlet", description = "Consumer Servlet")
+@OpenAPIDefinition(info = @Info(title = "Consumer Servlet",description = "Consumer Servlet"))
 @Singleton
 public class ConsumerServlet extends BeGenericServlet {
 
@@ -70,9 +80,14 @@ public class ConsumerServlet extends BeGenericServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Consumer credentials", httpMethod = "POST", notes = "Returns created ECOMP consumer credentials", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Consumer credentials created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response createConsumer(@ApiParam(value = "Consumer Object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Consumer credentials", method = "POST",
+            summary = "Returns created ECOMP consumer credentials",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Consumer credentials created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response createConsumer(@Parameter(description = "Consumer Object to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -115,9 +130,14 @@ public class ConsumerServlet extends BeGenericServlet {
     @Path("/{consumerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Consumer", httpMethod = "GET", notes = "Returns consumer according to ConsumerID", response = ConsumerDefinition.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Consumer found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
-    public Response getConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Consumer", method = "GET", summary = "Returns consumer according to ConsumerID",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Consumer found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Consumer not found")})
+    public Response getConsumer(@PathParam("consumerId") final String consumerId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -151,9 +171,14 @@ public class ConsumerServlet extends BeGenericServlet {
     @Path("/{consumerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Deletes Consumer", httpMethod = "DELETE", notes = "Returns deleted consumer according to ConsumerID", response = ConsumerDefinition.class)
-    @ApiResponses(value = { @ApiResponse(code = 204, message = "Consumer deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
-    public Response deleteConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Deletes Consumer", method = "DELETE",
+            summary = "Returns deleted consumer according to ConsumerID",  responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Consumer deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Consumer not found")})
+    public Response deleteConsumer(@PathParam("consumerId") final String consumerId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
 

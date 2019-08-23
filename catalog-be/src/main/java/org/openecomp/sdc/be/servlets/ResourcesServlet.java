@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.*;
 import javax.inject.Inject;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -40,6 +39,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
@@ -50,7 +50,15 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +73,7 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Resources Catalog", description = "Resources Servlet")
+@OpenAPIDefinition(info = @Info(title = "Resources Catalog", description = "Resources Servlet"))
 @Singleton
 public class ResourcesServlet extends AbstractValidationsServlet {
 
@@ -86,10 +94,15 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Resource", httpMethod = "POST", notes = "Returns created resource", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Resource already exist") })
-    public Response createResource(@ApiParam(value = "Resource object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Create Resource", method = "POST", summary = "Returns created resource",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    public Response createResource(@Parameter(description = "Resource object to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
@@ -253,9 +266,14 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Resource", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Resource not found") })
-    public Response getResourceById(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")})
+    public Response getResourceById(@PathParam("resourceId") final String resourceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -294,9 +312,14 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/resourceName/{resourceName}/resourceVersion/{resourceVersion}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Resource by name and version", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Resource not found") })
-    public Response getResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
+    @Operation(description = "Retrieve Resource by name and version", method = "GET",
+            summary = "Returns resource according to resourceId", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")})
+    public Response getResourceByNameAndVersion(@PathParam("resourceName") final String resourceName,
+            @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
@@ -326,9 +349,14 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/validate-name/{resourceName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "validate resource name", httpMethod = "GET", notes = "checks if the chosen resource name is available ", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation") })
-    public Response validateResourceName(@PathParam("resourceName") final String resourceName, @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "validate resource name", method = "GET",
+            summary = "checks if the chosen resource name is available ", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    public Response validateResourceName(@PathParam("resourceName") final String resourceName,
+            @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
@@ -401,10 +429,15 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Resource Metadata", httpMethod = "PUT", notes = "Returns updated resource metadata", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource metadata updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content") })
-    public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId, @ApiParam(value = "Resource metadata to be updated", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Resource Metadata", method = "PUT", summary = "Returns updated resource metadata",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource metadata updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content")})
+    public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId,
+            @Parameter(description = "Resource metadata to be updated", required = true) String data,
+            @Context final HttpServletRequest request,       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}" , url);
@@ -438,16 +471,22 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Resource", httpMethod = "PUT", notes = "Returns updated resource", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Resource already exist") })
-    public Response updateResource(@ApiParam(value = "Resource object to be updated", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+    @Operation(description = "Update Resource", method = "PUT", summary = "Returns updated resource",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    public Response updateResource(
+            @Parameter(description = "Resource object to be updated", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @PathParam(value = "resourceId") String resourceId) {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug("Start handle request of {}", url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
@@ -465,7 +504,8 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
+                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(
+                        convertResponse.left().value(), modifier, null, null, resourceId);
                 Object representation = RepresentationUtils.toRepresentation(updatedResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
                 responseWrapper.setInnerElement(response);
@@ -484,14 +524,20 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/csar/{csaruuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Resource", httpMethod = "POST", notes = "Returns resource created from csar uuid", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource retrieced"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response getResourceFromCsar(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @PathParam(value = "csaruuid") String csarUUID) {
+    @Operation(description = "Create Resource", method = "POST", summary = "Returns resource created from csar uuid",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource retrieced"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response getResourceFromCsar(@Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @PathParam(value = "csaruuid") String csarUUID) {
 
         init();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug("Start handle request of {}", url);
 
         // retrieve user details
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
@@ -504,12 +550,14 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         try {
 
-            Either<Resource, ResponseFormat> eitherResource = resourceBusinessLogic.getLatestResourceFromCsarUuid(csarUUID, user);
+            Either<Resource, ResponseFormat> eitherResource =
+                    resourceBusinessLogic.getLatestResourceFromCsarUuid(csarUUID, user);
 
             // validate response
             if (eitherResource.isRight()) {
                 log.debug("failed to get resource from csarUuid : {}", csarUUID);
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), eitherResource.right().value());
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                        eitherResource.right().value());
             } else {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);

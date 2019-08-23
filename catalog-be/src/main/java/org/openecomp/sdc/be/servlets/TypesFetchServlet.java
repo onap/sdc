@@ -20,18 +20,26 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
@@ -55,27 +63,21 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Types Fetch Servlet", description = "Types Fetch Servlet")
+@OpenAPIDefinition(info = @Info(title = "Types Fetch Servlet",description = "Types Fetch Servlet"))
 @Singleton
 public class TypesFetchServlet extends AbstractValidationsServlet {
 
@@ -109,9 +111,12 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("dataTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get data types", httpMethod = "GET", notes = "Returns data types", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "datatypes"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "Data types not found") })
+    @Operation(description = "Get data types", method = "GET", summary = "Returns data types", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "datatypes"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Data types not found")})
     public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -155,12 +160,13 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("interfaceLifecycleTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get interface lifecycle types", httpMethod = "GET", notes = "Returns interface lifecycle types", response = Response.class)
+    @Operation(description = "Get interface lifecycle types", method = "GET", summary = "Returns interface lifecycle types", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Interface lifecycle types"),
-        @ApiResponse(code = 403, message = "Restricted operation"),
-        @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-        @ApiResponse(code = 404, message = "Interface lifecycle types not found")
+        @ApiResponse(responseCode = "200", description = "Interface lifecycle types"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Interface lifecycle types not found")
     })
     public Response getInterfaceLifecycleTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -202,12 +208,12 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("capabilityTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get capability types", httpMethod = "GET", notes = "Returns capability types", response =
-            Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "capabilityTypes"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "Capability types not found")})
+    @Operation(description = "Get capability types", method = "GET", summary = "Returns capability types", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "capabilityTypes"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Capability types not found")})
     public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 
@@ -254,12 +260,12 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("relationshipTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get relationship types", httpMethod = "GET", notes = "Returns relationship types", response =
-            Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "relationshipTypes"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "Relationship types not found")})
+    @Operation(description = "Get relationship types", method = "GET", summary = "Returns relationship types", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "relationshipTypes"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Relationship types not found")})
     public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 
@@ -306,10 +312,11 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("nodeTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get node types", httpMethod = "GET", notes = "Returns node types", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "nodeTypes"), @ApiResponse(code = 403, message =
-            "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "Node types not found")})
+    @Operation(description = "Get node types", method = "GET", summary = "Returns node types", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "nodeTypes"), @ApiResponse(responseCode = "403", description =
+            "Restricted operation"), @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Node types not found")})
     public Response getAllNodeTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 

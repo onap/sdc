@@ -24,11 +24,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -76,7 +80,7 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Service Catalog", description = "Service Servlet")
+@OpenAPIDefinition(info = @Info(title = "Service Catalog", description = "Service Servlet"))
 @Singleton
 public class ServiceServlet extends AbstractValidationsServlet {
 
@@ -100,10 +104,15 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Service", httpMethod = "POST", notes = "Returns created service", response = Service.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Service created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Service already exist") })
-    public Response createService(@ApiParam(value = "Service object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Create Service", method = "POST", summary = "Returns created service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Service already exist")})
+    public Response createService(@Parameter(description = "Service object to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -150,9 +159,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/validate-name/{serviceName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "validate service name", httpMethod = "GET", notes = "checks if the chosen service name is available ", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation") })
-    public Response validateServiceName(@PathParam("serviceName") final String serviceName, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "validate service name", method = "GET",
+            summary = "checks if the chosen service name is available ", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    public Response validateServiceName(@PathParam("serviceName") final String serviceName,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -162,14 +175,16 @@ public class ServiceServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}", userId);
         Response response = null;
         try {
-            Either<Map<String, Boolean>, ResponseFormat> actionResponse = serviceBusinessLogic.validateServiceNameExists(serviceName, userId);
+            Either<Map<String, Boolean>, ResponseFormat> actionResponse =
+                    serviceBusinessLogic.validateServiceNameExists(serviceName, userId);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get validate service name");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                    actionResponse.left().value());
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Validate Service Name");
             log.debug("validate service name failed with exception", e);
@@ -181,9 +196,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/audit-records/{componentType}/{componentUniqueId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get component audit records", httpMethod = "GET", notes = "get audit records for a service or a resource", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation") })
-    public Response getComponentAuditRecords(@PathParam("componentType") final String componentType, @PathParam("componentUniqueId") final String componentUniqueId, @Context final HttpServletRequest request,
+    @Operation(description = "get component audit records", method = "GET",
+            summary = "get audit records for a service or a resource", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    public Response getComponentAuditRecords(@PathParam("componentType") final String componentType,
+            @PathParam("componentUniqueId") final String componentUniqueId, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         init();
         ServletContext context = request.getSession().getServletContext();
@@ -206,18 +225,22 @@ public class ServiceServlet extends AbstractValidationsServlet {
             }
 
             if (responseWrapper.isEmpty()) {
-                fillUUIDAndVersion(responseWrapper, uuidWrapper, versionWrapper, userWrapper.getInnerElement(), componentWrapper.getInnerElement(), componentUniqueId, context);
+                fillUUIDAndVersion(responseWrapper, uuidWrapper, versionWrapper, userWrapper.getInnerElement(),
+                        componentWrapper.getInnerElement(), componentUniqueId, context);
             }
 
             if (responseWrapper.isEmpty()) {
-                Either<List<Map<String, Object>>, ResponseFormat> eitherServiceAudit = serviceBusinessLogic.getComponentAuditRecords(versionWrapper.getInnerElement(), uuidWrapper.getInnerElement(), userId);
+                Either<List<Map<String, Object>>, ResponseFormat> eitherServiceAudit =
+                        serviceBusinessLogic.getComponentAuditRecords(versionWrapper.getInnerElement(),
+                                uuidWrapper.getInnerElement(), userId);
 
                 if (eitherServiceAudit.isRight()) {
                     Response errorResponse = buildErrorResponse(eitherServiceAudit.right().value());
                     responseWrapper.setInnerElement(errorResponse);
                 } else {
                     List<Map<String, Object>> auditRecords = eitherServiceAudit.left().value();
-                    Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), auditRecords);
+                    Response okResponse =
+                            buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), auditRecords);
                     responseWrapper.setInnerElement(okResponse);
 
                 }
@@ -226,7 +249,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Validate Service Name");
             log.debug("get Service Audit Records failed with exception", e);
-            Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            Response errorResponse =
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             responseWrapper.setInnerElement(errorResponse);
         }
         return responseWrapper.getInnerElement();
@@ -328,10 +352,15 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Service Metadata", httpMethod = "PUT", notes = "Returns updated service", response = Service.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service Updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateServiceMetadata(@PathParam("serviceId") final String serviceId, @ApiParam(value = "Service object to be Updated", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Service Metadata", method = "PUT", summary = "Returns updated service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service Updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateServiceMetadata(@PathParam("serviceId") final String serviceId,
+            @Parameter(description = "Service object to be Updated", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -353,7 +382,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 return response;
             }
             Service updatedService = convertResponse.left().value();
-            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
+            Either<Service, ResponseFormat> actionResponse =
+                    serviceBusinessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update service");
@@ -388,10 +418,17 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{serviceId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Group Instance Property Values", httpMethod = "PUT", notes = "Returns updated group instance", response = Service.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Group Instance Property Values Updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateGroupInstancePropertyValues(@PathParam("serviceId") final String serviceId,@PathParam("componentInstanceId") final String componentInstanceId, @PathParam("groupInstanceId") final String groupInstanceId, @ApiParam(value = "Group instance object to be Updated", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Group Instance Property Values", method = "PUT",
+            summary = "Returns updated group instance", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Instance Property Values Updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateGroupInstancePropertyValues(@PathParam("serviceId") final String serviceId,
+            @PathParam("componentInstanceId") final String componentInstanceId,
+            @PathParam("groupInstanceId") final String groupInstanceId,
+            @Parameter(description = "Group instance object to be Updated", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         Response response = null;
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -436,9 +473,14 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Service", httpMethod = "GET", notes = "Returns service according to serviceId", response = Service.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
-    public Response getServiceById(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Service", method = "GET", summary = "Returns service according to serviceId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Service not found")})
+    public Response getServiceById(@PathParam("serviceId") final String serviceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -477,9 +519,14 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/serviceName/{serviceName}/serviceVersion/{serviceVersion}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Service", httpMethod = "GET", notes = "Returns service according to name and version", response = Service.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
-    public Response getServiceByNameAndVersion(@PathParam("serviceName") final String serviceName, @PathParam("serviceVersion") final String serviceVersion, @Context final HttpServletRequest request,
+    @Operation(description = "Retrieve Service", method = "GET",
+            summary = "Returns service according to name and version", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Service not found")})
+    public Response getServiceByNameAndVersion(@PathParam("serviceName") final String serviceName,
+            @PathParam("serviceVersion") final String serviceVersion, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         // get modifier id
@@ -513,11 +560,21 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/distribution-state/{state}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Service Distribution State", httpMethod = "POST", notes = "service with the changed distribution status")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service distribution state changed"), @ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 403, message = "Service is not available for distribution"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"), @ApiResponse(code = 404, message = "Requested service was not found"), @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
-    public Response updateServiceDistributionState(@ApiParam(value = "DistributionChangeInfo - get comment out of body", required = true) LifecycleChangeInfoWithAction jsonChangeInfo, @PathParam("serviceId") final String serviceId,
-            @ApiParam(allowableValues = "approve, reject", required = true) @PathParam("state") final String state, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Service Distribution State", method = "POST",
+            summary = "service with the changed distribution status")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service distribution state changed"),
+            @ApiResponse(responseCode = "409", description = "Restricted operation"),
+            @ApiResponse(responseCode = "403", description = "Service is not available for distribution"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Requested service was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
+    public Response updateServiceDistributionState(
+            @Parameter(description = "DistributionChangeInfo - get comment out of body",
+                    required = true) LifecycleChangeInfoWithAction jsonChangeInfo,
+            @PathParam("serviceId") final String serviceId,
+            @Parameter(schema = @Schema(allowableValues = {"approve", "reject"}),
+                    required = true) @PathParam("state") final String state,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -551,10 +608,15 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/distribution/{env}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Activate distribution", httpMethod = "POST", notes = "activate distribution")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 409, message = "Service cannot be distributed due to missing deployment artifacts"), @ApiResponse(code = 404, message = "Requested service was not found"),
-            @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
-    public Response activateDistribution(@PathParam("serviceId") final String serviceId, @PathParam("env") final String env, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Activate distribution", method = "POST", summary = "activate distribution")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "409",
+                    description = "Service cannot be distributed due to missing deployment artifacts"),
+            @ApiResponse(responseCode = "404", description = "Requested service was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
+    public Response activateDistribution(@PathParam("serviceId") final String serviceId,
+            @PathParam("env") final String env, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -587,10 +649,17 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/distribution/{did}/markDeployed")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Mark distribution as deployed", httpMethod = "POST", notes = "relevant audit record will be created")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service was marked as deployed"), @ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 403, message = "Service is not available"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"), @ApiResponse(code = 404, message = "Requested service was not found"), @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
-    public Response markDistributionAsDeployed(@PathParam("serviceId") final String serviceId, @PathParam("did") final String did, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Mark distribution as deployed", method = "POST",
+            summary = "relevant audit record will be created")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service was marked as deployed"),
+            @ApiResponse(responseCode = "409", description = "Restricted operation"),
+            @ApiResponse(responseCode = "403", description = "Service is not available"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Requested service was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
+    public Response markDistributionAsDeployed(@PathParam("serviceId") final String serviceId,
+            @PathParam("did") final String did, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -623,7 +692,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/tempUrlToBeDeleted")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 500, message = "Internal Server Error. Please try again later.") })
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.") })
     public Response tempUrlToBeDeleted(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
@@ -656,9 +725,14 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/linksMap")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Service component relations map", httpMethod = "GET", notes = "Returns service components relations", response = ServiceRelations.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
-    public Response getServiceComponentRelationMap(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Service component relations map", method = "GET",
+            summary = "Returns service components relations",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ServiceRelations.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Service not found")})
+    public Response getServiceComponentRelationMap(@PathParam("serviceId") final String serviceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);

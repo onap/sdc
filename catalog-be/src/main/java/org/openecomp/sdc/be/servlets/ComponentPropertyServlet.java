@@ -16,18 +16,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -41,8 +33,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -57,11 +47,21 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Component Property Servlet", description = "Property Servlet - used to create properties in Service and Resource")
+@OpenAPIDefinition(info = @Info(title = "Component Property Servlet", description = "Component Property Servlet"))
 @Singleton
 public class ComponentPropertyServlet extends BeGenericServlet {
 
@@ -82,144 +82,203 @@ public class ComponentPropertyServlet extends BeGenericServlet {
   private static final String CREATE_PROPERTY = "Create Property";
   private static final String DEBUG_MESSAGE = "Start handle request of {} modifier id is {}";
 
-  @POST
-  @Path("services/{serviceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Create Service Property", httpMethod = "POST", notes = "Returns created service property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 201, message = "Service property created"),
-      @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-      @ApiResponse(code = 409, message = "Service property already exist") })
-  public Response createPropertyInService(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-                                 @ApiParam(value = "Service property to be created", required = true) String data,
-                                 @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @POST
+    @Path("services/{serviceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create Service Property", method = "POST", summary = "Returns created service property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service property created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Service property already exist")})
+    public Response createPropertyInService(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "Service property to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return createProperty(serviceId, data, request, userId);
-  }
+        return createProperty(serviceId, data, request, userId);
+    }
 
-  @POST
-  @Path("resources/{resourceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Create Resource Property", httpMethod = "POST", notes = "Returns created service property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource property created"),
-          @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 409, message = "Resource property already exist") })
-  public Response createPropertyInResource(@ApiParam(value = "Resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-                                           @ApiParam(value = "Resource property to be created", required = true) String data,
-                                           @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @POST
+    @Path("resources/{resourceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create Resource Property", method = "POST", summary = "Returns created service property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource property created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource property already exist")})
+    public Response createPropertyInResource(
+            @Parameter(description = "Resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "Resource property to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return createProperty(resourceId, data, request, userId);
-  }
+        return createProperty(resourceId, data, request, userId);
+    }
 
 
-  @GET
-  @Path("services/{serviceId}/properties/{propertyId}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get Service Property", httpMethod = "GET", notes = "Returns property of service", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 404, message = "Service property not found") })
-  public Response getPropertyInService(@ApiParam(value = "service id of property", required = true)
-                                       @PathParam("serviceId") final String serviceId, @ApiParam(value = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
-                                       @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @GET
+    @Path("services/{serviceId}/properties/{propertyId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get Service Property", method = "GET", summary = "Returns property of service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Service property not found")})
+    public Response getPropertyInService(
+            @Parameter(description = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return getProperty(serviceId, propertyId, request, userId);
-  }
+        return getProperty(serviceId, propertyId, request, userId);
+    }
 
-  @GET
-  @Path("resources/{resourceId}/properties/{propertyId}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get Resource Property", httpMethod = "GET", notes = "Returns property of resource", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 404, message = "Resource property not found") })
-  public Response getPropertyInResource(@ApiParam(value = "resource id of property", required = true)
-                                       @PathParam("resourceId") final String resourceId, @ApiParam(value = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
-                                       @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @GET
+    @Path("resources/{resourceId}/properties/{propertyId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get Resource Property", method = "GET", summary = "Returns property of resource",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    public Response getPropertyInResource(
+            @Parameter(description = "resource id of property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return getProperty(resourceId, propertyId, request, userId);
-  }
+        return getProperty(resourceId, propertyId, request, userId);
+    }
 
-  @GET
-  @Path("services/{serviceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get Service Property", httpMethod = "GET", notes = "Returns property list of service", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-      @ApiResponse(code = 404, message = "Service property not found") })
-  public Response getPropertyListInService(@ApiParam(value = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
-                                  @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @GET
+    @Path("services/{serviceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get Service Property", method = "GET", summary = "Returns property list of service",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Service property not found")})
+    public Response getPropertyListInService(
+            @Parameter(description = "service id of property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return getPropertyList(serviceId, request, userId);
-  }
+        return getPropertyList(serviceId, request, userId);
+    }
 
-  @GET
-  @Path("resources/{resourceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get Resource Property", httpMethod = "GET", notes = "Returns property list of resource", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 404, message = "Resource property not found") })
-  public Response getPropertyListInResource(@ApiParam(value = "resource id of property", required = true) @PathParam("resourceId") final String resourceId,
-                                           @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @GET
+    @Path("resources/{resourceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get Resource Property", method = "GET", summary = "Returns property list of resource",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    public Response getPropertyListInResource(
+            @Parameter(description = "resource id of property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return getPropertyList(resourceId, request, userId);
-  }
+        return getPropertyList(resourceId, request, userId);
+    }
 
-  @DELETE
-  @Path("services/{serviceId}/properties/{propertyId}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Delete Service Property", httpMethod = "DELETE", notes = "Returns deleted property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 204, message = "deleted property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 404, message = "Service property not found") })
-  public Response deletePropertyInService(@ApiParam(value = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
-                                          @ApiParam(value = "Property id to delete", required = true) @PathParam("propertyId") final String propertyId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @DELETE
+    @Path("services/{serviceId}/properties/{propertyId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Delete Service Property", method = "DELETE", summary = "Returns deleted property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "deleted property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Service property not found")})
+    public Response deletePropertyInService(
+            @Parameter(description = "service id of property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "Property id to delete",
+                    required = true) @PathParam("propertyId") final String propertyId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return deleteProperty(serviceId, propertyId, request, userId);
-  }
+        return deleteProperty(serviceId, propertyId, request, userId);
+    }
 
-  @DELETE
-  @Path("resources/{resourceId}/properties/{propertyId}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Delete Resource Property", httpMethod = "DELETE", notes = "Returns deleted property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 204, message = "deleted property"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-          @ApiResponse(code = 404, message = "Resource property not found") })
-  public Response deletePropertyInResource(@ApiParam(value = "resource id of property", required = true) @PathParam("resourceId") final String resourceId,
-                                          @ApiParam(value = "Property id to delete", required = true) @PathParam("propertyId") final String propertyId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @DELETE
+    @Path("resources/{resourceId}/properties/{propertyId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Delete Resource Property", method = "DELETE", summary = "Returns deleted property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "deleted property"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    public Response deletePropertyInResource(
+            @Parameter(description = "resource id of property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "Property id to delete",
+                    required = true) @PathParam("propertyId") final String propertyId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return deleteProperty(resourceId, propertyId, request, userId);
-  }
+        return deleteProperty(resourceId, propertyId, request, userId);
+    }
 
-  @PUT
-  @Path("services/{serviceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Update Service Property", httpMethod = "PUT", notes = "Returns updated property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "Service property updated"),
-      @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-  public Response updatePropertyInService(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-                                 @ApiParam(value = "Service property to update", required = true) String data, @Context final HttpServletRequest request,
-                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @PUT
+    @Path("services/{serviceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Update Service Property", method = "PUT", summary = "Returns updated property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service property updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updatePropertyInService(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "Service property to update", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return updateProperty(serviceId, data, request, userId);
-  }
+        return updateProperty(serviceId, data, request, userId);
+    }
 
-  @PUT
-  @Path("resources/{resourceId}/properties")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Update Resource Property", httpMethod = "PUT", notes = "Returns updated property", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource property updated"),
-          @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-  public Response updatePropertyInResource(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-                                          @ApiParam(value = "Resource property to update", required = true) String data, @Context final HttpServletRequest request,
-                                          @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @PUT
+    @Path("resources/{resourceId}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Update Resource Property", method = "PUT", summary = "Returns updated property",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource property updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updatePropertyInResource(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "Resource property to update", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return updateProperty(resourceId, data, request, userId);
-  }
+        return updateProperty(resourceId, data, request, userId);
+    }
 
   private Response createProperty(String componentId, String data,  HttpServletRequest request,String userId) {
     String url = request.getMethod() + " " + request.getRequestURI();
