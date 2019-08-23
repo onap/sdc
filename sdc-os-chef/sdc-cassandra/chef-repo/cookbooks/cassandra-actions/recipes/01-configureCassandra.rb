@@ -12,6 +12,27 @@ node['network']['interfaces'][interface][:addresses].each do | addr , details |
 	end
 end
 
+directory "Cassandra_cs_trust_dir_creation" do
+    path "#{ENV['CASSANDRA_CONFIG']}/cs_trust"
+    owner 'cassandra'
+    group 'cassandra'
+    mode '0755'
+    action :create
+end
+
+cookbook_file "#{ENV['CASSANDRA_CONFIG']}/cs_trust/org.onap.sdc.p12" do
+    source "org.onap.sdc.p12"
+    owner "cassandra"
+    group "cassandra"
+    mode 0755
+end
+
+cookbook_file "#{ENV['CASSANDRA_CONFIG']}/cs_trust/org.onap.sdc.trust.jks" do
+    source "org.onap.sdc.trust.jks"
+    owner "cassandra"
+    group "cassandra"
+    mode 0755
+end
 
 template "cassandra-yaml-config" do
     path "/etc/cassandra/cassandra.yaml"
