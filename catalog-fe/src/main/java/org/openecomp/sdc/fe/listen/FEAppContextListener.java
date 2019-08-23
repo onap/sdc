@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,27 @@
 
 package org.openecomp.sdc.fe.listen;
 
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
@@ -30,15 +52,10 @@ import org.openecomp.sdc.fe.servlets.HealthCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class FEAppContextListener extends AppContextListener implements ServletContextListener {
 
-    private static final int HEALTH_CHECHK_INTERVALE = 5;
-    private static final int PROBE_INTERVALE = 15;
+    private static final int HEALTH_CHECK_INTERVAL = 5;
+    private static final int PROBE_INTERVAL = 15;
     private static Logger log = LoggerFactory.getLogger(FEAppContextListener.class.getName());
 
     public void contextInitialized(ServletContextEvent context) {
@@ -51,17 +68,22 @@ public class FEAppContextListener extends AppContextListener implements ServletC
                 ExternalConfiguration.getAppName());
         context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
 
-        PluginStatusBL pbl = new PluginStatusBL();
-        context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
+        try {
+            PluginStatusBL pbl = new PluginStatusBL(buildRestClient());
+            context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
+        } catch (SSLException e) {
+            log.debug("ERROR: Build rest client failed because ", e);
+            return;
+        }
 
         // Health Check service
         HealthCheckService hcs = new HealthCheckService(context.getServletContext());
-        hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(HEALTH_CHECHK_INTERVALE));
+        hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(HEALTH_CHECK_INTERVAL));
         context.getServletContext().setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
 
         // Monitoring service
         FeMonitoringService fms = new FeMonitoringService(context.getServletContext());
-        fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(PROBE_INTERVALE));
+        fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(PROBE_INTERVAL));
 
         if (configurationManager.getConfiguration() == null) {
             log.debug("ERROR: configuration was not properly loaded");
@@ -87,4 +109,21 @@ public class FEAppContextListener extends AppContextListener implements ServletC
 
     }
 
+    private CloseableHttpClient buildRestClient() throws SSLException {
+        SSLContextBuilder builder = new SSLContextBuilder();
+        try {
+            builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                SSLContext.getDefault(), NoopHostnameVerifier.INSTANCE);
+            Registry<ConnectionSocketFactory> registry =
+                RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", new PlainConnectionSocketFactory()).register("https", sslsf)
+                    .build();
+            PoolingHttpClientConnectionManager cm =
+                new PoolingHttpClientConnectionManager(registry);
+            return HttpClients.custom().setSSLSocketFactory(sslsf).setConnectionManager(cm).build();
+        } catch (NoSuchAlgorithmException | KeyStoreException e) {
+            throw new SSLException(e);
+        }
+    }
 }
