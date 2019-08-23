@@ -20,8 +20,14 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.*;
+import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.mixin.PolicyTypeMixin;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -29,14 +35,20 @@ import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "policy types resource")
+@OpenAPIDefinition(info = @Info(title = "policy types resource"))
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,14 +64,15 @@ public class PolicyTypesEndpoint {
 
     @GET
     @Path("/policyTypes")
-    @ApiOperation(value = "Get policy types ", httpMethod = "GET", notes = "Returns policy types", response = PolicyTypeDefinition.class, responseContainer="List")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "policy types found"),
-                            @ApiResponse(code = 403, message = "Restricted operation"),
-                            @ApiResponse(code = 500, message = "The GET request failed due to internal SDC problem.")})
+    @Operation(description = "Get policy types ", method = "GET", summary = "Returns policy types",responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = PolicyTypeDefinition.class)))))
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "policy types found"),
+                            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                            @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
     @ResponseView(mixin = {PolicyTypeMixin.class})
-    public List<PolicyTypeDefinition> getPolicyTypes(@ApiParam(value = "An optional parameter to indicate the type of the container from where this call is executed")
+    public List<PolicyTypeDefinition> getPolicyTypes(@Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
                                    @QueryParam("internalComponentType") String internalComponentType,
-                                                     @ApiParam(value = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                   @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         log.debug("(get) Start handle request of GET policyTypes");
         return policyTypeBusinessLogic.getAllPolicyTypes(userId, internalComponentType);
     }

@@ -16,17 +16,25 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.Optional;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -41,31 +49,23 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Capability Servlet", description = "Capability Servlet")
+@OpenAPIDefinition(info = @Info(title = "Capability Servlet", description = "Capability Servlet"))
 @Singleton
 public class CapabilityServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = Logger.getLogger(CapabilityServlet.class);
@@ -86,15 +86,16 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities")
-    @ApiOperation(value = "Create Capabilities on resource", httpMethod = "POST",
-            notes = "Create Capabilities on resource", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Create Capabilities"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Capability already exist")})
+    @Operation(description = "Create Capabilities on resource", method = "POST",
+            summary = "Create Capabilities on resource",  responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Capabilities"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Capability already exist")})
     public Response createCapabilitiesOnResource(
-            @ApiParam(value = "Capability to create", required = true) String data,
-            @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+            @Parameter(description = "Capability to create", required = true) String data,
+            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return createOrUpdate(data, "resources" , resourceId,
@@ -105,14 +106,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities")
-    @ApiOperation(value = "Update Capabilities on resource", httpMethod = "PUT",
-            notes = "Update Capabilities on resource", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Update Capabilities"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Update Capabilities on resource", method = "PUT",
+            summary = "Update Capabilities on resource",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response updateCapabilitiesOnResource(
-            @ApiParam(value = "Capabilities to update", required = true) String data,
-            @ApiParam(value = "Component Id") @PathParam("resourceId") String resourceId,
+            @Parameter(description = "Capabilities to update", required = true) String data,
+            @Parameter(description = "Component Id") @PathParam("resourceId") String resourceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return createOrUpdate(data, "resources", resourceId,
@@ -123,14 +125,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities/{capabilityId}")
-    @ApiOperation(value = "Get Capability from resource", httpMethod = "GET",
-            notes = "GET Capability from resource", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "GET Capability"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Get Capability from resource", method = "GET",
+            summary = "GET Capability from resource", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response getCapabilityOnResource(
-            @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
-            @ApiParam(value = "Capability Id") @PathParam("capabilityId") String capabilityId,
+            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
+            @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -141,14 +144,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities/{capabilityId}")
-    @ApiOperation(value = "Delete capability from resource", httpMethod = "DELETE",
-            notes = "Delete capability from resource", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Delete capability"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Delete capability from resource", method = "DELETE",
+            summary = "Delete capability from resource", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response deleteCapabilityOnResource(
-            @ApiParam(value = "capability Id") @PathParam("capabilityId") String capabilityId,
-            @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+            @Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
+            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return delete(capabilityId, resourceId, request, userId);
@@ -158,15 +162,16 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities")
-    @ApiOperation(value = "Create Capabilities on service", httpMethod = "POST",
-            notes = "Create Capabilities on service", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Create Capabilities"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Capability already exist")})
+    @Operation(description = "Create Capabilities on service", method = "POST",
+            summary = "Create Capabilities on service", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Capabilities"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Capability already exist")})
     public Response createCapabilitiesOnService(
-            @ApiParam(value = "Capability to create", required = true) String data,
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Capability to create", required = true) String data,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return createOrUpdate(data, "services" , serviceId,
@@ -177,14 +182,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities")
-    @ApiOperation(value = "Update Capabilities on service", httpMethod = "PUT",
-            notes = "Update Capabilities on service", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Update Capabilities"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Update Capabilities on service", method = "PUT",
+            summary = "Update Capabilities on service",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response updateCapabilitiesOnService(
-            @ApiParam(value = "Capabilities to update", required = true) String data,
-            @ApiParam(value = "Component Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Capabilities to update", required = true) String data,
+            @Parameter(description = "Component Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return createOrUpdate(data, "services", serviceId,
@@ -195,14 +201,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities/{capabilityId}")
-    @ApiOperation(value = "Get Capability from service", httpMethod = "GET",
-            notes = "GET Capability from service", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "GET Capability"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Get Capability from service", method = "GET",
+            summary = "GET Capability from service", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response getCapabilityOnService(
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
-            @ApiParam(value = "Capability Id") @PathParam("capabilityId") String capabilityId,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -213,14 +220,15 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities/{capabilityId}")
-    @ApiOperation(value = "Delete capability from service", httpMethod = "DELETE",
-            notes = "Delete capability from service", response = CapabilityDefinition.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Delete capability"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Delete capability from service", method = "DELETE",
+            summary = "Delete capability from service",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response deleteCapabilityOnService(
-            @ApiParam(value = "capability Id") @PathParam("capabilityId") String capabilityId,
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return delete(capabilityId, serviceId, request, userId);
