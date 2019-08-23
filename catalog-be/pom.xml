@@ -703,6 +703,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <finalName>normatives</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>

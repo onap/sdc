@@ -59,7 +59,7 @@ function cleanup {
     echo "Performing old dockers cleanup"
 
 	if [ "$1" == "all" ] ; then
-		docker_ids=`docker ps -a | egrep -v "onap/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit}|dcae" | awk '{print $1}'`
+		docker_ids=`docker ps -a |egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit}|dcae" | awk '{print $1}'`
 		for X in ${docker_ids}
 		do
 			docker rm -f ${X}

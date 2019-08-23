@@ -515,6 +515,7 @@
 				<executions>
 					<execution>
 						<configuration>
+							<tarLongFileMode>posix</tarLongFileMode>
 							<finalName>sdctool</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>

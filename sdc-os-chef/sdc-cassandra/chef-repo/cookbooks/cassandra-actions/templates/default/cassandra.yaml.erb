@@ -781,10 +781,10 @@ request_scheduler: org.apache.cassandra.scheduler.NoScheduler
 #
 server_encryption_options:
     internode_encryption: none
-    keystore: <%= @cassandra_truststore_dir %>/.keystore
-    keystore_password: Aa123456
-    truststore: <%= @cassandra_truststore_dir %>/.truststore
-    truststore_password: Aa123456
+    keystore: <%= @cassandra_truststore_dir %>/org.onap.sdc.p12
+    keystore_password: rTIS;B4kM]2GHcNK2c3B4&Ng
+    truststore: <%= @cassandra_truststore_dir %>/org.onap.sdc.trust.jks
+    truststore_password: Y,f975ZNJfVZhV*{+Y[}pA?0
     # More advanced defaults below:
     # protocol: TLS
     # algorithm: SunX509
@@ -795,8 +795,8 @@ server_encryption_options:
 # enable or disable client/server encryption.
 client_encryption_options:
     enabled: false
-    keystore: <%= @cassandra_truststore_dir %>/.keystore
-    keystore_password: Aa123456
+    keystore: <%= @cassandra_truststore_dir %>/org.onap.sdc.p12
+    keystore_password: rTIS;B4kM]2GHcNK2c3B4&Ng
     # require_client_auth: false
     # Set trustore and truststore_password if require_client_auth is true
     # truststore: conf/.truststore
