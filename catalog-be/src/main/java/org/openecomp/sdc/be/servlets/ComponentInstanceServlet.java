@@ -20,14 +20,30 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -45,53 +61,65 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * Root resource (exposed at "/" path) .json
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Resource Instance Servlet")
+@OpenAPIDefinition(info = @Info(title = "Resource Instance Servlet"))
 @Singleton
 public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
-    private static final String FAILED_TO_GET_PROPERTIES_OF_COMPONENT_INSTANCE_ID_IN_WITH_ID = "Failed to get properties of component instance ID: {} in {} with ID: {}";
-	private static final String GET_GROUP_ARTIFACT_BY_ID = "getGroupArtifactById";
-	private static final String GET_GROUP_ARTIFACT_BY_ID_UNEXPECTED_EXCEPTION = "getGroupArtifactById unexpected exception";
-	private static final String GET_START_HANDLE_REQUEST_OF = "(GET) Start handle request of {}";
-	private static final String START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS = "Start handle request of updateResourceInstanceProperty. Received property is {}";
-	private static final String UPDATE_RESOURCE_INSTANCE = "Update Resource Instance";
-	private static final String RESOURCE_INSTANCE_UPDATE_RESOURCE_INSTANCE = "Resource Instance - updateResourceInstance";
-	private static final String UPDATE_RESOURCE_INSTANCE_WITH_EXCEPTION = "update resource instance with exception";
-	private static final String FAILED_TO_CONVERT_RECEIVED_DATA_TO_BE_FORMAT = "Failed to convert received data to BE format.";
-	private static final String EMPTY_BODY_WAS_SENT = "Empty body was sent.";
-	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
-	private static final String UNSUPPORTED_COMPONENT_TYPE = "Unsupported component type {}";
-	private static final Logger log = Logger.getLogger(ComponentInstanceServlet.class);
+    private static final String FAILED_TO_GET_PROPERTIES_OF_COMPONENT_INSTANCE_ID_IN_WITH_ID =
+            "Failed to get properties of component instance ID: {} in {} with ID: {}";
+    private static final String GET_GROUP_ARTIFACT_BY_ID = "getGroupArtifactById";
+    private static final String GET_GROUP_ARTIFACT_BY_ID_UNEXPECTED_EXCEPTION =
+            "getGroupArtifactById unexpected exception";
+    private static final String GET_START_HANDLE_REQUEST_OF = "(GET) Start handle request of {}";
+    private static final String START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS =
+            "Start handle request of updateResourceInstanceProperty. Received property is {}";
+    private static final String UPDATE_RESOURCE_INSTANCE = "Update Resource Instance";
+    private static final String RESOURCE_INSTANCE_UPDATE_RESOURCE_INSTANCE =
+            "Resource Instance - updateResourceInstance";
+    private static final String UPDATE_RESOURCE_INSTANCE_WITH_EXCEPTION = "update resource instance with exception";
+    private static final String FAILED_TO_CONVERT_RECEIVED_DATA_TO_BE_FORMAT =
+            "Failed to convert received data to BE format.";
+    private static final String EMPTY_BODY_WAS_SENT = "Empty body was sent.";
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String UNSUPPORTED_COMPONENT_TYPE = "Unsupported component type {}";
+    private static final Logger log = Logger.getLogger(ComponentInstanceServlet.class);
     private static final Type PROPERTY_CONSTRAINT_TYPE = new TypeToken<PropertyConstraint>() {}.getType();
-    private static final Gson gsonDeserializer = new GsonBuilder().registerTypeAdapter(PROPERTY_CONSTRAINT_TYPE, new PropertyConstraintDeserialiser()).create();
+    private static final Gson gsonDeserializer = new GsonBuilder()
+            .registerTypeAdapter(PROPERTY_CONSTRAINT_TYPE, new PropertyConstraintDeserialiser()).create();
     private final GroupBusinessLogic groupBL;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     private final ServiceBusinessLogic serviceBusinessLogic;
@@ -113,12 +141,21 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create ComponentInstance", httpMethod = "POST", notes = "Returns created ComponentInstance", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Component created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Component instance already exist") })
-    public Response createComponentInstance(@ApiParam(value = "RI object to be created", required = true) String data, @PathParam("componentId") final String containerComponentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId, @Context final HttpServletRequest request) {
+    @Operation(description = "Create ComponentInstance", method = "POST", summary = "Returns created ComponentInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Component created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Component instance already exist")})
+    public Response createComponentInstance(@Parameter(description = "RI object to be created", required = true) String data,
+            @PathParam("componentId") final String containerComponentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
         try {
@@ -128,14 +165,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(
+                        getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+                    .createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
+                    actionResponse.left().value());
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Component Instance");
@@ -148,11 +188,18 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance", httpMethod = "POST", notes = "Returns updated resource instance", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource instance updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateComponentInstanceMetadata(@PathParam("componentId") final String componentId, @PathParam("componentInstanceId") final String componentInstanceId,
-            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Update resource instance", method = "POST", summary = "Returns updated resource instance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource instance updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateComponentInstanceMetadata(@PathParam("componentId") final String componentId,
+            @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "valid values: resources / services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME,
+                            ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -176,7 +223,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(
+                        getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
             Either<ComponentInstance, ResponseFormat> convertResponse = convertToResourceInstance(data);
 
@@ -187,30 +235,34 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             ComponentInstance resourceInstance = convertResponse.left().value();
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.updateComponentInstanceMetadata(containerComponentType, componentId, componentInstanceId, userId, resourceInstance);
+            Either<ComponentInstance, ResponseFormat> actionResponse =
+                    componentInstanceBusinessLogic.updateComponentInstanceMetadata(containerComponentType, componentId,
+                            componentInstanceId, userId, resourceInstance);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
             ComponentInstance resultValue = actionResponse.left().value();
-            if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
-                boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null && resourceInstance.getDirectives().contains(
-                        DirectivesUtils.SELECTABLE);
+            if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)) {
+                boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null
+                        && resourceInstance.getDirectives().contains(DirectivesUtils.SELECTABLE);
 
-                if(shouldCreateServiceFilter) {
-                    Either<CINodeFilterDataDefinition, ResponseFormat> either =
-                            serviceBusinessLogic.createIfNotAlreadyExistServiceFilter(componentId, componentInstanceId, userId,
-                                    true);
-                    if (either.isRight()){
-                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to create service filter.");
+                if (shouldCreateServiceFilter) {
+                    Either<CINodeFilterDataDefinition, ResponseFormat> either = serviceBusinessLogic
+                            .createIfNotAlreadyExistServiceFilter(componentId, componentInstanceId, userId, true);
+                    if (either.isRight()) {
+                        BeEcompErrorManager.getInstance().logBeSystemError(
+                                "Resource Instance - updateResourceInstance Failed to create service filter.");
                         log.debug("Failed to create service filter.");
                         return buildErrorResponse(convertResponse.right().value());
                     }
                     resultValue.setNodeFilter(either.left().value());
                 } else {
-                    Either<String, ResponseFormat> either = serviceBusinessLogic.deleteIfNotAlreadyDeletedServiceFilter(componentId, componentInstanceId,  userId,true);
-                    if (either.isRight()){
-                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to delete service filter.");
+                    Either<String, ResponseFormat> either = serviceBusinessLogic
+                            .deleteIfNotAlreadyDeletedServiceFilter(componentId, componentInstanceId, userId, true);
+                    if (either.isRight()) {
+                        BeEcompErrorManager.getInstance().logBeSystemError(
+                                "Resource Instance - updateResourceInstance Failed to delete service filter.");
                         log.debug("Failed to delete service filter.");
                         return buildErrorResponse(convertResponse.right().value());
                     }
@@ -218,7 +270,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 }
             }
 
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                    actionResponse.left().value());
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_RESOURCE_INSTANCE);
@@ -232,12 +285,19 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/multipleComponentInstance")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance multiple component", httpMethod = "POST", notes = "Returns updated resource instance", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource instance updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateMultipleComponentInstance(@PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @Context final HttpServletRequest request, @ApiParam(value = "Component Instance JSON Array", required = true) final String componentInstanceJsonArray) {
+    @Operation(description = "Update resource instance multiple component", method = "POST",
+            summary = "Returns updated resource instance", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource instance updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateMultipleComponentInstance(@PathParam("componentId") final String componentId, @Parameter(
+            description = "valid values: resources / services / products",
+            schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                    ComponentTypeEnum.SERVICE_PARAM_NAME,
+                    ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Context final HttpServletRequest request, @Parameter(description = "Component Instance JSON Array",
+                    required = true) final String componentInstanceJsonArray) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -256,10 +316,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(
+                        getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
-            Either<List<ComponentInstance>, ResponseFormat> convertResponse = convertToMultipleResourceInstance(componentInstanceJsonArray);
+            Either<List<ComponentInstance>, ResponseFormat> convertResponse =
+                    convertToMultipleResourceInstance(componentInstanceJsonArray);
 
             if (convertResponse.isRight()) {
                 // Using both ECOMP error methods, show to Sofer
@@ -271,13 +333,14 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             List<ComponentInstance> componentInstanceList = convertResponse.left().value();
 
             Either<List<ComponentInstance>, ResponseFormat> actionResponse = componentInstanceBusinessLogic
-                .updateComponentInstance(containerComponentType, componentId, userId, componentInstanceList, true);
+                    .updateComponentInstance(containerComponentType, componentId, userId, componentInstanceList, true);
 
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
 
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                    actionResponse.left().value());
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_RESOURCE_INSTANCE);
@@ -291,11 +354,18 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{resourceInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete ResourceInstance", httpMethod = "DELETE", notes = "Returns delete resourceInstance", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "ResourceInstance deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response deleteResourceInstance(@PathParam("componentId") final String componentId, @PathParam("resourceInstanceId") final String resourceInstanceId,
-            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Delete ResourceInstance", method = "DELETE", summary = "Returns delete resourceInstance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "ResourceInstance deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response deleteResourceInstance(@PathParam("componentId") final String componentId,
+            @PathParam("resourceInstanceId") final String resourceInstanceId,
+            @Parameter(description = "valid values: resources / services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME,
+                            ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -305,10 +375,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(
+                        getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
             String userId = request.getHeader(Constants.USER_ID_HEADER);
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deleteComponentInstance(containerComponentType, componentId, resourceInstanceId, userId);
+            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+                    .deleteComponentInstance(containerComponentType, componentId, resourceInstanceId, userId);
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -323,18 +395,31 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         }
     }
 
-    @ApiParam(value = "allowed values are resources /services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + "," + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true)
+    @Parameter(description = "allowed values are resources /services / products",
+            schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                    ComponentTypeEnum.SERVICE_PARAM_NAME,
+                    ComponentTypeEnum.PRODUCT_PARAM_NAME}),
+            required = true)
     @POST
     @Path("/{containerComponentType}/{componentId}/resourceInstance/associate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Associate RI to RI", httpMethod = "POST", notes = "Returns created RelationshipInfo", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Relationship created"), @ApiResponse(code = 403, message = "Missing information"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Relationship already exist") })
-    public Response associateRIToRI(@ApiParam(value = "unique id of the container component") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "allowed values are resources /services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true) @PathParam("containerComponentType") final String containerComponentType,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "RelationshipInfo", required = true) String data, @Context final HttpServletRequest request) {
+    @Operation(description = "Associate RI to RI", method = "POST", summary = "Returns created RelationshipInfo",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Relationship created"),
+            @ApiResponse(responseCode = "403", description = "Missing information"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Relationship already exist")})
+    public Response associateRIToRI(@Parameter(
+            description = "unique id of the container component") @PathParam("componentId") final String componentId,
+            @Parameter(description = "allowed values are resources /services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME}),
+                    required = true) @PathParam("containerComponentType") final String containerComponentType,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "RelationshipInfo", required = true) String data,
+            @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -383,13 +468,22 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/dissociate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Dissociate RI from RI", httpMethod = "PUT", notes = "Returns deleted RelationshipInfo", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Relationship deleted"), @ApiResponse(code = 403, message = "Missing information"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+    @Operation(description = "Dissociate RI from RI", method = "PUT", summary = "Returns deleted RelationshipInfo",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Relationship deleted"),
+            @ApiResponse(responseCode = "403", description = "Missing information"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response dissociateRIFromRI(
-            @ApiParam(value = "allowed values are resources /services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "unique id of the container component") @PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @ApiParam(value = "RelationshipInfo", required = true) String data, @Context final HttpServletRequest request) {
+            @Parameter(description = "allowed values are resources /services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME}),
+                    required = true) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "unique id of the container component") @PathParam("componentId") final String componentId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "RelationshipInfo", required = true) String data,
+            @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -431,11 +525,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/createAndAssociate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create RI and associate RI to RI", httpMethod = "POST", notes = "Returns created RI and RelationshipInfo", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "RI created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Relationship already exist") })
-    public Response createAndAssociateRIToRI(@PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Create RI and associate RI to RI", method = "POST",
+            summary = "Returns created RI and RelationshipInfo", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "RI created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Relationship already exist")})
+    public Response createAndAssociateRIToRI(@PathParam("componentId") final String componentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
@@ -492,12 +592,24 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/properties")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance property", httpMethod = "POST", notes = "Returns updated resource instance property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateResourceInstanceProperties(@ApiParam(value = "service id") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Context final HttpServletRequest request, @ApiParam(value = "Component Instance Properties JSON Array", required = true) final String componentInstancePropertiesJsonArray) {
+    @Operation(description = "Update resource instance property", method = "POST",
+            summary = "Returns updated resource instance property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateResourceInstanceProperties(
+            @Parameter(description = "service id") @PathParam("componentId") final String componentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "Component Instance Properties JSON Array",
+                    required = true) final String componentInstancePropertiesJsonArray) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -551,12 +663,24 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/inputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance property", httpMethod = "POST", notes = "Returns updated resource instance property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateResourceInstanceInput(@ApiParam(value = "service id") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Context final HttpServletRequest request, @ApiParam(value = "Component Instance Properties JSON Array", required = true) final String componentInstanceInputsJsonArray) {
+    @Operation(description = "Update resource instance property", method = "POST",
+            summary = "Returns updated resource instance property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateResourceInstanceInput(
+            @Parameter(description = "service id") @PathParam("componentId") final String componentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "Component Instance Properties JSON Array",
+                    required = true) final String componentInstanceInputsJsonArray) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -619,11 +743,21 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/attribute")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance attribute", httpMethod = "POST", notes = "Returns updated resource instance attribute", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateResourceInstanceAttribute(@ApiParam(value = "service id") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+    @Operation(description = "Update resource instance attribute", method = "POST",
+            summary = "Returns updated resource instance attribute", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateResourceInstanceAttribute(
+            @Parameter(description = "service id") @PathParam("componentId") final String componentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId,
             @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -639,7 +773,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             validateInputStream(request, dataWrapper, errorWrapper);
 
             if (errorWrapper.isEmpty()) {
-                validateClassParse(dataWrapper.getInnerElement(), attributeWrapper, () -> ComponentInstanceProperty.class, errorWrapper);
+                validateClassParse(dataWrapper.getInnerElement(), attributeWrapper,
+                        () -> ComponentInstanceProperty.class, errorWrapper);
             }
 
             if (errorWrapper.isEmpty()) {
@@ -649,8 +784,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             if (errorWrapper.isEmpty()) {
                 ComponentInstanceBusinessLogic componentInstanceLogic = blWrapper.getInnerElement();
                 ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-                log.debug("Start handle request of ComponentInstanceAttribute. Received attribute is {}", attributeWrapper.getInnerElement());
-                Either<ComponentInstanceProperty, ResponseFormat> eitherAttribute = componentInstanceLogic.createOrUpdateAttributeValue(componentTypeEnum, componentId, componentInstanceId, attributeWrapper.getInnerElement(), userId);
+                log.debug("Start handle request of ComponentInstanceAttribute. Received attribute is {}",
+                        attributeWrapper.getInnerElement());
+                Either<ComponentInstanceProperty, ResponseFormat> eitherAttribute =
+                        componentInstanceLogic.createOrUpdateAttributeValue(componentTypeEnum, componentId,
+                                componentInstanceId, attributeWrapper.getInnerElement(), userId);
                 if (eitherAttribute.isRight()) {
                     errorWrapper.setInnerElement(eitherAttribute.right().value());
                 } else {
@@ -671,12 +809,23 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/property/{propertyId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance", httpMethod = "DELETE", notes = "Returns deleted resource instance property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response deleteResourceInstanceProperty(@ApiParam(value = "service id") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "property id") @PathParam("propertyId") final String propertyId,
-            @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
+    @Operation(description = "Update resource instance", method = "DELETE",
+            summary = "Returns deleted resource instance property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response deleteResourceInstanceProperty(
+            @Parameter(description = "service id") @PathParam("componentId") final String componentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "property id") @PathParam("propertyId") final String propertyId,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId,
+            @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -685,10 +834,12 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(
+                        getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
-            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deletePropertyValue(componentTypeEnum, componentId, componentInstanceId, propertyId, userId);
+            Either<ComponentInstanceProperty, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+                    .deletePropertyValue(componentTypeEnum, componentId, componentInstanceId, propertyId, userId);
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
@@ -704,10 +855,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/changeVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance", httpMethod = "POST", notes = "Returns updated resource instance", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response changeResourceInstanceVersion(@PathParam("componentId") final String componentId, @PathParam("componentInstanceId") final String componentInstanceId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Update resource instance", method = "POST", summary = "Returns updated resource instance",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response changeResourceInstanceVersion(@PathParam("componentId") final String componentId,
+            @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
@@ -760,12 +918,23 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstanceId}/property")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update resource instance property", httpMethod = "POST", notes = "Returns updated resource instance property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource instance created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateGroupInstanceProperty(@ApiParam(value = "service id") @PathParam("componentId") final String componentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId, @ApiParam(value = "group instance id") @PathParam("groupInstanceId") final String groupInstanceId,
-            @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
+    @Operation(description = "Update resource instance property", method = "POST",
+            summary = "Returns updated resource instance property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource instance created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateGroupInstanceProperty(
+            @Parameter(description = "service id") @PathParam("componentId") final String componentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "group instance id") @PathParam("groupInstanceId") final String groupInstanceId,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId,
+            @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -819,10 +988,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get group artifacts ", httpMethod = "GET", notes = "Returns artifacts metadata according to groupInstId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "group found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Group not found") })
-    public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("componentId") final String componentId, @PathParam("componentInstanceId") final String componentInstanceId,
-            @PathParam("groupInstId") final String groupInstId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get group artifacts ", method = "GET",
+            summary = "Returns artifacts metadata according to groupInstId", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "group found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Group not found")})
+    public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("componentId") final String componentId,
+            @PathParam("componentInstanceId") final String componentInstanceId,
+            @PathParam("groupInstId") final String groupInstId, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
@@ -853,10 +1029,16 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/properties")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get component instance properties", httpMethod = "GET", notes = "Returns component instance properties", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Properties found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component/Component Instance - not found") })
-    public Response getInstancePropertiesById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("containerComponentId") final String containerComponentId,
-            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get component instance properties", method = "GET",
+            summary = "Returns component instance properties", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Properties found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component/Component Instance - not found")})
+    public Response getInstancePropertiesById(@PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -886,11 +1068,19 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/capability/{capabilityType}/capabilityName/{capabilityName}/ownerId/{ownerId}/properties")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get component instance capability properties", httpMethod = "GET", notes = "Returns component instance capability properties", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Properties found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component/Component Instance/Capability - not found") })
-    public Response getInstanceCapabilityPropertiesById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("containerComponentId") final String containerComponentId,
-            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId, @PathParam("capabilityType") final String capabilityType, @PathParam("capabilityName") final String capabilityName,  @PathParam("ownerId") final String ownerId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get component instance capability properties", method = "GET",
+            summary = "Returns component instance capability properties", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Properties found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component/Component Instance/Capability - not found")})
+    public Response getInstanceCapabilityPropertiesById(
+            @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+            @PathParam("capabilityType") final String capabilityType,
+            @PathParam("capabilityName") final String capabilityName, @PathParam("ownerId") final String ownerId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -921,12 +1111,22 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/capability/{capabilityType}/capabilityName/{capabilityName}/ownerId/{ownerId}/properties")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Instance Capabilty  Property", httpMethod = "PUT", notes = "Returns updated property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource instance capabilty property updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "Component/Component Instance/Capability - not found") })
-    public Response updateInstanceCapabilityProperty(@PathParam("containerComponentType") final String containerComponentType, @PathParam("containerComponentId") final String containerComponentId,
-            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId, @PathParam("capabilityType") final String capabilityType, @PathParam("capabilityName") final String capabilityName, @PathParam("ownerId") final String ownerId,
-            @ApiParam(value = "Instance capabilty property to update", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Instance Capabilty  Property", method = "PUT",
+            summary = "Returns updated property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(
+            value = {@ApiResponse(responseCode = "200", description = "Resource instance capabilty property updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "404", description = "Component/Component Instance/Capability - not found")})
+    public Response updateInstanceCapabilityProperty(
+            @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+            @PathParam("capabilityType") final String capabilityType,
+            @PathParam("capabilityName") final String capabilityName, @PathParam("ownerId") final String ownerId,
+            @Parameter(description = "Instance capabilty property to update", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(PUT) Start handle request of {}", url);
@@ -934,7 +1134,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
             List<ComponentInstanceProperty> propertiesToUpdate = new ArrayList<>();
             if (errorWrapper.isEmpty()) {
-                Either<List<ComponentInstanceProperty>, ResponseFormat> propertiesToUpdateEither = convertMultipleProperties(data);
+                Either<List<ComponentInstanceProperty>, ResponseFormat> propertiesToUpdateEither =
+                        convertMultipleProperties(data);
                 if (propertiesToUpdateEither.isRight()) {
                     errorWrapper.setInnerElement(propertiesToUpdateEither.right().value());
                 } else {
@@ -967,12 +1168,21 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/serviceProxy")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create service proxy", httpMethod = "POST", notes = "Returns created service proxy", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Service proxy already exist") })
-    public Response createServiceProxy(@ApiParam(value = "RI object to be created", required = true) String data, @PathParam("containerComponentId") final String containerComponentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId, @Context final HttpServletRequest request) {
+    @Operation(description = "Create service proxy", method = "POST", summary = "Returns created service proxy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service proxy created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Service proxy already exist")})
+    public Response createServiceProxy(@Parameter(description = "RI object to be created", required = true) String data,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
         try {
@@ -1006,11 +1216,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/serviceProxy/{serviceProxyId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete service proxy", httpMethod = "DELETE", notes = "Returns delete service proxy", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response deleteServiceProxy(@PathParam("containerComponentId") final String containerComponentId, @PathParam("serviceProxyId") final String serviceProxyId,
-            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Delete service proxy", method = "DELETE", summary = "Returns delete service proxy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service proxy deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response deleteServiceProxy(@PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("serviceProxyId") final String serviceProxyId,
+            @Parameter(description = "valid values: resources / services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -1042,10 +1258,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{containerComponentId}/serviceProxy/{serviceProxyId}/changeVersion/{newServiceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update service proxy with new version", httpMethod = "POST", notes = "Returns updated service proxy", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response changeServiceProxyVersion(@PathParam("containerComponentId") final String containerComponentId, @PathParam("serviceProxyId") final String serviceProxyId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Update service proxy with new version", method = "POST",
+            summary = "Returns updated service proxy", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service proxy created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response changeServiceProxyVersion(@PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("serviceProxyId") final String serviceProxyId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
 
@@ -1087,10 +1310,15 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/relationId/{relationId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get relation", httpMethod = "GET", notes = "Returns relation metadata according to relationId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "relation found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Relation not found") })
-    public Response getRelationById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("componentId") final String componentId,
-            @PathParam("relationId") final String relationId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get relation", method = "GET",
+            summary = "Returns relation metadata according to relationId",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "relation found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Relation not found")})
+    public Response getRelationById(@PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("componentId") final String componentId, @PathParam("relationId") final String relationId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -1191,13 +1419,15 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{containerComponentType}/{componentId}/paths-to-delete")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Check if forwarding path to delete on version change", httpMethod = "GET", notes = "Returns forwarding paths to delete",
-        response = Response.class)
+    @Operation(description = "Check if forwarding path to delete on version change", method = "GET", summary = "Returns forwarding paths to delete",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     public Response changeResourceInstanceVersion( @PathParam("componentId") String componentId,
         @QueryParam("componentInstanceId") final String oldComponentInstanceId,
         @QueryParam("newComponentInstanceId") final String newComponentInstanceId,
-        @ApiParam(value = "valid values: resources / services",
-            allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME)
+        @Parameter(description = "valid values: resources / services",
+                schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                        ComponentTypeEnum.SERVICE_PARAM_NAME}))
         @PathParam("containerComponentType") final String containerComponentType,
         @Context final HttpServletRequest request) {
         if (oldComponentInstanceId == null){
@@ -1238,14 +1468,15 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/services/{componentId}/copyComponentInstance/{componentInstanceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces((MediaType.APPLICATION_JSON))
-    @ApiOperation(value = "Copy Component Instance", httpMethod = "POST", notes = "Returns updated service information", response = Service.class)
+    @Operation(description = "Copy Component Instance", method = "POST", summary = "Returns updated service information",responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Copy and Paste Success"),
-            @ApiResponse(code = 403, message = "Restricted Operation"),
-            @ApiResponse(code = 400, message = "Invalid Content / Missing content")})
+            @ApiResponse(responseCode = "201", description = "Copy and Paste Success"),
+            @ApiResponse(responseCode = "403", description = "Restricted Operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid Content / Missing content")})
     public Response copyComponentInstance(
-            @ApiParam(value = "service unique id in pasted canvas") @PathParam("componentId") final String containerComponentId,
-            @ApiParam(value = "Data for copying", required = true) String data, @PathParam("componentInstanceId") final String componentInstanceId,
+            @Parameter(description = "service unique id in pasted canvas") @PathParam("componentId") final String containerComponentId,
+            @Parameter(description = "Data for copying", required = true) String data, @PathParam("componentInstanceId") final String componentInstanceId,
             @Context final HttpServletRequest request) {
         log.info("Start to copy component instance");
         ServletContext context = request.getSession().getServletContext();
@@ -1281,19 +1512,20 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/batchDeleteResourceInstances/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Batch Delete ResourceInstances", httpMethod = "POST")
+    @Operation(description = "Batch Delete ResourceInstances", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(code = 203, message = "ResourceInstances deleted"),
-            @ApiResponse(code = 403, message = "Restricted Operation"),
-            @ApiResponse(code = 400, message = "Invalid Content / Missing Content")
+            @ApiResponse(responseCode = "203", description = "ResourceInstances deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted Operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid Content / Missing Content")
     })
     public Response batchDeleteResourceInstances(
-            @ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + "," +
-                    ComponentTypeEnum.PRODUCT_PARAM_NAME)
+            @Parameter(description = "valid values: resources / services / products", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                    ComponentTypeEnum.SERVICE_PARAM_NAME,
+                    ComponentTypeEnum.PRODUCT_PARAM_NAME}))
             @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId,
             @Context final HttpServletRequest request,
-            @ApiParam(value = "Component Instance Id List", required = true) final String componentInstanceIdLisStr) {
+            @Parameter(description = "Component Instance Id List", required = true) final String componentInstanceIdLisStr) {
         try {
             if (componentInstanceIdLisStr == null || componentInstanceIdLisStr.isEmpty()) {
                 log.error("Empty JSON List was sent",componentInstanceIdLisStr);
@@ -1333,19 +1565,22 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/batchDissociate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Batch Dissociate RI from RI", httpMethod = "PUT", notes = "Returns deleted RelationShip Info", response = Response.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Relationship deleted"),
-            @ApiResponse(code = 403, message = "Missing Information"),
-            @ApiResponse(code = 400, message = "Invalid Content / Missing Content")
-    })
+    @Operation(description = "Batch Dissociate RI from RI", method = "PUT",
+            summary = "Returns deleted RelationShip Info", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Relationship deleted"),
+            @ApiResponse(responseCode = "403", description = "Missing Information"),
+            @ApiResponse(responseCode = "400", description = "Invalid Content / Missing Content")})
     public Response batchDissociateRIFromRI(
-            @ApiParam(value = "allowed values are resources/services/products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + "," + ComponentTypeEnum.PRODUCT_PARAM_NAME, required = true)
-            @PathParam("containerComponentType") final String containerComponentType,
-            @ApiParam(value = "unique id of the container component")
-            @PathParam("componentId") final String componentId,
+            @Parameter(description = "allowed values are resources/services/products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME,
+                            ComponentTypeEnum.PRODUCT_PARAM_NAME}),
+                    required = true) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "unique id of the container component") @PathParam("componentId") final String componentId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @ApiParam(value = "RelationshipInfo", required = true) String data,
+            @Parameter(description = "RelationshipInfo", required = true) String data,
             @Context final HttpServletRequest request) {
 
         try {

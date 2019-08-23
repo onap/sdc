@@ -22,7 +22,15 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.inject.Inject;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -48,7 +56,7 @@ import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Additional Information Servlet", description = "Additional Information Servlet")
+@OpenAPIDefinition(info = @Info(title = "Additional Information Servlet", description = "Additional Information Servlet"))
 @Singleton
 public class AdditionalInformationServlet extends BeGenericServlet {
 
@@ -75,13 +83,22 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/additionalinfo")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Additional Information Label and Value", httpMethod = "POST", notes = "Returns created Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Additional information created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response createResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-            @ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
+    @Operation(description = "Create Additional Information Label and Value", method = "POST",
+            summary = "Returns created Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Additional information created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response createResourceAdditionalInformationLabel(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "Additional information key value to be created", required = true) String data,
+            @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
 
-        return createAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userUserId, data);
+        return createAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userUserId,
+                data);
 
     }
 
@@ -97,11 +114,19 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/additionalinfo")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Additional Information Label and Value", httpMethod = "POST", notes = "Returns created Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Additional information created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response createServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-            @ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
+    @Operation(description = "Create Additional Information Label and Value", method = "POST",
+            summary = "Returns created Additional Inforamtion property",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Additional information created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response createServiceAdditionalInformationLabel(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "Additional information key value to be created", required = true) String data,
+            @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
 
         return createAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, request, userUserId, data);
 
@@ -120,14 +145,22 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Additional Information Label and Value", httpMethod = "PUT", notes = "Returns updated Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Additional information updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response updateResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Additional Information Label and Value", method = "PUT",
+            summary = "Returns updated Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response updateResourceAdditionalInformationLabel(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Parameter(description = "Additional information key value to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId, data);
+        return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId,
+                data);
 
     }
 
@@ -144,14 +177,22 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Additional Information Label and Value", httpMethod = "PUT", notes = "Returns updated Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Additional information updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response updateServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Additional Information Label and Value", method = "PUT",
+            summary = "Returns updated Additional Inforamtion property",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response updateServiceAdditionalInformationLabel(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Parameter(description = "Additional information key value to be created", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId, data);
+        return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId,
+                data);
 
     }
 
@@ -167,13 +208,21 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Additional Information Label and Value", httpMethod = "DELETE", notes = "Returns deleted Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Additional information deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response updateResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Create Additional Information Label and Value", method = "DELETE",
+            summary = "Returns deleted Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response updateResourceAdditionalInformationLabel(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        return deleteAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId);
+        return deleteAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request,
+                userId);
 
     }
 
@@ -189,11 +238,18 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Additional Information Label and Value", httpMethod = "DELETE", notes = "Returns deleted Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Additional information deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response deleteServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Create Additional Information Label and Value", method = "DELETE",
+            summary = "Returns deleted Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response deleteServiceAdditionalInformationLabel(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         return deleteAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId);
 
@@ -211,11 +267,18 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Additional Information by id", httpMethod = "GET", notes = "Returns Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "fetched additional information"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response getResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get Additional Information by id", method = "GET",
+            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "fetched additional information"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response getResourceAdditionalInformationLabel(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         return getAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId);
 
@@ -233,11 +296,18 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/additionalinfo/{labelId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Additional Information by id", httpMethod = "GET", notes = "Returns Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "fetched additional information"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response getServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-            @ApiParam(value = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get Additional Information by id", method = "GET",
+            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "fetched additional information"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response getServiceAdditionalInformationLabel(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         return getAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId);
 
@@ -254,11 +324,17 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/additionalinfo")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get all Additional Information under resource", httpMethod = "GET", notes = "Returns Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "list of additional information"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response getAllResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get all Additional Information under resource", method = "GET",
+            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "list of additional information"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response getAllResourceAdditionalInformationLabel(
+            @Parameter(description = "resource id to update with new property",
+                    required = true) @PathParam("resourceId") final String resourceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         return getAllAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userId);
 
@@ -275,11 +351,17 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/additionalinfo")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get all Additional Information under service", httpMethod = "GET", notes = "Returns Additional Inforamtion property", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "list of additional information"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Additional information key already exist") })
-    public Response getAllServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get all Additional Information under service", method = "GET",
+            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "list of additional information"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    public Response getAllServiceAdditionalInformationLabel(
+            @Parameter(description = "service id to update with new property",
+                    required = true) @PathParam("serviceId") final String serviceId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         return getAllAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, request, userId);
 

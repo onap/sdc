@@ -20,15 +20,26 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -37,30 +48,34 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.GroupCompositionMixin;
 import org.openecomp.sdc.be.mixin.PolicyCompositionMixin;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapReqDef;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Component Servlet", description = "Component Servlet")
+@OpenAPIDefinition(info = @Info(title = "Component Servlet",description = "Component Servlet"))
 @Controller
 public class ComponentServlet extends BeGenericServlet {
     private static final String GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION = "getCertifiedNotAbstractComponents failed with exception";
@@ -87,9 +102,14 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/{componentUuid}/conformanceLevelValidation")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Validate Component Conformance Level", httpMethod = "GET", notes = "Returns the result according to conformance level in BE config", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response conformanceLevelValidation(@PathParam("componentType") final String componentType, @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
+    @Operation(description = "Validate Component Conformance Level", method = "GET",
+            summary = "Returns the result according to conformance level in BE config", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response conformanceLevelValidation(@PathParam("componentType") final String componentType,
+            @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Response response;
 
@@ -116,9 +136,14 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/requirmentsCapabilities")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Component Requirments And Capabilities", httpMethod = "GET", notes = "Returns Requirements And Capabilities according to componentId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+    @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
+            summary = "Returns Requirements And Capabilities according to componentId", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Response response;
 
@@ -151,10 +176,17 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/latestversion/notabstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Component Requirments And Capabilities", httpMethod = "GET", notes = "Returns Requirments And Capabilities according to componentId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getLatestVersionNotAbstractCheckoutComponents(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
-            @QueryParam("componentUids") List<String> componentUids, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
+            summary = "Returns Requirments And Capabilities according to componentId", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getLatestVersionNotAbstractCheckoutComponents(
+            @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
+            @QueryParam("internalComponentType") String internalComponentType,
+            @QueryParam("componentUids") List<String> componentUids,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
@@ -190,10 +222,17 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/latestversion/notabstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Component Requirments And Capabilities", httpMethod = "GET", notes = "Returns Requirments And Capabilities according to componentId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getLatestVersionNotAbstractCheckoutComponentsByBody(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "Consumer Object to be created", required = true) List<String> data) {
+    @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
+            summary = "Returns Requirments And Capabilities according to componentId", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getLatestVersionNotAbstractCheckoutComponentsByBody(
+            @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
+            @QueryParam("internalComponentType") String internalComponentType,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "Consumer Object to be created", required = true) List<String> data) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
@@ -233,10 +272,17 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/latestversion/notabstract/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Component uid only", httpMethod = "GET", notes = "Returns componentId", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @QueryParam("internalComponentType") String internalComponentType,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "uid list", required = true) String data) {
+    @Operation(description = "Get Component uid only", method = "GET", summary = "Returns componentId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(
+            @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
+            @QueryParam("internalComponentType") String internalComponentType,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "uid list", required = true) String data) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
@@ -267,10 +313,17 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/componentInstances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get Component instances", httpMethod = "GET", notes = "Returns component instances", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getComponentInstancesFilteredByPropertiesAndInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
-            @QueryParam("searchText") String searchText, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "uid" + " " + "list", required = true) String data) {
+    @Operation(description = "Get Component instances", method = "GET", summary = "Returns component instances",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getComponentInstancesFilteredByPropertiesAndInputs(
+            @PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
+            @Context final HttpServletRequest request, @QueryParam("searchText") String searchText,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "uid" + " " + "list", required = true) String data) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
@@ -313,10 +366,17 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/filteredDataByParams")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Resource", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Resource.class)
+    @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
     @ResponseView(mixin = {GroupCompositionMixin.class, PolicyCompositionMixin.class})
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Resource not found") })
-    public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @QueryParam("include") final List<String> dataParamsToReturn, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")})
+    public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId,
+            @QueryParam("include") final List<String> dataParamsToReturn, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF , url);
@@ -357,8 +417,15 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/filteredproperties/{propertyNameFragment}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve properties belonging to component instances of specific component by name and optionally resource type", httpMethod = "GET", notes = "Returns properties belonging to component instances of specific component by name and optionally resource type", response = Map.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
+    @Operation(
+            description = "Retrieve properties belonging to component instances of specific component by name and optionally resource type",
+            method = "GET",
+            summary = "Returns properties belonging to component instances of specific component by name and optionally resource type",
+                    responses = @ApiResponse(
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Map.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getFilteredComponentInstanceProperties(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
