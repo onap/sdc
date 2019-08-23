@@ -28,18 +28,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
+import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -51,31 +52,44 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
 import java.util.*;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -605,6 +619,262 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
                 ComponentTypeEnum.RESOURCE, resource,
                 true, false);
         assertThat(result.isRight());
+    }
+
+    @Test
+    public void validateHandleArtifactRequestReturnsProperResponseMessage() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final String componentId = "testComponent";
+        final String userId = "testUser";
+        final String artifactId = "testArtifact";
+        final String origMd5 = "testOrigMd5";
+        final String originData = "testOriginData";
+        final String interfaceUuid = "testInterfaceUuid";
+        final String operationUuid = "testOperationUuid";
+        final String parentId = "testParentId";
+        final String containerComponentType = "services";
+        User testUser = new User();
+        ComponentTypeEnum componentType = ComponentTypeEnum.SERVICE_INSTANCE;
+
+        ArtifactsBusinessLogic.ArtifactOperationInfo operation = Mockito.mock(ArtifactsBusinessLogic.ArtifactOperationInfo.class);
+        when(operation.getArtifactOperationEnum()).thenReturn(ArtifactsBusinessLogic.ArtifactOperationEnum.DOWNLOAD);
+
+        UserValidations testUserValidation = Mockito.mock(UserValidations.class);
+        when(testUserValidation.validateUserExists(eq(userId),any(String.class),anyBoolean())).thenReturn(testUser);
+
+        ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
+
+        ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+        when(componentsUtils.getResponseFormat(any(ActionStatus.class),eq(componentId)) ).thenReturn(responseFormat);
+
+        ArtifactDefinition artifactInfo = new ArtifactDefinition();
+
+        Either<Component, StorageOperationStatus> storageStatus = Either.right(StorageOperationStatus.OK);//.RightProjection<Component, StorageOperationStatus>() ;
+        when(toscaOperationFacade.getToscaFullElement(eq(componentId))).thenReturn(storageStatus);
+
+        testArtifactsBusinessLogic.setComponentsUtils(componentsUtils);
+        testArtifactsBusinessLogic.setUserValidations(testUserValidation);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> response = testArtifactsBusinessLogic.handleArtifactRequest(
+                componentId, userId,  componentType,  operation,
+                artifactId,  artifactInfo, origMd5, originData,
+                interfaceUuid, operationUuid, parentId, containerComponentType);
+
+        assertTrue(response.isRight());
+        assertEquals(response.right().value(), responseFormat);
+    }
+
+
+    @Test
+    public void validateHandleArtifactRequestWithNoUserReturnsMissingInformationResponseMessage() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final String componentId = "testComponent";
+        final String artifactId = "testArtifact";
+        final String origMd5 = "testOrigMd5";
+        final String originData = "testOriginData";
+        final String interfaceUuid = "testInterfaceUuid";
+        final String operationUuid = "testOperationUuid";
+        final String parentId = "testParentId";
+        final String containerComponentType = "services";
+        ArtifactDefinition artifactInfo = new ArtifactDefinition();
+        ComponentTypeEnum componentType = ComponentTypeEnum.SERVICE_INSTANCE;
+
+        ArtifactsBusinessLogic.ArtifactOperationInfo operation =
+                Mockito.mock(ArtifactsBusinessLogic.ArtifactOperationInfo.class);
+        when(operation.getArtifactOperationEnum()).thenReturn(ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE);
+
+        ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
+
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_INFORMATION)) ).thenReturn(responseFormat);
+
+        testArtifactsBusinessLogic.setComponentsUtils(componentsUtils);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> response =
+                testArtifactsBusinessLogic.handleArtifactRequest(
+                    componentId, null,  componentType,  operation,
+                    artifactId,  artifactInfo, origMd5, originData,
+                    interfaceUuid, operationUuid, parentId, containerComponentType
+                );
+
+        assertTrue(response.isRight());
+        assertEquals(response.right().value(), responseFormat);
+    }
+
+    @Test
+    public void validateValidateAndHandleArtifactWillCallAuditResourceWithProperParameters() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final String componentUniqueId = "testComponentId";
+        final ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
+        final ArtifactsBusinessLogic.ArtifactOperationInfo operation = Mockito.mock(ArtifactsBusinessLogic.ArtifactOperationInfo.class);
+        final String artifactUniqueId = "testArtifactId";
+        final String artifactName = "testArtifact";
+        final String artifactType = "testData";
+        final ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactType("testArtifact");
+        final String origMd5 = GeneralUtility.calculateMD5Base64EncodedByString(artifactType);
+        final String interfaceUuid = "testInterfaceUUID";
+        final String operationName = "testOperation";
+        final User user = new User();
+        final Resource component = Mockito.mock(Resource.class);
+        when(component.getName()).thenReturn(artifactName);
+        final boolean shouldLock = false;
+        final boolean inTransaction = false;
+        final boolean needUpdateGroup = false;
+
+        when(operation.getArtifactOperationEnum()).thenReturn(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE);
+
+        when(componentsUtils.isExternalApiEvent(AuditingActionEnum.ARTIFACT_UPLOAD)).thenReturn(false);
+
+        testArtifactsBusinessLogic.setComponentsUtils(componentsUtils);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> response =
+                testArtifactsBusinessLogic.validateAndHandleArtifact(
+                    componentUniqueId,  componentType, operation,
+                    artifactUniqueId, artifactDefinition, origMd5,
+                    artifactType, interfaceUuid, operationName,
+                    user, component, shouldLock, inTransaction, needUpdateGroup
+                );
+
+        assertTrue(response.isRight());
+        assertNull(response.right().value());
+        verify(componentsUtils).auditResource(
+                eq(null), eq(user), eq(component),
+                eq(artifactName), eq(AuditingActionEnum.ARTIFACT_UPLOAD), any(ResourceVersionInfo.class),
+                eq(null), eq(null));
+    }
+
+    @Test
+    public void validateGenerateAndSaveToscaArtifactStoresProperArtifact() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final ResponseFormat expectedResponseFormat = Mockito.mock(ResponseFormat.class);
+
+        final ArtifactDefinition artifactDefinition = Mockito.mock(ArtifactDefinition.class);
+        when(artifactDefinition.getArtifactType()).thenReturn(ArtifactTypeEnum.TOSCA_CSAR.getType());
+        final Component component = Mockito.mock(Component.class);
+        final User user = new User();
+        final boolean isInCertificationRequest = false;
+        final boolean shouldLock = false;
+        final boolean inTransaction= false;
+        final boolean fetchTemplatesFromDB = false;
+
+
+        when(csarUtils.createCsar(eq(component), eq(false), eq(false))).thenReturn(Either.right(expectedResponseFormat));
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> response =
+                testArtifactsBusinessLogic.generateAndSaveToscaArtifact(
+                        artifactDefinition, component, user,
+                        isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
+
+        assertTrue(response.isRight());
+        assertEquals(response.right().value(), expectedResponseFormat);
+    }
+
+    @Test
+    public void validateGenerateAndSaveToscaArtifactResponseProperlyToGenerationFail() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final ResponseFormat expectedResponseFormat = Mockito.mock(ResponseFormat.class);
+
+        final byte[] byteResponse= "testBytes".getBytes();
+        final byte[] testPayloadData = "testPayloadData".getBytes();
+        final String testESId = "testEsId";
+        final ArtifactDefinition artifactDefinition = Mockito.mock(ArtifactDefinition.class);
+        when(artifactDefinition.getArtifactType()).thenReturn(ArtifactTypeEnum.TOSCA_CSAR.getType());
+        when(artifactDefinition.getPayloadData()).thenReturn(testPayloadData);
+        when(artifactDefinition.getEsId()).thenReturn(testESId);
+        final String artifactName = "testArtifact";
+        final String componentUniqueId = "testUniqueId";
+        final Resource component = Mockito.mock(Resource.class);
+        when(component.getComponentType()).thenReturn(ComponentTypeEnum.RESOURCE);
+        when(component.getUniqueId()).thenReturn(componentUniqueId);
+        when(component.getName()).thenReturn(artifactName);
+        final User user = new User();
+        final boolean isInCertificationRequest = false;
+        final boolean shouldLock = false;
+        final boolean inTransaction= false;
+        final boolean fetchTemplatesFromDB = false;
+        final ComponentsUtils testComponentUtils = Mockito.mock(ComponentsUtils.class);
+        when(testComponentUtils.getResponseFormat(eq(ActionStatus.OK))).thenReturn(expectedResponseFormat);
+
+        when(artifactCassandraDao.saveArtifact(any(ESArtifactData.class))).thenReturn(CassandraOperationStatus.OK);
+        when(artifactToscaOperation.updateArtifactOnResource(
+                eq(artifactDefinition), eq(componentUniqueId), eq(null),
+                eq(NodeTypeEnum.Resource), eq(componentUniqueId)
+        )).thenReturn(Either.left(artifactDefinition));
+        when(csarUtils.createCsar(eq(component), eq(false), eq(false))).thenReturn(Either.left(byteResponse));
+        testArtifactsBusinessLogic.setComponentsUtils(testComponentUtils);
+        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> response =
+                testArtifactsBusinessLogic.generateAndSaveToscaArtifact(
+                        artifactDefinition, component, user,
+                        isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
+        assertTrue(response.isLeft());
+        assertTrue(response.isLeft());
+        assertEquals(response.left().value().left().value(), artifactDefinition);
+    }
+
+    @Test
+    public void validateHandleDownloadToscaModelRequestReturnsProperResponseFormat() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final ResponseFormat expectedResponseFormat = Mockito.mock(ResponseFormat.class);
+
+        final Component component = Mockito.mock(Component.class);
+        final String testESId = "testEsId";
+        final String artifactName = "testArtifact";
+        final ArtifactDefinition artifactDefinition = Mockito.mock(ArtifactDefinition.class);
+        when(artifactDefinition.getEsId()).thenReturn(testESId);
+        when(artifactDefinition.getArtifactDisplayName()).thenReturn(artifactName);
+        final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.OK))).thenReturn(ActionStatus.OK);
+        when(componentsUtils.getResponseFormatByArtifactId(
+                eq(ActionStatus.OK), eq(artifactName))).thenReturn(expectedResponseFormat);
+
+        when(artifactCassandraDao.getArtifact(eq(testESId))).thenReturn(Either.right(CassandraOperationStatus.OK));
+
+        testArtifactsBusinessLogic.setComponentsUtils(componentsUtils);
+
+        Either<ImmutablePair<String, byte[]>, ResponseFormat> response =
+                testArtifactsBusinessLogic.handleDownloadToscaModelRequest(component,artifactDefinition);
+
+        assertTrue(response.isRight());
+        assertEquals(response.right().value(), expectedResponseFormat);
+    }
+
+    @Test
+    public void validateHandleDownloadRequestByIdReturnsProperResponseFormat() {
+        ArtifactsBusinessLogic testArtifactsBusinessLogic = getArtifactsBusinessLogic();
+
+        final ResponseFormat expectedResponseFormat = Mockito.mock(ResponseFormat.class);
+
+        final String componentId = "testComponent";
+        final String artifactId = "testArtifact";
+        final String userId = "testUser";
+        final ComponentTypeEnum componentType = ComponentTypeEnum.SERVICE;
+        final String parentId = "testParent";
+        final String containerComponentType = "products";
+        final User user = new User();
+        final Service component = Mockito.mock(Service.class);
+        when(component.getUniqueId()).thenReturn(componentId);
+        final UserValidations userValidations = Mockito.mock(UserValidations.class);
+        when(userValidations.validateUserExists(
+                eq(userId), eq("ArtifactDownload"), eq(false))).thenReturn(user);
+
+        when(toscaOperationFacade.getToscaFullElement(eq(componentId))).thenReturn(Either.left(component));
+        when(artifactToscaOperation.getArtifactById(componentId, artifactId, componentType, componentId)).
+                thenReturn(Either.right(StorageOperationStatus.OK));
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.OK))).thenReturn(ActionStatus.OK);
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.OK))).thenReturn(expectedResponseFormat);
+
+        testArtifactsBusinessLogic.setComponentsUtils(componentsUtils);
+        testArtifactsBusinessLogic.setUserValidations(userValidations);
+
+        Either<ImmutablePair<String, byte[]>, ResponseFormat> response =
+                testArtifactsBusinessLogic.handleDownloadRequestById(
+                        componentId, artifactId, userId,
+                        componentType, parentId, containerComponentType);
+
+        assertTrue(response.isRight());
+        assertEquals(response.right().value(), expectedResponseFormat);
     }
 
     private void verifyHeatParam(HeatParameterDefinition heatEnvParam, HeatParameterDefinition heatYamlParam) {
