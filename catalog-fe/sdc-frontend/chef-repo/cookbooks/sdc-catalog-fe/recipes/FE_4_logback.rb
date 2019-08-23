@@ -4,4 +4,3 @@ cookbook_file "#{ENV['JETTY_BASE']}/config/catalog-fe/logback.xml" do
   owner "jetty"
   group "jetty"
 end
- 

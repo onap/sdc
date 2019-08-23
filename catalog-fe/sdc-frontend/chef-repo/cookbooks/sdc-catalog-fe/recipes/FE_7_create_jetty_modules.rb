@@ -23,7 +23,7 @@ template "http-ini" do
    owner "jetty"
    group "jetty"
    mode "0755"
-   variables ({
+   variables({
      :http_option => http_option ,
      :http_port => "#{node['FE'][:http_port]}"
     })
@@ -46,7 +46,7 @@ template "ssl-ini" do
    owner "jetty"
    group "jetty"
    mode "0755"
-   variables ({
+   variables({
      :https_port => "#{node['FE'][:https_port]}" ,
      :jetty_keystore_pwd => "#{node['jetty'][:keystore_pwd]}" ,
      :jetty_keymanager_pwd => "#{node['jetty'][:keymanager_pwd]}" ,

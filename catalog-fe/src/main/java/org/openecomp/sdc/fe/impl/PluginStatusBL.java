@@ -60,7 +60,7 @@ public class PluginStatusBL {
     }
 
     public String getPluginsList() {
-        String result = null;
+        String result;
 
         if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
             LOGGER.warn("Configuration of type {} was not found", PluginsConfiguration.class);

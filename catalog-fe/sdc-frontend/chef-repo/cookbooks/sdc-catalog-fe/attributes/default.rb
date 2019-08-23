@@ -6,6 +6,8 @@ default['FE'][:https_port] = 9443
 default['disableHttp'] = true
 default['jetty'][:keystore_pwd] = "rTIS;B4kM]2GHcNK2c3B4&Ng"
 default['jetty'][:keymanager_pwd] = "rTIS;B4kM]2GHcNK2c3B4&Ng"
+# TO CHANGE THE TRUSTSTORE CERT THE JVM CONFIGURATION
+# MUST BE ALSO CHANGE IN THE startup.sh FILE
 default['jetty'][:truststore_pwd] = "Y,f975ZNJfVZhV*{+Y[}pA?0"
 
 #Onboard
