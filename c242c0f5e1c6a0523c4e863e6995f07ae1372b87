@@ -22,6 +22,30 @@
       "revId": "c242c0f5e1c6a0523c4e863e6995f07ae1372b87",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07e0c0b7_8c928c13",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/AuditHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2019-08-23T09:52:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84e73195_be6ca7b9",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 75
+      },
+      "revId": "c242c0f5e1c6a0523c4e863e6995f07ae1372b87",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
