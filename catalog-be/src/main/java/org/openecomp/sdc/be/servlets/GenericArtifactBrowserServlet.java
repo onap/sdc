@@ -20,18 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -44,9 +36,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.GenericArtifactQueryInfo;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -54,12 +44,23 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Controller;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/gab")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Generic Artifact Browser")
+@OpenAPIDefinition(info = @Info(title = "Generic Artifact Browser"))
 @Controller
 public class GenericArtifactBrowserServlet extends BeGenericServlet {
 
@@ -79,12 +80,13 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
 
     @POST
     @Path("/searchFor")
-    @ApiOperation(value = "Search json paths inside the yaml", httpMethod = "POST", notes = "Returns found entries of json paths", response = Response.class)
+    @Operation(description = "Search json paths inside the yaml", method = "POST", summary = "Returns found entries of json paths",responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Returned yaml entries"),
-        @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+        @ApiResponse(responseCode = "200", description = "Returned yaml entries"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response searchFor(
-        @ApiParam(value = "Generic Artifact search model", required = true) GenericArtifactQueryInfo query,
+        @Parameter(description = "Generic Artifact search model", required = true) GenericArtifactQueryInfo query,
         @Context final HttpServletRequest request) {
         try {
             Either<ImmutablePair<String, byte[]>, ResponseFormat> immutablePairResponseFormatEither = artifactsBusinessLogic

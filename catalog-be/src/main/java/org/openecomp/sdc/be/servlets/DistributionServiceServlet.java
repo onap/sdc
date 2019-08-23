@@ -20,16 +20,19 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -39,20 +42,23 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * Root resource (exposed at "/" path)
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Distribution Service Servlet", description = "Distribution Service Servlet")
+@OpenAPIDefinition(info = @Info(title = "Distribution Service Servlet",description = "Distribution Service Servlet"))
 @Singleton
 public class DistributionServiceServlet extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(DistributionServiceServlet.class);
@@ -71,9 +77,15 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @Path("/services/{serviceUUID}/distribution")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Distributions", httpMethod = "GET", notes = "Returns list  bases on the  information extracted from  Auditing Records according to service uuid", response = DistributionStatusListResponse.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Service not found") })
-    public Response getServiceById(@PathParam("serviceUUID") final String serviceUUID, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Distributions", method = "GET",
+            summary = "Returns list  bases on the  information extracted from  Auditing Records according to service uuid",
+                    responses = @ApiResponse(
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = DistributionStatusListResponse.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Service not found")})
+    public Response getServiceById(@PathParam("serviceUUID") final String serviceUUID,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -110,9 +122,15 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @Path("/services/distribution/{did}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Distributions", httpMethod = "GET", notes = "Return  the  list  of  distribution status objects", response = DistributionStatusListResponse.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Status not found") })
-    public Response getListOfDistributionStatuses(@PathParam("did") final String did, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve Distributions", method = "GET",
+            summary = "Return  the  list  of  distribution status objects",
+                    responses = @ApiResponse(
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = DistributionStatusListResponse.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Status not found")})
+    public Response getListOfDistributionStatuses(@PathParam("did") final String did,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);

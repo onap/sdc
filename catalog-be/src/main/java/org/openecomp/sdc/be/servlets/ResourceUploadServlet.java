@@ -20,13 +20,24 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.*;
+import java.io.File;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -38,21 +49,22 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.File;
-
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 /**
  * Root resource (exposed at "/" path)
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/upload")
-@Api(value = "Resources Catalog Upload", description = "Upload resource yaml")
+@OpenAPIDefinition(info = @Info(title = "Resources Catalog Upload", description = "Upload resource yaml"))
 @Singleton
 public class ResourceUploadServlet extends AbstractValidationsServlet {
 
@@ -71,7 +83,9 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     }
 
     public enum ResourceAuthorityTypeEnum {
-        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true, true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false, true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
+        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true,
+                true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false,
+                        true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
 
         private String urlPath;
         private boolean isBackEndImport, isUserTypeResource;
@@ -110,14 +124,22 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     @Path("/{resourceAuthority}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create Resource from yaml", httpMethod = "POST", notes = "Returns created resource", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Resource already exist") })
+    @Operation(description = "Create Resource from yaml", method = "POST", summary = "Returns created resource",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist")})
     public Response uploadMultipart(
-            @ApiParam(value = "validValues: normative-resource / user-resource", allowableValues = NORMATIVE_TYPE_RESOURCE + "," + USER_TYPE_RESOURCE + ","
-                    + USER_TYPE_RESOURCE_UI_IMPORT) @PathParam(value = "resourceAuthority") final String resourceAuthority,
-            @ApiParam("FileInputStream") @FormDataParam("resourceZip") File file, @ApiParam("ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
-            @ApiParam("resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "validValues: normative-resource / user-resource",
+                    schema = @Schema(allowableValues = {NORMATIVE_TYPE_RESOURCE ,
+                            USER_TYPE_RESOURCE,USER_TYPE_RESOURCE_UI_IMPORT})) @PathParam(
+                                    value = "resourceAuthority") final String resourceAuthority,
+            @Parameter(description = "FileInputStream") @FormDataParam("resourceZip") File file,
+            @Parameter(description = "ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
+            @Parameter(description = "resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             // updateResourse Query Parameter if false checks if already exist
             @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) {
 
