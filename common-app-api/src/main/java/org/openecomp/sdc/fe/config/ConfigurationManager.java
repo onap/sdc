@@ -110,19 +110,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
     }
 
-    public void reconfigure(BasicConfiguration obj) {
-        //
-        // if (obj != null) {
-        //
-        // if (obj instanceof Configuration) {
-        // configurations.put(getKey(Configuration.class), obj);
-        // }
-        //
-        // if (obj instanceof EcompErrorConfiguration) {
-        // configurations.put(getKey(EcompErrorConfiguration.class), obj);
-        // }
-        // }
-    }
+    public void reconfigure(BasicConfiguration obj) { }
 
     public static ConfigurationManager getConfigurationManager() {
         return instance;
