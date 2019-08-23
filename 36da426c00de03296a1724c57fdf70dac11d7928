@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e761cc7_884972d9",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/fe/config/ConfigurationManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-08-23T09:30:12Z",
+      "side": 1,
+      "message": "remove unused import",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 42
+      },
+      "revId": "36da426c00de03296a1724c57fdf70dac11d7928",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
