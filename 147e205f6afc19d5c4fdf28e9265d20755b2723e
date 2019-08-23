@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e3056d8_e37acfc4",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/fe/config/ConfigurationManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-23T08:32:58Z",
+      "side": 1,
+      "message": "add empty line before each test",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 4
+      },
+      "revId": "147e205f6afc19d5c4fdf28e9265d20755b2723e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6da15f7e_39dc8a6b",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/fe/config/PluginsConfigurationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-23T08:32:58Z",
+      "side": 1,
+      "message": "remove those empty lines from here, but put empty line before each test",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 0
+      },
+      "revId": "147e205f6afc19d5c4fdf28e9265d20755b2723e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
