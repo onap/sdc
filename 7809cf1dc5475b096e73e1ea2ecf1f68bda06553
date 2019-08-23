@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d9f44f5a_260898c7",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/http/client/api/HttpConnectionMngFactoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2019-08-23T13:02:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a888b539_963c50e6",
+      "range": {
+        "startLine": 33,
+        "startChar": 16,
+        "endLine": 33,
+        "endChar": 24
+      },
+      "revId": "7809cf1dc5475b096e73e1ea2ecf1f68bda06553",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7821408d_128eeac0",
         "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/http/client/api/HttpExecuteExceptionTest.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-08-23T12:41:19Z",
       "side": 1,
       "message": "i don\u0027t like this approach.\nplease check rule mechanism/ assertThrows from: https://stackoverflow.com/questions/2469911/how-do-i-assert-my-exception-message-with-junit-test-annotation",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 9
+      },
+      "revId": "7809cf1dc5475b096e73e1ea2ecf1f68bda06553",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e652777d_735e830d",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/http/client/api/HttpExecuteExceptionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2019-08-23T13:02:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7821408d_128eeac0",
       "range": {
         "startLine": 33,
         "startChar": 0,
