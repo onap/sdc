@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Robert Bogacki <r.bogacki@samsung.com>
+Code-Review+1: Lasse Kaihlavirta <l.kaihlavirt@partner.samsung.com>
+Code-Review+2: Piotr Darosz <piotr.darosz@nokia.com>
+Submitted-by: Piotr Darosz <piotr.darosz@nokia.com>
+Submitted-at: Fri, 23 Aug 2019 10:25:22 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/94038
+Project: sdc
+Branch: refs/heads/master
