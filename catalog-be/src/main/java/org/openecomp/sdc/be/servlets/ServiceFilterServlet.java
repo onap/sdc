@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +41,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
@@ -68,11 +61,21 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Path("/v1/catalog/services/{serviceId}/resourceInstances/{resourceInstanceId}/nodeFilter")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Service Filter", description = "Service Filter Servlet")
+@OpenAPIDefinition(info = @Info(title = "Service Filter", description = "Service Filter Servlet"))
 @Singleton
 public class ServiceFilterServlet extends AbstractValidationsServlet {
 
@@ -100,14 +103,15 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @ApiOperation(value = "Add Service Filter Constraint", httpMethod = "POST", notes = "Add Service Filter Constraint",
-            response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Create Service Filter"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
-    public Response addServiceFilterConstraint(@ApiParam(value = "Service data", required = true) String data,
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
-            @ApiParam(value = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
+    @Operation(description = "Add Service Filter Constraint", method = "POST", summary = "Add Service Filter Constraint",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response addServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -164,14 +168,15 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @ApiOperation(value = "Update Service Filter Constraint", httpMethod = "PUT",
-            notes = "Update Service Filter Constraint", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Create Service Filter"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
-    public Response updateServiceFilterConstraint(@ApiParam(value = "Service data", required = true) String data,
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
-            @ApiParam(value = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
+    @Operation(description = "Update Service Filter Constraint", method = "PUT",
+            summary = "Update Service Filter Constraint", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -233,15 +238,16 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{constraintIndex}")
-    @ApiOperation(value = "Delete Service Filter Constraint", httpMethod = "Delete",
-            notes = "Delete Service Filter Constraint", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Delete Service Filter Constraint"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content")})
+    @Operation(description = "Delete Service Filter Constraint", method = "Delete",
+            summary = "Delete Service Filter Constraint", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Service Filter Constraint"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response deleteServiceFilterConstraint(
-            @ApiParam(value = "Service Id") @PathParam("serviceId") String serviceId,
-            @ApiParam(value = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
-            @ApiParam(value = "Constraint Index") @PathParam("constraintIndex") int index,
+            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+            @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
+            @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);

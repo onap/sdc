@@ -20,19 +20,21 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -44,20 +46,22 @@ import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@Api(value = "BE Monitoring", description = "BE Monitoring")
+@OpenAPIDefinition(info = @Info(title = "BE Monitoring", description = "BE Monitoring"))
 @Singleton
 public class BeMonitoringServlet extends BeGenericServlet {
 
@@ -81,11 +85,15 @@ public class BeMonitoringServlet extends BeGenericServlet {
     @Path("/healthCheck")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Return aggregate BE health check of SDC BE components", notes = "return BE health check", response = String.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "SDC BE components are all up"), @ApiResponse(code = 500, message = "One or more SDC BE components are down") })
+    @Operation(description = "Return aggregate BE health check of SDC BE components", summary = "return BE health check",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "SDC BE components are all up"),
+            @ApiResponse(responseCode = "500", description = "One or more SDC BE components are down")})
     public Response getHealthCheck(@Context final HttpServletRequest request) {
         try {
-            Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus = healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
+            Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus =
+                    healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
             Boolean aggregateStatus = beHealthCheckInfosStatus.getLeft();
             ActionStatus status = aggregateStatus ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
             String sdcVersion = getVersionFromContext(request);
@@ -93,7 +101,8 @@ public class BeMonitoringServlet extends BeGenericServlet {
                 sdcVersion = "UNKNOWN";
             }
             String siteMode = healthCheckBusinessLogic.getSiteMode();
-            HealthCheckWrapper healthCheck = new HealthCheckWrapper(beHealthCheckInfosStatus.getRight(), sdcVersion, siteMode);
+            HealthCheckWrapper healthCheck =
+                    new HealthCheckWrapper(beHealthCheckInfosStatus.getRight(), sdcVersion, siteMode);
             // The response can be either with 200 or 500 aggregate status - the
             // body of individual statuses is returned either way
 
@@ -134,8 +143,11 @@ public class BeMonitoringServlet extends BeGenericServlet {
     @Path("/version")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "return the ASDC application version", notes = "return the ASDC application version", response = String.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "return ASDC version"), @ApiResponse(code = 500, message = "Internal Error") })
+    @Operation(description = "return the ASDC application version", summary = "return the ASDC application version",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "return ASDC version"),
+            @ApiResponse(responseCode = "500", description = "Internal Error")})
     public Response getSdcVersion(@Context final HttpServletRequest request) {
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
