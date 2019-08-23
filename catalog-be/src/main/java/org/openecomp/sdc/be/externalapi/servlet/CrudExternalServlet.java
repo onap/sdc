@@ -20,11 +20,24 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Strings;
 import org.json.simple.JSONObject;
@@ -32,7 +45,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -68,23 +80,24 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "CRUD External Servlet", description = "This Servlet serves external users for creating assets and changing their lifecycle state")
+@OpenAPIDefinition(info = @Info(title = "CRUD External Servlet",
+        description = "This Servlet serves external users for creating assets and changing their lifecycle state"))
+
 @Singleton
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
@@ -126,39 +139,68 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "creates a resource", httpMethod = "POST", notes = "Creates a resource")
+    @Operation(description = "creates a resource", method = "POST", summary = "Creates a resource")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ECOMP component is authenticated and Asset created", response = Resource.class),
-            @ApiResponse(code = 400, message = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(code = 400, message = "The name provided for the newly created resource is already in use for another resource in SDC - SVC4050"),
-            @ApiResponse(code = 400, message = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
-            @ApiResponse(code = 400, message = "Missing request body. The post request did not contain the expected body - SVC4500"),
-            @ApiResponse(code = 400, message = "The resource name is missing in the request body - SVC4062"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT description has wrong format - SVC4064"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT description has wrong format (exceeds limit) - SVC4065"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT tags exceeds character limit - SVC4066"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor name exceeds character limit - SVC4067"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor release exceeds character limit - SVC4068"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT ATT Contact has wrong format - SVC4069"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT name has wrong format - SVC4070"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor name has wrong format - SVC4071"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor release has wrong format - SVC4072"),
-            @ApiResponse(code = 400, message = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created resource")})
+            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and Asset created",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "401",
+                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "404",
+                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+            @ApiResponse(responseCode = "405",
+                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500",
+                    description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+            @ApiResponse(responseCode = "400",
+                    description = "The name provided for the newly created resource is already in use for another resource in SDC - SVC4050"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
+            @ApiResponse(responseCode = "400",
+                    description = "Missing request body. The post request did not contain the expected body - SVC4500"),
+            @ApiResponse(responseCode = "400",
+                    description = "The resource name is missing in the request body - SVC4062"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT description has wrong format - SVC4064"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT description has wrong format (exceeds limit) - SVC4065"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT tags exceeds character limit - SVC4066"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT vendor name exceeds character limit - SVC4067"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT vendor release exceeds character limit - SVC4068"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT ATT Contact has wrong format - SVC4069"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT name has wrong format - SVC4070"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT vendor name has wrong format - SVC4071"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT vendor release has wrong format - SVC4072"),
+            @ApiResponse(responseCode = "400",
+                    description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073")})
+    // @ApiImplicitParams({@ApiImplicitParam(required = true, dataType =
+    // "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created
+    // resource")})
     public Response createResourceExternal(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @ApiParam(value = "The user id", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
-            @ApiParam( hidden = true) String data) {
+            @Parameter(description = "Determines the format of the body of the request",
+                    required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+            @Parameter(description = "The user id",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+            @Parameter(description = "X-ECOMP-RequestID header",
+                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
+                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @Parameter(description = "Determines the format of the body of the response",
+                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password",
+                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Parameter(description = "The requested asset type", required = true,
+                    schema = @Schema(
+                            allowableValues = {"resources, services"})) @PathParam("assetType") final String assetType,
+            @Parameter(hidden = true) String data) {
 
         init();
 
@@ -264,29 +306,45 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/lifecycleState/{lifecycleOperation}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST")
+    @Operation(description = "Change Resource lifecycle State", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Resource state changed", response = AssetMetadata.class),
-            @ApiResponse(code = 400, message = "Missing X-ECOMP-InstanceID HTTP header - POL5001"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(code = 403, message = "Asset is already checked-out by another user - SVC4085"),
-            @ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
+            @ApiResponse(responseCode = "200", description = "Resource state changed",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing X-ECOMP-InstanceID HTTP header - POL5001"),
+            @ApiResponse(responseCode = "401",
+                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "404",
+                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+            @ApiResponse(responseCode = "405",
+                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500",
+                    description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+            @ApiResponse(responseCode = "403", description = "Asset is already checked-out by another user - SVC4085"),
+            @ApiResponse(responseCode = "403",
+                    description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
+  //  @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
     public Response changeResourceStateExternal(
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @ApiParam(value = "The user id", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @ApiParam(allowableValues = "checkout, checkin", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
-            @ApiParam(value = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
-            @ApiParam(value = "validValues: resources / services ", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam(value = "assetType") final String assetType,
-            @ApiParam( hidden = true) String jsonChangeInfo) {
+            @Parameter(description = "Determines the format of the body of the request",
+                    required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+            @Parameter(description = "The user id",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+            @Parameter(description = "X-ECOMP-RequestID header",
+                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
+                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @Parameter(description = "Determines the format of the body of the response",
+                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password",
+                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Parameter(schema = @Schema(allowableValues = {"checkout, checkin"}),
+                    required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
+            @Parameter(description = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
+            @Parameter(description = "validValues: resources / services ",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam(
+                                    value = "assetType") final String assetType,
+            @Parameter(hidden = true) String jsonChangeInfo) {
 
         Response response = null;
 

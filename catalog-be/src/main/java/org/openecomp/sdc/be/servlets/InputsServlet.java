@@ -20,14 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
@@ -48,32 +40,43 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstListInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.ComponentInstListInput;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Api(value = "Input Catalog", description = "Input Servlet")
+@OpenAPIDefinition(info = @Info(title = "Input Catalog", description = "Input Servlet"))
 @Path("/v1/catalog")
 @Singleton
 @Consumes(MediaType.APPLICATION_JSON)
@@ -99,12 +102,18 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{containerComponentType}/{componentId}/update/inputs")
-    @ApiOperation(value = "Update resource  inputs", httpMethod = "POST", notes = "Returns updated input", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Input updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateComponentInputs(
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+    @Operation(description = "Update resource  inputs", method = "POST", summary = "Returns updated input",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Input updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateComponentInputs(@Parameter(description = "valid values: resources / services",
+            schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                    ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId,
-            @ApiParam(value = "json describe the input", required = true) String data, @Context final HttpServletRequest request) {
+            @Parameter(description = "json describe the input", required = true) String data,
+            @Context final HttpServletRequest request) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -155,10 +164,16 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComponentUid}/inputs")
-    @ApiOperation(value = "Get Inputs only", httpMethod = "GET", notes = "Returns Inputs list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
-                                               @PathParam("originComponentUid") final String originComponentUid, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get Inputs only", method = "GET", summary = "Returns Inputs list",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
+            @PathParam("originComponentUid") final String originComponentUid, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -185,10 +200,16 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{inputId}/properties")
-    @ApiOperation(value = "Get properties", httpMethod = "GET", notes = "Returns properties list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getInputPropertiesForComponentInstance(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
-            @PathParam("inputId") final String inputId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get properties", method = "GET", summary = "Returns properties list",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getInputPropertiesForComponentInstance(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
+            @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -196,7 +217,8 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic.getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
+            Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic
+                    .getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
             if (inputPropertiesRes.isRight()) {
                 log.debug("failed to get properties of input: {}, with instance id: {}", inputId, instanceId);
                 return buildErrorResponse(inputPropertiesRes.right().value());
@@ -205,7 +227,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Properites by input id: " + inputId + " for instance with id: " + instanceId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
+                    "Get Properites by input id: " + inputId + " for instance with id: " + instanceId);
             log.debug("getInputPropertiesForComponentInstance failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
@@ -215,17 +238,22 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/inputs/{inputId}/inputs")
-    @ApiOperation(value = "Get inputs", httpMethod = "GET", notes = "Returns inputs list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getInputsForComponentInput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = @ApiResponse(content = @Content(
+            array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getInputsForComponentInput(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
         Response response;
         try {
-            Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes = inputsBusinessLogic.getInputsForComponentInput(userId, componentId, inputId);
+            Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes =
+                    inputsBusinessLogic.getInputsForComponentInput(userId, componentId, inputId);
 
             if (inputsRes.isRight()) {
                 log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
@@ -235,7 +263,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get inputs by input id: " + inputId + " for component with id: " + componentId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
+                    "Get inputs by input id: " + inputId + " for component with id: " + componentId);
             log.debug("getInputsForComponentInput failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
@@ -245,10 +274,14 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/inputs/{inputId}")
-    @ApiOperation(value = "Get inputs", httpMethod = "GET", notes = "Returns inputs list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getInputsAndPropertiesForComponentInput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = @ApiResponse(content = @Content(
+            array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getInputsAndPropertiesForComponentInput(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -256,7 +289,8 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response;
 
         try {
-            Either<InputDefinition, ResponseFormat> inputsRes = inputsBusinessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
+            Either<InputDefinition, ResponseFormat> inputsRes =
+                    inputsBusinessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
 
             if (inputsRes.isRight()) {
                 log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
@@ -266,7 +300,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get inputs by input id: " + inputId + " for component with id: " + componentId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
+                    "Get inputs by input id: " + inputId + " for component with id: " + componentId);
             log.debug("getInputsForComponentInput failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
@@ -284,10 +319,17 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{componentType}/{componentId}/create/inputs")
-    @ApiOperation(value = "Create inputs on service", httpMethod = "POST", notes = "Return inputs list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response createMultipleInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "ComponentIns Inputs Object to be created", required = true) String componentInstInputsMapObj) {
+    @Operation(description = "Create inputs on service", method = "POST", summary = "Return inputs list",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response createMultipleInputs(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "ComponentIns Inputs Object to be created",
+                    required = true) String componentInstInputsMapObj) {
 
         return super.declareProperties(userId, componentId, componentType, componentInstInputsMapObj,
                 DeclarationTypeEnum.INPUT, request);
@@ -309,10 +351,17 @@ public class InputsServlet extends AbstractValidationsServlet {
      */
     @POST
     @Path("/{componentType}/{componentId}/create/listInput")
-    @ApiOperation(value = "Create a list input on service", httpMethod = "POST", notes = "Return input", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response createListInput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
-                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "ComponentIns Inputs Object to be created", required = true) String componentInstInputsMapObj) {
+    @Operation(description = "Create a list input on service", method = "POST", summary = "Return input",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response createListInput(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "ComponentIns Inputs Object to be created",
+                    required = true) String componentInstInputsMapObj) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -326,7 +375,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             log.debug("modifier id is {}", userId);
 
             Either<ComponentInstListInput, ResponseFormat> componentInstInputsMapRes =
-                parseToComponentInstListInput(componentInstInputsMapObj, modifier);
+                    parseToComponentInstListInput(componentInstInputsMapObj, modifier);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
                 response = buildErrorResponse(componentInstInputsMapRes.right().value());
@@ -337,11 +386,12 @@ public class InputsServlet extends AbstractValidationsServlet {
             ComponentInstListInput componentInstInputsMap = componentInstInputsMapRes.left().value();
             if (log.isDebugEnabled()) {
                 // for inspection on debug
-                log.debug("parsed componentInstInputsMap={}", ReflectionToStringBuilder.toString(componentInstInputsMap));
+                log.debug("parsed componentInstInputsMap={}",
+                        ReflectionToStringBuilder.toString(componentInstInputsMap));
             }
 
-            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic.createListInput(
-                userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
+            Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic
+                    .createListInput(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
             if (inputPropertiesRes.isRight()) {
                 log.debug("failed to create list input for service: {}", componentId);
                 return buildErrorResponse(inputPropertiesRes.right().value());
@@ -350,7 +400,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create list input for service with id: " + componentId);
+            BeEcompErrorManager.getInstance()
+                    .logBeRestApiGeneralError("Create list input for service with id: " + componentId);
             log.debug("createListInput failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
@@ -360,15 +411,16 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/{componentType}/{componentId}/delete/{inputId}/input")
-    @ApiOperation(value = "Delete input from service", httpMethod = "DELETE", notes = "Delete service input", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Input deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Input not found") })
-    public Response deleteInput (
-            @PathParam("componentType") final String componentType,
-            @PathParam("componentId") final String componentId,
-            @PathParam("inputId") final String inputId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @ApiParam(value = "Service Input to be deleted", required = true) String componentInstInputsMapObj) {
+    @Operation(description = "Delete input from service", method = "DELETE", summary = "Delete service input",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Input deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Input not found")})
+    public Response deleteInput(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "Service Input to be deleted", required = true) String componentInstInputsMapObj) {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -376,15 +428,17 @@ public class InputsServlet extends AbstractValidationsServlet {
         Response response = null;
 
         try {
-            Either<InputDefinition, ResponseFormat> deleteInput = inputsBusinessLogic.deleteInput(componentId, userId, inputId);
-            if (deleteInput.isRight()){
+            Either<InputDefinition, ResponseFormat> deleteInput =
+                    inputsBusinessLogic.deleteInput(componentId, userId, inputId);
+            if (deleteInput.isRight()) {
                 ResponseFormat deleteResponseFormat = deleteInput.right().value();
                 response = buildErrorResponse(deleteResponseFormat);
                 return response;
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteInput.left().value());
-        } catch (Exception e){
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance()
+                    .logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
             log.debug("Delete input failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
@@ -402,12 +456,13 @@ public class InputsServlet extends AbstractValidationsServlet {
      */
     @GET
     @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
-    @ApiOperation(value = "Get data type in service", httpMethod = "GET", notes = "Get data type in service",
-            response = DataTypeDefinition.class)
+    @Operation(description = "Get data type in service", method = "GET", summary = "Get data type in service",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = DataTypeDefinition.class)))))
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Data type found"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 404, message = "Data type not found")})
+            @ApiResponse(responseCode = "200", description = "Data type found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Data type not found")})
     public Response getDataType(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
@@ -444,12 +499,13 @@ public class InputsServlet extends AbstractValidationsServlet {
      */
     @GET
     @Path("/{componentType}/{componentId}/dataTypes")
-    @ApiOperation(value = "Get data types that service has", httpMethod = "GET", notes = "Get data types in service",
-            response = Resource.class)
+    @Operation(description = "Get data types that service has", method = "GET", summary = "Get data types in service",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Data type found"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 404, message = "Component not found")})
+            @ApiResponse(responseCode = "200", description = "Data type found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getDataTypes(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
@@ -487,12 +543,13 @@ public class InputsServlet extends AbstractValidationsServlet {
      */
     @DELETE
     @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
-    @ApiOperation(value = "Delete data type from service", httpMethod = "DELETE", notes = "Delete service input",
-            response = Resource.class)
+    @Operation(description = "Delete data type from service", method = "DELETE", summary = "Delete service input",
+            responses = @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Data type deleted"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 404, message = "Data type not found")})
+            @ApiResponse(responseCode = "200", description = "Data type deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Data type not found")})
     public Response deleteDataType(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,

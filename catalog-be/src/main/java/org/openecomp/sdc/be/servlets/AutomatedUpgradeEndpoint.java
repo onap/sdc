@@ -20,33 +20,43 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.*;
+import java.util.List;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeRequest;
 import org.openecomp.sdc.be.components.upgrade.UpgradeStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "policy types resource")
+@OpenAPIDefinition(info = @Info(title = "policy types resource"))
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,10 +77,15 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/automatedupgrade")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Autometed upgrade", httpMethod = "POST", notes = "....", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response autometedUpgrade(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @ApiParam(value = "json describes upgrade request", required = true) String data) {
+    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response autometedUpgrade(@PathParam("componentType") final String componentType,
+            @Context final HttpServletRequest request, @PathParam("componentId") final String componentId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "json describes upgrade request", required = true) String data) {
 
      
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -97,10 +112,15 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/dependencies")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Autometed upgrade", httpMethod = "POST", notes = "....", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response getComponentDependencies(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request, @PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @ApiParam(value = "Consumer Object to be created", required = true) List<String> data) {
+    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response getComponentDependencies(@PathParam("componentType") final String componentType,
+            @Context final HttpServletRequest request, @PathParam("componentId") final String componentId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "Consumer Object to be created", required = true) List<String> data) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
 
