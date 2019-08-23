@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b6143b5_ccec8c25",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/exception/ResponseFormatTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-08-23T09:42:21Z",
+      "side": 1,
+      "message": "check for unused imports and remove.",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 44
+      },
+      "revId": "fbcefdb6cbf1b0300fea2053b82eda17615d05ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
