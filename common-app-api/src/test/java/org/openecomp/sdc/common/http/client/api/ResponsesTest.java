@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,20 +20,15 @@
 
 package org.openecomp.sdc.common.http.client.api;
 
-import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.junit.Test;
-
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-public class RestUtilsTest {
+public class ResponsesTest {
 
     @Test
-    public void addBasicAuthHeader() {
-        Properties headers = new Properties();
-        RestUtils restutil = new RestUtils();
-        restutil.addBasicAuthHeader(headers,"uname","passwd");
-        assertEquals(headers.getProperty(HttpHeaders.AUTHORIZATION),"Basic dW5hbWU6cGFzc3dk");
+    public void validateStaticFields() {
+        assertEquals(Responses.INTERNAL_SERVER_ERROR.getStatusCode(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 }
