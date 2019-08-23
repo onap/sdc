@@ -20,12 +20,18 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.AuditHandler;
@@ -45,13 +51,17 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.HttpUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * This Servlet serves external users for distribution purposes.
@@ -62,7 +72,8 @@ import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1")
-@Api(value = "Distribution Servlet", description = "This Servlet serves external users for distribution purposes.")
+@OpenAPIDefinition(info =  @Info(title = "Distribution Servlet",description = "This Servlet serves external users for distribution purposes."))
+
 @Singleton
 public class DistributionServlet extends BeGenericServlet {
 
@@ -91,23 +102,24 @@ public class DistributionServlet extends BeGenericServlet {
     @Path("/distributionUebCluster")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "UEB Server List", httpMethod = "GET", notes = "return the available UEB Server List",
+    @Operation(description = "UEB Server List", method = "GET", summary = "return the available UEB Server List")
     //TODO Tal G fix response headers
-    responseHeaders = {
+    /*responseHeaders = {
             @ResponseHeader(name = Constants.CONTENT_TYPE_HEADER, description = "Determines the format of the response body", response = String.class),
-            @ResponseHeader(name = "Content-Length", description = "Length of  the response body", response = String.class)})
+            @ResponseHeader(name = "Content-Length", description = "Length of  the response body", response = String.class)})*/
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned", response = ServerListResponse.class),
-            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ServerListResponse.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     public Response getUebServerList(
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
-            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
+            @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @Parameter(description = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -161,27 +173,29 @@ public class DistributionServlet extends BeGenericServlet {
     @Path("/registerForDistribution")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Subscribes for distribution notifications")
+    @Operation(parameters = @Parameter(name = "requestJson", required = true ), description = "Subscription status", method = "POST", summary = "Subscribes for distribution notifications")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ECOMP component is successfully registered for distribution", response = TopicRegistrationResponse.class),
-            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
-            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - POL4502"),
-            @ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+            @ApiResponse(responseCode = "200", description = "ECOMP component is successfully registered for distribution",content = @Content(array = @ArraySchema(schema = @Schema(implementation = TopicRegistrationResponse.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "400", description = "Missing  Body - POL4500"),
+            @ApiResponse(responseCode = "400", description = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+            @ApiResponse(responseCode = "400", description = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - POL4502"),
+            @ApiResponse(responseCode = "400", description = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
+            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    
+    //@ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    
     public Response registerForDistribution(
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
-            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @ApiParam( hidden = true) String requestJson) {
+            @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @Parameter(description = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+            @Parameter(description = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
+            @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Parameter( hidden = true) String requestJson) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -220,19 +234,19 @@ public class DistributionServlet extends BeGenericServlet {
     @Path("/artifactTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list")
+    @Operation(description = "Artifact types list", method = "GET", summary = "Fetches available artifact types list")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Artifact types list fetched successfully", response = String.class),
-            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+            @ApiResponse(responseCode = "200", description = "Artifact types list fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
     public Response getValidArtifactTypes(
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
+            @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
@@ -265,28 +279,29 @@ public class DistributionServlet extends BeGenericServlet {
     @Path("/unRegisterForDistribution")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Removes from subscription for distribution notifications")
+    @Operation(parameters = @Parameter(name = "requestJson", required = true ),description = "Subscription status", method = "POST", summary = "Removes from subscription for distribution notifications")
     //TODO Edit the responses
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "ECOMP component is successfully unregistered", response = TopicUnregistrationResponse.class),
-            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
-            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - SVC4506"),
-            @ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
-            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
-            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+            @ApiResponse(responseCode = "204", description = "ECOMP component is successfully unregistered", 
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = TopicUnregistrationResponse.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "400", description = "Missing  Body - POL4500"),
+            @ApiResponse(responseCode = "400", description = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+            @ApiResponse(responseCode = "400", description = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - SVC4506"),
+            @ApiResponse(responseCode = "400", description = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
+            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    //@ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
     public Response unRegisterForDistribution(
-            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
-            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
-            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @ApiParam( hidden = true) String requestJson) {
+            @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @Parameter(description = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+            @Parameter(description = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
+            @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Parameter( hidden = true) String requestJson) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);

@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +40,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -67,13 +59,23 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 /**
  * Provides REST API to create, retrieve, update, delete a policy
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Policy Servlet")
+@OpenAPIDefinition(info = @Info(title = "Policy Servlet"))
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -94,168 +96,235 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{containerComponentType}/{componentId}/policies/{policyTypeName}")
-    @ApiOperation(value = "Create Policy", httpMethod = "POST", notes = "Returns created Policy", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Policy created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Policy already exist"),  @ApiResponse(code = 404, message = "Component not found")})
-    public Response createPolicy(@PathParam("componentId") final String containerComponentId,
-                                 @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                                 @PathParam("policyTypeName") final String policyTypeName,
-                                 @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-                                 @Context final HttpServletRequest request) {
+    @Operation(description = "Create Policy", method = "POST", summary = "Returns created Policy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Policy created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Policy already exist"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response createPolicy(@PathParam("componentId") final String containerComponentId, @Parameter(description = "valid values: resources / services",
+            schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                    ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyTypeName") final String policyTypeName,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request) {
         init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             if (responseWrapper.isEmpty()) {
-                responseWrapper.setInnerElement(policyBusinessLogic.createPolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyTypeName, userId, true)
+                responseWrapper.setInnerElement(policyBusinessLogic
+                        .createPolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyTypeName,
+                                userId, true)
                         .either(l -> buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), l),
                                 this::buildErrorResponse));
             }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Policy");
             log.error("Failed to create policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @ApiOperation(value = "Update Policy metadata", httpMethod = "PUT", notes = "Returns updated Policy", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Policy updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "component / policy Not found")})
-    public Response updatePolicy(@PathParam("componentId") final String containerComponentId,
-                                 @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                                 @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-                                 @ApiParam(value = "PolicyDefinition", required = true) String policyData, @Context final HttpServletRequest request) {
+    @Operation(description = "Update Policy metadata", method = "PUT", summary = "Returns updated Policy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+    public Response updatePolicy(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Parameter(description = "PolicyDefinition", required = true) String policyData,
+            @Context final HttpServletRequest request) {
         init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             Wrapper<PolicyDefinition> policyWrapper = new Wrapper<>();
             if (responseWrapper.isEmpty()) {
                 convertJsonToObjectOfClass(policyData, policyWrapper, PolicyDefinition.class, responseWrapper);
                 if (policyWrapper.isEmpty()) {
-                    responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+                    responseWrapper.setInnerElement(
+                            buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
                 }
             }
             if (!policyWrapper.isEmpty()) {
                 policyWrapper.getInnerElement().setUniqueId(policyId);
-                responseWrapper.setInnerElement(policyBusinessLogic.updatePolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyWrapper.getInnerElement(), userId, true)
-                        .either(this::buildOkResponse,
-                                this::buildErrorResponse));
+                responseWrapper.setInnerElement(policyBusinessLogic
+                        .updatePolicy(componentTypeWrapper.getInnerElement(), containerComponentId,
+                                policyWrapper.getInnerElement(), userId, true)
+                        .either(this::buildOkResponse, this::buildErrorResponse));
             }
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Policy");
             log.error("Failed to update policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
 
     @GET
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @ApiOperation(value = "Get Policy", httpMethod = "GET", notes = "Returns Policy", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Policy was found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "component / policy Not found")})
-    public Response getPolicy(@PathParam("componentId") final String containerComponentId,
-                              @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                              @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-                              @Context final HttpServletRequest request) {
+    @Operation(description = "Get Policy", method = "GET", summary = "Returns Policy", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy was found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+    public Response getPolicy(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request) {
         init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             if (responseWrapper.isEmpty()) {
-                responseWrapper.setInnerElement(policyBusinessLogic.getPolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyId, userId)
-                        .either(this::buildOkResponse,
-                                this::buildErrorResponse));
+                responseWrapper.setInnerElement(policyBusinessLogic
+                        .getPolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyId, userId)
+                        .either(this::buildOkResponse, this::buildErrorResponse));
             }
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Policy");
             log.error("Failed to retrieve policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
 
     @DELETE
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @ApiOperation(value = "Delete Policy", httpMethod = "DELETE", notes = "No body", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 204, message = "Policy was deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "component / policy Not found")})
-    public Response deletePolicy(@PathParam("componentId") final String containerComponentId,
-                                 @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                                 @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-                                 @Context final HttpServletRequest request) {
+    @Operation(description = "Delete Policy", method = "DELETE", summary = "No body", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Policy was deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+    public Response deletePolicy(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request) {
         init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             if (responseWrapper.isEmpty()) {
-                responseWrapper.setInnerElement(policyBusinessLogic.deletePolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyId, userId, true)
-                        .either(this::buildOkResponse,
-                                this::buildErrorResponse));
+                responseWrapper
+                        .setInnerElement(
+                                policyBusinessLogic
+                                        .deletePolicy(componentTypeWrapper.getInnerElement(), containerComponentId,
+                                                policyId, userId, true)
+                                        .either(this::buildOkResponse, this::buildErrorResponse));
             }
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Policy");
             log.error("Failed to delete policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/undeclare")
-    @ApiOperation(value = "undeclare Policy", httpMethod = "PUT", notes = "No body", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 204, message = "Policy was undeclared"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "component / policy Not found")})
-    public Response undeclarePolicy(@PathParam("componentId") final String containerComponentId,
-            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
+    @Operation(description = "undeclare Policy", method = "PUT", summary = "No body",responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Policy was undeclared"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+    public Response undeclarePolicy(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
             @Context final HttpServletRequest request) {
         init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             if (responseWrapper.isEmpty()) {
-                responseWrapper.setInnerElement(policyBusinessLogic.undeclarePolicy(componentTypeWrapper.getInnerElement(), containerComponentId, policyId, userId, true)
-                                                        .either(this::buildOkResponse,
-                                                                this::buildErrorResponse));
+                responseWrapper
+                        .setInnerElement(
+                                policyBusinessLogic
+                                        .undeclarePolicy(componentTypeWrapper.getInnerElement(), containerComponentId,
+                                                policyId, userId, true)
+                                        .either(this::buildOkResponse, this::buildErrorResponse));
             }
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Undeclare Policy");
             log.error("Failed to undeclare policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
 
     @GET
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/properties")
-    @ApiOperation(value = "Get component policy properties", httpMethod = "GET", notes = "Returns component policy properties", response = PropertyDataDefinition.class, responseContainer="List")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Properties found"),@ApiResponse(code = 400, message = "invalid content - Error: containerComponentType is invalid"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Componentorpolicy  not found"),
-    @ApiResponse(code = 500, message = "The GET request failed due to internal SDC problem.") })public Response getPolicyProperties(@ApiParam(value = "the id of the component which is the container of the policy") @PathParam("componentId") final String containerComponentId,
-                                        @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                                        @ApiParam(value = "the id of the policy which its properties are to return") @PathParam("policyId") final String policyId,
-                                        @ApiParam(value = "the userid", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-                                        @Context final HttpServletRequest request) {
+    @Operation(description = "Get component policy properties", method = "GET",
+            summary = "Returns component policy properties",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PropertyDataDefinition.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Properties found"),
+            @ApiResponse(responseCode = "400",
+                    description = "invalid content - Error: containerComponentType is invalid"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Componentorpolicy  not found"),
+            @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
+    public Response getPolicyProperties(@Parameter(
+            description = "the id of the component which is the container of the policy") @PathParam("componentId") final String containerComponentId,
+            @Parameter(description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @Parameter(
+                    description = "the id of the policy which its properties are to return") @PathParam("policyId") final String policyId,
+            @Parameter(description = "the userid",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Context final HttpServletRequest request) {
         init();
         try {
-            return convertToComponentType(containerComponentType)
-                    .left()
-                    .bind(cmptType -> policyBusinessLogic.getPolicyProperties(cmptType, containerComponentId, policyId, userId))
-                    .either(this::buildOkResponse,
-                            this::buildErrorResponse);
+            return convertToComponentType(containerComponentType).left().bind(cmptType -> policyBusinessLogic
+                    .getPolicyProperties(cmptType, containerComponentId, policyId, userId))
+                    .either(this::buildOkResponse, this::buildErrorResponse);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("get Policy properties");
             log.debug("#getPolicyProperties - get Policy properties has failed.", e);
@@ -267,33 +336,47 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/properties")
-    @ApiOperation(value = "Update Policy properties", httpMethod = "PUT", notes = "Returns updated Policy", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Policy properties updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 404, message = "component / policy Not found")})
-    public Response updatePolicyProperties(@PathParam("componentId") final String containerComponentId,
-                                           @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-                                           @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-                                           @ApiParam(value = "PolicyDefinition", required = true) String policyData, @Context final HttpServletRequest request) {
+    @Operation(description = "Update Policy properties", method = "PUT", summary = "Returns updated Policy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy properties updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+    public Response updatePolicyProperties(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Parameter(description = "PolicyDefinition", required = true) String policyData,
+            @Context final HttpServletRequest request) {
         init();
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
-            Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
+            Wrapper<ComponentTypeEnum> componentTypeWrapper =
+                    validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
             Wrapper<PropertyDataDefinition[]> propertiesWrapper = new Wrapper<>();
             if (responseWrapper.isEmpty()) {
-                convertJsonToObjectOfClass(policyData, propertiesWrapper, PropertyDataDefinition[].class, responseWrapper);
+                convertJsonToObjectOfClass(policyData, propertiesWrapper, PropertyDataDefinition[].class,
+                        responseWrapper);
                 if (propertiesWrapper.isEmpty()) {
-                    responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+                    responseWrapper.setInnerElement(
+                            buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
                 }
             }
             if (!propertiesWrapper.isEmpty()) {
-                responseWrapper.setInnerElement(
-                        policyBusinessLogic.updatePolicyProperties(componentTypeWrapper.getInnerElement(), containerComponentId, policyId, propertiesWrapper.getInnerElement(), userId, true)
-                                .either(this::buildOkResponse, this::buildErrorResponse));
+                responseWrapper.setInnerElement(policyBusinessLogic
+                        .updatePolicyProperties(componentTypeWrapper.getInnerElement(), containerComponentId, policyId,
+                                propertiesWrapper.getInnerElement(), userId, true)
+                        .either(this::buildOkResponse, this::buildErrorResponse));
             }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Policy");
             log.error("Failed to update policy. The exception {} occurred. ", e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         }
         return responseWrapper.getInnerElement();
     }
@@ -310,23 +393,29 @@ public class PolicyServlet extends AbstractValidationsServlet {
         return componentTypeWrapper;
     }
 
-	@POST
-	@Path("/{containerComponentType}/{componentId}/policies/{policyId}/targets")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "update policy targets", httpMethod = "POST", notes = "Returns updated Policy", response = Response.class)
-	@ApiResponses(value = {@ApiResponse(code = 201, message = "Policy target updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content")})
-	public Response updatePolicyTargets(@PathParam("componentId") final String containerComponentId,
-										@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
-										@PathParam("policyId") final String policyId,
-										@HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
-										@Context final HttpServletRequest request,
-										List<PolicyTargetDTO> requestJson) {
-		try {
+    @POST
+    @Path("/{containerComponentType}/{componentId}/policies/{policyId}/targets")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "update policy targets", method = "POST", summary = "Returns updated Policy",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Policy target updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updatePolicyTargets(@PathParam("componentId") final String containerComponentId, @Parameter(
+            description = "valid values: resources / services",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("policyId") final String policyId,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
+                    required = true) String userId,
+            @Context final HttpServletRequest request, List<PolicyTargetDTO> requestJson) {
+        try {
 
-		    return updatePolicyTargetsFromDTO(requestJson)
-                    .left()
-                    .bind(policyTarget -> updatePolicyTargetsFromMap(policyTarget, containerComponentType, containerComponentId, policyId, userId))
+            return updatePolicyTargetsFromDTO(requestJson).left()
+                    .bind(policyTarget -> updatePolicyTargetsFromMap(policyTarget, containerComponentType,
+                            containerComponentId, policyId, userId))
                     .either(this::buildOkResponse, this::buildErrorResponse);
 
         } catch (Exception e) {
@@ -338,26 +427,36 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{componentType}/{componentId}/create/policies")
-    @ApiOperation(value = "Create policies on service", httpMethod = "POST", notes = "Return policies list", response = Resource.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-    public Response declareProperties(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @ApiParam(value = "ComponentIns policies Object to be created", required = true) String componentInstPoliciesMapObj) {
+    @Operation(description = "Create policies on service", method = "POST", summary = "Return policies list",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response declareProperties(@PathParam("componentType") final String componentType,
+            @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "ComponentIns policies Object to be created",
+                    required = true) String componentInstPoliciesMapObj) {
 
         return super.declareProperties(userId, componentId, componentType, componentInstPoliciesMapObj,
                 DeclarationTypeEnum.POLICY, request);
     }
 
-    private Either<PolicyDefinition, ResponseFormat> updatePolicyTargetsFromMap(Map<PolicyTargetType, List<String>> policyTarget, String containerComponentType, String containerComponentId, String policyId, String userId) {
-        return convertToComponentType(containerComponentType)
-                .left()
-                .bind(cmptType -> policyBusinessLogic.updatePolicyTargets(cmptType, containerComponentId, policyId, policyTarget, userId));
+    private Either<PolicyDefinition, ResponseFormat> updatePolicyTargetsFromMap(
+            Map<PolicyTargetType, List<String>> policyTarget, String containerComponentType,
+            String containerComponentId, String policyId, String userId) {
+        return convertToComponentType(containerComponentType).left().bind(cmptType -> policyBusinessLogic
+                .updatePolicyTargets(cmptType, containerComponentId, policyId, policyTarget, userId));
     }
 
-    private Either<Map<PolicyTargetType, List<String>>, ResponseFormat> updatePolicyTargetsFromDTO(List<PolicyTargetDTO> targetDTOList) {
+    private Either<Map<PolicyTargetType, List<String>>, ResponseFormat> updatePolicyTargetsFromDTO(
+            List<PolicyTargetDTO> targetDTOList) {
         Map<PolicyTargetType, List<String>> policyTarget = new HashMap<>();
         for (PolicyTargetDTO currentTarget : targetDTOList) {
-            if(!addTargetsByType(policyTarget, currentTarget.getType(), currentTarget.getUniqueIds())){
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.POLICY_TARGET_TYPE_DOES_NOT_EXIST, currentTarget.getType()));
+            if (!addTargetsByType(policyTarget, currentTarget.getType(), currentTarget.getUniqueIds())) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.POLICY_TARGET_TYPE_DOES_NOT_EXIST,
+                        currentTarget.getType()));
             }
         }
         return Either.left(policyTarget);

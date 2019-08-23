@@ -20,14 +20,34 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.google.gson.reflect.TypeToken;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.openecomp.sdc.be.components.impl.*;
+import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
+import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.DataTypeImportManager;
+import org.openecomp.sdc.be.components.impl.GroupTypeImportManager;
+import org.openecomp.sdc.be.components.impl.InterfaceLifecycleTypeImportManager;
+import org.openecomp.sdc.be.components.impl.PolicyTypeImportManager;
+import org.openecomp.sdc.be.components.impl.RelationshipTypeImportManager;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -47,25 +67,24 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import com.google.gson.reflect.TypeToken;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadType")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Catalog Types Upload")
+@OpenAPIDefinition(info = @Info(title = "Catalog Types Upload"))
 @Controller
 public class TypesUploadServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(TypesUploadServlet.class);
@@ -103,23 +122,32 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/capability")
-    @ApiOperation(value = "Create Capability Type from yaml", httpMethod = "POST", notes = "Returns created Capability Type", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Capability Type created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "Capability Type already exist") })
-    public Response uploadCapabilityType(@ApiParam("FileInputStream") @FormDataParam("capabilityTypeZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload));
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name());
+    @Operation(description = "Create Capability Type from yaml", method = "POST",
+            summary = "Returns created Capability Type", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Capability Type created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Capability Type already exist")})
+    public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
+            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod =
+                (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
+                        () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload));
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator,
+                NodeTypeEnum.CapabilityType.name());
     }
 
     @POST
     @Path("/relationship")
-    @ApiOperation(value = "Create Relationship Type from yaml", httpMethod = "POST",
-            notes = "Returns created Relationship Type", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Relationship Type created"),
-            @ApiResponse(code = 403, message = "Restricted operation"),
-            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-            @ApiResponse(code = 409, message = "Relationship Type already exist")})
-    public Response uploadRelationshipType(@ApiParam("FileInputStream") @FormDataParam("relationshipTypeZip") File file,
+    @Operation(description = "Create Relationship Type from yaml", method = "POST",
+            summary = "Returns created Relationship Type", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Relationship Type created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Relationship Type already exist")})
+    public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request,
                                            @HeaderParam("USER_ID") String creator) {
         return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator,
@@ -128,60 +156,89 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/interfaceLifecycle")
-    @ApiOperation(value = "Create Interface Lyfecycle Type from yaml", httpMethod = "POST", notes = "Returns created Interface Lifecycle Type", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Interface Lifecycle Type created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "Interface Lifecycle Type already exist") })
-    public Response uploadInterfaceLifecycleType(@ApiParam("FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload));
+    @Operation(description = "Create Interface Lyfecycle Type from yaml", method = "POST",
+            summary = "Returns created Interface Lifecycle Type", responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Interface Lifecycle Type created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Interface Lifecycle Type already exist")})
+    public Response uploadInterfaceLifecycleType(
+            @Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
+            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod =
+                (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
+                        () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
     }
 
     @POST
     @Path("/categories")
-    @ApiOperation(value = "Create Categories from yaml", httpMethod = "POST", notes = "Returns created categories", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Categories created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "Category already exist") })
-    public Response uploadCategories(@ApiParam("FileInputStream") @FormDataParam("categoriesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> categoriesImportManager.createCategories(ymlPayload));
+    @Operation(description = "Create Categories from yaml", method = "POST", summary = "Returns created categories",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Categories created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Category already exist")})
+    public Response uploadCategories(@Parameter(description = "FileInputStream") @FormDataParam("categoriesZip") File file,
+            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod =
+                (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
+                        () -> categoriesImportManager.createCategories(ymlPayload));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "categories");
     }
 
     @POST
     @Path("/datatypes")
-    @ApiOperation(value = "Create Categories from yaml", httpMethod = "POST", notes = "Returns created data types", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Data types created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "Data types already exist") })
-    public Response uploadDataTypes(@ApiParam("FileInputStream") @FormDataParam("dataTypesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+    @Operation(description = "Create Categories from yaml", method = "POST", summary = "Returns created data types",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Data types created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Data types already exist")})
+    public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
+            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = this::createDataTypes;
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.DataType.getName());
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator,
+                NodeTypeEnum.DataType.getName());
     }
 
     @POST
     @Path("/grouptypes")
-    @ApiOperation(value = "Create GroupTypes from yaml", httpMethod = "POST", notes = "Returns created group types", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "group types created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "group types already exist") })
-    public Response uploadGroupTypes(@ApiParam("toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
-                                     @ApiParam("FileInputStream") @FormDataParam("groupTypesZip") File file,
-                                     @Context final HttpServletRequest request,
-                                     @HeaderParam("USER_ID") String creator) {
+    @Operation(description = "Create GroupTypes from yaml", method = "POST", summary = "Returns created group types",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "group types created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "group types already exist")})
+    public Response uploadGroupTypes(
+            @Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
+            @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
+            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName());
+        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator,
+                NodeTypeEnum.GroupType.getName());
     }
 
     @POST
     @Path("/policytypes")
-    @ApiOperation(value = "Create PolicyTypes from yaml", httpMethod = "POST", notes = "Returns created policy types", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "policy types created"),
-                            @ApiResponse(code = 403, message = "Restricted operation"),
-                            @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-    @ApiResponse(code = 409, message = "policy types already exist") })
+    @Operation(description = "Create PolicyTypes from yaml", method = "POST", summary = "Returns created policy types",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "policy types created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "policy types already exist")})
     public Response uploadPolicyTypes(
-            @ApiParam("toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
-            @ApiParam("FileInputStream") @FormDataParam("policyTypesZip") File file,
+            @Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
+            @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName());
+        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator,
+                NodeTypeEnum.PolicyType.getName());
     }
 
     private Map<String, ToscaTypeMetadata> getTypesMetadata(String toscaTypesMetaData) {
@@ -270,20 +327,26 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
     // data types
     private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml) {
-        final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> dataTypeImportManager.createDataTypes(dataTypesYml);
-        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.DATA_TYPE_ALREADY_EXIST, NodeTypeEnum.DataType.name());
+        final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml =
+                () -> dataTypeImportManager.createDataTypes(dataTypesYml);
+        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml,
+                ActionStatus.DATA_TYPE_ALREADY_EXIST, NodeTypeEnum.DataType.name());
     }
 
     // group types
     private void createGroupTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData) {
-        final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> groupTypeImportManager.createGroupTypes(toscaTypeImportData);
-        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.GROUP_TYPE_ALREADY_EXIST, NodeTypeEnum.GroupType.name());
+        final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml =
+                () -> groupTypeImportManager.createGroupTypes(toscaTypeImportData);
+        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml,
+                ActionStatus.GROUP_TYPE_ALREADY_EXIST, NodeTypeEnum.GroupType.name());
     }
 
     // policy types
     private void createPolicyTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData) {
-        final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> policyTypeImportManager.createPolicyTypes(toscaTypeImportData);
-        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.POLICY_TYPE_ALREADY_EXIST, NodeTypeEnum.PolicyType.name());
+        final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml =
+                () -> policyTypeImportManager.createPolicyTypes(toscaTypeImportData);
+        buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml,
+                ActionStatus.POLICY_TYPE_ALREADY_EXIST, NodeTypeEnum.PolicyType.name());
     }
 
     // data types

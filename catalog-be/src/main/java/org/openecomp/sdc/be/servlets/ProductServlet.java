@@ -20,12 +20,22 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
+import java.util.Map;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -36,19 +46,21 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Map;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Product Catalog", description = "Product Servlet")
+@OpenAPIDefinition(info = @Info(title = "Product Catalog", description = "Product Catalog"))
 @Singleton
 public class ProductServlet extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(ProductServlet.class);
@@ -66,11 +78,17 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create product", httpMethod = "POST", notes = "Returns created product", response = Product.class)
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Product created"), @ApiResponse(code = 403, message = "Restricted operation / Empty USER_ID header"), @ApiResponse(code = 400, message = "Invalid/missing content"),
-    @ApiResponse(code = 409, message = "Product already exists / User not found / Wrong user role") })
-    public Response createProduct(@ApiParam(value = "Product object to be created", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of product strategist user", required = true) String userId) {
+    @Operation(description = "Create product", method = "POST", summary = "Returns created product",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Product.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Product created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation / Empty USER_ID header"),
+            @ApiResponse(responseCode = "400", description = "Invalid/missing content"),
+            @ApiResponse(responseCode = "409", description = "Product already exists / User not found / Wrong user role")})
+    public Response createProduct(@Parameter(description = "Product object to be created", required = true) String data,
+            @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of product strategist user",
+                    required = true) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -106,10 +124,16 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products/{productId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve product", httpMethod = "GET", notes = "Returns product according to productId", response = Product.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 403, message = "Missing information"), @ApiResponse(code = 409, message = "Restricted operation"),
-            @ApiResponse(code = 500, message = "Internal Server Error"), @ApiResponse(code = 404, message = "Product not found"), })
-    public Response getProductById(@PathParam("productId") final String productId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Retrieve product", method = "GET", summary = "Returns product according to productId",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Product.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Product found"),
+            @ApiResponse(responseCode = "403", description = "Missing information"),
+            @ApiResponse(responseCode = "409", description = "Restricted operation"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error"),
+            @ApiResponse(responseCode = "404", description = "Product not found"),})
+    public Response getProductById(@PathParam("productId") final String productId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -145,9 +169,14 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products/productName/{productName}/productVersion/{productVersion}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve Service", httpMethod = "GET", notes = "Returns product according to name and version", response = Product.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Product not found") })
-    public Response getServiceByNameAndVersion(@PathParam("productName") final String productName, @PathParam("productVersion") final String productVersion, @Context final HttpServletRequest request,
+    @Operation(description = "Retrieve Service", method = "GET",
+            summary = "Returns product according to name and version",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Product.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Product found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Product not found")})
+    public Response getServiceByNameAndVersion(@PathParam("productName") final String productName,
+            @PathParam("productVersion") final String productVersion, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         // get modifier id
@@ -157,7 +186,8 @@ public class ProductServlet extends BeGenericServlet {
 
         Response response = null;
         try {
-            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.getProductByNameAndVersion(productName, productVersion, userId);
+            Either<Product, ResponseFormat> actionResponse =
+                    productBusinessLogic.getProductByNameAndVersion(productName, productVersion, userId);
 
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
@@ -219,10 +249,15 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products/{productId}/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Update Product Metadata", httpMethod = "PUT", notes = "Returns updated product", response = Product.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Product Updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-    public Response updateProductMetadata(@PathParam("productId") final String productId, @ApiParam(value = "Product object to be Updated", required = true) String data, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Update Product Metadata", method = "PUT", summary = "Returns updated product",
+            responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Product.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Product Updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    public Response updateProductMetadata(@PathParam("productId") final String productId,
+            @Parameter(description = "Product object to be Updated", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -235,7 +270,8 @@ public class ProductServlet extends BeGenericServlet {
         try {
             String productIdLower = productId.toLowerCase();
             Product updatedProduct = RepresentationUtils.fromRepresentation(data, Product.class);
-            Either<Product, ResponseFormat> actionResponse = productBusinessLogic.updateProductMetadata(productIdLower, updatedProduct, modifier);
+            Either<Product, ResponseFormat> actionResponse =
+                    productBusinessLogic.updateProductMetadata(productIdLower, updatedProduct, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update product");
@@ -258,9 +294,13 @@ public class ProductServlet extends BeGenericServlet {
     @Path("/products/validate-name/{productName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "validate product name", httpMethod = "GET", notes = "checks if the chosen product name is available ", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Service found"), @ApiResponse(code = 403, message = "Restricted operation") })
-    public Response validateServiceName(@PathParam("productName") final String productName, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "validate product name", method = "GET",
+            summary = "checks if the chosen product name is available ",responses = @ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    public Response validateServiceName(@PathParam("productName") final String productName,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
 
@@ -269,14 +309,16 @@ public class ProductServlet extends BeGenericServlet {
         log.debug("modifier id is {}", userId);
         Response response = null;
         try {
-            Either<Map<String, Boolean>, ResponseFormat> actionResponse = productBusinessLogic.validateProductNameExists(productName, userId);
+            Either<Map<String, Boolean>, ResponseFormat> actionResponse =
+                    productBusinessLogic.validateProductNameExists(productName, userId);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get validate service name");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                    actionResponse.left().value());
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Validate Product Name");
             log.debug("validate product name failed with exception", e);

@@ -20,13 +20,18 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.annotations.*;
 import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -44,19 +49,22 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Lifecycle Actions Servlet", description = "Lifecycle Actions Servlet")
+@OpenAPIDefinition(info = @Info(title = "Lifecycle Actions Servlet", description = "Lifecycle Actions Servlet"))
 @Singleton
 public class LifecycleServlet extends BeGenericServlet {
 
@@ -76,14 +84,27 @@ public class LifecycleServlet extends BeGenericServlet {
     @Path("/{componentCollection}/{componentId}/lifecycleState/{lifecycleOperation}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST", response = Response.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource state changed"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 409, message = "Resource already exist") })
-    public Response changeResourceState(@ApiParam(value = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification", required = false) String jsonChangeInfo,
-            @ApiParam(value = "validValues: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
-                    + ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam(value = "componentCollection") final String componentCollection,
-            @ApiParam(allowableValues = "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
-            @ApiParam(value = "id of component to be changed") @PathParam(value = "componentId") final String componentId, @Context final HttpServletRequest request,
-            @ApiParam(value = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @Operation(description = "Change Resource lifecycle State", method = "POST", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource state changed"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    public Response changeResourceState(
+            @Parameter(
+                    description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification",
+                    required = false) String jsonChangeInfo,
+            @Parameter(description = "validValues: resources / services / products",
+                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                            ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam(
+                                    value = "componentCollection") final String componentCollection,
+            @Parameter(schema = @Schema(allowableValues = {
+                    "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify"}),
+                    required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
+            @Parameter(description = "id of component to be changed") @PathParam(
+                    value = "componentId") final String componentId,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "id of user initiating the operation") @HeaderParam(
+                    value = Constants.USER_ID_HEADER) String userId) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -110,14 +131,16 @@ public class LifecycleServlet extends BeGenericServlet {
         try {
             if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
                 ObjectMapper mapper = new ObjectMapper();
-                changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
+                changeInfo = new LifecycleChangeInfoWithAction(
+                        mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
             }
         }
 
         catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
             log.debug("failed to convert from json {}", jsonChangeInfo, e);
-            ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
+            ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId,
+                    AuditingActionEnum.CHECKOUT_RESOURCE);
             return buildErrorResponse(responseFormat);
         }
 
@@ -125,8 +148,9 @@ public class LifecycleServlet extends BeGenericServlet {
             LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
             ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(componentCollection);
             if (componentType != null) {
-                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
-                    .changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
+                Either<? extends Component, ResponseFormat> actionResponse =
+                        lifecycleBusinessLogic.changeComponentState(componentType, componentId, user, transitionEnum,
+                                changeInfo, false, true);
 
                 if (actionResponse.isRight()) {
                     log.info("failed to change resource state");
@@ -135,14 +159,18 @@ public class LifecycleServlet extends BeGenericServlet {
                 }
 
                 log.debug("change state successful !!!");
-                UiComponentMetadata componentMetatdata = UiComponentDataConverter.convertToUiComponentMetadata(actionResponse.left().value());
+                UiComponentMetadata componentMetatdata =
+                        UiComponentDataConverter.convertToUiComponentMetadata(actionResponse.left().value());
                 Object value = RepresentationUtils.toRepresentation(componentMetatdata);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), value);
                 return response;
             } else {
-                log.info("componentCollection \"{}\" is not valid. Supported componentCollection values are \"{}\", \"{}\" or \"{}\"", componentCollection, ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
-                        ComponentTypeEnum.PRODUCT_PARAM_NAME);
-                ResponseFormat error = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
+                log.info(
+                        "componentCollection \"{}\" is not valid. Supported componentCollection values are \"{}\", \"{}\" or \"{}\"",
+                        componentCollection, ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                        ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME);
+                ResponseFormat error = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId,
+                        AuditingActionEnum.CHECKOUT_RESOURCE);
                 return buildErrorResponse(error);
             }
         } catch (Exception e) {
