@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77ed0a1a_c8737355",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicMockitoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-23T13:12:28Z",
+      "side": 1,
+      "message": "... :)",
+      "range": {
+        "startLine": 153,
+        "startChar": 5,
+        "endLine": 170,
+        "endChar": 36
+      },
+      "revId": "79635a4a7ba5677c3d34636e645ece47e12fd1e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
