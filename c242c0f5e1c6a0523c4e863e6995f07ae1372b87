@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84e73195_be6ca7b9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/AuditHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-08-23T09:41:23Z",
+      "side": 1,
+      "message": "remove unused import",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 75
+      },
+      "revId": "c242c0f5e1c6a0523c4e863e6995f07ae1372b87",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
