@@ -22,6 +22,30 @@
       "revId": "0e744f973169b49e631602ab36336b7225d86c51",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08d72604_07c5ce75",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2019-08-23T07:01:37Z",
+      "side": 1,
+      "message": "Good point, thanks!",
+      "parentUuid": "41bf5182_7e6bcc35",
+      "range": {
+        "startLine": 111,
+        "startChar": 20,
+        "endLine": 111,
+        "endChar": 35
+      },
+      "revId": "0e744f973169b49e631602ab36336b7225d86c51",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
