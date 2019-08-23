@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a17e2ac_c1b1d87f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/auditing/impl/distribution/AuditDistributionEngineEventFactoryManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-23T09:05:26Z",
+      "side": 1,
+      "message": "i\u0027d prefer to have an empty line before assertion",
+      "revId": "2e175b0d5070c937d33d14a5ee0603ed33ada042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5fd4f60_51bdd543",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/PropertyValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-23T09:05:26Z",
+      "side": 1,
+      "message": "make them privates",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 54
+      },
+      "revId": "2e175b0d5070c937d33d14a5ee0603ed33ada042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
