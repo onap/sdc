@@ -21,7 +21,13 @@
 package org.openecomp.sdc.exception;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.exception.ResponseFormat.RequestErrorWrapper;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.AllOf.allOf;
 
 public class ResponseFormatTest {
 
