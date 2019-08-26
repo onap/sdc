@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.switchover.detector;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -246,6 +247,11 @@ public class SwitchoverDetector {
             }
         }
 
+    }
+
+    @VisibleForTesting
+    void setSwitchoverDetectorConfig(SwitchoverDetectorConfig switchoverDetectorConfig) {
+        this.switchoverDetectorConfig = switchoverDetectorConfig;
     }
 
     @PostConstruct

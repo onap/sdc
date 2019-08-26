@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.be.model.Service;
 
 /**
@@ -29,6 +30,9 @@ public class ActivationRequestInformation {
     private Service serviceToActivate;
     private String workloadContext;
     private String tenant;
+
+    @VisibleForTesting
+    ActivationRequestInformation() {}
 
     public ActivationRequestInformation(Service serviceToActivate, String workloadContext, String tenant) {
         this.serviceToActivate = serviceToActivate;

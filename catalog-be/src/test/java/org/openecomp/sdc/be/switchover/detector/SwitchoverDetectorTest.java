@@ -16,41 +16,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.switchover.detector;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
+import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorGroup;
+import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorScheduledTask;
+import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorState;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class SwitchoverDetectorTest {
 
-	private SwitchoverDetector createTestSubject() {
-		return new SwitchoverDetector();
-	}
+	private static final String SITEMODE = "SITEMODE";
+	@Mock
+	private SwitchoverDetectorConfig config;
+	@Mock
+	private SwitchoverDetectorScheduledTask task;
+	@Mock
+	private ScheduledExecutorService switchoverDetectorScheduler;
 
-	
 	@Test
-	public void testGetSiteMode() throws Exception {
-		SwitchoverDetector testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getSiteMode();
+	public void shouldSwitchoverDetectorStateGotCorrectStates() {
+		assertEquals(SwitchoverDetectorState.ACTIVE.getState(), "active");
+		assertEquals(SwitchoverDetectorState.STANDBY.getState(), "standby");
+		assertEquals(SwitchoverDetectorState.UNKNOWN.getState(), "unknown");
 	}
 
-	
 	@Test
-	public void testSetSiteMode() throws Exception {
-		SwitchoverDetector testSubject;
-		String mode = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setSiteMode(mode);
+	public void shouldSwitchoverDetectorGroupGotCorrectGroup() {
+		assertEquals(SwitchoverDetectorGroup.BE_SET.getGroup(), "beSet");
+		assertEquals(SwitchoverDetectorGroup.FE_SET.getGroup(), "feSet");
 	}
 
-	
+	@Test
+	public void shouldSwitchoverDetectorSetSiteMode() {
+		SwitchoverDetector switchoverDetector = new SwitchoverDetector();
+		switchoverDetector.setSiteMode(SITEMODE);
+		assertEquals(switchoverDetector.getSiteMode(), SITEMODE);
+	}
 
+	@Test
+	public void shouldStartSwitchoverDetectorTask() {
+		SwitchoverDetector switchoverDetector = new SwitchoverDetector();
+		switchoverDetector.setSwitchoverDetectorConfig(config);
+		switchoverDetector.switchoverDetectorScheduledTask = task;
+		switchoverDetector.switchoverDetectorScheduler = switchoverDetectorScheduler;
+		switchoverDetector.startSwitchoverDetectorTask();
+		Mockito.verify(switchoverDetectorScheduler).scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+	}
 }
