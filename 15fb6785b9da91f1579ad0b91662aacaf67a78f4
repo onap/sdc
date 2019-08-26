@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fe925e4_1a51bd55",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/GroupTypeImportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-26T11:06:51Z",
+      "side": 1,
+      "message": "privates",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 9
+      },
+      "revId": "15fb6785b9da91f1579ad0b91662aacaf67a78f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
