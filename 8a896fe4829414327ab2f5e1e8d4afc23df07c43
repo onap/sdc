@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "caff1c23_4a1523b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-08-26T10:56:52Z",
+      "side": 1,
+      "message": "Is there allowableValues equivalent in v3?",
+      "range": {
+        "startLine": 152,
+        "startChar": 49,
+        "endLine": 152,
+        "endChar": 58
+      },
+      "revId": "8a896fe4829414327ab2f5e1e8d4afc23df07c43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

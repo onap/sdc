@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ae30a6e_aaa26038",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-08-26T10:56:52Z",
+      "side": 0,
+      "message": "also here",
+      "range": {
+        "startLine": 248,
+        "startChar": 75,
+        "endLine": 248,
+        "endChar": 90
+      },
+      "revId": "5c55e23700716698d03fde052c0a89622b9f6c54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a101ae5_f4bc4ce0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-08-26T10:56:52Z",
+      "side": 0,
+      "message": "and here",
+      "range": {
+        "startLine": 336,
+        "startChar": 75,
+        "endLine": 336,
+        "endChar": 90
+      },
+      "revId": "5c55e23700716698d03fde052c0a89622b9f6c54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
