@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -34,18 +39,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
-import java.io.InputStream;
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-
 public abstract class BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
   protected static final Logger logger =
       LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
   @Override
   public UploadFileResponse upload(VspDetails vspDetails, InputStream fileToUpload,
                                    String fileSuffix, String networkPackageName,
-                                   CandidateService candidateService) {
+                                   CandidateService candidateService, Map<String, Object> originalFileToUploadDetails) {
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     uploadFileResponse.setOnboardingType(getHandlerType());
     if (isNotEmptyFileToUpload(fileSuffix, fileToUpload, uploadFileResponse, candidateService)) {
@@ -72,7 +72,7 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
       return uploadFileResponse;
     }
     if (updateCandidateData(vspDetails, uploadedFileData, optionalContentMap.get(), fileSuffix,
-        networkPackageName, candidateService, uploadFileResponse)) {
+        networkPackageName, candidateService, uploadFileResponse, originalFileToUploadDetails)) {
       return uploadFileResponse;
     }
     return uploadFileResponse;
@@ -85,7 +85,8 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
                                                  String fileSuffix,
                                                  String networkPackageName,
                                                  CandidateService candidateService,
-                                                 UploadFileResponse uploadFileResponse);
+                                                 UploadFileResponse uploadFileResponse,
+                                                 Map<String, Object> originalFileToUploadDetails);
 
   private boolean isNotEmptyFileToUpload(String fileSuffix, InputStream fileToUpload,
                                          UploadFileResponse uploadFileResponse,
