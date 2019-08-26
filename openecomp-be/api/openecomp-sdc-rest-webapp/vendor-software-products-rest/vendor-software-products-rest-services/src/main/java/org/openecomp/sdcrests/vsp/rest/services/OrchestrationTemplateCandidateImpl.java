@@ -19,6 +19,21 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.activation.DataHandler;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
@@ -36,6 +51,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
@@ -53,20 +69,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-
 @Named
 @Service("orchestrationTemplateCandidate")
 @Scope(value = "prototype")
@@ -82,7 +84,18 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
 
   @Override
   public Response upload(String vspId, String versionId, Attachment fileToUpload, String user) {
-    PackageArchive archive = new PackageArchive(fileToUpload.getObject(byte[].class));
+    final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
+    String fileToUploadName = null;
+    String fileToUploadExtension = null;
+    final DataHandler dataHandler = fileToUpload.getDataHandler();
+    if(dataHandler != null) {
+      final String filename = dataHandler.getName();
+      fileToUploadName = FilenameUtils.removeExtension(filename);
+      fileToUploadExtension = FilenameUtils.getExtension(filename);
+    }
+    final Map<String, Object> originalFileToUploadDetails =
+        OnboardPackageInfo.mapOnboardPackageInfo(fileToUploadName, fileToUploadExtension, fileToUploadBytes);
+    PackageArchive archive = new PackageArchive(fileToUploadBytes);
     UploadFileResponseDto uploadFileResponseDto;
     try {
       if (archive.isSigned() && !archive.isSignatureValid()) {
@@ -97,7 +110,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       String filename = archive.getArchiveFileName().orElse(fileToUpload.getContentDisposition().getFilename());
       UploadFileResponse uploadFileResponse = candidateManager
               .upload(vspId, new Version(versionId), new ByteArrayInputStream(archive.getPackageFileContents()),
-                      getFileExtension(filename), getNetworkPackageName(filename));
+                      getFileExtension(filename), getNetworkPackageName(filename), originalFileToUploadDetails);
 
       uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
               .applyMapping(uploadFileResponse, UploadFileResponseDto.class);

@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,10 +143,11 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             OrchestrationTemplateCandidateManager candidateManager =
                     OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
 
+            Map<String, Object> originalFileToUploadDetails = new HashMap<>();
             String filename = formatFilename(csarId);
             Version version = getVersion(vspId, versionId);
             UploadFileResponse response = candidateManager.upload(vspId, version, fileStream,
-                    getFileExtension(filename), getNetworkPackageName(filename));
+                    getFileExtension(filename), getNetworkPackageName(filename), originalFileToUploadDetails);
 
             UploadFileResponseDto uploadFileResponse = new MapUploadFileResponseToUploadFileResponseDto()
                                                                .applyMapping(response, UploadFileResponseDto.class);
