@@ -16,6 +16,32 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -27,19 +53,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
-import org.openecomp.core.factory.impl.AbstractFactoryBase;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
@@ -56,12 +80,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.ActionVersioningManager;
@@ -69,36 +90,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-
 
 
 public class VendorSoftwareProductManagerImplTest {
@@ -135,12 +126,9 @@ public class VendorSoftwareProductManagerImplTest {
   private ManualVspToscaManager manualVspToscaManager;
   @Mock
   private DeploymentFlavorDao deploymentFlavorDaoMock;
-
-
   @Spy
   @InjectMocks
   private VendorSoftwareProductManagerImpl vendorSoftwareProductManager;
-
   @Mock
   private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManagerMock;
   @Mock
@@ -161,30 +149,34 @@ public class VendorSoftwareProductManagerImplTest {
     vendorSoftwareProductManager = null;
   }
 
-  @Test
-  public void testCreatePackageEtsiVNF(){
-    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
-        InputStream manifestInput = getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
+    @Test
+    public void testCreatePackageEtsiVNF() throws IOException {
+        try (
+            final InputStream metadataInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
+            final InputStream manifestInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
 
-      FileContentHandler handler = new FileContentHandler();
-      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
-      handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
-      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
-      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
-      VspDetails vsp =
-              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
-                      "category", "subCategory", "123", null);
-      //want to avoid triggering populateVersionsForVlm method
-      vsp.setVlmVersion(null);
+            final FileContentHandler handler = new FileContentHandler();
+            final byte[] metadataInputBytes = IOUtils.toByteArray(metadataInput);
+            handler.addFile(TOSCA_META_PATH_FILE_NAME, metadataInputBytes);
+            handler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, metadataInputBytes);
+            handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
+            final ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+            when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata);
+            final VspDetails vsp =
+                createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                    "category", "subCategory", "123", null);
+            //want to avoid triggering populateVersionsForVlm method
+            vsp.setVlmVersion(null);
 
-      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
-      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
-      PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
-      assertEquals(packageInfo.getResourceType(), ResourceTypeEnum.VF.name());
-    } catch (IOException e) {
-      fail();
+            when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+            when(licenseArtifactsServiceMock.createLicenseArtifacts(any(), any(), any(), any()))
+                .thenReturn(new FileContentHandler());
+            final PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+            assertEquals(packageInfo.getResourceType(), ResourceTypeEnum.VF.name());
+        }
     }
-  }
 
   @Test(expected = IOException.class)
   public void testCreatePackageEtsiNoManifest() throws IOException {
@@ -207,30 +199,82 @@ public class VendorSoftwareProductManagerImplTest {
     }
   }
 
-  @Test
-  public void testCreatePackageEtsiPNF(){
-    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
-        InputStream manifestInput = getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoToscaPNF.mf")) {
+    @Test
+    public void testCreatePackageEtsiPnfWithoutNonMano() throws IOException {
+        try (
+            final InputStream metadataInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
+            final InputStream manifestInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoToscaPnfWithoutNonMano.mf")) {
 
-      FileContentHandler handler = new FileContentHandler();
-      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
-      handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
-      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
-      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
-      VspDetails vsp =
-              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
-                      "category", "subCategory", "123", null);
-      //want to avoid triggering populateVersionsForVlm method
-      vsp.setVlmVersion(null);
+            final FileContentHandler handler = new FileContentHandler();
+            final byte[] metadataInputBytes = IOUtils.toByteArray(metadataInput);
+            handler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, metadataInputBytes);
+            handler.addFile(TOSCA_META_PATH_FILE_NAME, metadataInputBytes);
+            handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
+            final ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+            when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata);
+            final VspDetails vsp =
+                createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                    "category", "subCategory", "123", null);
+            //want to avoid triggering populateVersionsForVlm method
+            vsp.setVlmVersion(null);
 
-      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
-      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
-      PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
-      assertEquals(packageInfo.getResourceType(), ResourceTypeEnum.PNF.name());
-    } catch (IOException e) {
-      fail();
+            when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+            when(licenseArtifactsServiceMock.createLicenseArtifacts(any(), any(), any(), any()))
+                .thenReturn(new FileContentHandler());
+            final PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+            assertEquals(packageInfo.getResourceType(), ResourceTypeEnum.PNF.name());
+        }
     }
-  }
+
+    @Test
+    public void testCreatePackageEtsiPnfWithNonManoArtifacts() throws IOException {
+        try (
+            final InputStream metadataInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
+            final InputStream manifestInput = getClass()
+                .getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoToscaPNFWithNonMano.mf");
+            final InputStream mainServiceTemplateYamlFile = getClass()
+                .getResourceAsStream("/vspmanager.csar/descriptor/MainServiceTemplate.yaml")) {
+
+            final FileContentHandler handler = new FileContentHandler();
+            handler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
+            handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
+            handler.addFile("Deployment/ANOTHER/authorized_keys", "".getBytes());
+
+            final ServiceTemplate mainServiceTemplate = new YamlUtil()
+                .yamlToObject(mainServiceTemplateYamlFile, ServiceTemplate.class);
+            final String mainServiceTemplateName = "MainServiceTemplate.yaml";
+            final HashMap<String, ServiceTemplate> serviceTemplateMap = new HashMap<>();
+            serviceTemplateMap.put(mainServiceTemplateName, mainServiceTemplate);
+
+            final ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, serviceTemplateMap,
+                mainServiceTemplateName);
+            when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata);
+            final VspDetails vsp =
+                createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                    "category", "subCategory", "123", null);
+            //want to avoid triggering populateVersionsForVlm method
+            vsp.setVlmVersion(null);
+
+            when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+            when(licenseArtifactsServiceMock.createLicenseArtifacts(any(), any(), any(), any()))
+                .thenReturn(new FileContentHandler());
+            final PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+            assertThat("Package Info should contain resource type", packageInfo.getResourceType(),
+                equalTo(ResourceTypeEnum.PNF.name()));
+            assertThat("Should not contain moved artifact", toscaMetadata.getArtifactFiles().getFileList(),
+                not(hasItem("Deployment/ANOTHER/authorized_keys")));
+            assertThat("Should contain moved artifact", toscaMetadata.getArtifactFiles().getFileList(),
+                hasItem("Informational/OTHER/authorized_keys"));
+            final String serviceTemplateAsYaml = new YamlUtil().objectToYaml(toscaMetadata.getServiceTemplates());
+            assertThat("Descriptor should not contain reference to file", serviceTemplateAsYaml,
+                not(containsString("Artifacts/Deployment/ANOTHER/authorized_keys")));
+            assertThat("Descriptor should contain reference to file", serviceTemplateAsYaml,
+                containsString("Artifacts/Informational/OTHER/authorized_keys"));
+        }
+    }
 
   @Test
   public void testCreate() {
@@ -399,120 +443,6 @@ public class VendorSoftwareProductManagerImplTest {
     assertVspsEquals(actualVsp, expectedVsp);
   }
 
-/*
-  @Test
-  public void testSubmitWithMissingData() throws IOException {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        VSP_ID, USER1, VersionableEntityAction.Read);
-
-    VspDetails vsp = new VspDetails(VSP_ID, VERSION01);
-    vsp.setOnboardingMethod("Manual");
-    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
-
-    VspQuestionnaireEntity vspQuestionnaire = new VspQuestionnaireEntity(VSP_ID, VERSION01);
-    vspQuestionnaire.setQuestionnaireData("{}");
-    doReturn(vspQuestionnaire).when(vspInfoDaoMock).getQuestionnaire(VSP_ID, VERSION01);
-
-    ComponentEntity comp1 = new ComponentEntity(VSP_ID, VERSION01, "comp1");
-    comp1.setQuestionnaireData("{}");
-    doReturn(Collections.singleton(comp1)).when(vendorSoftwareProductDaoMock)
-        .listComponentsCompositionAndQuestionnaire(VSP_ID, VERSION01);
-
-    NicEntity nic1 = new NicEntity(VSP_ID, VERSION01, "comp1", "nic1");
-    nic1.setQuestionnaireData("{}");
-    doReturn(Collections.singleton(nic1))
-        .when(vendorSoftwareProductDaoMock).listNicsByVsp(VSP_ID, VERSION01);
-
-    ValidationResponse validationResponse = vendorSoftwareProductManager.submit(VSP_ID, USER1);
-    Assert.assertNotNull(validationResponse);
-    Assert.assertFalse(validationResponse.isValid());
-    List<String> errorIds = validationResponse.getVspErrors().stream().map(ErrorCode::id).distinct()
-        .collect(Collectors.toList());
-    Assert.assertTrue(errorIds.contains(ValidationErrorBuilder.FIELD_VALIDATION_ERROR_ERR_ID));
-    Assert.assertTrue(errorIds.contains(VendorSoftwareProductErrorCodes.VSP_INVALID));
-
-    verify(versioningManagerMock, never())
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
-    verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
-  }
-
-  */
-
-  // TODO: 3/15/2017 fix and enable
-  //@Test
-  public void testSubmitWithInvalidLicensingData() throws IOException {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        VSP_ID, USER1, VersionableEntityAction.Read);
-
-    VspDetails vsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "licenseAgreementId",
-            Collections.singletonList("featureGroupId"));
-    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
-    OrchestrationTemplateEntity uploadData = new OrchestrationTemplateEntity(VSP_ID, VERSION01);
-    uploadData.setContentData(
-        ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
-    doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
-        .get(anyObject(), anyObject());
-    doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
-        "MainServiceTemplate.yaml"))
-        .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
-
-    ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(vsp);
-    Assert.assertNotNull(validationResponse);
-    Assert.assertFalse(validationResponse.isValid());
-    Assert.assertNull(validationResponse.getVspErrors());
-    Assert.assertEquals(validationResponse.getLicensingDataErrors().size(), 1);
-
-    verify(versioningManagerMock, never())
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
-  }
-
-  // TODO: 3/15/2017 fix and enable
-  //@Test
-  public void testSubmit() throws IOException {
-    mockVersioning(VersionableEntityAction.Read);
-
-    EnrichmentManagerFactory.getInstance();
-    AbstractFactoryBase
-        .registerFactory(EnrichmentManagerFactory.class, EnrichmentManagerFactoryImpl.class);
-
-    VspDetails vsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "123", Collections.singletonList("fg1"));
-    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
-    OrchestrationTemplateEntity uploadData = new OrchestrationTemplateEntity(VSP_ID, VERSION01);
-    uploadData.setContentData(
-        ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
-    doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
-        .get(anyObject(), anyObject());
-    doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
-        "MainServiceTemplate.yaml"))
-        .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
-
-    ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(vsp);
-    Assert.assertTrue(validationResponse.isValid());
-
-/*    Assert.assertEquals(vsp2.getVersionInfo().getVersion(), VERSION10);
-    Assert.assertEquals(vsp2.getVersionInfo().getStatus(), VersionStatus.Certified);
-    Assert.assertNull(vsp2.getVersionInfo().getLockingUser());*/
-
-    verify(versioningManagerMock)
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
-  }
-
   @Test
   public void testCreatePackage() throws IOException {
     /*VspDetails vspDetailsMock = new VspDetails("vspId", new Version(1, 0));
@@ -540,122 +470,6 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertNotNull(packageInfo.getVspId());
   }
 
-  // TODO: 3/15/2017 fix and enable
-  //@Test(dependsOnMethods = {"testListFinals"})
-  public void testUploadFileMissingFile() throws IOException {
-    try (InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip")) {
-
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(VSP_ID, VERSION01, zis, "zip", "file");
-
-      Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
-    }
-  }
-
-  // TODO: 3/15/2017 fix and enable
-  //@Test(dependsOnMethods = {"testUploadFileMissingFile"})
-  public void testUploadNotZipFile() {
-    URL url = this.getClass().getResource("/notZipFile");
-
-    try {
-      candidateManager.upload(VSP_ID, VERSION01, url.openStream(), "zip", "file");
-      candidateManager.process(VSP_ID, VERSION01);
-    } catch (Exception ce) {
-      Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
-    }
-  }
-
-  private List<String> getWantedFileNamesFromCsar(String pathInCsar)
-      throws IOException {
-    File translatedFile = vendorSoftwareProductManager.getTranslatedFile(VSP_ID, VERSION10);
-
-    return getFileNamesFromFolderInCsar(translatedFile,
-        pathInCsar);
-  }
-
-  private List<String> getFileNamesFromFolderInCsar(File csar, String folderName)
-      throws IOException {
-    List<String> fileNames = new ArrayList<>();
-
-    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(csar))) {
-      ZipEntry ze;
-
-      while ((ze = zip.getNextEntry()) != null) {
-        String name = ze.getName();
-        if (name.contains(folderName)) {
-          fileNames.add(name);
-        }
-      }
-    }
-
-    return fileNames;
-  }
-  /*
-  //Disabled for sonar null pointer issue for componentEntities
-  private Pair<String, String> uploadMib(String vspId, String user, String filePath,
-                                         String fileName) {
-    List<ComponentEntity> componentEntities = null;
-    //(List<ComponentEntity>) vendorSoftwareProductManager.listComponents(vspId, null, user);
-    monitoringUploadsManager.upload(getFileInputStream(filePath),
-        fileName, vspId,
-<<<<<<< HEAD
-        VERSION01, componentEntities.get(0).getId(), ArtifactType.SNMP_POLL);
-    //TODO: add validate of logActivity() func call
-=======
-        VERSION01, componentEntities.get(0).getId(), MonitoringUploadType.SNMP_POLL, user);
-    //TODO: add validate of addActionLog() func call
->>>>>>> feature/Amdocs-ASDC-1710
-
-    return new ImmutablePair<>(componentEntities.get(0).getId(),
-        componentEntities.get(0).getComponentCompositionData()
-            .getDisplayName());
-  }*/
-
-  // TODO: 3/15/2017 fix and enable
-/*
-
-  public void testUpdatedVSPShouldBeInBeginningOfList() {
-    vendorSoftwareProductManager.updateVsp(new VspDetails(), USER3);
-    assertVSPInWantedLocationInVSPList(id006, 0, USER3);
-
-    InputStream zis = getFileInputStream("/vspmanager/zips/fullComposition.zip");
-    candidateManager.upload(id007, VERSION01, zis, USER3);
-    candidateManager.process(id007, VERSION01, USER3);
-    assertVSPInWantedLocationInVSPList(id007, 0, USER3);
-  }
-
-  @Test(dependsOnMethods = {"testUpdatedVSPShouldBeInBeginningOfList"})
-  public void testVSPInBeginningOfListAfterCheckin() {
-    vendorSoftwareProductManager.checkin(id006, USER3);
-    assertVSPInWantedLocationInVSPList(id006, 0, USER3);
-
-    vendorSoftwareProductManager.checkin(id007, USER3);
-    assertVSPInWantedLocationInVSPList(id007, 0, USER3);
-  }
-
-  @Test(dependsOnMethods = {"testVSPInBeginningOfListAfterCheckin"})
-  public void testVSPInBeginningOfListAfterCheckout() {
-    vendorSoftwareProductManager.checkout(id006, USER3);
-    assertVSPInWantedLocationInVSPList(id006, 0, USER3);
-  }
-
-  @Test(dependsOnMethods = {"testVSPInBeginningOfListAfterCheckout"})
-  public void testVSPInBeginningOfListAfterUndoCheckout() {
-    vendorSoftwareProductManager.checkout(id007, USER3);
-    assertVSPInWantedLocationInVSPList(id007, 0, USER3);
-
-    vendorSoftwareProductManager.undoCheckout(id006, USER3);
-    assertVSPInWantedLocationInVSPList(id006, 0, USER3);
-  }
-
-  @Test(dependsOnMethods = {"testVSPInBeginningOfListAfterUndoCheckout"})
-  public void testVSPInBeginningOfListAfterSubmit() throws IOException {
-    vendorSoftwareProductManager.checkin(id007, USER3);
-    vendorSoftwareProductManager.submit(id007, USER3);
-
-    assertVSPInWantedLocationInVSPList(id007, 0, USER3);
-  }
-*/
   @Test
   public void testValidateWithCandidateDataNotProcessed() throws IOException {
     VspDetails vsp =
@@ -705,26 +519,6 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertEquals(validationResponse.getVspErrors().size(), 1);
   }
 
-  private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
-    candidateManager.upload(vspId, VERSION01, upload, "zip", "file");
-    candidateManager.process(vspId, VERSION01);
-
-    OrchestrationTemplateEntity uploadData =
-        orchestrationTemplateDataDaoMock.get(vspId, version);
-    Assert.assertNotNull(uploadData);
-  }
-
-
-  private InputStream getFileInputStream(String fileName) {
-    URL url = this.getClass().getResource(fileName);
-    try {
-      return url.openStream();
-    } catch (IOException exception) {
-      exception.printStackTrace();
-      return null;
-    }
-  }
-
   private static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                      String vendorName, String vlm, String icon,
                                      String category, String subCategory,
@@ -756,17 +550,6 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertEquals(actual.getVendorId(), expected.getVendorId());
     Assert.assertEquals(actual.getLicenseAgreement(), expected.getLicenseAgreement());
     Assert.assertEquals(actual.getFeatureGroups(), expected.getFeatureGroups());
-  }
-
-
-  // todo ********************** move to common **************************************
-
-  private void mockVersioning(VersionableEntityAction action) {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        action);
   }
 
 }

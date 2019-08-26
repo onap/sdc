@@ -5,3 +5,6 @@ nonManoKeyFolderMapping:
   Other:
     location: VES_EVENTS
     type: Informational
+  onap_other:
+    location: OTHER
+    type: Deployment

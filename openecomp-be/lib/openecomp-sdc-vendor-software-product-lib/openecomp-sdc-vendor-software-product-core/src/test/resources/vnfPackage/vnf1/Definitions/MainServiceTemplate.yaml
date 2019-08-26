@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  VNFD_SCHEMA_VERSION: 2.5.1+1
+  template_name: Main
+  template_version: '1.0'
+  template_author: onap
+topology_template:
+  node_templates:
+    VDU_vgw_0:
+      type: tosca.nodes.nfv.Vdu.Compute
+      properties:
+        name:
+          get_input: vgw_name_0
+        description: vgw
+        vdu_profile:
+          min_number_of_instances: 1
+          max_number_of_instances: 1
+          watchdog: none
+        inject_files:
+          source_path: ../Artifacts/Deployment/ANOTHER/authorized_keys
+          dest_path: /home/ubuntu/.ssh/authorized_keys
+        meta_data:
+          vnf_id:
+            get_input: vnf_id
+          vf_module_id:
+            get_input: vf_module_id
+          mux_gw_private_net_ipaddr:
+            get_input: vgw_private_ip_0
+          oam_ipaddr:
+            get_input: vgw_private_ip_1
+          oam_cidr:
+            get_input: onap_private_net_cidr
+          cpe_public_net_cidr:
+            get_input: cpe_public_net_cidr
+          mux_gw_private_net_cidr:
+            get_input: mux_gw_private_net_cidr
+          mux_ip_addr:
+            get_input: mux_ip_addr
+          vg_vgmux_tunnel_vni:
+            get_input: vg_vgmux_tunnel_vni
+          install_script_version:
+            get_input: install_script_version
+          cloud_env:
+            get_input: cloud_env
+          nexus_artifact_repo:
+            get_input: nexus_artifact_repo
+        boot_data: |
+          #!/bin/bash
+          METADATA=`curl -s http://169.254.169.254/openstack/2012-08-10/meta_data.json`
+          apt-get -y install jq
+
+          get_metadata () {
+            echo $METADATA | jq -r ".meta.$1"
+          }
+
+          # Create configuration files
+          mkdir /opt/config
+          echo "$(get_metadata oam_ipaddr)" > /opt/config/oam_ipaddr.txt
+          echo "$(get_metadata oam_cidr)" > /opt/config/oam_cidr.txt
+          echo "$(get_metadata cpe_public_net_cidr)" > /opt/config/cpe_public_net_cidr.txt
+          echo "$(get_metadata mux_gw_private_net_ipaddr)" > /opt/config/mux_gw_private_net_ipaddr.txt
+          echo "$(get_metadata mux_gw_private_net_cidr)" > /opt/config/mux_gw_private_net_cidr.txt
+          echo "$(get_metadata install_script_version)" > /opt/config/install_script_version.txt
+          echo "$(get_metadata cloud_env)" > /opt/config/cloud_env.txt
+          echo "$(get_metadata mux_ip_addr)" > /opt/config/mux_ip_addr.txt
+          echo "$(get_metadata vg_vgmux_tunnel_vni)" > /opt/config/vg_vgmux_tunnel_vni.txt
+          echo "$(get_metadata nexus_artifact_repo)" > /opt/config/nexus_artifact_repo.txt
+
+          # Download and run install script
+          apt-get -y install unzip
+          INSTALL_SCRIPT_VERSION=$(get_metadata install_script_version)
+          NEXUS_ARTIFACT_REPO=$(get_metadata nexus_artifact_repo)
+          if [[ "${INSTALL_SCRIPT_VERSION}" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+          curl -k -L "${NEXUS_ARTIFACT_REPO}/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vcpe&a=vcpe-scripts&e=zip&v=${INSTALL_SCRIPT_VERSION}" -o /opt/vcpe-scripts-${INSTALL_SCRIPT_VERSION}.zip
+          unzip -j /opt/vcpe-scripts-${INSTALL_SCRIPT_VERSION}.zip -d /opt v_gw_install.sh
+          cd /opt
+          chmod +x v_gw_install.sh
+          ./v_gw_install.sh
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 4096 MB
+              vdu_mem_requirements:
+                memoryPageSize: '{"schemaVersion": "0", "schemaSelector": "", "hardwarePlatform":
+                  "generic", "mandatory": "true", "configurationValue": "2 MB"}'
+                numberOfPages: '{"schemaVersion": "0","schemaSelector": "","hardwarePlatform":
+                  "generic","mandatory": "true", "configurationValue": "1024"}'
+            virtual_cpu:
+              num_virtual_cpu: 2
+              cpu_architecture: generic
+            virtual_local_storage:
+            - size_of_storage: 40 GB
+      artifacts:
+        sw_image:
+          type: tosca.artifacts.nfv.SwImage
+          file: ../Artifacts/Deployment/ANOTHER/image

@@ -20,21 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
-import org.apache.commons.io.IOUtils;
-import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
-import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
-import org.openecomp.sdc.tosca.csar.ToscaMetadata;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ARTIFACTS_FOLDER;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
@@ -43,17 +29,45 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_M
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+
 public class ETSIServiceImpl implements ETSIService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ETSIServiceImpl.class);
 
     private Configuration configuration;
 
     public ETSIServiceImpl() throws IOException {
-        InputStream io = getClass().getClassLoader().getResourceAsStream("nonManoConfig.yaml");
+        final InputStream io = getClass().getClassLoader().getResourceAsStream("nonManoConfig.yaml");
         if (io == null) {
             throw new IOException("Non Mano configuration not found");
         }
-        String data = IOUtils.toString(io, StandardCharsets.UTF_8);
-        YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
+        final String data = IOUtils.toString(io, StandardCharsets.UTF_8);
+        final YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
         configuration = yamlToObjectConverter.convertFromString(data, Configuration.class);
     }
 
@@ -63,52 +77,136 @@ public class ETSIServiceImpl implements ETSIService {
 
     @Override
     public boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException {
-        Map<String, byte[]> templates = handler.getFiles();
+        final Map<String, byte[]> templates = handler.getFiles();
         return isMetaFilePresent(templates) && hasMetaMandatoryEntries(getMetadata(handler));
     }
 
     @Override
-    public void moveNonManoFileToArtifactFolder(FileContentHandler handler, Manifest manifest) {
-        for (Map.Entry<String, List<String>> entry : manifest.getNonManoSources().entrySet()) {
-            String e = entry.getKey();
-            List<String> k = entry.getValue();
-            updateNonManoLocation(handler, e, k);
+    public Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler) throws IOException {
+        final Manifest manifest;
+        try {
+            manifest = getManifest(handler);
+        } catch (final IOException ex) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("An error occurred while getting the manifest file", ex);
+            }
+            throw ex;
         }
+        final Path originalManifestPath;
+        try {
+            originalManifestPath = getOriginalManifestPath(handler);
+        } catch (final IOException ex) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("An error occurred while getting the original manifest path", ex);
+            }
+            throw ex;
+        }
+        final Map<String, Path> fromToPathMap = new HashMap<>();
+        final Map<String, NonManoType> nonManoKeyFolderMapping = configuration.getNonManoKeyFolderMapping();
+        manifest.getNonManoSources().entrySet().stream()
+            .filter(manifestNonManoSourceEntry -> nonManoKeyFolderMapping.containsKey(manifestNonManoSourceEntry.getKey()))
+            .forEach(manifestNonManoSourceEntry -> {
+                final NonManoType nonManoType = nonManoKeyFolderMapping.get(manifestNonManoSourceEntry.getKey());
+                final List<String> nonManoFileList = manifestNonManoSourceEntry.getValue();
+                final Map<String, Path> actualFromToPathMap = nonManoFileList.stream()
+                    .map(nonManoFilePath -> {
+                        final Path normalizedFilePath = resolveNonManoFilePath(originalManifestPath, nonManoFilePath);
+                        final Optional<Path> changedPath = updateNonManoPathInHandler(handler, nonManoType, normalizedFilePath);
+                        if (changedPath.isPresent()) {
+                            final Map<String, Path> fromAndToPathMap = new HashMap<>();
+                            fromAndToPathMap.put(nonManoFilePath, Paths.get(ARTIFACTS_FOLDER).resolve(changedPath.get()));
+                            return fromAndToPathMap;
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toMap(
+                        fromToPathEntry -> fromToPathEntry.keySet().iterator().next(),
+                        fromToPathEntry -> fromToPathEntry.values().iterator().next()
+                    ));
+                fromToPathMap.putAll(actualFromToPathMap);
+            });
+
+        return MapUtils.isEmpty(fromToPathMap) ? Optional.empty() : Optional.of(fromToPathMap);
     }
 
+    /**
+     * Resolves the non mano file path based on the original manifest path of the onboarded package.
+     *
+     * @param originalManifestPath The original path from the onboarded package manifest
+     * @param nonManoFilePath The non mano file path defined in the manifest
+     * @return The resolved and normalized non mano path.
+     */
+    private Path resolveNonManoFilePath(final Path originalManifestPath, final String nonManoFilePath) {
+        return originalManifestPath.resolve(Paths.get(nonManoFilePath)).normalize();
+    }
 
-    private void updateNonManoLocation(FileContentHandler handler, String nonManoKey, List<String> sources) {
-        Map<String, byte[]> files = handler.getFiles();
-        for (String key : sources) {
-            if (files.containsKey(key)) {
-                updateLocation(key, nonManoKey, files);
+    /**
+     * Updates the non mano file path in the package file handler based on the non mano type.
+     *
+     * @param handler The package file handler
+     * @param nonManoType The Non Mano type of the file to update
+     * @param nonManoOriginalFilePath The Non Mano file original path
+     * @return The new file path if it was updated in the package file handler, otherwise empty.
+     */
+    private Optional<Path> updateNonManoPathInHandler(final FileContentHandler handler, final NonManoType nonManoType,
+                                                      final Path nonManoOriginalFilePath) {
+        final Path fixedSourcePath = fixNonManoPath(nonManoOriginalFilePath);
+        final Map<String, byte[]> packageFileMap = handler.getFiles();
+        if (packageFileMap.containsKey(fixedSourcePath.toString())) {
+            final Path newNonManoPath = Paths.get(nonManoType.getType(), nonManoType.getLocation()
+                , fixedSourcePath.getFileName().toString());
+            if (!packageFileMap.containsKey(newNonManoPath.toString())) {
+                packageFileMap.put(newNonManoPath.toString(), packageFileMap.remove(fixedSourcePath.toString()));
+                return Optional.of(newNonManoPath);
             }
         }
+
+        return Optional.empty();
     }
 
-    private void updateLocation(String key, String nonManoKey, Map<String, byte[]> files) {
-        if (nonManoKey == null || nonManoKey.isEmpty()) {
-            return;
+    /**
+     * Fix the original non mano file path to the ONAP package file path.
+     *
+     * Non mano artifacts that were inside the {@link org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} path
+     * are not moved when parsed to ONAP package, but the Manifest declaration can still have the {@link
+     * org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} reference in it. If so, that reference is removed.
+     *
+     * @param nonManoOriginalFilePath The original non mano file path
+     * @return The non mano fixed path to ONAP package structure.
+     */
+    private Path fixNonManoPath(final Path nonManoOriginalFilePath) {
+        final Path rootArtifactsPath = Paths.get("/", ARTIFACTS_FOLDER);
+        if (nonManoOriginalFilePath.startsWith(rootArtifactsPath)) {
+            return rootArtifactsPath.relativize(nonManoOriginalFilePath);
         }
-        Map<String, NonManoType> map = configuration.getNonManoKeyFolderMapping();
-        if (map.containsKey(nonManoKey)) {
-            NonManoType nonManoPair = map.get(nonManoKey);
-            String newLocation = nonManoPair.getType() + "/" +
-                    nonManoPair.getLocation() + "/" + getFileName(key);
-            if (!files.containsKey(newLocation)) {
-                files.put(newLocation, files.remove(key));
-            }
+        final Path relativeArtifactsPath = Paths.get(ARTIFACTS_FOLDER);
+        if (nonManoOriginalFilePath.startsWith(relativeArtifactsPath)) {
+            return relativeArtifactsPath.relativize(nonManoOriginalFilePath);
         }
+
+        return nonManoOriginalFilePath;
     }
 
-    private String getFileName(String key) {
-        return key.substring(key.lastIndexOf('/') + 1);
+    @Override
+    public void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel,
+                                          final Map<String, Path> fromToMovedArtifactMap) {
+        final ServiceTemplate entryDefinition = toscaServiceModel.getServiceTemplates()
+            .get(toscaServiceModel.getEntryDefinitionServiceTemplate());
+        final YamlUtil yamlUtil = new YamlUtil();
+        final String[] entryDefinitionYaml = {yamlUtil.objectToYaml(entryDefinition)};
+        fromToMovedArtifactMap.forEach((fromPath, toPath) -> entryDefinitionYaml[0] = entryDefinitionYaml[0]
+            .replaceAll(fromPath, toPath.toString()));
+
+        toscaServiceModel.addServiceTemplate(toscaServiceModel.getEntryDefinitionServiceTemplate()
+            , yamlUtil.yamlToObject(entryDefinitionYaml[0], ServiceTemplate.class));
     }
 
-    private boolean hasMetaMandatoryEntries(ToscaMetadata toscaMetadata) {
-        Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
-        return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_MANIFEST)
-                && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_CHANGE_LOG);
+    private boolean hasMetaMandatoryEntries(final ToscaMetadata toscaMetadata) {
+        final Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
+        return metaDataEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS) && metaDataEntries
+            .containsKey(TOSCA_META_ETSI_ENTRY_MANIFEST)
+            && metaDataEntries.containsKey(TOSCA_META_ETSI_ENTRY_CHANGE_LOG);
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
@@ -125,7 +223,7 @@ public class ETSIServiceImpl implements ETSIService {
         // Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
         // validation of manifest done during package upload stage
         if (manifest != null && !manifest.getMetadata().isEmpty()
-                && MANIFEST_PNF_METADATA.stream().anyMatch(e -> manifest.getMetadata().containsKey(e))) {
+            && MANIFEST_PNF_METADATA.stream().anyMatch(e -> manifest.getMetadata().containsKey(e))) {
             return ResourceTypeEnum.PNF;
         }
         // VNF is default resource type
@@ -138,23 +236,41 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     private Manifest getManifest(FileContentHandler handler, String manifestLocation) throws IOException {
-        try(InputStream manifestInputStream = getManifestInputStream(handler, manifestLocation)) {
+        try (InputStream manifestInputStream = getManifestInputStream(handler, manifestLocation)) {
             Manifest onboardingManifest = new SOL004ManifestOnboarding();
             onboardingManifest.parse(manifestInputStream);
             return onboardingManifest;
         }
     }
 
+    public Path getOriginalManifestPath(final FileContentHandler handler) throws IOException {
+        final ToscaMetadata metadata = getOriginalMetadata(handler);
+        final String originalMetadataPath = metadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST);
+        final Path path = Paths.get(originalMetadataPath);
+        return path.getParent() == null ? Paths.get("") : path.getParent();
+    }
+
     private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
         ToscaMetadata metadata;
         if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
-            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+            metadata = OnboardingToscaMetadata
+                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
         } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
-            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+            metadata = OnboardingToscaMetadata
+                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
         } else {
             throw new IOException("TOSCA.meta file not found!");
         }
         return metadata;
+    }
+
+    private ToscaMetadata getOriginalMetadata(final FileContentHandler handler) throws IOException {
+        if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
+            return OnboardingToscaMetadata
+                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+        } else {
+            throw new IOException(String.format("%s file not found", TOSCA_META_ORIG_PATH_FILE_NAME));
+        }
     }
 
     private InputStream getManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
