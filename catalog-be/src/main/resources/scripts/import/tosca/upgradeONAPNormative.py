@@ -59,9 +59,11 @@ def main(argv):
 	updateOnapVersion = 'false'
 	importCommon.debugFlag = False
 	scheme = 'http'
+	opts = []
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:d:h",["ip=","port=","user=","debug="])
+		opts, args = getopt.getopt(argv, "i:p:u:d:v:h:s",
+								   ["scheme=", "ip=", "port=", "user=", "debug=", "updateversion="])
 	except getopt.GetoptError:
 		usage()
 		error_and_exit(2, 'Invalid input')
@@ -103,7 +105,7 @@ def main(argv):
 	importCategories(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "relationship-types/"
-        importNormativeRelationships(scheme, beHost, bePort, adminUser, False, fileLocation)
+	importNormativeRelationships(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "data-types/"
 	importDataTypes(scheme, beHost, bePort, adminUser, False, fileLocation)
