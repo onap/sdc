@@ -14,6 +14,7 @@
     <properties>
         <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
         <swagger.version>2.0.8</swagger.version>
+        <swagger.jaxrs.version>1.5.22</swagger.jaxrs.version>
     </properties>
 
     <dependencies>
@@ -54,10 +55,15 @@
 
         <!-- Swagger Dependencies Start -->
         <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>${swagger.jaxrs.version}</version>
+        </dependency>
         <!-- Swagger Dependencies End -->
 
         <dependency>
@@ -617,6 +623,16 @@
             <artifactId>commons-collections4</artifactId>
             <version>${commons.collections.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>1.5.21</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>1.5.21</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -703,6 +719,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <finalName>normatives</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
