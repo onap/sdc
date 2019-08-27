@@ -38,7 +38,6 @@ import org.openecomp.sdc.asdctool.Utils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -57,7 +56,7 @@ import java.util.Map.Entry;
 
 public class GraphMLConverter {
 
-	private static final String FROM_VERTEX = "fromVertex={}";
+    private static final String FROM_VERTEX = "fromVertex={}";
 
     private static final String STORAGE_BACKEND = "storage.backend";
 
@@ -75,491 +74,487 @@ public class GraphMLConverter {
 
     private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
 
-	private Gson gson = new Gson();
-
-	public boolean importGraph(String[] args) {
-
-		JanusGraph graph = null;
-		try {
-			String janusGraphFileLocation = args[1];
-			String inputFile = args[2];
-			graph = openGraph(janusGraphFileLocation);
-
-			List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
-			ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
-			ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>(NODE_LABEL, "user");
-			ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>(NODE_LABEL,
-					"resourceCategory");
-			ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>(NODE_LABEL,
-					"serviceCategory");
-
-			propertiesCriteriaToDelete.add(immutablePair1);
-			propertiesCriteriaToDelete.add(immutablePair2);
-			propertiesCriteriaToDelete.add(immutablePair3);
-			propertiesCriteriaToDelete.add(immutablePair4);
-
-			return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
-
-		} catch (Exception e) {
-			log.info("import graph failed - {} " , e);
-			return false;
-		} finally {
-			if (graph != null) {
-				graph.close();
-			}
-		}
-
-	}
-
-	public boolean exportGraph(String[] args) {
-
-		JanusGraph graph = null;
-		try {
-			String janusGraphFileLocation = args[1];
-			String outputDirectory = args[2];
-			graph = openGraph(janusGraphFileLocation);
-
-			String result = exportJsonGraph(graph, outputDirectory);
-
-			if (result == null) {
-				return false;
-			}
-
-			System.out.println(EXPORTED_FILE + result);
-		} catch (Exception e) {
-			log.info("export graph failed -{}" , e);
-			return false;
-		} finally {
-			if (graph != null) {
-				graph.close();
-			}
-		}
-
-		return true;
-	}
-
-	public String exportGraphMl(String[] args) {
-
-		JanusGraph graph = null;
-		String result = null;
-		try {
-			String janusGraphFileLocation = args[1];
-			String outputDirectory = args[2];
-			graph = openGraph(janusGraphFileLocation);
-
-			result = exportGraphMl(graph, outputDirectory);
-
-			System.out.println(EXPORTED_FILE + result);
-		} catch (Exception e) {
-			log.info("export exportGraphMl failed - {}" , e);
-			return null;
-		} finally {
-			if (graph != null) {
-				graph.close();
-			}
-		}
-
-		return result;
-	}
-
-	public boolean findErrorInJsonGraph(String[] args) {
-
-		JanusGraph graph = null;
-		try {
-			String janusGraphFileLocation = args[1];
-			String outputDirectory = args[2];
-			graph = openGraph(janusGraphFileLocation);
-
-			String result = findErrorInJsonGraph(graph, outputDirectory);
-
-			if (result == null) {
-				return false;
-			}
-
-			System.out.println(EXPORTED_FILE + result);
-		} catch (Exception e) {
-			log.info("find Error In Json Graph failed - {}" , e);
-			return false;
-		} finally {
-			if (graph != null) {
-				graph.close();
-			}
-		}
-
-		return true;
-	}
-
-	public JanusGraph openGraph(String janusGraphFileLocation) {
-
-		return JanusGraphFactory.open(janusGraphFileLocation);
-
-	}
+    private Gson gson = new Gson();
+
+    public boolean importGraph(String[] args) {
+
+        JanusGraph graph = null;
+        try {
+            String janusGraphFileLocation = args[1];
+            String inputFile = args[2];
+            graph = openGraph(janusGraphFileLocation);
+
+            List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
+            ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
+            ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>(NODE_LABEL, "user");
+            ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>(NODE_LABEL, "resourceCategory");
+            ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>(NODE_LABEL, "serviceCategory");
+
+            propertiesCriteriaToDelete.add(immutablePair1);
+            propertiesCriteriaToDelete.add(immutablePair2);
+            propertiesCriteriaToDelete.add(immutablePair3);
+            propertiesCriteriaToDelete.add(immutablePair4);
+
+            return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
+
+        } catch (Exception e) {
+            log.info("import graph failed ", e);
+            return false;
+        } finally {
+            if (graph != null) {
+                graph.close();
+            }
+        }
+
+    }
+
+    public boolean exportGraph(String[] args) {
+
+        JanusGraph graph = null;
+        try {
+            String janusGraphFileLocation = args[1];
+            String outputDirectory = args[2];
+            graph = openGraph(janusGraphFileLocation);
+
+            String result = exportJsonGraph(graph, outputDirectory);
+
+            if (result == null) {
+                return false;
+            }
+
+            log.info("{} {}", EXPORTED_FILE, result);
+        } catch (Exception e) {
+            log.info("export graph failed ", e);
+            return false;
+        } finally {
+            if (graph != null) {
+                graph.close();
+            }
+        }
+
+        return true;
+    }
+
+    public String exportGraphMl(String[] args) {
+
+        JanusGraph graph = null;
+        String result = null;
+        try {
+            String janusGraphFileLocation = args[1];
+            String outputDirectory = args[2];
+            graph = openGraph(janusGraphFileLocation);
+
+            result = exportGraphMl(graph, outputDirectory);
+
+            log.info("{} {}", EXPORTED_FILE, result);
+        } catch (Exception e) {
+            log.info("export exportGraphMl failed ", e);
+            return null;
+        } finally {
+            if (graph != null) {
+                graph.close();
+            }
+        }
+
+        return result;
+    }
+
+    public boolean findErrorInJsonGraph(String[] args) {
+
+        JanusGraph graph = null;
+        try {
+            String janusGraphFileLocation = args[1];
+            String outputDirectory = args[2];
+            graph = openGraph(janusGraphFileLocation);
+
+            String result = findErrorInJsonGraph(graph, outputDirectory);
+
+            if (result == null) {
+                return false;
+            }
+
+            log.info("{} {}", EXPORTED_FILE, result);
+        } catch (Exception e) {
+            log.info("find Error In Json Graph failed ", e);
+            return false;
+        } finally {
+            if (graph != null) {
+                graph.close();
+            }
+        }
+
+        return true;
+    }
+
+    public JanusGraph openGraph(String janusGraphFileLocation) {
+
+        return JanusGraphFactory.open(janusGraphFileLocation);
+
+    }
+
+    public String exportJsonGraph(JanusGraph graph, String outputDirectory) {
+
+        String result = null;
+
+        String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
+
+        OutputStream out = null;
+        try {
+            out = new BufferedOutputStream(new FileOutputStream(outputFile));
+
+            final GraphSONWriter.Builder builder = GraphSONWriter.build();
+            final GraphSONMapper mapper = newGraphSONMapper(graph);
+            builder.mapper(mapper);
+            final GraphSONWriter writer = builder.create();
+            writer.writeGraph(out, graph);
+
+            graph.tx().commit();
+
+            result = outputFile;
+
+        } catch (Exception e) {
+            log.info("export Json Graph failed ", e);
+            graph.tx().rollback();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED, e);
+            }
+        }
+        return result;
 
-	public String exportJsonGraph(JanusGraph graph, String outputDirectory) {
-
-		String result = null;
-
-		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
-
-		OutputStream out = null;
-		try {
-			out = new BufferedOutputStream(new FileOutputStream(outputFile));
-
-			final GraphSONWriter.Builder builder = GraphSONWriter.build();
-			final GraphSONMapper mapper = newGraphSONMapper(graph);
-			builder.mapper(mapper);
-			final GraphSONWriter writer = builder.create();
-			writer.writeGraph(out, graph);
-
-			graph.tx().commit();
-
-			result = outputFile;
-
-		} catch (Exception e) {
-			log.info("export Json Graph failed - {}" , e);
-			graph.tx().rollback();
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
-			}
-		}
-		return result;
+    }
+
+    public String exportGraphMl(JanusGraph graph, String outputDirectory) {
+        String result = null;
+        String outputFile =
+                outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
+        try {
+            try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+                graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
+            }
+            result = outputFile;
+            graph.tx().commit();
+        } catch (Exception e) {
+            graph.tx().rollback();
+            log.info("export Graph Ml failed ", e);
+        }
+        return result;
 
-	}
+    }
 
-	public String exportGraphMl(JanusGraph graph, String outputDirectory) {
-		String result = null;
-		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
-		try {
-			try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-				graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
-			}
-			result = outputFile;
-			graph.tx().commit();
-		} catch (Exception e) {
-			graph.tx().rollback();
-			log.info("export Graph Ml failed - {}" , e);
-		}
-		return result;
+    private static GraphSONMapper newGraphSONMapper(final Graph graph) {
+        final GraphSONMapper.Builder builder = graph.io(IoCore.graphson()).mapper();
+        return builder.create();
+    }
 
-	}
+    public boolean importJsonGraph(JanusGraph graph, String graphJsonFile,
+            List<ImmutablePair<String, String>> propertiesCriteriaToDelete) {
 
-	private static GraphSONMapper newGraphSONMapper(final Graph graph) {
-		final GraphSONMapper.Builder builder = graph.io(IoCore.graphson()).mapper();
-		return builder.create();
-	}
+        boolean result = false;
 
-	public boolean importJsonGraph(JanusGraph graph, String graphJsonFile,
-			List<ImmutablePair<String, String>> propertiesCriteriaToDelete) {
+        InputStream is = null;
 
-		boolean result = false;
+        try {
 
-		InputStream is = null;
+            if (propertiesCriteriaToDelete != null) {
+                for (Entry<String, String> entry : propertiesCriteriaToDelete
 
-		try {
+                ) {
 
-			if (propertiesCriteriaToDelete != null) {
-				for (Entry<String, String> entry : propertiesCriteriaToDelete
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    Iterator iterator = graph.query().has(key, value).vertices().iterator();
+                    while (iterator.hasNext()) {
+                        Vertex vertex = (Vertex) iterator.next();
+                        vertex.remove();
+                        log.info("Remove vertex of type{} ", key, " and value {}", value);
+                    }
 
-				) {
+                }
+            }
+            File file = new File(graphJsonFile);
+            if (!file.isFile()) {
+                log.info("File ", graphJsonFile, " cannot be found.");
+                return result;
+            }
 
-					String key = entry.getKey();
-					String value = entry.getValue();
-					Iterator iterator = graph.query().has(key, value).vertices().iterator();
-					while (iterator.hasNext()) {
-						Vertex vertex = (Vertex) iterator.next();
-						vertex.remove();
-						System.out.println("Remove vertex of type " + key + " and value " + value);
-					}
+            is = new BufferedInputStream(new FileInputStream(graphJsonFile));
+            log.info("Before importing file ", graphJsonFile);
 
-				}
-			}
-			File file = new File(graphJsonFile);
-			if (!file.isFile()) {
-				System.out.println("File " + graphJsonFile + " cannot be found.");
-				return result;
-			}
+            GraphSONReader create = GraphSONReader.build().create();
+            create.readGraph(is, graph);
 
-			is = new BufferedInputStream(new FileInputStream(graphJsonFile));
-			System.out.println("Before importing file " + graphJsonFile);
+            graph.tx().commit();
 
-			GraphSONReader create = GraphSONReader.build().create();
-			create.readGraph(is, graph);
+            result = true;
 
-			graph.tx().commit();
+        } catch (Exception e) {
+            log.info("Failed to import graph ", e);
+            graph.tx().rollback();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED, e);
+            }
+        }
 
-			result = true;
+        return result;
 
-		} catch (Exception e) {
-			System.out.println("Failed to import graph " + e.getMessage());
-			log.info("Failed to import graph - {}" , e);
-			graph.tx().rollback();
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
-			}
-		}
+    }
 
-		return result;
+    public String findErrorInJsonGraph(JanusGraph graph, String outputDirectory) {
 
-	}
+        boolean runVertexScan = false;
+        boolean runEdgeScan = false;
 
-	public String findErrorInJsonGraph(JanusGraph graph, String outputDirectory) {
+        String result = null;
 
-		boolean runVertexScan = false;
-		boolean runEdgeScan = false;
+        String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
 
-		String result = null;
+        OutputStream out = null;
+        try {
+            out = new BufferedOutputStream(new FileOutputStream(outputFile));
 
-		String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
+            if (runEdgeScan) {
 
-		OutputStream out = null;
-		try {
-			out = new BufferedOutputStream(new FileOutputStream(outputFile));
+                Vertex vertexFrom = null;
+                Vertex vertexTo = null;
+                Edge edge = null;
 
-			if (runEdgeScan) {
+                Iterable<JanusGraphEdge> edges = graph.query().edges();
+                Iterator<JanusGraphEdge> iterator = edges.iterator();
+                while (iterator.hasNext()) {
 
-				Vertex vertexFrom = null;
-				Vertex vertexTo = null;
-				Edge edge = null;
+                    try {
 
-				Iterable<JanusGraphEdge> edges = graph.query().edges();
-				Iterator<JanusGraphEdge> iterator = edges.iterator();
-				while (iterator.hasNext()) {
+                        edge = iterator.next();
 
-					try {
+                        vertexFrom = edge.outVertex();
+                        vertexTo = edge.inVertex();
 
-						edge = iterator.next();
+                        BaseConfiguration conf = new BaseConfiguration();
+                        conf.setProperty(STORAGE_BACKEND, INMEMORY);
+                        JanusGraph openGraph = Utils.openGraph(conf);
 
-						vertexFrom = edge.outVertex();
-						vertexTo = edge.inVertex();
+                        JanusGraphVertex addVertexFrom = openGraph.addVertex();
+                        Utils.setProperties(addVertexFrom, Utils.getProperties(vertexFrom));
 
-						BaseConfiguration conf = new BaseConfiguration();
-						conf.setProperty(STORAGE_BACKEND, INMEMORY);
-						JanusGraph openGraph = Utils.openGraph(conf);
+                        JanusGraphVertex addVertexTo = openGraph.addVertex();
+                        Utils.setProperties(addVertexTo, Utils.getProperties(vertexTo));
 
-						JanusGraphVertex addVertexFrom = openGraph.addVertex();
-						Utils.setProperties(addVertexFrom, Utils.getProperties(vertexFrom));
+                        Edge addEdge = addVertexFrom.addEdge(edge.label(), addVertexTo);
+                        Utils.setProperties(addEdge, Utils.getProperties(edge));
 
-						JanusGraphVertex addVertexTo = openGraph.addVertex();
-						Utils.setProperties(addVertexTo, Utils.getProperties(vertexTo));
+                        log.info(FROM_VERTEX, Utils.getProperties(vertexFrom));
+                        log.info("toVertex={}", Utils.getProperties(vertexTo));
+                        log.info("edge={} {} ", edge.label(), Utils.getProperties(edge));
 
-						Edge addEdge = addVertexFrom.addEdge(edge.label(), addVertexTo);
-						Utils.setProperties(addEdge, Utils.getProperties(edge));
+                        GraphSONWriter create = GraphSONWriter.build().create();
+                        create.writeGraph(out, openGraph);
 
-						log.info(FROM_VERTEX, Utils.getProperties(vertexFrom));
-						log.info("toVertex={}", Utils.getProperties(vertexTo));
-						log.info("edge={} {} ",edge.label(),Utils.getProperties(edge));
+                        openGraph.tx().rollback();
 
-						GraphSONWriter create = GraphSONWriter.build().create();
-						create.writeGraph(out, openGraph);
+                    } catch (Exception e) {
+                        log.info("run Edge Scan failed ", e);
 
-						openGraph.tx().rollback();
+                        log.error(FROM_VERTEX, Utils.getProperties(vertexFrom));
+                        log.error("toVertex={}", Utils.getProperties(vertexTo));
+                        log.error("edge={} {} ", edge.label(), Utils.getProperties(edge));
 
-					} catch (Exception e) {
-						log.info("run Edge Scan failed - {}" , e);
+                        break;
 
-						log.error(FROM_VERTEX, Utils.getProperties(vertexFrom));
-						log.error("toVertex={}", Utils.getProperties(vertexTo));
-						log.error("edge={} {} ",edge.label(),Utils.getProperties(edge));
+                    }
+                }
 
-						break;
+                graph.tx().rollback();
 
-					}
-				}
+            }
 
-				graph.tx().rollback();
+            if (runVertexScan) {
 
-			}
+                Vertex vertex = null;
+                Iterator<Vertex> iteratorVertex = graph.vertices();
+                while (iteratorVertex.hasNext()) {
 
-			if (runVertexScan) {
+                    try {
 
-				Vertex vertex = null;
-				Iterator<Vertex> iteratorVertex = graph.vertices();
-				while (iteratorVertex.hasNext()) {
+                        vertex = iteratorVertex.next();
+                        Iterator<Edge> iterator2 = vertex.edges(Direction.BOTH);
+                        if (!iterator2.hasNext()) {
 
-					try {
+                            BaseConfiguration conf = new BaseConfiguration();
+                            conf.setProperty(STORAGE_BACKEND, INMEMORY);
+                            JanusGraph openGraph = Utils.openGraph(conf);
 
-						vertex = iteratorVertex.next();
-						Iterator<Edge> iterator2 = vertex.edges(Direction.BOTH);
-						if (!iterator2.hasNext()) {
+                            JanusGraphVertex addVertexFrom = openGraph.addVertex();
+                            Utils.setProperties(addVertexFrom, Utils.getProperties(vertex));
 
-							BaseConfiguration conf = new BaseConfiguration();
-							conf.setProperty(STORAGE_BACKEND, INMEMORY);
-							JanusGraph openGraph = Utils.openGraph(conf);
+                            log.info(FROM_VERTEX, Utils.getProperties(addVertexFrom));
 
-							JanusGraphVertex addVertexFrom = openGraph.addVertex();
-							Utils.setProperties(addVertexFrom, Utils.getProperties(vertex));
+                            GraphSONWriter create = GraphSONWriter.build().create();
+                            create.writeGraph(out, openGraph);
 
-							log.info(FROM_VERTEX, Utils.getProperties(addVertexFrom));
+                            openGraph.tx().rollback();
 
-							GraphSONWriter create = GraphSONWriter.build().create();
-							create.writeGraph(out, openGraph);
+                        }
 
-							openGraph.tx().rollback();
+                    } catch (Exception e) {
+                        log.info("run Vertex Scan failed ", e);
 
-						}
+                        Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
+                        log.info(property1.toString());
 
-					} catch (Exception e) {
-						log.info("run Vertex Scan failed - {}" , e);
+                        Object property2 = vertex.value("healthcheck");
+                        log.info(property2.toString());
 
-						Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
-						System.out.println(property1);
+                        break;
 
-						Object property2 = vertex.value("healthcheck");
-						System.out.println(property2);
+                    }
+                }
 
-						break;
+                graph.tx().rollback();
 
-					}
-				}
+            }
 
-				graph.tx().rollback();
+            Iterable<JanusGraphVertex> vertices2 =
+                    graph.query().has(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(), "GOOD").vertices();;
 
-			}
+            BaseConfiguration conf = new BaseConfiguration();
+            conf.setProperty(STORAGE_BACKEND, INMEMORY);
+            for (NodeTypeEnum nodeTypeEnum : NodeTypeEnum.values()) {
+                removeNodesByLabel(graph, nodeTypeEnum.getName());
+            }
 
-			Iterable<JanusGraphVertex> vertices2 = graph.query()
-					.has(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(), "GOOD").vertices();
-			;
 
-			BaseConfiguration conf = new BaseConfiguration();
-			conf.setProperty(STORAGE_BACKEND, INMEMORY);
-			for (NodeTypeEnum nodeTypeEnum : NodeTypeEnum.values()) {
-				removeNodesByLabel(graph, nodeTypeEnum.getName());
-			}
+            GraphSONWriter create = GraphSONWriter.build().create();
+            create.writeGraph(out, graph);
 
+            graph.tx().rollback();
 
-			GraphSONWriter create = GraphSONWriter.build().create();
-			create.writeGraph(out, graph);
+        } catch (Exception e) {
+            log.info("find Error In Json Graph failed ", e);
+            graph.tx().rollback();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED, e);
+            }
+        }
+        return result;
 
-			graph.tx().rollback();
+    }
 
-		} catch (Exception e) {
-			log.info("find Error In Json Graph failed - {}" , e);
-			graph.tx().rollback();
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
-			}
-		}
-		return result;
+    private void removeNodesByLabel(JanusGraph graph, String label) {
+        Iterable<JanusGraphVertex> vertices =
+                graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label).vertices();
+        Iterator<JanusGraphVertex> iterator = vertices.iterator();
+        while (iterator.hasNext()) {
+            Vertex next2 = iterator.next();
+            next2.remove();
+        }
+    }
 
-	}
+    public String exportUsers(JanusGraph graph, String outputDirectory) {
 
-	private void removeNodesByLabel(JanusGraph graph, String label) {
-		Iterable<JanusGraphVertex> vertices = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label)
-				.vertices();
-		Iterator<JanusGraphVertex> iterator = vertices.iterator();
-		while (iterator.hasNext()) {
-			Vertex next2 = iterator.next();
-			next2.remove();
-		}
-	}
+        List<Map<String, Object>> users = new ArrayList<>();
+        String result = null;
 
-	public String exportUsers(JanusGraph graph, String outputDirectory) {
+        String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + DOT_JSON;
 
-		List<Map<String, Object>> users = new ArrayList<>();
-		String result = null;
+        FileWriter fileWriter = null;
+        try {
 
-		String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + DOT_JSON;
+            JanusGraphQuery graphQuery =
+                    graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
 
-		FileWriter fileWriter = null;
-		try {
+            @SuppressWarnings("unchecked")
+            Iterable<JanusGraphVertex> vertices = graphQuery.vertices();
 
-			JanusGraphQuery graphQuery = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(),
-					NodeTypeEnum.User.getName());
+            if (vertices != null) {
+                for (Vertex v : vertices) {
+                    Map<String, Object> properties = getProperties(v);
+                    properties.remove(GraphPropertiesDictionary.LABEL.getProperty());
+                    users.add(properties);
+                }
+            }
 
-			@SuppressWarnings("unchecked")
-			Iterable<JanusGraphVertex> vertices = graphQuery.vertices();
+            graph.tx().commit();
 
-			if (vertices != null) {
-				for (Vertex v : vertices) {
-					Map<String, Object> properties = getProperties(v);
-					properties.remove(GraphPropertiesDictionary.LABEL.getProperty());
-					users.add(properties);
-				}
-			}
+            String jsonUsers = gson.toJson(users);
 
-			graph.tx().commit();
+            fileWriter = new FileWriter(outputFile);
+            fileWriter.write(jsonUsers);
 
-			String jsonUsers = gson.toJson(users);
+            result = outputFile;
 
-			fileWriter = new FileWriter(outputFile);
-			fileWriter.write(jsonUsers);
+        } catch (Exception e) {
+            log.info("export Users failed ", e);
+            graph.tx().rollback();
+        } finally {
+            try {
+                if (fileWriter != null) {
+                    fileWriter.close();
+                }
+            } catch (IOException e) {
+                log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED, e);
+            }
+        }
+        return result;
 
-			result = outputFile;
+    }
 
-		} catch (Exception e) {
-			log.info("export Users failed - {}" , e);
-			graph.tx().rollback();
-		} finally {
-			try {
-				if (fileWriter != null) {
-					fileWriter.close();
-				}
-			} catch (IOException e) {
-				log.info(CLOSE_FILE_OUTPUT_STREAM_FAILED , e);
-			}
-		}
-		return result;
+    public Map<String, Object> getProperties(Element element) {
 
-	}
+        Map<String, Object> result = new HashMap<>();;
 
-	public Map<String, Object> getProperties(Element element) {
+        if (element.keys() != null && !element.keys().isEmpty()) {
+            Map<String, Property> propertyMap =
+                    ElementHelper.propertyMap(element, element.keys().toArray(new String[element.keys().size()]));
 
-		Map<String, Object> result = new HashMap<>();
-		;
+            for (Entry<String, Property> entry : propertyMap.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue().value();
 
-		if (element.keys() != null && !element.keys().isEmpty()) {
-			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
-					element.keys().toArray(new String[element.keys().size()]));
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
 
-			for (Entry<String, Property> entry : propertyMap.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue().value();
+    public boolean exportUsers(String[] args) {
 
-				result.put(key, value);
-			}
-		}
-		return result;
-	}
+        JanusGraph graph = null;
+        try {
+            String janusGraphFileLocation = args[1];
+            String outputDirectory = args[2];
+            graph = openGraph(janusGraphFileLocation);
 
-	public boolean exportUsers(String[] args) {
+            String result = exportUsers(graph, outputDirectory);
 
-		JanusGraph graph = null;
-		try {
-			String janusGraphFileLocation = args[1];
-			String outputDirectory = args[2];
-			graph = openGraph(janusGraphFileLocation);
+            if (result == null) {
+                return false;
+            }
 
-			String result = exportUsers(graph, outputDirectory);
+            log.info(EXPORTED_FILE, result);
+        } catch (Exception e) {
+            log.info("export Users failed ", e);
+            return false;
+        } finally {
+            if (graph != null) {
+                graph.close();
+            }
+        }
 
-			if (result == null) {
-				return false;
-			}
-
-			System.out.println(EXPORTED_FILE + result);
-		} catch (Exception e) {
-			log.info("export Users failed - {}" , e);
-			return false;
-		} finally {
-			if (graph != null) {
-				graph.close();
-			}
-		}
-
-		return true;
-	}
+        return true;
+    }
 }
