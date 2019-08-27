@@ -2,11 +2,11 @@
 replication_factor=node['cassandra']['replication_factor']
 
 if node['Pair_EnvName'] == ""
-    janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s
-    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s
+   janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + "," + replication_factor.to_s
+   conf_dcname_with_rep = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s
 else
-    janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + ","   + replication_factor.to_s + "," + node['cassandra']['cluster_name']   + node['Pair_EnvName'] + ","   + replication_factor.to_s
-    conf_dcname_with_rep  = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s + "','" + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "','" + replication_factor.to_s
+   janusgraph_dcname_with_rep = node['cassandra']['datacenter_name'] + "," + replication_factor.to_s + "," + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "," + replication_factor.to_s
+   conf_dcname_with_rep = node['cassandra']['datacenter_name'] + "','" + replication_factor.to_s + "','" + node['cassandra']['cluster_name'] + node['Pair_EnvName'] + "','" + replication_factor.to_s
 end
 
 

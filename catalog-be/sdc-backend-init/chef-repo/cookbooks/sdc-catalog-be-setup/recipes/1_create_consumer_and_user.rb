@@ -1,34 +1,45 @@
-template "/tmp/user.py" do
+if node['disableHttp']
+  protocol = "https"
+  be_port = node['BE']['https_port']
+else
+  protocol = "http"
+  be_port = node['BE']['http_port']
+end
+
+
+template "/var/tmp/user.py" do
     source "user.py.erb"
     sensitive true
     mode 0755
     variables({
+      :protocol => protocol,
       :be_ip => node['Nodes']['BE'],
-      :be_port => node['BE']['http_port']
+      :be_port => be_port
     })
 end
 
-bash "excuting-create_user" do
+bash "executing-create_user" do
    code <<-EOH
-     python /tmp/user.py
+     python /var/tmp/user.py
      rc=$?
      if [[ $rc != 0 ]]; then exit $rc; fi
    EOH
 end
 
-template "/tmp/consumers.py" do
+template "/var/tmp/consumers.py" do
     source "consumers.py.erb"
     sensitive true
     mode 0755
     variables({
+      :protocol => protocol,
       :be_ip => node['Nodes']['BE'],
-      :be_port => node['BE']['http_port']
+      :be_port => be_port
     })
 end
 
-bash "excuting-consumers" do
+bash "executing-consumers" do
    code <<-EOH
-     python /tmp/consumers.py
+     python /var/tmp/consumers.py
      rc=$?
      if [[ $rc != 0 ]]; then exit $rc; fi
    EOH

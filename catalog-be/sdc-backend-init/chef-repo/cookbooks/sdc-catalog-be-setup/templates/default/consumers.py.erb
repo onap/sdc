@@ -6,6 +6,7 @@ from datetime import datetime
 
 BE_IP="<%= @be_ip %>"
 BE_PORT="<%= @be_port %>"
+PROTOCOL="<%= @protocol %>"
 
 class bcolors:
     HEADER    = '\033[95m'
@@ -22,7 +23,7 @@ class bcolors:
 #    Functions
 ##############################
 def checkBackend():
-    command="curl -s -o /dev/null -I -w \"%{http_code}\" -i http://" + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/user/jh0003"
+    command="curl -k -s -o /dev/null -I -w \"%{http_code}\" -i "+PROTOCOL+"://" + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/user/jh0003"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE )
     (out, err) = proc.communicate()
@@ -31,7 +32,7 @@ def checkBackend():
 
 
 def checkConsumer(consumerName):
-    command="curl -s -o /dev/null -I -w \"%{http_code}\" -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\"   http://" + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/" + consumerName
+    command="curl -k -s -o /dev/null -I -w \"%{http_code}\" -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" "+PROTOCOL+"://" + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/" + consumerName
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE )
     (out, err) = proc.communicate()
@@ -41,7 +42,7 @@ def checkConsumer(consumerName):
 
 def createConsumer( consumerName, consumerSalt, consumerPass ):
     print '[INFO] ' + consumerName
-    command="curl -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" http://"  + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/ -d '{\"consumerName\": '" + consumerName + "', \"consumerSalt\": '" + consumerSalt + "',\"consumerPassword\": '" + consumerPass + "'}'"
+    command="curl -k -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" "+PROTOCOL+"://"  + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/ -d '{\"consumerName\": '" + consumerName + "', \"consumerSalt\": '" + consumerSalt + "',\"consumerPassword\": '" + consumerPass + "'}'"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE)
 
