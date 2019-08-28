@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdc.common.util;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
@@ -68,7 +68,7 @@ public class YamlToObjectConverterTest {
 
     @Test
     public void validateIsValidYamlEncoded64ReturnsTrueIfGivenYamlIsEncoded64() {
-        boolean result = yamlToObjectConverter.isValidYamlEncoded64(Base64.encodeBase64(testYaml.getBytes()));
+        boolean result = yamlToObjectConverter.isValidYamlEncoded64(Base64.getEncoder().encode(testYaml.getBytes()));
 
         assertTrue(result);
     }

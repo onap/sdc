@@ -22,7 +22,7 @@
 
 package org.openecomp.sdc;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.ByteArrayInputStream;
@@ -42,7 +42,6 @@ public class ZipUtil {
 
         String zipFileName = "/src/test/resources/config/config.zip";
 
-        zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
         zipFileName = "src/test/resources/config/config.zip";
 
         Path path = Paths.get(zipFileName);
@@ -51,10 +50,10 @@ public class ZipUtil {
             byte[] zipAsBytes = Files.readAllBytes(path);
             // encode to base
 
-            byte[] decodedMd5 = Base64.encodeBase64(zipAsBytes);
+            byte[] decodedMd5 = Base64.getEncoder().encode(zipAsBytes);
             String decodedStr = new String(decodedMd5);
 
-            zipAsBytes = Base64.decodeBase64(decodedStr.getBytes());
+            zipAsBytes = Base64.getDecoder().decode(decodedStr.getBytes());
 
             // String str = new String(zipAsBytes);
 

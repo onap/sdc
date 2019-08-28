@@ -85,7 +85,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <!-- logback -->
         <logback.version>1.2.3</logback.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
-        <commons-codec>1.10</commons-codec>
         <commons-logging>1.2</commons-logging>
         <janino.version>3.0.6</janino.version>
 
@@ -124,7 +123,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
 
         <!-- parser-->
-        <sdc-tosca-parser.version>1.3.5</sdc-tosca-parser.version>
+        <sdc-tosca-parser.version>1.6.2</sdc-tosca-parser.version>
 
         <!-- sonar -->
         <sonar.language>java</sonar.language>
