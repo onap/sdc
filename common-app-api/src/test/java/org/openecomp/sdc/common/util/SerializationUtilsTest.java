@@ -22,38 +22,88 @@ package org.openecomp.sdc.common.util;
 
 import fj.data.Either;
 import org.junit.Test;
+import org.openecomp.sdc.fe.config.Configuration;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SerializationUtilsTest {
 
-	private SerializationUtils createTestSubject() {
-		return new SerializationUtils();
+	@Test
+	public void testSerializeAndDeserializeReturnsCorrectObject() {
+
+		final List<String> list = Collections.singletonList("testList");
+
+		Either<byte[], Boolean> serializeResult = SerializationUtils.serialize(list);
+		assertTrue(serializeResult.isLeft());
+		byte[] serializeList = serializeResult .left().value();
+
+		Either<Object, Boolean> deserializeResult = SerializationUtils.deserialize(serializeList);
+		assertTrue(deserializeResult.isLeft());
+		List<String> deserializeList = (List<String>) deserializeResult.left().value();
+
+		assertEquals(list, deserializeList);
 	}
 
 	@Test
-	public void testSerialize() throws Exception {
-		Object object = null;
-		Either<byte[], Boolean> result;
+	public void testSerializeReturnsFalseIfObjectIsNotSerializable() {
 
-		// default test
-		result = SerializationUtils.serialize(object);
+		final Configuration configuration = new Configuration();
+
+		Either<byte[], Boolean> serializeResult = SerializationUtils.serialize(configuration);
+		assertTrue(serializeResult.isRight());
+		assertFalse(serializeResult.right().value());
 	}
 
 	@Test
-	public void testDeserialize() throws Exception {
-		byte[] bytes = new byte[] { ' ' };
-		Either<Object, Boolean> result;
+	public void testDeserializeReturnsFalseIfObjectIsNotSerializable() {
 
-		// default test
-		result = SerializationUtils.deserialize(bytes);
+		String testBytes = "wrongBytesToDeserialize";
+
+		Either<Object, Boolean> serializeResult = SerializationUtils.deserialize(testBytes.getBytes());
+		assertTrue(serializeResult.isRight());
+		assertFalse(serializeResult.right().value());
 	}
 
 	@Test
-	public void testSerializeExt() throws Exception {
-		Object object = null;
-		Either<byte[], Boolean> result;
+	public void testSerializeExtAndDeserializeExtReturnsCorrectObject() {
 
-		// default test
-		result = SerializationUtils.serializeExt(object);
+		final List<String> list = Collections.singletonList("testList");
+
+		Either<byte[], Boolean> serializeResult = SerializationUtils.serializeExt(list);
+		assertTrue(serializeResult.isLeft());
+		byte[] serializeList = serializeResult .left().value();
+
+		Either<List, Boolean> deserializeResult =
+				SerializationUtils.deserializeExt(serializeList,List.class, "testComponent");
+		assertTrue(deserializeResult.isLeft());
+		List<String> deserializeList = deserializeResult.left().value();
+
+		assertEquals(list, deserializeList);
 	}
 
+	@Test
+	public void testSerializeExtReturnsFalseIfObjectIsNotSerializable() {
+
+		final Configuration configuration = new Configuration();
+
+		Either<byte[], Boolean> serializeResult = SerializationUtils.serializeExt(configuration);
+		assertTrue(serializeResult.isRight());
+		assertFalse(serializeResult.right().value());
+	}
+
+	@Test
+	public void testDeserializeExtReturnsFalseIfObjectIsNotSerializable() {
+
+		String testBytes = "wrongBytesToDeserialize";
+
+		Either<List, Boolean> serializeResult =
+				SerializationUtils.deserializeExt(testBytes.getBytes(),List.class, "testComponent");
+		assertTrue(serializeResult.isRight());
+		assertFalse(serializeResult.right().value());
+	}
 }

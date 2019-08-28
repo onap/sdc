@@ -24,19 +24,15 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 
+import static junit.framework.TestCase.assertEquals;
+
 
 public class GsonFactoryTest {
-
-	private GsonFactory createTestSubject() {
-		return new GsonFactory();
-	}
-
 	
 	@Test
-	public void testGetGson() throws Exception {
-		Gson result;
+	public void testGetGson() {
+		Gson result = GsonFactory.getGson();
 
-		// default test
-		result = GsonFactory.getGson();
+		assertEquals( result.getClass(),  Gson.class);
 	}
 }
