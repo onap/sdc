@@ -21,7 +21,7 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -196,7 +196,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
 		Path path = Paths.get(rootPath + "/src/test/resources/CI/csars/vf_with_cap_prop_override_cap_type_prop.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);
@@ -231,7 +231,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		Path path = Paths
 				.get(rootPath + "/src/test/resources/CI/csars/vf_with_cap_prop_override_cap_type_prop_failed.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);
@@ -274,7 +274,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		resourceDetails = ElementFactory.getDefaultImportResource();
 		Path path = Paths.get(rootPath + "/src/test/resources/CI/csars/vf_with_cap_prop_override_cap_type_prop1.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);
@@ -322,7 +322,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		Path path = Paths
 				.get(rootPath + "/src/test/resources/CI/csars/vf_with_cap_prop_override_cap_type_prop1_failed.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);
@@ -344,7 +344,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		Path path = Paths.get(rootPath + "/src/test/resources/CI/csars/" + payloadName);
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);
