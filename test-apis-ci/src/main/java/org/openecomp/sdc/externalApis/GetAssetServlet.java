@@ -22,7 +22,7 @@ package org.openecomp.sdc.externalApis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -263,7 +263,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		res = new byte[len];
 		inputStream.read(res, 0, len);
 		fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
-		assertEquals(Base64.encodeBase64(res), fromUiDownload);
+		assertEquals(Base64.getEncoder().encode(res), fromUiDownload);
 		fileName = assetResponse.getFirstHeader(Constants.CONTENT_DISPOSITION_HEADER).getValue();
 		assertEquals(fileName, new StringBuilder().append("attachment; filename=\"")
 				.append(artifactUiDownloadData.getArtifactName()).append("\"").toString());

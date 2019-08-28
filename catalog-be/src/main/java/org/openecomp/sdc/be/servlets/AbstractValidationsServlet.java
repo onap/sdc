@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,6 @@ import java.util.function.Supplier;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -216,7 +216,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
                 Response errorResp = buildErrorResponse(responseFormat);
                 responseWrapper.setInnerElement(errorResp);
             }
-            String payloadData =  Base64.encodeBase64String(data);
+            String payloadData =  Base64.getEncoder().encodeToString(data);
             uploadResourceInfoWrapper.setPayloadData(payloadData);
 
 
@@ -474,7 +474,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             responseWrapper.setInnerElement(errorResponse);
         } else {
             String toscaPayload = resourceInfo.getPayloadData();
-            String decodedPayload = new String(Base64.decodeBase64(toscaPayload));
+            String decodedPayload = new String(Base64.getDecoder().decode(toscaPayload));
             yamlStringWrapper.setInnerElement(decodedPayload);
         }
 
@@ -742,7 +742,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
         }
 
-        byte[] decodedPayload = Base64.decodeBase64(payloadData.getBytes(StandardCharsets.UTF_8));
+        byte[] decodedPayload = Base64.getDecoder().decode(payloadData.getBytes(StandardCharsets.UTF_8));
         if (decodedPayload == null) {
             log.info("Failed to decode received csar", csarUUID);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
