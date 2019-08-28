@@ -21,7 +21,7 @@
 //US505653
 package org.openecomp.sdc.ci.tests.execute.general;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -295,7 +295,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	@Test
 	public void sendAuthenticatedRequestTest_InvalidHeader() throws Exception, Exception {
 		String userCredentials = USER + ":" + PASSWORD;
-		byte[] encodeBase64 = Base64.encodeBase64(userCredentials.getBytes());
+		byte[] encodeBase64 = Base64.getEncoder().encode(userCredentials.getBytes());
 		String encodedUserCredentials = new String(encodeBase64);
 		Map<String, String> authorizationHeader = new HashMap<String, String>();
 		authorizationHeader.put(HttpHeaderEnum.AUTHORIZATION.getValue(), encodedUserCredentials);

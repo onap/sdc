@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -78,7 +78,7 @@ public class ArtifactUtils {
         json.put(Constants.ARTIFACT_DESCRIPTION, description);
         json.put(Constants.IS_FROM_CSAR, isFromCsar);
 
-        String encodedPayload = Base64.encodeBase64String(artifactContentent);
+        String encodedPayload = Base64.getEncoder().encodeToString(artifactContentent);
 
         json.put(Constants.ARTIFACT_PAYLOAD_DATA, encodedPayload);
         json.put(Constants.ARTIFACT_DISPLAY_NAME, displayName);
@@ -104,7 +104,7 @@ public class ArtifactUtils {
         json.put(Constants.ARTIFACT_DESCRIPTION, "created from csar");
 		json.put(Constants.IS_FROM_CSAR, isFromcsar);
 
-        String encodedPayload = Base64.encodeBase64String(artifactContentent);
+        String encodedPayload = Base64.getEncoder().encodeToString(artifactContentent);
 
         json.put(Constants.ARTIFACT_PAYLOAD_DATA, encodedPayload);
         String displayName = artifactName;

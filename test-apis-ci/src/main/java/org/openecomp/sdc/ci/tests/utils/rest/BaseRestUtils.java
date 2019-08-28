@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -46,7 +46,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 	public static final String acceptJsonHeader = "application/json";
 	public static final String acceptOctetHeader = "application/octet-stream";
 	public static final String acceptMultipartHeader = "application/octet-stream";
-	public static final String authorizationHeader = "Basic " + Base64.encodeBase64String("ci:123456".getBytes());
+	public static final String authorizationHeader = "Basic " + Base64.getEncoder().encodeToString("ci:123456".getBytes());
 	public static final String acceptOctetStream = "application/octet-stream";
 	public static final String ecomp = "ecomp";
 	public static final String authorizationPrefixString = "Basic ";
@@ -258,7 +258,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 
 	public static Map<String, String> addAuthorizeHeader(String userName, String password) {
 		String userCredentials = userName + ":" + password;
-		encodeBase64 = Base64.encodeBase64(userCredentials.getBytes());
+		encodeBase64 = Base64.getEncoder().encode(userCredentials.getBytes());
 		String encodedUserCredentials = authorizationPrefixString + new String(encodeBase64);
 		Map<String, String> authorizationHeader = new HashMap<>();
 		authorizationHeader.put(HttpHeaderEnum.AUTHORIZATION.getValue(), encodedUserCredentials);

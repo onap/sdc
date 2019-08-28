@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.tosca;
 
 
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.WordUtils;
@@ -635,7 +634,7 @@ public class CsarUtils {
 				parsedCsarArtifactPath[1], collectedWarningMessages));
 		artifact.setArtifactName(
 				ValidationUtils.normalizeFileName(parsedCsarArtifactPath[parsedCsarArtifactPath.length - 1]));
-		artifact.setPayloadData(Base64.encodeBase64String(entry.getValue()));
+		artifact.setPayloadData(Base64.getEncoder().encodeToString(entry.getValue()));
 		artifact.setArtifactDisplayName(artifact.getArtifactName().lastIndexOf('.') > 0
 				? artifact.getArtifactName().substring(0, artifact.getArtifactName().lastIndexOf('.'))
 				: artifact.getArtifactName());
@@ -675,7 +674,7 @@ public class CsarUtils {
 			}
 			this.artifactLabel = ValidationUtils.normalizeArtifactLabel(artifactName);
 			if (payloadData != null) {
-				this.payloadData = Base64.encodeBase64String(payloadData);
+				this.payloadData = Base64.getEncoder().encodeToString(payloadData);
 				this.artifactChecksum = GeneralUtility.calculateMD5Base64EncodedByByteArray(payloadData);
 			}
 			this.artifactUniqueId = artifactUniqueId;

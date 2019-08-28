@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.common.util;
 
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.hash.Hashing;
+import java.util.Base64;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.common.api.Constants;
 
@@ -49,7 +50,12 @@ public class GeneralUtility {
      * The methods contained in other common libraries do the same.
      */
     public static boolean isBase64Encoded(byte[] data) {
-        return Base64.isBase64(data);
+        try {
+            Base64.getDecoder().decode(data);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -65,7 +71,7 @@ public class GeneralUtility {
             if (isEncoded) {
                 // If no exception is caught, then it is possibly a base64
                 // encoded string
-                byte[] data = Base64.decodeBase64(str);
+                Base64.getDecoder().decode(str);
             }
 
         } catch (Exception e) {
@@ -136,29 +142,21 @@ public class GeneralUtility {
     }
 
     public static String calculateMD5Base64EncodedByByteArray(byte[] payload) {
-        String decodedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(payload);
-        byte[] encodeMd5 = Base64.encodeBase64(decodedMd5.getBytes());
+        String decodedMd5 = Hashing.md5().hashBytes(payload).toString();
+        byte[] encodeMd5 = Base64.getEncoder().encode(decodedMd5.getBytes());
         return new String(encodeMd5);
 
     }
 
-    /**
-     * @param data
-     * @return
-     */
     public static String calculateMD5Base64EncodedByString(String data) {
-        String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
+        String calculatedMd5 = Hashing.md5().hashBytes(data.getBytes()).toString();
 
         // encode base-64 result
-        byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
+        byte[] encodeBase64 = Base64.getEncoder().encode(calculatedMd5.getBytes());
         return new String(encodeBase64);
     }
 
 
-    /**
-     * @param String
-     * @return String is null or Empty
-     */
     public static boolean isEmptyString(String str) {
         return str == null || str.trim().isEmpty();
     }

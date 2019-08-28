@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.imports;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -444,7 +444,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 		assertNotNull(artifactUiDownloadData);
 
 		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
-		byte[] decodeBase64 = Base64.decodeBase64(fromUiDownload);
+		byte[] decodeBase64 = Base64.getDecoder().decode(fromUiDownload);
 
 		return decodeBase64;
 	}

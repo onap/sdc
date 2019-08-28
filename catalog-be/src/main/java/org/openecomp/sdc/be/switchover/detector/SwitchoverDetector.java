@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.switchover.detector;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -119,7 +119,7 @@ public class SwitchoverDetector {
 
     private void setAuthorizationProperties() {
         String userInfo = switchoverDetectorConfig.getChangePriorityUser() + ":" + switchoverDetectorConfig.getChangePriorityPassword();
-        String auth = "Basic " + new String(new Base64().encode(userInfo.getBytes()));
+        String auth = "Basic " + new String(Base64.getEncoder().encode(userInfo.getBytes()));
         authHeader = new Properties();
         authHeader.put("Authorization", auth);
     }

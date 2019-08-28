@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -62,7 +62,7 @@ public class CsarParserUtils {
 		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(csarResponse.getResponse(),
 				ArtifactUiDownloadData.class);
 		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
-		return Base64.decodeBase64(fromUiDownload);
+		return Base64.getDecoder().decode(fromUiDownload);
 	}
 	
 	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(File csarFileLocation) throws Exception {

@@ -182,12 +182,18 @@
       <artifactId>jersey-bean-validation</artifactId>
     </dependency>
 
-    <!-- http client -->
+        <!-- http client -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${httpclient.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -204,12 +210,6 @@
       <scope>compile</scope>
     </dependency>
 
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>${commons-codec}</version>
-      <scope>compile</scope>
-    </dependency>
     <!-- http client END -->
 
     <dependency>

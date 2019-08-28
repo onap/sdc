@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.WordUtils;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -737,7 +736,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		// create new resource from Csar
@@ -755,7 +754,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// change composition (resource should be updated)
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_b.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		// change name
 		resourceDetails.setName("test1");
@@ -782,7 +781,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// wrong RI (without node types, resource shouldn't be updated)
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_c.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		// change name
 		resourceDetails.setName("test3");
@@ -797,7 +796,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		resourceDetails = ElementFactory.getDefaultImportResource();
 		path = Paths.get(rootPath + "/src/main/resources/ci/VF_RI2_G4_withArtifacts.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setPayloadName("VF_RI2_G4_withArtifacts.csar");
 		resourceDetails.setName("test4");
@@ -813,7 +812,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		resourceDetails.setCsarUUID("VF_RI2_G4_withArtifacts_b.csar");
 		path = Paths.get(rootPath + "/src/main/resources/ci/VF_RI2_G4_withArtifacts_b.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setPayloadName("VF_RI2_G4_withArtifacts_b.csar");
 		resourceDetails.setName("test5");
@@ -834,7 +833,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		// create new resource from Csar
@@ -851,7 +850,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// change composition and update resource
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_b.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setUniqueId(resource.getUniqueId());
 		// change name
@@ -879,7 +878,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// shouldn't be updated)
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_c.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		// change name
 		resourceDetails.setName("test3");
@@ -1059,7 +1058,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		// create new resource from Csar
@@ -1077,7 +1076,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// change composition (add new RI with specified property values)
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_d.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		// change name
 		resourceDetails.setName("test1");
@@ -1092,7 +1091,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		// change composition (add new specified property values to existing RI)
 		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_f.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		// change name
 		resourceDetails.setName("test2");
@@ -1445,7 +1444,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		path = Paths.get(rootPath + "/src/test/resources/CI/csars/vmmc_relate_by_cap_name.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		// create new resource from Csar
@@ -1471,7 +1470,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		path = Paths.get(rootPath + "/src/test/resources/CI/csars/vf_relate_by_cap_name.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		// create new resource from Csar
@@ -1644,7 +1643,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		String payloadName = "ImportArtifactsToVFC.csar";
 		Path path = Paths.get(rootPath + "/src/test/resources/CI/csars/ImportArtifactsToVFC.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
@@ -1663,7 +1662,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		payloadName = "ImportArtifactsToVFC_empty.csar";
 		path = Paths.get(rootPath + "/src/test/resources/CI/csars/ImportArtifactsToVFC_empty.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setName(resourceDetails.getName()+"2");
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setPayloadName(payloadName);

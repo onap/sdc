@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.common.test;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
@@ -52,11 +52,11 @@ public class YamlTest {
 
 	@Test
 	public void testValidYamlBase64() {
-		assertTrue(yamlToObjectConverter.isValidYamlEncoded64(Base64.encodeBase64(validYaml.getBytes())));
+		assertTrue(yamlToObjectConverter.isValidYamlEncoded64(Base64.getEncoder().encode(validYaml.getBytes())));
 	}
 
 	@Test
 	public void testInvalidYamlBase64() {
-		assertFalse(yamlToObjectConverter.isValidYamlEncoded64(Base64.encodeBase64(invalidYaml.getBytes())));
+		assertFalse(yamlToObjectConverter.isValidYamlEncoded64(Base64.getEncoder().encode(invalidYaml.getBytes())));
 	}
 }

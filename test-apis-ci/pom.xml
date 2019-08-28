@@ -165,13 +165,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

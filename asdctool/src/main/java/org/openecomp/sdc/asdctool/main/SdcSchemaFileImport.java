@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import com.google.common.hash.Hashing;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
 import org.openecomp.sdc.asdctool.impl.EsToCassandraDataMigrationConfig;
@@ -142,7 +142,7 @@ public class SdcSchemaFileImport {
 		byte[] fileBytes = baos.toByteArray();
 
 		Date date = new Date();
-		String md5Hex = DigestUtils.md5Hex(fileBytes);
+		String md5Hex = Hashing.md5().hashBytes(fileBytes).toString();
 		
 		SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME, fileBytes, md5Hex);
 		CassandraOperationStatus saveSchemaFile = schemaFilesCassandraDao.saveSchemaFile(schemeFileData);

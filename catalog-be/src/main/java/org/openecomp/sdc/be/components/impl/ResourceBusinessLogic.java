@@ -34,6 +34,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonSt
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -49,7 +50,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -766,7 +766,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (!foundArtifact.getArtifactChecksum().equals(currNewArtifact.getArtifactChecksum())) {
             foundArtifact.setPayload(currNewArtifact.getPayloadData());
             foundArtifact.setPayloadData(
-                    Base64.encodeBase64String(currNewArtifact.getPayloadData()));
+                    Base64.getEncoder().encodeToString(currNewArtifact.getPayloadData()));
             foundArtifact.setArtifactChecksum(GeneralUtility
                     .calculateMD5Base64EncodedByByteArray(currNewArtifact.getPayloadData()));
             artifactsToUpdate.add(foundArtifact);

@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.common.util;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
@@ -259,7 +259,7 @@ public class YamlToObjectConverter {
 
     public boolean isValidYamlEncoded64(byte[] fileContents) {
         log.trace("Received Base64 data - decoding before validating...");
-        byte[] decodedFileContents = Base64.decodeBase64(fileContents);
+        byte[] decodedFileContents = Base64.getDecoder().decode(fileContents);
 
         return isValidYaml(decodedFileContents);
     }

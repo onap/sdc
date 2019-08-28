@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
@@ -856,7 +855,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     private Either<List<HeatParameterDefinition>, ResponseFormat> extractHeatParameters(String artifactType,
             String fileName, byte[] content, boolean is64Encoded) {
         // extract heat parameters
-        String heatDecodedPayload = is64Encoded ? new String(Base64.decodeBase64(content)) : new String(content);
+        String heatDecodedPayload = is64Encoded ? new String(Base64.getDecoder().decode(content)) : new String(content);
         Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils
                 .getHeatParamsWithoutImplicitTypes(heatDecodedPayload, artifactType);
         if (heatParameters.isRight()) {
