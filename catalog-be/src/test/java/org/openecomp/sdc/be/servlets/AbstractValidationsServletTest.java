@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.servlets;
 
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -76,7 +76,7 @@ public class AbstractValidationsServletTest {
         try {
             path = Paths.get(rootPath + "/src/test/resources/valid_vf.csar");
             data = Files.readAllBytes(path);
-            payloadData = Base64.encodeBase64String(data);
+            payloadData = Base64.getEncoder().encodeToString(data);
             UploadResourceInfo resourceInfo = new UploadResourceInfo();
             resourceInfo.setPayloadName(payloadName);
             resourceInfo.setPayloadData(payloadData);

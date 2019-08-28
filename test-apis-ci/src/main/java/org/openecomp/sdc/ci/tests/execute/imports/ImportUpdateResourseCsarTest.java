@@ -21,7 +21,7 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -73,7 +73,7 @@ public class ImportUpdateResourseCsarTest extends ComponentBaseTest {
 		String rootPath = System.getProperty("user.dir");
 		Path path = Paths.get(rootPath + csarFolderPath + "orig2G.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setName("TEST01");
@@ -87,7 +87,7 @@ public class ImportUpdateResourseCsarTest extends ComponentBaseTest {
 		// update scar with new artifacts
 		path = Paths.get(rootPath + csarFolderPath + "orig2G_update.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setDescription("update");
 		resourceDetails.setCsarVersion("2");
 		updateResource = ResourceRestUtils.updateResource(resourceDetails, sdncModifierDetails,
@@ -270,7 +270,7 @@ public class ImportUpdateResourseCsarTest extends ComponentBaseTest {
 
 		Path path = Paths.get(rootPath + csarFolderPath + payloadName);
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 
 		resourceDetails.setPayloadName(payloadName);

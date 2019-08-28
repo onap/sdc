@@ -20,42 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-//import com.fasterxml.jackson.databind.DeserializationFeature;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.module.SimpleModule;
-//import com.google.gson.*;
-//import org.apache.commons.codec.binary.Base64;
-//import org.apache.log4j.Logger;
-//import org.codehaus.jackson.JsonNode;
-//
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.simple.JSONObject;
-//import org.json.simple.JSONValue;
-//import org.openecomp.sdc.be.model.*;
-//import org.openecomp.sdc.be.model.category.CategoryDefinition;
-//import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;;
-//import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-//import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
-//import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
-//import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
-//import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-//import org.openecomp.sdc.ci.tests.tosca.datatypes.VfModuleDefinition;
-//import org.openecomp.sdc.ci.tests.utils.Utils;
-//import org.yaml.snakeyaml.Yaml;
-//
-//import java.io.ByteArrayInputStream;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.text.ParseException;
-//import java.util.*;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.hash.Hashing;
 import com.google.gson.*;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -398,9 +368,9 @@ public class ResponseParser {
 	}
 
 	public static String calculateMD5(String data) {
-		String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
+		String calculatedMd5 = Hashing.md5().hashBytes(data.getBytes()).toString();
 		// encode base-64 result
-		byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
+		byte[] encodeBase64 = Base64.getEncoder().encode(calculatedMd5.getBytes());
 		String encodeBase64Str = new String(encodeBase64);
 		return encodeBase64Str;
 

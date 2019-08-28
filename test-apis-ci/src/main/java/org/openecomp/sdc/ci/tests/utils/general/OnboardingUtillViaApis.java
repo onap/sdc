@@ -22,7 +22,7 @@ package org.openecomp.sdc.ci.tests.utils.general;
 
 import com.google.gson.Gson;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
@@ -86,7 +86,7 @@ public class OnboardingUtillViaApis {
 		@SuppressWarnings("unchecked")
 		Map<String, String> fromJson = gson.fromJson(payload, Map.class);
 		String string = fromJson.get("base64Contents").toString();
-		byte[] byteArray = Base64.decodeBase64(string.getBytes(StandardCharsets.UTF_8));
+		byte[] byteArray = Base64.getDecoder().decode(string.getBytes(StandardCharsets.UTF_8));
 		File downloadedFile = new File(file.getAbsolutePath());
 		FileOutputStream fos = new FileOutputStream(downloadedFile);
 		fos.write(byteArray);
