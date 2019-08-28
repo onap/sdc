@@ -94,6 +94,7 @@ import static org.openecomp.sdc.action.util.ActionUtil.actionErrorLogProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.getUtcDateStringFromTimestamp;
 
+import com.google.common.hash.Hashing;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -103,7 +104,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -197,7 +197,7 @@ public class ActionsImpl implements Actions {
   private static String calculateCheckSum(byte[] input) {
     String checksum = null;
     if (input != null) {
-      checksum = DigestUtils.md5Hex(input);
+      checksum = Hashing.md5().hashBytes(input).toString().toUpperCase();
     }
     return checksum;
   }
@@ -1208,7 +1208,7 @@ public class ActionsImpl implements Actions {
   private String CalcMD5CheckSum(byte[] input) {
     String checksum = null;
     if (input != null) {
-      checksum = DigestUtils.md5Hex(input).toUpperCase();
+      checksum = Hashing.md5().hashBytes(input).toString().toUpperCase();
       System.out.println("checksum : " + checksum);
     }
     return checksum;

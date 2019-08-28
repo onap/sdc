@@ -1,1 +1,1 @@
-normal['version'] ="1.5.0"
+normal['version'] ="1.5.1"

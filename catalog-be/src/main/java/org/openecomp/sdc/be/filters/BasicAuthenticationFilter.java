@@ -23,7 +23,7 @@ package org.openecomp.sdc.be.filters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -81,7 +81,7 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
                 if ("Basic".equalsIgnoreCase(basic)) {
                     try {
-                        String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
+                        String credentials = new String(Base64.getDecoder().decode(st.nextToken()), "UTF-8");
                         log.debug("Credentials: {}", credentials);
                         checkUserCredentials(requestContext, credentials);
                     } catch (UnsupportedEncodingException e) {

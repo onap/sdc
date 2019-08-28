@@ -30,8 +30,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import mockit.Deencapsulation;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -529,7 +530,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         artifactDefinition.setArtifactType(ArtifactTypeEnum.TOSCA_TEMPLATE.getType());
         artifactDefinition.setArtifactLabel(ARTIFACT_LABEL);
         artifactDefinition.setEsId(ES_ARTIFACT_ID);
-        artifactDefinition.setPayload(PAYLOAD);
+        artifactDefinition.setPayload(Base64.getEncoder().encode(PAYLOAD));
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
@@ -1239,7 +1240,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         artifactInfo.setArtifactName(artifactName);
         artifactInfo.setArtifactType(artifactType.getType());
         artifactInfo.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-        artifactInfo.setPayload(Base64.encodeBase64(payload));
+        artifactInfo.setPayload(Base64.getEncoder().encode(payload));
         return artifactInfo;
     }
 

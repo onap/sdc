@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import com.google.common.hash.Hashing;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
@@ -205,7 +205,7 @@ public class ArtifactFromCsar {
  
 			// md5Hex converts an array of bytes into an array of characters representing the hexadecimal values of each byte in order.
 			// The returned array will be double the length of the passed array, as it takes two characters to represent any given byte.
-			crunchifyValue = DigestUtils.md5Hex(IOUtils.toByteArray(crunchifyInputStream));
+			crunchifyValue = Hashing.md5().hashBytes(IOUtils.toByteArray(crunchifyInputStream)).toString();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

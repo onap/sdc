@@ -23,7 +23,7 @@ package org.openecomp.sdc.ci.tests.utils.general;
 import com.aventstack.extentreports.Status;
 import com.google.gson.Gson;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONException;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -821,7 +821,7 @@ public final class AtomicOperationUtils {
 		Path path = Paths.get(csarFilePath + File.separator + csarFileName);
 		byte[] data = Files.readAllBytes(path);
 		String payloadName = csarFileName;
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
@@ -836,7 +836,7 @@ public final class AtomicOperationUtils {
 		Path path = Paths.get(csarFilePath + File.separator + csarFileName);
 		data = Files.readAllBytes(path);
 		String payloadName = csarFileName;
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		ImportReqDetails resourceDetails = new ImportReqDetails(resource, payloadName, payloadData);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setCsarUUID(payloadName);

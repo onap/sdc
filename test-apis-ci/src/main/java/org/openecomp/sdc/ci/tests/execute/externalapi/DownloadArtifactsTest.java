@@ -21,7 +21,7 @@
 package org.openecomp.sdc.ci.tests.execute.externalapi;
 
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -348,7 +348,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 		String payloadName = "VF_RI2_G4_withArtifacts.csar";
 		Path path = Paths.get(rootPath + "/src/main/resources/ci/VF_RI2_G4_withArtifacts.csar");
 		byte[] data = Files.readAllBytes(path);
-		String payloadData = Base64.encodeBase64String(data);
+		String payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetailsVF_01.setPayloadData(payloadData);
 
 		resourceDetailsVF_01.setPayloadName(payloadName);

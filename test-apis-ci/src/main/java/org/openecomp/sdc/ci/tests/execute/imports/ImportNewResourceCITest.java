@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -161,7 +160,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
                 + "  org.openecomp.resource.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n"
                 + "    description: someDesc";
 
-        String encodedPayload = new String(Base64.encodeBase64(payload.getBytes()));
+        String encodedPayload = new String(Base64.getEncoder().encode(payload.getBytes()));
 
         String json = "{\r\n" + "  \"resourceName\": \"importResource4test\",\r\n"
                 + "  \"payloadName\": \"importResource4test.yml\",\r\n"

@@ -36,7 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
@@ -712,7 +712,7 @@ public class ArtifactServlet extends BeGenericServlet {
             response = buildErrorResponse(actionResult.right().value());
         } else {
             byte[] file = actionResult.left().value().getRight();
-            String base64Contents = new String(Base64.encodeBase64(file));
+            String base64Contents = new String(Base64.getEncoder().encode(file));
             String artifactName = actionResult.left().value().getLeft();
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
             ArtifactUiDownloadData artifactUiDownloadData = new ArtifactUiDownloadData();
