@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.common.util;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
@@ -65,8 +65,8 @@ public class YamlToObjectConverter {
 
     static {
 
-        org.yaml.snakeyaml.constructor.Constructor deConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-                DistributionEngineConfiguration.class);
+        org.yaml.snakeyaml.constructor.Constructor deConstructor =
+                new org.yaml.snakeyaml.constructor.Constructor(DistributionEngineConfiguration.class);
         TypeDescription deDescription = new TypeDescription(DistributionEngineConfiguration.class);
         deDescription.putListPropertyType("distributionStatusTopic", DistributionStatusTopicConfig.class);
         deDescription.putListPropertyType("distribNotifServiceArtifactTypes", ComponentArtifactTypesConfig.class);
@@ -78,16 +78,16 @@ public class YamlToObjectConverter {
         yamls.put(DistributionEngineConfiguration.class.getName(), yaml);
 
         // FE conf
-        org.yaml.snakeyaml.constructor.Constructor feConfConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-                org.openecomp.sdc.fe.config.Configuration.class);
+        org.yaml.snakeyaml.constructor.Constructor feConfConstructor =
+                new org.yaml.snakeyaml.constructor.Constructor(org.openecomp.sdc.fe.config.Configuration.class);
         TypeDescription feConfDescription = new TypeDescription(org.openecomp.sdc.fe.config.Configuration.class);
         feConfDescription.putListPropertyType("systemMonitoring", FeMonitoringConfig.class);
         feConfConstructor.addTypeDescription(feConfDescription);
         yamls.put(org.openecomp.sdc.fe.config.Configuration.class.getName(), new Yaml(feConfConstructor));
 
         // BE conf
-        org.yaml.snakeyaml.constructor.Constructor beConfConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-                org.openecomp.sdc.be.config.Configuration.class);
+        org.yaml.snakeyaml.constructor.Constructor beConfConstructor =
+                new org.yaml.snakeyaml.constructor.Constructor(org.openecomp.sdc.be.config.Configuration.class);
         TypeDescription beConfDescription = new TypeDescription(org.openecomp.sdc.be.config.Configuration.class);
         beConfConstructor.addTypeDescription(beConfDescription);
 
@@ -101,10 +101,8 @@ public class YamlToObjectConverter {
         beConfConstructor.addTypeDescription(esDescription);
 
         // resourceDeploymentArtifacts and serviceDeploymentArtifacts
-        beConfDescription.putMapPropertyType("resourceDeploymentArtifacts", String.class,
-                ArtifactTypeConfig.class);
-        beConfDescription.putMapPropertyType("serviceDeploymentArtifacts", String.class,
-                ArtifactTypeConfig.class);
+        beConfDescription.putMapPropertyType("resourceDeploymentArtifacts", String.class, ArtifactTypeConfig.class);
+        beConfDescription.putMapPropertyType("serviceDeploymentArtifacts", String.class, ArtifactTypeConfig.class);
 
         // onboarding
         beConfDescription.putListPropertyType("onboarding", OnboardingConfig.class);
@@ -126,8 +124,8 @@ public class YamlToObjectConverter {
         yamls.put(org.openecomp.sdc.be.config.Configuration.class.getName(), new Yaml(beConfConstructor));
 
         // HEAT deployment artifact
-        org.yaml.snakeyaml.constructor.Constructor depArtHeatConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-                DeploymentArtifactHeatConfiguration.class);
+        org.yaml.snakeyaml.constructor.Constructor depArtHeatConstructor =
+                new org.yaml.snakeyaml.constructor.Constructor(DeploymentArtifactHeatConfiguration.class);
         PropertyUtils propertyUtils = new PropertyUtils();
         // Skip properties which are found in YAML but not found in POJO
         propertyUtils.setSkipMissingProperties(true);
@@ -158,13 +156,15 @@ public class YamlToObjectConverter {
             config = convert(fullFileName, className);
 
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file {} to object.", configFileName, e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file {} to object.",
+                    configFileName, e);
         }
 
         return config;
     }
 
     public class MyYamlConstructor extends org.yaml.snakeyaml.constructor.Constructor {
+
         private HashMap<String, Class<?>> classMap = new HashMap<>();
 
         public MyYamlConstructor(Class<? extends Object> theRoot) {
@@ -206,7 +206,8 @@ public class YamlToObjectConverter {
 
             File f = new File(fullFileName);
             if (!f.exists()) {
-                log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "The file {} cannot be found. Ignore reading configuration.", fullFileName);
+                log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "",
+                        "The file {} cannot be found. Ignore reading configuration.", fullFileName);
                 return null;
             }
             in = Files.newInputStream(Paths.get(fullFileName));
@@ -215,7 +216,8 @@ public class YamlToObjectConverter {
 
             // System.out.println(config.toString());
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file {} to object.", fullFileName, e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file {} to object.",
+                    fullFileName, e);
         } finally {
             if (in != null) {
                 try {
@@ -259,9 +261,12 @@ public class YamlToObjectConverter {
 
     public boolean isValidYamlEncoded64(byte[] fileContents) {
         log.trace("Received Base64 data - decoding before validating...");
-        byte[] decodedFileContents = Base64.decodeBase64(fileContents);
-
-        return isValidYaml(decodedFileContents);
+        try {
+            byte[] decodedFileContents = Base64.getDecoder().decode(fileContents);
+            return isValidYaml(decodedFileContents);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -276,7 +281,8 @@ public class YamlToObjectConverter {
             }
 
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file to object - yaml is invalid", e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "",
+                    "Failed to convert yaml file to object - yaml is invalid", e);
             return false;
         }
         return true;

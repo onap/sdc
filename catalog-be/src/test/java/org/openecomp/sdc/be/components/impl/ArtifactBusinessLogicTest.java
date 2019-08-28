@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -1031,7 +1030,7 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
         when(artifactInfo.getEsId()).thenReturn(esId);
         final Wrapper<byte[]> payloadWrapper = new Wrapper<>();
         final byte[] payloadArtifactData = "testArtifactData".getBytes();
-        final byte[] base64PayloadArtifactData = Base64.decodeBase64(payloadArtifactData);
+        final byte[] base64PayloadArtifactData = Base64.getDecoder().decode(payloadArtifactData);
         final ESArtifactData artifactData = Mockito.mock(ESArtifactData.class);
         when(artifactData.getDataAsArray()).thenReturn(base64PayloadArtifactData);
 
