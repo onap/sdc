@@ -25,7 +25,7 @@ package org.openecomp.sdc.be.components.impl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -2248,7 +2248,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private Either<Boolean, ResponseFormat> extractHeatParameters(ArtifactDefinition artifactInfo) {
         // extract heat parameters
         if (artifactInfo.getPayloadData() != null) {
-            String heatDecodedPayload = new String(Base64.decodeBase64(artifactInfo.getPayloadData()));
+            String heatDecodedPayload = new String(Base64.getDecoder().decode(artifactInfo.getPayloadData()));
             Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParamsWithoutImplicitTypes(heatDecodedPayload, artifactInfo
                     .getArtifactType());
             if (heatParameters.isRight() && (!heatParameters.right()
@@ -2356,7 +2356,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 .getEsId());
         if (eitherArtifactData.isLeft()) {
             byte[] data = eitherArtifactData.left().value().getDataAsArray();
-            data = Base64.encodeBase64(data);
+            data = Base64.getEncoder().encode(data);
             payloadWrapper.setInnerElement(data);
         }
         else {
@@ -2372,9 +2372,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     @SuppressWarnings("unchecked")
     private void validateEnvVsHeat(Wrapper<ResponseFormat> errorWrapper, ArtifactDefinition envArtifact, ArtifactDefinition heatArtifact, byte[] heatPayloadData) {
-        String envPayload = new String(Base64.decodeBase64(envArtifact.getPayloadData()));
+        String envPayload = new String(Base64.getDecoder().decode(envArtifact.getPayloadData()));
         Map<String, Object> heatEnvToscaJson = (Map<String, Object>) new Yaml().load(envPayload);
-        String heatDecodedPayload = new String(Base64.decodeBase64(heatPayloadData));
+        String heatDecodedPayload = new String(Base64.getDecoder().decode(heatPayloadData));
         Map<String, Object> heatToscaJson = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
 
         Either<Map<String, Object>, ResultStatusEnum> eitherHeatEnvProperties = ImportUtils.findFirstToscaMapElement(heatEnvToscaJson, TypeUtils.ToscaTagNamesEnum.PARAMETERS);
@@ -3155,7 +3155,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         if (payload != null && payload.length != 0) {
             // the generated artifacts were already decoded by the handler
-            decodedPayload = artifactInfo.getGenerated() ? payload : Base64.decodeBase64(payload);
+            decodedPayload = artifactInfo.getGenerated() ? payload : Base64.getDecoder().decode(payload);
             if (decodedPayload.length == 0) {
                 log.debug("Failed to decode the payload.");
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -4142,7 +4142,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         if (artifactContent != null) {
             log.debug("payload is encoded. perform decode");
-            String encodedPayload = Base64.encodeBase64String(artifactContent);
+            String encodedPayload = Base64.getEncoder().encodeToString(artifactContent);
             json.put(Constants.ARTIFACT_PAYLOAD_DATA, encodedPayload);
         }
         json.put(Constants.ARTIFACT_DISPLAY_NAME, displayName);
