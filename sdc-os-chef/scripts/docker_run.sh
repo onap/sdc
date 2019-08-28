@@ -59,7 +59,7 @@ function cleanup {
     echo "Performing old dockers cleanup"
 
 	if [ "$1" == "all" ] ; then
-		docker_ids=`docker ps -a | egrep -v "onap/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit}|dcae" | awk '{print $1}'`
+		docker_ids=`docker ps -a | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit}|dcae" | awk '{print $1}'`
 		for X in ${docker_ids}
 		do
 			docker rm -f ${X}
@@ -213,7 +213,7 @@ function monitor_docker {
 
         esac
 
-        if [ ${status} == ${SUCCESS} ] ; then
+        if [[ ${status} == ${SUCCESS} ]] ; then
             break;
         fi
 
@@ -230,22 +230,22 @@ function monitor_docker {
 }
 #
 
-
+# healthCheck script used the secure connection to send request (https is always turn on)
 function healthCheck {
 	curl --noproxy "*" ${IP}:9200/_cluster/health?pretty=true
 
 	echo "BE Health Check:"
-	curl --noproxy "*" http://${IP}:8080/sdc2/rest/healthCheck
+	curl -k --noproxy "*" https://${IP}:8443/sdc2/rest/healthCheck
 
 	echo ""
 	echo ""
 	echo "FE Health Check:"
-	curl --noproxy "*" http://${IP}:8181/sdc1/rest/healthCheck
+	curl -k --noproxy "*" https://${IP}:9443/sdc1/rest/healthCheck
 
 
 	echo ""
 	echo ""
-	healthCheck_http_code=$(curl --noproxy "*" -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://${IP}:8080/sdc2/rest/v1/user/demo;)
+	healthCheck_http_code=$(curl -k --noproxy "*" -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" https://${IP}:8443/sdc2/rest/v1/user/demo;)
 	if [[ ${healthCheck_http_code} != 200 ]]; then
 		echo "Error [${healthCheck_http_code}] while checking existence of user"
 		return ${healthCheck_http_code}
@@ -610,25 +610,25 @@ fi
 echo ""
 
 if [ -z "${DOCKER}" ]; then
-        cleanup all
-	dir_perms
-	sdc-es
-	sdc-init-es
-	sdc-cs
-	sdc-cs-init
-#       sdc-kbn
-	sdc-cs-onboard-init
-	sdc-onboard-BE
-	sdc-BE
-	sdc-BE-init
-	sdc-FE
-	healthCheck
-        sdc-sim
-	sdc-api-tests
-	sdc-ui-tests
+    cleanup all
+    dir_perms
+    sdc-es
+    sdc-init-es
+    sdc-cs
+    sdc-cs-init
+#    sdc-kbn
+    sdc-cs-onboard-init
+    sdc-onboard-BE
+    sdc-BE
+    sdc-BE-init
+    sdc-FE
+    healthCheck
+    sdc-sim
+    sdc-api-tests
+    sdc-ui-tests
 else
-	cleanup ${DOCKER}
-	dir_perms
-	${DOCKER}
-        healthCheck
+    cleanup ${DOCKER}
+    dir_perms
+    ${DOCKER}
+    healthCheck
 fi
