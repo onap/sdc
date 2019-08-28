@@ -20,8 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -892,9 +893,9 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	}
 	
 	public static String calculateMD5 (String data){
-		String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
+		String calculatedMd5 = Hashing.md5().hashBytes(data.getBytes()).toString();
 		// encode base-64 result
-		byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
+		byte[] encodeBase64 = Base64.getEncoder().encode(calculatedMd5.getBytes());
 		String encodeBase64Str = new String(encodeBase64);
 		return encodeBase64Str;
 

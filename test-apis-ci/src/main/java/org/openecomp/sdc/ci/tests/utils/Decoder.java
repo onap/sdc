@@ -20,24 +20,23 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Base64;
 
 public class Decoder {
 
 	public static String encode(byte[] byteArrayToEncode) {
 
-		byte[] bytesEncoded = Base64.encodeBase64(byteArrayToEncode);
+		byte[] bytesEncoded = Base64.getEncoder().encode(byteArrayToEncode);
 		String strEncoded = new String(bytesEncoded);
 		return strEncoded;
 	}
 
 	public static String decode(String strEncoded) throws IOException {
 
-		byte[] byteDecoded = Base64.decodeBase64(strEncoded);
+		byte[] byteDecoded = Base64.getDecoder().decode(strEncoded);
 		String decoded = new String(byteDecoded);
 
 		return decoded;

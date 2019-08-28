@@ -23,7 +23,6 @@ package org.openecomp.sdc.ci.tests.execute.imports;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -213,7 +212,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		String payloadData = null;
 		path = Paths.get(rootPath + "/src/test/resources/CI/csars/jsonPropertyTypeTest.csar");
 		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
+		payloadData = Base64.getEncoder().encodeToString(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
@@ -383,7 +382,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(toscaTemplate.getResponse(),
 				ArtifactUiDownloadData.class);
 		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
-		byte[] decodeBase64 = Base64.decodeBase64(fromUiDownload);
+		byte[] decodeBase64 = Base64.getDecoder().decode(fromUiDownload);
 		Yaml yaml = new Yaml();
 
 		InputStream inputStream = new ByteArrayInputStream(decodeBase64);
