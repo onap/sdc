@@ -25,7 +25,7 @@ package org.openecomp.sdc.be.servlets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.text.StrSubstitutor;
 import org.apache.http.HttpStatus;
@@ -973,7 +973,7 @@ public class ResourceServletTest extends JerseyTest {
     }
 
     private void encodeAndSetPayload(UploadResourceInfo mdJson, String payload) {
-        byte[] encodedBase64Payload = Base64.encodeBase64(payload.getBytes());
+        byte[] encodedBase64Payload = Base64.getEncoder().encode(payload.getBytes());
         mdJson.setPayloadData(new String(encodedBase64Payload));
     }
 

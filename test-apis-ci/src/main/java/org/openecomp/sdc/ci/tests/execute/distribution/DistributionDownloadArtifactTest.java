@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.distribution;
 
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
@@ -201,7 +201,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 		String actualContents = restResponse.getResponse();
 
 		// Contents - comparing decoded content
-		AssertJUnit.assertEquals(artifactDetails.getPayload(), Base64.encodeBase64String(actualContents.getBytes()));
+		AssertJUnit.assertEquals(artifactDetails.getPayload(), Base64.getEncoder().encodeToString(actualContents.getBytes()));
 
 		// validating checksum
 		String actualPayloadChecksum = GeneralUtility.calculateMD5Base64EncodedByByteArray(actualContents.getBytes());
@@ -368,7 +368,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 		String actualContents = restResponse.getResponse();
 
-		assertEquals(artifactDetails.getPayload(), Base64.encodeBase64String(actualContents.getBytes()));
+		assertEquals(artifactDetails.getPayload(), Base64.getEncoder().encodeToString(actualContents.getBytes()));
 
 		// validating checksum
 		byte[] bytes = actualContents.getBytes();

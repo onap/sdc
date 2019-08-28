@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.common.rest.impl.validator;
 
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.hash.Hashing;
+import java.util.Base64;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -75,8 +76,8 @@ public class RequestHeadersValidator {
         }
 
         // calculate MD5 on the data
-        String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(encodedData);
-        byte[] encodedMd5 = Base64.encodeBase64(md5.getBytes());
+        String md5 = Hashing.md5().hashBytes(encodedData).toString();
+        byte[] encodedMd5 = Base64.getEncoder().encode(md5.getBytes());
 
         // read the Content-MD5 header
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
