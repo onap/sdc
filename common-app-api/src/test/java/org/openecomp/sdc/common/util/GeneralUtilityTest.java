@@ -20,125 +20,231 @@
 
 package org.openecomp.sdc.common.util;
 
-import java.util.List;
 
-import org.junit.Assert;
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GeneralUtilityTest {
 
-	private GeneralUtility createTestSubject() {
-		return new GeneralUtility();
-	}
-
-	
 	@Test
-	public void testGenerateTextFile() throws Exception {
-		String fileName = "";
-		String fileData = "";
-		boolean result;
+	public void validateGenerateTextFileReturnsTrueIfGeneratesTextFile() throws IOException {
 
-		// default test
-		result = GeneralUtility.generateTextFile(fileName, fileData);
+		final String fileName = "test.txt";
+		final String fileData = "test data";
+		final File expectedFile = new File(fileName);
+
+		boolean result = GeneralUtility.generateTextFile(fileName, fileData);
+
+		String createdFileData = FileUtils.readFileToString(expectedFile);
+
+		assertTrue(result);
+		assertEquals(createdFileData ,fileData);
+
+		FileUtils.forceDelete(expectedFile);
 	}
 
-	
 	@Test
-	public void testIsBase64Encoded() throws Exception {
-		byte[] data = new byte[] { ' ' };
-		boolean result;
+	public void validateIsBase64EncodedReturnsProperResponseFromByteArray() {
 
-		// default test
-		result = GeneralUtility.isBase64Encoded(data);
+		final String testString = "testDataToEncode";
+		final byte[] testBytes = testString.getBytes();
+		final byte[] testEncodedBytes = Base64.getEncoder().encode(testBytes);
+
+		boolean result = GeneralUtility.isBase64Encoded(testEncodedBytes);
+
+		assertTrue(result);
 	}
 
-	
 	@Test
-	public void testIsBase64Encoded_1() throws Exception {
-		String str = "";
-		boolean result;
+	public void validateIsBase64EncodedReturnsProperResponseFromString() {
 
-		// default test
-		result = GeneralUtility.isBase64Encoded(str);
+		final String testString = "testDataToEncode";
+		final byte[] testBytes = testString.getBytes();
+		final byte[] testEncodedBytes = Base64.getEncoder().encode(testBytes);
+		final String testEncodedString = new String(testEncodedBytes);
+
+		boolean result = GeneralUtility.isBase64Encoded(testEncodedString);
+
+		assertTrue(result);
 	}
 
-	
 	@Test
-	public void testIsExceedingLimit() throws Exception {
-		String str = "";
-		int limit = 0;
-		boolean result;
+	public void validateIsExceedingLimitReturnsFalseIfStringIsShorterThenLimit() {
 
-		// test 1
-		str = null;
-		result = GeneralUtility.isExceedingLimit(str, limit);
-		Assert.assertEquals(false, result);
+		final String testString = "test";
+		final int limit = 5;
 
-		// test 2
-		str = "";
-		result = GeneralUtility.isExceedingLimit(str, limit);
-		Assert.assertEquals(false, result);
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit);
+
+		assertFalse(result);
 	}
 
-	
 	@Test
-	public void testIsExceedingLimit_1() throws Exception {
-		List<String> strList = null;
-		int limit = 0;
-		int delimiterLength = 0;
-		boolean result;
+	public void validateIsExceedingLimitReturnsFalseIfStringIsNull() {
 
-		// test 1
-		strList = null;
-		result = GeneralUtility.isExceedingLimit(strList, limit, delimiterLength);
-		Assert.assertEquals(false, result);
+		final String testString = null;
+		final int limit = 5;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit);
+
+		assertFalse(result);
 	}
 
-	
 	@Test
-	public void testGetFilenameExtension() throws Exception {
-		String fileName = "";
-		String result;
+	public void validateIsExceedingLimitReturnsFalseIfStringLengthIsEqualToLimit() {
 
-		// test 1
-		fileName = null;
-		result = GeneralUtility.getFilenameExtension(fileName);
-		Assert.assertEquals("", result);
+		final String testString = "test";
+		final int limit = 4;
 
-		// test 2
-		fileName = "";
-		result = GeneralUtility.getFilenameExtension(fileName);
-		Assert.assertEquals("", result);
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit);
+
+		assertFalse(result);
 	}
 
-	
 	@Test
-	public void testCalculateMD5Base64EncodedByByteArray() throws Exception {
-		byte[] payload = new byte[] { ' ' };
-		String result;
+	public void validateIsExceedingLimitReturnsTrueIfStringExceedsLimit() {
 
-		// default test
-		result = GeneralUtility.calculateMD5Base64EncodedByByteArray(payload);
+		final String testString = "test";
+		final int limit = 3;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit);
+
+		assertTrue(result);
 	}
 
-	
 	@Test
-	public void testCalculateMD5Base64EncodedByString() throws Exception {
-		String data = "";
-		String result;
+	public void validateIsExceedingLimitWithDelimiterReturnsFalseIfSumOfAllElementsLengthAndDelimiterLengthIsSmallerThenLimit() {
 
-		// default test
-		result = GeneralUtility.calculateMD5Base64EncodedByString(data);
+		final List<String> testString = Lists.newArrayList("testing","list");
+		final int limit = 15;
+		final int delimiterLength = 2;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit, delimiterLength);
+
+		assertFalse(result);
 	}
 
-	
 	@Test
-	public void testIsEmptyString() throws Exception {
-		String str = "";
-		boolean result;
+	public void validateIsExceedingLimitWithDelimiterReturnsFalseIfListIsNull() {
 
-		// default test
-		result = GeneralUtility.isEmptyString(str);
+		final List<String> testString = null;
+		final int limit = 15;
+		final int delimiterLength = 2;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit, delimiterLength);
+
+		assertFalse(result);
 	}
+
+	@Test
+	public void validateIsExceedingLimitWithDelimiterReturnsFalseIfSumOfAllElementsLengthAndDelimiterLengthIsEqualThenLimit() {
+
+		final List<String> testString = Lists.newArrayList("testing","list","equal");
+		final int limit = 18;
+		final int delimiterLength = 1;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit, delimiterLength);
+
+		assertFalse(result);
+	}
+
+	@Test
+	public void validateIsExceedingLimitWithDelimiterReturnsTrueIfSumOfAllElementsLengthAndDelimiterLengthIsBiggerThenLimit() {
+
+		final List<String> testString = Lists.newArrayList("long","testing","list","of","strings");
+		final int limit = 20;
+		final int delimiterLength = 2;
+
+		boolean result = GeneralUtility.isExceedingLimit(testString, limit, delimiterLength);
+
+		assertTrue(result);
+	}
+
+	@Test
+	public void validateGetFilenameExtensionReturnsProperExtension() {
+
+		final String testFile = "test.yaml";
+
+		String extension = GeneralUtility.getFilenameExtension(testFile);
+
+		assertEquals(extension, "yaml");
+	}
+
+	@Test
+	public void validateCalculateMD5Base64EncodedByByteArrayReturnsCorrectString() {
+
+		final String testStringToEncode = "testString";
+
+		String result = GeneralUtility.calculateMD5Base64EncodedByByteArray(testStringToEncode.getBytes());
+
+		final String encodedString =
+				org.apache.commons.codec.digest.DigestUtils.md5Hex(testStringToEncode.getBytes());
+
+		assertArrayEquals(encodedString.getBytes(), Base64.getDecoder().decode(result));
+	}
+
+	@Test
+	public void validateCalculateMD5Base64EncodedByStringReturnsCorrectString() {
+
+		final String testStringToEncode = "testString";
+
+		String result = GeneralUtility.calculateMD5Base64EncodedByString(testStringToEncode);
+
+		final String encodedString =
+				org.apache.commons.codec.digest.DigestUtils.md5Hex(testStringToEncode.getBytes());
+
+		assertArrayEquals(encodedString.getBytes(), Base64.getDecoder().decode(result));
+	}
+
+	@Test
+	public void validateIsEmptyStringReturnTrueIfStringIsEmpty() {
+
+		final String empty = "";
+
+		boolean result = GeneralUtility.isEmptyString(empty);
+
+		assertTrue(result);
+	}
+
+	@Test
+	public void validateIsEmptyStringReturnTrueIfStringIsContainingOnlyWightSpaces() {
+
+		final String empty = "  \t ";
+
+		boolean result = GeneralUtility.isEmptyString(empty);
+
+		assertTrue(result);
+	}
+
+	@Test
+	public void validateIsEmptyStringReturnFalseIfStringIsNotEmpty() {
+
+		final String empty = "test";
+
+		boolean result = GeneralUtility.isEmptyString(empty);
+
+		assertFalse(result);
+	}
+
+	@Test
+	public void validateIsEmptyStringReturnFalseIfStringIsNotEmptyAndSurroundedWithWightSpaces() {
+
+		final String empty = " \ttest  ";
+
+		boolean result = GeneralUtility.isEmptyString(empty);
+
+		assertFalse(result);
+	}
+
 }
