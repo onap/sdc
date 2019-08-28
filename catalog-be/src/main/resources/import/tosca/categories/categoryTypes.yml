@@ -150,6 +150,9 @@ resources:
       TunnelXConnect:
           name: "TunnelXConn"
           icons: ['tunnel_x_connect'] 
+      BRG:
+          name: "BRG"
+          icons: ['brg'] 
       IpMuxDemux:
           name: "IP Mux Demux"
           icons: ['ip_mux_demux'] 
