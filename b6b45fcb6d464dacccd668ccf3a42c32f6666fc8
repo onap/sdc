@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4085e7c5_3de97327",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-29T07:13:07Z",
+      "side": 1,
+      "message": "private",
+      "range": {
+        "startLine": 174,
+        "startChar": 4,
+        "endLine": 174,
+        "endChar": 10
+      },
+      "revId": "b6b45fcb6d464dacccd668ccf3a42c32f6666fc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06ab909f_fda5eb5c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-29T07:13:07Z",
+      "side": 1,
+      "message": "remove asterisk",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 49
+      },
+      "revId": "b6b45fcb6d464dacccd668ccf3a42c32f6666fc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9227e5c_04cabf68",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-29T07:13:07Z",
+      "side": 1,
+      "message": "privates",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 63
+      },
+      "revId": "b6b45fcb6d464dacccd668ccf3a42c32f6666fc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9cb5289f_cdc26c4c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-08-29T07:13:07Z",
+      "side": 1,
+      "message": "i don\u0027t think that \u0027Test\u0027 prefix is really needed here",
+      "range": {
+        "startLine": 949,
+        "startChar": 44,
+        "endLine": 949,
+        "endChar": 50
+      },
+      "revId": "b6b45fcb6d464dacccd668ccf3a42c32f6666fc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
