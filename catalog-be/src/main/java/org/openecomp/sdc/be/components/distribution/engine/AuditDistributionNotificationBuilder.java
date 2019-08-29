@@ -33,8 +33,6 @@ public class AuditDistributionNotificationBuilder {
     private String workloadContext;
     private String tenant;
 
-    public AuditDistributionNotificationBuilder() {}
-
     public String getTopicName() {
         return topicName;
     }
