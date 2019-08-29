@@ -20,10 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.tosca.csar.Manifest;
-import java.io.IOException;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 
 public interface ETSIService {
@@ -38,11 +42,22 @@ public interface ETSIService {
     boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException;
 
     /**
-     * Update file structure. Moves non mano files to Artifacts/Deployment/non mano key location
-     * @param handler
-     * @param manifest
+     * Update file structure. Moves non mano files to the correct folder based on the manifest non mano type.
+     *
+     * @param handler The file handler containing the artifacts to move.
+     * @return A Map with pairs of from and to path of the moved artifacts.
      */
-    void moveNonManoFileToArtifactFolder(FileContentHandler handler, Manifest manifest);
+    Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler)
+        throws IOException;
+
+    /**
+     * Updates the main descriptor paths referring the artifacts that were moved.
+     *
+     * @param toscaServiceModel The tosca service model containing the main descriptor.
+     * @param fromToMovedArtifactMap A Map representing the from and to artifacts path changes.
+     */
+    void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel,
+                                   final Map<String, Path> fromToMovedArtifactMap);
 
     /**
      * Retrieves the manifest file from the CSAR
@@ -64,4 +79,6 @@ public interface ETSIService {
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
     ResourceTypeEnum getResourceType(Manifest manifest) throws IOException;
+
+    Path getOriginalManifestPath(final FileContentHandler handler) throws IOException;
 }
