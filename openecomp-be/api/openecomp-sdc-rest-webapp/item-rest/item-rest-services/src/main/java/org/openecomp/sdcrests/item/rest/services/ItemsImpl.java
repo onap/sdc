@@ -16,23 +16,14 @@
 
 package org.openecomp.sdcrests.item.rest.services;
 
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.datatypes.model.ItemType;
-import org.openecomp.sdc.itempermissions.PermissionsManager;
-import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.dtos.Event;
-import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
-import org.openecomp.sdc.notification.services.NotificationPropagationManager;
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
@@ -40,6 +31,7 @@ import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdc.versioning.types.NotificationEventTypes;
 import org.openecomp.sdcrests.item.rest.Items;
 import org.openecomp.sdcrests.item.rest.mapping.MapItemToDto;
+import org.openecomp.sdcrests.item.rest.models.SyncEvent;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.Notifier;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.NotifierFactory;
 import org.openecomp.sdcrests.item.types.ItemAction;
@@ -68,23 +60,10 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM
 public class ItemsImpl implements Items {
 
     private static final String ONBOARDING_METHOD = "onboardingMethod";
-
-    private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
-
-    private static ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
-
-    private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
-
-    private final PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemsImpl.class);
 
-    private NotificationPropagationManager notifier =
-            NotificationPropagationManagerFactory.getInstance().createInterface();
-
-
-
     private Map<ItemAction, ActionSideAffects> actionSideAffectsMap = new EnumMap<>(ItemAction.class);
+    private ManagersProvider managersProvider;
 
     @PostConstruct
     public void initActionSideAffectsMap() {
@@ -94,21 +73,20 @@ public class ItemsImpl implements Items {
                 .put(ItemAction.RESTORE, new ActionSideAffects(ActivityType.Restore, NotificationEventTypes.RESTORE));
     }
 
-
     @Override
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
 
-        Item item = itemManager.get(itemId);
+        Item item = getManagersProvider().getItemManager().get(itemId);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).entity(new Exception("Item does not exist.")).build();
         }
 
         switch (request.getAction()) {
             case ARCHIVE:
-                itemManager.archive(item);
+                getManagersProvider().getItemManager().archive(item);
                 break;
             case RESTORE:
-                itemManager.restore(item);
+                getManagersProvider().getItemManager().restore(item);
                 break;
             default:
         }
@@ -134,7 +112,7 @@ public class ItemsImpl implements Items {
 
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
-        itemManager.list(itemPredicate).stream()
+        getManagersProvider().getItemManager().list(itemPredicate).stream()
                    .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
 
@@ -144,46 +122,10 @@ public class ItemsImpl implements Items {
 
     @Override
     public Response getItem(String itemId, String user) {
-        Item item = itemManager.get(itemId);
+        Item item = getManagersProvider().getItemManager().get(itemId);
         ItemDto itemDto = new MapItemToDto().applyMapping(item, ItemDto.class);
 
         return Response.ok(itemDto).build();
-    }
-
-    private class SyncEvent implements Event {
-
-        private String eventType;
-        private String originatorId;
-        private Map<String, Object> attributes;
-        private String entityId;
-
-        SyncEvent(String eventType, String originatorId, Map<String, Object> attributes, String entityId) {
-            this.eventType = eventType;
-            this.originatorId = originatorId;
-            this.attributes = attributes;
-            this.entityId = entityId;
-        }
-
-        @Override
-        public String getEventType() {
-            return eventType;
-        }
-
-        @Override
-        public String getOriginatorId() {
-            return originatorId;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return attributes;
-        }
-
-        @Override
-        public String getEntityId() {
-            return entityId;
-        }
-
     }
 
     private class ActionSideAffects {
@@ -198,7 +140,7 @@ public class ItemsImpl implements Items {
         }
 
         private Version getLatestVersion(String itemId) {
-            List<Version> list = versioningManager.list(itemId);
+            List<Version> list = getManagersProvider().getVersioningManager().list(itemId);
             Optional<Version> max = list.stream().max(Version::compareTo);
 
             return max.orElse(null);
@@ -206,21 +148,21 @@ public class ItemsImpl implements Items {
 
         private void execute(Item item, String user) {
             notifyUsers(item.getId(), item.getName(), user, this.notificationType);
-            activityLogManager.logActivity(
+            getManagersProvider().getActivityLogManager().logActivity(
                     new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true,
                             "", ""));
         }
 
         private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {
             Map<String, Object> eventProperties = new HashMap<>();
-            eventProperties.put(ITEM_NAME, itemName == null ? itemManager.get(itemId).getName() : itemName);
+            eventProperties.put(ITEM_NAME, itemName == null ? getManagersProvider().getItemManager().get(itemId).getName() : itemName);
             eventProperties.put(ITEM_ID, itemId);
 
             eventProperties.put(PERMISSION_USER, userName);
 
             Event syncEvent = new SyncEvent(eventType.getEventName(), itemId, eventProperties, itemId);
             try {
-                notifier.notifySubscribers(syncEvent, userName);
+                getManagersProvider().getNotificationPropagationManager().notifySubscribers(syncEvent, userName);
             } catch (Exception e) {
                 LOGGER.error("Failed to send sync notification to users subscribed to item '{}'", itemId, e);
             }
@@ -282,7 +224,7 @@ public class ItemsImpl implements Items {
         String[] permissions = filterValue.split(",");
         Set<String> itemIds = new HashSet<>();
         for (String permission : permissions) {
-            itemIds.addAll(permissionsManager.listUserPermittedItems(user, permission));
+            itemIds.addAll(getManagersProvider().getPermissionsManager().listUserPermittedItems(user, permission));
         }
         return item -> itemIds.contains(item.getId());
     }
@@ -327,4 +269,22 @@ public class ItemsImpl implements Items {
     private enum OnboardingMethod {
         NetworkPackage, Manual
     }
+
+    @VisibleForTesting
+    void setManagersProvider(ManagersProvider managersProvider) {
+        this.managersProvider = managersProvider;
+    }
+
+    @VisibleForTesting
+    Map<ItemAction, ActionSideAffects> getActionSideAffectsMap() {
+        return actionSideAffectsMap;
+    }
+
+    private ManagersProvider getManagersProvider() {
+        if (managersProvider == null){
+            managersProvider = new ManagersProvider();
+        }
+        return managersProvider;
+    }
+
 }

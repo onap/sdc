@@ -12,9 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ================================================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 package org.openecomp.sdcrests.uniquevalue.rest.services;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -42,6 +46,7 @@ public class UniqueTypesImpl implements UniqueTypes {
   private static final String UNIQUE_TYPE_NOT_FOUND_MSG = "%s is not a supported unique type.";
 
   private static final Map<String, String> UNIQUE_TYPE_TO_INTERNAL;
+  private UniqueValueUtil uniqueValueUtil;
 
   static {
     Map<String, String> uniqueTypes = new HashMap<>();
@@ -50,8 +55,6 @@ public class UniqueTypesImpl implements UniqueTypes {
     UNIQUE_TYPE_TO_INTERNAL = Collections.unmodifiableMap(uniqueTypes);
   }
 
-  private final UniqueValueUtil uniqueValueUtil =
-      new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
 
   @Override
   public Response listUniqueTypes(String user) {
@@ -73,7 +76,19 @@ public class UniqueTypesImpl implements UniqueTypes {
     }
 
     return Response.ok(Collections
-        .singletonMap("occupied", uniqueValueUtil.isUniqueValueOccupied(internalType, value)))
+        .singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value)))
         .build();
+  }
+
+  @VisibleForTesting
+  void setUniqueValueUtil(UniqueValueUtil uniqueValueUtil) {
+    this.uniqueValueUtil = uniqueValueUtil;
+  }
+
+  private UniqueValueUtil getUniqueValueUtil() {
+    if (uniqueValueUtil == null){
+      uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+    }
+    return uniqueValueUtil;
   }
 }
