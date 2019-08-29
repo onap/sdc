@@ -1,9 +1,6 @@
 #!/bin/bash
-<% if node[:disableHttp] -%>
-health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' https://127.0.0.1:<%= @ssl_port %>/sdc1/rest/healthCheck)
-<% else %>
-health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8181/sdc1/rest/healthCheck)
-<% end -%>
+health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc1/rest/healthCheck)
+
 if [[ "$health_Check_http_code" -eq 200 ]]; then
    exit 0
 else
