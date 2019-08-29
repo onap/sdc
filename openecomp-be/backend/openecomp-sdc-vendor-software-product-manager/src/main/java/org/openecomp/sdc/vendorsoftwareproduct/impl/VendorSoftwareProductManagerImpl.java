@@ -16,6 +16,31 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -107,31 +132,6 @@ import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
@@ -610,26 +610,28 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-  public PackageInfo createPackage(String vspId, Version version) throws IOException {
-    ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
-    VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
-    Version vlmVersion = vspDetails.getVlmVersion();
+  public PackageInfo createPackage(final String vspId, final Version version) throws IOException {
+      final ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
+      final VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
+      final Version vlmVersion = vspDetails.getVlmVersion();
     if (vlmVersion != null) {
       populateVersionsForVlm(vspDetails.getVendorId(), vlmVersion);
     }
-    PackageInfo packageInfo = createPackageInfo(vspDetails);
+      final PackageInfo packageInfo = createPackageInfo(vspDetails);
 
-    ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar =
+      final ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar =
         new ToscaFileOutputServiceCsarImpl();
-    FileContentHandler licenseArtifacts = licenseArtifactsService
+      final FileContentHandler licenseArtifacts = licenseArtifactsService
         .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
             vspDetails.getFeatureGroups());
-    ETSIService etsiService = new ETSIServiceImpl();
+      final ETSIService etsiService = new ETSIServiceImpl();
     if (etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())) {
-        FileContentHandler handler = toscaServiceModel.getArtifactFiles();
-        Manifest manifest = etsiService.getManifest(handler);
-        etsiService.moveNonManoFileToArtifactFolder(handler, manifest);
-        packageInfo.setResourceType(etsiService.getResourceType(manifest).name());
+        final FileContentHandler handler = toscaServiceModel.getArtifactFiles();
+      final Manifest manifest = etsiService.getManifest(handler);
+      final Optional<Map<String, Path>> fromToMovedPaths = etsiService.moveNonManoFileToArtifactFolder(handler);
+      fromToMovedPaths
+          .ifPresent(it -> etsiService.updateMainDescriptorPaths(toscaServiceModel, it));
+      packageInfo.setResourceType(etsiService.getResourceType(manifest).name());
     }
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));

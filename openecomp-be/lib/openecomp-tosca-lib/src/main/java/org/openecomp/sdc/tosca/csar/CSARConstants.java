@@ -25,14 +25,15 @@ public class CSARConstants {
 
     public static final ImmutableSet<String> ELIGBLE_FOLDERS = of("Artifacts/","Definitions/",
             "Licenses/", "TOSCA-Metadata/");
+    public static final String ARTIFACTS_FOLDER = "Artifacts";
 
     public static final String MAIN_SERVICE_TEMPLATE_MF_FILE_NAME = "MainServiceTemplate.mf";
     public static final String MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME = "MainServiceTemplate.yaml";
-    public static final String TOSCA_META_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta";
+    public static final String TOSCA_META_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta";
     public static final String TOSCA_META_FILE_VERSION_ENTRY = "TOSCA-Meta-File-Version";
     public static final String TOSCA_META_CSAR_VERSION_ENTRY = "CSAR-Version";
     public static final String TOSCA_META_CREATED_BY_ENTRY = "Created-By";
-    public static final String TOSCA_META_ENTRY_DEFINITIONS="Entry-Definitions";
+    public static final String TOSCA_META_ENTRY_DEFINITIONS ="Entry-Definitions";
     public static final String TOSCA_META_ETSI_ENTRY_MANIFEST ="ETSI-Entry-Manifest";
     public static final String TOSCA_META_ETSI_ENTRY_CHANGE_LOG ="ETSI-Entry-Change-Log";
     public static final String TOSCA_META_ETSI_ENTRY_TESTS = "ETSI-Entry-Tests";
@@ -64,7 +65,7 @@ public class CSARConstants {
     public static final String CMD_END = "----END CMS-----";
     public static final String SEPARATOR_MF_ATTRIBUTE = ":";
     public static final String NON_MANO_MF_ATTRIBUTE = "non_mano_artifact_sets";
-    public static final String TOSCA_META_ORIG_PATH_FILE_NAME="TOSCA-Metadata/TOSCA.meta.original";
+    public static final String TOSCA_META_ORIG_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta.original";
 
     public static final String TOSCA_META_FILE_VERSION = "1.0";
     public static final String CSAR_VERSION_1_0 = "1.0";
