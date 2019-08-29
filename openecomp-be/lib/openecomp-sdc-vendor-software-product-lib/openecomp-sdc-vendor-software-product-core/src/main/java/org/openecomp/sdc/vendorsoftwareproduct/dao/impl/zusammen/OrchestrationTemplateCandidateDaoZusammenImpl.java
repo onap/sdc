@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -23,6 +26,9 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.utils.fileutils.FileUtils;
+import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
+import java.util.Optional;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
@@ -33,13 +39,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidat
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
-import java.util.Optional;
-
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class OrchestrationTemplateCandidateDaoZusammenImpl
     implements OrchestrationTemplateCandidateDao {
@@ -118,26 +117,29 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
   }
 
-  private void populateCandidate(OrchestrationTemplateCandidateData candidate,
-                                 Element candidateInfoElement,
-                                 boolean fullData) {
-    if (candidateInfoElement.getInfo().getName()
-        .equals(ElementType.OrchestrationTemplateCandidateContent.name())) {
-
+  private void populateCandidate(final OrchestrationTemplateCandidateData candidate, final Element candidateInfoElement,
+      final boolean fullData) {
+    final String elementName = candidateInfoElement.getInfo().getName();
+    if (ElementType.OrchestrationTemplateCandidateContent.name().equals(elementName)) {
       if (fullData) {
-        candidate
-            .setContentData(ByteBuffer.wrap(FileUtils.toByteArray(candidateInfoElement.getData())));
+        candidate.setContentData(ByteBuffer.wrap(FileUtils.toByteArray(candidateInfoElement.getData())));
       }
-      candidate.setFileSuffix(
-          candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-      candidate.setFileName(
-          candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
-
-    } else if (candidateInfoElement.getInfo().getName()
-        .equals(ElementType.OrchestrationTemplateCandidateValidationData.name())) {
-
-      candidate
-          .setValidationData(new String(FileUtils.toByteArray(candidateInfoElement.getData())));
+      candidate.setFileSuffix(candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
+      candidate.setFileName(candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
+    } else if (ElementType.OrchestrationTemplateCandidateValidationData.name().equals(elementName)) {
+      candidate.setValidationData(new String(FileUtils.toByteArray(candidateInfoElement.getData())));
+    } else if (ElementType.ORIGINAL_ONBOARDED_PACKAGE.name().equals(elementName)) {
+      candidate.setOriginalFileName(
+          candidateInfoElement.getInfo().getProperty(InfoPropertyName.ORIGINAL_FILE_NAME.getVal())
+      );
+      candidate.setOriginalFileSuffix(
+          candidateInfoElement.getInfo().getProperty(InfoPropertyName.ORIGINAL_FILE_SUFFIX.getVal())
+      );
+      if (fullData) {
+        candidate.setOriginalFileContentData(
+            ByteBuffer.wrap(FileUtils.toByteArray(candidateInfoElement.getData()))
+        );
+      }
     }
   }
 
@@ -183,6 +185,13 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
         .addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), candidateData.getFileSuffix());
     candidateContentElement.getInfo()
         .addProperty(InfoPropertyName.FILE_NAME.getVal(), candidateData.getFileName());
+    ZusammenElement originalPackageElement =
+        buildStructuralElement(ElementType.ORIGINAL_ONBOARDED_PACKAGE, Action.UPDATE);
+    originalPackageElement.getInfo()
+              .addProperty(InfoPropertyName.ORIGINAL_FILE_NAME.getVal(), candidateData.getOriginalFileName());
+    originalPackageElement.getInfo()
+              .addProperty(InfoPropertyName.ORIGINAL_FILE_SUFFIX.getVal(), candidateData.getOriginalFileSuffix());
+    originalPackageElement.setData(new ByteArrayInputStream(candidateData.getOriginalFileContentData().array()));
 
     ZusammenElement validationData = buildStructuralElement(ElementType
         .OrchestrationTemplateCandidateValidationData, Action.UPDATE);
@@ -192,6 +201,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     }
     candidateElement.addSubElement(candidateContentElement);
     candidateElement.addSubElement(validationData);
+    candidateElement.addSubElement(originalPackageElement);
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
     zusammenAdaptor.saveElement(context, elementContext, candidateElement,
@@ -261,7 +271,10 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
 
   public enum InfoPropertyName {
     FILE_SUFFIX("fileSuffix"),
-    FILE_NAME("fileName");
+    FILE_NAME("fileName"),
+    ORIGINAL_FILE_NAME("originalFilename"),
+    ORIGINAL_FILE_SUFFIX("originalFileSuffix"),
+    ORIGINAL_FILE_CONTENT("originalFileContent");
 
     private final String val;
 
@@ -269,7 +282,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
       this.val = val;
     }
 
-    String getVal() {
+    public String getVal() {
       return val;
     }
   }

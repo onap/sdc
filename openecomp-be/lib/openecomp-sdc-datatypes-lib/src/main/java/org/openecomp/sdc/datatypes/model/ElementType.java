@@ -46,5 +46,5 @@ public enum ElementType {
   Images, Image, ImageQuestionnaire,
   ServiceModel, EnrichedServiceModel, ServiceTemplate, Templates, Artifact, Artifacts,
 
-  test
+  test, ORIGINAL_ONBOARDED_PACKAGE
 }

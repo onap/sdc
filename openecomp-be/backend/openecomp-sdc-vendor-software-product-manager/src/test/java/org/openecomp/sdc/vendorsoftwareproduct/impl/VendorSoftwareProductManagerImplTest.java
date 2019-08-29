@@ -16,6 +16,34 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -61,6 +89,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
@@ -69,36 +98,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-
 
 
 public class VendorSoftwareProductManagerImplTest {
@@ -544,9 +543,10 @@ public class VendorSoftwareProductManagerImplTest {
   //@Test(dependsOnMethods = {"testListFinals"})
   public void testUploadFileMissingFile() throws IOException {
     try (InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip")) {
-
+      final Map<String, Object> originalFileToUploadDetails = OnboardPackageInfo
+          .mapOnboardPackageInfo("file", "zip", FileUtils.toByteArray(zis));
       UploadFileResponse uploadFileResponse =
-          candidateManager.upload(VSP_ID, VERSION01, zis, "zip", "file");
+          candidateManager.upload(VSP_ID, VERSION01, zis, "zip", "file", originalFileToUploadDetails);
 
       Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
     }
@@ -558,7 +558,9 @@ public class VendorSoftwareProductManagerImplTest {
     URL url = this.getClass().getResource("/notZipFile");
 
     try {
-      candidateManager.upload(VSP_ID, VERSION01, url.openStream(), "zip", "file");
+      final Map<String, Object> originalFileToUploadDetails = OnboardPackageInfo
+          .mapOnboardPackageInfo("file", "zip", FileUtils.toByteArray(url.openStream()));
+      candidateManager.upload(VSP_ID, VERSION01, url.openStream(), "zip", "file", originalFileToUploadDetails);
       candidateManager.process(VSP_ID, VERSION01);
     } catch (Exception ce) {
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
@@ -706,7 +708,9 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
-    candidateManager.upload(vspId, VERSION01, upload, "zip", "file");
+    final Map<String, Object> originalFileToUploadDetails = OnboardPackageInfo
+        .mapOnboardPackageInfo("file", "zip", FileUtils.toByteArray(upload));
+    candidateManager.upload(vspId, VERSION01, upload, "zip", "file", originalFileToUploadDetails);
     candidateManager.process(vspId, VERSION01);
 
     OrchestrationTemplateEntity uploadData =
