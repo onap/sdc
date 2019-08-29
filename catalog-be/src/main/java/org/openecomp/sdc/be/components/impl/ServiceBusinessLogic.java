@@ -170,7 +170,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private static final Logger log = Logger.getLogger(ServiceBusinessLogic.class);
     private static final String INITIAL_VERSION = "0.1";
     private static final String STATUS_SUCCESS_200 = "200";
-	  private static final String STATUS_DEPLOYED = "DEPLOYED";
+    private static final String STATUS_DEPLOYED = "DEPLOYED";
+    public static final String IS_VALID = "isValid";
 
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
@@ -1035,7 +1036,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         if (dataModelResponse.isLeft()) {
             Map<String, Boolean> result = new HashMap<>();
-            result.put("isValid", dataModelResponse.left().value());
+            result.put(IS_VALID, dataModelResponse.left().value());
             log.debug("validation was successfully performed.");
             return Either.left(result);
         }

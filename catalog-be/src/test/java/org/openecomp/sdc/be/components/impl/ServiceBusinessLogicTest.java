@@ -22,8 +22,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,6 +46,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -57,6 +61,7 @@ import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
+import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -66,6 +71,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -86,6 +92,8 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
 
     private static final String SERVICE_CATEGORY = "Mobility";
     private static final String INSTANTIATION_TYPE = "A-la-carte";
+    public static final String ALREADY_EXIST = "alreadyExist";
+    public static final String DOES_NOT_EXIST = "doesNotExist";
     private final ServletContext servletContext = Mockito.mock(ServletContext.class);
     private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
@@ -162,7 +170,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
         when(toscaOperationFacade.validateComponentNameExists("Service", null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCount);
         Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
-        when(toscaOperationFacade.validateComponentNameExists("alreadyExist", null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCountExist);
+        when(toscaOperationFacade.validateComponentNameExists(ALREADY_EXIST, null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCountExist);
 
         genericService = setupGenericServiceMock();
         Either<Resource, StorageOperationStatus> findLatestGeneric = Either.left(genericService);
@@ -292,7 +300,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
     }
 
     private void testServiceNameAlreadyExists() {
-        String serviceName = "alreadyExist";
+        String serviceName = ALREADY_EXIST;
         Service serviceExccedsNameLimit = createServiceObject(false);
         // 51 chars, the limit is 50
         serviceExccedsNameLimit.setName(serviceName);
@@ -850,7 +858,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         }
     }
 
-    private Component createNewService() {
+    private Component createNewComponent() {
 
         Service service = new Service();
         int listSize = 3;
@@ -875,6 +883,10 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         }
         service.setComponentInstances(componentInstances);
         return service;
+    }
+
+    private Service createNewService() {
+        return (Service)createNewComponent();
     }
 
 
@@ -932,4 +944,126 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
         return genericService;
     }
+
+    @Test
+    public void validateServiceNameDoesExistTest() {
+        when(toscaOperationFacade.validateComponentNameUniqueness(ALREADY_EXIST, null, ComponentTypeEnum.SERVICE))
+                .thenReturn(Either.left(true));
+        Either<Map<String, Boolean>, ResponseFormat> actionResponse =
+                bl.validateServiceNameExists(ALREADY_EXIST, user.getUserId());
+        Assert.assertTrue(actionResponse.isLeft());
+        Map<String,Boolean> result = actionResponse.left().value();
+        Assert.assertEquals(true, result.get(ServiceBusinessLogic.IS_VALID));
+    }
+
+    @Test
+    public void validateServiceNameDoesNotExistTest() {
+        when(toscaOperationFacade.validateComponentNameUniqueness(DOES_NOT_EXIST, null, ComponentTypeEnum.SERVICE))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        Either<Map<String, Boolean>, ResponseFormat> actionResponse =
+                bl.validateServiceNameExists(DOES_NOT_EXIST, user.getUserId());
+        Assert.assertTrue(actionResponse.isRight());
+        ResponseFormat responseFormat = actionResponse.right().value();
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), responseFormat.getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionServiceNotFoundTest() {
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", "2", "3",
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionParentServiceIsEmptyTest() {
+        Either<Component, StorageOperationStatus> eitherService = Either.left(createServiceObject(true));
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", "2", "3",
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionNoMatchingComponentTest() {
+        Service aService = createNewService();
+        Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+
+        String weirdUniqueServiceInstanceId = UUID.randomUUID().toString();
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", weirdUniqueServiceInstanceId, "3",
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionNotComponentInstancesInterfacesOnParentServiceTest() {
+        Service aService = createNewService();
+        aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
+        Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionInterfaceCandidateNotPresentTest() {
+        Service aService = createNewService();
+        aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
+        Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap =
+                Maps.newHashMap();
+        componentInstancesInterfacesMap.put(aService.getUniqueId(),
+                Lists.newArrayList(new ComponentInstanceInterface("1", new InterfaceInstanceDataDefinition())));
+
+        aService.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    @Test
+    public void  addPropertyServiceConsumptionNoInputsCandidateTest() {
+        Service aService = createNewService();
+        aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
+        Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+
+        String operationId = "operationId";
+        ComponentInstanceInterface componentInstanceInterface =
+                new ComponentInstanceInterface("interfaceId", new InterfaceInstanceDataDefinition());
+        Map<String, Operation> operationsMap = Maps.newHashMap();
+        operationsMap.put(operationId, new Operation(new ArtifactDataDefinition(), "1",
+                new ListDataDefinition<>(), new ListDataDefinition<>()));
+        componentInstanceInterface.setOperationsMap(operationsMap);
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = Maps.newHashMap();
+        componentInstancesInterfacesMap.put(aService.getUniqueId(), Lists.newArrayList(componentInstanceInterface));
+        aService.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
+
+        Either<Operation, ResponseFormat> operationEither =
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), operationId,
+                        user.getUserId(), new ServiceConsumptionData());
+        Assert.assertTrue(operationEither.isRight());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+    }
+
 }
