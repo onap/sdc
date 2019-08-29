@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import org.openecomp.sdc.asdctool.impl.GraphJsonValidator;
 import org.openecomp.sdc.asdctool.impl.GraphMLConverter;
 import org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class ExportImportMenu {
 
@@ -145,6 +146,7 @@ public class ExportImportMenu {
 		private static final GraphMLConverter GRAPH_ML_CONVERTER = new GraphMLConverter();
 		private String usage;
 		private String keyword;
+		private static Logger log = Logger.getLogger(ExportImportMenu.class.getName());
 
 		ExportImportEnum(String usage, String keyword) {
 			this.usage = usage;
@@ -153,9 +155,9 @@ public class ExportImportMenu {
 
 		ExportImportEnum() {}
 
-		void usage(){
-			System.out.println(usage);
-		}
+        void usage() {
+            log.info(usage);
+        }
 
 		static ExportImportEnum getByKeyword(String keyword) {
 			List<ExportImportEnum> collected = Arrays.stream(ExportImportEnum.values())
