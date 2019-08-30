@@ -20,6 +20,45 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CERTIFICATE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_LICENSES;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_TESTS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_ARCHIVE_VERSION;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_RELEASE_DATE_TIME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PACKAGE_VERSION;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PRODUCT_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PROVIDER_ID;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_RELEASE_DATE_TIME;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.EMPTY_YAML_FILE_PATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.INVALID_YAML_FILE_PATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_DEFINITION_FILE_PATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_DEFINITION_IMPORT_FILE_PATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_SOURCE;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_CHANGELOG_FILEPATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,42 +67,9 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_PROVIDER;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_ARCHIVE_VERSION;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.PNFD_RELEASE_DATE_TIME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CERTIFICATE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_LICENSES;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_TESTS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PRODUCT_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PROVIDER_ID;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_PACKAGE_VERSION;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.VNF_RELEASE_DATE_TIME;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.*;
+import org.openecomp.sdc.tosca.csar.ManifestTokenType;
 
 public class SOL004MetaDirectoryValidatorTest {
 
@@ -81,9 +87,9 @@ public class SOL004MetaDirectoryValidatorTest {
                 "TOSCA-Meta-File-Version: 1.0\n"+
                 "CSAR-Version: 1.1\n"+
                 "Created-By: Vendor\n"+
-                TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n"+
-                TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.mf\n"+
-                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text\n";
+                TOSCA_META_ENTRY_DEFINITIONS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Definitions/MainServiceTemplate.yaml\n"+
+                TOSCA_META_ETSI_ENTRY_MANIFEST + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Definitions/MainServiceTemplate.mf\n"+
+                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Artifacts/changeLog.text\n";
     }
 
     @Test
@@ -92,7 +98,7 @@ public class SOL004MetaDirectoryValidatorTest {
                 "Entry-Definitions: Definitions/MainServiceTemplate.yaml";
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileWithInvalidEntry.getBytes(StandardCharsets.UTF_8));
-        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
         assertExpectedErrors("TOSCA Meta file with no entries", errors, 1);
@@ -109,8 +115,8 @@ public class SOL004MetaDirectoryValidatorTest {
         folderList.add("Files/Licenses/");
 
         metaFile = metaFile +
-                TOSCA_META_ETSI_ENTRY_TESTS + SEPARATOR_MF_ATTRIBUTE + entryTestFilePath + "\n" +
-                TOSCA_META_ETSI_ENTRY_LICENSES + SEPARATOR_MF_ATTRIBUTE + entryLicenseFilePath +"\n";
+                TOSCA_META_ETSI_ENTRY_TESTS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + entryTestFilePath + "\n" +
+                TOSCA_META_ETSI_ENTRY_LICENSES + ATTRIBUTE_VALUE_SEPARATOR.getToken() + entryLicenseFilePath +"\n";
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -156,16 +162,16 @@ public class SOL004MetaDirectoryValidatorTest {
                 "TOSCA-Meta-File-Version: " + Integer.MAX_VALUE +
                 "\nCSAR-Version: " + Integer.MAX_VALUE  +
                 "\nCreated-By: Bilal Iqbal\n" +
-                TOSCA_META_ENTRY_DEFINITIONS+ SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n" +
-                TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.mf\n"+
-                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text";
+                TOSCA_META_ENTRY_DEFINITIONS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Definitions/MainServiceTemplate.yaml\n" +
+                TOSCA_META_ETSI_ENTRY_MANIFEST + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Definitions/MainServiceTemplate.mf\n"+
+                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Artifacts/changeLog.text";
 
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
 
-        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
+        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
         manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -437,9 +443,9 @@ public class SOL004MetaDirectoryValidatorTest {
                 "TOSCA-Meta-File-Version: 1.0\n"+
                 "CSAR-Version: 1.1\n"+
                 "Created-By: Vendor\n"+
-                TOSCA_META_ENTRY_DEFINITIONS + SEPARATOR_MF_ATTRIBUTE + "Definitions/MainServiceTemplate.yaml\n"+
-                TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE +"Definitions/MainServiceTemplate2.mf\n"+
-                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE +"Artifacts/changeLog.text\n";
+                TOSCA_META_ENTRY_DEFINITIONS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Definitions/MainServiceTemplate.yaml\n"+
+                TOSCA_META_ETSI_ENTRY_MANIFEST + ATTRIBUTE_VALUE_SEPARATOR.getToken() +"Definitions/MainServiceTemplate2.mf\n"+
+                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + ATTRIBUTE_VALUE_SEPARATOR.getToken() +"Artifacts/changeLog.text\n";
 
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
@@ -470,8 +476,8 @@ public class SOL004MetaDirectoryValidatorTest {
                 "CSAR-Version: 1.1\n"+
                 "Created-By: Vendor\n"+
                 "Entry-Definitions: Definitions/MainServiceTemplate.yaml\n"+
-                TOSCA_META_ETSI_ENTRY_MANIFEST + SEPARATOR_MF_ATTRIBUTE +  "Definitions/MainServiceTemplate.txt\n"+
-                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + SEPARATOR_MF_ATTRIBUTE + "Artifacts/changeLog.text\n";
+                TOSCA_META_ETSI_ENTRY_MANIFEST + ATTRIBUTE_VALUE_SEPARATOR.getToken() +  "Definitions/MainServiceTemplate.txt\n"+
+                TOSCA_META_ETSI_ENTRY_CHANGE_LOG + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Artifacts/changeLog.text\n";
 
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
@@ -540,10 +546,10 @@ public class SOL004MetaDirectoryValidatorTest {
     @Test
     public void testGivenManifestFile_withMetadataContainingMixedPnfVnfMetadata_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder()
-            .withMetaData(PNFD_NAME, "RadioNode")
-            .withMetaData(VNF_PROVIDER_ID, "Bilal Iqbal")
-            .withMetaData(PNFD_ARCHIVE_VERSION, "1.0")
-            .withMetaData(VNF_RELEASE_DATE_TIME, "2019-12-14T11:25:00+00:00");
+            .withMetaData(PNFD_NAME.getToken(), "RadioNode")
+            .withMetaData(VNF_PROVIDER_ID.getToken(), "Bilal Iqbal")
+            .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
+            .withMetaData(VNF_RELEASE_DATE_TIME.getToken(), "2019-12-14T11:25:00+00:00");
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
@@ -588,8 +594,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenManifestFile_withMetadataMissingMandatoryPnfEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder();
 
-        manifestBuilder.withMetaData(PNFD_NAME, "RadioNode");
-        manifestBuilder.withMetaData(PNFD_RELEASE_DATE_TIME, "2019-12-14T11:25:00+00:00");
+        manifestBuilder.withMetaData(PNFD_NAME.getToken(), "RadioNode");
+        manifestBuilder.withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-12-14T11:25:00+00:00");
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
@@ -604,7 +610,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertExpectedErrors("Manifest with metadata missing pnf mandatory entries should return error", errors, 3);
+        assertExpectedErrors("Manifest with metadata missing pnf mandatory entries should return error", errors, 1);
 
     }
 
@@ -612,7 +618,7 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenManifestFile_withMetadataMissingMandatoryVnfEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder();
 
-        manifestBuilder.withMetaData(VNF_PRODUCT_NAME, "RadioNode");
+        manifestBuilder.withMetaData(VNF_PRODUCT_NAME.getToken(), "RadioNode");
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
@@ -627,7 +633,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertExpectedErrors("Manifest with metadata missing vnf mandatory entries should return error", errors, 4);
+        assertExpectedErrors("Manifest with metadata missing vnf mandatory entries should return error", errors, 1);
 
     }
 
@@ -637,10 +643,10 @@ public class SOL004MetaDirectoryValidatorTest {
     @Test
     public void testGivenManifestFile_withMetadataEntriesExceedingTheLimit_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder()
-            .withMetaData(PNFD_NAME, "RadioNode")
-            .withMetaData(PNFD_PROVIDER, "Bilal Iqbal")
-            .withMetaData(PNFD_ARCHIVE_VERSION, "1.0")
-            .withMetaData(PNFD_RELEASE_DATE_TIME, "2019-03-11T11:25:00+00:00");
+            .withMetaData(PNFD_NAME.getToken(), "RadioNode")
+            .withMetaData(ManifestTokenType.PNFD_PROVIDER.getToken(), "Bilal Iqbal")
+            .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
+            .withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
@@ -655,7 +661,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler, Collections.emptyList());
-        assertExpectedErrors("Manifest with more than 4 metadata entries should return error", errors, 2);
+        assertExpectedErrors("Manifest with more than 4 metadata entries should return error", errors, 1);
     }
 
     @Test
@@ -663,9 +669,9 @@ public class SOL004MetaDirectoryValidatorTest {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
         metaFile = metaFile +
-            TOSCA_META_ETSI_ENTRY_TESTS + SEPARATOR_MF_ATTRIBUTE + "Files/Tests\n" +
-            TOSCA_META_ETSI_ENTRY_LICENSES + SEPARATOR_MF_ATTRIBUTE + "Files/Licenses\n" +
-            TOSCA_META_ETSI_ENTRY_CERTIFICATE + SEPARATOR_MF_ATTRIBUTE + "Files/Certificates";
+            TOSCA_META_ETSI_ENTRY_TESTS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Files/Tests\n" +
+            TOSCA_META_ETSI_ENTRY_LICENSES + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Files/Licenses\n" +
+            TOSCA_META_ETSI_ENTRY_CERTIFICATE + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "Files/Certificates";
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
@@ -908,9 +914,9 @@ public class SOL004MetaDirectoryValidatorTest {
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
         if (expectedErrors > 0) {
-            assertEquals(testCase, errorMessages.size(), expectedErrors);
+            assertEquals(testCase, expectedErrors, errorMessages.size());
         } else {
-            assertEquals(testCase, errors.size(), expectedErrors);
+            assertEquals(testCase, expectedErrors, errors.size());
         }
     }
 
@@ -936,18 +942,18 @@ public class SOL004MetaDirectoryValidatorTest {
 
     private ManifestBuilder getPnfManifestSampleBuilder() {
         return new ManifestBuilder()
-            .withMetaData(PNFD_NAME, "myPnf")
-            .withMetaData(PNFD_PROVIDER, "ACME")
-            .withMetaData(PNFD_ARCHIVE_VERSION, "1.0")
-            .withMetaData(PNFD_RELEASE_DATE_TIME, "2019-03-11T11:25:00+00:00");
+            .withMetaData(PNFD_NAME.getToken(), "myPnf")
+            .withMetaData(ManifestTokenType.PNFD_PROVIDER.getToken(), "ACME")
+            .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
+            .withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
     }
 
     private ManifestBuilder getVnfManifestSampleBuilder() {
         return new ManifestBuilder()
-            .withMetaData(VNF_PRODUCT_NAME, "RadioNode")
-            .withMetaData(VNF_PROVIDER_ID, "ACME")
-            .withMetaData(VNF_PACKAGE_VERSION, "1.0")
-            .withMetaData(VNF_RELEASE_DATE_TIME, "2019-03-11T11:25:00+00:00");
+            .withMetaData(VNF_PRODUCT_NAME.getToken(), "RadioNode")
+            .withMetaData(VNF_PROVIDER_ID.getToken(), "ACME")
+            .withMetaData(VNF_PACKAGE_VERSION.getToken(), "1.0")
+            .withMetaData(VNF_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
     }
 
     private void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {

@@ -30,12 +30,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 
 public class ONAPCsarValidatorTest {
 
-    ONAPCsarValidator onapCsarValidator;
+    private ONAPCsarValidator onapCsarValidator;
     private FileContentHandler contentHandler;
     private List<String> folderList;
 
@@ -85,9 +85,9 @@ public class ONAPCsarValidatorTest {
     private void assertExpectedErrors( String testCase, Map<String, List<ErrorMessage>> errors, int expectedErrors){
         if(expectedErrors > 0){
             List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
-            assertTrue(testCase, errorMessages.size() == expectedErrors);
+            assertEquals(testCase, expectedErrors, errorMessages.size());
         }else{
-            assertTrue(testCase,errors.size() == expectedErrors);
+            assertEquals(testCase, expectedErrors, errors.size());
         }
     }
 }

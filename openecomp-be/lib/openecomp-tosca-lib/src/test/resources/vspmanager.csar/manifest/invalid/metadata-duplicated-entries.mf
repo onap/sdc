@@ -1,0 +1,4 @@
+metadata:
+  vnf_product_name: vPP
+  vnf_provider_id: Ericsson
+  vnf_product_name: vPP

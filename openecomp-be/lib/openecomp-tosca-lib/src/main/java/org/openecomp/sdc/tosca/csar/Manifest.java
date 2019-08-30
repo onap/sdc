@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.tosca.csar;
 
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
 public interface Manifest {
 
@@ -70,4 +70,18 @@ public interface Manifest {
      * @return enum for type values
      */
     Optional<ResourceTypeEnum> getType();
+
+    /**
+     * Gets the CMS manifest signature if present in manifest
+     * @return
+     *  the CMS manifest signature.
+     */
+    Optional<String> getCmsSignature();
+
+    /**
+     * Gets the Map of source path and it correspondent checksum.
+     * @return
+     *  The source and checksum map.
+     */
+    Optional<Map<String, AlgorithmDigest>> getSourceAndChecksumMap();
 }
