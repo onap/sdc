@@ -50,6 +50,17 @@
 		<servlet-name>EsGateway</servlet-name>
 		<url-pattern>/sdc2/esGateway/*</url-pattern>
 	</servlet-mapping>
+
+	<filter>
+		<filter-name>AuthenticationFilter</filter-name>
+		<filter-class>
+			org.openecomp.sdc.be.filters.RestAuthenticationFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthenticationFilter</filter-name>
+		<url-pattern>/sdc2/rest/v1/consumers</url-pattern>
+	</filter-mapping>
 	
 	<servlet>
 		<servlet-name>jerseyDistribution</servlet-name>
