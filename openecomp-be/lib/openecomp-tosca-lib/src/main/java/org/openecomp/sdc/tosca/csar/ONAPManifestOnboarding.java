@@ -21,44 +21,54 @@
 package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Optional;
 import org.openecomp.sdc.common.errors.Messages;
-import java.util.Iterator;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
-
-public class ONAPManifestOnboarding extends AbstractOnboardingManifest implements Manifest {
+public class ONAPManifestOnboarding extends AbstractOnboardingManifest {
 
     @Override
     protected void processManifest(ImmutableList<String> lines) {
         super.processManifest(lines);
         if (errors.isEmpty() && sources.isEmpty()) {
-                errors.add(Messages.MANIFEST_NO_SOURCES.getErrorMessage());
+            errors.add(Messages.MANIFEST_NO_SOURCES.getErrorMessage());
         }
     }
 
     @Override
-    protected void processMetadata(Iterator<String> iterator) {
-        if(!iterator.hasNext()){
+    protected void processMetadata() {
+        Optional<String> currentLine = getCurrentLine();
+        if (!currentLine.isPresent() || !isMetadata(currentLine.get())) {
+            reportError(Messages.MANIFEST_START_METADATA);
+            continueToProcess = false;
             return;
         }
-        String line = iterator.next();
-        if(isEmptyLine(iterator, line)) {
-            return;
+        currentLine = readNextNonEmptyLine();
+
+        while (currentLine.isPresent() && continueToProcess) {
+            final String line = currentLine.get();
+            final String entry = readEntryName(line).orElse(null);
+            if (entry == null) {
+                reportInvalidLine();
+            }
+            final String value = readEntryValue(line).orElse(null);
+            if (value == null) {
+                reportInvalidLine();
+            }
+
+            final ManifestTokenType tokenType = ManifestTokenType.parse(entry).orElse(null);
+            if (tokenType == ManifestTokenType.SOURCE) {
+                sources.add(value);
+            } else {
+                addToMetadata(entry, value);
+                continueToProcess = isValid();
+            }
+            currentLine = readNextNonEmptyLine();
         }
-        String[] metaSplit = line.split(SEPARATOR_MF_ATTRIBUTE);
-        if (isInvalidLine(line, metaSplit)) {
-            return;
-        }
-        if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
-            metadata.put(metaSplit[0].trim(),value.trim());
-            processMetadata(iterator);
-        }else if(metaSplit[0].startsWith(SOURCE_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
-            sources.add(value);
-            processMetadata(iterator);
-        }
+    }
+
+    @Override
+    protected void processBody() {
+        //no implementation
     }
 
 }

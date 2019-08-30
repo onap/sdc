@@ -1,0 +1,8 @@
+metadata:
+  vnf_product_name: vPP
+  vnf_provider_id: Ericsson
+  vnf_package_version: R24A583
+  vnf_release_date_time: 2019-08-29T22:17:39.275281
+
+Source: scripts/userdata.file.sm
+Hash: 3b119b37da5b76ec7c933168b21cedd8

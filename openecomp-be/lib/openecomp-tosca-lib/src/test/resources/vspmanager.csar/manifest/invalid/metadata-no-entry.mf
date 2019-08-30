@@ -1,0 +1,3 @@
+metadata:
+  vnf_product_name: vPP
+  : no-entry-value

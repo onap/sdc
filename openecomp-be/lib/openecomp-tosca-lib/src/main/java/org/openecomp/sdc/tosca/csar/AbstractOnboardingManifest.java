@@ -19,10 +19,6 @@ package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,21 +31,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.METADATA_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
+abstract class AbstractOnboardingManifest implements Manifest {
 
- abstract class AbstractOnboardingManifest implements Manifest{
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOnboardingManifest.class);
-    private static final int MAX_ALLOWED_MANIFEST_META_ENTRIES = 4;
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractOnboardingManifest.class);
+    protected static final int MAX_ALLOWED_MANIFEST_META_ENTRIES = 4;
     protected Map<String, String> metadata;
     protected List<String> sources;
-    protected List<String> errors;
     protected Map<String, List<String>> nonManoSources;
-    protected ResourceTypeEnum type;
+    protected Map<String, AlgorithmDigest> sourceAndChecksumMap = new HashMap<>();
+    protected String cmsSignature;
+    protected List<String> errors;
+    protected boolean continueToProcess;
+    protected String currentLine;
+    protected Iterator<String> linesIterator;
+    protected int currentLineNumber;
 
     protected AbstractOnboardingManifest() {
         errors = new ArrayList<>();
@@ -59,122 +61,327 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
     }
 
     @Override
-    public Optional<ResourceTypeEnum> getType(){
-        if(errors.isEmpty() && !metadata.isEmpty() && metadata.size() == MAX_ALLOWED_MANIFEST_META_ENTRIES) {
-            for (String key : metadata.keySet()) {
-                if (MANIFEST_PNF_METADATA.stream().anyMatch(key::equals)) {
-                    return Optional.of(ResourceTypeEnum.PNF);
-                }
-                return Optional.of(ResourceTypeEnum.VF);
-            }
+    public Optional<ResourceTypeEnum> getType() {
+        if (!isValid()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        final String firstKey = metadata.keySet().iterator().next();
+        final ManifestTokenType manifestTokenType = ManifestTokenType.parse(firstKey).orElse(null);
+        if (manifestTokenType == null) {
+            return Optional.empty();
+        }
+        if (manifestTokenType.isMetadataPnfEntry()) {
+            return Optional.of(ResourceTypeEnum.PNF);
+        }
+        return Optional.of(ResourceTypeEnum.VF);
     }
 
     @Override
-    public void parse(InputStream is) {
+    public void parse(final InputStream manifestAsStream) {
         try {
-            ImmutableList<String> lines = readAllLines(is);
+            final ImmutableList<String> lines = readAllLines(manifestAsStream);
+            continueToProcess = true;
+            currentLineNumber = 0;
             processManifest(lines);
-        } catch (IOException e){
-            LOGGER.error(e.getMessage(),e);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             errors.add(Messages.MANIFEST_PARSER_INTERNAL.getErrorMessage());
         }
     }
 
-    protected void processManifest(ImmutableList<String> lines) {
-        if (isEmptyManifest(lines)){
+    /**
+     * Process the manifest lines, reporting an error when detected.
+     *
+     * @param lines the manifest lines
+     */
+    protected void processManifest(final ImmutableList<String> lines) {
+        if (isEmptyManifest(lines)) {
             return;
         }
-        Iterator<String> iterator = lines.iterator();
-        //SOL004 #4.3.2: The manifest file shall start with the package metadata
-        String line = iterator.next();
-        if (!isMetadata(line)) {
+        linesIterator = lines.iterator();
+        readNextNonEmptyLine();
+        if (!getCurrentLine().isPresent()) {
+            errors.add(Messages.MANIFEST_EMPTY.getErrorMessage());
             return;
         }
-        //handle metadata
-        processMetadata(iterator);
-        if (errors.isEmpty() && metadata.isEmpty()) {
-                errors.add(Messages.MANIFEST_NO_METADATA.getErrorMessage());
-        }
+
+        processMetadata();
+        processBody();
     }
 
-    protected abstract void processMetadata(Iterator<String> iterator);
+    /**
+     * Process the metadata part of the Manifest file.
+     */
+    protected abstract void processMetadata();
 
-     protected boolean isEmptyLine(Iterator<String> iterator, String line) {
-         if(line.isEmpty()){
-             processMetadata(iterator);
-             return true;
-         }
-         return false;
-     }
+    /**
+     * Process the other parts from manifest different than metadata.
+     */
+    protected abstract void processBody();
 
-     protected boolean isInvalidLine(String line, String[] metaSplit) {
-         if (metaSplit.length < 2){
-             reportError(line);
-             return true;
-         }
-         return false;
-     }
-
-     protected boolean isMetadata(String line) {
-         if(line.trim().equals(METADATA_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
-             return true;
-         }
-         reportError(line);
-         return false;
-     }
-
-     protected boolean isEmptyManifest(ImmutableList<String> lines) {
-         if(lines == null || lines.isEmpty()){
-             errors.add(Messages.MANIFEST_EMPTY.getErrorMessage());
-             return true;
-         }
-         return false;
-     }
-
-    protected void reportError(String line) {
-        errors.add(getErrorWithParameters(Messages.MANIFEST_INVALID_LINE.getErrorMessage(), line));
-    }
-
-    protected ImmutableList<String> readAllLines(InputStream is) throws IOException {
-        if(is == null){
-            throw new IOException("Input Stream cannot be null!");
+    /**
+     * Read the manifest as a list of lines.
+     *
+     * @param manifestAsStream The manifest file input stream
+     * @return The manifest as a list of string
+     * @throws IOException when the input stream is null or a read problem happened.
+     */
+    protected ImmutableList<String> readAllLines(final InputStream manifestAsStream) throws IOException {
+        if (manifestAsStream == null) {
+            throw new IOException("Manifest Input Stream cannot be null.");
         }
-        ImmutableList.Builder<String> builder = ImmutableList.<String> builder();
-        try (BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8.newDecoder()))) {
+        final ImmutableList.Builder<String> builder = ImmutableList.builder();
+        try (final BufferedReader bufferedReader = new BufferedReader(
+            new InputStreamReader(manifestAsStream, StandardCharsets.UTF_8.newDecoder()))) {
             bufferedReader.lines().forEach(builder::add);
         }
         return builder.build();
     }
 
+    /**
+     * Checks if the line is a {@link ManifestTokenType#METADATA} entry.
+     *
+     * @param line The line to check
+     * @return {@code true} if the line is a 'metadata' entry, {@code false} otherwise.
+     */
+    protected boolean isMetadata(final String line) {
+        return line.trim()
+            .equals(ManifestTokenType.METADATA.getToken() + ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken());
+    }
+
+    /**
+     * Checks if the the entry is a valid metadata entry.
+     *
+     * @param metadataEntry the entry to be evaluated
+     * @return {@code true} if the entry is a valid metadata entry, {@code false} otherwise.
+     */
+    protected boolean isMetadataEntry(final String metadataEntry) {
+        final Optional<ManifestTokenType> manifestTokenType = ManifestTokenType.parse(metadataEntry);
+        return manifestTokenType.map(ManifestTokenType::isMetadataEntry).orElse(false);
+    }
+
+    /**
+     * Checks if the manifest is empty
+     *
+     * @param lines the manifest parsed as a string lines list
+     * @return {@code true} if the manifest is empty, {@code false} otherwise.
+     */
+    protected boolean isEmptyManifest(final ImmutableList<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            errors.add(Messages.MANIFEST_EMPTY.getErrorMessage());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Reports a manifest invalid line error occurred in the current line.
+     */
+    protected void reportInvalidLine() {
+        reportInvalidLine(currentLineNumber, getCurrentLine().orElse(""));
+    }
+
+    /**
+     * Reports a manifest invalid line error.
+     *
+     * @param lineNumber the line number
+     * @param line the line
+     */
+    protected void reportInvalidLine(final int lineNumber, final String line) {
+        errors.add(Messages.MANIFEST_INVALID_LINE.formatMessage(lineNumber, line));
+    }
+
+    /**
+     * Reports a manifest error occurred in the current line.
+     *
+     * @param message The error message
+     * @param params The message params
+     */
+    protected void reportError(final Messages message, final Object... params) {
+        reportError(currentLineNumber, getCurrentLine().orElse(""), message, params);
+    }
+
+    /**
+     * Reports a manifest error occurred in the specified line.
+     *
+     * @param lineNumber The line number
+     * @param line The line
+     * @param message The error message
+     * @param params The message params
+     */
+    protected void reportError(final int lineNumber, final String line, final Messages message,
+                               final Object... params) {
+        errors.add(Messages.MANIFEST_ERROR_WITH_LINE.formatMessage(message.formatMessage(params), lineNumber, line));
+    }
+
+    /**
+     * Checks if the manifest is valid.
+     *
+     * @return {@code true} if the manifest is valid, {@code false} otherwise.
+     */
+    public boolean isValid() {
+        return errors.isEmpty();
+    }
+
+    /**
+     * Reads the next non empty line in the manifest. Updates the current line and line number.
+     *
+     * @return the next non empty line. If there is no more lines, an empty value.
+     */
+    protected Optional<String> readNextNonEmptyLine() {
+        while (linesIterator.hasNext()) {
+            final String line = linesIterator.next().trim();
+            currentLineNumber++;
+            if (!line.isEmpty()) {
+                currentLine = line;
+                return getCurrentLine();
+            }
+            currentLine = null;
+        }
+
+        if (getCurrentLine().isPresent()) {
+            currentLineNumber++;
+            currentLine = null;
+        }
+
+        return getCurrentLine();
+    }
+
+    /**
+     * Gets the current line.
+     *
+     * @return the current line.
+     */
+    protected Optional<String> getCurrentLine() {
+        return Optional.ofNullable(currentLine);
+    }
+
+    /**
+     * Reads the current line entry name. The entry name and value must be separated by {@link
+     * ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     *
+     * @return the entry value
+     */
+    protected Optional<String> readCurrentEntryName() {
+        final Optional<String> line = getCurrentLine();
+        if (line.isPresent()) {
+            return readEntryName(line.get());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Read a entry name. The entry name and value must be separated by {@link ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     *
+     * @param line the entry line
+     * @return returns the entry name
+     */
+    protected Optional<String> readEntryName(final String line) {
+        if (StringUtils.isEmpty(line)) {
+            return Optional.empty();
+        }
+        if (!line.contains(ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken())) {
+            return Optional.empty();
+        }
+        final String attribute = line.substring(0, line.indexOf(ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken())).trim();
+        if (StringUtils.isEmpty(attribute)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(attribute);
+    }
+
+    /**
+     * Reads the current line entry value. The entry name and value must be separated by {@link
+     * ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     *
+     * @return the entry value
+     */
+    protected Optional<String> readCurrentEntryValue() {
+        final Optional<String> line = getCurrentLine();
+        if (line.isPresent()) {
+            return readEntryValue(line.get());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Reads a entry value. The entry name and value must be separated by {@link ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     *
+     * @param line the entry line
+     * @return the entry value
+     */
+    protected Optional<String> readEntryValue(final String line) {
+        if (StringUtils.isEmpty(line)) {
+            return Optional.empty();
+        }
+        if (!line.contains(ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken())) {
+            return Optional.empty();
+        }
+        final String value = line.substring(line.indexOf(ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken()) + 1).trim();
+        if (StringUtils.isEmpty(value)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(value);
+    }
+
+    /**
+     * Adds a entry to the metadata map. Only accepts new entries. If the entry is duplicated a manifest error is
+     * reported.
+     *
+     * @param entry the metadata entry
+     * @param value the entry value
+     * @return {@code true} if the entry was added, {@code false} otherwise.
+     */
+    protected boolean addToMetadata(final String entry, final String value) {
+        if (metadata.containsKey(entry)) {
+            reportError(Messages.MANIFEST_METADATA_DUPLICATED_ENTRY, entry);
+            return false;
+        }
+
+        metadata.put(entry, value);
+        return true;
+    }
+
+    public List<String> getErrors() {
+        return ImmutableList.copyOf(errors);
+    }
+
     public Map<String, String> getMetadata() {
-        if (!isValid()){
+        if (!isValid()) {
             return Collections.emptyMap();
         }
         return ImmutableMap.copyOf(metadata);
     }
 
     public List<String> getSources() {
-        if (!isValid()){
+        if (!isValid()) {
             return Collections.emptyList();
         }
         return ImmutableList.copyOf(sources);
     }
 
-    public List<String> getErrors() {
-        return  ImmutableList.copyOf(errors);
-    }
-
-    public boolean isValid() {
-        return errors.isEmpty();
-    }
-
     public Map<String, List<String>> getNonManoSources() {
-        if (!isValid()){
+        if (!isValid()) {
             return Collections.emptyMap();
         }
         return ImmutableMap.copyOf(nonManoSources);
+    }
+
+    @Override
+    public Optional<String> getCmsSignature() {
+        return Optional.ofNullable(cmsSignature);
+    }
+
+    @Override
+    public Optional<Map<String, AlgorithmDigest>> getSourceAndChecksumMap() {
+        if (MapUtils.isEmpty(sourceAndChecksumMap)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(ImmutableMap.copyOf(sourceAndChecksumMap));
     }
 }

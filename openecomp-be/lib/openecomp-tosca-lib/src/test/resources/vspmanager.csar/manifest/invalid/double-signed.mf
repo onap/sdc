@@ -1,0 +1,35 @@
+metadata:
+  vnf_product_name: vPP
+  vnf_provider_id: Ericsson
+  vnf_package_version: R24A583
+  vnf_release_date_time: 2019-08-29T22:17:39.275281
+
+Source: scripts/userdata.file
+Algorithm: md5
+Hash: 3b119b37da5b76ec7c933168b21cedd8
+
+-----BEGIN CMS-----
+MIIBcwYJKoZIhvcNAQcCoIIBZDCCAWACAQMxDTALBglghkgBZQMEAgEwCwYJKoZI
+hvcNAQcBMYIBPTCCATkCAQOAFGOGMKMvLSRzUBjkgZipSoZm1U/UMAsGCWCGSAFl
+AwQCATANBgkqhkiG9w0BAQEFAASCAQBNHXz1p5NBM9Nlvp8RPoVjszzh9UfQ/OCp
+mB926MTLexWOiawjPRKuoiXn4y4dQFZBXauunCOyXYfPASUMFnhL/7gvhajPH25/
+MwEyEsUqsCyJ63tAeYxZAqTZWA2pZi9ejCPoRnt6xl7EhEyogXiSBgc2P89hxhe6
+0/MP6Mtw9D8Ks7M1LxH6ntxGApPTNRlmMtQkrx/ZUtAcKKZJoNpofzdmd+O60PMT
+igNsuwzMNy5LfSjvp8xgWoxhWr4/zLRIZ5F5Z5qhz7lia9xDSGYMfPitDCVqI9XE
+O58S/FoHu+z3Tig7vauTFFbiJjIu9SkG0c33ayEUCKejuVQPjuY9
+-----END CMS-----
+
+Source: scripts/userdata.file.sm
+Algorithm: md5
+Hash: 3b119b37da5b76ec7c933168b21cedd7
+
+-----BEGIN CMS-----
+MIIBcwYJKoZIhvcNAQcCoIIBZDCCAWACAQMxDTALBglghkgBZQMEAgEwCwYJKoZI
+hvcNAQcBMYIBPTCCATkCAQOAFGOGMKMvLSRzUBjkgZipSoZm1U/UMAsGCWCGSAFl
+AwQCATANBgkqhkiG9w0BAQEFAASCAQBNHXz1p5NBM9Nlvp8RPoVjszzh9UfQ/OCp
+mB926MTLexWOiawjPRKuoiXn4y4dQFZBXauunCOyXYfPASUMFnhL/7gvhajPH25/
+MwEyEsUqsCyJ63tAeYxZAqTZWA2pZi9ejCPoRnt6xl7EhEyogXiSBgc2P89hxhe6
+0/MP6Mtw9D8Ks7M1LxH6ntxGApPTNRlmMtQkrx/ZUtAcKKZJoNpofzdmd+O60PMT
+igNsuwzMNy5LfSjvp8xgWoxhWr4/zLRIZ5F5Z5qhz7lia9xDSGYMfPitDCVqI9XE
+O58S/FoHu+z3Tig7vauTFFbiJjIu9SkG0c33ayEUCKejuVQPjuY9
+-----END CMS-----
