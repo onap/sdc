@@ -52,5 +52,12 @@
             <artifactId>woodstox-core-asl</artifactId>
             <version>${woodstox.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
