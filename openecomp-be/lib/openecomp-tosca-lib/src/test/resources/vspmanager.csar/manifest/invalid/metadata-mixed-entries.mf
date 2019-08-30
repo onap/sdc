@@ -1,0 +1,5 @@
+metadata:
+  vnf_product_name: vPP
+  vnf_provider_id: Ericsson
+  vnf_release_date_time: 2019-08-29T22:17:39.275281
+  pnfd_archive_version: 1.0

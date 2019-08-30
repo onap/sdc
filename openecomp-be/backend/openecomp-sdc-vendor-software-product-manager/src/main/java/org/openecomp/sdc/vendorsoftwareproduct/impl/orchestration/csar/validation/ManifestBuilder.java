@@ -19,12 +19,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ALGORITHM;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.HASH;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.METADATA;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.NON_MANO_ARTIFACT_SETS;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.SOURCE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import org.openecomp.sdc.tosca.csar.CSARConstants;
 
 /**
  * Builds SOL0004 manifest file as a String.
@@ -73,8 +78,8 @@ public class ManifestBuilder {
      */
     public ManifestBuilder withSignedSource(final String sourcePath, final String hashAlgorithm, final String hash) {
         TreeMap<String, String> sourcePropertiesMap = new TreeMap<>();
-        sourcePropertiesMap.put(CSARConstants.ALGORITHM_MF_ATTRIBUTE, hashAlgorithm);
-        sourcePropertiesMap.put(CSARConstants.HASH_MF_ATTRIBUTE, hash);
+        sourcePropertiesMap.put(ALGORITHM.getToken(), hashAlgorithm);
+        sourcePropertiesMap.put(HASH.getToken(), hash);
         sourceWithPropertiesMap.put(sourcePath, sourcePropertiesMap);
         return this;
     }
@@ -119,7 +124,7 @@ public class ManifestBuilder {
 
     private String buildMetadata() {
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format(SECTION_FORMAT, CSARConstants.METADATA_MF_ATTRIBUTE));
+        stringBuilder.append(String.format(SECTION_FORMAT, METADATA.getToken()));
         for (Entry<String, String> metadataAndValue : metadataMap.entrySet()) {
             stringBuilder.append("\t");
             stringBuilder.append(String.format(PROPERTY_FORMAT, metadataAndValue.getKey(), metadataAndValue.getValue()));
@@ -131,17 +136,17 @@ public class ManifestBuilder {
     private String buildSource() {
         final StringBuilder stringBuilder = new StringBuilder();
         for (final Entry<String, Map<String, String>> signedSourceMap : sourceWithPropertiesMap.entrySet()) {
-            stringBuilder.append(String.format(PROPERTY_FORMAT, CSARConstants.SOURCE_MF_ATTRIBUTE, signedSourceMap.getKey()));
+            stringBuilder.append(String.format(PROPERTY_FORMAT, SOURCE.getToken(), signedSourceMap.getKey()));
             final Map<String, String> propertiesMap = signedSourceMap.getValue();
             if (propertiesMap != null && !propertiesMap.isEmpty()) {
-                final String algorithm = propertiesMap.get(CSARConstants.ALGORITHM_MF_ATTRIBUTE);
+                final String algorithm = propertiesMap.get(ALGORITHM.getToken());
                 if (algorithm != null) {
-                    stringBuilder.append(String.format(PROPERTY_FORMAT, CSARConstants.ALGORITHM_MF_ATTRIBUTE, algorithm));
+                    stringBuilder.append(String.format(PROPERTY_FORMAT, ALGORITHM.getToken(), algorithm));
                 }
 
-                final String hash = propertiesMap.get(CSARConstants.HASH_MF_ATTRIBUTE);
+                final String hash = propertiesMap.get(HASH.getToken());
                 if (hash != null) {
-                    stringBuilder.append(String.format(PROPERTY_FORMAT, CSARConstants.HASH_MF_ATTRIBUTE, hash));
+                    stringBuilder.append(String.format(PROPERTY_FORMAT, HASH.getToken(), hash));
                 }
             }
         }
@@ -151,13 +156,13 @@ public class ManifestBuilder {
 
     private String buildNonManoArtifact() {
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format(SECTION_FORMAT, CSARConstants.NON_MANO_MF_ATTRIBUTE));
+        stringBuilder.append(String.format(SECTION_FORMAT, NON_MANO_ARTIFACT_SETS.getToken()));
         for (Entry<String, List<String>> artifactTypeAndSourcesEntry : nonManoArtifactMap.entrySet()) {
             stringBuilder.append("\t");
             stringBuilder.append(String.format(SECTION_FORMAT, artifactTypeAndSourcesEntry.getKey()));
             for (String source : artifactTypeAndSourcesEntry.getValue()) {
                 stringBuilder.append("\t\t");
-                stringBuilder.append(String.format(PROPERTY_FORMAT, CSARConstants.SOURCE_MF_ATTRIBUTE, source));
+                stringBuilder.append(String.format(PROPERTY_FORMAT, SOURCE.getToken(), source));
             }
         }
         return stringBuilder.toString();

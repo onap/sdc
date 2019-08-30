@@ -21,114 +21,295 @@
 package org.openecomp.sdc.tosca.csar;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.common.errors.Messages;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ALGORITHM_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.CMD_END;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.CMS_BEGIN;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.HASH_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_MANO_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SEPARATOR_MF_ATTRIBUTE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
-
+/**
+ * Processes a SOL004 Manifest.
+ */
 public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
 
     @Override
-    protected void processMetadata(Iterator<String> iterator) {
-        if(!iterator.hasNext()){
+    protected void processMetadata() {
+        Optional<String> currentLine = getCurrentLine();
+        //SOL004 #4.3.2: The manifest file shall start with the package metadata
+        if (!currentLine.isPresent() || !isMetadata(currentLine.get())) {
+            reportError(Messages.MANIFEST_START_METADATA);
+            continueToProcess = false;
             return;
         }
-        String line = iterator.next();
-        if(isEmptyLine(iterator, line)){
-            return;
-        }
-        String[] metaSplit = line.split(SEPARATOR_MF_ATTRIBUTE);
-        if (isInvalidLine(line, metaSplit)) {
-            return;
-        }
-        if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE) && !metaSplit[0].equals(NON_MANO_MF_ATTRIBUTE)){
-            String value = line.substring((metaSplit[0] + SEPARATOR_MF_ATTRIBUTE).length()).trim();
-            metadata.put(metaSplit[0].trim(),value.trim());
-            processMetadata(iterator);
-        } else {
-            processSourcesAndNonManoSources(iterator, line);
-        }
-    }
-
-    private void processSourcesAndNonManoSources(Iterator<String> iterator, String prevLine) {
-        if(prevLine.isEmpty()){
-            if(iterator.hasNext()){
-                processSourcesAndNonManoSources(iterator, iterator.next());
+        while (continueToProcess) {
+            currentLine = readNextNonEmptyLine();
+            if (!currentLine.isPresent()) {
+                continueToProcess = validateMetadata();
+                return;
             }
-        } else if(prevLine.startsWith(SOURCE_MF_ATTRIBUTE+ SEPARATOR_MF_ATTRIBUTE)){
-            processSource(iterator, prevLine);
-        }
-        else if(prevLine.startsWith(ALGORITHM_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE) ||
-                prevLine.startsWith(HASH_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
-            processSourcesAndNonManoSources(iterator, iterator.next());
-        }else if(prevLine.startsWith(CMS_BEGIN)){
-            String line = iterator.next();
-            while(iterator.hasNext() && !line.contains(CMD_END)){
-               line = iterator.next();
+            final String metadataLine = currentLine.get();
+            final String metadataEntry = readEntryName(metadataLine).orElse(null);
+            if (!isMetadataEntry(metadataEntry)) {
+                if (metadata.size() < MAX_ALLOWED_MANIFEST_META_ENTRIES) {
+                    reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, metadataLine);
+                    continueToProcess = false;
+                    return;
+                }
+                continueToProcess = validateMetadata();
+                return;
             }
-            processSourcesAndNonManoSources(iterator, iterator.next());
+            final String metadataValue = readEntryValue(metadataLine).orElse(null);
+            addToMetadata(metadataEntry, metadataValue);
+            continueToProcess = isValid();
         }
-        else if(prevLine.startsWith(NON_MANO_MF_ATTRIBUTE+ SEPARATOR_MF_ATTRIBUTE)){
-            //non mano should be the last bit in manifest file,
-            // all sources after non mano will be placed to the last non mano
-            // key, if any other structure met error reported
-            processNonManoInputs(iterator, iterator.next());
-        }else{
-            reportError(prevLine);
+        readNextNonEmptyLine();
+    }
+
+    @Override
+    protected void processBody() {
+        while (continueToProcess) {
+            final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+            if (manifestTokenType == null) {
+                getCurrentLine().ifPresent(line -> reportInvalidLine());
+                break;
+            }
+
+            switch (manifestTokenType) {
+                case CMS_BEGIN:
+                    readCmsSignature();
+                    break;
+                case NON_MANO_ARTIFACT_SETS:
+                    processNonManoArtifactEntry();
+                    continueToProcess = false;
+                    break;
+                case SOURCE:
+                    processSource();
+                    break;
+                default:
+                    getCurrentLine().ifPresent(line -> reportInvalidLine());
+                    continueToProcess = false;
+                    break;
+            }
         }
     }
 
-    private void processSource(Iterator<String> iterator, String prevLine) {
-        String value = prevLine.substring((SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE).length()).trim();
-        sources.add(value);
-        if(iterator.hasNext()) {
-            processSourcesAndNonManoSources(iterator, iterator.next());
+    /**
+     * Processes the {@link ManifestTokenType#NON_MANO_ARTIFACT_SETS} entry.
+     */
+    private void processNonManoArtifactEntry() {
+        Optional<String> currentLine = readNextNonEmptyLine();
+        while (currentLine.isPresent()) {
+            final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+            if (manifestTokenType != null) {
+                reportError(Messages.MANIFEST_INVALID_NON_MANO_KEY, manifestTokenType.getToken());
+                continueToProcess = false;
+                return;
+            }
+            final String nonManoKey = readCurrentEntryName().orElse(null);
+            if (nonManoKey == null) {
+                reportError(Messages.MANIFEST_INVALID_NON_MANO_KEY, currentLine.get());
+                continueToProcess = false;
+                return;
+            }
+            readNextNonEmptyLine();
+            final List<String> nonManoSourceList = readNonManoSourceList();
+            if (!isValid()) {
+                continueToProcess = false;
+                return;
+            }
+            if (nonManoSourceList.isEmpty()) {
+                reportError(Messages.MANIFEST_EMPTY_NON_MANO_KEY, nonManoKey);
+                continueToProcess = false;
+                return;
+            }
+            if (nonManoSources.get(nonManoKey) == null) {
+                nonManoSources.put(nonManoKey, nonManoSourceList);
+            } else {
+                nonManoSources.get(nonManoKey).addAll(nonManoSourceList);
+            }
+            currentLine = getCurrentLine();
         }
     }
 
-    private void processNonManoInputs(Iterator<String> iterator, String prevLine) {
-        if(prevLine.trim().equals(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
-            reportError(prevLine);
-            return;
-        }
-        if(!prevLine.contains(SEPARATOR_MF_ATTRIBUTE)){
-            reportError(prevLine);
-            return;
-        }
+    /**
+     * Processes {@link ManifestTokenType#SOURCE} entries in {@link ManifestTokenType#NON_MANO_ARTIFACT_SETS}.
+     *
+     * @return A list of sources paths
+     */
+    private List<String> readNonManoSourceList() {
+        final List<String> nonManoSourceList = new ArrayList<>();
+        while (getCurrentLine().isPresent()) {
+            final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+            if (manifestTokenType != ManifestTokenType.SOURCE) {
+                break;
+            }
 
-        String[] metaSplit = prevLine.trim().split(SEPARATOR_MF_ATTRIBUTE);
-        if (metaSplit.length > 1){
-            reportError(prevLine);
-            return;
-        }
-        int index = prevLine.indexOf(':');
-        if(index > 0){
-            prevLine = prevLine.substring(0, index);
-        }
-        processNonManoSource(iterator, prevLine, new ArrayList<>());
+            final String value = readCurrentEntryValue().orElse(null);
+            if (!StringUtils.isEmpty(value)) {
+                nonManoSourceList.add(value);
+            } else {
+                reportError(Messages.MANIFEST_EMPTY_NON_MANO_SOURCE);
+                break;
+            }
 
+            readNextNonEmptyLine();
+        }
+        return nonManoSourceList;
     }
 
-    private void processNonManoSource(Iterator<String> iterator, String key, List<String> sources) {
-        if(!iterator.hasNext()){
+    /**
+     * Reads a manifest CMS signature.
+     */
+    private void readCmsSignature() {
+        if (cmsSignature != null) {
+            reportError(Messages.MANIFEST_DUPLICATED_CMS_SIGNATURE);
+            continueToProcess = false;
             return;
         }
-        String line = iterator.next();
-        if(line.isEmpty()){
-            processNonManoSource(iterator, key, sources);
-        }else if(line.trim().startsWith(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE)){
-            String value = line.replace(SOURCE_MF_ATTRIBUTE + SEPARATOR_MF_ATTRIBUTE, "").trim();
-            sources.add(value);
-            processNonManoSource(iterator, key, sources);
-        }else {
-            processNonManoInputs(iterator, line);
+        Optional<String> currentLine = readNextNonEmptyLine();
+        if(!getCurrentLine().isPresent()) {
+            return;
         }
-        nonManoSources.put(key.trim(), sources);
+        StringBuilder stringBuilder = new StringBuilder();
+        while (currentLine.isPresent() && detectLineEntry().orElse(null) != ManifestTokenType.CMS_END) {
+            stringBuilder.append(currentLine.get());
+            stringBuilder.append("\n");
+            currentLine = readNextNonEmptyLine();
+        }
+
+        if (currentLine.isPresent()) {
+            cmsSignature = stringBuilder.toString();
+            readNextNonEmptyLine();
+        }
     }
+
+    /**
+     * Detects the current line manifest token.
+     *
+     * @return the current line manifest token.
+     */
+    private Optional<ManifestTokenType> detectLineEntry() {
+        final Optional<String> currentLine = getCurrentLine();
+        if (currentLine.isPresent()) {
+            final String line = currentLine.get();
+            final String entry = readEntryName(line).orElse(null);
+            if (entry == null) {
+                return ManifestTokenType.parse(line);
+            } else {
+                return ManifestTokenType.parse(entry);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Validates the manifest metadata content, reporting errors found.
+     *
+     * @return {@code true} if the metadata content is valid, {@code false} otherwise.
+     */
+    private boolean validateMetadata() {
+        if (metadata.isEmpty()) {
+            reportError(Messages.MANIFEST_NO_METADATA);
+            return false;
+        }
+
+        final Entry<String, String> firstManifestEntry = metadata.entrySet().iterator().next();
+        final ManifestTokenType firstManifestEntryTokenType =
+            ManifestTokenType.parse(firstManifestEntry.getKey()).orElse(null);
+        if (firstManifestEntryTokenType == null) {
+            reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, firstManifestEntry.getKey());
+            return false;
+        }
+        for (final Entry<String, String> manifestEntry : metadata.entrySet()) {
+            final ManifestTokenType manifestEntryTokenType = ManifestTokenType.parse(manifestEntry.getKey())
+                .orElse(null);
+            if (manifestEntryTokenType == null) {
+                reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, manifestEntry.getKey());
+                return false;
+            }
+            if ((firstManifestEntryTokenType.isMetadataVnfEntry() && !manifestEntryTokenType.isMetadataVnfEntry())
+                || (firstManifestEntryTokenType.isMetadataPnfEntry() && !manifestEntryTokenType.isMetadataPnfEntry())) {
+                reportError(Messages.MANIFEST_METADATA_UNEXPECTED_ENTRY_TYPE);
+                return false;
+            }
+        }
+
+        if (metadata.entrySet().size() != MAX_ALLOWED_MANIFEST_META_ENTRIES) {
+            reportError(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT, MAX_ALLOWED_MANIFEST_META_ENTRIES);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Processes a Manifest {@link ManifestTokenType#SOURCE} entry.
+     */
+    private void processSource() {
+        final Optional<String> currentLine = getCurrentLine();
+        if (!currentLine.isPresent()) {
+            return;
+        }
+        final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+        if (manifestTokenType != ManifestTokenType.SOURCE) {
+            return;
+        }
+
+        final String sourceLine = currentLine.get();
+        final String sourcePath = readEntryValue(sourceLine).orElse(null);
+
+        if (sourcePath == null) {
+            reportError(Messages.MANIFEST_EXPECTED_SOURCE_PATH);
+            return;
+        }
+        sources.add(sourcePath);
+        readAlgorithmEntry(sourcePath);
+    }
+
+    /**
+     * Processes entries  {@link ManifestTokenType#ALGORITHM} and {@link ManifestTokenType#HASH} of a {@link
+     * ManifestTokenType#SOURCE} entry.
+     *
+     * @param sourcePath the source path related to the algorithm entry.
+     */
+    private void readAlgorithmEntry(final String sourcePath) {
+        Optional<String> currentLine = readNextNonEmptyLine();
+        if (!currentLine.isPresent()) {
+            return;
+        }
+        final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+        if (manifestTokenType == ManifestTokenType.HASH) {
+            reportError(Messages.MANIFEST_EXPECTED_ALGORITHM_BEFORE_HASH);
+            continueToProcess = false;
+            return;
+        }
+        if (manifestTokenType != ManifestTokenType.ALGORITHM) {
+            return;
+        }
+        final String algorithmLine = currentLine.get();
+        final String algorithmType = readEntryValue(algorithmLine).orElse(null);
+        if (algorithmType == null) {
+            reportError(Messages.MANIFEST_EXPECTED_ALGORITHM_VALUE);
+            continueToProcess = false;
+            return;
+        }
+
+        currentLine = readNextNonEmptyLine();
+        if (!currentLine.isPresent() || detectLineEntry().orElse(null) != ManifestTokenType.HASH) {
+            reportError(Messages.MANIFEST_EXPECTED_HASH_ENTRY);
+            continueToProcess = false;
+            return;
+        }
+
+        final String hashLine = currentLine.get();
+        final String hash = readEntryValue(hashLine).orElse(null);
+        if (hash == null) {
+            reportError(Messages.MANIFEST_EXPECTED_HASH_VALUE);
+            continueToProcess = false;
+            return;
+        }
+        sourceAndChecksumMap.put(sourcePath, new AlgorithmDigest(algorithmType, hash));
+        readNextNonEmptyLine();
+    }
+
 }

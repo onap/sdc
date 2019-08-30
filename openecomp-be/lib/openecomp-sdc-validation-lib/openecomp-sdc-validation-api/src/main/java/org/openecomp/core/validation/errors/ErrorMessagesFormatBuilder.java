@@ -26,7 +26,7 @@ import org.openecomp.core.validation.ErrorMessageCode;
 public class ErrorMessagesFormatBuilder {
   private static final String MESSAGE_PATTERN = "[%s]: %s";
 
-  public static String getErrorWithParameters(String error, String... params) {
+  public static String getErrorWithParameters(String error, Object... params) {
     return String.format(error, params);
   }
   /**

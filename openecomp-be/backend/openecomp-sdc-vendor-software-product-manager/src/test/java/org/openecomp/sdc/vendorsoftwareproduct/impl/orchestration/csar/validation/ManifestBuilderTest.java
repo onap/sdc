@@ -24,6 +24,10 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_ARCHIVE_VERSION;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_PROVIDER;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_RELEASE_DATE_TIME;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 
@@ -34,7 +38,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.tosca.csar.CSARConstants;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 
@@ -92,10 +95,10 @@ public class ManifestBuilderTest {
     @Test
     public void givenMetadata_whenBuildingManifestWithMetadata_thenParsedManifestMetadataShouldBeTheSame() {
         final Map<String, String> expectedMetadataMap = new TreeMap<>();
-        expectedMetadataMap.put(CSARConstants.PNFD_NAME, "myPnf");
-        expectedMetadataMap.put(CSARConstants.PNFD_PROVIDER, "Acme");
-        expectedMetadataMap.put(CSARConstants.PNFD_ARCHIVE_VERSION, "1.0");
-        expectedMetadataMap.put(CSARConstants.PNFD_RELEASE_DATE_TIME, "2019-03-11T11:25:00+00:00");
+        expectedMetadataMap.put(PNFD_NAME.getToken(), "myPnf");
+        expectedMetadataMap.put(PNFD_PROVIDER.getToken(), "Acme");
+        expectedMetadataMap.put(PNFD_ARCHIVE_VERSION.getToken(), "1.0");
+        expectedMetadataMap.put(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
 
         expectedMetadataMap.forEach((key, value) -> manifestBuilder.withMetaData(key, value));
 
@@ -150,7 +153,10 @@ public class ManifestBuilderTest {
     }
 
     private void mockManifestMetadata() {
-        manifestBuilder.withMetaData(CSARConstants.PNFD_PROVIDER, "test");
+        manifestBuilder.withMetaData(PNFD_PROVIDER.getToken(), "provider");
+        manifestBuilder.withMetaData(PNFD_NAME.getToken(), "name");
+        manifestBuilder.withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "datetime");
+        manifestBuilder.withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0");
     }
 
     private void mockManifestSource() {
