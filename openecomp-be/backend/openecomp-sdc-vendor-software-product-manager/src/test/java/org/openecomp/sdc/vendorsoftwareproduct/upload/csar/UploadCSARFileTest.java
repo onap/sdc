@@ -138,8 +138,9 @@ public class UploadCSARFileTest {
           candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(1, response.getErrors().size());
       assertEquals(response.getErrors().values().iterator().next().get(0).getMessage(),
-          "Manifest " +
-              "contains invalid line : aaa: vCSCF");
+          Messages.MANIFEST_ERROR_WITH_LINE
+              .formatMessage(Messages.MANIFEST_START_METADATA.getErrorMessage(), 1, "aaa: vCSCF")
+      );
 
     }
   }

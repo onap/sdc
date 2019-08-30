@@ -2,7 +2,7 @@ metadata:
     vnf_product_name: Mock
     vnf_provider_id: ZTE
     vnf_package_version: 1.0
-    vnf_release_data_time: 2017.01.01T10:00+03:00
+    vnf_release_date_time: 2017.01.01T10:00+03:00
 
 Source: MainServiceTemplate.yaml
 
@@ -31,4 +31,4 @@ non_mano_artifact_sets:
       Source:   happy/cool/hot/hot_or_cool.json
 
 
-some garbadge
+some garbage

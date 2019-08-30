@@ -27,16 +27,30 @@ public enum Messages {
   CSAR_FILE_NOT_FOUND("Each CSAR file must contain %s file."),
   CSAR_DIRECTORIES_NOT_ALLOWED("Directory : %s , is not allowed."),
   CSAR_FILES_NOT_ALLOWED("File : %s , are not allowed."),
-  MANIFEST_INVALID_LINE("Manifest contains invalid line : %s"),
+  MANIFEST_INVALID_LINE("Manifest contains invalid line: %s: %s"),
+  MANIFEST_START_METADATA("Manifest must starts with 'metadata:'"),
   MANIFEST_NO_METADATA("Manifest must contain metadata"),
   MANIFEST_NO_SOURCES("Manifest must contain Source"),
   MANIFEST_METADATA_MISSING_ENTRY("Manifest metadata missing entry %s"),
   MANIFEST_INVALID_NAME("Manifest file %s and TOSCA definitions file %s must have the same name"),
   MANIFEST_INVALID_EXT("Manifest file must have extension \".mf\" "),
   MANIFEST_METADATA_INVALID_ENTRY("Manifest metadata should only have pnf or vnf entries"),
+  MANIFEST_METADATA_INVALID_ENTRY1("Invalid Manifest metadata entry: '%s'."),
+  MANIFEST_METADATA_DUPLICATED_ENTRY("Duplicated Manifest metadata entry: '%s'."),
+  MANIFEST_METADATA_UNEXPECTED_ENTRY_TYPE("Manifest metadata should have either pnf or vnf entries, not both together"),
   MANIFEST_INVALID_PNF_METADATA("%s TOSCA.meta file is applicable for VF only"),
-  MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT("Manifest metadata must only have the required number [%s] of values"),
-  MANIFEST_EMPTY("Manifest must contain data"),
+  MANIFEST_INVALID_NON_MANO_KEY("Invalid non mano key '%s'"),
+  MANIFEST_EMPTY_NON_MANO_KEY("Expecting a 'Source' entry for the non mano key '%s'"),
+  MANIFEST_EMPTY_NON_MANO_SOURCE("Empty non mano source"),
+  MANIFEST_EXPECTED_HASH_ENTRY("Expected Hash entry"),
+  MANIFEST_EXPECTED_HASH_VALUE("Expected Hash entry value"),
+  MANIFEST_EXPECTED_SOURCE_PATH("Expected Source entry path"),
+  MANIFEST_EXPECTED_ALGORITHM_VALUE("Expected Algorithm entry value"),
+  MANIFEST_EXPECTED_ALGORITHM_BEFORE_HASH("Expected 'Algorithm' entry before 'Hash' entry"),
+  MANIFEST_DUPLICATED_CMS_SIGNATURE("Duplicated CMS signature"),
+  MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT("Manifest metadata must only have the required number [%s] of entries"),
+  MANIFEST_EMPTY("The manifest is empty"),
+  MANIFEST_ERROR_WITH_LINE("%s;%nAt line %s: '%s'."),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
   METADATA_MISSING_OPTIONAL_FOLDERS("Missing folder %s in package"),
@@ -211,7 +225,7 @@ public enum Messages {
    * @return
    *  The formatted message.
    */
-  public String formatMessage(final String... params) {
+  public String formatMessage(final Object... params) {
     return String.format(errorMessage, params);
   }
 
