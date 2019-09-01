@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "186bf80d_cf7cc7fb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RestAuthenticationFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-09-01T10:57:58Z",
+      "side": 1,
+      "message": "jh0003 is just a demo predefined user, but we should allow any user awith Admin role to authenticate. Shouldn\u0027t hardcorde a specific demo user, hence need to query cassandra for users.\nTry using getAllAdminUsers() in UserBusinessLogic class.",
+      "range": {
+        "startLine": 87,
+        "startChar": 40,
+        "endLine": 87,
+        "endChar": 46
+      },
+      "revId": "b5e0baf99a4a88d08d483c98aeb78f501b9dd6cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
