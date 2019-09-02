@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab05c968_f42d1b14",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/templates/default/ready-probe.sh.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-09-02T12:39:58Z",
+      "side": 1,
+      "message": "this user won\u0027t necessarily exist in production, it\u0027s just a demo user",
+      "range": {
+        "startLine": 2,
+        "startChar": 103,
+        "endLine": 2,
+        "endChar": 109
+      },
+      "revId": "04a98777e88dc2faee7c67ef4e2c56f09e4efb90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
