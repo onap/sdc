@@ -27,16 +27,26 @@ public class OrchestrationTemplateCandidateData {
   private String fileSuffix;
   private String fileName;
   private String validationData;
+  private ByteBuffer originalFileContentData;
+  private String originalFileName;
+  private String originalFileSuffix;
 
   public OrchestrationTemplateCandidateData() {
   }
 
-  public OrchestrationTemplateCandidateData(ByteBuffer contentData, String dataStructureJson,
-                                            String fileSuffix, String fileName) {
+  public OrchestrationTemplateCandidateData(final ByteBuffer contentData,
+                                            final String dataStructureJson,
+                                            final String fileSuffix, final String fileName,
+                                            final String originalFileName,
+                                            final String originalFileSuffix,
+                                            final ByteBuffer originalFileContentData) {
     this.contentData = contentData;
     this.filesDataStructure = dataStructureJson;
     this.fileSuffix = fileSuffix;
     this.fileName = fileName;
+    this.originalFileName = originalFileName;
+    this.originalFileSuffix = originalFileSuffix;
+    this.originalFileContentData = originalFileContentData;
   }
 
   public ByteBuffer getContentData() {
@@ -87,5 +97,29 @@ public class OrchestrationTemplateCandidateData {
   public void setValidationDataStructure(ValidationStructureList validationData) {
     this.validationData = validationData == null ? null
         : JsonUtil.object2Json(validationData);
+  }
+
+  public ByteBuffer getOriginalFileContentData() {
+    return originalFileContentData;
+  }
+
+  public void setOriginalFileContentData(ByteBuffer originalFileContentData) {
+    this.originalFileContentData = originalFileContentData;
+  }
+
+  public String getOriginalFileName() {
+    return originalFileName;
+  }
+
+  public void setOriginalFileName(String originalFileName) {
+    this.originalFileName = originalFileName;
+  }
+
+  public String getOriginalFileSuffix() {
+    return originalFileSuffix;
+  }
+
+  public void setOriginalFileSuffix(String originalFileSuffix) {
+    this.originalFileSuffix = originalFileSuffix;
   }
 }

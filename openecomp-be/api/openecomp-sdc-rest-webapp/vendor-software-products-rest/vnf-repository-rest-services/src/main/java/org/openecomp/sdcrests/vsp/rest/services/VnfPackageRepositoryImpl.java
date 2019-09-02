@@ -21,10 +21,8 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
 import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +47,8 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
@@ -135,24 +135,23 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         }
     }
 
-    private Response uploadVnfPackage(String vspId, String versionId, String csarId, byte[] payload) {
-
-        try (InputStream fileStream = new BufferedInputStream(new ByteArrayInputStream(payload))) {
-
-            OrchestrationTemplateCandidateManager candidateManager =
+    private Response uploadVnfPackage(final String vspId, final String versionId,
+                                      final String csarId, final byte[] payload) {
+        try {
+            final OrchestrationTemplateCandidateManager candidateManager =
                     OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
-
-            String filename = formatFilename(csarId);
-            Version version = getVersion(vspId, versionId);
-            UploadFileResponse response = candidateManager.upload(vspId, version, fileStream,
-                    getFileExtension(filename), getNetworkPackageName(filename));
-
-            UploadFileResponseDto uploadFileResponse = new MapUploadFileResponseToUploadFileResponseDto()
-                                                               .applyMapping(response, UploadFileResponseDto.class);
+            final String filename = formatFilename(csarId);
+            final OnboardPackageInfo onboardPackageInfo = new OnboardPackageInfo(getNetworkPackageName(filename),
+                getFileExtension(filename), ByteBuffer.wrap(payload));
+            final VspDetails vspDetails = new VspDetails(vspId, getVersion(vspId, versionId));
+            final UploadFileResponse response = candidateManager.upload(vspDetails, onboardPackageInfo);
+            final UploadFileResponseDto uploadFileResponse =
+                new MapUploadFileResponseToUploadFileResponseDto()
+                    .applyMapping(response, UploadFileResponseDto.class);
 
             return Response.ok(uploadFileResponse).build();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             ErrorCode error = new GeneralErrorBuilder().build();
             LOGGER.error("Exception while uploading package received from VNF Repository", new CoreException(error, e));
             return generateInternalServerError(error);

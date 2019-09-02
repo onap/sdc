@@ -22,33 +22,37 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.function.Predicate;
-
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.ManifestCreatorNamingConventionImpl;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class UploadCSARFileTest {
 
-  public static final Version VERSION01 = new Version("0.1");
+  private static final Logger LOGGER = LoggerFactory.getLogger(UploadCSARFileTest.class);
 
   @Spy
   private CandidateServiceImpl candidateService;
@@ -62,11 +66,12 @@ public class UploadCSARFileTest {
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
+  private OnboardPackageInfo onboardPackageInfo;
+  private final VspDetails vspDetails = new VspDetails(id001, activeVersion002);
 
   private static String id001 = "dummyId";
   private static Version activeVersion002 = new Version("dummyVersion");
   private static final String BASE_DIR = "/vspmanager.csar";
-  private static final String CSAR = "csar";
 
 
   @Before
@@ -79,7 +84,6 @@ public class UploadCSARFileTest {
 
   @Test
   public void testSuccessfulUploadFile() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     testCsarUpload("successfulUpload.csar", 0);
@@ -87,7 +91,6 @@ public class UploadCSARFileTest {
 
   @Test
   public void testIllegalUploadInvalidFileInRoot() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     UploadFileResponse response = testCsarUpload("invalidFileInRoot.csar", 1);
@@ -97,7 +100,6 @@ public class UploadCSARFileTest {
 
   @Test
   public void testIllegalUploadMissingMainServiceTemplate() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     UploadFileResponse response = testCsarUpload("missingMainServiceTemplate.csar", 1);
@@ -107,7 +109,6 @@ public class UploadCSARFileTest {
 
   @Test
   public void testUploadFileIsNotZip() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     UploadFileResponse response = testCsarUpload("notCsar.txt", 1);
@@ -117,26 +118,24 @@ public class UploadCSARFileTest {
 
   @Test
   public void testUploadFileIsEmpty() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = new ByteArrayInputStream(new byte[]{})) {
-      UploadFileResponse uploadFileResponse = candidateManager.upload(id001,
-          activeVersion002, is, "csar", "file");
-      assertEquals(1, uploadFileResponse.getErrors().size());
-    }
+    onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
+            ByteBuffer.wrap(new byte[]{}));
+    UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
+    assertEquals(1, uploadFileResponse.getErrors().size());
   }
 
   @Test
   public void testInvalidManifestContent() throws Exception {
-    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
+
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-
-    try (InputStream is = getClass()
+    try (InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + "/invalidManifestContent.csar")) {
+      onboardPackageInfo = new OnboardPackageInfo("invalidManifestContent",
+              OnboardingTypesEnum.CSAR.toString(), convertFileInputStream(inputStream));
       UploadFileResponse response =
-          candidateManager.upload(id001, activeVersion002, is, "csar", "invalidManifestContent");
+          candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(1, response.getErrors().size());
       assertEquals(response.getErrors().values().iterator().next().get(0).getMessage(),
           "Manifest " +
@@ -153,17 +152,27 @@ public class UploadCSARFileTest {
     return error.iterator().next().getMessage().contains(substring);
   }
 
-  private UploadFileResponse testCsarUpload(String csarFileName, int expectedErrorsNumber)
-      throws IOException {
+  private UploadFileResponse testCsarUpload(final String csarFileName,
+                                            final int expectedErrorsNumber) throws IOException {
     UploadFileResponse uploadFileResponse;
-    try (InputStream is = getClass()
+    try (final InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + File.separator + csarFileName)) {
-      uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is, CSAR, csarFileName);
+      onboardPackageInfo = new OnboardPackageInfo(csarFileName, OnboardingTypesEnum.CSAR.toString(),
+              convertFileInputStream(inputStream));
+      uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(expectedErrorsNumber, uploadFileResponse.getErrors().size());
     }
     return uploadFileResponse;
   }
 
+  private ByteBuffer convertFileInputStream(final InputStream fileInputStream) {
+    byte[] fileContent = new byte[0];
+    try {
+      fileContent = IOUtils.toByteArray(fileInputStream);
+    } catch (final IOException e) {
+      LOGGER.error(String.format("Could not convert %s into byte[]", fileInputStream), e);
+    }
+    return ByteBuffer.wrap(fileContent);
+  }
 
 }

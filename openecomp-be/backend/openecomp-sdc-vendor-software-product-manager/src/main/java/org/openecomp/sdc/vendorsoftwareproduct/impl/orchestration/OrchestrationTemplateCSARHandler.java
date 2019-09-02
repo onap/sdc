@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -34,18 +39,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.Validator;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
-
 
   @Override
   public Optional<FileContentHandler> getFileContentMap(UploadFileResponse uploadFileResponse,
@@ -74,16 +73,20 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   }
 
   @Override
-  protected boolean updateCandidateData(VspDetails vspDetails, byte[] uploadedFileData,
-                                        FileContentHandler contentMap,
-                                        String fileSuffix, String networkPackageName,
-                                        CandidateService candidateService,
-                                        UploadFileResponse uploadFileResponse) {
+  protected boolean updateCandidateData(final VspDetails vspDetails,
+                                        final OnboardPackageInfo onboardPackageInfo,
+                                        final CandidateService candidateService,
+                                        final UploadFileResponse uploadFileResponse,
+                                        final FileContentHandler contentMap) {
     try {
+      final OnboardPackage csarPackage = onboardPackageInfo.getOnboardPackage();
+      final OnboardPackage originalOnboardPackage = onboardPackageInfo.getOriginalOnboardPackage();
       candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
-          new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
-              networkPackageName));
-    } catch (Exception exception) {
+          new OrchestrationTemplateCandidateData(csarPackage.getFileContent(),
+              "", csarPackage.getFileExtension(),
+              csarPackage.getFilename(), originalOnboardPackage.getFilename(), originalOnboardPackage.getFileExtension(),
+              originalOnboardPackage.getFileContent()));
+    } catch (final Exception exception) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
           getHandlerType().toString()), exception);
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,

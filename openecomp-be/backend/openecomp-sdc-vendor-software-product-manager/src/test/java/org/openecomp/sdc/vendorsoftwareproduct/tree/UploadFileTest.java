@@ -31,8 +31,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.zip.ZipOutputStream;
-
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +44,8 @@ import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
@@ -52,11 +55,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VSPCommon;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class UploadFileTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(UploadFileTest.class);
+
   private static final String USER1 = "vspTestUser1";
 
   public static final Version VERSION01 = new Version(0, 1);
@@ -76,15 +82,15 @@ public class UploadFileTest {
   @Mock
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
 
+  private OnboardPackageInfo onboardPackageInfo;
+
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
-  private static String vlm1Id;
-  public static String id001 = null;
-  public static String id002 = null;
+  public static String id001 = "dummyId";
+  public static Version activeVersion002 = new Version(1, 0);
 
-  public static Version activeVersion002 = null;
-
+  private final VspDetails vspDetails = new VspDetails(id001, activeVersion002);
 
   @Before
   public void setUp() throws Exception {
@@ -92,17 +98,20 @@ public class UploadFileTest {
   }
 
   @Test
-  public void testUploadFile() {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
+  public void testUploadFile() throws IOException {
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-    candidateManager.upload(id001, activeVersion002, getZipInputStream("/legalUpload"),
-        OnboardingTypesEnum.ZIP.toString(), "legalUpload");
+    try (final InputStream inputStream = getZipInputStream("/legalUpload")) {
+      onboardPackageInfo = new OnboardPackageInfo("legalUpload", OnboardingTypesEnum.ZIP.toString(),
+              convertFileInputStream(inputStream));
+      candidateManager.upload(vspDetails, onboardPackageInfo);
+
+    }
   }
 
-
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
-    UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, activeVersion002,
-        upload, OnboardingTypesEnum.ZIP.toString(), "file");
+    onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.ZIP.toString(),
+            convertFileInputStream(upload));
+    final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
     assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.ZIP);
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDataDaoMock.get(vspId, version);
 
@@ -121,5 +130,14 @@ public class UploadFileTest {
     return new ByteArrayInputStream(baos.toByteArray());
   }
 
+  private ByteBuffer convertFileInputStream(final InputStream fileInputStream) {
+    byte[] fileContent = new byte[0];
+    try {
+      fileContent = IOUtils.toByteArray(fileInputStream);
+    } catch (final IOException e) {
+      LOGGER.error(String.format("Could not convert %s into byte[]", fileInputStream), e);
+    }
+    return ByteBuffer.wrap(fileContent);
+  }
 
 }
