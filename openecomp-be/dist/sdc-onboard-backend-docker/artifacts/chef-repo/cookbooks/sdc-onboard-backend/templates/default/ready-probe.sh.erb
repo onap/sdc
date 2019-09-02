@@ -1,6 +1,5 @@
 #!/bin/bash
-health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc1/rest/healthCheck)
-
+health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' -X GET --header "USER_ID: cs0008" --header "Accept: application/json" "<%= @protocol %>://127.0.0.1:<%= @port %>/onboarding-api/v1.0/healthcheck")
 if [[ "$health_Check_http_code" -eq 200 ]]; then
    exit 0
 else
