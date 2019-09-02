@@ -1125,6 +1125,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             }
         } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
+            responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         } finally {
             getComponentsUtils().auditExternalDownloadArtifact(responseFormat,
                     new ResourceCommonInfo(resourceInstanceName, componentTypeValue),
