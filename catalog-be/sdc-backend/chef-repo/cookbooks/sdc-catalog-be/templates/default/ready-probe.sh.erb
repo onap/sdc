@@ -1,5 +1,5 @@
 #!/bin/bash
-health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc1/rest/healthCheck)
+health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc2/rest/healthCheck)
 
 if [[ "$health_Check_http_code" -eq 200 ]]; then
    exit 0
