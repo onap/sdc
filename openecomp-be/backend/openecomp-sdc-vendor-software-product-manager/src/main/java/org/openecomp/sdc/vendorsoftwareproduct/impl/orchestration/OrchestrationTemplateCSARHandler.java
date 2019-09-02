@@ -20,8 +20,20 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_CONTENT;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_SUFFIX;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
@@ -35,13 +47,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validatio
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
@@ -78,11 +83,23 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
                                         FileContentHandler contentMap,
                                         String fileSuffix, String networkPackageName,
                                         CandidateService candidateService,
-                                        UploadFileResponse uploadFileResponse) {
+                                        UploadFileResponse uploadFileResponse,
+                                        Map<String, Object> originalFileToUploadDetails) {
     try {
-      candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
-          new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
-              networkPackageName));
+        final String originalFilename = (String) originalFileToUploadDetails.get(ORIGINAL_FILE_NAME.getVal());
+        final String originalFileExtension = (String) originalFileToUploadDetails.get(ORIGINAL_FILE_SUFFIX.getVal());
+        final ByteBuffer originalFileContent;
+        final Object originalFileContentValue = originalFileToUploadDetails.get(ORIGINAL_FILE_CONTENT.getVal());
+        if (originalFileContentValue instanceof InputStream) {
+            byte[] originalUploadedFileData = FileUtils.toByteArray((InputStream) originalFileContentValue);
+            originalFileContent = ByteBuffer.wrap(originalUploadedFileData);
+        } else {
+            originalFileContent = ByteBuffer.wrap((byte[]) originalFileContentValue);
+        }
+
+        candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
+            new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
+                networkPackageName, originalFilename, originalFileExtension, originalFileContent));
     } catch (Exception exception) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
           getHandlerType().toString()), exception);

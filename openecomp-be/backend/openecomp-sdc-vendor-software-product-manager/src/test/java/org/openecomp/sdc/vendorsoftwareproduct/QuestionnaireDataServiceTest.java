@@ -21,6 +21,16 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_CONTENT;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_SUFFIX;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +41,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -45,11 +56,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.tree.UploadFileTest;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
 
 public class QuestionnaireDataServiceTest {
   public static final Version VERSION = new Version(0, 1);
@@ -101,12 +107,21 @@ public class QuestionnaireDataServiceTest {
   // TODO: 3/15/2017 fix and enable   //@Test
   public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
+      final Map<String, Object> originalFileToUploadDetails = storeOriginalFileInfo("missingYml", "csar", zipInputStream);
       UploadFileResponse uploadFileResponse =
-              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "missingYml");
+              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "missingYml", originalFileToUploadDetails);
     }
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
 
+  }
+
+  private Map<String, Object> storeOriginalFileInfo(final String filename, final String fileSuffix, final InputStream is) {
+    final Map<String, Object> originalFileToUploadDetails = new HashMap<>();
+    originalFileToUploadDetails.put(ORIGINAL_FILE_NAME.getVal(), filename);
+    originalFileToUploadDetails.put(ORIGINAL_FILE_SUFFIX.getVal(), fileSuffix);
+    originalFileToUploadDetails.put(ORIGINAL_FILE_CONTENT.getVal(), FileUtils.toByteArray(is));
+    return originalFileToUploadDetails;
   }
 
   private InformationArtifactData uploadFileAndValidateInformationArtifactData(String filePath,
@@ -114,8 +129,9 @@ public class QuestionnaireDataServiceTest {
             throws IOException {
 
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
+      final Map<String, Object> originalFileToUploadDetails = storeOriginalFileInfo("file", "csar", zipInputStream);
       UploadFileResponse uploadFileResponse =
-              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "file");
+              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "file", originalFileToUploadDetails);
       candidateManager.process(vspId, VERSION);
 
       Assert.assertTrue(MapUtils.isEmpty(

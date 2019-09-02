@@ -31,8 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 import java.util.zip.ZipOutputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -41,6 +41,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -52,6 +53,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VSPCommon;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -95,14 +97,18 @@ public class UploadFileTest {
   public void testUploadFile() {
     VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-    candidateManager.upload(id001, activeVersion002, getZipInputStream("/legalUpload"),
-        OnboardingTypesEnum.ZIP.toString(), "legalUpload");
+    InputStream inputStream = getZipInputStream("/legalUpload");
+    final Map<String, Object> originalFileToUploadDetails = OnboardPackageInfo
+        .mapOnboardPackageInfo("legalUpload", "zip", FileUtils.toByteArray(inputStream));
+    candidateManager.upload(id001, activeVersion002, inputStream,
+        OnboardingTypesEnum.ZIP.toString(), "legalUpload", originalFileToUploadDetails);
   }
 
-
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
+    final Map<String, Object> originalFileToUploadDetails =
+        OnboardPackageInfo.mapOnboardPackageInfo("file", "zip", FileUtils.toByteArray(upload));
     UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, activeVersion002,
-        upload, OnboardingTypesEnum.ZIP.toString(), "file");
+        upload, OnboardingTypesEnum.ZIP.toString(), "file", originalFileToUploadDetails);
     assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.ZIP);
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDataDaoMock.get(vspId, version);
 
@@ -120,6 +126,5 @@ public class UploadFileTest {
     }
     return new ByteArrayInputStream(baos.toByteArray());
   }
-
 
 }

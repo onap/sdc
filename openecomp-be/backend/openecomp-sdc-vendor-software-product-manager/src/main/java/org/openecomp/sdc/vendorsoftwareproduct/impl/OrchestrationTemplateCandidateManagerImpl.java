@@ -16,6 +16,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,13 +46,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
 
@@ -62,14 +61,14 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public UploadFileResponse upload(String vspId, Version version, InputStream fileToUpload,
-                                   String fileSuffix, String networkPackageName) {
+                                   String fileSuffix, String networkPackageName, Map<String, Object> originalFileToUploadDetails) {
     OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
         OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(fileSuffix);
 
     VspDetails vspDetails = getVspDetails(vspId, version);
 
     UploadFileResponse uploadResponse = orchestrationTemplateFileHandler
-        .upload(vspDetails, fileToUpload, fileSuffix, networkPackageName, candidateService);
+        .upload(vspDetails, fileToUpload, fileSuffix, networkPackageName, candidateService, originalFileToUploadDetails);
 
     uploadResponse.setNetworkPackageName(networkPackageName);
     return uploadResponse;

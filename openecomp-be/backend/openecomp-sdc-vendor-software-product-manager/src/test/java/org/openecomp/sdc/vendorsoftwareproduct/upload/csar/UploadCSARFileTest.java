@@ -21,14 +21,18 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_CONTENT;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_SUFFIX;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -121,10 +125,20 @@ public class UploadCSARFileTest {
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     try (InputStream is = new ByteArrayInputStream(new byte[]{})) {
+      final Map<String, Object> originalFileToUploadDetails = storeOriginalFileInfo("file", "csar", is);
+
       UploadFileResponse uploadFileResponse = candidateManager.upload(id001,
-          activeVersion002, is, "csar", "file");
+          activeVersion002, is, "csar", "file", originalFileToUploadDetails);
       assertEquals(1, uploadFileResponse.getErrors().size());
     }
+  }
+
+  private Map<String, Object> storeOriginalFileInfo(final String filename, final String fileSuffix, final InputStream inputStream) {
+    final Map<String, Object> originalFileToUploadDetails = new HashMap<>();
+    originalFileToUploadDetails.put(ORIGINAL_FILE_NAME.getVal(), filename);
+    originalFileToUploadDetails.put(ORIGINAL_FILE_SUFFIX.getVal(), fileSuffix);
+    originalFileToUploadDetails.put(ORIGINAL_FILE_CONTENT.getVal(), inputStream);
+    return originalFileToUploadDetails;
   }
 
   @Test
@@ -135,8 +149,9 @@ public class UploadCSARFileTest {
 
     try (InputStream is = getClass()
         .getResourceAsStream(BASE_DIR + "/invalidManifestContent.csar")) {
+      final Map<String, Object> originalFileToUploadDetails = storeOriginalFileInfo("invalidManifestContent", "csar", is);
       UploadFileResponse response =
-          candidateManager.upload(id001, activeVersion002, is, "csar", "invalidManifestContent");
+          candidateManager.upload(id001, activeVersion002, is, "csar", "invalidManifestContent", originalFileToUploadDetails);
       assertEquals(1, response.getErrors().size());
       assertEquals(response.getErrors().values().iterator().next().get(0).getMessage(),
           "Manifest " +
@@ -158,8 +173,9 @@ public class UploadCSARFileTest {
     UploadFileResponse uploadFileResponse;
     try (InputStream is = getClass()
         .getResourceAsStream(BASE_DIR + File.separator + csarFileName)) {
+      final Map<String, Object> originalFileToUploadDetails = storeOriginalFileInfo(csarFileName, CSAR, is);
       uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is, CSAR, csarFileName);
+          candidateManager.upload(id001, activeVersion002, is, CSAR, csarFileName, originalFileToUploadDetails);
       assertEquals(expectedErrorsNumber, uploadFileResponse.getErrors().size());
     }
     return uploadFileResponse;

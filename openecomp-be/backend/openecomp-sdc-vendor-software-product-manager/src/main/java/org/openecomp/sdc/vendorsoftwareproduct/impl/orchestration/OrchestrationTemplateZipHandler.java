@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_CONTENT;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.OrchestrationTemplateCandidateDaoZusammenImpl.InfoPropertyName.ORIGINAL_FILE_SUFFIX;
+
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.Messages;
@@ -31,10 +39,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.utils.CandidateEntityBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
@@ -51,7 +55,8 @@ public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHa
                                         FileContentHandler contentMap,
                                         String fileSuffix, String networkPackageName,
                                         CandidateService candidateService,
-                                        UploadFileResponse uploadFileResponse) {
+                                        UploadFileResponse uploadFileResponse,
+                                        Map<String, Object> originalFileToUploadDetails) {
     try {
       OrchestrationTemplateCandidateData candidateData =
           new CandidateEntityBuilder(candidateService)
@@ -59,6 +64,9 @@ public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHa
                   uploadFileResponse.getErrors());
       candidateData.setFileSuffix(fileSuffix);
       candidateData.setFileName(networkPackageName);
+      candidateData.setOriginalFileName((String) originalFileToUploadDetails.get(ORIGINAL_FILE_NAME.getVal()));
+      candidateData.setOriginalFileSuffix((String) originalFileToUploadDetails.get(ORIGINAL_FILE_SUFFIX.getVal()));
+      candidateData.setOriginalFileContentData(ByteBuffer.wrap((byte[]) originalFileToUploadDetails.get(ORIGINAL_FILE_CONTENT.getVal())));
 
       candidateService
           .updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(), candidateData);

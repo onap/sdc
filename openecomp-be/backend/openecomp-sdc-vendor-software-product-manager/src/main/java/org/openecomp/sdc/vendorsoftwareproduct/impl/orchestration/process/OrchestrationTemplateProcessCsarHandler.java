@@ -16,6 +16,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.AbstractToscaSolConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
@@ -46,15 +54,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
@@ -133,8 +132,8 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     ETSIService etsiService = new ETSIServiceImpl();
     ToscaServiceModel toscaServiceModel;
     if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
-      fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() +
-              EXT_SEPARATOR + candidateData.getFileSuffix(), candidateData.getContentData().array());
+      fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() +
+              EXT_SEPARATOR + candidateData.getOriginalFileSuffix(), candidateData.getOriginalFileContentData().array());
       final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
       toscaServiceModel = instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
     } else {
