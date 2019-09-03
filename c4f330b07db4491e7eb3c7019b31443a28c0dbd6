@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5b1778b_b6eabc63",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ResourceServletTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-09-03T12:48:11Z",
+      "side": 1,
+      "message": "you have response creation used multiple times within tests, consider extracting to separate (parametrized if needed) method",
+      "range": {
+        "startLine": 481,
+        "startChar": 0,
+        "endLine": 486,
+        "endChar": 23
+      },
+      "revId": "c4f330b07db4491e7eb3c7019b31443a28c0dbd6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
