@@ -20,6 +20,20 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
@@ -51,18 +65,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto
 import org.openecomp.sdcrests.vsp.rest.data.PackageArchive;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({VspManagerFactory.class, ActivityLogManagerFactory.class,
@@ -114,7 +116,7 @@ public class OrchestrationTemplateCandidateImplTest {
             UploadFileResponse uploadFileResponse = new UploadFileResponse();
             uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
             uploadFileResponse.setNetworkPackageName("test");
-            when(candidateManager.upload(any(), any(), any(), any(), any())).thenReturn(uploadFileResponse);
+            when(candidateManager.upload(any(), any())).thenReturn(uploadFileResponse);
 
 
             // get using the candidate manager.
@@ -165,22 +167,24 @@ public class OrchestrationTemplateCandidateImplTest {
         when(packageArchive.isSigned()).thenReturn(true);
         when(packageArchive.isSignatureValid()).thenReturn(true);
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Attachment attachment = mock(Attachment.class);
-        when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
-        Response response = orchestrationTemplateCandidate.upload("1", "1", attachment, "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
     }
 
     @Test
     public void uploadNotSignedTest(){
         when(packageArchive.isSigned()).thenReturn(false);
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Attachment attachment = mock(Attachment.class);
-        when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
-        Response response = orchestrationTemplateCandidate.upload("1", "1", attachment, "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
 
+    private Attachment mockAttachment() {
+        final Attachment attachment = mock(Attachment.class);
+        when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
+        final byte[] bytes = "upload package Test".getBytes();
+        when(attachment.getObject(ArgumentMatchers.any())).thenReturn(bytes);
+        return attachment;
     }
 
     @Test
@@ -188,12 +192,9 @@ public class OrchestrationTemplateCandidateImplTest {
         when(packageArchive.isSigned()).thenReturn(true);
         when(packageArchive.isSignatureValid()).thenReturn(false);
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Attachment attachment = mock(Attachment.class);
-        when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
-        Response response = orchestrationTemplateCandidate.upload("1", "1", attachment, "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertFalse(((UploadFileResponseDto)response.getEntity()).getErrors().isEmpty());
-
     }
 
     @Test
@@ -204,7 +205,6 @@ public class OrchestrationTemplateCandidateImplTest {
         Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Candidate"),-1);
         byte[] content = (byte[])rsp.getEntity();
         Assert.assertEquals("World", new String(content));
-
     }
 
     @Test
