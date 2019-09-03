@@ -16,78 +16,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.model;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.Collections;
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition.OwnerType;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
-
-import java.util.Map;
-
+import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 
 public class CapabilityTypeDefinitionTest {
 
-	private CapabilityTypeDefinition createTestSubject() {
-		return new CapabilityTypeDefinition();
+	private static final String OWNER_NAME = "ownerName";
+	private static final String NAME = "name";
+	private static final OwnerType RESOURCE = OwnerType.RESOURCE;
+	private static final String TYPE = "TYPE";
+	private static final String DESCRIPTION = "DESCRIPTION";
+	private static final String UNIQUE_ID = "UNIQUE_ID";
+
+	@Test
+	public void hasValidGettersAndSettersTest() {
+		assertThat(CapabilityTypeDefinition.class,
+			hasValidGettersAndSettersExcluding("empty", "ownerIdIfEmpty"));
 	}
 
 	@Test
-	public void testCtor() throws Exception {
-		new CapabilityTypeDefinition(new CapabilityTypeDataDefinition());
-	}
-	
-	@Test
-	public void testGetDerivedFrom() throws Exception {
-		CapabilityTypeDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDerivedFrom();
+	public void shouldHaveValidToString() {
+		CapabilityDefinition capabilityDefinition = new CapabilityDefinition(
+			new CapabilityTypeDefinition(), OWNER_NAME, NAME, RESOURCE);
+		capabilityDefinition.setProperties(Collections.emptyList());
+		capabilityDefinition.setType(TYPE);
+		capabilityDefinition.setDescription(DESCRIPTION);
+		CapabilityTypeDefinition capabilityTypeDefinitionTest = new CapabilityTypeDefinition(capabilityDefinition);
+		String toStringRepr = capabilityTypeDefinitionTest.toString();
+		assertEquals(toStringRepr, "CapabilityTypeDataDefinition [uniqueId=null, description=DESCRIPTION, type=TYPE, validSourceTypes=[], version=null, creationTime=null, modificationTime=null] [ derivedFrom=null, properties={} ]");
 	}
 
-	
 	@Test
-	public void testSetDerivedFrom() throws Exception {
-		CapabilityTypeDefinition testSubject;
-		String derivedFrom = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDerivedFrom(derivedFrom);
-	}
-
-	
-	@Test
-	public void testGetProperties() throws Exception {
-		CapabilityTypeDefinition testSubject;
-		Map<String, PropertyDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProperties();
-	}
-
-	
-	@Test
-	public void testSetProperties() throws Exception {
-		CapabilityTypeDefinition testSubject;
-		Map<String, PropertyDefinition> properties = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setProperties(properties);
-	}
-
-	
-	@Test
-	public void testToString() throws Exception {
-		CapabilityTypeDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
+	public void shouldCreateCapabilityTypeDefinitionFromCapabilityTypeData() {
+		CapabilityTypeData capabilityTypeData = new CapabilityTypeData();
+		CapabilityTypeDataDefinition capabilityTypeDataDefinition = new CapabilityTypeDataDefinition();
+		capabilityTypeDataDefinition.setUniqueId(UNIQUE_ID);
+		capabilityTypeDataDefinition.setType(TYPE);
+		capabilityTypeData.setCapabilityTypeDataDefinition(capabilityTypeDataDefinition);
+		CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition(capabilityTypeData);
+		assertEquals(capabilityTypeDefinition.getType(), capabilityTypeData.getCapabilityTypeDataDefinition().getType());
+		assertEquals(capabilityTypeDefinition.getUniqueId(), capabilityTypeData.getCapabilityTypeDataDefinition().getUniqueId());
 	}
 }

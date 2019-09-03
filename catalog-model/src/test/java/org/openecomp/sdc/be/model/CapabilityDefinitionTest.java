@@ -16,92 +16,113 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.model;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsFor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeFor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToStringFor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition.OwnerType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 
 public class CapabilityDefinitionTest {
 
-	private CapabilityDefinition createTestSubject() {
-		return new CapabilityDefinition();
+	private static final String OWNER_NAME = "OWNER";
+	private static final String OWNER_ID = "OWNER_ID";
+	private static final String NAME = "NAME";
+	private static final OwnerType OWNER_TYPE = OwnerType.COMPONENT_INSTANCE;
+	private static final String PROP = "PROP";
+	private static final String EQ = "eq";
+	private static final String PROPERTIES = "properties";
+	private static final String VALUE = "VALUE";
+
+	@Test
+	public void hasValidGettersAndSettersTest() {
+		assertThat(CapabilityDefinition.class,
+			hasValidGettersAndSettersExcluding("empty", "ownerIdIfEmpty", "version"));
 	}
 
 	@Test
-	public void testCtor() throws Exception {
-		CapabilityDefinition other = new CapabilityDefinition();
-		new CapabilityDefinition(other);
-		other.setProperties(new LinkedList<>());
-		new CapabilityDefinition(other);
-		new CapabilityDefinition(new CapabilityDataDefinition());
+	public void shouldHaveValidToString() {
+		assertThat(CapabilityDefinition.class, hasValidBeanToStringFor(PROPERTIES));
 	}
-	
+
 	@Test
-	public void testHashCode() throws Exception {
-		CapabilityDefinition testSubject;
-		int result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.hashCode();
+	public void shouldHaveEquals() {
+		assertThat(CapabilityDefinition.class, hasValidBeanEqualsFor(PROPERTIES));
 	}
 
-	
 	@Test
-	public void testEquals() throws Exception {
-		CapabilityDefinition testSubject;
-		Object obj = null;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.equals(obj);
-		result = testSubject.equals(new Object());
-		result = testSubject.equals(testSubject);
-		CapabilityDefinition createTestSubject = createTestSubject();
-		result = testSubject.equals(createTestSubject);
-		createTestSubject.setProperties(new LinkedList<>());
-		result = testSubject.equals(createTestSubject);
-		testSubject.setProperties(new LinkedList<>());
-		result = testSubject.equals(createTestSubject);
+	public void shouldHaveHashCode() {
+		assertThat(CapabilityDefinition.class, hasValidBeanHashCodeFor(PROPERTIES));
 	}
 
-	
 	@Test
-	public void testToString() throws Exception {
-		CapabilityDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
+	public void testParamConstructor() {
+		EqualConstraint equalConstraint = new EqualConstraint(EQ);
+		CapabilityDefinition capabilityDefinition = createCapabilityDefinition(equalConstraint);
+		assertEquals(capabilityDefinition.getOwnerName(), OWNER_NAME);
+		assertEquals(capabilityDefinition.getProperties().get(0).getConstraints().get(0), equalConstraint);
+		assertEquals(capabilityDefinition.getName(), NAME);
+		assertEquals(capabilityDefinition.getOwnerType(), OWNER_TYPE);
 	}
 
-	
 	@Test
-	public void testGetProperties() throws Exception {
-		CapabilityDefinition testSubject;
-		List<ComponentInstanceProperty> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProperties();
+	public void testCopyConstructor() {
+		EqualConstraint equalConstraint = new EqualConstraint(EQ);
+		CapabilityDefinition capabilityDefinition = createCapabilityDefinition(equalConstraint);
+		CapabilityDefinition copiedCapabilityDefinition = new CapabilityDefinition(capabilityDefinition);
+		assertEquals(copiedCapabilityDefinition.getOwnerName(), OWNER_NAME);
+		assertEquals(copiedCapabilityDefinition.getProperties().get(0).getConstraints().get(0), equalConstraint);
+		assertEquals(copiedCapabilityDefinition.getName(), NAME);
+		assertEquals(copiedCapabilityDefinition.getOwnerType(), OWNER_TYPE);
 	}
 
-	
 	@Test
-	public void testSetProperties() throws Exception {
-		CapabilityDefinition testSubject;
-		List<ComponentInstanceProperty> properties = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setProperties(properties);
+	public void shouldUpdateCapabilityProperties() {
+		EqualConstraint equalConstraint = new EqualConstraint(EQ);
+		CapabilityDefinition referenceCapabilityDefinition = createCapabilityDefinition(equalConstraint);
+		CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+		ArrayList<ComponentInstanceProperty> properties = new ArrayList<>();
+		ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
+		componentInstanceProperty.setName(NAME);
+		properties.add(componentInstanceProperty);
+		capabilityDefinition.setProperties(properties);
+		capabilityDefinition.updateCapabilityProperties(referenceCapabilityDefinition);
+		assertEquals(capabilityDefinition.getProperties().get(0).getValue(), VALUE);
 	}
+
+	@Test
+	public void shouldUpdateEmptyCapabilityOwnerFields() {
+		CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+		capabilityDefinition.updateEmptyCapabilityOwnerFields(OWNER_ID, OWNER_NAME, OWNER_TYPE);
+		assertEquals(capabilityDefinition.getOwnerName(), OWNER_NAME);
+		assertEquals(capabilityDefinition.getOwnerType(), OWNER_TYPE);
+		assertEquals(capabilityDefinition.getOwnerId(), OWNER_ID);
+	}
+
+	private CapabilityDefinition createCapabilityDefinition(EqualConstraint equalConstraint){
+		CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
+		HashMap<String, PropertyDefinition> properties = new HashMap<>();
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		ArrayList<PropertyConstraint> constraints = new ArrayList<>();
+		constraints.add(equalConstraint);
+		propertyDefinition.setConstraints(constraints);
+		propertyDefinition.setName(NAME);
+		propertyDefinition.setValue(VALUE);
+		properties.put(PROP, propertyDefinition);
+		capabilityTypeDefinition.setProperties(properties);
+		return new CapabilityDefinition(capabilityTypeDefinition, OWNER_NAME, NAME,
+			OWNER_TYPE);
+	}
+
 }
