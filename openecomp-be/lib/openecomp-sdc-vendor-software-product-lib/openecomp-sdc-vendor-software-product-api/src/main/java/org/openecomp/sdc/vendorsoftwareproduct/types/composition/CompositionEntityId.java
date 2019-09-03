@@ -16,13 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class CompositionEntityId {
   private String id;
   private CompositionEntityId parentId;
+
+  @VisibleForTesting
+  CompositionEntityId() {}
 
   public CompositionEntityId(String id, CompositionEntityId parentId) {
     this.id = id;

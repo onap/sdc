@@ -16,9 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +33,9 @@ public class CompositionEntityValidationData {
   private String entityName;
   private Collection<String> errors;
   private Collection<CompositionEntityValidationData> subEntitiesValidationData;
+
+  @VisibleForTesting
+  CompositionEntityValidationData() {}
 
   public CompositionEntityValidationData(CompositionEntityType entityType, String entityId) {
     this.entityType = entityType;

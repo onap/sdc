@@ -16,9 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
+
+import java.util.Objects;
 
 public class ComputeData implements CompositionDataEntity {
   private String name;
@@ -48,7 +52,7 @@ public class ComputeData implements CompositionDataEntity {
 
   @Override
   public int hashCode() {
-    int result = name.hashCode();
+    int result = name != null ? name.hashCode() : 0;
     result = 31 * result + (description != null ? description.hashCode() : 0);
     return result;
   }
@@ -64,7 +68,7 @@ public class ComputeData implements CompositionDataEntity {
 
     ComputeData that = (ComputeData) object;
 
-    if (!name.equals(that.name)) {
+    if (!Objects.equals(name, that.name)) {
       return false;
     }
     return description != null ? description.equals(that.description): that.description == null;

@@ -16,9 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
+
+import java.util.Objects;
 
 public class Network implements CompositionDataEntity {
   private String name;
@@ -58,7 +62,7 @@ public class Network implements CompositionDataEntity {
 
     Network network = (Network) object;
 
-    if (dhcp != network.dhcp) {
+    if (!Objects.equals(dhcp, network.dhcp)) {
       return false;
     }
     return name != null ? name.equals(network.name) : network.name == null;
