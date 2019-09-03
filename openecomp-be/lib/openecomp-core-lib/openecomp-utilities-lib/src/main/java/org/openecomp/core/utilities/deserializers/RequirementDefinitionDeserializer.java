@@ -32,9 +32,9 @@ import com.google.gson.JsonPrimitive;
 
 public class RequirementDefinitionDeserializer implements JsonDeserializer<RequirementDefinition> {
 
-  private static final String CAPABILITY = "capability";
-  private static final String NODE = "node";
-  private static final String RELATIONSHIP = "relationship";
+  static final String CAPABILITY = "capability";
+  static final String NODE = "node";
+  static final String RELATIONSHIP = "relationship";
   private static final String OCCURRENCES = "occurrences";
 
   @Override
