@@ -1,0 +1,36 @@
+topology_template:
+  inputs:
+    role1:
+      type: string
+      description: Role
+      default: leaf
+    layer_protocols:
+      type: list
+      description: IP protocols
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+      default:
+        - assingment_method: dhcp
+          ip_version: 4
+        - assingment_method: dhcp
+          ip_version: 6
+    role:
+      type: string
+      description: Role
+      default: leaf
+  node_templates:
+    pnfExtCp_3:
+      properties:
+        role: {get_input: role1}
+    pnfExtCp_2:
+      properties:
+        ip_requirements: {get_input: layer_protocols}
+        role: {get_input: role}
+    pnfExtCp_1:
+      properties:
+        ip_requirements:
+          - assingment_method: dhcp
+            ip_version: 4
+          - assingment_method: dhcp
+            ip_version: 6
+        role: leaf

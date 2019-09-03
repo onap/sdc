@@ -1,0 +1,10 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          trunk_mode:
+      to-name: trunk_mode_copy
+      to-value:
+        strategy: copy

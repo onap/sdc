@@ -1,0 +1,37 @@
+#just one of the transformations will be considered
+- transformation-for: nodeTemplate #same time
+  name: PnfExtCp transformation
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp
+  query: #same block query
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          trunk_mode:
+      to-name: trunk_mode_copy
+      to-value:
+        strategy: copy
+- transformation-for: nodeTemplate #same time
+  name: PnfExtCp transformation
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp
+  query: #same block query
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          role:
+      to-name: role
+      to-value:
+        strategy: copy
+- transformation-for: nodeTemplate #same time
+  name: PnfExtCp transformation
+  description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp
+  query: #same block query
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          trunk_mode:
+      to-name: trunk_mode_copy1
+      to-value:
+        strategy: copy

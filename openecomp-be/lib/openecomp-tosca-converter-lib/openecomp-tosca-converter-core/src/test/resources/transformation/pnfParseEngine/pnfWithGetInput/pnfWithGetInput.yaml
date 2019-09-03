@@ -1,0 +1,61 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: service template of a PNF
+
+topology_template:
+  inputs:
+    role:
+      type: string
+      description: Role
+      default: leaf
+    role1:
+      type: string
+      description: Role
+      default: leaf
+    layer_protocols:
+      type: list
+      description: IP protocols
+      entry_schema:
+        type: string
+      default: [ipv4, ipv6, otherProtocol]
+  node_templates:
+    notToBeConvertedNode:
+      type: tosca.nodes.nfv.PNF
+      properties:
+        descriptor_id: b1bb0ce7-ebca-4fa7-95ed-4840d70a2233
+        function_description: an example PNF
+        provider: Mycompany
+        version: 1.0
+        descriptor_invariant_id: 1111-2222-ccaa-bbdd
+        name: ExamplePnf
+      requirements:
+        - virtual_link:
+            capability: tosca.capabilities.nfv.VirtualLinkable
+            node: pnfExtCp_1
+    pnfExtCp_1:
+      type: tosca.nodes.nfv.PnfExtCp
+      properties:
+        trunk_mode: false
+        layer_protocols: [ipv4, ipv6, otherProtocol]
+        role: leaf
+        description: External connection point to access this pnf
+        anObjectAttribute:
+          anyAttribute: anyAttributeValue
+    pnfExtCp_2:
+      type: tosca.nodes.nfv.PnfExtCp
+      properties:
+        trunk_mode: false
+        layer_protocols:
+          get_input: layer_protocols
+        role: {get_input: role}
+        description: External connection point to access this pnf
+        anObjectAttribute:
+          anyAttribute: anyAttributeValue
+    pnfExtCp_3:
+      type: tosca.nodes.nfv.PnfExtCp
+      properties:
+        trunk_mode: false
+        description: External connection point to access this pnf
+        anObjectAttribute:
+          anyAttribute: anyAttributeValue
+        role: {get_input: role1}

@@ -16,6 +16,10 @@
 
 package org.onap.sdc.tosca.services;
 
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -28,6 +32,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.parser.ParserException;
 import org.yaml.snakeyaml.representer.Representer;
+
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
@@ -43,6 +48,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unchecked")
 public class YamlUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YamlUtil.class.getName());
 
   private static final String DEFAULT = "default";
   private static final String DEFAULT_STR = "_default";
@@ -139,6 +145,36 @@ public class YamlUtil {
     Yaml yaml = new Yaml();
     return (Map<String, LinkedHashMap<String, Object>>) yaml.load(yamlContent);
   }
+
+
+    /**
+     * Parse a YAML file to List
+     *
+     * @param yamlFileInputStream the YAML file input stream
+     * @return The YAML casted as a list
+     */
+    public static Optional<List<Object>> yamlToList(final InputStream yamlFileInputStream) {
+        List<Object> yamlList = null;
+        try {
+            yamlList = (List<Object>) read(yamlFileInputStream);
+        } catch (final ClassCastException ex) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not parse YAML to List.", ex);
+            }
+        }
+        return Optional.ofNullable(yamlList);
+    }
+
+    /**
+     * Parse a YAML file to Object
+     *
+     * @param yamlFileInputStream the YAML file input stream
+     * @return The YAML Object
+     */
+    public static Object read(final InputStream yamlFileInputStream) {
+        final Yaml yaml = new Yaml();
+        return yaml.load(yamlFileInputStream);
+    }
 
   /**
    * Object to yaml string.
