@@ -19,19 +19,16 @@
  */
 package org.openecomp.core.utilities.deserializers;
 
+import java.lang.reflect.Type;
+import java.util.Objects;
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-
-import java.lang.reflect.Type;
-import java.util.Objects;
-import java.util.Optional;
 
 public class RequirementDefinitionDeserializer implements JsonDeserializer<RequirementDefinition> {
 
