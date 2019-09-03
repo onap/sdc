@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-
 package org.openecomp.sdc.action.types;
 
 import java.util.Date;
@@ -27,6 +26,7 @@ import java.util.Set;
 import org.openecomp.sdc.action.ActionConstants;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
 
 public class Action implements Comparable {
   private String actionUuId;
@@ -249,6 +249,7 @@ public class Action implements Comparable {
 
   @Override
   public boolean equals(Object o) {
+
     if (this == o) {
       return true;
     }
@@ -258,17 +259,15 @@ public class Action implements Comparable {
 
     Action action = (Action) o;
 
-    if (!version.equals(action.version)) {
+    if (!Objects.equals(version, action.version)) {
       return false;
     }
 
-    return name.equals(action.name);
+    return Objects.equals(name, action.name);
   }
 
   @Override
   public int hashCode() {
-    int result = version.hashCode();
-    result = 31 * result + name.hashCode();
-    return result;
+    return com.google.common.base.Objects.hashCode(version, name);
   }
 }
