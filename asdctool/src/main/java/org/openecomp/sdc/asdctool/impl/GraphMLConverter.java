@@ -71,6 +71,7 @@ public class GraphMLConverter {
     private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
 
     private Gson gson = new Gson();
+    private static final String LOG_FORMATTER = "{} {}";
 
     public boolean importGraph(String[] args) {
 
@@ -118,7 +119,7 @@ public class GraphMLConverter {
                 return false;
             }
 
-            log.info("{} {}", EXPORTED_FILE, result);
+            log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("export graph failed ", e);
             return false;
@@ -142,7 +143,7 @@ public class GraphMLConverter {
 
             result = exportGraphMl(graph, outputDirectory);
 
-            log.info("{} {}", EXPORTED_FILE, result);
+            log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("export exportGraphMl failed ", e);
             return null;
@@ -169,7 +170,7 @@ public class GraphMLConverter {
                 return false;
             }
 
-            log.info("{} {}", EXPORTED_FILE, result);
+            log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("find Error In Json Graph failed ", e);
             return false;
