@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "268f5e84_1d1367a1",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/test/java/org/openecomp/sdc/action/types/ActionTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-09-03T12:48:40Z",
+      "side": 1,
+      "message": "Typo",
+      "revId": "ac50efc2541d280418360c44e8f6422ccd074f8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
