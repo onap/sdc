@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d3adb7b7_7bab0540",
+        "filename": "common/onap-tosca-datatype/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4a92731_e60121ae",
+      "range": {
+        "startLine": 73,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 17
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87209d27_ecd4ba50",
         "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/YamlUtil.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-03T11:18:09Z",
       "side": 1,
       "message": "replace with Optional.ofNullable",
+      "range": {
+        "startLine": 165,
+        "startChar": 15,
+        "endLine": 165,
+        "endChar": 75
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b5f93fd_6b36513f",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/YamlUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87209d27_ecd4ba50",
       "range": {
         "startLine": 165,
         "startChar": 15,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1bf53347_7783549e",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/ConversionQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab84b7b_3f28885c",
+      "range": {
+        "startLine": 33,
+        "startChar": 4,
+        "endLine": 56,
+        "endChar": 5
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a798318d_6458358a",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/Transformation.java",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2019-09-03T11:18:09Z",
       "side": 1,
       "message": "use lombok",
+      "range": {
+        "startLine": 29,
+        "startChar": 13,
+        "endLine": 29,
+        "endChar": 27
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76b9bf16_49ec4d1f",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/Transformation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a798318d_6458358a",
       "range": {
         "startLine": 29,
         "startChar": 13,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "85a8e20a_68c08826",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationDescription.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cbc1547c_478b2cdd",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 38
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a781e77d_0a9937d8",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/parser/AbstractPnfdBlockParser.java",
         "patchSetId": 4
@@ -128,6 +248,30 @@
       "writtenOn": "2019-09-03T11:18:09Z",
       "side": 1,
       "message": "please check for NPE",
+      "range": {
+        "startLine": 69,
+        "startChar": 33,
+        "endLine": 69,
+        "endChar": 75
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97b73f29_f6843cee",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/parser/AbstractPnfdBlockParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "added a check for empty map",
+      "parentUuid": "a781e77d_0a9937d8",
       "range": {
         "startLine": 69,
         "startChar": 33,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "bceac620_5c25c5e6",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/parser/AbstractPnfdBlockParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30d623a0_2e331993",
+      "range": {
+        "startLine": 73,
+        "startChar": 16,
+        "endLine": 74,
+        "endChar": 98
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "574f791b_4623a03b",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationDescriptorReader.java",
         "patchSetId": 4
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "c6e2de9b_8457723a",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationDescriptorReader.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "574f791b_4623a03b",
+      "range": {
+        "startLine": 66,
+        "startChar": 25,
+        "endLine": 66,
+        "endChar": 38
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9510b657_3ddcc5e0",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationEngine.java",
         "patchSetId": 4
@@ -197,6 +389,30 @@
       "writtenOn": "2019-09-03T11:18:09Z",
       "side": 1,
       "message": "rename",
+      "range": {
+        "startLine": 143,
+        "startChar": 35,
+        "endLine": 143,
+        "endChar": 61
+      },
+      "revId": "c4ebba8bf2b3311036d562fd00627d6213ab1475",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "910c5b9c_ce915960",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationEngine.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:19:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9510b657_3ddcc5e0",
       "range": {
         "startLine": 143,
         "startChar": 35,
