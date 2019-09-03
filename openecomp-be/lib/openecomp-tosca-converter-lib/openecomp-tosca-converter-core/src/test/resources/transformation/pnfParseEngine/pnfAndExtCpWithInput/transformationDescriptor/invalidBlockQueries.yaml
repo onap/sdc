@@ -1,0 +1,10 @@
+- transformation-for: nodeTemplate
+  query: #this attribute value does not exists
+    type: tosca.nodes.nfv.PnfExtCp1
+- transformation-for: nodeTemplate
+  query: #this attribute does not exists
+    type1: tosca.nodes.nfv.PnfExtCp
+- transformation-for: nodeTemplate
+  query:
+    type:
+      non-existent-lvl: #this attribute does not exists

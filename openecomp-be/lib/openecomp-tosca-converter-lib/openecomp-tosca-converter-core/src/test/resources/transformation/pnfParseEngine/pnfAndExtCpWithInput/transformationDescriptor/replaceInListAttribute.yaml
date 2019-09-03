@@ -1,0 +1,19 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          layer_protocols:
+      to-name: ip_requirements
+      to-value:
+        strategy: replaceInList
+        list:
+          - from: ipv4
+            to:
+              assingment_method: dhcp
+              ip_version: 4
+          - from: ipv6
+            to:
+              assingment_method: dhcp
+              ip_version: 6

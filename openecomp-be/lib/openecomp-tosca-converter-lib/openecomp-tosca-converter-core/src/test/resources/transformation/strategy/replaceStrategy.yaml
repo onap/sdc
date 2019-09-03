@@ -1,0 +1,3 @@
+strategy: replace
+from: tosca.nodes.nfv.PnfExtCp
+to: org.openecomp.resource.cp.v2.extCP

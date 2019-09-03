@@ -1,0 +1,13 @@
+- transformation-for: nodeTemplate
+  query:
+    type: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        properties:
+          trunk_mode:
+      to-name: trunk_mode_replaced
+      to-value:
+        strategy: replace
+        from: false
+        to:
+          myObjectReplaced: myObjectReplacedValue
