@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.servlets;
@@ -25,28 +27,33 @@ import com.google.gson.GsonBuilder;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.text.StrSubstitutor;
+import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -55,7 +62,6 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -65,23 +71,56 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 public class ResourceServletTest extends JerseyTest {
     public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     public static final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
-    final static HttpSession session = Mockito.mock(HttpSession.class);
-    final static ServletContext servletContext = Mockito.mock(ServletContext.class);
-    final static WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    final static WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
+    private static final HttpSession session = Mockito.mock(HttpSession.class);
+    private static final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private static final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
     public static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
     public static final ComponentsUtils componentUtils = Mockito.mock(ComponentsUtils.class);
-    public static final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
+    private static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+    private static final GroupBusinessLogic groupBL = Mockito.mock(GroupBusinessLogic.class);
+    private static final ComponentInstanceBusinessLogic componentInstanceBL = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    private static final ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final ResponseFormat okResponseFormat = new ResponseFormat(HttpStatus.SC_OK);
+    private static final ResponseFormat conflictResponseFormat = new ResponseFormat(HttpStatus.SC_CONFLICT);
+    private static final ResponseFormat generalErrorResponseFormat = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    private static final ResponseFormat createdResponseFormat = new ResponseFormat(HttpStatus.SC_CREATED);
+    private static final ResponseFormat noContentResponseFormat = new ResponseFormat(HttpStatus.SC_NO_CONTENT);
+    private static final ResponseFormat notFoundResponseFormat = new ResponseFormat(HttpStatus.SC_NOT_FOUND);
+    private static final ResponseFormat badRequestResponseFormat = new ResponseFormat(HttpStatus.SC_BAD_REQUEST);
+    private static final String RESOURCE_NAME = "resourceName";
+    private static final String VERSION = "version";
+    private static final String RESOURCE_ID = "resourceId";
+    private static final String RESOURCE_VERSION = "resourceVersion";
+    private static final String SUBTYPE = "subtype";
+    private static final String CSAR_UUID = "csaruuid";
+    private static final String EMPTY_JSON = "{}";
+    private static final String NON_UI_IMPORT_JSON = "{\n" +
+            "  \"node1\": \"value1\",\n" +
+            "  \"node2\": {\n" +
+            "    \"level21\": \"value21\",\n" +
+            "    \"level22\": \"value22\"\n" +
+            "  }\n" +
+            "}";
+    private static User user;
 
     @BeforeClass
     public static void setup() {
@@ -95,7 +134,7 @@ public class ResourceServletTest extends JerseyTest {
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
         String userId = "jh0003";
-        User user = new User();
+        user = new User();
         user.setUserId(userId);
         user.setRole(Role.ADMIN.name());
         Either<User, ActionStatus> eitherUser = Either.left(user);
@@ -111,25 +150,26 @@ public class ResourceServletTest extends JerseyTest {
     @Before
     public void beforeTest() {
         Mockito.reset(componentUtils);
+        Mockito.reset(resourceBusinessLogic);
 
-        Mockito.doAnswer(new Answer<ResponseFormat>() {
-            public ResponseFormat answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                ActionStatus action = (ActionStatus) args[0];
-                return (action == ActionStatus.OK) ? new ResponseFormat(HttpStatus.CREATED.value()) : new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            }
-        }).when(componentUtils).getResponseFormat(Mockito.any(ActionStatus.class));
-
+        when(componentUtils.getResponseFormat(ActionStatus.OK)) .thenReturn(okResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(createdResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.NO_CONTENT)).thenReturn(noContentResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(badRequestResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)) .thenReturn(generalErrorResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND)) .thenReturn(notFoundResponseFormat);
     }
 
     @Test
     public void testHappyScenarioTest() {
+        when(componentUtils.getResponseFormat(ActionStatus.OK)) .thenReturn(createdResponseFormat);
+
         UploadResourceInfo validJson = buildValidJson();
         setMD5OnRequest(true, validJson);
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(validJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.OK);
-        assertEquals(response.getStatus(), HttpStatus.CREATED.value());
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
     }
 
@@ -142,7 +182,7 @@ public class ResourceServletTest extends JerseyTest {
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(validJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.INVALID_RESOURCE_CHECKSUM);
-        assertEquals(response.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
     }
 
@@ -217,6 +257,721 @@ public class ResourceServletTest extends JerseyTest {
 
     }
 
+    @Test
+    public void deleteResourceTryDeleteNonExistingResourceTest() {
+        String resourceId = "resourceId";
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put("resourceId", resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResource(any(), any(User.class)))
+                .thenReturn(notFoundResponseFormat);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void deleteResourceExceptionDuringDeletingTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResource(any(), any(User.class)))
+                .thenThrow(new JSONException("Test exception: deleteResource"));
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void deleteResourceCategoryTest() {
+        String resourceId = "resourceId";
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put("resourceId", resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResource(eq(resourceId.toLowerCase()), any(User.class)))
+                .thenReturn(noContentResponseFormat);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(org.apache.http.HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    public void deleteResourceByNameAndVersionTryDeleteNonExistingResourceTest() {
+        String resourceName = RESOURCE_NAME;
+        String version = VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(VERSION, version);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceName}/{version}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResourceByNameAndVersion(eq(resourceName), eq(version), any(User.class)))
+                .thenReturn(notFoundResponseFormat);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void deleteResourceByNameAndVersionExceptionDuringDeletingTest() {
+        String resourceName = RESOURCE_NAME;
+        String version = VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(VERSION, version);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceName}/{version}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResourceByNameAndVersion(eq(resourceName), eq(version), any(User.class)))
+                .thenThrow(new JSONException("Test exception: deleteResourceByNameAndVersion"));
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void deleteResourceByNameAndVersionCategoryTest() {
+        String resourceName = RESOURCE_NAME;
+        String version = VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(VERSION, version);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceName}/{version}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        when(resourceBusinessLogic.deleteResourceByNameAndVersion(eq(resourceName), eq(version), any(User.class)))
+                .thenReturn(noContentResponseFormat);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .delete();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    public void getResourceByIdTryGetNonExistingResourceTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> getResourceByIdEither = Either.right(notFoundResponseFormat);
+        when(resourceBusinessLogic.getResource(eq(resourceId.toLowerCase()), any(User.class)))
+                .thenReturn(getResourceByIdEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void getResourceByIdExceptionDuringSearchingTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        given(resourceBusinessLogic.getResource(eq(resourceId.toLowerCase()), any(User.class)))
+                .willAnswer( invocation -> { throw new IOException("Test exception: getResourceById"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void getResourceByIdTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> getResourceByIdEither = Either.left(new Resource());
+        when(resourceBusinessLogic.getResource(eq(resourceId.toLowerCase()), any(User.class)))
+                .thenReturn(getResourceByIdEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getResourceByNameAndVersionTryGetNonExistingResourceTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceVersion = RESOURCE_VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(RESOURCE_VERSION, resourceVersion);
+
+        String formatEndpoint = "/v1/catalog/resources/resourceName/{resourceName}/resourceVersion/{resourceVersion}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> getResourceByNameAndVersionEither = Either.right(notFoundResponseFormat);
+        when(resourceBusinessLogic.getResourceByNameAndVersion(eq(resourceName), eq(resourceVersion), eq(user.getUserId())))
+                .thenReturn(getResourceByNameAndVersionEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void getResourceByNameAndVersionExceptionDuringSearchingTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceVersion = RESOURCE_VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(RESOURCE_VERSION, resourceVersion);
+
+        String formatEndpoint = "/v1/catalog/resources/resourceName/{resourceName}/resourceVersion/{resourceVersion}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        given(resourceBusinessLogic.getResourceByNameAndVersion(eq(resourceName), eq(resourceVersion), eq(user.getUserId())))
+                .willAnswer( invocation -> { throw new IOException("Test exception: getResourceByNameAndVersion"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void getResourceByNameAndVersionTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceVersion = RESOURCE_VERSION;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+        parametersMap.put(RESOURCE_VERSION, resourceVersion);
+
+        String formatEndpoint = "/v1/catalog/resources/resourceName/{resourceName}/resourceVersion/{resourceVersion}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> getResourceByNameAndVersionEither = Either.left(new Resource());
+        when(resourceBusinessLogic.getResourceByNameAndVersion(eq(resourceName), eq(resourceVersion), eq(user.getUserId())))
+                .thenReturn(getResourceByNameAndVersionEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void validateResourceNameTryValidateNonExistingResourceTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceType = "VFC";
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+
+        String formatEndpoint = "/v1/catalog/resources/validate-name/{resourceName}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Map<String, Boolean>, ResponseFormat> validateResourceNameEither =
+                Either.right(notFoundResponseFormat);
+        ResourceTypeEnum resourceTypeEnum = ResourceTypeEnum.valueOf(resourceType);
+        when(resourceBusinessLogic.validateResourceNameExists(eq(resourceName), eq(resourceTypeEnum), eq(user.getUserId())))
+                .thenReturn(validateResourceNameEither);
+
+        Response response = target()
+                .path(path)
+                .queryParam(SUBTYPE, resourceType)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void validateResourceNameInvalidContentTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceType = "ThisIsInvalid";
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+
+        String formatEndpoint = "/v1/catalog/resources/validate-name/{resourceName}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Response response = target()
+                .path(path)
+                .queryParam(SUBTYPE, resourceType)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void validateResourceNameTest() {
+        String resourceName = RESOURCE_NAME;
+        String resourceType = "VFC";
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_NAME, resourceName);
+
+        String formatEndpoint = "/v1/catalog/resources/validate-name/{resourceName}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Map<String, Boolean>, ResponseFormat> validateResourceNameEither =
+                Either.left(new HashMap<>());
+        ResourceTypeEnum resourceTypeEnum = ResourceTypeEnum.valueOf(resourceType);
+        when(resourceBusinessLogic.validateResourceNameExists(eq(resourceName), eq(resourceTypeEnum), eq(user.getUserId())))
+                .thenReturn(validateResourceNameEither);
+
+        Response response = target()
+                .path(path)
+                .queryParam(SUBTYPE, resourceType)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getCertifiedAbstractResourcesExceptionDuringSearchingTest() {
+        String path = "/v1/catalog/resources/certified/abstract";
+        given(resourceBusinessLogic.getAllCertifiedResources(eq(true), eq(HighestFilterEnum.HIGHEST_ONLY),
+                eq(user.getUserId())))
+                .willAnswer( invocation -> { throw new IOException("Test exception: getCertifiedAbstractResources"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void getCertifiedAbstractResourcesTest() {
+        String path = "/v1/catalog/resources/certified/abstract";
+
+        List<Resource> resources = Arrays.asList(new Resource(), new Resource());
+        when(resourceBusinessLogic.getAllCertifiedResources(eq(true), eq(HighestFilterEnum.HIGHEST_ONLY),
+                eq(user.getUserId())))
+                .thenReturn(resources);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getCertifiedNotAbstractResourcesExceptionDuringSearchingTest() {
+        String path = "/v1/catalog/resources/certified/notabstract";
+        given(resourceBusinessLogic.getAllCertifiedResources(eq(false), eq(HighestFilterEnum.ALL),
+                eq(user.getUserId())))
+                .willAnswer( invocation -> { throw new IOException("Test exception: getCertifiedNotAbstractResources"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void getCertifiedNotAbstractResourcesTest() {
+        String path = "/v1/catalog/resources/certified/notabstract";
+
+        List<Resource> resources = Arrays.asList(new Resource(), new Resource());
+        when(resourceBusinessLogic.getAllCertifiedResources(eq(true), eq(HighestFilterEnum.ALL),
+                eq(user.getUserId())))
+                .thenReturn(resources);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void updateResourceMetadataTryUpdateNonExistingResourceTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}/metadata";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> updateResourceMetadataEither = Either.right(badRequestResponseFormat);
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(any(), any(), eq(Resource.class),
+                eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(updateResourceMetadataEither);
+
+        when(resourceBusinessLogic.updateResourceMetadata(eq(resourceId.toLowerCase()), any(), any(), any(User.class),
+                eq(false)))
+                .thenReturn(new Resource());
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(EMPTY_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void updateResourceMetadataExceptionDuringUpdateTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}/metadata";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        given(componentUtils.convertJsonToObjectUsingObjectMapper(any(), any(), eq(Resource.class),
+                eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .willAnswer( invocation -> { throw new IOException("Test exception: updateResourceMetadata"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(EMPTY_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void updateResourceMetadataCategoryTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}/metadata";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Resource initialResource = new Resource();
+        Either<Resource, ResponseFormat> updateResourceMetadataEither = Either.left(initialResource);
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(any(), any(), eq(Resource.class),
+                eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(updateResourceMetadataEither);
+
+        when(resourceBusinessLogic.updateResourceMetadata(eq(resourceId.toLowerCase()), eq(initialResource), any(),
+                any(User.class), eq(false)))
+                .thenReturn(new Resource());
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(EMPTY_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void updateResourceParsingUncussessfulTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> updateResourceEither = Either.right(badRequestResponseFormat);
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class),
+                eq(Resource.class), eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(updateResourceEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void updateResourceExceptionDuringUpdateTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        given(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class),
+                eq(Resource.class), eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .willAnswer( invocation -> { throw new IOException("Test exception: updateResource"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void updateResourceNonUiImportTest() {
+        String resourceId = RESOURCE_ID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(RESOURCE_ID, resourceId);
+
+        String formatEndpoint = "/v1/catalog/resources/{resourceId}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> updateResourceEither = Either.left(new Resource());
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class), eq(Resource.class),
+                eq(AuditingActionEnum.UPDATE_RESOURCE_METADATA), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(updateResourceEither);
+
+        when(resourceBusinessLogic.validateAndUpdateResourceFromCsar(any(), any(), any(), any(), eq(resourceId)))
+                .thenReturn(new Resource());
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .put(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getResourceFromCsarTryGetNonExistingResourceTest() {
+        String csarUuid = CSAR_UUID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(CSAR_UUID, csarUuid);
+
+        String formatEndpoint = "/v1/catalog/resources/csar/{csaruuid}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+        
+        Either<Resource, ResponseFormat> getResourceFromCsarEither = Either.right(notFoundResponseFormat);
+        when(resourceBusinessLogic.getLatestResourceFromCsarUuid(eq(csarUuid), any(User.class)))
+                .thenReturn(getResourceFromCsarEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void getResourceFromCsarExceptionDuringGettingTest() {
+        String csarUuid = CSAR_UUID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(CSAR_UUID, csarUuid);
+
+        String formatEndpoint = "/v1/catalog/resources/csar/{csaruuid}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        given(resourceBusinessLogic.getLatestResourceFromCsarUuid(eq(csarUuid), any(User.class)))
+                .willAnswer( invocation -> { throw new IOException("Test exception: getResourceFromCsar"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void getResourceFromCsarTest() {
+        String csarUuid = CSAR_UUID;
+        Map<String,String> parametersMap = new HashMap<>();
+        parametersMap.put(CSAR_UUID, csarUuid);
+
+        String formatEndpoint = "/v1/catalog/resources/csar/{csaruuid}";
+        String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{","}");
+
+        Either<Resource, ResponseFormat> getResourceFromCsarEither = Either.left(new Resource());
+        when(resourceBusinessLogic.getLatestResourceFromCsarUuid(eq(csarUuid), any(User.class)))
+                .thenReturn(getResourceFromCsarEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void createResourceExceptionDuringCreateTest() {
+        String path = "/v1/catalog/resources";
+
+        given(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class),
+                eq(Resource.class), eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.RESOURCE)))
+                .willAnswer( invocation -> { throw new IOException("Test exception: createResource"); });
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .post(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void createResourceNonUiImportProcessingFailedTest() {
+        String path = "/v1/catalog/resources";
+
+        Either<Resource, ResponseFormat> createResourceEither = Either.right(badRequestResponseFormat);
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class),
+                eq(Resource.class), eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(createResourceEither);
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .post(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void createResourceNonUiImportTest() {
+        String path = "/v1/catalog/resources";
+
+        Either<Resource, ResponseFormat> createResourceEither = Either.left(new Resource());
+
+        when(componentUtils.convertJsonToObjectUsingObjectMapper(eq(NON_UI_IMPORT_JSON), any(User.class),
+                eq(Resource.class), eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(createResourceEither);
+
+        when(resourceBusinessLogic.createResource(eq(createResourceEither.left().value()), eq(AuditingActionEnum.CREATE_RESOURCE),
+                any(User.class), any(), any()))
+                .thenReturn(new Resource());
+
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, user.getUserId())
+                .post(Entity.json(NON_UI_IMPORT_JSON));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
+    }
+
     private void encodeAndSetPayload(UploadResourceInfo mdJson, String payload) {
         byte[] encodedBase64Payload = Base64.encodeBase64(payload.getBytes());
         mdJson.setPayloadData(new String(encodedBase64Payload));
@@ -227,7 +982,7 @@ public class ResourceServletTest extends JerseyTest {
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(mdJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(invalidResourcePayload);
-        assertEquals(response.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 
     private void setMD5OnRequest(boolean isValid, UploadResourceInfo json) {
@@ -254,11 +1009,6 @@ public class ResourceServletTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
-        GroupBusinessLogic groupBL = Mockito.mock(GroupBusinessLogic.class);
-        ComponentInstanceBusinessLogic componentInstanceBL = Mockito.mock(ComponentInstanceBusinessLogic.class);
-        ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
-
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ResourcesServlet.class)
