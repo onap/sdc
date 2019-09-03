@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9f00bbe_2b448e12",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/conflict-rest-types/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/composition/ComponentComputeAssociationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-09-03T06:53:23Z",
+      "side": 1,
+      "message": "i prefer something like \u0027shouldHaveValidGettersAndSetters\u0027",
+      "range": {
+        "startLine": 30,
+        "startChar": 16,
+        "endLine": 30,
+        "endChar": 29
+      },
+      "revId": "7b10cc4d95582dfaf6c6010199fa95aae78c806b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
