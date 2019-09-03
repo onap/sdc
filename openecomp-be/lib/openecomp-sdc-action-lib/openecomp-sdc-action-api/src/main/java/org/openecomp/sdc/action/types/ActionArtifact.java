@@ -21,11 +21,11 @@
 package org.openecomp.sdc.action.types;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Objects;
 import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
-
 
 public class ActionArtifact {
   private String artifactUuId;
@@ -131,15 +131,13 @@ public class ActionArtifact {
   public boolean equals(Object obj) {
     if (obj instanceof ActionArtifact) {
       ActionArtifact temp = (ActionArtifact) obj;
-      if (artifactUuId.equals(temp.getArtifactUuId())) {
-        return true;
-      }
+      return Objects.equal(artifactUuId, temp.getArtifactUuId());
     }
     return false;
   }
 
   @Override
   public int hashCode() {
-    return artifactUuId.hashCode();
+    return Objects.hashCode(artifactUuId);
   }
 }
