@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "42a0158e_9b232b1a",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/strategy/CopyConversionStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:46:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74981110_848fe757",
+      "range": {
+        "startLine": 35,
+        "startChar": 15,
+        "endLine": 35,
+        "endChar": 85
+      },
+      "revId": "2b0579cee628547f76d0740f7487db03e28d9d21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98856f4c_c21ee2bd",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/strategy/ReplaceConversionStrategy.java",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-03T13:34:54Z",
       "side": 1,
       "message": "ofNullable",
+      "range": {
+        "startLine": 36,
+        "startChar": 15,
+        "endLine": 36,
+        "endChar": 103
+      },
+      "revId": "2b0579cee628547f76d0740f7487db03e28d9d21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "625a70a4_b8d623b6",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/strategy/ReplaceConversionStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-09-03T13:46:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98856f4c_c21ee2bd",
       "range": {
         "startLine": 36,
         "startChar": 15,
