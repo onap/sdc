@@ -1,0 +1,14 @@
+topology_template:
+  node_templates:
+    pnfExtCp_3:
+      properties:
+        trunk_mode_copy: false
+        role: {get_input: role1}
+    pnfExtCp_2:
+      properties:
+        trunk_mode_copy: false
+        role: {get_input: role}
+    pnfExtCp_1:
+      properties:
+        trunk_mode_copy: false
+        role: leaf

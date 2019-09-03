@@ -1,0 +1,5 @@
+topology_template:
+  node_templates:
+    pnfExtCp_1:
+      properties:
+        trunk_mode_copy: false

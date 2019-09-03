@@ -1,0 +1,8 @@
+topology_template:
+  node_templates:
+    pnfExtCp_3:
+      type: org.openecomp.resource.cp.v2.extCP
+    pnfExtCp_2:
+      type: org.openecomp.resource.cp.v2.extCP
+    pnfExtCp_1:
+      type: org.openecomp.resource.cp.v2.extCP

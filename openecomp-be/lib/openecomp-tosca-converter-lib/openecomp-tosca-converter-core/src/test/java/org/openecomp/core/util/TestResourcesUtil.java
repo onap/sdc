@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -47,7 +48,7 @@ public class TestResourcesUtil {
      * @throws IOException
      *  When the file was not found or the input stream could not be opened
      */
-    public static byte[] getFileResource(final String resourcePath) throws IOException {
+    public static byte[] getFileResourceBytes(final String resourcePath) throws IOException {
         try(final InputStream inputStream = ClassLoader.class.getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
                 throw new IOException(String.format("Could not find the resource on path \"%s\"", resourcePath));
@@ -67,7 +68,7 @@ public class TestResourcesUtil {
      */
     public static byte[] getResourceBytesOrFail(final String resourcePath) {
         try {
-            return getFileResource(resourcePath);
+            return getFileResourceBytes(resourcePath);
         } catch (final IOException e) {
             final String errorMsg = String.format("Could not load resource '%s'", resourcePath);
             LOGGER.error(errorMsg, e);
@@ -75,6 +76,28 @@ public class TestResourcesUtil {
         }
 
         return null;
+    }
+
+    /**
+     * Gets the input stream of a resource file
+     *
+     * @param resourcePath      The resource file path
+     * @return
+     *  The resource input stream
+     */
+    public static InputStream getFileResourceAsStream(final String resourcePath) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+    }
+
+    /**
+     * Gets the input stream of a resource file
+     *
+     * @param resourcePath      The resource file path
+     * @return
+     *  The resource input stream
+     */
+    public static URL getFileUrl(final String resourcePath) {
+        return Thread.currentThread().getContextClassLoader().getResource(resourcePath);
     }
 
 }
