@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.action.types;
 
+import com.google.common.base.Objects;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
@@ -82,29 +83,23 @@ public class ActionTest {
         assertEquals(action.getName(), "NAME");
     }
 
-
-
-
     @Test
-    public void testToEntiry() {
+    public void testToEntity() {
         ActionEntity destination = action.toEntity();
         assertNotNull(destination);
         assertEqualsMultipleAssert(action,destination);
     }
 
-
-
     @Test
-    public void testequal()
+    public void testEqual()
     {
-
         assertEquals(true,action.equals(action));
     }
 
     @Test
-    public void testhashcode()
+    public void testEashcode()
     {
-        assertEquals(action.hashCode(),31 * action.getVersion().hashCode() + action.getName().hashCode());
+        assertEquals(action.hashCode(), Objects.hashCode(action.getVersion(), action.getName()));
     }
 
     private void assertEqualsMultipleAssert(Action source, ActionEntity destination) {
