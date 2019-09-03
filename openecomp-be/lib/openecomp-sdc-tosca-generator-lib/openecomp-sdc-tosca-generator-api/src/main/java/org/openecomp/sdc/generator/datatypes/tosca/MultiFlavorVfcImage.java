@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.generator.datatypes.tosca;
@@ -74,10 +76,10 @@ public class MultiFlavorVfcImage {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (obj != null && getClass() != obj.getClass())
+    if (obj == null || getClass() != obj.getClass())
       return false;
     MultiFlavorVfcImage other = (MultiFlavorVfcImage) obj;
-    if (other != null) {
+
       if (this.file_name == null) {
         if (other.file_name != null)
           return false;
@@ -98,7 +100,7 @@ public class MultiFlavorVfcImage {
           return false;
       } else if (!software_version.equals(other.software_version))
         return false;
-    }
+
     return true;
   }
 
