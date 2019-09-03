@@ -16,6 +16,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,18 +39,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationT
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUploadFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process.OrchestrationProcessFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
@@ -61,18 +61,16 @@ public class OrchestrationTemplateCandidateManagerImpl
   }
 
   @Override
-  public UploadFileResponse upload(String vspId, Version version, InputStream fileToUpload,
-                                   String fileSuffix, String networkPackageName) {
-    OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
-        OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(fileSuffix);
+  public UploadFileResponse upload(final VspDetails vspDetails,
+                                   final OnboardPackageInfo onboardPackageInfo) {
+    final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
+    final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
+        OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(onboardPackage.getFileExtension());
 
-    VspDetails vspDetails = getVspDetails(vspId, version);
-
-    UploadFileResponse uploadResponse = orchestrationTemplateFileHandler
-        .upload(vspDetails, fileToUpload, fileSuffix, networkPackageName, candidateService);
-
-    uploadResponse.setNetworkPackageName(networkPackageName);
-    return uploadResponse;
+    final UploadFileResponse uploadFileResponse =
+        orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
+    uploadFileResponse.setNetworkPackageName(onboardPackage.getFilename());
+    return uploadFileResponse;
   }
 
   @Override

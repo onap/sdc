@@ -16,6 +16,25 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -48,20 +67,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.Module;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class CandidateServiceImpl implements CandidateService {
   private static final Logger logger = LoggerFactory.getLogger(CandidateServiceImpl.class);
@@ -300,8 +305,8 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
-  public void updateCandidateUploadData(String vspId, Version version,
-                                        OrchestrationTemplateCandidateData uploadData) {
+  public void updateCandidateUploadData(final String vspId, final Version version,
+                                        final OrchestrationTemplateCandidateData uploadData) {
     orchestrationTemplateCandidateDao.update(vspId, version, uploadData);
   }
 

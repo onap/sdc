@@ -31,7 +31,7 @@ public enum ElementType {
 
   VspModel, NetworkPackage,
   OrchestrationTemplateCandidate, OrchestrationTemplateCandidateContent,
-  OrchestrationTemplateCandidateValidationData,
+  OrchestrationTemplateCandidateValidationData, ORIGINAL_ONBOARDED_PACKAGE,
   OrchestrationTemplateStructure, OrchestrationTemplate,
   OrchestrationTemplateValidationData,
   // todo - remove OrchestrationTemplateContent

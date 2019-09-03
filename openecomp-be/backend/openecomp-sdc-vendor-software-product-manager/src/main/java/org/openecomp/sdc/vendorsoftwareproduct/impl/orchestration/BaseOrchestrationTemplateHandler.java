@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.io.ByteArrayInputStream;
+import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -32,33 +35,32 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
-import java.io.InputStream;
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-
 public abstract class BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
-  protected static final Logger logger =
-      LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
+  protected static final Logger logger = LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
+
   @Override
-  public UploadFileResponse upload(VspDetails vspDetails, InputStream fileToUpload,
-                                   String fileSuffix, String networkPackageName,
-                                   CandidateService candidateService) {
-    UploadFileResponse uploadFileResponse = new UploadFileResponse();
+  public UploadFileResponse upload(final VspDetails vspDetails,
+                                   final OnboardPackageInfo onboardPackageInfo,
+                                   final CandidateService candidateService) {
+    final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
+    final UploadFileResponse uploadFileResponse = new UploadFileResponse();
     uploadFileResponse.setOnboardingType(getHandlerType());
-    if (isNotEmptyFileToUpload(fileSuffix, fileToUpload, uploadFileResponse, candidateService)) {
+    if (isFileFileToUploadEmpty(onboardPackage, uploadFileResponse, candidateService)) {
       return uploadFileResponse;
     }
 
-    byte[] uploadedFileData = FileUtils.toByteArray(fileToUpload);
-    if (isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService)) {
+    final byte[] fileContentByteArray = onboardPackage.getFileContent().array();
+    if (isInvalidRawZipData(onboardPackage.getFileExtension(),
+        uploadFileResponse, fileContentByteArray, candidateService)) {
       return uploadFileResponse;
     }
 
-    Optional<FileContentHandler> optionalContentMap =
-        getFileContentMap(uploadFileResponse, uploadedFileData);
+    final Optional<FileContentHandler> optionalContentMap =
+        getFileContentMap(uploadFileResponse, fileContentByteArray);
     if (!optionalContentMap.isPresent()) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
           getHandlerType().toString()));
@@ -71,27 +73,27 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
     if (!MapUtils.isEmpty(uploadFileResponse.getErrors())) {
       return uploadFileResponse;
     }
-    if (updateCandidateData(vspDetails, uploadedFileData, optionalContentMap.get(), fileSuffix,
-        networkPackageName, candidateService, uploadFileResponse)) {
+    if (updateCandidateData(vspDetails, onboardPackageInfo, candidateService, uploadFileResponse,
+        optionalContentMap.get())) {
       return uploadFileResponse;
     }
     return uploadFileResponse;
 
   }
 
-  protected abstract boolean updateCandidateData(VspDetails vspDetails,
-                                                 byte[] uploadedFileData,
-                                                 FileContentHandler contentMap,
-                                                 String fileSuffix,
-                                                 String networkPackageName,
-                                                 CandidateService candidateService,
-                                                 UploadFileResponse uploadFileResponse);
+  protected abstract boolean updateCandidateData(final VspDetails vspDetails,
+                                                 final OnboardPackageInfo onboardPackageInfo,
+                                                 final CandidateService candidateService,
+                                                 final UploadFileResponse uploadFileResponse,
+                                                 final FileContentHandler contentMap);
 
-  private boolean isNotEmptyFileToUpload(String fileSuffix, InputStream fileToUpload,
-                                         UploadFileResponse uploadFileResponse,
-                                         CandidateService candidateService) {
+  private boolean isFileFileToUploadEmpty(final OnboardPackage onboardPackage,
+                                          final UploadFileResponse uploadFileResponse,
+                                          final CandidateService candidateService) {
+    final ByteArrayInputStream fileToUpload = new ByteArrayInputStream(
+        onboardPackage.getFileContent().array());
     Optional<ErrorMessage> errorMessage =
-        candidateService.validateNonEmptyFileToUpload(fileToUpload, fileSuffix);
+        candidateService.validateNonEmptyFileToUpload(fileToUpload, onboardPackage.getFileExtension());
     if (errorMessage.isPresent()) {
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
       return true;

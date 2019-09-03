@@ -21,62 +21,50 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.core.model.dao.ServiceModelDao;
-import org.openecomp.core.model.types.ServiceElement;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.healing.api.HealingManager;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
-import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.tree.UploadFileTest;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-
 public class QuestionnaireDataServiceTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(QuestionnaireDataServiceTest.class);
+
   public static final Version VERSION = new Version(0, 1);
   private QuestionnaireDataService questionnaireDataService;// = new QuestionnaireDataServiceImpl();
-
-  @Mock
-  private CandidateService candidateServiceMock;
-  @Mock
-  private HealingManager healingManagerMock;
-  @Mock
-  private CompositionDataExtractor compositionDataExtractorMock;
-  @Mock
-  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
-  @Mock
-  private CompositionEntityDataManager compositionEntityDataManagerMock;
-
-  @Captor
-  private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
 
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
   private UploadFileTest uploadFileTest = new UploadFileTest();
+  private OnboardPackageInfo onboardPackageInfo;
 
   private static String vspId;
   private static Version vspActiveVersion;
   private static final String USER1 = "vspTestUser1";
+  private static final VspDetails vspDetails = new VspDetails(vspId, VERSION);
+  private static final String CSAR = "csar";
+  private static final String ZIP = "zip";
 
   @Before
   public void setUp() throws Exception {
@@ -101,37 +89,38 @@ public class QuestionnaireDataServiceTest {
   // TODO: 3/15/2017 fix and enable   //@Test
   public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
+      onboardPackageInfo = new OnboardPackageInfo("missingYml", CSAR, convertFileInputStream(zipInputStream));
       UploadFileResponse uploadFileResponse =
-              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "missingYml");
+              candidateManager.upload(vspDetails, onboardPackageInfo);
     }
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
 
   }
 
-  private InformationArtifactData uploadFileAndValidateInformationArtifactData(String filePath,
-                                                                               int listSizeToCheck)
-            throws IOException {
+  private InformationArtifactData uploadFileAndValidateInformationArtifactData(final String filePath,
+                                                                               final int listSizeToCheck)
+      throws IOException {
 
-    try (InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
-      UploadFileResponse uploadFileResponse =
-              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "file");
+    try (final InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
+      onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
+          convertFileInputStream(zipInputStream));
+      final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       candidateManager.process(vspId, VERSION);
 
       Assert.assertTrue(MapUtils.isEmpty(
               MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, uploadFileResponse.getErrors())));
     }
-    InformationArtifactData informationArtifactData = questionnaireDataService
+    final InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
     Assert.assertNotNull(informationArtifactData);
 
-    List<ComponentQuestionnaire> componentQuestionnaireList =
+    final List<ComponentQuestionnaire> componentQuestionnaireList =
         informationArtifactData.getComponentQuestionnaires();
     Assert.assertEquals(componentQuestionnaireList.size(), listSizeToCheck);
 
     return informationArtifactData;
   }
-
 
   private void assertQuestionnaireValuesAreAsExpected(
       InformationArtifactData informationArtifactData, boolean condition) {
@@ -141,6 +130,16 @@ public class QuestionnaireDataServiceTest {
     Assert.assertEquals(
         Objects.isNull(informationArtifactData.getComponentQuestionnaires().get(0).getStorage()),
         condition);
+  }
+
+  private ByteBuffer convertFileInputStream(final InputStream fileInputStream) {
+    byte[] fileContent = new byte[0];
+    try {
+      fileContent = IOUtils.toByteArray(fileInputStream);
+    } catch (final IOException e) {
+      LOGGER.error(String.format("Could not convert %s into byte[]", fileInputStream), e);
+    }
+    return ByteBuffer.wrap(fileContent);
   }
 
 }

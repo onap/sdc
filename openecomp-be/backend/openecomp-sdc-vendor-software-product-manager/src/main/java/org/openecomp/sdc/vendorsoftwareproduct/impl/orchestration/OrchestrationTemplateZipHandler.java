@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
+import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.Messages;
@@ -30,11 +33,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCan
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.utils.CandidateEntityBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {
@@ -47,22 +48,22 @@ public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHa
   }
 
   @Override
-  protected boolean updateCandidateData(VspDetails vspDetails, byte[] uploadedFileData,
-                                        FileContentHandler contentMap,
-                                        String fileSuffix, String networkPackageName,
-                                        CandidateService candidateService,
-                                        UploadFileResponse uploadFileResponse) {
+  protected boolean updateCandidateData(final VspDetails vspDetails,
+                                        final OnboardPackageInfo onboardPackageInfo,
+                                        final CandidateService candidateService,
+                                        final UploadFileResponse uploadFileResponse,
+                                        final FileContentHandler contentMap) {
     try {
-      OrchestrationTemplateCandidateData candidateData =
+      final OnboardPackage zipPackage = onboardPackageInfo.getOnboardPackage();
+      final OrchestrationTemplateCandidateData candidateData =
           new CandidateEntityBuilder(candidateService)
-              .buildCandidateEntityFromZip(vspDetails, uploadedFileData, contentMap,
+              .buildCandidateEntityFromZip(vspDetails, zipPackage.getFileContent().array(), contentMap,
                   uploadFileResponse.getErrors());
-      candidateData.setFileSuffix(fileSuffix);
-      candidateData.setFileName(networkPackageName);
-
+      candidateData.setFileName(zipPackage.getFilename());
+      candidateData.setFileSuffix(zipPackage.getFileExtension());
       candidateService
           .updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(), candidateData);
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
           getHandlerType().toString()), exception);
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,
