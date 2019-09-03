@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.generator.datatypes.tosca;
@@ -52,10 +54,10 @@ public class VendorInfo {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (obj != null && getClass() != obj.getClass())
+    if (obj == null || getClass() != obj.getClass())
       return false;
     VendorInfo other = (VendorInfo) obj;
-    if (other != null) {
+
       if (this.manufacturer_reference_number == null) {
         if (other.manufacturer_reference_number != null)
           return false;
@@ -66,7 +68,7 @@ public class VendorInfo {
           return false;
       } else if (!vendor_model.equals(other.vendor_model))
         return false;
-    }
+
     return true;
   }
 

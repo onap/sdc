@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2019 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.generator.datatypes.tosca;
@@ -73,10 +75,10 @@ public class DeploymentFlavorModel {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (obj != null && getClass() != obj.getClass())
+    if (obj == null || getClass() != obj.getClass())
       return false;
     DeploymentFlavorModel other = (DeploymentFlavorModel) obj;
-    if (other != null) {
+
       if (this.sp_part_number == null) {
         if (other.sp_part_number != null)
           return false;
@@ -97,7 +99,7 @@ public class DeploymentFlavorModel {
           return false;
       } else if (!license_flavor.equals(other.license_flavor))
         return false;
-    }
+
     return true;
   }
 
