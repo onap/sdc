@@ -22,6 +22,30 @@
       "revId": "7b10cc4d95582dfaf6c6010199fa95aae78c806b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "131c6f16_c1bc3ab0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/conflict-rest-types/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/types/composition/ComponentComputeAssociationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-09-03T07:07:23Z",
+      "side": 1,
+      "message": "Proposed approach would effectively duplicate information which is already contained in this one-liner test. The expression: assertThat(ComponentComputeAssociation.class, hasValidGettersAndSetters()); \nreads like plain English sentence and does exactly this: explains the viewer what this method does.",
+      "parentUuid": "a9f00bbe_2b448e12",
+      "range": {
+        "startLine": 30,
+        "startChar": 16,
+        "endLine": 30,
+        "endChar": 29
+      },
+      "revId": "7b10cc4d95582dfaf6c6010199fa95aae78c806b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
