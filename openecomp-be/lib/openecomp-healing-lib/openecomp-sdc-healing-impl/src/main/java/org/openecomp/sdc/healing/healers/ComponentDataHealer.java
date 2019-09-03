@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.healing.healers;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,11 @@ public class ComponentDataHealer implements Healer {
 
     public ComponentDataHealer() {
         this.componentDao = ComponentDaoFactory.getInstance().createInterface();
+    }
+
+    @VisibleForTesting
+    ComponentDataHealer(ComponentDao componentDao) {
+        this.componentDao = componentDao;
     }
 
     @Override
