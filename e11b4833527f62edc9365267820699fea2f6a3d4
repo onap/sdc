@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a764e9c_8fdf8307",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/servlet/DistributionCatalogServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-09-04T12:33:10Z",
+      "side": 1,
+      "message": "privates",
+      "range": {
+        "startLine": 71,
+        "startChar": 3,
+        "endLine": 79,
+        "endChar": 94
+      },
+      "revId": "e11b4833527f62edc9365267820699fea2f6a3d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b13bc07_dba3583e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/servlet/DistributionCatalogServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-09-04T12:33:10Z",
+      "side": 1,
+      "message": "private static final variables should have capital letters",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 113
+      },
+      "revId": "e11b4833527f62edc9365267820699fea2f6a3d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65576304_963b55a8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/servlet/DistributionCatalogServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2019-09-04T12:33:10Z",
+      "side": 1,
+      "message": "maybe extract to separate method - for example configureUserAuthorizationMocks, the same case with error configuration",
+      "range": {
+        "startLine": 98,
+        "startChar": 6,
+        "endLine": 108,
+        "endChar": 56
+      },
+      "revId": "e11b4833527f62edc9365267820699fea2f6a3d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
