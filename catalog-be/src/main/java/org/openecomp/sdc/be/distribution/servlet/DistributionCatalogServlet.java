@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -43,9 +44,9 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -76,7 +77,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
 	private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
-	  @Autowired
+	@Inject
     public DistributionCatalogServlet(UserBusinessLogic userBusinessLogic,
         ComponentsUtils componentsUtils,
         ArtifactsBusinessLogic artifactsBusinessLogic) {
@@ -128,13 +129,10 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @PathParam("serviceVersion") final String serviceVersion,
             @PathParam("artifactName") final String artifactName) {
 
-        Response response = null;
         String requestURI = request.getRequestURI();
-        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-            return buildErrorResponse(responseFormat);
+        Wrapper<Response> responseWrapper = validateInstanceIdHeader(new Wrapper<>(), instanceIdHeader, requestURI);
+        if(!responseWrapper.isEmpty()) {
+            return responseWrapper.getInnerElement();
         }
 
         try {
@@ -143,7 +141,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildErrorResponse(responseFormat);
+                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
             } else {
                 byte[] value = downloadRsrcArtifactEither.left().value();
                 InputStream is = new ByteArrayInputStream(value);
@@ -152,15 +150,25 @@ public class DistributionCatalogServlet extends BeGenericServlet {
                 headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildOkResponse(responseFormat, is, headers);
+                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
             }
-            return response;
+            return responseWrapper.getInnerElement();
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download Murano package artifact for service - external API");
             log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+    }
+
+    private Wrapper<Response> validateInstanceIdHeader(Wrapper<Response> responseWrapper, String instanceIdHeader, String requestURI) {
+        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
+            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
+            ResponseFormat errorResponseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            getComponentsUtils().auditDistributionDownload(errorResponseFormat, new DistributionData(instanceIdHeader, requestURI));
+            responseWrapper.setInnerElement(buildErrorResponse(errorResponseFormat));
+        }
+        return responseWrapper;
     }
 
     /**
@@ -205,14 +213,11 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @PathParam("resourceVersion") final String resourceVersion,
             @PathParam("artifactName") final String artifactName) {
 
-        Response response = null;
         String requestURI = request.getRequestURI();
+        Wrapper<Response> responseWrapper = validateInstanceIdHeader(new Wrapper<>(), instanceIdHeader, requestURI);
 
-        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-            return buildErrorResponse(responseFormat);
+        if(!responseWrapper.isEmpty()) {
+            return responseWrapper.getInnerElement();
         }
 
         try {
@@ -221,7 +226,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildErrorResponse(responseFormat);
+                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
             } else {
                 byte[] value = downloadRsrcArtifactEither.left().value();
                 // Returning 64-encoded as it was received during upload
@@ -230,9 +235,9 @@ public class DistributionCatalogServlet extends BeGenericServlet {
                 headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildOkResponse(responseFormat, is, headers);
+                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
             }
-            return response;
+            return responseWrapper.getInnerElement();
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
@@ -281,14 +286,11 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @PathParam("resourceInstanceName") final String resourceInstanceName,
             @PathParam("artifactName") final String artifactName) {
 
-        Response response = null;
         String requestURI = request.getRequestURI();
+        Wrapper<Response> responseWrapper = validateInstanceIdHeader(new Wrapper<>(), instanceIdHeader, requestURI);
 
-        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-            return buildErrorResponse(responseFormat);
+        if(!responseWrapper.isEmpty()) {
+            return responseWrapper.getInnerElement();
         }
 
         try {
@@ -297,7 +299,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             if (downloadRsrcArtifactEither.isRight()) {
                 ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildErrorResponse(responseFormat);
+                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
             } else {
                 byte[] value = downloadRsrcArtifactEither.left().value();
                 // Returning 64-encoded as it was received during upload
@@ -306,9 +308,9 @@ public class DistributionCatalogServlet extends BeGenericServlet {
                 headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                response = buildOkResponse(responseFormat, is, headers);
+                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
             }
-            return response;
+            return responseWrapper.getInnerElement();
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
