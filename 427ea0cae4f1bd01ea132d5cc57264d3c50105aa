@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2c0b5660_54ce973f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/conflict-rest-services/src/test/java/org/openecomp/core/model/types/EnrichedServiceArtifactEntityTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-09-04T08:55:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c249ba39_a3cbc0d0",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 15
+      },
+      "revId": "427ea0cae4f1bd01ea132d5cc57264d3c50105aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0f30e216_f0e3ad0e",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/conflict-rest-services/src/test/java/org/openecomp/core/model/types/EnrichedServiceTemplateEntityTest.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-09-04T07:20:00Z",
       "side": 1,
       "message": "not needed",
+      "range": {
+        "startLine": 86,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 12
+      },
+      "revId": "427ea0cae4f1bd01ea132d5cc57264d3c50105aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "829e73cc_f551dcd9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/conflict-rest/conflict-rest-services/src/test/java/org/openecomp/core/model/types/EnrichedServiceTemplateEntityTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2019-09-04T08:55:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0f30e216_f0e3ad0e",
       "range": {
         "startLine": 86,
         "startChar": 8,
