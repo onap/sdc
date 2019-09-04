@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (c) 2019 Nokia
  */
 
 package org.onap.sdc.tosca.datatypes.model;
@@ -24,6 +26,11 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsExcluding;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeExcluding;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertThat;
 
 
 public class NodeTemplateTest {
@@ -66,6 +73,20 @@ public class NodeTemplateTest {
         Assert.assertEquals(expectedServiceTemplate, actualServiceTemplate);
     }
 
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(NodeTemplate.class, hasValidGettersAndSettersExcluding("normalizeInterfaces"));
+    }
+
+    @Test
+    public void shouldHaveValidEquals() {
+        assertThat(NodeTemplate.class, hasValidBeanEqualsExcluding("normalizeInterfaces"));
+    }
+
+    @Test
+    public void shouldHaveValidHashCode() {
+        assertThat(NodeTemplate.class, hasValidBeanHashCodeExcluding("normalizeInterfaces"));
+    }
 
     private InterfaceDefinitionTemplate createInterfaceDefinitionTemplate() {
         InterfaceDefinitionTemplate interfaceDefinitionTemplate = new InterfaceDefinitionTemplate();
