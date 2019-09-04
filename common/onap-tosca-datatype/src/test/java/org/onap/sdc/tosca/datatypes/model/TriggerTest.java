@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (c) 2019 Nokia
  */
 
 package org.onap.sdc.tosca.datatypes.model;
@@ -22,6 +24,11 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEquals;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class TriggerTest {
@@ -88,6 +95,20 @@ public class TriggerTest {
         Assert.assertEquals(true, operationAction instanceof Map);
         Assert.assertNotNull( ((Map)operationAction).get(IMPLEMENTATION));
 
+    }
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(Trigger.class, hasValidGettersAndSetters());
+    }
+
+    @Test
+    public void shouldHaveValidEquals() {
+        assertThat(Trigger.class, hasValidBeanEquals());
+    }
+
+    @Test
+    public void shouldHaveValidHashCode() {
+        assertThat(Trigger.class, hasValidBeanHashCode());
     }
 
 }

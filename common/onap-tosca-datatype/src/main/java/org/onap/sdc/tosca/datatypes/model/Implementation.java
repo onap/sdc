@@ -12,13 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * Modifications copyright (c) 2019 Nokia
  */
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 
@@ -52,8 +53,8 @@ public class Implementation implements Cloneable {
             return false;
         }
         Implementation that = (Implementation) o;
-        return Objects.equals(primary, that.primary) && Objects.equals(new HashSet<>(dependencies),
-                new HashSet<>(that.dependencies));
+        return Objects.equals(primary, that.primary)
+                && Objects.equals(dependencies, that.dependencies);
     }
 
     @Override

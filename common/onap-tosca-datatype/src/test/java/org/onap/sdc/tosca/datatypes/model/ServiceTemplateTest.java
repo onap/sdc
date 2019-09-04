@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (c) 2019 Nokia
  */
 
 package org.onap.sdc.tosca.datatypes.model;
@@ -24,6 +26,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ServiceTemplateTest {
 
@@ -60,5 +65,11 @@ public class ServiceTemplateTest {
             Assert.assertNotNull(interfaceWithOper.getOperations().get(NEW_OPER_2).getDescription());
         }
 
+    }
+
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(ServiceTemplate.class,
+                hasValidGettersAndSettersExcluding("imports", "normalizeInterfaceTypes"));
     }
 }

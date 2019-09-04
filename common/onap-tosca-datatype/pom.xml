@@ -75,5 +75,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.bean-matchers</groupId>
+			<artifactId>bean-matchers</artifactId>
+			<version>${bean-matchers.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

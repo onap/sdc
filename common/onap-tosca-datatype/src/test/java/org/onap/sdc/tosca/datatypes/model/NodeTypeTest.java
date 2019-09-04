@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (c) 2019 Nokia
  */
 
 package org.onap.sdc.tosca.datatypes.model;
@@ -22,6 +24,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertThat;
 
 
 public class NodeTypeTest {
@@ -42,6 +47,11 @@ public class NodeTypeTest {
             InterfaceDefinitionType interfaceDefinitionType = chkData(normalizeInterfacesNoEvent);
         }
 
+    }
+
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(NodeType.class, hasValidGettersAndSettersExcluding("normalizeInterfaces"));
     }
 
     protected InterfaceDefinitionType chkData(Map<String, InterfaceDefinitionType> normalizeInterfacesNoEvent) {
