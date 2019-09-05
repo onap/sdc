@@ -19,6 +19,11 @@
  */
 package org.openecomp.sdcrests.vsp.rest.data;
 
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -29,17 +34,12 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 
-import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
- * Class responsible for processing zip archive and verify if this package corresponds
- * SOL004 option 2 signed package format, verifies the cms signature if package is signed
+ * Class responsible for processing zip archive and verify if this package corresponds SOL004 option 2 signed package
+ * format, verifies the cms signature if package is signed
  */
 public class PackageArchive {
+
     private static final Logger LOG = LoggerFactory.getLogger(PackageArchive.class);
     private static final String[] ALLOWED_ARCHIVE_EXTENSIONS = {"csar", "zip"};
     private static final String[] ALLOWED_SIGNATURE_EXTENSIONS = {"cms"};
@@ -49,6 +49,7 @@ public class PackageArchive {
     private final SecurityManager securityManager;
     private final byte[] outerPackageFileBytes;
     private Pair<FileContentHandler, List<String>> handlerPair;
+    private Boolean signatureValid;
 
     public PackageArchive(Attachment uploadedFile) {
         this(uploadedFile.getObject(byte[].class));
@@ -59,7 +60,7 @@ public class PackageArchive {
         this.securityManager = SecurityManager.getInstance();
         try {
             handlerPair = CommonUtil.getFileContentMapFromOrchestrationCandidateZip(
-                    outerPackageFileBytes);
+                outerPackageFileBytes);
         } catch (IOException exception) {
             LOG.error("Error reading files inside archive", exception);
         }
@@ -88,6 +89,7 @@ public class PackageArchive {
 
     /**
      * Gets csar/zip package content from zip archive
+     *
      * @return csar package content
      * @throws SecurityManagerException
      */
@@ -97,37 +99,38 @@ public class PackageArchive {
                 return handlerPair.getKey().getFiles().get(getArchiveFileName().orElseThrow(CertificateException::new));
             }
         } catch (CertificateException exception) {
-            LOG.info("Error verifying signature " + exception);
+            LOG.info("Error verifying signature ", exception);
         }
         return outerPackageFileBytes;
     }
 
     /**
      * Validates package signature against trusted certificates
+     *
      * @return true if signature verified
      * @throws SecurityManagerException
      */
     public boolean isSignatureValid() throws SecurityManagerException {
-        Map<String, byte[]> files = handlerPair.getLeft().getFiles();
-        Optional<String> signatureFileName = getSignatureFileName();
-        Optional<String> archiveFileName = getArchiveFileName();
-        if (files.isEmpty() || !signatureFileName.isPresent() || !archiveFileName.isPresent()) {
-            return false;
+        if (signatureValid == null) {
+            final Map<String, byte[]> files = handlerPair.getLeft().getFiles();
+            final Optional<String> signatureFileName = getSignatureFileName();
+            final Optional<String> archiveFileName = getArchiveFileName();
+            if (files.isEmpty() || !signatureFileName.isPresent() || !archiveFileName.isPresent()) {
+                signatureValid = false;
+            } else {
+                final Optional<String> certificateFile = getCertificateFileName();
+                signatureValid = securityManager.verifySignedData(files.get(signatureFileName.get()),
+                    certificateFile.map(files::get).orElse(null), files.get(archiveFileName.get()));
+            }
+
         }
-        Optional<String> certificateFile = getCertificateFileName();
-        if(certificateFile.isPresent()){
-            return securityManager.verifySignedData(files.get(signatureFileName.get()),
-                    files.get(certificateFile.get()), files.get(archiveFileName.get()));
-        }else {
-            return securityManager.verifySignedData(files.get(signatureFileName.get()),
-                    null, files.get(archiveFileName.get()));
-        }
+        return signatureValid;
     }
 
     private boolean isPackageSizeMatches() {
         return handlerPair.getRight().isEmpty()
-                && (handlerPair.getLeft().getFiles().size() == NUMBER_OF_FILES_FOR_SIGNATURE_WITH_CERT_INSIDE
-                || handlerPair.getLeft().getFiles().size() == NUMBER_OF_FILES_FOR_SIGNATURE_WITHOUT_CERT_INSIDE);
+            && (handlerPair.getLeft().getFiles().size() == NUMBER_OF_FILES_FOR_SIGNATURE_WITH_CERT_INSIDE
+            || handlerPair.getLeft().getFiles().size() == NUMBER_OF_FILES_FOR_SIGNATURE_WITHOUT_CERT_INSIDE);
     }
 
     private Optional<String> getSignatureFileName() {
@@ -147,7 +150,7 @@ public class PackageArchive {
 
     private Optional<String> getCertificateFileName() {
         Optional<String> certFileName = getFileByExtension(ALLOWED_CERTIFICATE_EXTENSIONS);
-        if(!certFileName.isPresent()){
+        if (!certFileName.isPresent()) {
             return Optional.empty();
         }
         String certNameWithoutExtension = FilenameUtils.removeExtension(certFileName.get());
