@@ -20,21 +20,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
 import com.google.common.collect.ImmutableSet;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSTypedData;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.util.Store;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,14 +50,30 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.util.Store;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
- * This is temporary solution. When AAF provides functionality for verifying trustedCertificates, this class should be reviewed
- * Class is responsible for providing root trustedCertificates from configured location in onboarding container.
+ * This is temporary solution. When AAF provides functionality for verifying trustedCertificates, this class should be
+ * reviewed Class is responsible for providing root trustedCertificates from configured location in onboarding
+ * container.
  */
 public class SecurityManager {
+
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
-    private static final SecurityManager INSTANCE = new SecurityManager();
+    private static SecurityManager INSTANCE = null;
 
     private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
     private Set<X509Certificate> trustedCertificates = new HashSet<>();
@@ -88,12 +89,14 @@ public class SecurityManager {
         certificateDirectory = this.getcertDirectory();
     }
 
-    public static SecurityManager getInstance(){
+    public static SecurityManager getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new SecurityManager();
+        }
         return INSTANCE;
     }
 
     /**
-     *
      * Checks the configured location for available trustedCertificates
      *
      * @return set of trustedCertificates
@@ -116,12 +119,11 @@ public class SecurityManager {
     /**
      * Cleans certificate collection
      */
-    public void cleanTrustedCertificates(){
+    public void cleanTrustedCertificates() {
         trustedCertificates.clear();
     }
 
     /**
-     *
      * Verifies if packaged signed with trusted certificate
      *
      * @param messageSyntaxSignature - signature data in cms format
@@ -131,34 +133,33 @@ public class SecurityManager {
      * @throws SecurityManagerException
      */
     public boolean verifySignedData(final byte[] messageSyntaxSignature, final byte[] packageCert,
-                                    final byte[] innerPackageFile) throws SecurityManagerException{
-        try (ByteArrayInputStream signatureStream = new ByteArrayInputStream(messageSyntaxSignature)) {
-            Object parsedObject = new PEMParser(new InputStreamReader(signatureStream)).readObject();
+                                    final byte[] innerPackageFile) throws SecurityManagerException {
+        try (ByteArrayInputStream signatureStream = new ByteArrayInputStream(messageSyntaxSignature);
+            final PEMParser pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
+            final Object parsedObject = pemParser.readObject();
             if (!(parsedObject instanceof ContentInfo)) {
                 throw new SecurityManagerException("Signature is not recognized");
             }
-            ContentInfo signature = ContentInfo.getInstance(parsedObject);
-            CMSTypedData signedContent = new CMSProcessableByteArray(innerPackageFile);
-            CMSSignedData signedData = new CMSSignedData(signedContent, signature);
+            final ContentInfo signature = ContentInfo.getInstance(parsedObject);
+            final CMSTypedData signedContent = new CMSProcessableByteArray(innerPackageFile);
+            final CMSSignedData signedData = new CMSSignedData(signedContent, signature);
 
-            Collection<SignerInformation> signers = signedData.getSignerInfos().getSigners();
-            SignerInformation firstSigner = signers.iterator().next();
-            Store certificates = signedData.getCertificates();
-            X509Certificate cert;
+            final Collection<SignerInformation> signers = signedData.getSignerInfos().getSigners();
+            final SignerInformation firstSigner = signers.iterator().next();
+            final X509Certificate cert;
             if (packageCert == null) {
-                Collection<X509CertificateHolder> firstSignerCertificates = certificates.getMatches(firstSigner.getSID());
-                if(!firstSignerCertificates.iterator().hasNext()){
-                    throw new SecurityManagerException("No certificate found in cms signature that should contain one!");
+                Collection<X509CertificateHolder> firstSignerCertificates = signedData.getCertificates()
+                    .getMatches(firstSigner.getSID());
+                if (!firstSignerCertificates.iterator().hasNext()) {
+                    throw new SecurityManagerException(
+                        "No certificate found in cms signature that should contain one!");
                 }
-                X509CertificateHolder firstSignerFirstCertificate = firstSignerCertificates.iterator().next();
-                cert = loadCertificate(firstSignerFirstCertificate.getEncoded());
+                cert = loadCertificate(firstSignerCertificates.iterator().next().getEncoded());
             } else {
                 cert = loadCertificate(packageCert);
             }
 
-            PKIXCertPathBuilderResult result = verifyCertificate(cert, getTrustedCertificates());
-
-            if (result == null) {
+            if (verifyCertificate(cert, getTrustedCertificates()) == null) {
                 return false;
             }
 
@@ -166,7 +167,7 @@ public class SecurityManager {
         } catch (OperatorCreationException | IOException | CMSException e) {
             logger.error(e.getMessage(), e);
             throw new SecurityManagerException("Unexpected error occurred during signature validation!", e);
-        } catch (GeneralSecurityException e){
+        } catch (GeneralSecurityException e) {
             throw new SecurityManagerException("Could not verify signature!", e);
         }
     }
@@ -214,36 +215,37 @@ public class SecurityManager {
     }
 
     private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert,
-                                                        Set<X509Certificate> additionalCerts) throws GeneralSecurityException, SecurityManagerException {
-            if (null == cert) {
-                throw new SecurityManagerException("The certificate is empty!");
-            }
+                                                        Set<X509Certificate> additionalCerts)
+        throws GeneralSecurityException, SecurityManagerException {
+        if (null == cert) {
+            throw new SecurityManagerException("The certificate is empty!");
+        }
 
-            if (isExpired(cert)) {
-                throw new SecurityManagerException("The certificate expired on: " + cert.getNotAfter());
-            }
+        if (isExpired(cert)) {
+            throw new SecurityManagerException("The certificate expired on: " + cert.getNotAfter());
+        }
 
-            if (isSelfSigned(cert)) {
-                throw new SecurityManagerException("The certificate is self-signed.");
-            }
+        if (isSelfSigned(cert)) {
+            throw new SecurityManagerException("The certificate is self-signed.");
+        }
 
-            Set<X509Certificate> trustedRootCerts = new HashSet<>();
-            Set<X509Certificate> intermediateCerts = new HashSet<>();
-            for (X509Certificate additionalCert : additionalCerts) {
-                if (isSelfSigned(additionalCert)) {
-                    trustedRootCerts.add(additionalCert);
-                } else {
-                    intermediateCerts.add(additionalCert);
-                }
+        Set<X509Certificate> trustedRootCerts = new HashSet<>();
+        Set<X509Certificate> intermediateCerts = new HashSet<>();
+        for (X509Certificate additionalCert : additionalCerts) {
+            if (isSelfSigned(additionalCert)) {
+                trustedRootCerts.add(additionalCert);
+            } else {
+                intermediateCerts.add(additionalCert);
             }
+        }
 
-            return verifyCertificate(cert, trustedRootCerts, intermediateCerts);
+        return verifyCertificate(cert, trustedRootCerts, intermediateCerts);
     }
 
     private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert,
                                                         Set<X509Certificate> allTrustedRootCerts,
                                                         Set<X509Certificate> allIntermediateCerts)
-            throws GeneralSecurityException {
+        throws GeneralSecurityException {
 
         // Create the selector that specifies the starting certificate
         X509CertSelector selector = new X509CertSelector();
@@ -272,13 +274,15 @@ public class SecurityManager {
         pkixParams.addCertStore(createCertStore(allIntermediateCerts));
         pkixParams.addCertStore(createCertStore(allTrustedRootCerts));
 
-        CertPathBuilder builder = CertPathBuilder.getInstance(CertPathBuilder.getDefaultType(), BouncyCastleProvider.PROVIDER_NAME);
+        CertPathBuilder builder = CertPathBuilder
+            .getInstance(CertPathBuilder.getDefaultType(), BouncyCastleProvider.PROVIDER_NAME);
         return (PKIXCertPathBuilderResult) builder.build(pkixParams);
     }
 
     private CertStore createCertStore(Set<X509Certificate> certificateSet) throws InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, NoSuchProviderException {
-        return CertStore.getInstance("Collection", new CollectionCertStoreParameters(certificateSet), BouncyCastleProvider.PROVIDER_NAME);
+        NoSuchAlgorithmException, NoSuchProviderException {
+        return CertStore.getInstance("Collection", new CollectionCertStoreParameters(certificateSet),
+            BouncyCastleProvider.PROVIDER_NAME);
     }
 
     private boolean isExpired(X509Certificate cert) {
@@ -295,8 +299,8 @@ public class SecurityManager {
     }
 
     private boolean isSelfSigned(Certificate cert)
-            throws CertificateException, NoSuchAlgorithmException,
-            NoSuchProviderException {
+        throws CertificateException, NoSuchAlgorithmException,
+        NoSuchProviderException {
         try {
             // Try to verify certificate signature with its own public key
             PublicKey key = cert.getPublicKey();
