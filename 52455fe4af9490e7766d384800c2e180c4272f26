@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9cbe663e_1dd37296",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-09-06T10:54:42Z",
+      "side": 1,
+      "message": "Let\u0027s upgrade this one too if possible",
+      "range": {
+        "startLine": 302,
+        "startChar": 25,
+        "endLine": 302,
+        "endChar": 26
+      },
+      "revId": "52455fe4af9490e7766d384800c2e180c4272f26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
