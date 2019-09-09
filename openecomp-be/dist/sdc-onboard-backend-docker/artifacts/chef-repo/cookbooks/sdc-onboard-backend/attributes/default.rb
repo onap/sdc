@@ -5,9 +5,10 @@ default['FE'][:http_port] = 8181
 default['FE'][:https_port] = 9443
 default['disableHttp'] = true
 default['cassandra'][:truststore_password] = "Aa123456"
-default['jetty'][:keystore_pwd] = "rTIS;B4kM]2GHcNK2c3B4&Ng"
-default['jetty'][:keymanager_pwd] = "rTIS;B4kM]2GHcNK2c3B4&Ng"
-default['jetty'][:truststore_pwd] = "Y,f975ZNJfVZhV*{+Y[}pA?0"
+default['jetty'][:keystore_pwd] = "!ppJ.JvWn0hGh)oVF]([Kv)^"
+default['jetty'][:keymanager_pwd] = "!ppJ.JvWn0hGh)oVF]([Kv)^"
+default['jetty'][:truststore_pwd] = "].][xgtze]hBhz*wy]}m#lf*"
+
 default['VnfRepo']['vnfRepoPort'] = 8702
 default['VnfRepo']['vnfRepoHost'] = "192.168.50.5"
 
@@ -22,4 +23,3 @@ default['cassandra']['janusgraph_connection_timeout'] = 10000
 #ExternalTesting
 default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://192.168.50.5:8702/onapapi/vnfsdk-marketplace,c.*"
 default['EXTTEST']['ep2_config'] = "repository,Repository,false,,.*"
-
