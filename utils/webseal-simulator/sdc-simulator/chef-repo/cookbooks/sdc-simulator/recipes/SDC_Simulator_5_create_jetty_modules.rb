@@ -51,9 +51,9 @@ template "ssl-ini" do
    mode "0755"
    variables({
      :https_port           => "8443",
-     :jetty_truststore_pwd => "Y,f975ZNJfVZhV*{+Y[}pA?0",
-     :jetty_keystore_pwd   => "rTIS;B4kM]2GHcNK2c3B4&Ng",
-     :jetty_keymanager_pwd => "rTIS;B4kM]2GHcNK2c3B4&Ng",
+     :jetty_truststore_pwd => "].][xgtze]hBhz*wy]}m#lf*",
+     :jetty_keystore_pwd   => "!ppJ.JvWn0hGh)oVF]([Kv)^",
+     :jetty_keymanager_pwd => "!ppJ.JvWn0hGh)oVF]([Kv)^",
    })
 end
 

@@ -16,7 +16,7 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
                 -Dlog.home=${JETTY_BASE}/logs \
                 -Dlogback.configurationFile=${JETTY_BASE}/config/sdc-simulator/logback.xml \
                 -Djavax.net.ssl.trustStore=${JETTY_BASE}/etc/org.onap.sdc.trust.jks \
-                -Djavax.net.ssl.trustStorePassword=Y,f975ZNJfVZhV*{+Y[}pA?0 \
+                -Djavax.net.ssl.trustStorePassword=].][xgtze]hBhz*wy]}m#lf* \
                 -Djetty.console-capture.dir=${JETTY_BASE}/logs"
 
 
