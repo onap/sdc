@@ -560,7 +560,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 result = StorageOperationStatus.NOT_FOUND;
             }
         }
-        if (result == null) {
+        if (result == null && foundEdge!=null) {
             JanusGraphOperationStatus
                 createEdgeRes = janusGraphDao
                 .createEdge(foundEdge.outVertex(), certifiedToscaElement.getVertex(), EdgeLabelEnum.LAST_STATE, foundEdge);
