@@ -179,16 +179,14 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         } else if (!vendorName.equals(other.vendorName)) {
             return false;
         }
-        if (vendorRelease == null) {
-            if (other.vendorRelease != null) {
+        if (vendorRelease == null && other.vendorRelease != null) {
                 return false;
-            }
         }
         if (toscaResourceName == null) {
             if (other.toscaResourceName != null) {
                 return false;
             }
-        } else if (!vendorRelease.equals(other.vendorRelease)) {
+        } else if (vendorRelease!=null && !vendorRelease.equals(other.vendorRelease)) {
             return false;
         }
         if (resourceVendorModelNumber == null) {
