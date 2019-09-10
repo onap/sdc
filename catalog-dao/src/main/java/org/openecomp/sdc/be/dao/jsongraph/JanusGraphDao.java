@@ -956,7 +956,7 @@ public class JanusGraphDao {
                     toVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()));
             result = JanusGraphOperationStatus.NOT_FOUND;
         }
-        if (result == null) {
+        if (result == null && prevEdgeIter!=null) {
             result = replaceEdgeLabel(fromVertex, toVertex, prevEdgeIter.next(), prevLabel, newLabel);
         }
         return result;
