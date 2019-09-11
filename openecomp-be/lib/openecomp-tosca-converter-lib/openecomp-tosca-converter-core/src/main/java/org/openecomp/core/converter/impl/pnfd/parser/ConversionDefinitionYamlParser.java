@@ -20,15 +20,20 @@
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Map;
+import java.util.Optional;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
 import org.openecomp.core.converter.pnfd.model.ConversionQuery;
 import org.openecomp.core.converter.pnfd.model.PnfTransformationToken;
 import org.openecomp.core.converter.pnfd.strategy.PnfdConversionStrategy;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
  * Handles YAML from/to {@link ConversionDefinition} conversions
  */
 public class ConversionDefinitionYamlParser {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConversionDefinitionYamlParser.class);
 
     private ConversionDefinitionYamlParser() {
 
@@ -40,16 +45,20 @@ public class ConversionDefinitionYamlParser {
      * @return
      *  A new instance of {@link ConversionDefinition}.
      */
-    public static ConversionDefinition parse(final Map<String, Object> conversionYaml) {
+    public static Optional<ConversionDefinition> parse(final Map<String, Object> conversionYaml) {
         final ConversionQuery conversionQuery = ConversionQueryYamlParser
-            .parse(conversionYaml.get(PnfTransformationToken.QUERY.getName()));
+            .parse(conversionYaml.get(PnfTransformationToken.QUERY.getName())).orElse(null);
+        if (conversionQuery == null) {
+            LOGGER.warn("Invalid '{}' for '{}'", PnfTransformationToken.QUERY.getName(), conversionYaml.toString());
+            return Optional.empty();
+        }
         final String toName = (String) conversionYaml.get(PnfTransformationToken.TO_NAME.getName());
         final PnfdConversionStrategy toValue = PnfdConversionStrategyYamlParser
             .parse((Map<String, Object>) conversionYaml.get(PnfTransformationToken.TO_VALUE.getName()))
             .orElse(null);
         final String toGetInput = (String) conversionYaml.get(PnfTransformationToken.TO_GET_INPUT.getName());
 
-        return new ConversionDefinition(conversionQuery, toName, toValue, toGetInput);
+        return Optional.of(new ConversionDefinition(conversionQuery, toName, toValue, toGetInput));
     }
 
 }

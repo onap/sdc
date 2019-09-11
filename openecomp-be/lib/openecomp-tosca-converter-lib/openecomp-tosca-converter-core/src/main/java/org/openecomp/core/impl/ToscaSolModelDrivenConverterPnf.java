@@ -21,7 +21,9 @@ package org.openecomp.core.impl;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.core.converter.impl.pnfd.PnfdTransformationEngine;
+import org.openecomp.core.converter.impl.pnfd.PnfdNodeTemplateTransformationEngine;
+import org.openecomp.core.converter.impl.pnfd.PnfdNodeTypeTransformationEngine;
+import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
 
 public class ToscaSolModelDrivenConverterPnf extends AbstractToscaSolConverter {
 
@@ -31,9 +33,18 @@ public class ToscaSolModelDrivenConverterPnf extends AbstractToscaSolConverter {
      * @param readerService
      */
     @Override
-    public void convertTopologyTemplate(final ServiceTemplate serviceTemplate, final ServiceTemplateReaderService readerService) {
-        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdTransformationEngine(readerService, serviceTemplate);
+    public void convertTopologyTemplate(final ServiceTemplate serviceTemplate,
+                                        final ServiceTemplateReaderService readerService) {
+        final PnfdTransformationEngine pnfdTransformationEngine =
+            new PnfdNodeTemplateTransformationEngine(readerService, serviceTemplate);
         pnfdTransformationEngine.transform();
     }
 
+    @Override
+    protected void convertNodeTypes(final ServiceTemplate serviceTemplate,
+                                    final ServiceTemplateReaderService readerService) {
+        final PnfdTransformationEngine pnfdTransformationEngine =
+            new PnfdNodeTypeTransformationEngine(readerService, serviceTemplate);
+        pnfdTransformationEngine.transform();
+    }
 }

@@ -1,3 +1,68 @@
+- transformation-for: nodeType # Transforms all Node Types that extend from a valid ONAP NodeType.
+  name: Node Type transformation
+  description: converts any node type that has/extends from the type tosca.nodes.nfv.PnfExtCp
+  properties:
+    nodeNamePrefix: "org.openecomp.resource.abstract."
+  query:
+    derived_from: tosca.nodes.nfv.PnfExtCp
+  conversions:
+    - query:
+        derived_from:
+      to-name: derived_from
+      to-value:
+        strategy: replace
+        from: tosca.nodes.nfv.PnfExtCp
+        to: org.openecomp.resource.cp.v2.extCP
+    - query:
+        version:
+      to-name: version
+      to-value:
+        strategy: copy
+    - query:
+        metadata:
+      to-name: metadata
+      to-value:
+        strategy: copy
+    - query:
+        description:
+      to-name: description
+      to-value:
+        strategy: copy
+    - query:
+        attributes:
+      to-name: attributes
+      to-value:
+        strategy: copy
+    - query:
+        properties:
+      to-name: properties
+      to-value:
+        strategy: copy
+    - query:
+        requirements:
+      to-name: requirements
+      to-value:
+        strategy: copy
+    - query:
+        capabilities:
+      to-name: capabilities
+      to-value:
+        strategy: copy
+    - query:
+        interfaces:
+      to-name: interfaces
+      to-value:
+        strategy: copy
+    - query:
+        artifacts:
+      to-name: artifacts
+      to-value:
+        strategy: copy
+- transformation-for: customNodeType # Transforms all Customized Node Types that extend from a valid ONAP NodeType.
+  name: Custom Node Type transformation
+  description: converts any node type that has/extends from the type tosca.nodes.nfv.PnfExtCp
+  from: tosca.nodes.nfv.PnfExtCp
+  to: org.openecomp.resource.cp.v2.extCP
 - transformation-for: nodeTemplate #block
   name: PnfExtCp transformation #transformation name
   description: converts any node template that has a type tosca.nodes.nfv.PnfExtCp #transformation description

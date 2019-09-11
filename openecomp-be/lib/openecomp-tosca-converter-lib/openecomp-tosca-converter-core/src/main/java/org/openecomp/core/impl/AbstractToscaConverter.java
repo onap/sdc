@@ -217,7 +217,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         serviceTemplate.setMetadata(finalMetadata);
     }
 
-    private void convertNodeTypes(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
+    protected void convertNodeTypes(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Map<String, Object> nodeTypes = readerService.getNodeTypes();
         if (MapUtils.isEmpty(nodeTypes)) {
             return;

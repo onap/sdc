@@ -17,8 +17,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter.pnfd.parser;
+package org.openecomp.core.converter.impl.pnfd.parser;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +29,19 @@ import java.util.Set;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
+import org.openecomp.core.converter.impl.pnfd.PnfdQueryExecutor;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
+import org.openecomp.core.converter.pnfd.model.ConversionQuery;
 import org.openecomp.core.converter.pnfd.model.PnfTransformationToken;
 import org.openecomp.core.converter.pnfd.model.Transformation;
+import org.openecomp.core.converter.pnfd.parser.PnfdBlockParser;
 
 public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
 
     protected final Transformation transformation;
     protected ServiceTemplateReaderService templateFrom;
     protected ServiceTemplate templateTo;
+    protected Object attributeValueToBeConverted = "";
 
     public AbstractPnfdBlockParser(final Transformation transformation) {
         this.transformation = transformation;
@@ -104,8 +110,8 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
      * @return the rebuilt original YAML object with the converted attribute
      */
     protected abstract Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery,
-        final Map<String, Object> fromNodeTemplateAttributeMap,
-        final ConversionDefinition conversionDefinition);
+                                                                      final Map<String, Object> fromNodeTemplateAttributeMap,
+                                                                      final ConversionDefinition conversionDefinition);
 
     /**
      * Merges two YAML objects.
@@ -153,12 +159,11 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
     }
 
     /**
-     * Gets the value (input name) of a YAML object representing a TOSCA get_input call: "get_input: <i>value</i>".
-     *
-     * @param yamlObject the YAML object
-     * @return The get_input function value, that represents the input name
+     * Extracts the value from an YAML Object.
+     * @param yamlObject
+     * @return The Object value from the yamlObject parameter.
      */
-    protected String extractGetInputFunctionValue(final Object yamlObject) {
+    protected String extractObjectValue(final Object yamlObject) {
         if (yamlObject instanceof Map) {
             final Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
             return (String) yamlMap.values().stream().findFirst().orElse(null);
@@ -173,6 +178,49 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
      */
     public Optional<Map<String, String>> getInputAndTransformationNameMap() {
         return Optional.empty();
+    }
+
+    /**
+     * Finds all the derived node types from the provided node types.
+     *
+     * @param rootNodeTypeMap a map with the root node types to find the derived ones
+     * @param derivedNodeTypeMap a map that will be filled with the derived node types
+     */
+    private void findAllDerivedNodeType(final Map<String, Object> rootNodeTypeMap,
+                                          final Map<String, Object> derivedNodeTypeMap) {
+        templateFrom.getNodeTypes().entrySet().stream()
+            .filter(nodeEntry -> rootNodeTypeMap.containsKey(extractObjectValue(nodeEntry.getValue())))
+            .forEach(nodeEntry -> {
+                if (!derivedNodeTypeMap.containsKey(nodeEntry.getKey())) {
+                    derivedNodeTypeMap.put(nodeEntry.getKey(), nodeEntry.getValue());
+                    final ImmutableMap<String, Object> newRootNodeTypeMap = ImmutableMap
+                        .of(nodeEntry.getKey(), nodeEntry.getValue());
+                    findAllDerivedNodeType(newRootNodeTypeMap, derivedNodeTypeMap);
+                }
+            });
+    }
+
+    /**
+     * Fetches all Custom NodeTypes based on the query result.
+     * @return a map with all custom Node Types that matches with the query result.
+     */
+    protected Map<String, Object> fetchCustomNodeType() {
+        final Map<String, Object> nodeTypesMap = templateFrom.getNodeTypes();
+        if (MapUtils.isEmpty(nodeTypesMap)) {
+            return Collections.emptyMap();
+        }
+        final ConversionQuery conversionQuery = transformation.getConversionQuery();
+        final Map<String, Object> customNodeTypesMap = new HashMap<>();
+        nodeTypesMap.entrySet().stream()
+            .filter(nodeEntry -> PnfdQueryExecutor.find(conversionQuery, nodeEntry.getValue()))
+            .forEach(customNode -> {
+                attributeValueToBeConverted = extractObjectValue(customNode.getValue());
+                customNodeTypesMap.put(customNode.getKey(), customNode.getValue());
+            });
+        final Map<String, Object> childNodeTypeMap = new HashMap<>();
+        findAllDerivedNodeType(customNodeTypesMap, childNodeTypeMap);
+        customNodeTypesMap.putAll(childNodeTypeMap);
+        return customNodeTypesMap;
     }
 
 }

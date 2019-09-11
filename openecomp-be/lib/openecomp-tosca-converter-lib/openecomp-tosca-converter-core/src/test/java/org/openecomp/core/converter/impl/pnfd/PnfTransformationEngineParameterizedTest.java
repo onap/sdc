@@ -40,6 +40,7 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
+import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
 @RunWith(Parameterized.class)
@@ -130,8 +131,8 @@ public class PnfTransformationEngineParameterizedTest {
         final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
         final ServiceTemplate serviceTemplate = new ServiceTemplate();
 
-        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdTransformationEngine(serviceTemplateReaderService, serviceTemplate
-            , transformationDescriptorFilePath.toString());
+        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(
+            serviceTemplateReaderService, serviceTemplate, transformationDescriptorFilePath.toString());
         pnfdTransformationEngine.transform();
 
         final String result = yamlUtil.objectToYaml(serviceTemplate);

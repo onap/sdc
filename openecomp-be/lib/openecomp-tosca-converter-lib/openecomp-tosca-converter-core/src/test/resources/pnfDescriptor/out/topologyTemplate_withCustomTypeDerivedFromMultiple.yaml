@@ -1,0 +1,84 @@
+node_types:
+  org.openecomp.resource.abstract.myCustomizedNodeType_B:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+    properties:
+      descriptor_id:
+        type: string
+        required: true
+        default: b1bb0ce7-ebca-4fa7-95ed-4840d70a2233
+        status: SUPPORTED
+        constraints:
+          - valid_values:
+              - b1bb0ce7-ebca-4fa7-95ed-4840d70a2233
+      function_description:
+        type: string
+        required: true
+        default: an example PNF
+        status: SUPPORTED
+      provider:
+        type: string
+        required: true
+        default: MyCompany
+        status: SUPPORTED
+        constraints:
+          - valid_values:
+              - MyCompany
+      version:
+        type: string
+        required: true
+        default: '1.0'
+        status: SUPPORTED
+        constraints:
+          - valid_values:
+              - '1.0'
+      descriptor_invariant_id:
+        type: string
+        required: true
+        default: 1111-2222-ccaa-bbdd
+        status: SUPPORTED
+        constraints:
+          - valid_values:
+              - 1111-2222-ccaa-bbdd
+      name:
+        type: string
+        required: true
+        default: ExamplePnf
+        status: SUPPORTED
+        constraints:
+          - valid_values:
+              - ExamplePnf
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+  org.openecomp.resource.abstract.myCustomizedNodeType_C:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+  org.openecomp.resource.abstract.myCustomizedNodeType_A:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+  org.openecomp.resource.abstract.myCustomizedNodeType_D:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+topology_template:
+  inputs:
+    protocols:
+      type: list
+      description: IP protocols
+      default:
+        - assingment_method: dhcp
+          ip_version: 4
+        - assingment_method: dhcp
+          ip_version: 6
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+  node_templates:
+    pnf_mainPart:
+      type: org.openecomp.resource.cp.v2.extCP
+    pnfExtCp_2:
+      type: org.openecomp.resource.cp.v2.extCP
+      properties:
+        ip_requirements:
+          get_input: protocols
+    pnfExtCp_1:
+      type: org.openecomp.resource.cp.v2.extCP
+      properties:
+        ip_requirements:
+          - assingment_method: dhcp
+            ip_version: 4
