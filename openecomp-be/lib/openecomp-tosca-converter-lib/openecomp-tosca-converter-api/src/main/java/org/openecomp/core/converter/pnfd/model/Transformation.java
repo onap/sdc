@@ -21,9 +21,12 @@ package org.openecomp.core.converter.pnfd.model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents a transformation from the PNFD transformation descriptor.
@@ -35,6 +38,7 @@ public class Transformation {
     private String name;
     private String description;
     private TransformationBlock block;
+    private Set<TransformationProperty> propertySet;
     private ConversionQuery conversionQuery;
     private List<ConversionDefinition> conversionDefinitionList;
 
@@ -44,6 +48,9 @@ public class Transformation {
      * @return {code true} if the instance is valid, {code false} otherwise
      */
     public boolean isValid() {
+        if (block == TransformationBlock.GET_INPUT_FUNCTION) {
+            return !StringUtils.isEmpty(name) && !CollectionUtils.isEmpty(conversionDefinitionList);
+        }
         return block != null && conversionQuery != null && !CollectionUtils.isEmpty(conversionDefinitionList);
     }
 
@@ -55,9 +62,9 @@ public class Transformation {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Transformation that = (Transformation) o;
+        final Transformation that = (Transformation) o;
         //if there is no query, compares by block and name.
-        if (conversionQuery != null && conversionQuery.getQuery() == null && that.conversionQuery.getQuery() == null) {
+        if (conversionQuery == null && that.conversionQuery == null) {
             return block == that.block &&
                 Objects.equals(name, that.name);
         }
@@ -69,5 +76,25 @@ public class Transformation {
     @Override
     public int hashCode() {
         return Objects.hash(block, conversionQuery);
+    }
+
+    public <T> Optional<T> getPropertyValue(final TransformationPropertyType type, Class<T> clazz) {
+        if (CollectionUtils.isEmpty(propertySet)) {
+            return Optional.empty();
+        }
+
+        final Optional<TransformationProperty> transformationProperty = propertySet.stream()
+            .filter(transformationProperty1 -> transformationProperty1.getType() == type)
+            .findFirst();
+        if (transformationProperty.isPresent()) {
+            try {
+                T value = clazz.cast(transformationProperty.get().getValue());
+                return Optional.of(value);
+            } catch (final ClassCastException ignored) {
+                return Optional.empty();
+            }
+        }
+
+        return Optional.empty();
     }
 }

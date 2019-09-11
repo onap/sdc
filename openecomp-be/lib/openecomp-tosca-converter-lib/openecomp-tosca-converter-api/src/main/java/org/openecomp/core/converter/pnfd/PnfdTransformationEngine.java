@@ -17,31 +17,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter.impl.pnfd.parser;
-
-import java.util.Optional;
-import org.openecomp.core.converter.pnfd.model.ConversionQuery;
+package org.openecomp.core.converter.pnfd;
 
 /**
- * Handles YAML from/to {@link ConversionQuery} conversions
+ * Engine that manages the PNF Descriptor transformation process.
  */
-public class ConversionQueryYamlParser {
+@FunctionalInterface
+public interface PnfdTransformationEngine {
 
-    private ConversionQueryYamlParser() {
+    void transform();
 
-    }
-
-    /**
-     * Parses the given a YAML object to a {@link ConversionQuery} instance.
-     * @param conversionYaml    the YAML object representing a conversion query
-     * @return
-     *  A new instance of {@link ConversionQuery}.
-     */
-    public static Optional<ConversionQuery> parse(final Object conversionYaml) {
-        if (conversionYaml == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ConversionQuery(conversionYaml));
-    }
 }

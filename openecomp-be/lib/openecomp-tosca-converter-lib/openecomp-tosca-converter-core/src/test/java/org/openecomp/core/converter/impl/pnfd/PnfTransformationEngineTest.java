@@ -37,6 +37,7 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
+import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
 @RunWith(Parameterized.class)
@@ -47,6 +48,7 @@ public class PnfTransformationEngineTest {
     private String inputFilename;
     private final YamlUtil yamlUtil = new YamlUtil();
     private final ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    private PnfdTransformationEngine pnfdTransformationEngine;
 
     public PnfTransformationEngineTest(final String inputFilename) {
         this.inputFilename = inputFilename;
@@ -66,11 +68,13 @@ public class PnfTransformationEngineTest {
         final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
         final ServiceTemplate serviceTemplate = new ServiceTemplate();
 
-        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdTransformationEngine(
-            serviceTemplateReaderService, serviceTemplate);
+        pnfdTransformationEngine = new PnfdNodeTypeTransformationEngine(serviceTemplateReaderService, serviceTemplate);
+        pnfdTransformationEngine.transform();
+        pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(serviceTemplateReaderService, serviceTemplate);
         pnfdTransformationEngine.transform();
 
-        final String result = yamlUtil.objectToYaml(serviceTemplate);
+        final String yamlContent = yamlUtil.objectToYaml(serviceTemplate);
+        final String result = yamlUtil.objectToYaml(yamlUtil.yamlToObject(yamlContent, ServiceTemplate.class));
         final String expectedResult = getExpectedResultFor(inputFilename);
         assertEquals(expectedResult, result);
     }

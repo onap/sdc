@@ -26,8 +26,10 @@ import java.util.Optional;
  */
 public enum TransformationBlock {
     INPUT("input"),
+    GET_INPUT_FUNCTION("getInputFunction"),
     NODE_TEMPLATE("nodeTemplate"),
-    GET_INPUT_FUNCTION("getInputFunction");
+    CUSTOM_NODE_TYPE("customNodeType"),
+    NODE_TYPE("nodeType");
 
     private final String name;
 
