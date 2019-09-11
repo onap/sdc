@@ -47,7 +47,7 @@ public class ConversionDefinitionYamlParserTest {
             fail(String.format("Could not load %s", definitionYamlFilePath));
             return;
         }
-        final ConversionDefinition conversionDefinition = ConversionDefinitionYamlParser.parse(definitionYaml);
+        final ConversionDefinition conversionDefinition = ConversionDefinitionYamlParser.parse(definitionYaml).orElse(null);
         assertConversionDefinition(definitionYaml, conversionDefinition);
     }
 

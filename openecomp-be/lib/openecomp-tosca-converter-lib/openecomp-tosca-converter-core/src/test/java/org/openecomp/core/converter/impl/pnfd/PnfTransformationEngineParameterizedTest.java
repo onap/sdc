@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +41,7 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
+import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
 @RunWith(Parameterized.class)
@@ -72,7 +74,7 @@ public class PnfTransformationEngineParameterizedTest {
 
 
     @Parameterized.Parameters(name = "{index}: input: {0}, descriptor: {4}, output: {2}")
-    public static Collection input() throws IOException {
+    public static Collection input() throws IOException, URISyntaxException {
         return Files.list(getPathFromClasspath(TEST_CASES_PATH)).map(path -> {
             try {
                 return buildTestCase(path);
@@ -90,7 +92,6 @@ public class PnfTransformationEngineParameterizedTest {
         if (inputFilePath == null) {
             return Collections.emptyList();
         }
-        ;
         final List<Path> transformationDescriptorList;
         try (final Stream<Path> files = Files.walk(testCasePath.resolve(TRANSFORMATION_DESCRIPTOR_FOLDER))) {
             transformationDescriptorList = files.filter(path -> Files.isRegularFile(path))
@@ -130,8 +131,8 @@ public class PnfTransformationEngineParameterizedTest {
         final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
         final ServiceTemplate serviceTemplate = new ServiceTemplate();
 
-        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdTransformationEngine(serviceTemplateReaderService, serviceTemplate
-            , transformationDescriptorFilePath.toString());
+        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(
+            serviceTemplateReaderService, serviceTemplate, transformationDescriptorFilePath.toString());
         pnfdTransformationEngine.transform();
 
         final String result = yamlUtil.objectToYaml(serviceTemplate);
@@ -146,7 +147,7 @@ public class PnfTransformationEngineParameterizedTest {
         }
     }
 
-    private static Path getPathFromClasspath(final String location) {
-        return Paths.get(Thread.currentThread().getContextClassLoader().getResource(location).getPath());
+    private static Path getPathFromClasspath(final String location) throws URISyntaxException {
+        return Paths.get(PnfTransformationEngineParameterizedTest.class.getClassLoader().getResource(location).toURI());
     }
 }

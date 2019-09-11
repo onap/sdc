@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.openecomp.core.converter.pnfd.parser.AbstractPnfdBlockParser;
 import org.openecomp.core.converter.impl.pnfd.PnfdQueryExecutor;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
 import org.openecomp.core.converter.pnfd.model.ConversionQuery;
