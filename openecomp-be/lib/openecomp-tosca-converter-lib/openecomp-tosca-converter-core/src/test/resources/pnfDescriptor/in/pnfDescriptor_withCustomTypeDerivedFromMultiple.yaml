@@ -1,0 +1,95 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: the service template of a PNFD
+
+imports:
+ - etsi_nfv_sol001_pnfd_2_5_1_types.yaml
+
+node_types:
+  myCustomizedNodeType_C:
+    derived_from: myCustomizedNodeType_B
+  myCustomizedNodeType_A:
+    derived_from: tosca.nodes.nfv.PnfExtCp
+  myCustomizedNodeType_D:
+    derived_from: myCustomizedNodeType_C
+  myCustomizedNodeType_E:
+    derived_from: myCustomizedNodeType_XXXXXX
+  myCustomizedNodeType_B:
+    derived_from: myCustomizedNodeType_A
+    properties:
+      descriptor_id:
+        type: string
+        constraints: [ valid_values: [ b1bb0ce7-ebca-4fa7-95ed-4840d70a2233 ] ]
+        default: b1bb0ce7-ebca-4fa7-95ed-4840d70a2233
+      function_description:
+        type: string
+        default: an example PNF
+      provider:
+        type: string
+        constraints: [ valid_values: [ MyCompany] ]
+        default: MyCompany
+      version:
+        type: string
+        constraints: [ valid_values: [ '1.0' ] ]
+        default: '1.0'
+      descriptor_invariant_id:
+        type: string
+        constraints: [ valid_values: [ 1111-2222-ccaa-bbdd ] ]
+        default: 1111-2222-ccaa-bbdd
+      name:
+        type: string
+        constraints: [ valid_values: [ExamplePnf] ]
+        default: ExamplePnf
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+
+topology_template:
+  inputs:
+    anyOtherInput:
+      type: string
+      description: this is input1
+      default: defaultValue
+    protocols:
+      type: list
+      description: IP protocols
+      entry_schema:
+        type: string
+      default: [ ipv4, ipv6 ]
+
+  substitution_mappings:
+    node_type: myCustomizedNodeType_C
+    requirements:
+      virtual_link: [ pnfExtCp_1, external_virtual_link ]
+
+  node_templates:
+    pnf_mainPart:
+      type: myCustomizedNodeType_C
+      properties:
+        descriptor_id: b1bb0ce7-ebca-4fa7-95ed-4840d70a2233
+        function_description: an example PNF
+        provider: Mycompany
+        version: 1.0
+        descriptor_invariant_id: 1111-2222-ccaa-bbdd
+        name: ExamplePnf
+
+    pnfExtCp_1:
+      type: tosca.nodes.nfv.PnfExtCp
+      properties:
+        protocol: [ associated_layer_protocol: ipv4 ]
+        trunk_mode: false
+        layer_protocols: [ ipv4 ]
+        role: leaf
+        description: External connection point to access this pnf
+      requirements:
+        - dependency: pnf_mainPart
+
+    pnfExtCp_2:
+      type: tosca.nodes.nfv.PnfExtCp
+      properties:
+        trunk_mode: false
+        layer_protocols: { get_input: protocols }
+        role: leaf
+        description: External connection point to access Acme myPnf
+      requirements:
+        - dependency: myPnf

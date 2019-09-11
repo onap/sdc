@@ -20,24 +20,22 @@
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Represents a type of a transformation block
  */
+@AllArgsConstructor
+@Getter
 public enum TransformationBlock {
     INPUT("input"),
+    GET_INPUT_FUNCTION("getInputFunction"),
     NODE_TEMPLATE("nodeTemplate"),
-    GET_INPUT_FUNCTION("getInputFunction");
+    CUSTOM_NODE_TYPE("customNodeType"),
+    NODE_TYPE("nodeType");
 
     private final String name;
-
-    TransformationBlock(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     /**
      * Parse a String to the related {@link TransformationBlock}.

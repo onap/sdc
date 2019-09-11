@@ -19,7 +19,6 @@
 
 package org.openecomp.core.converter.impl.pnfd;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,35 +34,22 @@ import org.openecomp.core.converter.impl.pnfd.factory.PnfdBlockParserFactory;
 import org.openecomp.core.converter.impl.pnfd.parser.ConversionQueryYamlParser;
 import org.openecomp.core.converter.pnfd.model.Transformation;
 import org.openecomp.core.converter.pnfd.model.TransformationBlock;
-import org.openecomp.core.converter.pnfd.model.TransformationDescription;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
- * Engine that manages the PNF Descriptor transformation process.
+ * Engine that manages the PNF Descriptor transformation process for the NodeTemplate block.
  */
-public class PnfdTransformationEngine {
+public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransformationEngine {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PnfdTransformationEngine.class);
-
-    private final ServiceTemplate templateTo;
-    private final ServiceTemplateReaderService templateFrom;
-    private final PnfdTransformationDescriptorReader pnfdTransformationDescriptorReader =
-        new PnfdTransformationDescriptorReader();
-    private TransformationDescription transformationDescription;
-    private Map<TransformationBlock, List<Transformation>> transformationGroupByBlockMap;
-    private final String descriptorResourcePath;
-
-    public PnfdTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo) {
-        this(templateFrom, templateTo, "pnfdTransformationTemplate/model-driven-conversion.yaml");
+    public PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom,
+                                                final ServiceTemplate templateTo) {
+        super(templateFrom, templateTo);
     }
 
     //used for tests purposes
-    PnfdTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo,
-            final String descriptorResourcePath) {
-        this.templateFrom = templateFrom;
-        this.templateTo = templateTo;
-        this.descriptorResourcePath = descriptorResourcePath;
+    PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom,
+                                                final ServiceTemplate templateTo,
+                                                final String descriptorResourcePath) {
+        super(templateFrom, templateTo, descriptorResourcePath);
     }
 
     /**
@@ -89,17 +75,12 @@ public class PnfdTransformationEngine {
         }
     }
 
-    /**
-     * Reads the transformation description yaml file.
-     */
-    private void readDefinition() {
-        transformationDescription = pnfdTransformationDescriptorReader.parse(getDefinitionFileInputStream());
-    }
 
     /**
      * Execute all transformations specified in the descriptor.
      */
-    private void executeTransformations() {
+    @Override
+    protected void executeTransformations() {
         final Set<Transformation> transformationSet = transformationDescription.getTransformationSet();
         if (CollectionUtils.isEmpty(transformationSet)) {
             return;
@@ -107,6 +88,7 @@ public class PnfdTransformationEngine {
         transformationGroupByBlockMap = transformationSet.stream()
             .filter(Transformation::isValid)
             .collect(Collectors.groupingBy(Transformation::getBlock));
+        executeCustomTypeTransformations();
         final Map<String, String> inputsToConvertMap = executeNodeTemplateTransformations();
         executeGetInputFunctionTransformations(inputsToConvertMap);
     }
@@ -158,7 +140,9 @@ public class PnfdTransformationEngine {
                 if (transformation != null) {
                     final Map<String, Object> conversionQueryMap = new HashMap<>();
                     conversionQueryMap.put(inputName, null);
-                    transformation.setConversionQuery(ConversionQueryYamlParser.parse(conversionQueryMap));
+                    transformation.setConversionQuery(
+                        ConversionQueryYamlParser.parse(conversionQueryMap).orElse(null)
+                    );
                     PnfdBlockParserFactory.getInstance().get(transformation)
                         .ifPresent(pnfParser -> pnfParser.parse(templateFrom, templateTo));
                 }
@@ -167,17 +151,17 @@ public class PnfdTransformationEngine {
     }
 
     /**
-     * Gets the transformation definition yaml file path.
-     * @return The transformation definition yaml path.
+     * Parses a Customized Node Type that extend from a valid ONAP NodeType.
      */
-    private InputStream getDefinitionFileInputStream() {
-        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(descriptorResourcePath);
-        if (resourceAsStream  == null) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error(String.format("Could not find resource '%s'", descriptorResourcePath));
-            }
-            return null;
+    private void executeCustomTypeTransformations() {
+        final List<Transformation> transformationList =  transformationGroupByBlockMap
+            .get((TransformationBlock.CUSTOM_NODE_TYPE));
+        if (CollectionUtils.isEmpty(transformationList)) {
+            return;
         }
-        return resourceAsStream;
+        transformationList.forEach(transformation ->
+            PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfdBlockParser ->
+                pnfdBlockParser.parse(templateFrom, templateTo)));
     }
+
 }

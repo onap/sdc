@@ -20,9 +20,11 @@
 package org.openecomp.core.converter.impl.pnfd.factory;
 
 import java.util.Optional;
-import org.openecomp.core.converter.pnfd.model.Transformation;
 import org.openecomp.core.converter.impl.pnfd.parser.PnfdInputBlockParser;
 import org.openecomp.core.converter.impl.pnfd.parser.PnfdNodeTemplateBlockParser;
+import org.openecomp.core.converter.impl.pnfd.parser.PnfdCustomNodeTypeBlockParser;
+import org.openecomp.core.converter.impl.pnfd.parser.PnfdNodeTypeBlockParser;
+import org.openecomp.core.converter.pnfd.model.Transformation;
 import org.openecomp.core.converter.pnfd.parser.PnfdBlockParser;
 
 /**
@@ -46,6 +48,10 @@ public class PnfdBlockParserFactory {
         switch (transformation.getBlock()) {
             case NODE_TEMPLATE:
                 return Optional.of(new PnfdNodeTemplateBlockParser(transformation));
+            case NODE_TYPE:
+                return Optional.of(new PnfdNodeTypeBlockParser(transformation));
+            case CUSTOM_NODE_TYPE:
+                return Optional.of(new PnfdCustomNodeTypeBlockParser(transformation));
             case INPUT:
             case GET_INPUT_FUNCTION:
                 return Optional.of(new PnfdInputBlockParser(transformation));

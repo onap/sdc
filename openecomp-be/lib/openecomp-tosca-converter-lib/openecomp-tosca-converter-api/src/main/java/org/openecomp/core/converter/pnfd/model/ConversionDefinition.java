@@ -32,4 +32,10 @@ public class ConversionDefinition {
     private PnfdConversionStrategy pnfdConversionStrategy;
     private String toGetInput;
 
+    public ConversionDefinition(ConversionQuery conversionQuery, String toAttributeName,
+                                PnfdConversionStrategy pnfdConversionStrategy) {
+        this.conversionQuery = conversionQuery;
+        this.toAttributeName = toAttributeName;
+        this.pnfdConversionStrategy = pnfdConversionStrategy;
+    }
 }

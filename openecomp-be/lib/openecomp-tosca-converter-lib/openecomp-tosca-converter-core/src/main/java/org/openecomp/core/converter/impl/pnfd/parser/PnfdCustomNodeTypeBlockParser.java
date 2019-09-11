@@ -27,35 +27,31 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.core.converter.impl.pnfd.PnfdQueryExecutor;
-import org.openecomp.core.converter.impl.pnfd.strategy.CopyConversionStrategy;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
-import org.openecomp.core.converter.pnfd.model.ConversionQuery;
 import org.openecomp.core.converter.pnfd.model.Transformation;
 import org.openecomp.core.converter.pnfd.strategy.PnfdConversionStrategy;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 
-public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
+public class PnfdCustomNodeTypeBlockParser extends AbstractPnfdBlockParser {
 
-    private Map<String, String> inputNameToConvertMap = new HashMap<>();
-
-    public PnfdNodeTemplateBlockParser(final Transformation transformation) {
+    public PnfdCustomNodeTypeBlockParser(final Transformation transformation) {
         super(transformation);
     }
 
     @Override
     protected Set<Map<String, Object>> findBlocksToParse() {
-        final ConversionQuery conversionQuery = transformation.getConversionQuery();
         final Map<String, Object> nodeTemplateMap = templateFrom.getNodeTemplates();
-        if (MapUtils.isEmpty(nodeTemplateMap)) {
+        final Map<String, Object> customNodeTypeMap = fetchCustomNodeType();
+        if (customNodeTypeMap.isEmpty() || MapUtils.isEmpty(nodeTemplateMap)) {
             return Collections.emptySet();
         }
-
-        return nodeTemplateMap.entrySet().stream()
-            .filter(mapEntry -> PnfdQueryExecutor.find(conversionQuery, mapEntry.getValue()))
-            .map(stringObjectEntry -> {
+        return customNodeTypeMap.entrySet().stream()
+            .map(customNode -> {
                 final Map<String, Object> map = new HashMap<>();
-                map.put(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+                nodeTemplateMap.entrySet().stream()
+                    .filter(nodeTemplate ->
+                        extractObjectValue(nodeTemplate.getValue()).equalsIgnoreCase(customNode.getKey()))
+                    .forEach(nodeType -> map.put(nodeType.getKey(), nodeType.getValue()));
                 return map;
             }).collect(Collectors.toSet());
     }
@@ -70,46 +66,23 @@ public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
         }
         final String attribute = attributeQuery.keySet().iterator().next();
         final Object queryValue = attributeQuery.get(attribute);
-        final Object attributeValueToConvert = fromNodeTemplateAttributeMap.get(attribute);
+        final Map<String, Object> parsedNodeTemplate = new HashMap<>();
         if (queryValue == null) {
-            PnfdConversionStrategy pnfdConversionStrategy = conversionDefinition.getPnfdConversionStrategy();
-            if (isGetInputFunction(attributeValueToConvert)) {
-                inputNameToConvertMap.put(extractObjectValue(attributeValueToConvert)
-                    , conversionDefinition.getToGetInput()
-                );
-                pnfdConversionStrategy = new CopyConversionStrategy();
-            }
-            final Map<String, Object> parsedNodeTemplate = new HashMap<>();
-            final Optional convertedAttribute = pnfdConversionStrategy.convert(attributeValueToConvert);
+            final PnfdConversionStrategy pnfdConversionStrategy = conversionDefinition.getPnfdConversionStrategy();
+            final Optional convertedAttribute = pnfdConversionStrategy.convert(attributeValueToBeConverted);
             if (convertedAttribute.isPresent()) {
                 parsedNodeTemplate.put(conversionDefinition.getToAttributeName(), convertedAttribute.get());
             }
-
-            return parsedNodeTemplate.isEmpty() ? Optional.empty() : Optional.of(parsedNodeTemplate);
-        } else {
-            if (!(queryValue instanceof Map) || !(attributeValueToConvert instanceof Map)) {
-                return Optional.empty();
-            }
-            final Map<String, Object> parsedNodeTemplate = new HashMap<>();
-            final Optional<Map<String, Object>> builtNodeTemplate = buildParsedBlock(
-                (Map<String, Object>) queryValue,
-                (Map<String, Object>) attributeValueToConvert, conversionDefinition);
-            builtNodeTemplate.ifPresent(builtNodeTemplate1 -> parsedNodeTemplate.put(attribute, builtNodeTemplate1));
-
-            return parsedNodeTemplate.isEmpty() ? Optional.empty() : Optional.of(parsedNodeTemplate);
         }
+        return parsedNodeTemplate.isEmpty() ? Optional.empty() : Optional.of(parsedNodeTemplate);
     }
 
     @Override
-    protected void write(final String nodeTemplateName, final Map<String, Object> parsedNodeTemplateMap) {
-        if (!parsedNodeTemplateMap.isEmpty()) {
-            final NodeTemplate parsedNodeTemplate = NodeTemplateYamlParser.parse(parsedNodeTemplateMap);
+    protected void write(final String nodeTemplateName, final Map<String, Object> parsedTemplateMap) {
+        if (!parsedTemplateMap.isEmpty()) {
+            final NodeTemplate parsedNodeTemplate = NodeTemplateYamlParser.parse(parsedTemplateMap);
             DataModelUtil.addNodeTemplate(templateTo, nodeTemplateName, parsedNodeTemplate);
         }
     }
 
-    @Override
-    public Optional<Map<String, String>> getInputAndTransformationNameMap() {
-        return Optional.of(inputNameToConvertMap);
-    }
 }
