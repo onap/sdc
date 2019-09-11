@@ -17,31 +17,41 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter.impl.pnfd.parser;
+package org.openecomp.core.converter.pnfd.model;
 
-import java.util.Optional;
-import org.openecomp.core.converter.pnfd.model.ConversionQuery;
+import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
- * Handles YAML from/to {@link ConversionQuery} conversions
+ * Represents a PNFD transformation block property.
+ *
+ * @param <T> the type of the property value
  */
-public class ConversionQueryYamlParser {
+@Getter
+@AllArgsConstructor
+@EqualsAndHashCode
+public class TransformationProperty<T> {
 
-    private ConversionQueryYamlParser() {
+    private TransformationPropertyType type;
+    @EqualsAndHashCode.Exclude
+    private T value;
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TransformationProperty<?> property = (TransformationProperty<?>) o;
+        return Objects.equals(type, property.type);
     }
 
-    /**
-     * Parses the given a YAML object to a {@link ConversionQuery} instance.
-     * @param conversionYaml    the YAML object representing a conversion query
-     * @return
-     *  A new instance of {@link ConversionQuery}.
-     */
-    public static Optional<ConversionQuery> parse(final Object conversionYaml) {
-        if (conversionYaml == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ConversionQuery(conversionYaml));
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

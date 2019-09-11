@@ -1,0 +1,31 @@
+node_types:
+  org.openecomp.resource.abstract.myCustomizedNodeType_B:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+  org.openecomp.resource.abstract.myCustomizedNodeType_A:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+topology_template:
+  inputs:
+    protocols:
+      type: list
+      description: IP protocols
+      default:
+        - assingment_method: dhcp
+          ip_version: 4
+        - assingment_method: dhcp
+          ip_version: 6
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+  node_templates:
+    pnf_mainPart:
+      type: org.openecomp.resource.cp.v2.extCP
+    pnfExtCp_2:
+      type: org.openecomp.resource.cp.v2.extCP
+      properties:
+        ip_requirements:
+          get_input: protocols
+    pnfExtCp_1:
+      type: org.openecomp.resource.cp.v2.extCP
+      properties:
+        ip_requirements:
+          - assingment_method: dhcp
+            ip_version: 4

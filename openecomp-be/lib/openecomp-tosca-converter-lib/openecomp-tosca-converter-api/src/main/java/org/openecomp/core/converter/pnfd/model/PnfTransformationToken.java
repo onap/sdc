@@ -34,7 +34,10 @@ public enum PnfTransformationToken {
     TRANSFORMATION_FOR("transformation-for"),
     NAME("name"),
     DESCRIPTION("description"),
-    GET_INPUT("get_input"), TO_GET_INPUT("to-get-input");
+    GET_INPUT("get_input"),
+    TO_GET_INPUT("to-get-input"),
+    PROPERTIES("properties"),
+    NODE_TYPE("node_types");
 
     private final String name;
 

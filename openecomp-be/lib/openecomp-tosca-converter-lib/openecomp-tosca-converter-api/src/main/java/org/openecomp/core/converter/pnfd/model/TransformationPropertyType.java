@@ -17,31 +17,26 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.core.converter.impl.pnfd.parser;
+package org.openecomp.core.converter.pnfd.model;
 
+import java.util.Arrays;
 import java.util.Optional;
-import org.openecomp.core.converter.pnfd.model.ConversionQuery;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * Handles YAML from/to {@link ConversionQuery} conversions
+ * Represents a valid property for a PNFD transformation block.
  */
-public class ConversionQueryYamlParser {
+@Getter
+@AllArgsConstructor
+public enum TransformationPropertyType {
+    NODE_NAME_PREFIX("nodeNamePrefix");
 
-    private ConversionQueryYamlParser() {
+    private final String type;
 
-    }
-
-    /**
-     * Parses the given a YAML object to a {@link ConversionQuery} instance.
-     * @param conversionYaml    the YAML object representing a conversion query
-     * @return
-     *  A new instance of {@link ConversionQuery}.
-     */
-    public static Optional<ConversionQuery> parse(final Object conversionYaml) {
-        if (conversionYaml == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ConversionQuery(conversionYaml));
+    public static Optional<TransformationPropertyType> parse(final String type) {
+        return Arrays.stream(values())
+            .filter(transformationPropertyType -> transformationPropertyType.getType().equals(type))
+            .findFirst();
     }
 }
