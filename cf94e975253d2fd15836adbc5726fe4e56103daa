@@ -22,6 +22,30 @@
       "revId": "cf94e975253d2fd15836adbc5726fe4e56103daa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47dad88f_6c6eeb70",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 2571
+      },
+      "writtenOn": "2019-09-16T01:27:56Z",
+      "side": 1,
+      "message": "I think it\u0027s already taken care of in not-null check. Also after running sonarLint on this class I don\u0027t see any bug related to this.",
+      "parentUuid": "38643923_3de3db23",
+      "range": {
+        "startLine": 960,
+        "startChar": 60,
+        "endLine": 960,
+        "endChar": 80
+      },
+      "revId": "cf94e975253d2fd15836adbc5726fe4e56103daa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
