@@ -46,6 +46,30 @@
       "revId": "cf94e975253d2fd15836adbc5726fe4e56103daa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "560a3b69_4e316795",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-09-18T08:54:26Z",
+      "side": 1,
+      "message": "replace with\nif (result \u003d\u003d null \u0026\u0026 !org.apache.commons.collections4.IteratorUtils.isEmpty(prevEdgeIter)) {",
+      "parentUuid": "47dad88f_6c6eeb70",
+      "range": {
+        "startLine": 960,
+        "startChar": 60,
+        "endLine": 960,
+        "endChar": 80
+      },
+      "revId": "cf94e975253d2fd15836adbc5726fe4e56103daa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
