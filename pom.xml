@@ -140,8 +140,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <nexus.id.snapshot>nexus</nexus.id.snapshot>
 
         <!--nexus-->
-        <npm.registry>https://registry.npmjs.org/</npm.registry>
-        <!-- https://nexus.onap.org/content/repositories/npm/ -->
+        <npm.registry>https://nexus3.onap.org/repository/npm.public/</npm.registry>
         <nexus.proxy>https://nexus.onap.org</nexus.proxy>
         <sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
         <staging.profile.id>176c31dfe190a</staging.profile.id>
