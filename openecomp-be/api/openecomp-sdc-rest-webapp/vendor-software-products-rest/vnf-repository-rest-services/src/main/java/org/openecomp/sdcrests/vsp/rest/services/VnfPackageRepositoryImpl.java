@@ -39,6 +39,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.config.api.ConfigurationManager;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
@@ -141,8 +142,10 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             final OrchestrationTemplateCandidateManager candidateManager =
                     OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
             final String filename = formatFilename(csarId);
-            final OnboardPackageInfo onboardPackageInfo = new OnboardPackageInfo(getNetworkPackageName(filename),
-                getFileExtension(filename), ByteBuffer.wrap(payload));
+            final String fileExtension = getFileExtension(filename);
+            final OnboardPackageInfo onboardPackageInfo =
+                new OnboardPackageInfo(getNetworkPackageName(filename), fileExtension, ByteBuffer.wrap(payload),
+                    OnboardingTypesEnum.getOnboardingTypesEnum(fileExtension));
             final VspDetails vspDetails = new VspDetails(vspId, getVersion(vspId, versionId));
             final UploadFileResponse response = candidateManager.upload(vspDetails, onboardPackageInfo);
             final UploadFileResponseDto uploadFileResponse =

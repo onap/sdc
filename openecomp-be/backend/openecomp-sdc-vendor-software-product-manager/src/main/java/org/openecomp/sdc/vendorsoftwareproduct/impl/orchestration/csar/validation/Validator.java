@@ -34,8 +34,7 @@ public interface Validator {
     /**
      *
      * @param contentHandler contains file and its data
-     * @param folderList folder structure inside the package
      * @return errors Map of errors that occur
      */
-    Map<String, List<ErrorMessage>> validateContent(FileContentHandler contentHandler, List<String> folderList);
+    Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler);
 }

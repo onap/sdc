@@ -280,11 +280,11 @@ public class TranslationContext {
   }
 
   public void setFiles(Map<String, byte[]> files) {
-    this.files.putAll(files);
+    this.files.setFiles(files);
   }
 
-  public InputStream getFileContent(String fileName) {
-    return files.getFileContent(fileName);
+  public InputStream getFileContentAsStream(final String fileName) {
+    return files.getFileContentAsStream(fileName);
   }
 
   public void addFile(String name, byte[] content) {
