@@ -120,7 +120,7 @@ public class HeatToToscaUtil {
     public static TranslatorOutput loadAndTranslateTemplateData(FileContentHandler fileNameContentMap) {
         HeatToToscaTranslator heatToToscaTranslator = HeatToToscaTranslatorFactory.getInstance().createInterface();
 
-        try (InputStream fileContent = fileNameContentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+        try (InputStream fileContent = fileNameContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
             heatToToscaTranslator.addManifest(SdcCommon.MANIFEST_NAME, FileUtils.toByteArray(fileContent));
         } catch (IOException e) {
             throw new SdcRuntimeException("Failed to read manifest", e);
@@ -128,7 +128,7 @@ public class HeatToToscaUtil {
 
         fileNameContentMap.getFileList().stream().filter(fileName -> !(fileName.equals(SdcCommon.MANIFEST_NAME)))
                           .forEach(fileName -> heatToToscaTranslator.addFile(fileName,
-                                  FileUtils.toByteArray(fileNameContentMap.getFileContent(fileName))));
+                                  fileNameContentMap.getFileContent(fileName)));
 
         Map<String, List<ErrorMessage>> errors = heatToToscaTranslator.validate();
         if (MapUtils.isNotEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, errors))) {
@@ -233,7 +233,7 @@ public class HeatToToscaUtil {
                     fileDataCollection.addBaseFiles(fileData);
                 }
                 HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil().yamlToObject(
-                        translationContext.getFileContent(fileName), HeatOrchestrationTemplate.class);
+                        translationContext.getFileContentAsStream(fileName), HeatOrchestrationTemplate.class);
                 if (MapUtils.isNotEmpty(heatOrchestrationTemplate.getResources())) {
                     referenced.addAll(applyFilterOnFileCollection(heatOrchestrationTemplate, translationContext,
                             fileDataCollection, filteredFiles));
@@ -565,7 +565,7 @@ public class HeatToToscaUtil {
 
     private static boolean isNestedVlanResource(String nestedHeatFileName, TranslationContext translationContext) {
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil().yamlToObject(
-                translationContext.getFileContent(nestedHeatFileName), HeatOrchestrationTemplate.class);
+                translationContext.getFileContentAsStream(nestedHeatFileName), HeatOrchestrationTemplate.class);
         return Objects.nonNull(nestedHeatOrchestrationTemplate.getResources()) && nestedHeatOrchestrationTemplate
                                                                                           .getResources().values()
                                                                                           .stream().anyMatch(
@@ -575,7 +575,7 @@ public class HeatToToscaUtil {
     public static Optional<String> getSubInterfaceParentPortNodeTemplateId(TranslateTo subInterfaceTo) {
         String subInterfaceResourceType = getSubInterfaceResourceType(subInterfaceTo.getResource());
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil().yamlToObject(
-                subInterfaceTo.getContext().getFileContent(subInterfaceResourceType), HeatOrchestrationTemplate.class);
+                subInterfaceTo.getContext().getFileContentAsStream(subInterfaceResourceType), HeatOrchestrationTemplate.class);
         if (Objects.isNull(nestedHeatOrchestrationTemplate.getResources())) {
             return Optional.empty();
         }
@@ -664,7 +664,7 @@ public class HeatToToscaUtil {
     public static boolean isNestedVfcResource(Resource resource, TranslationContext context) {
         Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil().yamlToObject(
-                context.getFileContent(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
+                context.getFileContentAsStream(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
         Map<String, Resource> resources = nestedHeatOrchestrationTemplate.getResources();
         return Objects.nonNull(resources) && resources.values().stream()
                      .anyMatch(ConsolidationDataUtil::isComputeResource);
@@ -1366,8 +1366,8 @@ public class HeatToToscaUtil {
 
     private static FileContentHandler getCsarArtifactFiles(TranslationContext translationContext) {
         FileContentHandler artifactFiles = new FileContentHandler();
-        artifactFiles.setFiles(translationContext.getFiles());
-        artifactFiles.setFiles(translationContext.getExternalArtifacts());
+        artifactFiles.addAll(translationContext.getFiles());
+        artifactFiles.addAll(translationContext.getExternalArtifacts());
 
         HeatTreeManager heatTreeManager = HeatTreeManagerUtil.initHeatTreeManager(translationContext.getFiles());
         heatTreeManager.createTree();
@@ -1415,7 +1415,7 @@ public class HeatToToscaUtil {
         }
 
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil().yamlToObject(
-                translationContext.getFileContent(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
+                translationContext.getFileContentAsStream(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
 
         if (MapUtils.isNotEmpty(nestedHeatOrchestrationTemplate.getResources())) {
             ContrailV2VirtualMachineInterfaceHelper contrailV2VirtualMachineInterfaceHelper =

@@ -132,7 +132,7 @@ public class CandidateServiceImpl implements CandidateService {
         analyzedZipHeatFiles);
     handleOtherResources(tree, usedEnvFiles, structure);
     FilesDataStructure fileDataStructureFromManifest =
-        createFileDataStructureFromManifest(zipContentMap.getFileContent(SdcCommon.MANIFEST_NAME));
+        createFileDataStructureFromManifest(zipContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME));
     List<String> structureArtifacts = structure.getArtifacts();
     structureArtifacts.addAll(fileDataStructureFromManifest.getArtifacts().stream().filter
         (artifact -> isNotStrctureArtifact(structureArtifacts, artifact))
