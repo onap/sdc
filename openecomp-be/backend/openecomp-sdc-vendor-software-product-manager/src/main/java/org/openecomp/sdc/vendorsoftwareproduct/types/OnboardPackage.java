@@ -19,8 +19,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Getter;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.common.utils.CommonUtil;
 
 @Getter
 public class OnboardPackage {
@@ -28,11 +31,26 @@ public class OnboardPackage {
     private final String filename;
     private final String fileExtension;
     private final ByteBuffer fileContent;
+    private final FileContentHandler fileContentHandler;
 
-    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent) {
+    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent,
+                          final FileContentHandler fileContentHandler) {
         this.filename = filename;
         this.fileExtension = fileExtension;
         this.fileContent = fileContent;
+        this.fileContentHandler = fileContentHandler;
     }
 
+    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent)
+        throws IOException {
+        this.filename = filename;
+        this.fileExtension = fileExtension;
+        this.fileContent = fileContent;
+        fileContentHandler = CommonUtil.getZipContent(fileContent.array());
+    }
+
+    public OnboardPackage(final String packageName, final String packageExtension, final byte[] packageContentBytes)
+            throws IOException {
+        this(packageName, packageExtension, ByteBuffer.wrap(packageContentBytes));
+    }
 }

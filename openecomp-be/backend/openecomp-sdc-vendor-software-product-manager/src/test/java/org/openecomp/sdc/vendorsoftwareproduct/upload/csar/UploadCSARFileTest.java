@@ -120,7 +120,7 @@ public class UploadCSARFileTest {
   public void testUploadFileIsEmpty() throws Exception {
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
     onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
-            ByteBuffer.wrap(new byte[]{}));
+            ByteBuffer.wrap(new byte[]{}), OnboardingTypesEnum.CSAR);
     UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
     assertEquals(1, uploadFileResponse.getErrors().size());
   }
@@ -133,7 +133,7 @@ public class UploadCSARFileTest {
     try (InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + "/invalidManifestContent.csar")) {
       onboardPackageInfo = new OnboardPackageInfo("invalidManifestContent",
-              OnboardingTypesEnum.CSAR.toString(), convertFileInputStream(inputStream));
+              OnboardingTypesEnum.CSAR.toString(), convertFileInputStream(inputStream), OnboardingTypesEnum.CSAR);
       UploadFileResponse response =
           candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(1, response.getErrors().size());
@@ -158,7 +158,7 @@ public class UploadCSARFileTest {
     try (final InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + File.separator + csarFileName)) {
       onboardPackageInfo = new OnboardPackageInfo(csarFileName, OnboardingTypesEnum.CSAR.toString(),
-              convertFileInputStream(inputStream));
+              convertFileInputStream(inputStream), OnboardingTypesEnum.CSAR);
       uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(expectedErrorsNumber, uploadFileResponse.getErrors().size());
     }

@@ -20,16 +20,17 @@
 
 package org.openecomp.sdc.datatypes.error;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import org.apache.commons.collections4.CollectionUtils;
 
 @Getter
 @EqualsAndHashCode
+@ToString
 public class ErrorMessage {
   private final ErrorLevel level;
   private final String message;
@@ -40,6 +41,9 @@ public class ErrorMessage {
   }
 
   public static class ErrorMessageUtil {
+
+    private ErrorMessageUtil() {
+    }
 
     /**
      * Add message list.

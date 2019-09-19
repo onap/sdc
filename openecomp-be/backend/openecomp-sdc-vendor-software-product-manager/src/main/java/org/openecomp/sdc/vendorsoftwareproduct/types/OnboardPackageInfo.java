@@ -19,26 +19,33 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Getter;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 
 @Getter
 public class OnboardPackageInfo {
 
+    private final OnboardingTypesEnum packageType;
     private final OnboardPackage originalOnboardPackage;
     private final OnboardPackage onboardPackage;
 
-    public OnboardPackageInfo(final String filename,
-                              final String fileExtension,
-                              final ByteBuffer fileContent,
-                              final OnboardPackage onboardPackage) {
-        originalOnboardPackage = new OnboardPackage(filename, fileExtension, fileContent);
+    public OnboardPackageInfo(final OnboardPackage onboardPackage, final OnboardingTypesEnum packageType) {
+        this(onboardPackage, onboardPackage, packageType);
+    }
+
+    public OnboardPackageInfo(final OnboardPackage originalOnboardPackage,
+                              final OnboardPackage onboardPackage, final OnboardingTypesEnum packageType) {
+        this.packageType = packageType;
+        this.originalOnboardPackage = originalOnboardPackage;
         this.onboardPackage = onboardPackage;
     }
 
     public OnboardPackageInfo(final String filename,
                               final String fileExtension,
-                              final ByteBuffer fileContent) {
+                              final ByteBuffer fileContent, final OnboardingTypesEnum packageType) throws IOException {
+        this.packageType = packageType;
         originalOnboardPackage = new OnboardPackage(filename, fileExtension, fileContent);
         this.onboardPackage = originalOnboardPackage;
     }

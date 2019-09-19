@@ -96,7 +96,7 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
     private String getMainServiceDefinitionFileName(FileContentHandler contentHandler) throws IOException {
         try {
             ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(
-                    contentHandler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
             return toscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

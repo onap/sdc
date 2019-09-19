@@ -56,7 +56,7 @@ public class CandidateEntityBuilder {
       Map<String, List<ErrorMessage>> uploadErrors) throws Exception {
     //mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
 
-    try (InputStream zipFileManifest = contentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+    try (InputStream zipFileManifest = contentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
       HeatFileAnalyzer heatFileAnalyzer = new HeatFileAnalyzerRowDataImpl();
       AnalyzedZipHeatFiles analyzedZipHeatFiles =
           heatFileAnalyzer.analyzeFilesNotEligibleForModulesFromFileAnalyzer(contentMap.getFiles());
@@ -87,7 +87,7 @@ public class CandidateEntityBuilder {
                                                      FileContentHandler fileContentHandler,
                                                      AnalyzedZipHeatFiles analyzedZipHeatFiles)
       throws IOException {
-    try (InputStream manifest = fileContentHandler.getFileContent(SdcCommon.MANIFEST_NAME)) {
+    try (InputStream manifest = fileContentHandler.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
 
       if (Objects.isNull(manifest)) {
         Optional<ManifestContent> manifestContentOptional =

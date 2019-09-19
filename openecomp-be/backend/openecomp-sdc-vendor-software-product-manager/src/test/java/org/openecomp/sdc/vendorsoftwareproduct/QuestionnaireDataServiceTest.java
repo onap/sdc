@@ -89,7 +89,7 @@ public class QuestionnaireDataServiceTest {
   // TODO: 3/15/2017 fix and enable   //@Test
   public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
-      onboardPackageInfo = new OnboardPackageInfo("missingYml", CSAR, convertFileInputStream(zipInputStream));
+      onboardPackageInfo = new OnboardPackageInfo("missingYml", CSAR, convertFileInputStream(zipInputStream), OnboardingTypesEnum.CSAR);
       UploadFileResponse uploadFileResponse =
               candidateManager.upload(vspDetails, onboardPackageInfo);
     }
@@ -104,7 +104,7 @@ public class QuestionnaireDataServiceTest {
 
     try (final InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
       onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
-          convertFileInputStream(zipInputStream));
+          convertFileInputStream(zipInputStream), OnboardingTypesEnum.CSAR);
       final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       candidateManager.process(vspId, VERSION);
 

@@ -81,7 +81,7 @@ public class VolumeTranslationHelper {
       String resourceId, TranslateTo translateTo, List<FileData> fileDatas) {
     for (FileData data : fileDatas) {
       HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
-          .yamlToObject(translateTo.getContext().getFiles().getFileContent(data.getFile()),
+          .yamlToObject(translateTo.getContext().getFiles().getFileContentAsStream(data.getFile()),
               HeatOrchestrationTemplate.class);
       Map<String, Output> outputs = heatOrchestrationTemplate.getOutputs();
       if (Objects.isNull(outputs)) {

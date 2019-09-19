@@ -123,7 +123,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
     for (String filenameIncludingPath : externalArtifacts.getFileList()) {
       try {
         zos.putNextEntry(new ZipEntry(filenameIncludingPath));
-        writeBytesToZip(zos, externalArtifacts.getFileContent(filenameIncludingPath));
+        writeBytesToZip(zos, externalArtifacts.getFileContentAsStream(filenameIncludingPath));
 
       } catch (IOException ex) {
         throw new RuntimeException(ex);
@@ -143,7 +143,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
     for (String fileName : artifacts.getFileList()) {
       try {
         zos.putNextEntry(new ZipEntry(ARTIFACTS_FOLDER_NAME + FILE_SEPARATOR + fileName));
-        writeBytesToZip(zos, artifacts.getFileContent(fileName));
+        writeBytesToZip(zos, artifacts.getFileContentAsStream(fileName));
 
       } catch (IOException ex) {
         throw new RuntimeException(ex);

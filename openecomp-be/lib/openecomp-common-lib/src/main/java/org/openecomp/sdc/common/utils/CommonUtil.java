@@ -36,7 +36,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -114,6 +113,25 @@ public class CommonUtil {
 
     return new ImmutablePair<>(mapFileContent, folderList);
   }
+
+    public static FileContentHandler getZipContent(final byte[] zipFile) throws IOException {
+        final FileContentHandler fileContentHandler = new FileContentHandler();
+        try (final ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(zipFile))) {
+            ZipEntry zipEntry;
+            while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+                assertEntryNotVulnerable(zipEntry);
+                if (zipEntry.isDirectory()) {
+                    fileContentHandler.addFolder(zipEntry.getName());
+                } else {
+                    fileContentHandler.addFile(zipEntry.getName(), FileUtils.toByteArray(inputZipStream));
+                }
+            }
+        } catch (final RuntimeException exception) {
+            throw new IOException(exception);
+        }
+
+        return fileContentHandler;
+    }
 
   private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
     if (entry.getName().contains("../")) {

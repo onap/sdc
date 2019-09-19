@@ -129,7 +129,7 @@ public class TranslationService {
                                   TranslationContext context) {
         String heatFileName = heatFileData.getFile();
         HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
-                .yamlToObject(context.getFileContent(heatFileName), HeatOrchestrationTemplate.class);
+                .yamlToObject(context.getFileContentAsStream(heatFileName), HeatOrchestrationTemplate.class);
 
         translateInputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData, context,
                 heatFileName);
@@ -389,7 +389,7 @@ public class TranslationService {
         }
         for (FileData fileRelatedData : fileRelatedDataList) {
             if (fileRelatedData.getType().equals(FileData.Type.HEAT_ENV)) {
-                return new YamlUtil().yamlToObject(context.getFileContent(fileRelatedData.getFile()),
+                return new YamlUtil().yamlToObject(context.getFileContentAsStream(fileRelatedData.getFile()),
                         Environment.class);
             }
         }

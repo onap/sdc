@@ -62,9 +62,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class UploadFileTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(UploadFileTest.class);
-
-  private static final String USER1 = "vspTestUser1";
-
   public static final Version VERSION01 = new Version(0, 1);
 
   @Mock
@@ -102,17 +99,17 @@ public class UploadFileTest {
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
     try (final InputStream inputStream = getZipInputStream("/legalUpload")) {
       onboardPackageInfo = new OnboardPackageInfo("legalUpload", OnboardingTypesEnum.ZIP.toString(),
-              convertFileInputStream(inputStream));
+              convertFileInputStream(inputStream), OnboardingTypesEnum.ZIP);
       candidateManager.upload(vspDetails, onboardPackageInfo);
 
     }
   }
 
-  private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
+  private void testLegalUpload(String vspId, Version version, InputStream upload, String user) throws IOException {
     onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.ZIP.toString(),
-            convertFileInputStream(upload));
+            convertFileInputStream(upload), OnboardingTypesEnum.ZIP);
     final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
-    assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.ZIP);
+    assertEquals(OnboardingTypesEnum.ZIP, uploadFileResponse.getOnboardingType());
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDataDaoMock.get(vspId, version);
 
   }
