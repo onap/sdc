@@ -118,7 +118,7 @@ public class HeatTreeManager {
                                             GlobalValidationContext globalContext) {
 
         String fileName = fileHeatStructureTree.getFileName();
-        try (InputStream fileContent = this.heatContentMap.getFileContent(fileName)) {
+        try (InputStream fileContent = this.heatContentMap.getFileContentAsStream(fileName)) {
             HeatOrchestrationTemplate hot =
                     new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
 

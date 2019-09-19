@@ -38,6 +38,7 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
@@ -72,7 +73,7 @@ public class QuestionnaireDataServiceTest {
   }
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterLegalUploadWithComposition() throws IOException {
+  public void testQuestionnaireDataAfterLegalUploadWithComposition() throws IOException, OnboardPackageException {
     InformationArtifactData informationArtifactData =
         uploadFileAndValidateInformationArtifactData("/fullComposition", 5);
 
@@ -81,15 +82,15 @@ public class QuestionnaireDataServiceTest {
 
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterLegalUploadEmptyComposition() throws IOException {
+  public void testQuestionnaireDataAfterLegalUploadEmptyComposition() throws IOException, OnboardPackageException {
     uploadFileAndValidateInformationArtifactData("/emptyComposition", 0);
   }
 
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
+  public void testQuestionnaireDataAfterIllegalUpload() throws IOException, OnboardPackageException {
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
-      onboardPackageInfo = new OnboardPackageInfo("missingYml", CSAR, convertFileInputStream(zipInputStream));
+      onboardPackageInfo = new OnboardPackageInfo("missingYml", CSAR, convertFileInputStream(zipInputStream), OnboardingTypesEnum.CSAR);
       UploadFileResponse uploadFileResponse =
               candidateManager.upload(vspDetails, onboardPackageInfo);
     }
@@ -100,11 +101,11 @@ public class QuestionnaireDataServiceTest {
 
   private InformationArtifactData uploadFileAndValidateInformationArtifactData(final String filePath,
                                                                                final int listSizeToCheck)
-      throws IOException {
+      throws IOException, OnboardPackageException {
 
     try (final InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
       onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
-          convertFileInputStream(zipInputStream));
+          convertFileInputStream(zipInputStream), OnboardingTypesEnum.CSAR);
       final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       candidateManager.process(vspId, VERSION);
 

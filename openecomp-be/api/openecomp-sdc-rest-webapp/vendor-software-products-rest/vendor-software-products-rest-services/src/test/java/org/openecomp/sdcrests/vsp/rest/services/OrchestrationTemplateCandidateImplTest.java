@@ -27,12 +27,12 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import javax.activation.DataHandler;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -52,7 +52,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileStatus;
@@ -62,7 +61,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.Module;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
-import org.openecomp.sdcrests.vsp.rest.data.PackageArchive;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -77,8 +75,6 @@ public class OrchestrationTemplateCandidateImplTest {
     private OrchestrationTemplateCandidateManager candidateManager;
     @Mock
     private VendorSoftwareProductManager vendorSoftwareProductManager;
-    @Mock
-    private PackageArchive packageArchive;
     @Mock
     private VspManagerFactory vspManagerFactory;
     @Mock
@@ -100,19 +96,15 @@ public class OrchestrationTemplateCandidateImplTest {
     public void setUp(){
         try {
             initMocks(this);
-            packageArchive = mock(PackageArchive.class);
             mockStatic(VspManagerFactory.class);
             when(VspManagerFactory.getInstance()).thenReturn(vspManagerFactory);
             when(vspManagerFactory.createInterface()).thenReturn(vendorSoftwareProductManager);
             mockStatic(ActivityLogManagerFactory.class);
             when(ActivityLogManagerFactory.getInstance()).thenReturn(activityLogManagerFactory);
             when(activityLogManagerFactory.createInterface()).thenReturn(activityLogManager);
-            whenNew(PackageArchive.class).withAnyArguments().thenReturn(packageArchive);
             mockStatic(OrchestrationTemplateCandidateManagerFactory.class);
             when(OrchestrationTemplateCandidateManagerFactory.getInstance()).thenReturn(orchestrationTemplateCandidateManagerFactory);
             when(orchestrationTemplateCandidateManagerFactory.createInterface()).thenReturn(candidateManager);
-            when(packageArchive.getArchiveFileName()).thenReturn(Optional.of("test"));
-            when(packageArchive.getPackageFileContents()).thenReturn(new byte[0]);
             UploadFileResponse uploadFileResponse = new UploadFileResponse();
             uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
             uploadFileResponse.setNetworkPackageName("test");
@@ -163,36 +155,34 @@ public class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    public void uploadSignedTest() throws SecurityManagerException {
-        when(packageArchive.isSigned()).thenReturn(true);
-        when(packageArchive.isSignatureValid()).thenReturn(true);
+    public void uploadSignedTest() {
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void uploadNotSignedTest(){
-        when(packageArchive.isSigned()).thenReturn(false);
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.csar"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
-    private Attachment mockAttachment() {
+    private Attachment mockAttachment(final String fileName) {
         final Attachment attachment = mock(Attachment.class);
         when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
+        final DataHandler dataHandler = mock(DataHandler.class);
+        when(dataHandler.getName()).thenReturn(fileName);
+        when(attachment.getDataHandler()).thenReturn(dataHandler);
         final byte[] bytes = "upload package Test".getBytes();
         when(attachment.getObject(ArgumentMatchers.any())).thenReturn(bytes);
         return attachment;
     }
 
     @Test
-    public void uploadSignNotValidTest() throws SecurityManagerException {
-        when(packageArchive.isSigned()).thenReturn(true);
-        when(packageArchive.isSignatureValid()).thenReturn(false);
+    public void uploadSignNotValidTest() {
         orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment(), "1");
+        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertFalse(((UploadFileResponseDto)response.getEntity()).getErrors().isEmpty());
     }

@@ -43,7 +43,7 @@ public class ValidationManagerUtil {
    */
   public static void handleMissingManifest(FileContentHandler fileContentMap,
                                            Map<String, List<ErrorMessage>> errors) throws IOException {
-    try (InputStream manifest = fileContentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+    try (InputStream manifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
       if (manifest == null) {
         ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
                 .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
@@ -60,7 +60,7 @@ public class ValidationManagerUtil {
   public static ValidationManager initValidationManager(FileContentHandler fileContentMap) {
     ValidationManager validationManager = ValidationManagerFactory.getInstance().createInterface();
     fileContentMap.getFileList().forEach(fileName -> validationManager
-        .addFile(fileName, FileUtils.toByteArray(fileContentMap.getFileContent(fileName))));
+        .addFile(fileName, FileUtils.toByteArray(fileContentMap.getFileContentAsStream(fileName))));
     return validationManager;
   }
 }

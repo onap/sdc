@@ -67,6 +67,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
                                   OrchestrationTemplateCandidateData candidateData) {
 
+
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
         .getFileContentMap(OnboardingTypesEnum.CSAR, uploadFileResponse,

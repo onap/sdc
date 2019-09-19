@@ -35,16 +35,13 @@ import static org.junit.Assert.assertTrue;
 
 public class ONAPCsarValidatorTest {
 
-    ONAPCsarValidator onapCsarValidator;
+    private ONAPCsarValidator onapCsarValidator;
     private FileContentHandler contentHandler;
-    private List<String> folderList;
 
     @Before
     public void setUp() throws IOException{
         onapCsarValidator = new ONAPCsarValidator();
         contentHandler = new FileContentHandler();
-        folderList = new ArrayList<>();
-
         contentHandler.addFile("TOSCA-Metadata/TOSCA.meta", ValidatorUtil.getFileResource("/validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
         contentHandler.addFile("MainServiceTemplate.mf", ValidatorUtil.getFileResource("/validation.files/manifest/sampleManifest.mf"));
         contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, ValidatorUtil.getFileResource(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
@@ -53,7 +50,7 @@ public class ONAPCsarValidatorTest {
     @Test
     public void testGivenCSARPackage_withValidContent_thenNoErrorsReturned() {
         assertExpectedErrors("Valid CSAR Package should have 0 errors",
-                onapCsarValidator.validateContent(contentHandler, folderList), 0);
+                onapCsarValidator.validateContent(contentHandler), 0);
     }
 
     @Test
@@ -63,23 +60,21 @@ public class ONAPCsarValidatorTest {
         contentHandler.addFile("MainServiceTemplate.mf", ValidatorUtil.getFileResource("/validation.files/manifest/invalidManifest.mf"));
         contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, ValidatorUtil.getFileResource(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
 
-        assertExpectedErrors("CSAR package with invalid manifest file should have errors", onapCsarValidator.validateContent(contentHandler, folderList), 1);
+        assertExpectedErrors("CSAR package with invalid manifest file should have errors", onapCsarValidator.validateContent(contentHandler), 1);
 
     }
 
     @Test
     public void testGivenCSARPackage_withUnwantedFolders_thenErrorsReturned(){
-
-        folderList.add("Files/");
-        assertExpectedErrors("CSAR package with unwanted folders should fail with errors", onapCsarValidator.validateContent(contentHandler, folderList), 1);
+        contentHandler.addFolder("Files/");
+        assertExpectedErrors("CSAR package with unwanted folders should fail with errors", onapCsarValidator.validateContent(contentHandler), 1);
     }
 
     @Test
     public void testGivenCSARPackage_withUnwantedFiles_thenErrorsReturned(){
-
         contentHandler.addFile("ExtraFile.text", "".getBytes());
         assertExpectedErrors("CSAR package with unwanted files should fail with errors",
-                onapCsarValidator.validateContent(contentHandler, folderList), 1);
+                onapCsarValidator.validateContent(contentHandler), 1);
     }
 
     private void assertExpectedErrors( String testCase, Map<String, List<ErrorMessage>> errors, int expectedErrors){

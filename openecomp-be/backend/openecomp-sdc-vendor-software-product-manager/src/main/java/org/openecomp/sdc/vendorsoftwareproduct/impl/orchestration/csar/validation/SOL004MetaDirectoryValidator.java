@@ -83,14 +83,13 @@ class SOL004MetaDirectoryValidator implements Validator {
     private static final String MANIFEST_NON_MANO_SOURCE = "Non-MANO Source";
     private final List<ErrorMessage> errorsByFile = new ArrayList<>();
     private FileContentHandler contentHandler;
-    private List<String> folderList;
+    private Set<String> folderList;
     private ToscaMetadata toscaMetadata;
 
     @Override
-    public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler
-        , final List<String> folderList) {
+    public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler) {
         this.contentHandler = contentHandler;
-        this.folderList = folderList;
+        this.folderList = contentHandler.getFolderList();
         parseToscaMetadata();
         verifyMetadataFile();
         return Collections.unmodifiableMap(getAnyValidationErrors());
@@ -103,7 +102,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         try {
             toscaMetadata =
                 OnboardingToscaMetadata
-                    .parseToscaMetadataFile(contentHandler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+                    .parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } catch (final IOException e) {
             reportError(ErrorLevel.ERROR, Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
             LOGGER.error(Messages.METADATA_PARSER_INTERNAL.getErrorMessage(), e.getMessage(), e);
@@ -198,7 +197,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         final String manifestFile = toscaMetadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST);
         if(verifyFileExists(contentHandler.getFileList(), manifestFile)){
             final Manifest onboardingManifest = new SOL004ManifestOnboarding();
-            onboardingManifest.parse(contentHandler.getFileContent(manifestFile));
+            onboardingManifest.parse(contentHandler.getFileContentAsStream(manifestFile));
             final Optional<ResourceTypeEnum> resourceType = onboardingManifest.getType();
             if (resourceType.isPresent() && resourceType.get() == ResourceTypeEnum.VF){
                 final String value = (String) entry.getValue();
@@ -250,7 +249,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         final Set<String> existingFiles = contentHandler.getFileList();
         if (verifyFileExists(existingFiles, filePath)) {
             final Manifest onboardingManifest = new SOL004ManifestOnboarding();
-            onboardingManifest.parse(contentHandler.getFileContent(filePath));
+            onboardingManifest.parse(contentHandler.getFileContentAsStream(filePath));
             if (onboardingManifest.isValid()) {
                 try {
                     verifyManifestMetadata(onboardingManifest.getMetadata());
@@ -354,7 +353,7 @@ class SOL004MetaDirectoryValidator implements Validator {
             return;
         }
 
-        final InputStream fileContent = contentHandler.getFileContent(filePath);
+        final InputStream fileContent = contentHandler.getFileContentAsStream(filePath);
         if (fileContent == null) {
             reportError(ErrorLevel.ERROR, Messages.EMPTY_YAML_FILE_1.formatMessage(filePath));
             return;
@@ -397,7 +396,7 @@ class SOL004MetaDirectoryValidator implements Validator {
                     folderPath));
     }
 
-    private boolean verifyFoldersExist(final List<String> folderList, final String folderPath) {
+    private boolean verifyFoldersExist(final Set<String> folderList, final String folderPath) {
         return folderList.contains(folderPath + "/");
     }
 

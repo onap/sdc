@@ -5,6 +5,7 @@ metadata:
   pnfd_release_date_time: 2017-01-01T10:00:00+03:00
 
 Source: MainServiceTemplate.yaml
+Source: Artifacts/Deployment/ANOTHER/authorized_keys
 
 non_mano_artifact_sets:
   onap_others:

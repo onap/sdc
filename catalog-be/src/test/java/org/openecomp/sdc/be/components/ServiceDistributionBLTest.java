@@ -131,7 +131,7 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         assertEquals((int) stringResponseFormatEither.right().value().getStatus(), VALIDATION_FAIL_STATUS);
     }
 
-    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
+    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.ml
     @Test
     public void testDistributionAuthenticationFails() {
         mockAllMethodsUntilDENotification();
@@ -143,7 +143,7 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
-    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
+    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.ml
     @Test
     public void testDistributionUnknownHostFails() {
         mockAllMethodsUntilDENotification();
@@ -155,7 +155,7 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
-    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
+    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.ml
     @Test
     public void testDistributionConnectionErrorFails() {
         mockAllMethodsUntilDENotification();
@@ -167,7 +167,7 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
-    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
+    //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.ml
     @Test
     public void testDistributionObjectNotFoundFails() {
         mockAllMethodsUntilDENotification();
