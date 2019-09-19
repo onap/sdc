@@ -103,7 +103,7 @@ abstract class BaseResourceConnection<T> {
                 .get(translateTo.getResource().getType());
         List<String> paramNames;
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
-                .yamlToObject(translateTo.getContext().getFileContent(nestedFileData.getFile()),
+                .yamlToObject(translateTo.getContext().getFileContentAsStream(nestedFileData.getFile()),
                         HeatOrchestrationTemplate.class);
         List<Map<String, T>> exposedConnectionPoints = getAllConnectionPoints();
         for (Map<String, T> connectionPointsMap : exposedConnectionPoints) {
@@ -148,7 +148,7 @@ abstract class BaseResourceConnection<T> {
             return Collections.emptyList();
         }
         HeatOrchestrationTemplate mappedNestedHeatOrchestrationTemplate = new YamlUtil()
-                .yamlToObject(translateTo.getContext().getFileContent(mappedNestedHeatFileName),
+                .yamlToObject(translateTo.getContext().getFileContentAsStream(mappedNestedHeatFileName),
                         HeatOrchestrationTemplate.class);
         ServiceTemplate mappedNestedServiceTemplate =
                 translateTo.getContext().getTranslatedServiceTemplates().get(mappedNestedHeatFileName);

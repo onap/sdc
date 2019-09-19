@@ -281,7 +281,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     }
     Set<String> fileList = mibs.getFileList();
     for (String fileName : fileList) {
-      mibServiceArtifact.setContentData(FileUtils.toByteArray(mibs.getFileContent(fileName)));
+      mibServiceArtifact.setContentData(mibs.getFileContent(fileName));
       mibServiceArtifact.setName(monitoringArtifactInfo.getName() + File.separator + fileName);
       getEnrichedServiceModelDao().storeExternalArtifact(mibServiceArtifact);
     }

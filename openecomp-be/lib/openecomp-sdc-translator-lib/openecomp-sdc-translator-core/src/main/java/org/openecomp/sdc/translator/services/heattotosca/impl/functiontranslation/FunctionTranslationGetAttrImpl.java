@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -237,7 +236,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
                 return Optional.empty();
             }
             HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
-                    .yamlToObject(context.getFiles().getFileContent(nestedFile.get()), HeatOrchestrationTemplate.class);
+                    .yamlToObject(context.getFiles().getFileContentAsStream(nestedFile.get()), HeatOrchestrationTemplate.class);
             translatedAttributes.addAll(nestedHeatOrchestrationTemplate.getOutputs().keySet());
             return Optional.of(translatedAttributes);
 
